@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -57,6 +58,8 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.rememberPrevious
+import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -118,12 +121,15 @@ fun NearbyTransitPage(
 
     val viewModel: NearbyTransitTabViewModel = viewModel()
 
-    val currentNavEntry: SheetRoutes? =
-        viewModel.currentNavEntry.collectAsState(initial = null).value
-    val previousNavEntry: SheetRoutes? =
-        viewModel.previousNavEntry.collectAsState(initial = null).value
+    val currentNavBackStackEntry by
+        navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
+
+    val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
+    val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
     val (pinnedRoutes) = managePinnedRoutes()
+
+    val now = timer(updateInterval = 5.seconds)
 
     val stopDetailsVM =
         stopDetailsManagedVM(
@@ -134,7 +140,8 @@ fun NearbyTransitPage(
                 }),
             globalResponse = nearbyTransit.globalResponse,
             alertData = nearbyTransit.alertData,
-            pinnedRoutes = pinnedRoutes ?: emptySet()
+            pinnedRoutes = pinnedRoutes ?: emptySet(),
+            now = now
         )
 
     val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
@@ -212,10 +219,21 @@ fun NearbyTransitPage(
         }
     }
 
-    fun updateStopFilter(stopFilter: StopDetailsFilter?) {
+    fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
         viewModel.setStopFilter(
             currentNavEntry,
+            stopId,
             stopFilter,
+            { navController.popBackStack() },
+            { navController.navigate(it) }
+        )
+    }
+
+    fun updateTripFilter(stopId: String, tripFilter: TripDetailsFilter?) {
+        viewModel.setTripFilter(
+            currentNavEntry,
+            stopId,
+            tripFilter,
             { navController.popBackStack() },
             { navController.navigate(it) }
         )
@@ -252,7 +270,6 @@ fun NearbyTransitPage(
         ) {
             composable<SheetRoutes.StopDetails>(typeMap = navTypeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-
                 val filters =
                     StopDetailsPageFilters(
                         navRoute.stopId,
@@ -269,16 +286,16 @@ fun NearbyTransitPage(
                     } else {
                         analytics.track(AnalyticsScreen.StopDetailsUnfiltered)
                     }
-                    viewModel.recordCurrentNavEntry(navRoute)
                 }
 
                 StopDetailsPage(
                     modifier = modifier,
                     viewModel = stopDetailsVM,
                     filters = filters,
-                    alertData = nearbyTransit.alertData,
+                    now = now,
                     onClose = { navController.popBackStack() },
-                    updateStopFilter = ::updateStopFilter,
+                    updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
+                    updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
@@ -292,7 +309,6 @@ fun NearbyTransitPage(
                         showNavBar()
                     }
                     analytics.track(AnalyticsScreen.NearbyTransit)
-                    viewModel.recordCurrentNavEntry(SheetRoutes.NearbyTransit)
                 }
 
                 var targetLocation by remember { mutableStateOf<Position?>(null) }

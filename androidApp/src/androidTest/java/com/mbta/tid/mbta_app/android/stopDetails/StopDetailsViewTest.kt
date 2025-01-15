@@ -244,6 +244,7 @@ class StopDetailsViewTest {
                     stopFilter = filterState.value,
                     tripFilter = null,
                     updateStopFilter = filterState::value::set,
+                    updateTripDetailsFilter = {},
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,
@@ -324,6 +325,7 @@ class StopDetailsViewTest {
                     stopFilter = filterState.value,
                     tripFilter = null,
                     updateStopFilter = filterState::value::set,
+                    updateTripDetailsFilter = {},
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,

@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 class StopDetailsViewModel(
@@ -32,6 +34,7 @@ class StopDetailsViewModel(
     private val predictionsRepository: IPredictionsRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
 ) : ViewModel() {
+
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
 
     private val _stopData = MutableStateFlow<StopData?>(null)
@@ -155,10 +158,10 @@ fun stopDetailsManagedVM(
     globalResponse: GlobalResponse?,
     alertData: AlertsStreamDataResponse?,
     pinnedRoutes: Set<String>,
+    now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds
 ): StopDetailsViewModel {
-    val now = timer(updateInterval = 5.seconds)
     val timer = timer(checkPredictionsStaleInterval)
 
     val stopData = viewModel.stopData.collectAsState()

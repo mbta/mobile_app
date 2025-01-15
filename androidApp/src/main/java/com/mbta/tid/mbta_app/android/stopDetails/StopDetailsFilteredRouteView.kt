@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,12 +25,9 @@ import com.mbta.tid.mbta_app.android.component.RouteHeader
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
-import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
-import com.mbta.tid.mbta_app.model.TripInstantDisplay
-import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
@@ -37,27 +36,24 @@ fun StopDetailsFilteredRouteView(
     departures: StopDetailsDepartures,
     global: GlobalResponse?,
     now: Instant,
-    stopFilter: StopDetailsFilter?,
+    stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    updateStopFilter: (StopDetailsFilter?) -> Unit
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
 ) {
     val patternsByStop = departures.routes.find { it.routeIdentifier == stopFilter?.routeId }
     val expectedDirection = stopFilter?.directionId
     if (patternsByStop == null) {
         return
     }
+
+    val data = departures.stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
+
     val alerts: List<Alert> =
         if (expectedDirection != null && global != null) {
             patternsByStop.alertsHereFor(directionId = expectedDirection, global = global)
         } else {
             emptyList()
-        }
-
-    val rows: List<RowData> =
-        patternsByStop.allUpcomingTrips().mapNotNull { upcoming ->
-            val route = patternsByStop.routes.first { it.id == upcoming.trip.routeId }
-
-            RowData.fromData(upcoming, route, expectedDirection, now)
         }
 
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
@@ -81,63 +77,53 @@ fun StopDetailsFilteredRouteView(
             for ((index, alert) in alerts.withIndex()) {
                 Column {
                     StopDetailsAlertHeader(alert, routeColor)
-                    if (index < alerts.size - 1 || rows.isNotEmpty()) {
+                    if (index < alerts.size - 1 || data.isNotEmpty()) {
                         HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
                     }
                 }
             }
-            for ((index, row) in rows.withIndex()) {
+            for ((index, row) in data.withIndex()) {
                 val modifier =
-                    if (index == 0 || index == rows.size - 1)
+                    if (index == 0 || index == data.size - 1)
                         Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
                     else Modifier.background(colorResource(R.color.fill3))
+
+                val route = patternsByStop.routes.first { it.id == row.upcoming.trip.routeId }
+
                 Column(modifier.border(1.dp, colorResource(R.color.halo))) {
+                    // TODO: Convert to tiles and TileData
                     HeadsignRowView(
-                        row.headsign,
-                        row.formatted,
-                        Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        row.upcoming.trip.headsign,
+                        RealtimePatterns.Format.Some(listOf(row.formatted), null),
+                        Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                            .border(
+                                BorderStroke(
+                                    if (row.upcoming.trip.id == tripFilter?.tripId) {
+                                        10.dp
+                                    } else {
+                                        0.dp
+                                    },
+                                    colorResource(R.color.key)
+                                )
+                            )
+                            .clickable(
+                                onClickLabel = null,
+                                onClick = {
+                                    updateTripFilter(
+                                        TripDetailsFilter(
+                                            row.upcoming.trip.id,
+                                            row.upcoming.vehicle?.id,
+                                            row.upcoming.stopSequence
+                                        )
+                                    )
+                                }
+                            ),
                         pillDecoration =
-                            if (patternsByStop.line != null) PillDecoration.OnRow(route = row.route)
+                            if (patternsByStop.line != null) PillDecoration.OnRow(route = route)
                             else null
                     )
                 }
             }
-        }
-    }
-}
-
-private data class RowData(
-    val tripId: String,
-    val route: Route,
-    val headsign: String,
-    val formatted: RealtimePatterns.Format
-) {
-    companion object {
-        fun fromData(
-            upcoming: UpcomingTrip,
-            route: Route,
-            expectedDirection: Int?,
-            now: Instant
-        ): RowData? {
-            val trip = upcoming.trip
-            if (trip.directionId != expectedDirection) {
-                return null
-            }
-
-            val headsign = trip.headsign
-            val formatted =
-                RealtimePatterns.ByHeadsign(
-                        route,
-                        headsign,
-                        line = null,
-                        patterns = emptyList(),
-                        upcomingTrips = listOf(upcoming)
-                    )
-                    .format(now, route.type, TripInstantDisplay.Context.StopDetailsFiltered)
-
-            if (formatted !is RealtimePatterns.Format.Some) return null
-
-            return RowData(trip.id, route, headsign, formatted)
         }
     }
 }

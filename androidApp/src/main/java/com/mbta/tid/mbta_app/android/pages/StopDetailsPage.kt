@@ -16,8 +16,9 @@ import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
 @Composable
@@ -27,9 +28,10 @@ fun StopDetailsPage(
     modifier: Modifier = Modifier,
     viewModel: StopDetailsViewModel,
     filters: StopDetailsPageFilters,
-    alertData: AlertsStreamDataResponse?,
+    now: Instant,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
@@ -48,7 +50,25 @@ fun StopDetailsPage(
 
     val departures by viewModel.stopDepartures.collectAsState()
 
-    LaunchedEffect(departures) { updateDepartures(departures) }
+    LaunchedEffect(departures) {
+        updateDepartures(departures)
+        val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
+
+        val autoTripFilter =
+            departures?.autoTripFilter(stopFilter, filters.tripFilter, now) ?: filters.tripFilter
+
+        if (stopFilter != filters.stopFilter) {
+            updateStopFilter(stopFilter)
+        }
+
+        if (autoTripFilter != filters.tripFilter) {
+            updateTripFilter(autoTripFilter)
+        }
+    }
+
+    LaunchedEffect(filters) {
+        updateTripFilter(departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now))
+    }
 
     StopDetailsView(
         modifier,
@@ -60,6 +80,7 @@ fun StopDetailsPage(
         ::togglePinnedRoute,
         onClose,
         updateStopFilter,
+        updateTripFilter,
         errorBannerViewModel
     )
 }

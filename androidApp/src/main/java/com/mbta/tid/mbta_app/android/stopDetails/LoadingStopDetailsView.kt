@@ -40,8 +40,10 @@ fun LoadingStopDetailsView(stopFilter: StopDetailsFilter?, tripFilter: TripDetai
                         global = null,
                         now = Clock.System.now(),
                         stopFilter = stopFilter,
-                        tripFilter = tripFilter
-                    ) {}
+                        tripFilter = tripFilter,
+                        updateStopFilter = {},
+                        updateTripFilter = {}
+                    )
                 }
             }
         }

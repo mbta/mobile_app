@@ -21,7 +21,7 @@ class NearbyTransitTabViewModelTest {
         var popCalled = false
         var pushedRouteCalled = false
 
-        vm.setStopFilter(null, newFilter, { popCalled = true }, { pushedRouteCalled = true })
+        vm.setStopFilter(null, "a", newFilter, { popCalled = true }, { pushedRouteCalled = true })
         assertFalse(pushedRouteCalled)
         assertFalse(popCalled)
     }
@@ -36,6 +36,7 @@ class NearbyTransitTabViewModelTest {
 
         vm.setStopFilter(
             SheetRoutes.StopDetails("", StopDetailsFilter("route", 1), null),
+            "a",
             newFilter,
             { popCalled = true },
             { pushedRoute = it }

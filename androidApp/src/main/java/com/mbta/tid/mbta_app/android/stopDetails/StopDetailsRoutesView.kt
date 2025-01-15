@@ -34,7 +34,8 @@ fun StopDetailsRoutesView(
     tripFilter: TripDetailsFilter?,
     pinRoute: (String) -> Unit,
     pinnedRoutes: Set<String>,
-    updateStopFilter: (StopDetailsFilter?) -> Unit
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit
 ) {
     if (departures == null) {
         LoadingStopDetailsView(stopFilter, tripFilter)
@@ -45,7 +46,8 @@ fun StopDetailsRoutesView(
             now = now,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
-            updateStopFilter
+            updateStopFilter,
+            updateTripFilter
         )
     } else {
         LazyColumn(Modifier.padding(top = 16.dp).background(colorResource(R.color.fill1))) {
@@ -167,7 +169,8 @@ private fun StopDetailsRoutesViewPreview() {
             tripFilter = null,
             pinRoute = {},
             pinnedRoutes = emptySet(),
-            updateStopFilter = {}
+            updateStopFilter = {},
+            updateTripFilter = {}
         )
     }
 }

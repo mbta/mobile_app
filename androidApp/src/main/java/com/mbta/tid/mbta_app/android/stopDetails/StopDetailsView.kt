@@ -42,6 +42,7 @@ fun StopDetailsView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
@@ -141,7 +142,8 @@ fun StopDetailsView(
                 tripFilter,
                 togglePinnedRoute,
                 pinnedRoutes,
-                updateStopFilter
+                updateStopFilter,
+                updateTripDetailsFilter
             )
         }
     }
