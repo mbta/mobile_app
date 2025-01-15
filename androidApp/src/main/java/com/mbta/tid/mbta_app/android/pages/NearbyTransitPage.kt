@@ -18,6 +18,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -112,12 +114,33 @@ fun NearbyTransitPage(
     val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
     val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
     var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = stopDetailsFilter)
+    val scope = rememberCoroutineScope()
 
+    var searchExpanded by rememberSaveable { mutableStateOf(false) }
     val searchFocusRequester = remember { FocusRequester() }
 
     fun updateVisitHistory(stopId: String) {
         CoroutineScope(Dispatchers.Default).launch {
             visitHistoryUsecase.addVisit(Visit.StopVisit(stopId))
+        }
+    }
+
+    fun handleSearchExpandedChange(expanded: Boolean) {
+        searchExpanded = expanded
+        if (expanded) {
+            hideNavBar()
+            if (!nearbyTransit.hideMaps) {
+                scope.launch {
+                    nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Hidden)
+                }
+            }
+        } else {
+            showNavBar()
+            if (!nearbyTransit.hideMaps) {
+                scope.launch {
+                    nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
+                }
+            }
         }
     }
 
@@ -221,7 +244,7 @@ fun NearbyTransitPage(
                 // for ViewModel reasons, must be within the `composable` to be the same instance
                 val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
                 LaunchedEffect(true) {
-                    if (!navBarVisible) {
+                    if (!navBarVisible && !searchExpanded) {
                         showNavBar()
                     }
 
@@ -274,36 +297,50 @@ fun NearbyTransitPage(
         }
     }
 
-    SearchBarOverlay(::handleStopNavigation, currentNavEntry, searchFocusRequester) {
-        Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
-            if (nearbyTransit.hideMaps) {
-                val isNearbyTransit =
-                    currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+    Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
+        if (nearbyTransit.hideMaps) {
+            val isNearbyTransit = currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+            SearchBarOverlay(
+                searchExpanded,
+                ::handleSearchExpandedChange,
+                ::handleStopNavigation,
+                currentNavEntry,
+                searchFocusRequester
+            ) {
                 SheetContent(
-                    Modifier.padding(top = if (isNearbyTransit) 86.dp else 0.dp).fillMaxSize()
+                    Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp).fillMaxSize()
                 )
-            } else {
-                BottomSheetScaffold(
-                    sheetDragHandle = { DragHandle() },
-                    sheetContent = {
-                        var sheetHeight by remember { mutableStateOf(0.dp) }
-                        val density = LocalDensity.current
-                        Box(
-                            modifier =
-                                Modifier.onGloballyPositioned {
-                                        // https://issuetracker.google.com/issues/287390075#comment7
-                                        sheetHeight =
-                                            with(density) { it.boundsInWindow().height.toDp() }
-                                    }
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.surface)
-                        ) {
-                            SheetContent(Modifier.height(sheetHeight).padding(outerSheetPadding))
-                        }
-                    },
-                    sheetContainerColor = MaterialTheme.colorScheme.surface,
-                    scaffoldState = nearbyTransit.scaffoldState,
-                ) { sheetPadding ->
+            }
+        } else {
+            BottomSheetScaffold(
+                sheetDragHandle = { DragHandle() },
+                sheetContent = {
+                    var sheetHeight by remember { mutableStateOf(0.dp) }
+                    val density = LocalDensity.current
+
+                    Box(
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                    // https://issuetracker.google.com/issues/287390075#comment7
+                                    sheetHeight =
+                                        with(density) { it.boundsInWindow().height.toDp() }
+                                }
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        SheetContent(Modifier.height(sheetHeight).padding(outerSheetPadding))
+                    }
+                },
+                sheetContainerColor = MaterialTheme.colorScheme.surface,
+                scaffoldState = nearbyTransit.scaffoldState
+            ) { sheetPadding ->
+                SearchBarOverlay(
+                    searchExpanded,
+                    ::handleSearchExpandedChange,
+                    ::handleStopNavigation,
+                    currentNavEntry,
+                    searchFocusRequester
+                ) {
                     HomeMapView(
                         Modifier.padding(sheetPadding),
                         lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
