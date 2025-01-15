@@ -2,9 +2,9 @@ package com.mbta.tid.mbta_app.usecases
 
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.model.FeaturePromo
+import com.mbta.tid.mbta_app.model.addedInVersion
 import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -43,7 +43,6 @@ class FeaturePromoUsecaseTest {
     }
 
     @Test
-    @Ignore
     fun `skips promos when too many`() = runBlocking {
         // instead of an @Ignore we may forget, skip the test if there aren't enough features
         if (FeaturePromo.entries.size <= FeaturePromoUseCase.MAX_PROMOS) return@runBlocking

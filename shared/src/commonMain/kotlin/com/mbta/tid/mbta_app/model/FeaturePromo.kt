@@ -1,8 +1,10 @@
 package com.mbta.tid.mbta_app.model
 
-enum class FeaturePromo(val addedInVersion: AppVersion) {
+enum class FeaturePromo(val addedInAndroidVersion: AppVersion, val addedInIosVersion: AppVersion) {
     // ktfmt does not like empty enums as of the version we get with spotless
     Nothing(AppVersion(0u, 0u, 0u));
+
+    constructor(addedInVersion: AppVersion) : this(addedInVersion, addedInVersion)
 
     companion object {
         fun featuresBetween(
@@ -15,3 +17,5 @@ enum class FeaturePromo(val addedInVersion: AppVersion) {
         }
     }
 }
+
+expect val FeaturePromo.addedInVersion: AppVersion
