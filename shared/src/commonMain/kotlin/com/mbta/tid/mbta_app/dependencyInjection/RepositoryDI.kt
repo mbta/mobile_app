@@ -1,12 +1,15 @@
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
+import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import com.mbta.tid.mbta_app.repositories.ILastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -29,10 +32,13 @@ import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.IdleSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripRepository
+import com.mbta.tid.mbta_app.repositories.LastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
+import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -58,8 +64,10 @@ interface IRepositories {
     val accessibilityStatus: IAccessibilityStatusRepository?
     val alerts: IAlertsRepository?
     val config: IConfigRepository
+    val currentAppVersion: ICurrentAppVersionRepository?
     val errorBanner: IErrorBannerStateRepository
     val global: IGlobalRepository
+    val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository
     val nearby: INearbyRepository
     val onboarding: IOnboardingRepository
     val pinnedRoutes: IPinnedRoutesRepository
@@ -81,8 +89,10 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val accessibilityStatus: IAccessibilityStatusRepository by inject()
     override val alerts: IAlertsRepository by inject()
     override val config: IConfigRepository by inject()
+    override val currentAppVersion: ICurrentAppVersionRepository by inject()
     override val errorBanner: IErrorBannerStateRepository by inject()
     override val global: IGlobalRepository by inject()
+    override val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository by inject()
     override val nearby: INearbyRepository by inject()
     override val onboarding: IOnboardingRepository by inject()
     override val pinnedRoutes: IPinnedRoutesRepository by inject()
@@ -107,8 +117,10 @@ class RealRepositories : IRepositories {
     override val accessibilityStatus = null
     override val alerts = null
     override val config = ConfigRepository()
+    override val currentAppVersion = null
     override val errorBanner = ErrorBannerStateRepository()
     override val global = GlobalRepository()
+    override val lastLaunchedAppVersion = LastLaunchedAppVersionRepository()
     override val nearby = NearbyRepository()
     override val onboarding = OnboardingRepository()
     override val pinnedRoutes = PinnedRoutesRepository()
@@ -130,8 +142,10 @@ class MockRepositories(
     override val accessibilityStatus: IAccessibilityStatusRepository,
     override val alerts: IAlertsRepository,
     override val config: IConfigRepository,
+    override val currentAppVersion: ICurrentAppVersionRepository,
     override val errorBanner: IErrorBannerStateRepository,
     override val global: IGlobalRepository,
+    override val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository,
     override val nearby: INearbyRepository,
     override val onboarding: IOnboardingRepository,
     override val pinnedRoutes: IPinnedRoutesRepository,
@@ -162,8 +176,10 @@ class MockRepositories(
                     MockAccessibilityStatusRepository(isScreenReaderEnabled = false),
                 alerts = MockAlertsRepository(),
                 config = MockConfigRepository(),
+                currentAppVersion = MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u)),
                 errorBanner = errorBanner,
                 global = global,
+                lastLaunchedAppVersion = MockLastLaunchedAppVersionRepository(null),
                 nearby = IdleNearbyRepository(),
                 onboarding = MockOnboardingRepository(),
                 pinnedRoutes = PinnedRoutesRepository(),

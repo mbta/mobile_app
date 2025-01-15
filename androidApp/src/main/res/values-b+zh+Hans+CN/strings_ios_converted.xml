@@ -73,6 +73,7 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="search_by_stop">按站点搜索</string>
     <string name="service_ended">服务已结束</string>
+    <string name="setting_elevator_accessibility">显示电梯可达性</string>
     <string name="setting_toggle_hide_maps">隐藏地图</string>
     <string name="settings_link">设置</string>
     <string name="shuttle">摆渡巴士</string>

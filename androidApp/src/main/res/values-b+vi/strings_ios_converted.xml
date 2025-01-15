@@ -73,6 +73,7 @@
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
+    <string name="setting_elevator_accessibility">Hiển thị khả năng tiếp cận thang máy</string>
     <string name="setting_toggle_hide_maps">Ẩn bản đồ</string>
     <string name="settings_link">Cài đặt</string>
     <string name="shuttle">Xe đưa đón</string>

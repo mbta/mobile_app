@@ -75,6 +75,7 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="search_by_stop">Search by stop</string>
     <string name="service_ended">Service ended</string>
+    <string name="setting_elevator_accessibility">Show elevator accessibility</string>
     <string name="setting_toggle_hide_maps">Hide Maps</string>
     <string name="settings_link">Settings</string>
     <string name="shuttle">Shuttle</string>
@@ -108,4 +109,5 @@
         <item quantity="one">Updated %d minute ago</item>
         <item quantity="other">Updated %d minutes ago</item>
     </plurals>
+    <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
 </resources>

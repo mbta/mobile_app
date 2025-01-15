@@ -96,6 +96,14 @@ class SettingsViewModel: ObservableObject {
                     ),
                     .toggle(
                         label: NSLocalizedString(
+                            "Show elevator accessibility",
+                            comment: "A setting on the More page to display elevator accessibility"
+                        ),
+                        setting: .elevatorAccessibility,
+                        value: settings[.elevatorAccessibility] ?? false
+                    ),
+                    .toggle(
+                        label: NSLocalizedString(
                             "Route Search",
                             comment: "A setting on the More page to display routes in search (only visible for developers)"
                         ),
