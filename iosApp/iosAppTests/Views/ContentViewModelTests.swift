@@ -25,6 +25,17 @@ final class ContentViewModelTests: XCTestCase {
         XCTAssertEqual(contentVM.configResponse, expectedResult)
     }
 
+    func testLoadFeaturePromoSetsFeaturePromo() async {
+        let contentVM = ContentViewModel(
+            featurePromoUseCase: FeaturePromoUseCase(
+                currentAppVersionRepository: MockCurrentAppVersionRepository(currentAppVersion: nil),
+                lastLaunchedAppVersionRepository: MockLastLaunchedAppVersionRepository(lastLaunchedAppVersion: nil)
+            )
+        )
+        await contentVM.loadFeaturePromos()
+        XCTAssertEqual(contentVM.featurePromosPending, [])
+    }
+
     func testLoadOnboardingSetsOnboarding() async {
         let contentVM = ContentViewModel(
             onboardingRepository: MockOnboardingRepository(pendingOnboarding: [.location, .feedback])
