@@ -110,6 +110,7 @@ final class HomeMapViewTests: XCTestCase {
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
+            locationDataManager: .init(),
             sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
@@ -1052,6 +1053,8 @@ final class HomeMapViewTests: XCTestCase {
             var locationFetcherDelegate: (any iosApp.LocationFetcherDelegate)?
 
             var authorizationStatus: CLAuthorizationStatus = .notDetermined
+
+            var accuracyAuthorization: CLAccuracyAuthorization = .fullAccuracy
 
             var distanceFilter: CLLocationDistance = .zero
 
