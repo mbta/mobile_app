@@ -216,22 +216,21 @@ private fun StandardBottomSheet(
                 .then(nestedScroll)
                 .draggableAnchors(state.anchoredDraggableState, orientation) { _, constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
-                    var newTarget = state.anchoredDraggableState.targetValue
-
-                    val newAnchors: DraggableAnchors<SheetValue> =
+                    val newTarget =
                         if (state.currentValue == SheetValue.Hidden) {
-                            newTarget = SheetValue.Hidden
-                            DraggableAnchors {
-                                SheetValue.Hidden at layoutHeight
-                                SheetValue.Medium at layoutHeight / 2
-                            }
+                            SheetValue.Hidden
                         } else {
-                            DraggableAnchors {
-                                SheetValue.Small at layoutHeight - smallHeightPx
-                                SheetValue.Medium at layoutHeight / 2
-                                SheetValue.Large at 0f
-                            }
+                            state.anchoredDraggableState.targetValue
                         }
+                    val newAnchors: DraggableAnchors<SheetValue> = DraggableAnchors {
+                        if (newTarget == SheetValue.Hidden) {
+                            SheetValue.Hidden at layoutHeight
+                        }
+                        SheetValue.Small at layoutHeight - smallHeightPx
+                        SheetValue.Medium at layoutHeight / 2
+                        SheetValue.Large at 0f
+                    }
+
                     return@draggableAnchors newAnchors to newTarget
                 }
                 .anchoredDraggable(
