@@ -51,6 +51,7 @@ struct ContentView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
+            Task { await contentVM.loadFeaturePromos() }
             Task { await contentVM.loadOnboardingScreens() }
             Task { await nearbyVM.loadDebugSetting() }
         }
