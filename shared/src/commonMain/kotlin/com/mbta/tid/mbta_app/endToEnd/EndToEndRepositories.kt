@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.endToEnd
 
+import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -20,8 +21,10 @@ import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
+import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import com.mbta.tid.mbta_app.repositories.ILastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -41,7 +44,9 @@ import com.mbta.tid.mbta_app.repositories.IdleRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
+import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -49,6 +54,7 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
+import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
@@ -99,6 +105,9 @@ fun endToEndModule(): Module {
         }
         single<IAlertsRepository> { MockAlertsRepository(AlertsStreamDataResponse(objects)) }
         single<IConfigRepository> { MockConfigRepository() }
+        single<ICurrentAppVersionRepository> {
+            MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u))
+        }
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
         single<IGlobalRepository> {
             object : IGlobalRepository {
@@ -114,6 +123,7 @@ fun endToEndModule(): Module {
                     ApiResult.Ok(state.value)
             }
         }
+        single<ILastLaunchedAppVersionRepository> { MockLastLaunchedAppVersionRepository(null) }
         single<INearbyRepository> {
             object : INearbyRepository {
                 override suspend fun getNearby(
@@ -237,6 +247,7 @@ fun endToEndModule(): Module {
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
         single { ConfigUseCase(get(), get()) }
+        single { FeaturePromoUseCase(get(), get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
     }

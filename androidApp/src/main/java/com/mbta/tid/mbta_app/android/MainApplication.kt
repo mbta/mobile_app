@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
+import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 import org.phoenixframework.Socket
@@ -21,7 +22,11 @@ class MainApplication : Application() {
         super.onCreate()
         initKoin(
             appVariant,
-            makeNativeModule(AccessibilityStatusRepository(applicationContext), socket.wrapped()),
+            makeNativeModule(
+                AccessibilityStatusRepository(applicationContext),
+                CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
+                socket.wrapped()
+            ),
             koinViewModelModule,
             this
         )
