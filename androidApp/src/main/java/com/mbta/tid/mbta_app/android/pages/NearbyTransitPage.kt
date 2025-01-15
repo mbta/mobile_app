@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -209,10 +210,20 @@ fun NearbyTransitPage(
             startDestination = SheetRoutes.NearbyTransit,
             modifier = Modifier.background(MaterialTheme.colorScheme.surface).then(modifier),
             enterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Up,
-                    animationSpec = tween(easing = EaseInOut)
-                )
+                val initialStopId = this.initialState.arguments?.getString("stopId")
+                val targetStopId = this.targetState.arguments?.getString("stopId")
+
+                // Skip animation if navigating within a single stop
+                if (
+                    initialStopId != null && targetStopId != null && initialStopId == targetStopId
+                ) {
+                    EnterTransition.None
+                } else {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Up,
+                        animationSpec = tween(easing = EaseInOut)
+                    )
+                }
             }
         ) {
             composable<SheetRoutes.StopDetails>(typeMap = navTypeMap) { backStackEntry ->
