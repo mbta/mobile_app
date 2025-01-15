@@ -332,6 +332,9 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
     inputPath = layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json")
     outputPath = layout.buildDirectory.file("boms/bom-ios-swiftpm.json")
     transform = {
+        // the cdxgen metadata gets emitted as the wrong kind of element after merging and breaks
+        // the parser, or something like that
+        metadata.tools = emptyList()
         // even with FETCH_LICENSES=true, the actual license text isn't embedded, so fetch it
         // directly
         for (component in components) {
