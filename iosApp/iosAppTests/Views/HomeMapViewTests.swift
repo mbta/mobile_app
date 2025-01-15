@@ -1053,6 +1053,8 @@ final class HomeMapViewTests: XCTestCase {
 
             var authorizationStatus: CLAuthorizationStatus = .notDetermined
 
+            var accuracyAuthorization: CLAccuracyAuthorization = .fullAccuracy
+
             var distanceFilter: CLLocationDistance = .zero
 
             func startUpdatingLocation() {}

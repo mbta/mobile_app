@@ -4,6 +4,7 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) var colorScheme
