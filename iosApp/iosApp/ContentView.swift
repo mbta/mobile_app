@@ -215,6 +215,7 @@ struct ContentView: View {
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
+            locationDataManager: locationDataManager,
             sheetHeight: $sheetHeight
         )
     }

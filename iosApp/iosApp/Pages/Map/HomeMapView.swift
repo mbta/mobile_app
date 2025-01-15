@@ -62,7 +62,7 @@ struct HomeMapView: View {
         stopRepository: IStopRepository = RepositoryDI().stop,
         vehiclesData: [Vehicle]? = nil,
         vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
-        locationDataManager: LocationDataManager = .init(distanceFilter: 1),
+        locationDataManager: LocationDataManager,
         sheetHeight: Binding<CGFloat>,
         globalMapData: GlobalMapData? = nil
     ) {

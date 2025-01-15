@@ -28,6 +28,7 @@ final class HomeMapViewTest: XCTestCase {
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider,
+            locationDataManager: .init(),
             sheetHeight: sheetHeight
         )
 

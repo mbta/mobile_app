@@ -110,6 +110,7 @@ final class HomeMapViewTests: XCTestCase {
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
+            locationDataManager: .init(),
             sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
