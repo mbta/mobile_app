@@ -41,7 +41,7 @@ struct ProductionAppView: View {
     }
 
     init(socket: PhoenixSocket) {
-        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
+        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 1))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }
