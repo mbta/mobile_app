@@ -101,11 +101,14 @@ class SearchBarOverlayTest : KoinTest {
     fun testSearchBarOverlayBehavesCorrectly() = runTest {
         val navigated = mutableStateOf(false)
         var navBackStackEntry = mutableStateOf<NavBackStackEntry?>(null)
+        var expanded = mutableStateOf(false)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val focusRequester = remember { FocusRequester() }
                 SearchBarOverlay(
+                    expanded.value,
+                    { expanded.value = it },
                     onStopNavigation = { navigated.value = true },
                     currentNavEntry = navBackStackEntry.value,
                     inputFieldFocusRequester = focusRequester,
