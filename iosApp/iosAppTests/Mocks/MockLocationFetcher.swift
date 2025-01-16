@@ -20,6 +20,8 @@ class MockLocationFetcher: LocationFetcher {
         }
     }
 
+    var accuracyAuthorization: CLAccuracyAuthorization = .fullAccuracy
+
     var handleStartUpdatingLocation: (() -> Void)?
     func startUpdatingLocation() {
         handleStartUpdatingLocation?()
@@ -47,6 +49,7 @@ class MockOnboardingLocationFetcher: LocationFetcher {
     }
 
     var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    var accuracyAuthorization: CLAccuracyAuthorization = .fullAccuracy
     var distanceFilter: CLLocationDistance = 0
     func startUpdatingLocation() {}
 
