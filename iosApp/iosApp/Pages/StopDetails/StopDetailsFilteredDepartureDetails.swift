@@ -31,7 +31,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
-    var analytics: StopTripDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
 
     var showTileHeadsigns: Bool {
         patternsByStop.line != nil || !tiles.allSatisfy { tile in

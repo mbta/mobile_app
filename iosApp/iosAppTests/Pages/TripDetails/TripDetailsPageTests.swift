@@ -489,14 +489,6 @@ final class TripDetailsPageTests: XCTestCase {
             $0.parentStationId = parentStop.id
         }
 
-        struct FakeAnalytics: TripDetailsAnalytics {
-            let onTappedDownstreamStop: (String, String, String, String?) -> Void
-
-            func tappedDownstreamStop(routeId: String, stopId: String, tripId: String, connectingRouteId: String?) {
-                onTappedDownstreamStop(routeId, stopId, tripId, connectingRouteId)
-            }
-        }
-
         let tripLoaded = PassthroughSubject<Void, Never>()
 
         let analyticsExp = expectation(description: "sends analytics event")
@@ -515,13 +507,20 @@ final class TripDetailsPageTests: XCTestCase {
                 scheduleResponse: .Unknown.shared,
                 onGetTrip: { tripLoaded.send() }
             ),
-            analytics: FakeAnalytics { routeId, stopId, tripId, connectingRouteId in
-                XCTAssertEqual(routeId, route.id)
-                XCTAssertEqual(stopId, childStop.id)
-                XCTAssertEqual(tripId, trip.id)
-                XCTAssertEqual(connectingRouteId, "connectingRoute")
+            analytics: MockAnalytics(onLogEvent: { name, parameters in
+                XCTAssertEqual(name, "tapped_downstream_stop")
+                XCTAssertEqual(
+                    parameters,
+                    [
+                        "class_name": "TripDetailsAnalytics",
+                        "route_id": route.id,
+                        "stop_id": childStop.id,
+                        "trip_id": trip.id,
+                        "connecting_route_id": "connectingRoute",
+                    ]
+                )
                 analyticsExp.fulfill()
-            }
+            })
         )
 
         ViewHosting.host(view: sut)

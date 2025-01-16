@@ -22,7 +22,7 @@ struct TripDetailsView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    let analytics: TripDetailsAnalytics
+    let analytics: Analytics
     let inspection = Inspection<Self>()
 
     init(
@@ -33,8 +33,7 @@ struct TripDetailsView: View {
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel,
-
-        analytics: TripDetailsAnalytics = AnalyticsProvider.shared
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.tripFilter = tripFilter
         self.stopId = stopId

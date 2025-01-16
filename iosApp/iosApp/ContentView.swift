@@ -27,8 +27,7 @@ struct ContentView: View {
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
-    var screenTracker: ScreenTracker = AnalyticsProvider.shared
-    let analytics: SessionAnalytics = AnalyticsProvider.shared
+    let analytics: Analytics = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
 
@@ -116,7 +115,7 @@ struct ContentView: View {
                 MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
-                    .onAppear { screenTracker.track(screen: .settings) }
+                    .onAppear { analytics.track(screen: .settings) }
             }
         } else {
             nearbyTab
@@ -300,7 +299,7 @@ struct ContentView: View {
                             viewportProvider: viewportProvider
                         )
                         .onAppear {
-                            screenTracker.track(
+                            analytics.track(
                                 screen: stopFilter != nil ? .stopDetailsFiltered : .stopDetailsUnfiltered
                             )
                         }
@@ -327,7 +326,7 @@ struct ContentView: View {
                         .toolbar(.hidden, for: .tabBar)
                         .onAppear {
                             let filtered = filter != nil
-                            screenTracker.track(
+                            analytics.track(
                                 screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
                             )
                         }
@@ -354,14 +353,14 @@ struct ContentView: View {
                             nearbyVM: nearbyVM,
                             mapVM: mapVM
                         ).toolbar(.hidden, for: .tabBar)
-                            .onAppear { screenTracker.track(screen: .tripDetails) }
+                            .onAppear { analytics.track(screen: .tripDetails) }
                     }
                     .transition(transition)
 
                 case .nearby:
                     nearbySheetContents
                         .transition(transition)
-                        .onAppear { screenTracker.track(screen: .nearbyTransit) }
+                        .onAppear { analytics.track(screen: .nearbyTransit) }
 
                 default: EmptyView()
                 }
