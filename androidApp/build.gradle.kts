@@ -67,6 +67,7 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(platform(libs.compose.bom))
+    implementation(platform(libs.firebase.bom))
     implementation(platform(libs.koin.bom))
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
@@ -76,6 +77,7 @@ dependencies {
     implementation(libs.compose.shimmer)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.firebase.analytics)
     implementation(libs.javaPhoenixClient)
     implementation(libs.koin.androidxCompose)
     implementation(libs.kotlinx.coroutines.core)
@@ -146,11 +148,12 @@ task("envVars") {
         println(".envrc file not configured, reading from system env instead")
     }
 
+    fun getPropsOrEnv(key: String): String? = props.getProperty(key) ?: System.getenv(key)
+
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_DSN",
-        "\"${props.getProperty("SENTRY_DSN_ANDROID")
-                ?: System.getenv("SENTRY_DSN_ANDROID") ?: ""}\""
+        "\"${getPropsOrEnv("SENTRY_DSN_ANDROID") ?: ""}\""
     )
 
     // https://stackoverflow.com/a/53261807
@@ -171,13 +174,29 @@ task("envVars") {
             "staging"
         }
 
-    val sentryEnvOverride: String = props.getProperty("SENTRY_ENVIRONMENT", sentryEnv)
+    val sentryEnvOverride: String = getPropsOrEnv("SENTRY_ENVIRONMENT") ?: sentryEnv
 
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_ENVIRONMENT",
         "\"${sentryEnvOverride}\""
     )
+
+    val firebaseKey = getPropsOrEnv("FIREBASE_KEY")
+    val googleAppId = getPropsOrEnv("GOOGLE_APP_ID_ANDROID")
+    if (firebaseKey != null && googleAppId != null) {
+        val googleSecretsFile = File("${projectDir}/src/main/res/values/secrets-google.xml")
+        val lines =
+            listOfNotNull(
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+                "<resources>",
+                "    <string name=\"google_app_id\" translatable=\"false\">$googleAppId</string>",
+                "    <string name=\"google_api_key\" translatable=\"false\">$firebaseKey</string>",
+                "    <string name=\"google_crash_reporting_api_key\" translatable=\"false\">$firebaseKey</string>",
+                "</resources>"
+            )
+        googleSecretsFile.writeText(lines.joinToString(separator = "\n"))
+    }
 }
 
 gradle.projectsEvaluated {
