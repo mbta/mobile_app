@@ -395,7 +395,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile],
             noPredictionsStatus: nil,
             alerts: [alert],
-            patternsByStop: .init(route: route, stop: stop, patterns: []),
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
