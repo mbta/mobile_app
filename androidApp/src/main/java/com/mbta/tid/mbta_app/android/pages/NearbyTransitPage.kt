@@ -53,7 +53,7 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
-import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsVMHandler
+import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
@@ -123,7 +123,7 @@ fun NearbyTransitPage(
     val (pinnedRoutes) = managePinnedRoutes()
 
     val stopDetailsVM =
-        stopDetailsVMHandler(
+        stopDetailsManagedVM(
             stopId =
                 (when (currentNavEntry) {
                     is SheetRoutes.StopDetails -> currentNavEntry.stopId
@@ -202,13 +202,7 @@ fun NearbyTransitPage(
     }
 
     LaunchedEffect(currentNavEntry) {
-        if (
-            previousNavEntry is SheetRoutes.StopDetails &&
-                currentNavEntry is SheetRoutes.StopDetails &&
-                previousNavEntry.stopId == currentNavEntry.stopId
-        ) {
-            // Skip changing sheet height - staying within same stop
-        } else {
+        if (SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
     }

@@ -20,13 +20,11 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
@@ -84,7 +82,7 @@ class StopDetailsViewModel(
             ?.predictionsByStop
     }
 
-    fun getStopSchedules(stopId: String) {
+    private fun getStopSchedules(stopId: String) {
         Log.i("KB", "fetched schedules ${stopId}")
 
         stopScheduleFetcher.getSchedule(listOf(stopId), "StopDetailsVM.getSchedule") { schedules ->
@@ -96,7 +94,7 @@ class StopDetailsViewModel(
         }
     }
 
-    fun joinStopPredictions(stopId: String) {
+    private fun joinStopPredictions(stopId: String) {
         Log.i("KB", "joined stop predictions ${stopId}")
 
         stopPredictionsFetcher.connect(listOf(stopId))
@@ -120,7 +118,7 @@ class StopDetailsViewModel(
         _stopDepartures.value = departures
     }
 
-    fun clearStopDetails() {
+    private fun clearStopDetails() {
         Log.i("KB", "Cleared stop details data")
         stopPredictionsFetcher.disconnect()
         _stopData.value = null
@@ -165,7 +163,7 @@ class StopDetailsViewModel(
  * - resubscribing to predictions when returning from background
  * - periodically checking for stale predictions
  */
-fun stopDetailsVMHandler(
+fun stopDetailsManagedVM(
     stopId: String?,
     globalResponse: GlobalResponse?,
     alertData: AlertsStreamDataResponse?,
@@ -176,26 +174,30 @@ fun stopDetailsVMHandler(
     val now = timer(updateInterval = 5.seconds)
     val timer = timer(checkPredictionsStaleInterval)
 
+    Log.i("KB", "HELLO THERE")
+
     val stopData = viewModel.stopData.collectAsState()
 
     LaunchedEffect(stopId) {
         Log.i("KB", "Handling stop change")
 
-        CoroutineScope(Dispatchers.IO).launch { viewModel.handleStopChange(stopId) }
+        viewModel.handleStopChange(stopId)
     }
-
     LifecycleResumeEffect(null) {
-        Log.i("KB", "Returned From Background")
         viewModel.returnFromBackground()
         viewModel.rejoinStopPredictions()
 
-        onPauseOrDispose { viewModel.leaveStopPredictions() }
+        onPauseOrDispose {
+            Log.i("KB", "PAUSED")
+            viewModel.leaveStopPredictions()
+        }
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, stopId, alertData, pinnedRoutes, now) {
         withContext(Dispatchers.Default) {
             val departures: StopDetailsDepartures? =
                 if (globalResponse != null && stopId != null) {
+                    Log.i("KB", "Calculating sdepartures")
                     StopDetailsDepartures.fromData(
                         stopId,
                         globalResponse,
