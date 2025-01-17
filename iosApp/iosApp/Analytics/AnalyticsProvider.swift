@@ -8,17 +8,16 @@
 
 import FirebaseAnalytics
 import Foundation
+import shared
 
-class AnalyticsProvider {
+class AnalyticsProvider: shared.Analytics {
     static let shared = AnalyticsProvider()
 
-    /**
-     * The `file` param is automatically populated with the call sites file path which we parse the class name from.
-     * e.g.: `NearbyTransitAnalytics`
-     */
-    func logEvent(_ name: String, parameters: [String: Any] = [:], file: String = #file) {
-        var params = parameters
-        params["class_name"] = URL(string: file)?.deletingPathExtension().lastPathComponent
-        Analytics.logEvent(name, parameters: params)
+    override func logEvent(name: String, parameters: [String: String]) {
+        FirebaseAnalytics.Analytics.logEvent(name, parameters: parameters)
+    }
+
+    override func setUserProperty(name: String, value: String) {
+        FirebaseAnalytics.Analytics.setUserProperty(value, forName: name)
     }
 }

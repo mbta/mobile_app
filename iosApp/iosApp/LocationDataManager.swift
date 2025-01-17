@@ -17,14 +17,14 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus: CLAuthorizationStatus?
-    let analytics: SessionAnalytics
+    let analytics: Analytics
 
     init(
         locationFetcher: LocationFetcher = CLLocationManager(),
         settingsRepository: ISettingsRepository = RepositoryDI().settings,
         subscribeToLocations: Bool = true,
         distanceFilter: Double = kCLDistanceFilterNone,
-        analytics: SessionAnalytics = AnalyticsProvider.shared
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.locationFetcher = locationFetcher
         self.locationFetcher.distanceFilter = distanceFilter

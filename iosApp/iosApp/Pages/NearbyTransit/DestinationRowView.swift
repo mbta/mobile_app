@@ -17,7 +17,7 @@ struct DestinationRowView: View {
     let now: Instant
     let context: TripInstantDisplay.Context
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
-    let analytics: DestinationRowAnalytics
+    let analytics: Analytics
     let pinned: Bool
     let routeType: RouteType
 
@@ -29,7 +29,7 @@ struct DestinationRowView: View {
         context: TripInstantDisplay.Context,
         condenseHeadsignPredictions: Bool = false,
         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
-        analytics: DestinationRowAnalytics,
+        analytics: Analytics,
         pinned: Bool,
         routeType: RouteType
     ) {
