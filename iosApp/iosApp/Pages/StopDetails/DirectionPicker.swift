@@ -114,7 +114,8 @@ struct DirectionPicker: View {
             directions: [
                 .init(name: "Outbound", destination: "Out", id: 0),
                 .init(name: "Inbound", destination: "In", id: 1),
-            ]
+            ],
+            elevatorAlerts: []
         ),
         filter: .init(routeId: route.id, directionId: 0),
         setFilter: { _ in }

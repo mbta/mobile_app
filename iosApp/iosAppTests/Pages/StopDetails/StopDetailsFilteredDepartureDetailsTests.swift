@@ -55,7 +55,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(route: route, stop: stop, patterns: []),
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -111,7 +111,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(route: route, stop: stop, patterns: []),
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -166,7 +166,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            patternsByStop: .init(
+                routes: [route], line: line, stop: stop,
+                patterns: [], directions: [], elevatorAlerts: []
+            ),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -227,7 +230,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            patternsByStop: .init(
+                routes: [route], line: line, stop: stop,
+                patterns: [], directions: [], elevatorAlerts: []
+            ),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -303,10 +309,12 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                             .init(trip: trip, schedule: schedule, prediction: prediction),
                         ]
                     ),
-                ], directions: [
+                ],
+                directions: [
                     .init(name: "", destination: "", id: 0),
                     .init(name: "", destination: "", id: 1),
-                ]
+                ],
+                elevatorAlerts: []
             ),
             pinned: false,
             now: Date.now,
@@ -339,7 +347,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [],
             noPredictionsStatus: RealtimePatterns.NoTripsFormatServiceEndedToday(),
             alerts: [],
-            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            patternsByStop: .init(
+                routes: [route], line: line, stop: stop,
+                patterns: [], directions: [], elevatorAlerts: []
+            ),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),

@@ -48,7 +48,8 @@ final class DirectionPickerTests: XCTestCase {
             directions: [
                 Direction(name: "North", destination: "Selected Destination", id: 0),
                 Direction(name: "South", destination: "Other Destination", id: 1),
-            ]
+            ],
+            elevatorAlerts: []
         )
 
         return patternsByStop

@@ -139,7 +139,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 alertsHere: [],
                 alertsDownstream: []
             ),
-        ])
+        ], elevatorAlerts: [])
 
         let linePatternsByStop = PatternsByStop(
             routes: [lineRoute1, lineRoute2, lineRoute3],
@@ -167,7 +167,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             directions: [
                 Direction(name: "Outbound", destination: nil, id: 0),
                 Direction(name: "", destination: "", id: 1),
-            ]
+            ],
+            elevatorAlerts: []
         )
 
         let departures = StopDetailsDepartures(routes: [basicPatternsByStop, linePatternsByStop])
@@ -278,7 +279,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 upcomingTrips: [],
                 hasSchedulesToday: false
             ),
-        ])
+        ], elevatorAlerts: [])
 
         let departures = StopDetailsDepartures(routes: [noServicePatterns])
 
@@ -320,7 +321,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 upcomingTrips: [],
                 hasSchedulesToday: true
             ),
-        ])
+        ], elevatorAlerts: [])
 
         let departures = StopDetailsDepartures(routes: [serviceEndedPatterns])
 
@@ -370,7 +371,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 upcomingTrips: [objects.upcomingTrip(schedule: scheduleNorth)],
                 hasSchedulesToday: true
             ),
-        ])
+        ], elevatorAlerts: [])
 
         let departures = StopDetailsDepartures(routes: [noPredictionsPatterns])
 

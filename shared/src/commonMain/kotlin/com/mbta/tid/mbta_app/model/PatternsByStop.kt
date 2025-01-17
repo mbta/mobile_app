@@ -148,14 +148,14 @@ data class PatternsByStop(
         route: Route,
         stop: Stop,
         patterns: List<RealtimePatterns>,
-        accessibilityAlerts: List<Alert> = emptyList()
+        elevatorAlerts: List<Alert> = emptyList()
     ) : this(
         listOf(route),
         null,
         stop,
         patterns,
         listOf(Direction(0, route), Direction(1, route)),
-        accessibilityAlerts
+        elevatorAlerts
     )
 
     @OptIn(ExperimentalTurfApi::class)

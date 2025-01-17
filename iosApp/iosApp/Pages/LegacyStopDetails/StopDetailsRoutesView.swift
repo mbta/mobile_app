@@ -103,7 +103,7 @@ struct StopDetailsRoutesView: View {
                 patterns: [],
                 upcomingTrips: [.init(trip: trip1, prediction: prediction1)]
             ),
-        ]),
+        ], elevatorAlerts: []),
         .init(route: route2, stop: stop, patterns: [
             .ByHeadsign(
                 route: route2,
@@ -128,7 +128,7 @@ struct StopDetailsRoutesView: View {
                     .init(trip: trip4, schedule: schedule3, prediction: prediction3),
                 ]
             ),
-        ]),
+        ], elevatorAlerts: []),
     ]), global: nil, now: Date.now.toKotlinInstant(), filter: nil, setFilter: { _ in }, pushNavEntry: { _ in },
     pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)
 }

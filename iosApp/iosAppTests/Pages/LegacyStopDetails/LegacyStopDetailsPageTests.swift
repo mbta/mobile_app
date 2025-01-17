@@ -97,7 +97,8 @@ final class LegacyStopDetailsPageTests: XCTestCase {
                 line: nil,
                 patterns: [routePattern1],
                 upcomingTrips: []
-            )]
+            )],
+            elevatorAlerts: []
         )
         let route2Departures = PatternsByStop(
             route: route2,
@@ -108,7 +109,8 @@ final class LegacyStopDetailsPageTests: XCTestCase {
                 line: nil,
                 patterns: [routePattern2],
                 upcomingTrips: []
-            )]
+            )],
+            elevatorAlerts: []
         )
 
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop,

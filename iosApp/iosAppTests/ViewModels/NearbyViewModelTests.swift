@@ -85,7 +85,7 @@ final class NearbyViewModelTests: XCTestCase {
         let stop1 = objects.stop { _ in }
         let route1 = objects.route { _ in }
         let departures: StopDetailsDepartures = .init(routes: [
-            .init(route: route1, stop: stop1, patterns: []),
+            .init(route: route1, stop: stop1, patterns: [], elevatorAlerts: []),
         ])
 
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop1, nil)])
@@ -99,7 +99,7 @@ final class NearbyViewModelTests: XCTestCase {
         let stop2 = objects.stop { _ in }
         let route1 = objects.route { _ in }
         let departures: StopDetailsDepartures = .init(routes: [
-            .init(route: route1, stop: stop1, patterns: []),
+            .init(route: route1, stop: stop1, patterns: [], elevatorAlerts: []),
         ])
 
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop1, nil),
