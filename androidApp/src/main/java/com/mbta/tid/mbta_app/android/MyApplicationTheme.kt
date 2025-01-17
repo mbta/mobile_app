@@ -8,6 +8,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -33,7 +34,34 @@ fun MyApplicationTheme(
                 primaryContainer = colorResource(R.color.fill1),
                 secondary = colorResource(R.color.key_inverse),
                 tertiary = colorResource(R.color.deemphasized),
-                outline = colorResource(R.color.halo)
+                outline = colorResource(R.color.halo),
+                onPrimary = Color.Magenta,
+                onPrimaryContainer = Color.Magenta,
+                inversePrimary = Color.Magenta,
+                onSecondary = Color.Magenta,
+                secondaryContainer = Color.Magenta,
+                onSecondaryContainer = Color.Magenta,
+                onTertiary = Color.Magenta,
+                tertiaryContainer = Color.Magenta,
+                onTertiaryContainer = Color.Magenta,
+                onBackground = Color.Magenta,
+                onSurface = Color.Magenta,
+                onSurfaceVariant = Color.Magenta,
+                surfaceTint = Color.Magenta,
+                inverseSurface = Color.Magenta,
+                inverseOnSurface = Color.Magenta,
+                error = Color.Magenta,
+                onError = Color.Magenta,
+                errorContainer = Color.Magenta,
+                onErrorContainer = Color.Magenta,
+                outlineVariant = Color.Magenta,
+                scrim = Color.Magenta,
+                surfaceBright = Color.Magenta,
+                surfaceContainer = Color.Magenta,
+                surfaceContainerHigh = Color.Magenta,
+                surfaceContainerHighest = Color.Magenta,
+                surfaceContainerLow = Color.Magenta,
+                surfaceContainerLowest = Color.Magenta,
             )
         } else {
             lightColorScheme(
@@ -44,7 +72,34 @@ fun MyApplicationTheme(
                 primaryContainer = colorResource(R.color.fill1),
                 secondary = colorResource(R.color.key_inverse),
                 tertiary = colorResource(R.color.deemphasized),
-                outline = colorResource(R.color.halo)
+                outline = colorResource(R.color.halo),
+                onPrimary = Color.Magenta,
+                onPrimaryContainer = Color.Magenta,
+                inversePrimary = Color.Magenta,
+                onSecondary = Color.Magenta,
+                secondaryContainer = Color.Magenta,
+                onSecondaryContainer = Color.Magenta,
+                onTertiary = Color.Magenta,
+                tertiaryContainer = Color.Magenta,
+                onTertiaryContainer = Color.Magenta,
+                onBackground = Color.Magenta,
+                onSurface = Color.Magenta,
+                onSurfaceVariant = Color.Magenta,
+                surfaceTint = Color.Magenta,
+                inverseSurface = Color.Magenta,
+                inverseOnSurface = Color.Magenta,
+                error = Color.Magenta,
+                onError = Color.Magenta,
+                errorContainer = Color.Magenta,
+                onErrorContainer = Color.Magenta,
+                outlineVariant = Color.Magenta,
+                scrim = Color.Magenta,
+                surfaceBright = Color.Magenta,
+                surfaceContainer = Color.Magenta,
+                surfaceContainerHigh = Color.Magenta,
+                surfaceContainerHighest = Color.Magenta,
+                surfaceContainerLow = Color.Magenta,
+                surfaceContainerLowest = Color.Magenta,
             )
         }
     val fontFamily =

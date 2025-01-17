@@ -179,7 +179,7 @@ struct StopDetailsFilteredRouteView: View {
                                                     line: patternsByStop.line,
                                                     routes: patternsByStop.routes
                                                 ))
-                                                analytics.tappedAlertDetails(
+                                                analytics.tappedAlertDetailsLegacy(
                                                     routeId: patternsByStop.routeIdentifier,
                                                     stopId: patternsByStop.stop.id,
                                                     alertId: alert.id
@@ -199,7 +199,7 @@ struct StopDetailsFilteredRouteView: View {
                                                     line: patternsByStop.line,
                                                     routes: patternsByStop.routes
                                                 ))
-                                                analytics.tappedAlertDetails(
+                                                analytics.tappedAlertDetailsLegacy(
                                                     routeId: patternsByStop.routeIdentifier,
                                                     stopId: patternsByStop.stop.id,
                                                     alertId: alert.id

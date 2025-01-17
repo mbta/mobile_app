@@ -297,6 +297,8 @@ extension HomeMapView {
             return
         }
 
+        analytics.tappedVehicle(routeId: routeId)
+
         // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
         // page, but we won't be able to tell what the target stop was.
         nearbyVM.pushNavEntry(.tripDetails(

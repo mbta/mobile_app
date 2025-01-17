@@ -29,7 +29,7 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: StopTripDetailsAnalytics = AnalyticsProvider.shared
 
     var tiles: [TileData] = []
     var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
