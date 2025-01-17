@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct NearbyStopView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     let patternsAtStop: PatternsByStop
     let condenseHeadsignPredictions: Bool
     let now: Instant

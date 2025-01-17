@@ -32,7 +32,7 @@ class SearchViewModel: ObservableObject {
     private let searchResultsRepository: ISearchResultRepository
     private let globalRepository: IGlobalRepository
 
-    private let analytics: SearchAnalytics
+    private let analytics: Analytics
 
     private var routeResultsEnabled: Bool
     private var globalResponse: GlobalResponse?
@@ -45,7 +45,7 @@ class SearchViewModel: ObservableObject {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
-        analytics: SearchAnalytics = AnalyticsProvider.shared
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.routeResultsEnabled = routeResultsEnabled
         self.settingsRepo = settingsRepo

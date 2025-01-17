@@ -353,4 +353,51 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
     }
+
+    func testShowsSuspension() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.header = "Fuchsia Line suspended from Here to There"
+        }
+
+        // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
+        // skipped
+        let tile = TileData(
+            route: route,
+            headsign: "A",
+            formatted: RealtimePatterns.FormatSome(
+                trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
+                secondaryAlert: nil
+            )
+        )
+        let nearbyVM = NearbyViewModel()
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            tiles: [tile],
+            noPredictionsStatus: nil,
+            alerts: [alert],
+            patternsByStop: .init(route: route, stop: stop, patterns: []),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: .init()
+        ).environmentObject(ViewportProvider())
+
+        XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
+        XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
+        XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
+        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
+        try sut.inspect().find(button: "View details").tap()
+        XCTAssertEqual(nearbyVM.navigationStack.last, .alertDetails(alertId: alert.id, line: nil, routes: [route]))
+    }
 }

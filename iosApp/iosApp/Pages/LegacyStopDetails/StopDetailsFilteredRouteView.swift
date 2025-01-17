@@ -11,7 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsFilteredRouteView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop?
     let alerts: [shared.Alert]
     let downstreamAlerts: [shared.Alert]
