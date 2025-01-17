@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct AlertDetails: View {
-    var analytics: AlertDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     var alert: shared.Alert
     var line: Line?
     var routes: [Route]?

@@ -16,7 +16,7 @@ struct StopDeparturesSummaryList: View {
     let now: Instant
     let context: TripInstantDisplay.Context
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
-    let analytics: any DestinationRowAnalytics
+    let analytics: Analytics
     let pinned: Bool
 
     var body: some View {
