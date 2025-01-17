@@ -15,4 +15,4 @@ fastlane/report.xml
 
 /iosApp/secrets/*
 /iosApp/Pods/*
-/androidApp/src/main/res/values/secrets.xml
+/androidApp/src/main/res/values/secrets*.xml
