@@ -118,7 +118,8 @@ class AlertTest {
                 )
             }
         assertEquals(
-            Alert.applicableAlerts(      listOf(validAlert, invalidAlert),
+            Alert.applicableAlerts(
+                listOf(validAlert, invalidAlert),
                 null,
                 listOf(route.id),
                 setOf(stop.id),
@@ -417,5 +418,36 @@ class AlertTest {
             )
 
         assertEquals(listOf(), downstreamAlerts)
+    }
+
+    @Test
+    fun `elevatorAlerts matches relevant accessibility alerts`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+
+        val elevatorAlert =
+            objects.alert {
+                effect = Alert.Effect.ElevatorClosure
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                    stop = stop.id
+                )
+            }
+        val serviceAlert =
+            objects.alert {
+                effect = Alert.Effect.NoService
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    stop = stop.id
+                )
+            }
+
+        val alerts =
+            Alert.elevatorAlerts(
+                listOf(serviceAlert, elevatorAlert),
+                setOf(stop.id)
+            )
+
+        assertEquals(listOf(elevatorAlert), alerts)
     }
 }
