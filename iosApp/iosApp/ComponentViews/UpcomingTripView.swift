@@ -184,7 +184,7 @@ struct DisruptionView: View {
             switch alertEffect {
             case .detour: .detour
             case .shuttle: .shuttle
-            case .stationClosure, .stopClosure: .stopClosed
+            case .stationClosure, .stopClosure, .dockClosure: .stopClosed
             case .suspension: .suspension
             default: .unknown
             }
