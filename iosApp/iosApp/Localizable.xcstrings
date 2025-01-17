@@ -426,6 +426,7 @@
       }
     },
     "%@ ahead" : {
+      "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
