@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">304904690247</string>
+    <string name="google_storage_bucket" translatable="false">mbta-app-c574d.firebasestorage.app</string>
+    <string name="project_id" translatable="false">mbta-app-c574d</string>
+</resources>

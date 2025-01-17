@@ -3,7 +3,8 @@
 # Firebase - used for Google Analytics collection, required because the library crashes without it
 # Find at https://console.firebase.google.com/u/0/project/mbta-app-c574d/settings/general
 export FIREBASE_KEY=
-export GOOGLE_APP_ID=
+export GOOGLE_APP_ID_IOS=
+export GOOGLE_APP_ID_ANDROID=
 
 # Optional Variables
 
