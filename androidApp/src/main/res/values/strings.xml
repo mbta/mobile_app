@@ -13,7 +13,7 @@
     <string name="directionTo">%1$s to</string>
     <string name="displays_more_info">displays more information</string>
     <string name="eastbound">Eastbound</string>
-    <plurals name="elevator_closure_count" tools:ignore="MissingTranslation">
+    <plurals name="elevator_closure_count">
         <item quantity="one">%d elevator closure</item>
         <item quantity="other">%d elevator closures</item>
     </plurals>
