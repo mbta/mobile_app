@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.StopAlertState
 fun AlertIcon(alertState: StopAlertState, color: Color?, modifier: Modifier = Modifier) {
     val iconId =
         when (alertState) {
+            StopAlertState.Elevator -> R.drawable.accessibility_icon_inaccessible
             StopAlertState.Issue -> R.drawable.alert_borderless_issue
             StopAlertState.Shuttle -> R.drawable.alert_borderless_shuttle
             StopAlertState.Suspension -> R.drawable.alert_borderless_suspension

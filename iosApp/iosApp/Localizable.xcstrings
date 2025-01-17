@@ -984,6 +984,138 @@
     "%1$@ to %2$@ has departed %3$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] to [Alewife] has departed [Central]\", \"[bus] to [Nubian] has departed [Harvard]\""
     },
+    "%ld elevator closures" : {
+      "comment" : "Header displayed when elevators are not working at a station",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld elevator closure"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld elevator closures"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld cierre de ascensor"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld cierres de ascensor"
+                }
+              }
+            }
+          }
+        },
+        "ht" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld asansè fèmen"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld fèmti asansè"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld asansè fèmen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld fèmti asansè"
+                }
+              },
+              "two" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld asansè fèmen"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld fechamento de elevador"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld fechamentos de elevador"
+                }
+              }
+            }
+          }
+        },
+        "vi" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld thang máy đóng cửa"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans-CN" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld 电梯关闭"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hant-TW" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ld 電梯關閉"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%ld stops away" : {
       "comment" : "How many stops away the vehicle is from the target stop",
       "localizations" : {
@@ -3184,7 +3316,45 @@
       }
     },
     "displays more information" : {
-      "comment" : "Screen reader hint for tapping on the trip details header on the stop page"
+      "comment" : "Screen reader hint for tapping on the trip details header on the stop page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "muestra más información"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "montre plis enfòmasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "exibe mais informações"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hiển thị thêm thông tin"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "显示详细信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "顯示更多資訊"
+          }
+        }
+      }
     },
     "displays more information about this trip" : {
       "comment" : "Screen reader hint for tapping a departure card in stop details"

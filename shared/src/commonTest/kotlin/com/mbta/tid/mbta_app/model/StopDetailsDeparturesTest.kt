@@ -294,7 +294,8 @@ class StopDetailsDeparturesTest {
                                 )
                             ),
                         ),
-                        listOf(Direction("West", null, 0), directionEast)
+                        listOf(Direction("West", null, 0), directionEast),
+                        emptyList()
                     )
                 )
             ),
@@ -681,6 +682,7 @@ class StopDetailsDeparturesTest {
                         stop,
                         listOf(expectedLateBeforeLoad, expectedEarly),
                         listOf(Direction("", "", 0), Direction("", "", 1)),
+                        emptyList(),
                     )
                 )
             )
@@ -705,7 +707,8 @@ class StopDetailsDeparturesTest {
                         null,
                         stop,
                         listOf(expectedLateAfterLoad),
-                        listOf(Direction("", "", 0), Direction("", "", 1))
+                        listOf(Direction("", "", 0), Direction("", "", 1)),
+                        emptyList(),
                     )
                 )
             )

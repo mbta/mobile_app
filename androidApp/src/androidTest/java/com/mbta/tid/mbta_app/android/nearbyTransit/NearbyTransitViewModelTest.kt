@@ -11,6 +11,8 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlinx.coroutines.test.runTest
@@ -50,7 +52,12 @@ class NearbyTransitViewModelTest {
             }
 
         var position by mutableStateOf(position1)
-        val nearbyVM = NearbyTransitViewModel(nearbyRepository)
+        val nearbyVM =
+            NearbyTransitViewModel(
+                nearbyRepository,
+                settingsRepository = MockSettingsRepository(),
+                errorBannerRepository = MockErrorBannerStateRepository()
+            )
 
         composeTestRule.setContent {
             LaunchedEffect(position) {

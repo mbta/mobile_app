@@ -36,8 +36,14 @@ final class LegacyStopDetailsViewTests: XCTestCase {
                                         filter: nil,
                                         setFilter: { _ in },
                                         departures: .init(routes: [
-                                            .init(route: routeDefaultSort1, stop: stop, patterns: []),
-                                            .init(route: routeDefaultSort0, stop: stop, patterns: []),
+                                            .init(
+                                                route: routeDefaultSort1, stop: stop,
+                                                patterns: [], elevatorAlerts: []
+                                            ),
+                                            .init(
+                                                route: routeDefaultSort0, stop: stop,
+                                                patterns: [], elevatorAlerts: []
+                                            ),
                                         ]),
                                         errorBannerVM: .init(),
                                         nearbyVM: .init(),
@@ -62,7 +68,7 @@ final class LegacyStopDetailsViewTests: XCTestCase {
                                         filter: nil,
                                         setFilter: { _ in },
                                         departures: .init(routes: [
-                                            .init(route: route, stop: stop, patterns: []),
+                                            .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
                                         ]),
                                         errorBannerVM: .init(),
                                         nearbyVM: .init(),

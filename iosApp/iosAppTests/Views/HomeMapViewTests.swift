@@ -379,7 +379,8 @@ final class HomeMapViewTests: XCTestCase {
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
-                )]
+                )],
+                elevatorAlerts: []
             )]
         ))
 
@@ -546,7 +547,8 @@ final class HomeMapViewTests: XCTestCase {
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
-                )]
+                )],
+                elevatorAlerts: []
             )]
         ))
 
@@ -651,7 +653,8 @@ final class HomeMapViewTests: XCTestCase {
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
-                )]
+                )],
+                elevatorAlerts: []
             )]
         ))
 

@@ -73,6 +73,7 @@ class AlertAssociatedStop(val stop: Stop) {
 
 @Serializable
 enum class StopAlertState {
+    Elevator,
     Issue,
     Normal,
     Shuttle,

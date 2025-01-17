@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="elevator_closure_count">
+        <item quantity="one">%d fechamento de elevador</item>
+        <item quantity="many">%d fechamentos de elevador</item>
+    </plurals>
 </resources>

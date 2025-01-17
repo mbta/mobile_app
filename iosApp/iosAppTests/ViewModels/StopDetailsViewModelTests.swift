@@ -180,7 +180,8 @@ final class StopDetailsViewModelTests: XCTestCase {
                     patterns: [pattern1], upcomingTrips: [upcoming1]
                 ),
             ],
-            directions: [direction0, direction1]
+            directions: [direction0, direction1],
+            elevatorAlerts: []
         )]), departures)
     }
 

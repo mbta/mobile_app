@@ -20,7 +20,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 @Composable
 fun SheetHeader(onClose: (() -> Unit)? = null, title: String? = null) {
     Row(
-        Modifier.padding(16.dp),
+        Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.Top
     ) {

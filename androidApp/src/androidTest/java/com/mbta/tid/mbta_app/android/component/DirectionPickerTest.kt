@@ -48,7 +48,8 @@ class DirectionPickerTest {
                 null,
                 stop,
                 patterns,
-                listOf(Direction("North", null, 0), Direction("South", null, 1))
+                listOf(Direction("North", null, 0), Direction("South", null, 1)),
+                emptyList()
             )
         var filter: StopDetailsFilter? = StopDetailsFilter(routeId = route.id, directionId = 0)
         composeTestRule.setContent {

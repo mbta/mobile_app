@@ -842,9 +842,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     line: nil,
                     patterns: [pattern],
                     upcomingTrips: []
-
-                )]
-
+                )],
+                elevatorAlerts: []
             ),
             now: Date.now.toKotlinInstant(),
             pushNavEntry: pushNavEntry,

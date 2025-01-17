@@ -8,6 +8,7 @@ import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -39,6 +40,7 @@ import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -251,5 +253,78 @@ class StopDetailsViewTest {
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
+    }
+
+    @Test
+    @Ignore("TODO: Remove ignore once feature toggle is properly pulled from stop details VM")
+    fun testStopDetailsViewDisplaysElevatorAlerts() {
+        val alert =
+            builder.alert {
+                effect = Alert.Effect.ElevatorClosure
+                header = "Elevator alert header"
+            }
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+                StopDetailsView(
+                    stop = stop,
+                    departures =
+                        StopDetailsDepartures(
+                            listOf(
+                                PatternsByStop(
+                                    route = route,
+                                    stop = stop,
+                                    patterns =
+                                        listOf(
+                                            RealtimePatterns.ByHeadsign(
+                                                staticData =
+                                                    NearbyStaticData.StaticPatterns.ByHeadsign(
+                                                        route = route,
+                                                        headsign = trip.headsign,
+                                                        line = line,
+                                                        patterns =
+                                                            listOf(
+                                                                routePatternOne,
+                                                                routePatternTwo
+                                                            ),
+                                                        stopIds = setOf(stop.id),
+                                                    ),
+                                                upcomingTripsMap =
+                                                    mapOf(
+                                                        RealtimePatterns.UpcomingTripKey
+                                                            .ByRoutePattern(
+                                                                trip.routeId,
+                                                                routePatternOne.id,
+                                                                stop.id
+                                                            ) to
+                                                            listOf(UpcomingTrip(trip, prediction))
+                                                    ),
+                                                parentStopId = stop.id,
+                                                alertsHere = emptyList(),
+                                                alertsDownstream = emptyList(),
+                                                hasSchedulesTodayByPattern = null,
+                                                allDataLoaded = false
+                                            )
+                                        ),
+                                    listOf(alert)
+                                )
+                            )
+                        ),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    filter = filterState.value,
+                    updateStopFilter = filterState::value::set,
+                    errorBannerViewModel =
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        )
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(alert.header!!).assertExists()
     }
 }

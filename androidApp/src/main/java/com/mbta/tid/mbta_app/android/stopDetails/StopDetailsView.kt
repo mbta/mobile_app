@@ -1,14 +1,21 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
@@ -33,7 +40,9 @@ fun StopDetailsView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    val globalResponse = getGlobalData("SopDetailsView.getGlobalData")
+    val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
+    // TODO: Set this from the StopDetailsViewModel based on the feature toggle once the VM exists
+    val showElevatorAccessibility = false
 
     val now = timer(updateInterval = 5.seconds)
 
@@ -90,6 +99,27 @@ fun StopDetailsView(
         }
 
         ErrorBanner(errorBannerViewModel)
+
+        if (showElevatorAccessibility && !departures?.elevatorAlerts.isNullOrEmpty()) {
+            Column(
+                Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                departures?.elevatorAlerts?.map {
+                    Column(
+                        Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp))
+                            .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
+                            .clickable(
+                                onClickLabel = stringResource(R.string.displays_more_info)
+                            ) {}
+                            .padding(end = 8.dp)
+                    ) {
+                        StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
+                    }
+                }
+            }
+        }
 
         StopDetailsRoutesView(
             departures,

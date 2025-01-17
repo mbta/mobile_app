@@ -522,7 +522,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
                                     ]
                                 ),
-                            ]
+                            ],
+                            elevatorAlerts: []
                         ),
                     ]
                 ),
@@ -549,7 +550,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
                                     ]
                                 ),
-                            ]
+                            ],
+                            elevatorAlerts: []
                         ),
                     ]
                 ),
