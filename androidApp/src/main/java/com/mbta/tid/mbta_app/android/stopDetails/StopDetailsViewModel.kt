@@ -68,13 +68,13 @@ class StopDetailsViewModel(
                     StopData(
                         it.stopId,
                         it.schedules,
-                        it.predictionsByStop
-                            ?: PredictionsByStopJoinResponse(
+                        (it.predictionsByStop
+                                ?: PredictionsByStopJoinResponse(
                                     mapOf(it.stopId to message.predictions),
                                     message.trips,
                                     message.vehicles
-                                )
-                                .mergePredictions(message)
+                                ))
+                            .mergePredictions(message)
                     )
                 }
             }
