@@ -3,11 +3,15 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.StopData
@@ -23,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
 class StopDetailsViewModel(
@@ -34,6 +39,9 @@ class StopDetailsViewModel(
 
     private val _stopData = MutableStateFlow<StopData?>(null)
     val stopData: StateFlow<StopData?> = _stopData
+
+    val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
+    val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
 
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
@@ -108,6 +116,10 @@ class StopDetailsViewModel(
         stopPredictionsFetcher.disconnect()
     }
 
+    fun setDepartures(departures: StopDetailsDepartures?) {
+        _stopDepartures.value = departures
+    }
+
     fun clearStopDetails() {
         Log.i("KB", "Cleared stop details data")
         stopPredictionsFetcher.disconnect()
@@ -149,27 +161,54 @@ class StopDetailsViewModel(
 @Composable
 /**
  * Manage stop details data and lifecycle events, including:
- * - re-fetching data when the selected stopId changes
- * - re-subscribing to predictions when returning from background
+ * - refetching data when the selected stopId changes
+ * - resubscribing to predictions when returning from background
  * - periodically checking for stale predictions
  */
 fun stopDetailsVMHandler(
     stopId: String?,
+    globalResponse: GlobalResponse?,
+    alertData: AlertsStreamDataResponse?,
+    pinnedRoutes: Set<String>,
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds
 ): StopDetailsViewModel {
-
+    val now = timer(updateInterval = 5.seconds)
     val timer = timer(checkPredictionsStaleInterval)
 
+    val stopData = viewModel.stopData.collectAsState()
+
     LaunchedEffect(stopId) {
+        Log.i("KB", "Handling stop change")
+
         CoroutineScope(Dispatchers.IO).launch { viewModel.handleStopChange(stopId) }
     }
 
     LifecycleResumeEffect(null) {
+        Log.i("KB", "Returned From Background")
         viewModel.returnFromBackground()
         viewModel.rejoinStopPredictions()
 
         onPauseOrDispose { viewModel.leaveStopPredictions() }
+    }
+
+    LaunchedEffect(stopId, globalResponse, stopData, stopId, alertData, pinnedRoutes, now) {
+        withContext(Dispatchers.Default) {
+            val departures: StopDetailsDepartures? =
+                if (globalResponse != null && stopId != null) {
+                    StopDetailsDepartures.fromData(
+                        stopId,
+                        globalResponse,
+                        stopData.value?.schedules,
+                        stopData.value?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                        alertData,
+                        pinnedRoutes,
+                        now,
+                        useTripHeadsigns = false,
+                    )
+                } else null
+            viewModel.setDepartures(departures)
+        }
     }
 
     LaunchedEffect(key1 = timer) { viewModel.checkPredictionsStale() }

@@ -54,6 +54,7 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsVMHandler
+import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -119,13 +120,18 @@ fun NearbyTransitPage(
     val previousNavEntry: SheetRoutes? =
         viewModel.previousNavEntry.collectAsState(initial = null).value
 
+    val (pinnedRoutes) = managePinnedRoutes()
+
     val stopDetailsVM =
         stopDetailsVMHandler(
             stopId =
                 (when (currentNavEntry) {
                     is SheetRoutes.StopDetails -> currentNavEntry.stopId
                     else -> null
-                })
+                }),
+            globalResponse = nearbyTransit.globalResponse,
+            alertData = nearbyTransit.alertData,
+            pinnedRoutes = pinnedRoutes ?: emptySet()
         )
 
     val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
@@ -266,7 +272,6 @@ fun NearbyTransitPage(
                     modifier = modifier,
                     viewModel = stopDetailsVM,
                     filters = filters,
-                    nearbyTransit.alertData,
                     onClose = { navController.popBackStack() },
                     updateStopFilter = ::updateStopFilter,
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
