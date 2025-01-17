@@ -44,7 +44,7 @@ jobs:
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID }}
+          GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_PROD }}
           KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
           KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           KEY_ALIAS: "upload"
