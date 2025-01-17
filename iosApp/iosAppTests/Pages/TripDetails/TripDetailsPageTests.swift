@@ -512,7 +512,6 @@ final class TripDetailsPageTests: XCTestCase {
                 XCTAssertEqual(
                     parameters,
                     [
-                        "class_name": "TripDetailsAnalytics",
                         "route_id": route.id,
                         "stop_id": childStop.id,
                         "trip_id": trip.id,

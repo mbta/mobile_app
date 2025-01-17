@@ -10,20 +10,13 @@ abstract class Analytics {
 
     protected abstract fun setUserProperty(name: String, value: String)
 
-    private fun logEvent(
-        name: String,
-        className: String?,
-        vararg parameters: Pair<String, String>
-    ) {
+    private fun logEvent(name: String, vararg parameters: Pair<String, String>) {
         val paramsMap = mutableMapOf(*parameters)
-        if (className != null) {
-            paramsMap["class_name"] = className
-        }
         logEvent(name, paramsMap)
     }
 
     fun performedSearch(query: String) {
-        logEvent("search", "SearchAnalytics", "query" to query)
+        logEvent("search", "query" to query)
     }
 
     fun recordSession(colorScheme: AnalyticsColorScheme) {
@@ -47,13 +40,12 @@ abstract class Analytics {
     }
 
     fun refetchedNearbyTransit() {
-        logEvent("refetched_nearby_transit", "NearbyTransitAnalytics")
+        logEvent("refetched_nearby_transit")
     }
 
     fun tappedAffectedStops(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_affected_stops",
-            "AlertDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
             "alert_id" to alertId,
@@ -63,7 +55,6 @@ abstract class Analytics {
     fun tappedAlertDetails(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_alert_details",
-            "StopTripDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
             "alertId" to alertId,
@@ -73,7 +64,6 @@ abstract class Analytics {
     fun tappedAlertDetailsLegacy(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_alert_details",
-            "StopDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
             "alertId" to alertId,
@@ -105,7 +95,6 @@ abstract class Analytics {
             }
         logEvent(
             "tapped_departure",
-            "DestinationRowAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
             "pinned" to pinned.toString(),
@@ -123,7 +112,6 @@ abstract class Analytics {
     ) {
         logEvent(
             "tapped_downstream_stop",
-            "TripDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
             "trip_id" to tripId,
@@ -134,7 +122,6 @@ abstract class Analytics {
     fun tappedOnStop(stopId: String) {
         logEvent(
             "tapped_on_stop",
-            "MapAnalytics",
             "stop_id" to stopId,
         )
     }
@@ -142,7 +129,6 @@ abstract class Analytics {
     fun tappedRouteFilter(routeId: String, stopId: String) {
         logEvent(
             "tapped_route_filter",
-            "StopTripDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
         )
@@ -151,7 +137,6 @@ abstract class Analytics {
     fun tappedRouteFilterLegacy(routeId: String, stopId: String) {
         logEvent(
             "tapped_route_filter",
-            "StopDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
         )
@@ -160,7 +145,6 @@ abstract class Analytics {
     fun tappedTripPlanner(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_trip_planner",
-            "AlertDetailsAnalytics",
             "route_id" to routeId,
             "stop_id" to stopId,
             "alert_id" to alertId,
@@ -168,13 +152,12 @@ abstract class Analytics {
     }
 
     fun tappedVehicle(routeId: String) {
-        logEvent("tapped_vehicle", "MapAnalytics", "route_id" to routeId)
+        logEvent("tapped_vehicle", "route_id" to routeId)
     }
 
     fun toggledPinnedRoute(pinned: Boolean, routeId: String) {
         logEvent(
             if (pinned) "pin_route" else "unpin_route",
-            "NearbyTransitAnalytics",
             "route_id" to routeId,
         )
     }
@@ -182,7 +165,6 @@ abstract class Analytics {
     fun toggledPinnedRouteAtStop(pinned: Boolean, routeId: String) {
         logEvent(
             if (pinned) "pin_route" else "unpin_route",
-            "StopTripDetailsAnalytics",
             "route_id" to routeId,
         )
     }
@@ -190,7 +172,6 @@ abstract class Analytics {
     fun track(screen: AnalyticsScreen) {
         logEvent(
             ANALYTICS_EVENT_SCREEN_VIEW,
-            null,
             ANALYTICS_PARAMETER_SCREEN_NAME to screen.pageName,
         )
     }
