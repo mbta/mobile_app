@@ -40,8 +40,6 @@ class NearbyTransitTabViewModel : ViewModel() {
         _stopDetailsDepartures.value = departures
     }
 
-    // TODO: Move these to separate Navigation utils helper
-
     fun setStopFilter(
         lastNavEntry: SheetRoutes?,
         stopFilter: StopDetailsFilter?,

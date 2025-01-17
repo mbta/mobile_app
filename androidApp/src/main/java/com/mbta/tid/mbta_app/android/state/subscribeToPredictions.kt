@@ -139,6 +139,10 @@ class PredictionsViewModel(
         stopPredictionsFetcher.disconnect()
     }
 
+    fun reset() {
+        _predictions.value = null
+    }
+
     fun checkPredictionsStale() {
         stopPredictionsFetcher.checkPredictionsStale(_predictions.value)
     }

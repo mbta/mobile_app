@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -83,8 +82,6 @@ class StopDetailsViewModel(
     }
 
     private fun getStopSchedules(stopId: String) {
-        Log.i("KB", "fetched schedules ${stopId}")
-
         stopScheduleFetcher.getSchedule(listOf(stopId), "StopDetailsVM.getSchedule") { schedules ->
             _stopData.update {
                 it?.let {
@@ -95,22 +92,15 @@ class StopDetailsViewModel(
     }
 
     private fun joinStopPredictions(stopId: String) {
-        Log.i("KB", "joined stop predictions ${stopId}")
-
         stopPredictionsFetcher.connect(listOf(stopId))
     }
 
     fun rejoinStopPredictions() {
 
-        stopData.value?.let {
-            Log.i("KB", "rejoined stop predictions")
-            joinStopPredictions(it.stopId)
-        }
+        stopData.value?.let { joinStopPredictions(it.stopId) }
     }
 
     fun leaveStopPredictions() {
-        Log.i("KB", "Left stop predictions")
-
         stopPredictionsFetcher.disconnect()
     }
 
@@ -119,12 +109,9 @@ class StopDetailsViewModel(
     }
 
     private fun clearStopDetails() {
-        Log.i("KB", "Cleared stop details data")
         stopPredictionsFetcher.disconnect()
         _stopData.value = null
         errorBannerRepository.clearDataError("StopDetailsVM.getSchedule")
-        // TODO: leave predictions
-        _stopData.value = null
     }
 
     fun handleStopChange(stopId: String?) {
@@ -174,30 +161,20 @@ fun stopDetailsManagedVM(
     val now = timer(updateInterval = 5.seconds)
     val timer = timer(checkPredictionsStaleInterval)
 
-    Log.i("KB", "HELLO THERE")
-
     val stopData = viewModel.stopData.collectAsState()
 
-    LaunchedEffect(stopId) {
-        Log.i("KB", "Handling stop change")
-
-        viewModel.handleStopChange(stopId)
-    }
+    LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
     LifecycleResumeEffect(null) {
         viewModel.returnFromBackground()
         viewModel.rejoinStopPredictions()
 
-        onPauseOrDispose {
-            Log.i("KB", "PAUSED")
-            viewModel.leaveStopPredictions()
-        }
+        onPauseOrDispose { viewModel.leaveStopPredictions() }
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, stopId, alertData, pinnedRoutes, now) {
         withContext(Dispatchers.Default) {
             val departures: StopDetailsDepartures? =
                 if (globalResponse != null && stopId != null) {
-                    Log.i("KB", "Calculating sdepartures")
                     StopDetailsDepartures.fromData(
                         stopId,
                         globalResponse,

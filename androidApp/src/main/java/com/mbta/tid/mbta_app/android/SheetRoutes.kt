@@ -25,10 +25,10 @@ sealed class SheetRoutes {
          * StopDetails is only considered a page change if the stopId changed.
          */
         fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
-            if (first is StopDetails && second is StopDetails) {
-                return first.stopId != second.stopId
+            return if (first is StopDetails && second is StopDetails) {
+                first.stopId != second.stopId
             } else {
-                return first == second
+                first != second
             }
         }
     }
