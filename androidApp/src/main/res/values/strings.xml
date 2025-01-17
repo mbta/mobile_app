@@ -11,7 +11,12 @@
     <string name="close_button_label">Close</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
+    <string name="displays_more_info">displays more information</string>
     <string name="eastbound">Eastbound</string>
+    <plurals name="elevator_closure_count" tools:ignore="MissingTranslation">
+        <item quantity="one">%d elevator closure</item>
+        <item quantity="other">%d elevator closures</item>
+    </plurals>
     <string name="error_loading_data">Error loading data</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>

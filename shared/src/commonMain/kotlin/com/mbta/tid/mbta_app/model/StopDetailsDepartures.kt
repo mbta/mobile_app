@@ -16,6 +16,7 @@ data class TripAndFormat(
 
 data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     val allUpcomingTrips = routes.flatMap { it.allUpcomingTrips() }
+    val elevatorAlerts = routes.flatMap { it.elevatorAlerts }.distinct()
 
     val upcomingPatternIds = allUpcomingTrips.mapNotNull { it.trip.routePatternId }.toSet()
 

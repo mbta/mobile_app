@@ -69,6 +69,7 @@ fun NearbyTransitView(
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
+    val showElevatorAccessibility by nearbyVM.showElevatorAccessibility.collectAsState(false)
 
     LaunchedEffect(targetLocation == null) {
         if (targetLocation == null) {
@@ -144,7 +145,8 @@ fun NearbyTransitView(
                                 pinnedRoutes.orEmpty().contains(it.id),
                                 togglePinnedRoute,
                                 now,
-                                onOpenStopDetails
+                                onOpenStopDetails,
+                                showElevatorAccessibility
                             )
                         is StopsAssociated.WithLine ->
                             NearbyLineView(
@@ -152,7 +154,8 @@ fun NearbyTransitView(
                                 pinnedRoutes.orEmpty().contains(it.id),
                                 togglePinnedRoute,
                                 now,
-                                onOpenStopDetails
+                                onOpenStopDetails,
+                                showElevatorAccessibility
                             )
                     }
                 }

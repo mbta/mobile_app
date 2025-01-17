@@ -2709,7 +2709,8 @@ class NearbyResponseTest {
                                 )
                             ),
                         ),
-                        listOf(directionWest, directionEast)
+                        listOf(directionWest, directionEast),
+                        emptyList()
                     )
                 )
             )

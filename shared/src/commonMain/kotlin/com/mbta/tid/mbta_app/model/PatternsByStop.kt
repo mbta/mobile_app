@@ -14,7 +14,8 @@ data class PatternsByStop(
     val line: Line?,
     val stop: Stop,
     val patterns: List<RealtimePatterns>,
-    val directions: List<Direction>
+    val directions: List<Direction>,
+    val elevatorAlerts: List<Alert>
 ) {
     val representativeRoute = routes.min()
     val routeIdentifier = line?.id ?: representativeRoute.id
@@ -77,7 +78,8 @@ data class PatternsByStop(
             }
             .filter(patternsPredicate)
             .sortedWith(PatternSorting.compareRealtimePatterns()),
-        staticData.directions
+        staticData.directions,
+        Alert.elevatorAlerts(alerts, setOf(staticData.stop.id))
     )
 
     constructor(
@@ -138,14 +140,23 @@ data class PatternsByStop(
             }
             .filter(patternsPredicate)
             .sortedWith(PatternSorting.compareRealtimePatterns()),
-        directions
+        directions,
+        Alert.elevatorAlerts(alerts, setOf(stop.id))
     )
 
     constructor(
         route: Route,
         stop: Stop,
-        patterns: List<RealtimePatterns>
-    ) : this(listOf(route), null, stop, patterns, listOf(Direction(0, route), Direction(1, route)))
+        patterns: List<RealtimePatterns>,
+        accessibilityAlerts: List<Alert> = emptyList()
+    ) : this(
+        listOf(route),
+        null,
+        stop,
+        patterns,
+        listOf(Direction(0, route), Direction(1, route)),
+        accessibilityAlerts
+    )
 
     @OptIn(ExperimentalTurfApi::class)
     fun distanceFrom(position: Position) = distance(position, this.position)

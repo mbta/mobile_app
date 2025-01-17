@@ -10,22 +10,41 @@ import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class NearbyTransitViewModel(val nearbyRepository: INearbyRepository) : KoinComponent, ViewModel() {
+class NearbyTransitViewModel(
+    private val nearbyRepository: INearbyRepository,
+    private val settingsRepository: ISettingsRepository,
+    private val errorBannerRepository: IErrorBannerStateRepository
+) : KoinComponent, ViewModel() {
+    private val _showElevatorAccessibility: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showElevatorAccessibility: StateFlow<Boolean> = _showElevatorAccessibility
+
     var loadedLocation by mutableStateOf<Position?>(null)
     var loading by mutableStateOf(false)
     var nearby by mutableStateOf<NearbyStaticData?>(null)
 
     private var fetchNearbyTask: Job? = null
 
-    private val errorBannerRepository: IErrorBannerStateRepository by inject()
+    init {
+        loadElevatorAccessibility()
+    }
+
+    private fun loadElevatorAccessibility() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val data = settingsRepository.getSettings()
+            _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false
+        }
+    }
 
     fun getNearby(
         globalResponse: GlobalResponse,
