@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -56,7 +57,8 @@ class NearbyTransitViewModelTest {
             NearbyTransitViewModel(
                 nearbyRepository,
                 settingsRepository = MockSettingsRepository(),
-                errorBannerRepository = MockErrorBannerStateRepository()
+                errorBannerRepository = MockErrorBannerStateRepository(),
+                analytics = MockAnalytics()
             )
 
         composeTestRule.setContent {

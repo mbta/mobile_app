@@ -18,6 +18,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
@@ -45,6 +46,7 @@ fun StopDetailsView(
     val showElevatorAccessibility = false
 
     val now = timer(updateInterval = 5.seconds)
+    val analytics = AnalyticsProvider.shared
 
     val servedRoutes =
         remember(departures, globalResponse) {
@@ -64,6 +66,7 @@ fun StopDetailsView(
         }
 
     val onTapRoutePill = { pillFilter: PillFilter ->
+        analytics.tappedRouteFilter(pillFilter.id, stop.id)
         val filterId = pillFilter.id
         if (filter?.routeId == filterId) {
             updateStopFilter(null)

@@ -35,7 +35,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
+import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -118,6 +120,8 @@ fun NearbyTransitPage(
 
     var searchExpanded by rememberSaveable { mutableStateOf(false) }
     val searchFocusRequester = remember { FocusRequester() }
+
+    val analytics = AnalyticsProvider.shared
 
     fun updateVisitHistory(stopId: String) {
         CoroutineScope(Dispatchers.Default).launch {
@@ -208,23 +212,17 @@ fun NearbyTransitPage(
                         hideNavBar()
                     }
 
-                    updateStopFilter(
+                    val filter =
                         if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
                             StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
                         else null
-                    )
-                }
+                    updateStopFilter(filter)
 
-                LaunchedEffect(navRoute) {
-                    if (navBarVisible) {
-                        hideNavBar()
+                    if (filter != null) {
+                        analytics.track(AnalyticsScreen.StopDetailsFiltered)
+                    } else {
+                        analytics.track(AnalyticsScreen.StopDetailsUnfiltered)
                     }
-
-                    updateStopFilter(
-                        if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
-                            StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
-                        else null
-                    )
                 }
 
                 if (stop != null) {
@@ -249,6 +247,7 @@ fun NearbyTransitPage(
                     }
 
                     updateStopFilter(null)
+                    analytics.track(AnalyticsScreen.NearbyTransit)
                 }
 
                 var targetLocation by remember { mutableStateOf<Position?>(null) }

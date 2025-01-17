@@ -31,6 +31,7 @@ fun NearbyStopView(
     patternsAtStop: PatternsByStop,
     condenseHeadsignPredictions: Boolean = false,
     now: Instant,
+    pinned: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     showElevatorAccessibility: Boolean = false
 ) {
@@ -79,7 +80,8 @@ fun NearbyStopView(
         patternsAtStop,
         condenseHeadsignPredictions,
         now,
-        TripInstantDisplay.Context.NearbyTransit
+        TripInstantDisplay.Context.NearbyTransit,
+        pinned,
     ) { patterns ->
         onOpenStopDetails(
             patternsAtStop.stop.id,

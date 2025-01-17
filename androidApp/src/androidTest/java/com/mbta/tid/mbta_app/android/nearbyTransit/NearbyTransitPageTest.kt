@@ -21,6 +21,8 @@ import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
@@ -207,9 +209,12 @@ class NearbyTransitPageTest : KoinTest {
             )
         )
 
+    val analytics = MockAnalytics()
+
     val koinApplication = koinApplication {
         modules(
             module {
+                single<Analytics> { analytics }
                 single<ISettingsRepository> { MockSettingsRepository() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> {

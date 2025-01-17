@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.android
 
 import android.app.Application
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
 import com.mbta.tid.mbta_app.android.util.decodeMessage
@@ -8,7 +10,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import org.phoenixframework.Socket
 
@@ -34,6 +36,7 @@ class MainApplication : Application() {
 
     companion object {
         val koinViewModelModule = module {
+            single<Analytics> { AnalyticsProvider.shared }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
         }

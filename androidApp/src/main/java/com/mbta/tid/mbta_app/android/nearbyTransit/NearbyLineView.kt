@@ -21,6 +21,7 @@ fun NearbyLineView(
                 patternsAtStop,
                 condenseHeadsignPredictions = nearbyLine.condensePredictions,
                 now,
+                pinned,
                 onOpenStopDetails,
                 showElevatorAccessibility
             )

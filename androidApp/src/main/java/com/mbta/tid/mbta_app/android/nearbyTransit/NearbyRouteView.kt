@@ -20,6 +20,7 @@ fun NearbyRouteView(
             NearbyStopView(
                 patternsAtStop,
                 now = now,
+                pinned = pinned,
                 onOpenStopDetails = onOpenStopDetails,
                 showElevatorAccessibility = showElevatorAccessibility
             )

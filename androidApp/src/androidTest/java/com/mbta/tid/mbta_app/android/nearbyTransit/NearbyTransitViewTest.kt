@@ -6,6 +6,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -180,9 +182,12 @@ class NearbyTransitViewTest : KoinTest {
             )
         )
 
+    val analytics = MockAnalytics()
+
     val koinApplication = koinApplication {
         modules(
             module {
+                single<Analytics> { analytics }
                 single<ISettingsRepository> { MockSettingsRepository() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<ISchedulesRepository> { MockScheduleRepository() }
@@ -288,6 +293,7 @@ class NearbyTransitViewTest : KoinTest {
         val emptyNearbyKoinApplication = koinApplication {
             modules(
                 module {
+                    single<Analytics> { analytics }
                     single<ISettingsRepository> { MockSettingsRepository() }
                     single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                     single<INearbyRepository> { MockNearbyRepository() }

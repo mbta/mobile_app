@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -24,7 +25,8 @@ import org.koin.core.component.KoinComponent
 class NearbyTransitViewModel(
     private val nearbyRepository: INearbyRepository,
     private val settingsRepository: ISettingsRepository,
-    private val errorBannerRepository: IErrorBannerStateRepository
+    private val errorBannerRepository: IErrorBannerStateRepository,
+    private val analytics: Analytics,
 ) : KoinComponent, ViewModel() {
     private val _showElevatorAccessibility: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showElevatorAccessibility: StateFlow<Boolean> = _showElevatorAccessibility
@@ -60,6 +62,7 @@ class NearbyTransitViewModel(
                 fetchNearbyTask?.cancel()
             }
             fetchNearbyTask = launch {
+                analytics.refetchedNearbyTransit()
                 loading = true
                 fetchApi(
                     errorBannerRepo = errorBannerRepository,

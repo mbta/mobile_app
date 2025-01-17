@@ -26,6 +26,9 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.AnalyticsLocationAccess
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import kotlin.time.Duration.Companion.seconds
@@ -46,7 +49,10 @@ open class LocationDataManager {
     @SuppressLint("MissingPermission")
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun running(lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current): LocationDataManager {
+    fun running(
+        lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+        analytics: Analytics = AnalyticsProvider.shared
+    ): LocationDataManager {
         val permissions = rememberPermissions()
         val locationRequest =
             remember(permissions) {
@@ -72,7 +78,23 @@ open class LocationDataManager {
 
         val activity = LocalActivity.current
         val context = LocalContext.current
-        hasPermission = permissions.permissions.any { it.status.isGranted }
+        val locationAccess =
+            when {
+                permissions.permissions
+                    .find { it.permission == Manifest.permission.ACCESS_FINE_LOCATION }
+                    ?.status
+                    ?.isGranted == true -> AnalyticsLocationAccess.Precise
+                permissions.permissions
+                    .find { it.permission == Manifest.permission.ACCESS_COARSE_LOCATION }
+                    ?.status
+                    ?.isGranted == true -> AnalyticsLocationAccess.Approximate
+                else -> AnalyticsLocationAccess.Off
+            }
+        hasPermission =
+            locationAccess in
+                setOf(AnalyticsLocationAccess.Precise, AnalyticsLocationAccess.Approximate)
+
+        LaunchedEffect(locationAccess) { analytics.recordSession(locationAccess) }
 
         val locationClient = LocalLocationClient.current
 

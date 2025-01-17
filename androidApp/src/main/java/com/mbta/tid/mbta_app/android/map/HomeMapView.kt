@@ -43,6 +43,7 @@ import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -100,6 +101,7 @@ fun HomeMapView(
     val isNearby = currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
 
+    val analytics = AnalyticsProvider.shared
     val context = LocalContext.current
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
@@ -121,6 +123,7 @@ fun HomeMapView(
             }
             val tapped = result.value?.firstOrNull() ?: return@queryRenderedFeatures
             val stopId = tapped.queriedFeature.feature.id() ?: return@queryRenderedFeatures
+            analytics.tappedOnStop(stopId)
             handleStopNavigation(stopId)
         }
         return false
