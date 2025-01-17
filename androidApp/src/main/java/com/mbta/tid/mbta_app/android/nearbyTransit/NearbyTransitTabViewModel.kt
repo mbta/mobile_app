@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class NearbyTransitTabViewModel : ViewModel() {
 
@@ -16,17 +17,23 @@ class NearbyTransitTabViewModel : ViewModel() {
 
     private val _currentNavEntry = MutableStateFlow<SheetRoutes?>(null)
     val currentNavEntry: StateFlow<SheetRoutes?> = _currentNavEntry
+    private val _previousNavEntry = MutableStateFlow<SheetRoutes?>(null)
+    val previousNavEntry: StateFlow<SheetRoutes?> = _previousNavEntry
 
     /**
-     * Record the current sheetRoute. Calling this function does *not* affect the navigation stack.
-     * It as a helper function to more conveniently access the SheetRoute directly rather than
-     * reading off `NavBackStackEntry`, where it may not always be known what SheetRoute type to
-     * resolve to.
+     * Record the current `navEntry` and archive the `previousNavEntry` Calling this function does
+     * *not* affect the navigation stack. It as a helper function to more conveniently access the
+     * SheetRoute directly rather than reading off `NavBackStackEntry`, where it may not always be
+     * known what SheetRoute type to resolve to.
      */
 
     // https://stackoverflow.com/a/78911122
     fun recordCurrentNavEntry(sheetRoute: SheetRoutes?) {
-        _currentNavEntry.value = sheetRoute
+
+        _currentNavEntry.update {
+            _previousNavEntry.value = it
+            sheetRoute
+        }
     }
 
     fun setStopDetailsDepartures(departures: StopDetailsDepartures?) {

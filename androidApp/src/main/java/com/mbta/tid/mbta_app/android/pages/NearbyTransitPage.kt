@@ -53,6 +53,7 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
+import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsVMHandler
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -113,9 +114,19 @@ fun NearbyTransitPage(
     val navController = rememberNavController()
 
     val viewModel: NearbyTransitTabViewModel = viewModel()
-
     val currentNavEntry: SheetRoutes? =
         viewModel.currentNavEntry.collectAsState(initial = null).value
+    val previousNavEntry: SheetRoutes? =
+        viewModel.previousNavEntry.collectAsState(initial = null).value
+
+    val stopDetailsVM =
+        stopDetailsVMHandler(
+            stopId =
+                (when (currentNavEntry) {
+                    is SheetRoutes.StopDetails -> currentNavEntry.stopId
+                    else -> null
+                })
+        )
 
     val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
     val scope = rememberCoroutineScope()
@@ -185,7 +196,15 @@ fun NearbyTransitPage(
     }
 
     LaunchedEffect(currentNavEntry) {
-        nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
+        if (
+            previousNavEntry is SheetRoutes.StopDetails &&
+                currentNavEntry is SheetRoutes.StopDetails &&
+                previousNavEntry.stopId == currentNavEntry.stopId
+        ) {
+            // Skip changing sheet height - staying within same stop
+        } else {
+            nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
+        }
     }
 
     fun updateStopFilter(stopFilter: StopDetailsFilter?) {
@@ -245,6 +264,7 @@ fun NearbyTransitPage(
 
                 StopDetailsPage(
                     modifier = modifier,
+                    viewModel = stopDetailsVM,
                     filters = filters,
                     nearbyTransit.alertData,
                     onClose = { navController.popBackStack() },

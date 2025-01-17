@@ -71,11 +71,6 @@ fun NearbyTransitView(
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
     val showElevatorAccessibility by nearbyVM.showElevatorAccessibility.collectAsState(false)
 
-    LaunchedEffect(targetLocation == null) {
-        if (targetLocation == null) {
-            predictionsVM.reset()
-        }
-    }
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
     val nearbyWithRealtimeInfo =
