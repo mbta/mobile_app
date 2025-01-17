@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel

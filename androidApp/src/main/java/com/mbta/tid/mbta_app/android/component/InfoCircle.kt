@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 import com.mbta.tid.mbta_app.android.R
 
 @Composable

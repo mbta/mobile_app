@@ -16,7 +16,7 @@ object AlertIcons {
             MapStopRoute.entries.flatMap { routeType ->
                 StopAlertState.entries
                     .filter { state ->
-                        !setOf(StopAlertState.Elevator, StopAlertState.Normal).contains(state)
+                        state !in setOf(StopAlertState.Elevator, StopAlertState.Normal)
                     }
                     .map { state ->
                         "${alertIconPrefix}${zoomPrefix}${(routeType.name.lowercase())}-${(state.name.lowercase())}"
