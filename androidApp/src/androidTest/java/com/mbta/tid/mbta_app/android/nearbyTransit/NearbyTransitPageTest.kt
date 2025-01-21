@@ -30,6 +30,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.map.RouteLineData
@@ -76,8 +77,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.compose.KoinContext
+import org.koin.core.module.dsl.*
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import org.koin.test.KoinTest
@@ -276,6 +277,7 @@ class NearbyTransitPageTest : KoinTest {
                 single<IVehiclesRepository> { MockVehiclesRepository() }
                 single<ISearchResultRepository> { MockSearchResultRepository() }
                 viewModelOf(::NearbyTransitViewModel)
+                viewModelOf(::StopDetailsViewModel)
                 single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
                 single<VisitHistoryUsecase> { VisitHistoryUsecase(get()) }
             }

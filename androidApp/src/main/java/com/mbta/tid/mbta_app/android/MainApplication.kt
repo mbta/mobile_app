@@ -8,11 +8,13 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
+import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
+import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import org.phoenixframework.Socket
@@ -48,6 +50,7 @@ class MainApplication : Application() {
         val koinViewModelModule = module {
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
+            viewModelOf(::StopDetailsViewModel)
         }
     }
 }

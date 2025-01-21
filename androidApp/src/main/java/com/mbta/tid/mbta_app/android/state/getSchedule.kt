@@ -18,27 +18,43 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.compose.koinInject
 
-class ScheduleViewModel(
+class ScheduleFetcher(
     private val schedulesRepository: ISchedulesRepository,
     private val errorBannerRepository: IErrorBannerStateRepository
-) : ViewModel() {
-    private val _schedule = MutableStateFlow<ScheduleResponse?>(null)
-    val schedule: StateFlow<ScheduleResponse?> = _schedule
+) {
 
-    fun getSchedule(stopIds: List<String>, errorKey: String) {
+    fun getSchedule(
+        stopIds: List<String>,
+        errorKey: String,
+        onSuccess: (ScheduleResponse) -> Unit
+    ) {
         if (stopIds.isNotEmpty()) {
             CoroutineScope(Dispatchers.IO).launch {
                 fetchApi(
                     errorBannerRepo = errorBannerRepository,
                     errorKey = errorKey,
                     getData = { schedulesRepository.getSchedule(stopIds, Clock.System.now()) },
-                    onSuccess = { _schedule.value = it },
-                    onRefreshAfterError = { getSchedule(stopIds, errorKey) }
+                    onSuccess = { onSuccess(it) },
+                    onRefreshAfterError = { getSchedule(stopIds, errorKey, onSuccess) }
                 )
             }
         } else {
-            _schedule.value = ScheduleResponse(emptyList(), emptyMap())
+            onSuccess(ScheduleResponse(emptyList(), emptyMap()))
         }
+    }
+}
+
+class ScheduleViewModel(
+    private val schedulesRepository: ISchedulesRepository,
+    private val errorBannerRepository: IErrorBannerStateRepository
+) : ViewModel() {
+
+    private val scheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
+    private val _schedule = MutableStateFlow<ScheduleResponse?>(null)
+    val schedule: StateFlow<ScheduleResponse?> = _schedule
+
+    fun getSchedule(stopIds: List<String>, errorKey: String) {
+        scheduleFetcher.getSchedule(stopIds, errorKey) { _schedule.value = it }
     }
 
     class Factory(

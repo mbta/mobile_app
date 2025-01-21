@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
@@ -188,13 +189,14 @@ class StopDetailsViewTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStopDetailsViewDisplaysCorrectly() {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
                 StopDetailsView(
-                    stop = stop,
+                    stopId = stop.id,
                     departures =
                         StopDetailsDepartures(
                             listOf(
@@ -239,7 +241,8 @@ class StopDetailsViewTest {
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = {},
-                    filter = filterState.value,
+                    stopFilter = filterState.value,
+                    tripFilter = null,
                     updateStopFilter = filterState::value::set,
                     errorBannerViewModel =
                         ErrorBannerViewModel(
@@ -250,6 +253,8 @@ class StopDetailsViewTest {
                 )
             }
         }
+
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Stop"))
 
         composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertIsDisplayed()
 
@@ -270,7 +275,7 @@ class StopDetailsViewTest {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
                 StopDetailsView(
-                    stop = stop,
+                    stopId = stop.id,
                     departures =
                         StopDetailsDepartures(
                             listOf(
@@ -316,7 +321,8 @@ class StopDetailsViewTest {
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = {},
-                    filter = filterState.value,
+                    stopFilter = filterState.value,
+                    tripFilter = null,
                     updateStopFilter = filterState::value::set,
                     errorBannerViewModel =
                         ErrorBannerViewModel(
