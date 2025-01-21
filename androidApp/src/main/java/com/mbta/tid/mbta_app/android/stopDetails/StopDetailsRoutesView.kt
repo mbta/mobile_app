@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,13 +23,16 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Composable
 fun StopDetailsRoutesView(
-    departures: StopDetailsDepartures?,
+    viewModel: StopDetailsViewModel,
     global: GlobalResponse?,
     now: Instant,
     stopFilter: StopDetailsFilter?,
@@ -37,11 +42,14 @@ fun StopDetailsRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit
 ) {
+
+    val departures = viewModel.stopDepartures.collectAsState().value
+
     if (departures == null) {
         LoadingStopDetailsView(stopFilter, tripFilter)
     } else if (stopFilter != null) {
         StopDetailsFilteredRouteView(
-            departures = departures,
+            viewModel,
             global = global,
             now = now,
             stopFilter = stopFilter,
@@ -116,53 +124,62 @@ private fun StopDetailsRoutesViewPreview() {
             scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
         }
 
-    MyApplicationTheme {
-        StopDetailsRoutesView(
-            departures =
-                StopDetailsDepartures(
+    val viewModel =
+        StopDetailsViewModel(
+            MockScheduleRepository(),
+            MockPredictionsRepository(),
+            MockErrorBannerStateRepository()
+        )
+    viewModel.setDepartures(
+        StopDetailsDepartures(
+            listOf(
+                PatternsByStop(
+                    route1,
+                    stop,
                     listOf(
-                        PatternsByStop(
+                        RealtimePatterns.ByHeadsign(
                             route1,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "A",
-                                    null,
-                                    emptyList(),
-                                    listOf(UpcomingTrip(trip1, prediction1))
-                                )
-                            )
-                        ),
-                        PatternsByStop(
-                            route2,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route2,
-                                    "B",
-                                    null,
-                                    emptyList(),
-                                    listOf(UpcomingTrip(trip3, prediction2))
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    route2,
-                                    "C",
-                                    null,
-                                    emptyList(),
-                                    listOf(UpcomingTrip(trip2, schedule2))
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    route2,
-                                    "D",
-                                    null,
-                                    emptyList(),
-                                    listOf(UpcomingTrip(trip4, schedule3, prediction3))
-                                )
-                            )
+                            "A",
+                            null,
+                            emptyList(),
+                            listOf(UpcomingTrip(trip1, prediction1))
                         )
                     )
                 ),
+                PatternsByStop(
+                    route2,
+                    stop,
+                    listOf(
+                        RealtimePatterns.ByHeadsign(
+                            route2,
+                            "B",
+                            null,
+                            emptyList(),
+                            listOf(UpcomingTrip(trip3, prediction2))
+                        ),
+                        RealtimePatterns.ByHeadsign(
+                            route2,
+                            "C",
+                            null,
+                            emptyList(),
+                            listOf(UpcomingTrip(trip2, schedule2))
+                        ),
+                        RealtimePatterns.ByHeadsign(
+                            route2,
+                            "D",
+                            null,
+                            emptyList(),
+                            listOf(UpcomingTrip(trip4, schedule3, prediction3))
+                        )
+                    )
+                )
+            )
+        )
+    )
+
+    MyApplicationTheme {
+        StopDetailsRoutesView(
+            viewModel = viewModel,
             global = null,
             now = Clock.System.now(),
             stopFilter = null,

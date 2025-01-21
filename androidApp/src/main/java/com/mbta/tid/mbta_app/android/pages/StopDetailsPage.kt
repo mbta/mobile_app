@@ -73,9 +73,9 @@ fun StopDetailsPage(
     StopDetailsView(
         modifier,
         stopId,
+        viewModel,
         filters.stopFilter,
         filters.tripFilter,
-        departures,
         pinnedRoutes.orEmpty(),
         ::togglePinnedRoute,
         onClose,

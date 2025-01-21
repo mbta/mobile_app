@@ -14,6 +14,9 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -99,6 +102,28 @@ class StopDetailsFilteredRouteViewTest {
 
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly() {
+
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+        viewModel.setDepartures(
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )
+            )
+        )
+
         composeTestRule.setContent {
             val filterState = remember {
                 mutableStateOf<StopDetailsFilter>(
@@ -107,19 +132,7 @@ class StopDetailsFilteredRouteViewTest {
             }
 
             StopDetailsFilteredRouteView(
-                departures =
-                    checkNotNull(
-                        StopDetailsDepartures.fromData(
-                            stop,
-                            globalResponse,
-                            null,
-                            PredictionsStreamDataResponse(builder),
-                            AlertsStreamDataResponse(emptyMap()),
-                            emptySet(),
-                            now,
-                            useTripHeadsigns = false,
-                        )
-                    ),
+                viewModel = viewModel,
                 global = globalResponse,
                 now = now,
                 stopFilter = filterState.value,
@@ -137,6 +150,28 @@ class StopDetailsFilteredRouteViewTest {
     @Test
     fun testTappingTripSetsFilter() {
         var tripFilter: TripDetailsFilter? = null
+
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+        viewModel.setDepartures(
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )
+            ),
+        )
+
         composeTestRule.setContent {
             val filterState = remember {
                 mutableStateOf<StopDetailsFilter>(
@@ -145,19 +180,7 @@ class StopDetailsFilteredRouteViewTest {
             }
 
             StopDetailsFilteredRouteView(
-                departures =
-                    checkNotNull(
-                        StopDetailsDepartures.fromData(
-                            stop,
-                            globalResponse,
-                            null,
-                            PredictionsStreamDataResponse(builder),
-                            AlertsStreamDataResponse(emptyMap()),
-                            emptySet(),
-                            now,
-                            useTripHeadsigns = false,
-                        )
-                    ),
+                viewModel = viewModel,
                 global = globalResponse,
                 now = now,
                 stopFilter = filterState.value,
