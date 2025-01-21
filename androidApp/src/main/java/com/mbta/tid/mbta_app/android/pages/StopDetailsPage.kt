@@ -10,21 +10,14 @@ import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.android.state.getSchedule
-import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
+import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.rememberSuspend
-import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -32,6 +25,7 @@ import org.koin.compose.koinInject
 @MapboxExperimental
 fun StopDetailsPage(
     modifier: Modifier = Modifier,
+    viewModel: StopDetailsViewModel,
     filters: StopDetailsPageFilters,
     alertData: AlertsStreamDataResponse?,
     onClose: () -> Unit,
@@ -39,23 +33,10 @@ fun StopDetailsPage(
     updateDepartures: (StopDetailsDepartures?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    val globalResponse = getGlobalData("StopDetailsPage.getGlobalData")
-
     val stopId = filters.stopId
-
-    val predictionsVM =
-        subscribeToPredictions(
-            stopIds = listOf(filters.stopId),
-            errorBannerViewModel = errorBannerViewModel
-        )
-    val predictionsResponse by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
-    val now = timer(updateInterval = 5.seconds)
-
-    val schedulesResponse =
-        getSchedule(stopIds = listOf(filters.stopId), "StopDetailsPage.getSchedule")
 
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
     fun togglePinnedRoute(routeId: String) {
@@ -65,31 +46,7 @@ fun StopDetailsPage(
         }
     }
 
-    val departures =
-        rememberSuspend(
-            stopId,
-            globalResponse,
-            schedulesResponse,
-            predictionsResponse,
-            alertData,
-            pinnedRoutes,
-            now
-        ) {
-            withContext(Dispatchers.Default) {
-                if (globalResponse != null) {
-                    StopDetailsDepartures.fromData(
-                        stopId,
-                        globalResponse,
-                        schedulesResponse,
-                        predictionsResponse,
-                        alertData,
-                        pinnedRoutes.orEmpty(),
-                        now,
-                        useTripHeadsigns = false,
-                    )
-                } else null
-            }
-        }
+    val departures by viewModel.stopDepartures.collectAsState()
 
     LaunchedEffect(departures) { updateDepartures(departures) }
 

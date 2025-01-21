@@ -18,6 +18,20 @@ sealed class SheetRoutes {
         val stopFilter: StopDetailsFilter?,
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
+
+    companion object {
+        /**
+         * Whether the page within the nearby transit tab changed. Moving from StopDetails to
+         * StopDetails is only considered a page change if the stopId changed.
+         */
+        fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+            return if (first is StopDetails && second is StopDetails) {
+                first.stopId != second.stopId
+            } else {
+                first != second
+            }
+        }
+    }
 }
 
 // Defining types for type-safe navigation with custom objects

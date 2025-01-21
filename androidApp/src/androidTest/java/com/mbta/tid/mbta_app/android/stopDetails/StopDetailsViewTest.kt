@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
@@ -188,6 +189,7 @@ class StopDetailsViewTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStopDetailsViewDisplaysCorrectly() {
         composeTestRule.setContent {
@@ -251,6 +253,8 @@ class StopDetailsViewTest {
                 )
             }
         }
+
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Stop"))
 
         composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertIsDisplayed()
 

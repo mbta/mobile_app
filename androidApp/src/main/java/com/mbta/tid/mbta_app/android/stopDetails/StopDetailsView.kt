@@ -133,7 +133,6 @@ fun StopDetailsView(
                     }
                 }
             }
-
             StopDetailsRoutesView(
                 departures,
                 globalResponse,
