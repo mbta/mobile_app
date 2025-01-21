@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.more
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,8 +35,10 @@ fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = 
             Modifier.clickable {
                     val webpage: Uri = Uri.parse(url)
                     val intent = Intent(Intent.ACTION_VIEW, webpage)
-                    if (intent.resolveActivity(context.packageManager) != null) {
+                    try {
                         context.startActivity(intent)
+                    } catch (_: ActivityNotFoundException) {
+                        Log.i("More", "Failed to navigate to link on MoreLink click")
                     }
                 }
                 .background(

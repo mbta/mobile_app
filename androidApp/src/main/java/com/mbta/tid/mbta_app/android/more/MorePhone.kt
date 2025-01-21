@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.more
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,10 +31,12 @@ fun MorePhone(label: String, phoneNumber: String) {
     Row(
         modifier =
             Modifier.clickable {
-                    val intent =
-                        Intent(Intent.ACTION_DIAL).apply { data = Uri.parse("tel:$phoneNumber") }
-                    if (intent.resolveActivity(context.packageManager) != null) {
+                    val numberUri = Uri.parse("tel:$phoneNumber")
+                    val intent = Intent(Intent.ACTION_DIAL).apply { data = numberUri }
+                    try {
                         context.startActivity(intent)
+                    } catch (_: ActivityNotFoundException) {
+                        Log.i("More", "Failed to dial number on MorePhone click")
                     }
                 }
                 .fillMaxWidth()
