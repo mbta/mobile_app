@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import androidx.navigation.NavBackStackEntry
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
@@ -44,6 +43,7 @@ import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -58,7 +58,6 @@ import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -75,15 +74,14 @@ fun HomeMapView(
     nearbyTransitSelectingLocationState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
     viewportProvider: ViewportProvider,
-    currentNavEntry: NavBackStackEntry?,
+    currentNavEntry: SheetRoutes?,
     handleStopNavigation: (String) -> Unit,
     vehiclesData: List<Vehicle>,
     stopDetailsDepartures: StopDetailsDepartures?,
-    stopDetailsFilter: StopDetailsFilter?,
     viewModel: IMapViewModel
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
-    val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
+    val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
 
     val coroutineScope = rememberCoroutineScope()
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
@@ -99,7 +97,7 @@ fun HomeMapView(
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
 
-    val isNearby = currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+    val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
 
     val analytics: Analytics = koinInject()
@@ -141,10 +139,10 @@ fun HomeMapView(
         val stopMapData = stopMapData ?: return
 
         val filteredRoutes =
-            if (stopDetailsFilter != null) {
+            if (currentNavEntry is SheetRoutes.StopDetails && currentNavEntry.stopFilter != null) {
                 RouteFeaturesBuilder.filteredRouteShapesForStop(
                     stopMapData,
-                    stopDetailsFilter,
+                    currentNavEntry.stopFilter,
                     stopDetailsDepartures
                 )
             } else {
@@ -180,13 +178,13 @@ fun HomeMapView(
 
     suspend fun handleNearbyNavRestoration() {
         if (
-            previousNavEntry?.destination?.route?.contains("NearbyTransit") == true &&
-                currentNavEntry?.destination?.route?.contains("StopDetails") == true
+            previousNavEntry is SheetRoutes.NearbyTransit &&
+                currentNavEntry is SheetRoutes.StopDetails
         ) {
             viewportProvider.saveNearbyTransitViewport()
         } else if (
-            previousNavEntry?.destination?.route?.contains("StopDetails") == true &&
-                currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+            previousNavEntry is SheetRoutes.StopDetails &&
+                currentNavEntry is SheetRoutes.NearbyTransit
         ) {
             refreshRouteLineSource()
             viewportProvider.restoreNearbyTransitViewport()
@@ -195,7 +193,11 @@ fun HomeMapView(
 
     suspend fun handleNavChange() {
         handleNearbyNavRestoration()
-        val stopId = currentNavEntry?.arguments?.getString("stopId")
+        val stopId =
+            when (currentNavEntry) {
+                is SheetRoutes.StopDetails -> currentNavEntry.stopId
+                else -> null
+            }
         if (stopId == null) {
             selectedStop = null
             return
@@ -259,7 +261,7 @@ fun HomeMapView(
             LaunchedEffect(stopSourceData) { refreshStopSource() }
 
             LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
-            LaunchedEffect(stopDetailsFilter) { updateDisplayedRoutesBasedOnStop() }
+            LaunchedEffect(currentNavEntry) { updateDisplayedRoutesBasedOnStop() }
 
             val locationProvider = remember { PassthroughLocationProvider() }
 
@@ -364,8 +366,7 @@ fun HomeMapView(
 
         LaunchedEffect(viewportProvider.isManuallyCentering) {
             if (
-                viewportProvider.isManuallyCentering &&
-                    currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+                viewportProvider.isManuallyCentering && currentNavEntry is SheetRoutes.NearbyTransit
             ) {
                 nearbyTransitSelectingLocation = true
             }
