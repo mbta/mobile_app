@@ -114,9 +114,9 @@ fun StopDetailsView(
                     departures?.elevatorAlerts?.map {
                         Column(
                             Modifier.background(
-                                colorResource(R.color.fill3),
-                                RoundedCornerShape(8.dp)
-                            )
+                                    colorResource(R.color.fill3),
+                                    RoundedCornerShape(8.dp)
+                                )
                                 .clip(RoundedCornerShape(8.dp))
                                 .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
                                 .clickable(
@@ -143,4 +143,3 @@ fun StopDetailsView(
         }
     }
 }
-

@@ -48,7 +48,8 @@ fun StopDetailsPage(
 
     val now = timer(updateInterval = 5.seconds)
 
-    val schedulesResponse = getSchedule(stopIds = listOf(filters.stopId), "StopDetailsPage.getSchedule")
+    val schedulesResponse =
+        getSchedule(stopIds = listOf(filters.stopId), "StopDetailsPage.getSchedule")
 
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 

@@ -310,8 +310,7 @@ fun NearbyTransitPage(
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         if (nearbyTransit.hideMaps) {
-            val isNearbyTransit =
-                currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
+            val isNearbyTransit = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
             SearchBarOverlay(
                 searchExpanded,
                 ::handleSearchExpandedChange,
