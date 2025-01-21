@@ -37,7 +37,7 @@ class StopDetailsViewModel(
     private val _stopData = MutableStateFlow<StopData?>(null)
     val stopData: StateFlow<StopData?> = _stopData
 
-    val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
+    private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
 
     private val stopPredictionsFetcher =
