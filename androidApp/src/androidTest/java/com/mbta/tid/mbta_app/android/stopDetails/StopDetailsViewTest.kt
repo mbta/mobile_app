@@ -271,7 +271,7 @@ class StopDetailsViewTest {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
                 StopDetailsView(
-                    stop = stop,
+                    stopId = stop.id,
                     departures =
                         StopDetailsDepartures(
                             listOf(
@@ -317,7 +317,8 @@ class StopDetailsViewTest {
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = {},
-                    filter = filterState.value,
+                    stopFilter = filterState.value,
+                    tripFilter = null,
                     updateStopFilter = filterState::value::set,
                     errorBannerViewModel =
                         ErrorBannerViewModel(
