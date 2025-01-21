@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
@@ -31,7 +32,13 @@ class MainApplication : Application() {
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
                 socket.wrapped()
             ) +
-                module { single<Analytics> { AnalyticsProvider(Firebase.analytics) } } +
+                module {
+                    single<Analytics> {
+                        if (R.string::class.members.any { it.name == "google_app_id" })
+                            AnalyticsProvider(Firebase.analytics)
+                        else MockAnalytics()
+                    }
+                } +
                 koinViewModelModule,
             this
         )

@@ -196,6 +196,8 @@ task("envVars") {
                 "</resources>"
             )
         googleSecretsFile.writeText(lines.joinToString(separator = "\n"))
+    } else {
+        logger.warn("FIREBASE_KEY or GOOGLE_APP_ID_ANDROID not provided, skipping Firebase setup")
     }
 }
 
