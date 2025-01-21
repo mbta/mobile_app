@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.android
 
 import android.app.Application
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
@@ -28,15 +30,15 @@ class MainApplication : Application() {
                 AccessibilityStatusRepository(applicationContext),
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
                 socket.wrapped()
-            ),
-            koinViewModelModule,
+            ) +
+                module { single<Analytics> { AnalyticsProvider(Firebase.analytics) } } +
+                koinViewModelModule,
             this
         )
     }
 
     companion object {
         val koinViewModelModule = module {
-            single<Analytics> { AnalyticsProvider.shared }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
         }

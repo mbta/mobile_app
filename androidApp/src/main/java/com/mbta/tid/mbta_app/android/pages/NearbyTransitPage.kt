@@ -35,9 +35,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.SheetRoutes
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -121,7 +121,7 @@ fun NearbyTransitPage(
     var searchExpanded by rememberSaveable { mutableStateOf(false) }
     val searchFocusRequester = remember { FocusRequester() }
 
-    val analytics = AnalyticsProvider.shared
+    val analytics: Analytics = koinInject()
 
     fun updateVisitHistory(stopId: String) {
         CoroutineScope(Dispatchers.Default).launch {

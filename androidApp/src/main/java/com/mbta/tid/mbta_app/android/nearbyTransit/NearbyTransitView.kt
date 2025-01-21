@@ -22,8 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.LoadingRouteCard
@@ -44,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun NearbyTransitView(
@@ -73,7 +74,7 @@ fun NearbyTransitView(
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
     val showElevatorAccessibility by nearbyVM.showElevatorAccessibility.collectAsState(false)
-    val analytics = AnalyticsProvider.shared
+    val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(targetLocation == null) {

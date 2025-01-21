@@ -15,6 +15,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -54,6 +56,7 @@ class SearchBarOverlayTest : KoinTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<Analytics> { MockAnalytics() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> { MockGlobalRepository() }
                 single<IGlobalRepository> {
@@ -65,7 +68,7 @@ class SearchBarOverlayTest : KoinTest {
                     object : ISearchResultRepository {
                         override suspend fun getSearchResults(
                             query: String
-                        ): ApiResult<SearchResults>? {
+                        ): ApiResult<SearchResults> {
                             return ApiResult.Ok(
                                 SearchResults(
                                     routes = emptyList(),

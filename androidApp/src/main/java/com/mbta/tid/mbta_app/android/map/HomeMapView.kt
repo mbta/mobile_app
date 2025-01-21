@@ -43,7 +43,7 @@ import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -65,6 +65,7 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @OptIn(MapboxExperimental::class)
 @Composable
@@ -101,7 +102,7 @@ fun HomeMapView(
     val isNearby = currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
 
-    val analytics = AnalyticsProvider.shared
+    val analytics: Analytics = koinInject()
     val context = LocalContext.current
 
     fun handleStopClick(map: MapView, point: Point): Boolean {

@@ -7,6 +7,8 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
@@ -124,6 +126,7 @@ class StopDetailsViewTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<Analytics> { MockAnalytics() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<ISchedulesRepository> { MockScheduleRepository() }
                 single<IPredictionsRepository> {

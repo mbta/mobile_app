@@ -28,12 +28,12 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsLocationAccess
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.compose.koinInject
 
 open class LocationDataManager {
     private val _currentLocation = MutableStateFlow<Location?>(null)
@@ -51,7 +51,7 @@ open class LocationDataManager {
     @Composable
     fun running(
         lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-        analytics: Analytics = AnalyticsProvider.shared
+        analytics: Analytics = koinInject()
     ): LocationDataManager {
         val permissions = rememberPermissions()
         val locationRequest =

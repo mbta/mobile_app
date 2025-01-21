@@ -8,7 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSchedule
@@ -25,6 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.compose.koinInject
 
 @Composable
 @ExperimentalMaterial3Api
@@ -48,7 +49,7 @@ fun StopDetailsPage(
         )
     val predictionsResponse by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
-    val analytics = AnalyticsProvider.shared
+    val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
     val now = timer(updateInterval = 5.seconds)
 

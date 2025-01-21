@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Instant
+import org.koin.compose.koinInject
 
 @Composable
 fun StopDeparturesSummaryList(
@@ -21,7 +21,7 @@ fun StopDeparturesSummaryList(
     now: Instant,
     context: TripInstantDisplay.Context,
     pinned: Boolean,
-    analytics: Analytics = AnalyticsProvider.shared,
+    analytics: Analytics = koinInject(),
     onClick: (RealtimePatterns) -> Unit
 ) {
     val localContext = LocalContext.current

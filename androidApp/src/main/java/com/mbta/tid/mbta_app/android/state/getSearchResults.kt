@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.analytics.Analytics
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.SearchResults
@@ -84,7 +83,7 @@ class SearchResultsViewModel(
 @Composable
 fun getSearchResultsVm(
     globalResponse: GlobalResponse?,
-    analytics: Analytics = AnalyticsProvider.shared,
+    analytics: Analytics = koinInject(),
     searchResultRepository: ISearchResultRepository = koinInject(),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject()
 ): SearchResultsViewModel {

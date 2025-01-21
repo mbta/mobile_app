@@ -19,9 +19,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsColorScheme
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
-import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.component.BottomNavBar
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheetState
@@ -76,7 +76,7 @@ fun ContentView(
         onPauseOrDispose { socket.detach() }
     }
 
-    val analytics = AnalyticsProvider.shared
+    val analytics: Analytics = koinInject()
 
     val colorScheme =
         if (isSystemInDarkTheme()) AnalyticsColorScheme.Dark else AnalyticsColorScheme.Light
