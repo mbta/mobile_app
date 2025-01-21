@@ -54,7 +54,8 @@ fun StopDetailsPage(
     val coroutineScope = rememberCoroutineScope()
     val now = timer(updateInterval = 5.seconds)
 
-    val schedulesResponse = getSchedule(stopIds = listOf(filters.stopId), "StopDetailsPage.getSchedule")
+    val schedulesResponse =
+        getSchedule(stopIds = listOf(filters.stopId), "StopDetailsPage.getSchedule")
 
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
     fun togglePinnedRoute(routeId: String) {
