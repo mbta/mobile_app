@@ -24,12 +24,7 @@ struct StopDetailsDownstreamAlert: View {
             Text("\(alert.effectDescription()) ahead")
                 .font(.callout)
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-            Image(.faCircleInfo)
-                .resizable()
-                .frame(width: iconSize, height: iconSize, alignment: .center)
-                .padding(4)
-                .foregroundStyle(Color.deemphasized)
+            InfoIcon(size: iconSize).padding(4)
         }
         .padding(.horizontal, 8).padding(.vertical, 10)
         .background(Color.fill2)

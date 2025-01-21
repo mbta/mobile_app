@@ -25,12 +25,9 @@ struct StopDetailsAlertHeader: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.vertical, 3)
-            Image(.faCircleInfo)
-                .resizable()
-                .frame(width: iconSize, height: iconSize)
+            InfoIcon(size: iconSize)
                 .padding(4)
                 .frame(maxHeight: .infinity, alignment: .center)
-                .foregroundStyle(Color.deemphasized)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 12)

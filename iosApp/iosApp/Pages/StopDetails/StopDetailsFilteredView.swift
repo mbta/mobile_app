@@ -21,6 +21,7 @@ struct StopDetailsFilteredView: View {
     var now: Date
 
     var alerts: [shared.Alert]
+    var downstreamAlerts: [shared.Alert]
     var patternsByStop: PatternsByStop?
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
@@ -68,8 +69,10 @@ struct StopDetailsFilteredView: View {
         if let departures, let patternsByStop {
             if let global = stopDetailsVM.global {
                 alerts = patternsByStop.alertsHereFor(directionId: stopFilter.directionId, global: global)
+                downstreamAlerts = patternsByStop.alertsDownstream(directionId: stopFilter.directionId)
             } else {
                 alerts = []
+                downstreamAlerts = []
             }
 
             tiles = departures.stopDetailsFormattedTrips(
@@ -99,6 +102,7 @@ struct StopDetailsFilteredView: View {
 
         } else {
             alerts = []
+            downstreamAlerts = []
             noPredictionsStatus = nil
             tiles = []
         }
@@ -136,6 +140,7 @@ struct StopDetailsFilteredView: View {
                     tiles: tiles,
                     noPredictionsStatus: noPredictionsStatus,
                     alerts: alerts,
+                    downstreamAlerts: downstreamAlerts,
                     patternsByStop: patternsByStop,
                     pinned: pinned,
                     now: now,
@@ -197,6 +202,7 @@ struct StopDetailsFilteredView: View {
             tiles: tiles,
             noPredictionsStatus: nil,
             alerts: alerts,
+            downstreamAlerts: downstreamAlerts,
             patternsByStop: loadingPatterns,
             pinned: pinned,
             now: now,
