@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,7 +21,6 @@ import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
 @Composable
-@ExperimentalMaterial3Api
 @MapboxExperimental
 fun StopDetailsPage(
     modifier: Modifier = Modifier,
@@ -50,24 +48,25 @@ fun StopDetailsPage(
 
     val departures by viewModel.stopDepartures.collectAsState()
 
-    LaunchedEffect(departures) {
+    LaunchedEffect(departures, filters) {
         updateDepartures(departures)
-        val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
 
-        val autoTripFilter =
-            departures?.autoTripFilter(stopFilter, filters.tripFilter, now) ?: filters.tripFilter
+        if (departures != null) {
+            val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
 
-        if (stopFilter != filters.stopFilter) {
-            updateStopFilter(stopFilter)
+            val autoTripFilter =
+                departures?.autoTripFilter(stopFilter, filters.tripFilter, now)
+                    ?: filters.tripFilter
+
+            if (stopFilter != filters.stopFilter) {
+                updateStopFilter(stopFilter)
+            }
+            // Wait until auto stopFilter has been applied to apply the trip filter
+            // to ensure that tripFilter doesn't overwrite the new stopFilter
+            if (filters.stopFilter == stopFilter && autoTripFilter != filters.tripFilter) {
+                updateTripFilter(autoTripFilter)
+            }
         }
-
-        if (autoTripFilter != filters.tripFilter) {
-            updateTripFilter(autoTripFilter)
-        }
-    }
-
-    LaunchedEffect(filters) {
-        updateTripFilter(departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now))
     }
 
     StopDetailsView(
