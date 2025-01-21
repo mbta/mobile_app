@@ -138,7 +138,7 @@ task("envVars") {
         val bufferedReader: BufferedReader = envFile.bufferedReader()
         bufferedReader.use {
             it.readLines()
-                .filter { line -> line.contains("export") }
+                .filter { line -> line.startsWith("export") }
                 .map { line ->
                     val cleanLine = line.replace("export", "")
                     props.load(StringReader(cleanLine))
