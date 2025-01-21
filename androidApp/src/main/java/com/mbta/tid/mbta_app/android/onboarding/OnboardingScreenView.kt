@@ -1,6 +1,12 @@
 package com.mbta.tid.mbta_app.android.onboarding
 
 import android.util.TypedValue
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -105,9 +111,7 @@ fun OnboardingScreenView(
     val bottomPadding = if (screenHeight < 812f) 16.dp else 52.dp
     val sidePadding = if (screenWidth < 393f) 16.dp else 32.dp
     val locationHaloSize = screenWidth * 0.8f
-    val locationHaloSizeDp = with(LocalDensity.current) { locationHaloSize.roundToInt().toDp() }
     val moreHaloSize = screenWidth * 0.55f
-    val moreHaloSizeDp = with(LocalDensity.current) { moreHaloSize.roundToInt().toDp() }
     val haloOffset =
         if ((screenWidth / screenHeight) >= 390f / 844f) {
             val scaledHeight = (screenWidth / 390f) * 844f
@@ -117,6 +121,24 @@ fun OnboardingScreenView(
         }
     val haloOffsetDp = with(LocalDensity.current) { haloOffset.roundToInt().toDp() }
     val buttonModifier = Modifier.fillMaxWidth().height(52.dp)
+    val haloTransition = rememberInfiniteTransition(label = "infinite")
+    val haloSizeMultiplier =
+        haloTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 1.22f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(durationMillis = 1250, easing = EaseInOut),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+            label = "haloSizeMultiplier"
+        )
+    val moreHaloSizeDp =
+        with(LocalDensity.current) { moreHaloSize.roundToInt().toDp() * haloSizeMultiplier.value }
+    val locationHaloSizeDp =
+        with(LocalDensity.current) {
+            locationHaloSize.roundToInt().toDp() * haloSizeMultiplier.value
+        }
 
     Column {
         when (screen) {
@@ -159,9 +181,11 @@ fun OnboardingScreenView(
                         Button(
                             modifier = Modifier.fillMaxWidth().height(52.dp),
                             onClick = advance,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(8.dp),
                         ) {
-                            Text(stringResource(R.string.onboarding_feedback_advance))
+                            Text(
+                                stringResource(R.string.onboarding_feedback_advance),
+                            )
                         }
                     }
                 }
@@ -205,9 +229,13 @@ fun OnboardingScreenView(
                                 .height(52.dp)
                                 .padding(start = 32.dp, end = 32.dp),
                         shape = RoundedCornerShape(8.dp),
-                        onClick = { hideMaps(true) }
+                        onClick = { hideMaps(true) },
                     ) {
-                        Text(stringResource(R.string.onboarding_hide_maps_hide), fontSize = 17.sp)
+                        Text(
+                            stringResource(R.string.onboarding_hide_maps_hide),
+                            fontSize = 17.sp,
+                            color = colorResource(R.color.fill3)
+                        )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
@@ -299,7 +327,7 @@ fun OnboardingScreenView(
                         Button(
                             modifier = buttonModifier,
                             shape = RoundedCornerShape(8.dp),
-                            onClick = ::shareLocation
+                            onClick = ::shareLocation,
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_location_advance),
