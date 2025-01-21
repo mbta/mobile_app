@@ -1,5 +1,8 @@
 package com.mbta.tid.mbta_app.android.more
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,30 +15,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
 @Composable
 fun MorePhone(label: String, phoneNumber: String) {
+    val context = LocalContext.current
+
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+        modifier =
+            Modifier.clickable {
+                    val intent =
+                        Intent(Intent.ACTION_DIAL).apply { data = Uri.parse("tel:$phoneNumber") }
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(intent)
+                    }
+                }
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column() {
-            Text(
-                buildAnnotatedString {
-                    withLink(LinkAnnotation.Url("tel:${phoneNumber}")) { append(label) }
-                },
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+        Column { Text(label, style = MaterialTheme.typography.bodyMedium) }
         Icon(
             painterResource(R.drawable.fa_phone),
             contentDescription = stringResource(id = R.string.icon_description_external_link),

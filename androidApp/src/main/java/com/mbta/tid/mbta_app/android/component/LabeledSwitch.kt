@@ -14,7 +14,12 @@ import androidx.compose.ui.semantics.Role
 
 // From https://www.magentaa11y.com/checklist-native/toggle-switch/
 @Composable
-fun LabeledSwitch(label: String, value: Boolean, onValueChange: ((Boolean) -> Unit)) {
+fun LabeledSwitch(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: Boolean,
+    onValueChange: ((Boolean) -> Unit)
+) {
     Row(
         modifier =
             Modifier.toggleable(
@@ -22,7 +27,8 @@ fun LabeledSwitch(label: String, value: Boolean, onValueChange: ((Boolean) -> Un
                     role = Role.Switch,
                     onValueChange = onValueChange,
                 )
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .then(modifier),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

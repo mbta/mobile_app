@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.more
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,7 +36,7 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
     val note = section.note
 
     if (!(section.requiresStaging && appVariant != AppVariant.Staging)) {
-        Column() {
+        Column {
             if (name != null) {
                 Column(modifier = Modifier.padding(2.dp)) {
                     Text(name, style = MaterialTheme.typography.titleMedium)
@@ -55,10 +54,12 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
                 section.items.mapIndexed { index, item ->
                     when (item) {
                         is MoreItem.Toggle ->
-                            Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-                                LabeledSwitch(label = item.label, value = item.value) {
-                                    toggleSetting(item.settings)
-                                }
+                            LabeledSwitch(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                label = item.label,
+                                value = item.value
+                            ) {
+                                toggleSetting(item.settings)
                             }
                         is MoreItem.Link ->
                             MoreLink(
