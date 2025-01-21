@@ -91,7 +91,7 @@ struct TripHeaderCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text("Scheduled to depart").font(Typography.footnote)
-                    if onTap != nil { infoIcon }
+                    if onTap != nil { InfoIcon() }
                 }
                 Text(stopEntry.stop.name)
                     .font(Typography.headlineBold)
@@ -247,7 +247,7 @@ struct TripHeaderCard: View {
     @ViewBuilder private var tripIndicator: some View {
         VStack {
             switch spec {
-            case .finishingAnotherTrip, .noVehicle: if onTap != nil { infoIcon }
+            case .finishingAnotherTrip, .noVehicle: if onTap != nil { InfoIcon() }
             case .vehicle: liveIndicator
             case .scheduled: EmptyView()
             }
@@ -260,14 +260,6 @@ struct TripHeaderCard: View {
                 ).foregroundStyle(Color.text).opacity(0.6)
             }
         }
-    }
-
-    @ViewBuilder private var infoIcon: some View {
-        Image(.faCircleInfo)
-            .resizable()
-            .frame(width: 16, height: 16)
-            .foregroundStyle(Color.text.opacity(0.5))
-            .accessibilityHidden(true)
     }
 
     @ViewBuilder private var liveIndicator: some View {

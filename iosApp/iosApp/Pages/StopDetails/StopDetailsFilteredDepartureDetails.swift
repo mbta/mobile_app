@@ -19,6 +19,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var tiles: [TileData]
     var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
     var alerts: [shared.Alert]
+    var downstreamAlerts: [shared.Alert]
     var patternsByStop: PatternsByStop
     var pinned: Bool
 
@@ -201,29 +202,41 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
+    func getAlertDetailsHandler(_ alertId: String) -> () -> Void {
+        {
+            nearbyVM.pushNavEntry(.alertDetails(
+                alertId: alertId,
+                line: patternsByStop.line,
+                routes: patternsByStop.routes
+            ))
+            analytics.tappedAlertDetails(
+                routeId: patternsByStop.routeIdentifier,
+                stopId: patternsByStop.stop.id,
+                alertId: alertId
+            )
+        }
+    }
+
+    @ViewBuilder
+    func alertCard(_ alert: shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
+        AlertCard(
+            alert: alert,
+            spec: spec ?? (alert.significance == .major ? .major : .secondary),
+            color: routeColor,
+            textColor: routeTextColor,
+            onViewDetails: getAlertDetailsHandler(alert.id)
+        )
+    }
+
     @ViewBuilder
     var alertCards: some View {
-        ForEach(alerts, id: \.id) { alert in
-            let openDetails = {
-                nearbyVM.pushNavEntry(.alertDetails(
-                    alertId: alert.id,
-                    line: patternsByStop.line,
-                    routes: patternsByStop.routes
-                ))
-                analytics.tappedAlertDetails(
-                    routeId: patternsByStop.routeIdentifier,
-                    stopId: patternsByStop.stop.id,
-                    alertId: alert.id
-                )
+        VStack(spacing: 16) {
+            ForEach(alerts, id: \.id) { alert in
+                alertCard(alert)
             }
-            VStack(spacing: 0) {
-                if alert.significance == .major {
-                    AlertCard(alert: alert, color: routeColor, textColor: routeTextColor, onViewDetails: openDetails)
-                } else {
-                    StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
-                        .onTapGesture(perform: openDetails)
-                }
-            }.padding(.horizontal, 8)
-        }
+            ForEach(downstreamAlerts, id: \.id) { alert in
+                alertCard(alert, .downstream)
+            }
+        }.padding(.horizontal, 16)
     }
 }
