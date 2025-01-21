@@ -28,7 +28,8 @@ fun StopDetailsRouteView(
                 condenseHeadsignPredictions = patternsByStop.routes.size > 1,
                 now,
                 TripInstantDisplay.Context.StopDetailsUnfiltered,
-                ::onTappedPatterns
+                pinned,
+                onClick = ::onTappedPatterns
             )
         }
     } else {
@@ -39,7 +40,8 @@ fun StopDetailsRouteView(
                 false,
                 now,
                 TripInstantDisplay.Context.StopDetailsUnfiltered,
-                ::onTappedPatterns
+                pinned,
+                onClick = ::onTappedPatterns
             )
         }
     }

@@ -49,6 +49,7 @@ class StopDeparturesSummaryListTest {
                 condenseHeadsignPredictions = false,
                 now = now,
                 context = TripInstantDisplay.Context.NearbyTransit,
+                pinned = false,
                 onClick = {}
             )
         }

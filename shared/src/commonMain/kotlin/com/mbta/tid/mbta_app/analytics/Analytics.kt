@@ -162,13 +162,6 @@ abstract class Analytics {
         )
     }
 
-    fun toggledPinnedRouteAtStop(pinned: Boolean, routeId: String) {
-        logEvent(
-            if (pinned) "pin_route" else "unpin_route",
-            "route_id" to routeId,
-        )
-    }
-
     fun track(screen: AnalyticsScreen) {
         logEvent(
             ANALYTICS_EVENT_SCREEN_VIEW,

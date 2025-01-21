@@ -11,12 +11,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
+import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -35,7 +39,11 @@ class ContentViewTests : KoinTest {
         modules(
             repositoriesModule(MockRepositories.buildWithDefaults()),
             MainApplication.koinViewModelModule,
-            module { single<PhoenixSocket> { MockPhoenixSocket() } },
+            module {
+                single<Analytics> { MockAnalytics() }
+                single<IAccessibilityStatusRepository> { MockAccessibilityStatusRepository(false) }
+                single<PhoenixSocket> { MockPhoenixSocket() }
+            },
         )
     }
 
@@ -70,6 +78,10 @@ class ContentViewTests : KoinTest {
                 repositoriesModule(MockRepositories.buildWithDefaults()),
                 MainApplication.koinViewModelModule,
                 module {
+                    single<Analytics> { MockAnalytics() }
+                    single<IAccessibilityStatusRepository> {
+                        MockAccessibilityStatusRepository(false)
+                    }
                     single<PhoenixSocket> {
                         MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 })
                     }

@@ -138,7 +138,7 @@ task("envVars") {
         val bufferedReader: BufferedReader = envFile.bufferedReader()
         bufferedReader.use {
             it.readLines()
-                .filter { line -> line.contains("export") }
+                .filter { line -> line.startsWith("export") }
                 .map { line ->
                     val cleanLine = line.replace("export", "")
                     props.load(StringReader(cleanLine))
@@ -196,6 +196,8 @@ task("envVars") {
                 "</resources>"
             )
         googleSecretsFile.writeText(lines.joinToString(separator = "\n"))
+    } else {
+        logger.warn("FIREBASE_KEY or GOOGLE_APP_ID_ANDROID not provided, skipping Firebase setup")
     }
 }
 

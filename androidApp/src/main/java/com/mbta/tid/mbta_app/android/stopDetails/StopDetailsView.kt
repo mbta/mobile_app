@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -27,6 +28,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import kotlin.time.Duration.Companion.seconds
+import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsView(
@@ -45,6 +47,7 @@ fun StopDetailsView(
     val showElevatorAccessibility = false
 
     val now = timer(updateInterval = 5.seconds)
+    val analytics: Analytics = koinInject()
 
     val servedRoutes =
         remember(departures, globalResponse) {
@@ -64,6 +67,7 @@ fun StopDetailsView(
         }
 
     val onTapRoutePill = { pillFilter: PillFilter ->
+        analytics.tappedRouteFilter(pillFilter.id, stop.id)
         val filterId = pillFilter.id
         if (filter?.routeId == filterId) {
             updateStopFilter(null)

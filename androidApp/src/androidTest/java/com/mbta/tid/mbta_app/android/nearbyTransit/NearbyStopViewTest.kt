@@ -102,6 +102,7 @@ class NearbyStopViewTest {
                 patternsAtStop = patternsByStop,
                 condenseHeadsignPredictions = false,
                 now = now,
+                pinned = false,
                 onOpenStopDetails = { _, _ -> }
             )
         }
@@ -118,6 +119,7 @@ class NearbyStopViewTest {
                 patternsAtStop = patternsByStop,
                 condenseHeadsignPredictions = false,
                 now = now,
+                pinned = false,
                 onOpenStopDetails = { _, _ -> },
                 showElevatorAccessibility = true
             )

@@ -116,7 +116,7 @@ struct StopDetailsFilteredView: View {
         Task {
             if let routeId = patternsByStop?.routeIdentifier {
                 let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
-                analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
+                analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 stopDetailsVM.loadPinnedRoutes()
             }
         }

@@ -5,8 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSchedule
@@ -21,7 +23,9 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.compose.koinInject
 
 @Composable
 @ExperimentalMaterial3Api
@@ -45,11 +49,19 @@ fun StopDetailsPage(
         )
     val predictionsResponse by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
+    val analytics: Analytics = koinInject()
+    val coroutineScope = rememberCoroutineScope()
     val now = timer(updateInterval = 5.seconds)
 
     val schedulesResponse = getSchedule(stopIds = listOf(stop.id), "StopDetailsPage.getSchedule")
 
-    val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
+    val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
+    fun togglePinnedRoute(routeId: String) {
+        coroutineScope.launch {
+            val pinned = rawTogglePinnedRoute(routeId)
+            analytics.toggledPinnedRoute(pinned, routeId)
+        }
+    }
 
     val departures =
         rememberSuspend(
@@ -85,7 +97,7 @@ fun StopDetailsPage(
         filter,
         departures,
         pinnedRoutes.orEmpty(),
-        togglePinnedRoute,
+        ::togglePinnedRoute,
         onClose,
         updateStopFilter,
         errorBannerViewModel
