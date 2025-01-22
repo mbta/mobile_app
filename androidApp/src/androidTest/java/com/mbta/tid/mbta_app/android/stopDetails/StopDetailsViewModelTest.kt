@@ -13,11 +13,15 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
@@ -25,6 +29,7 @@ import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
@@ -254,19 +259,22 @@ class StopDetailsViewModelTest {
 
         val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
 
-        val stopId = mutableStateOf<String?>("stop1")
+        val stopFilters =
+            mutableStateOf<StopDetailsPageFilters?>(StopDetailsPageFilters("stop1", null, null))
 
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.STARTED)
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
-                var stopId by remember { stopId }
+                var stopFilters by remember { stopFilters }
                 stopDetailsManagedVM(
-                    stopId,
+                    stopFilters,
                     viewModel = viewModel,
                     globalResponse = null,
                     alertData = null,
-                    pinnedRoutes = setOf()
+                    pinnedRoutes = setOf(),
+                    updateStopFilter = { _, _ -> },
+                    updateTripFilter = { _, _ -> }
                 )
             }
         }
@@ -277,7 +285,7 @@ class StopDetailsViewModelTest {
         assertEquals(1, disconnectCount)
         assertEquals("stop1", viewModel.stopData.value?.stopId)
 
-        stopId.value = "stop2"
+        stopFilters.value = StopDetailsPageFilters("stop2", null, null)
 
         composeTestRule.waitUntil { connectCount == 2 }
 
@@ -306,19 +314,21 @@ class StopDetailsViewModelTest {
 
         val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
 
-        val stopId = mutableStateOf<String?>("stop1")
+        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
-                var stopId by remember { stopId }
+                var stopFilters by remember { stopFilters }
                 stopDetailsManagedVM(
-                    stopId,
+                    stopFilters,
                     viewModel = viewModel,
                     globalResponse = null,
                     alertData = null,
-                    pinnedRoutes = setOf()
+                    pinnedRoutes = setOf(),
+                    updateStopFilter = { _, _ -> },
+                    updateTripFilter = { _, _ -> }
                 )
             }
         }
@@ -363,18 +373,20 @@ class StopDetailsViewModelTest {
 
         val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
 
-        val stopId = mutableStateOf<String?>("stop1")
+        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
         assertNull(viewModel.stopDepartures.value)
 
         composeTestRule.setContent {
-            var stopId by remember { stopId }
+            var stopFilters by remember { stopFilters }
             stopDetailsManagedVM(
-                stopId,
+                stopFilters,
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
-                pinnedRoutes = setOf()
+                pinnedRoutes = setOf(),
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> }
             )
         }
 
@@ -395,7 +407,7 @@ class StopDetailsViewModelTest {
 
         predictionsRepo.lastUpdated = Clock.System.now()
 
-        var stopId = mutableStateOf("stop1")
+        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
         var checkPredictionsStaleCount = 0
         val errorBannerRepo =
@@ -406,17 +418,251 @@ class StopDetailsViewModelTest {
         val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
 
         composeTestRule.setContent {
-            var stopId by remember { stopId }
+            var stopFilters by remember { stopFilters }
             stopDetailsManagedVM(
-                stopId,
+                stopFilters,
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
                 pinnedRoutes = setOf(),
-                checkPredictionsStaleInterval = 1.seconds
+                checkPredictionsStaleInterval = 1.seconds,
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> }
             )
         }
 
         composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }
+    }
+
+    @Test
+    fun testManagersAppliesStopFilterAutomaticallyOnDepartureChange() = runTest {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val route = objects.route {}
+        val stop = objects.stop {}
+
+        val tripId = "trip"
+        val routePattern = objects.routePattern(route) { representativeTripId = tripId }
+        val trip1 =
+            objects.trip(routePattern) {
+                id = tripId
+                directionId = 0
+                stopIds = listOf(stop.id)
+                routePatternId = routePattern.id
+            }
+        objects.schedule {
+            routeId = route.id
+            stopId = stop.id
+            stopSequence = 0
+            departureTime = now.plus(10.minutes)
+            trip = trip1
+        }
+
+        objects.prediction()
+
+        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
+
+        val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
+        val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+
+        val stopFilters = mutableStateOf(StopDetailsPageFilters(stop.id, null, null))
+
+        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+
+        var newStopFilter: StopDetailsFilter? = null
+
+        composeTestRule.setContent {
+            var stopFilters by remember { stopFilters }
+            stopDetailsManagedVM(
+                stopFilters,
+                viewModel = viewModel,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                checkPredictionsStaleInterval = 1.seconds,
+                updateStopFilter = { _, filter -> newStopFilter = filter },
+                updateTripFilter = { _, _ -> }
+            )
+
+            LaunchedEffect(null) {
+                viewModel.setDepartures(
+                    StopDetailsDepartures.fromData(
+                        stop,
+                        GlobalResponse(objects),
+                        ScheduleResponse(objects),
+                        PredictionsStreamDataResponse(objects),
+                        AlertsStreamDataResponse(objects),
+                        setOf(),
+                        now,
+                        false
+                    )
+                )
+            }
+        }
+
+        composeTestRule.waitUntil {
+            newStopFilter == StopDetailsFilter(route.id, routePattern.directionId)
+        }
+
+        assertEquals(StopDetailsFilter(route.id, routePattern.directionId), newStopFilter)
+    }
+
+    @Test
+    fun testManagerAppliesTripFilterAutomaticallyOnDepartureChange() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+
+        val now = Clock.System.now()
+
+        val route = objects.route {}
+
+        val tripId = "trip"
+        val routePattern = objects.routePattern(route) { representativeTripId = tripId }
+        val trip1 =
+            objects.trip(routePattern) {
+                id = tripId
+                directionId = 0
+                stopIds = listOf(stop.id)
+                routePatternId = routePattern.id
+            }
+        val schedule =
+            objects.schedule {
+                routeId = route.id
+                stopId = stop.id
+                stopSequence = 0
+                departureTime = now.plus(10.minutes)
+                trip = trip1
+            }
+
+        objects.prediction(schedule) { departureTime = now.plus(10.minutes) }
+
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+
+        val stopFilters =
+            mutableStateOf(StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null))
+
+        var newTripFilter: TripDetailsFilter? = null
+
+        composeTestRule.setContent {
+            var stopFilters by remember { stopFilters }
+            stopDetailsManagedVM(
+                stopFilters,
+                viewModel = viewModel,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                checkPredictionsStaleInterval = 1.seconds,
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter }
+            )
+
+            LaunchedEffect(null) {
+                viewModel.setDepartures(
+                    StopDetailsDepartures.fromData(
+                        stop,
+                        GlobalResponse(objects),
+                        ScheduleResponse(objects),
+                        PredictionsStreamDataResponse(objects),
+                        AlertsStreamDataResponse(objects),
+                        setOf(),
+                        now,
+                        false
+                    )
+                )
+            }
+        }
+
+        val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
+
+        composeTestRule.waitUntil { newTripFilter == expectedTripFilter }
+        kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
+    }
+
+    @Test
+    fun testManagerAppliesTripFilterAutomaticallyOnFilterChange() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+
+        val now = Clock.System.now()
+
+        val route = objects.route {}
+
+        val tripId = "trip"
+        val routePattern = objects.routePattern(route) { representativeTripId = tripId }
+        val trip1 =
+            objects.trip(routePattern) {
+                id = tripId
+                directionId = 0
+                stopIds = listOf(stop.id)
+                routePatternId = routePattern.id
+            }
+        val schedule =
+            objects.schedule {
+                routeId = route.id
+                stopId = stop.id
+                stopSequence = 0
+                departureTime = now.plus(10.minutes)
+                trip = trip1
+            }
+
+        objects.prediction(schedule) { departureTime = now.plus(10.minutes) }
+
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+
+        // There are no trips in direction 1
+        val stopFilters =
+            mutableStateOf(StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 1), null))
+
+        var newTripFilter: TripDetailsFilter? = null
+
+        composeTestRule.setContent {
+            var filters by remember { stopFilters }
+            stopDetailsManagedVM(
+                filters,
+                viewModel = viewModel,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                checkPredictionsStaleInterval = 1.seconds,
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter }
+            )
+
+            LaunchedEffect(null) {
+                viewModel.setDepartures(
+                    StopDetailsDepartures.fromData(
+                        stop,
+                        GlobalResponse(objects),
+                        ScheduleResponse(objects),
+                        PredictionsStreamDataResponse(objects),
+                        AlertsStreamDataResponse(objects),
+                        setOf(),
+                        now,
+                        false
+                    )
+                )
+
+                stopFilters.value =
+                    StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null)
+            }
+        }
+
+        val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
+
+        composeTestRule.waitUntil { newTripFilter == expectedTripFilter }
+        kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
     }
 }

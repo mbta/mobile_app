@@ -141,7 +141,7 @@ fun StopDetailsView(
                 viewModel,
                 globalResponse,
                 now,
-                stopFilter ?: departures?.autoStopFilter(),
+                stopFilter,
                 tripFilter,
                 togglePinnedRoute,
                 pinnedRoutes,

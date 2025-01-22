@@ -17,7 +17,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
 @Composable
@@ -26,7 +25,6 @@ fun StopDetailsPage(
     modifier: Modifier = Modifier,
     viewModel: StopDetailsViewModel,
     filters: StopDetailsPageFilters,
-    now: Instant,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -48,26 +46,7 @@ fun StopDetailsPage(
 
     val departures by viewModel.stopDepartures.collectAsState()
 
-    LaunchedEffect(departures, filters) {
-        updateDepartures(departures)
-
-        if (departures != null) {
-            val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
-
-            val autoTripFilter =
-                departures?.autoTripFilter(stopFilter, filters.tripFilter, now)
-                    ?: filters.tripFilter
-
-            if (stopFilter != filters.stopFilter) {
-                updateStopFilter(stopFilter)
-            }
-            // Wait until auto stopFilter has been applied to apply the trip filter
-            // to ensure that tripFilter doesn't overwrite the new stopFilter
-            if (filters.stopFilter == stopFilter && autoTripFilter != filters.tripFilter) {
-                updateTripFilter(autoTripFilter)
-            }
-        }
-    }
+    LaunchedEffect(departures) { updateDepartures(departures) }
 
     StopDetailsView(
         modifier,

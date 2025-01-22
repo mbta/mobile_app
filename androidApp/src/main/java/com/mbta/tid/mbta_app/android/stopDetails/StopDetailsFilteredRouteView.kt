@@ -99,7 +99,6 @@ fun StopDetailsFilteredRouteView(
                     val route = patternsByStop.routes.first { it.id == row.upcoming.trip.routeId }
 
                     Column(modifier.border(1.dp, colorResource(R.color.halo))) {
-                        // TODO: Convert to tiles and TileData
                         HeadsignRowView(
                             row.upcoming.trip.headsign,
                             RealtimePatterns.Format.Some(listOf(row.formatted), null),
