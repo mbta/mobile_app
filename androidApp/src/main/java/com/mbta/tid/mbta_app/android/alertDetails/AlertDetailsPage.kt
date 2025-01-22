@@ -15,7 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
@@ -124,7 +125,7 @@ private fun getAlert(
     alertId: String,
     goBack: () -> Unit
 ): Alert? {
-    var result by remember { mutableStateOf<Alert?>(null) }
+    var result by rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<Alert?>(null) }
     if (alerts == null) return result
     val newAlertData = alerts.alerts[alertId]
     // If no alert is already set, and no alert was found with the provided ID,

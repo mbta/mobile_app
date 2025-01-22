@@ -62,6 +62,7 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -233,7 +234,8 @@ fun NearbyTransitPage(
         )
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var currentModal by remember { mutableStateOf<ModalRoutes?>(null) }
+    var currentModal by
+        rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
 
     fun openModal(modal: ModalRoutes) {
         currentModal = modal
