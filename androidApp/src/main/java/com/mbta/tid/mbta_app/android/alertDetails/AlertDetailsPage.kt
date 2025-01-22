@@ -34,23 +34,24 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.Line
-import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun AlertDetailsPage(
     alertId: String,
-    line: Line?,
-    routes: List<Route>?,
-    alerts: AlertsStreamDataResponse?,
+    lineId: String?,
+    routeIds: List<String>?,
     stopId: String?,
+    alerts: AlertsStreamDataResponse?,
     goBack: () -> Unit
 ) {
     val alert = getAlert(alerts, alertId, goBack)
     val globalResponse = getGlobalData("AlertDetailsPage.loadGlobal")
     val now = timer(5.seconds)
+
+    val line = globalResponse?.getLine(lineId)
+    val routes = routeIds?.mapNotNull { globalResponse?.routes?.get(it) }
 
     val firstRoute = routes?.firstOrNull()
 
@@ -111,7 +112,7 @@ fun AlertDetailsPage(
             ActionButton(ActionButtonKind.Close) { goBack() }
         }
         if (alert != null) {
-            AlertDetails(alert, line, routes, affectedStops, stopId, now)
+            AlertDetails(alert, line, routes, stopId, affectedStops, now)
         } else {
             CircularProgressIndicator()
         }

@@ -431,10 +431,10 @@ fun NearbyTransitPage(
                     is ModalRoutes.AlertDetails ->
                         AlertDetailsPage(
                             modal.alertId,
-                            modal.line,
-                            modal.routes,
-                            nearbyTransit.alertData,
+                            modal.lineId,
+                            modal.routeIds,
                             modal.stopId,
+                            nearbyTransit.alertData,
                             goBack = { closeModal() }
                         )
                     null -> {}

@@ -54,8 +54,8 @@ class AlertDetailsTest {
                 alert,
                 null,
                 listOf(route),
-                affectedStops = listOf(stop1, stop2, stop3),
                 stopId = null,
+                affectedStops = listOf(stop1, stop2, stop3),
                 now = now
             )
         }
@@ -90,7 +90,14 @@ class AlertDetailsTest {
             }
 
         composeTestRule.setContent {
-            AlertDetails(alert, null, null, affectedStops = emptyList(), stopId = null, now = now)
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stopId = null,
+                affectedStops = emptyList(),
+                now = now
+            )
         }
 
         composeTestRule.onNodeWithText(alert.activePeriod[1].formatStart().text).assertIsDisplayed()
@@ -113,7 +120,14 @@ class AlertDetailsTest {
             }
 
         composeTestRule.setContent {
-            AlertDetails(alert, null, null, affectedStops = emptyList(), stopId = null, now = now)
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stopId = null,
+                affectedStops = emptyList(),
+                now = now
+            )
         }
 
         composeTestRule.onNodeWithText("Alert is no longer in effect").assertIsDisplayed()
@@ -136,7 +150,14 @@ class AlertDetailsTest {
             }
 
         composeTestRule.setContent {
-            AlertDetails(alert, null, null, affectedStops = emptyList(), stopId = null, now = now)
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stopId = null,
+                affectedStops = emptyList(),
+                now = now
+            )
         }
 
         composeTestRule.onNodeWithText("Full Description").assertDoesNotExist()
@@ -169,10 +190,10 @@ class AlertDetailsTest {
         composeTestRule.setContent {
             AlertDetails(
                 alert,
-                null,
-                null,
-                affectedStops = affectedStops.value,
+                line = null,
+                routes = null,
                 stopId = null,
+                affectedStops = affectedStops.value,
                 now = now
             )
         }

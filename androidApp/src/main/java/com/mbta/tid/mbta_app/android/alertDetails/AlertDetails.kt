@@ -67,8 +67,8 @@ fun AlertDetails(
     alert: Alert,
     line: Line?,
     routes: List<Route>?,
-    affectedStops: List<Stop>,
     stopId: String?,
+    affectedStops: List<Stop>,
     now: Instant,
     analytics: Analytics = koinInject()
 ) {
@@ -366,7 +366,7 @@ private fun AlertDetailsPreview() {
                 updatedAt = now - 10.minutes
             }
         Column(Modifier.background(colorResource(R.color.fill2)).padding(16.dp)) {
-            AlertDetails(alert, null, listOf(route), listOf(stop), stop.id, now, MockAnalytics())
+            AlertDetails(alert, null, listOf(route), stop.id, listOf(stop), now, MockAnalytics())
         }
     }
 }

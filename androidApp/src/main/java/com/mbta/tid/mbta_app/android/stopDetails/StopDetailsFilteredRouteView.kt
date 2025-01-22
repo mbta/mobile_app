@@ -94,8 +94,8 @@ fun StopDetailsFilteredRouteView(
                                 openAlertDetails(
                                     ModalRoutes.AlertDetails(
                                         alertId = alert.id,
-                                        line = patternsByStop.line,
-                                        routes = patternsByStop.routes,
+                                        lineId = patternsByStop.line?.id,
+                                        routeIds = patternsByStop.routes.map { it.id },
                                         stopId = patternsByStop.stop.id
                                     )
                                 )

@@ -140,10 +140,10 @@ class AlertDetailsPageTest {
             KoinContext(koin.koin) {
                 AlertDetailsPage(
                     alertId = alert.id,
-                    line = null,
-                    routes = listOf(route),
-                    alerts = AlertsStreamDataResponse(objects),
+                    lineId = null,
+                    routeIds = listOf(route.id),
                     stopId = null,
+                    alerts = AlertsStreamDataResponse(objects),
                     goBack = {}
                 )
             }

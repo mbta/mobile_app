@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.android
 
-import com.mbta.tid.mbta_app.model.Line
-import com.mbta.tid.mbta_app.model.Route
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,8 +13,8 @@ sealed interface ModalRoutes {
     @Serializable
     data class AlertDetails(
         val alertId: String,
-        val line: Line?,
-        val routes: List<Route>?,
+        val lineId: String?,
+        val routeIds: List<String>?,
         val stopId: String?
     ) : ModalRoutes
 }
