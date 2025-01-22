@@ -16,7 +16,7 @@ class FeedbackFormUrlTest {
 
     @Test
     fun testHT() {
-        assertEquals("https://mbta.com/appfeedback", feedbackFormUrl("ht"))
+        assertEquals("https://mbta.com/appfeedback-ht", feedbackFormUrl("ht"))
     }
 
     @Test
