@@ -23,9 +23,15 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.TripResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockTripRepository
+import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -58,7 +64,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -90,7 +96,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -127,7 +133,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -169,7 +175,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -194,7 +200,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         assertNull(viewModel.stopDepartures.value)
 
@@ -221,7 +227,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         composeTestRule.setContent {
             LaunchedEffect(Unit) {
@@ -237,6 +243,455 @@ class StopDetailsViewModelTest {
         assertEquals("stop2", viewModel.stopData.value?.stopId)
         assertNotNull(viewModel.stopData?.value?.predictionsByStop)
         assertNotNull(viewModel.stopData?.value?.schedules)
+    }
+
+    @Test
+    fun testLoadTripData() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
+
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip1 = objects.trip(pattern) { headsign = "0" }
+        val schedule =
+            objects.schedule {
+                trip = trip1
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle =
+            objects.vehicle {
+                tripId = trip1.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val tripPredictions = PredictionsStreamDataResponse(objects)
+        val tripSchedules = TripSchedulesResponse.Schedules(listOf(schedule))
+
+        var tripPredictionsConnectedCount = 0
+        var tripPredictionsDisconnectedCount = 0
+        var vehicleConnectedCount = 0
+        var vehicleDisconnectedCount = 0
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                tripPredictionsRepo =
+                    MockTripPredictionsRepository(
+                        { tripPredictionsConnectedCount += 1 },
+                        { tripPredictionsDisconnectedCount += 1 },
+                        tripPredictions
+                    ),
+                tripRepo =
+                    MockTripRepository(
+                        tripSchedulesResponse = tripSchedules,
+                        tripResponse = TripResponse(trip1)
+                    ),
+                vehicleRepo =
+                    MockVehicleRepository(
+                        { vehicleConnectedCount += 1 },
+                        { vehicleDisconnectedCount += 1 },
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
+                    )
+            )
+
+        val tripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
+        composeTestRule.setContent {
+            LaunchedEffect(Unit) { viewModel.handleTripFilterChange(tripFilter) }
+        }
+
+        composeTestRule.waitUntil { viewModel.tripData.value != null }
+        assertEquals(tripFilter, viewModel.tripData.value?.tripFilter)
+        assertEquals(trip1, viewModel.tripData.value?.trip)
+
+        composeTestRule.waitUntil { viewModel.tripData.value?.tripSchedules != null }
+        assertEquals(tripSchedules, viewModel.tripData.value?.tripSchedules)
+        composeTestRule.waitUntil { viewModel.tripData.value?.tripPredictions != null }
+        assertEquals(tripPredictions, viewModel.tripData.value?.tripPredictions)
+        composeTestRule.waitUntil { viewModel.tripData.value?.vehicle != null }
+        assertEquals(vehicle, viewModel.tripData.value?.vehicle)
+
+        assertEquals(true, viewModel.tripData.value?.tripPredictionsLoaded)
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(1, tripPredictionsConnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+        assertEquals(1, vehicleConnectedCount)
+
+        viewModel.clearTripDetails()
+
+        composeTestRule.waitUntil { viewModel.tripData.value == null }
+        assertNull(viewModel.tripData.value)
+
+        assertEquals(3, tripPredictionsDisconnectedCount)
+        assertEquals(3, vehicleDisconnectedCount)
+    }
+
+    @Test
+    fun testSkipLoadingTripData() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
+
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip1 = objects.trip(pattern) { headsign = "0" }
+        val schedule =
+            objects.schedule {
+                trip = trip1
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle =
+            objects.vehicle {
+                tripId = trip1.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val tripPredictions = PredictionsStreamDataResponse(objects)
+        val tripSchedules = TripSchedulesResponse.Schedules(listOf(schedule))
+
+        var tripPredictionsConnectedCount = 0
+        var tripPredictionsDisconnectedCount = 0
+        var vehicleConnectedCount = 0
+        var vehicleDisconnectedCount = 0
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                tripPredictionsRepo =
+                    MockTripPredictionsRepository(
+                        { tripPredictionsConnectedCount += 1 },
+                        { tripPredictionsDisconnectedCount += 1 },
+                        tripPredictions
+                    ),
+                tripRepo =
+                    MockTripRepository(
+                        tripSchedulesResponse = tripSchedules,
+                        tripResponse = TripResponse(trip1)
+                    ),
+                vehicleRepo =
+                    MockVehicleRepository(
+                        { vehicleConnectedCount += 1 },
+                        { vehicleDisconnectedCount += 1 },
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
+                    )
+            )
+
+        val tripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
+        composeTestRule.setContent {
+            LaunchedEffect(Unit) { viewModel.handleTripFilterChange(tripFilter) }
+        }
+
+        composeTestRule.waitUntil { viewModel.tripData.value != null }
+        assertEquals(tripFilter, viewModel.tripData.value?.tripFilter)
+        assertEquals(trip1, viewModel.tripData.value?.trip)
+
+        composeTestRule.waitUntil { viewModel.tripData.value?.tripSchedules != null }
+        assertEquals(tripSchedules, viewModel.tripData.value?.tripSchedules)
+        composeTestRule.waitUntil { viewModel.tripData.value?.tripPredictions != null }
+        assertEquals(tripPredictions, viewModel.tripData.value?.tripPredictions)
+        composeTestRule.waitUntil { viewModel.tripData.value?.vehicle != null }
+        assertEquals(vehicle, viewModel.tripData.value?.vehicle)
+
+        assertEquals(true, viewModel.tripData.value?.tripPredictionsLoaded)
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(1, tripPredictionsConnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+        assertEquals(1, vehicleConnectedCount)
+
+        // Call handle change again - connection / disconnect counts should stay the same
+
+        viewModel.handleTripFilterChange(tripFilter)
+
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(1, tripPredictionsConnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+        assertEquals(1, vehicleConnectedCount)
+
+        assertEquals(tripFilter, viewModel.tripData.value?.tripFilter)
+        assertEquals(trip1, viewModel.tripData.value?.trip)
+        assertEquals(tripSchedules, viewModel.tripData.value?.tripSchedules)
+        assertEquals(tripPredictions, viewModel.tripData.value?.tripPredictions)
+        assertEquals(vehicle, viewModel.tripData.value?.vehicle)
+    }
+
+    @Test
+    fun testSkipLoadingRedundantVehicleData() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
+
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip0 = objects.trip(pattern) { headsign = "0" }
+        val trip1 = objects.trip(pattern) { headsign = "0" }
+
+        val schedule =
+            objects.schedule {
+                trip = trip0
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle =
+            objects.vehicle {
+                tripId = trip0.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val tripPredictions = PredictionsStreamDataResponse(objects)
+        val tripSchedules = TripSchedulesResponse.Schedules(listOf(schedule))
+
+        var tripPredictionsConnectedCount = 0
+        var tripPredictionsDisconnectedCount = 0
+        var vehicleConnectedCount = 0
+        var vehicleDisconnectedCount = 0
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                tripPredictionsRepo =
+                    MockTripPredictionsRepository(
+                        { tripPredictionsConnectedCount += 1 },
+                        { tripPredictionsDisconnectedCount += 1 },
+                        tripPredictions
+                    ),
+                tripRepo =
+                    MockTripRepository(
+                        tripSchedulesResponse = tripSchedules,
+                        tripResponse = TripResponse(trip1)
+                    ),
+                vehicleRepo =
+                    MockVehicleRepository(
+                        { vehicleConnectedCount += 1 },
+                        { vehicleDisconnectedCount += 1 },
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
+                    )
+            )
+
+        val tripFilter = TripDetailsFilter(trip0.id, vehicle.id, 0, false)
+        composeTestRule.setContent {
+            LaunchedEffect(Unit) { viewModel.handleTripFilterChange(tripFilter) }
+        }
+
+        composeTestRule.waitUntil {
+            viewModel.tripData.value?.tripSchedules != null &&
+                viewModel.tripData.value?.tripPredictions != null &&
+                viewModel.tripData.value?.vehicle != null
+        }
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(1, tripPredictionsConnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+        assertEquals(1, vehicleConnectedCount)
+
+        // Call handle change again - only the tripId changed
+        val newTripFilter = tripFilter.copy(tripId = trip1.id)
+
+        viewModel.handleTripFilterChange(newTripFilter)
+
+        composeTestRule.waitUntil {
+            tripPredictionsDisconnectedCount == 4 && tripPredictionsConnectedCount == 2
+        }
+
+        assertEquals(4, tripPredictionsDisconnectedCount)
+        assertEquals(2, tripPredictionsConnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+        assertEquals(1, vehicleConnectedCount)
+
+        assertEquals(newTripFilter, viewModel.tripData.value?.tripFilter)
+        assertEquals(trip1, viewModel.tripData.value?.trip)
+        assertEquals(tripSchedules, viewModel.tripData.value?.tripSchedules)
+        assertEquals(tripPredictions, viewModel.tripData.value?.tripPredictions)
+        assertEquals(vehicle, viewModel.tripData.value?.vehicle)
+    }
+
+    @Test
+    fun testSkipLoadingRedundantTripData() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
+
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip0 = objects.trip(pattern) { headsign = "0" }
+
+        val schedule =
+            objects.schedule {
+                trip = trip0
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle0 =
+            objects.vehicle {
+                tripId = trip0.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val vehicle1 =
+            objects.vehicle {
+                tripId = trip0.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val tripPredictions = PredictionsStreamDataResponse(objects)
+        val tripSchedules = TripSchedulesResponse.Schedules(listOf(schedule))
+
+        var tripPredictionsConnectedCount = 0
+        var tripPredictionsDisconnectedCount = 0
+        var vehicleConnectedCount = 0
+        var vehicleDisconnectedCount = 0
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                tripPredictionsRepo =
+                    MockTripPredictionsRepository(
+                        { tripPredictionsConnectedCount += 1 },
+                        { tripPredictionsDisconnectedCount += 1 },
+                        tripPredictions
+                    ),
+                tripRepo =
+                    MockTripRepository(
+                        tripSchedulesResponse = tripSchedules,
+                        tripResponse = TripResponse(trip0)
+                    ),
+                vehicleRepo =
+                    MockVehicleRepository(
+                        { vehicleConnectedCount += 1 },
+                        { vehicleDisconnectedCount += 1 },
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle1))
+                    )
+            )
+
+        val tripFilter = TripDetailsFilter(trip0.id, vehicle0.id, 0, false)
+        composeTestRule.setContent {
+            LaunchedEffect(Unit) { viewModel.handleTripFilterChange(tripFilter) }
+        }
+
+        composeTestRule.waitUntil {
+            viewModel.tripData.value?.tripSchedules != null &&
+                viewModel.tripData.value?.tripPredictions != null &&
+                viewModel.tripData.value?.vehicle != null
+        }
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(1, tripPredictionsConnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+        assertEquals(1, vehicleConnectedCount)
+
+        // Call handle change again - only the vehicleId changed
+        val newTripFilter = tripFilter.copy(vehicleId = vehicle1.id)
+
+        viewModel.handleTripFilterChange(newTripFilter)
+
+        composeTestRule.waitUntil { vehicleDisconnectedCount == 4 && vehicleConnectedCount == 2 }
+
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(1, tripPredictionsConnectedCount)
+        assertEquals(4, vehicleDisconnectedCount)
+        assertEquals(2, vehicleConnectedCount)
+
+        assertEquals(newTripFilter, viewModel.tripData.value?.tripFilter)
+        assertEquals(trip0, viewModel.tripData.value?.trip)
+        assertEquals(tripSchedules, viewModel.tripData.value?.tripSchedules)
+        assertEquals(tripPredictions, viewModel.tripData.value?.tripPredictions)
+        assertEquals(vehicle1, viewModel.tripData.value?.vehicle)
+    }
+
+    @Test
+    fun testNullTripFilter() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
+
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip1 = objects.trip(pattern) { headsign = "0" }
+        val schedule =
+            objects.schedule {
+                trip = trip1
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle =
+            objects.vehicle {
+                tripId = trip1.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val tripPredictions = PredictionsStreamDataResponse(objects)
+        val tripSchedules = TripSchedulesResponse.Schedules(listOf(schedule))
+
+        var tripPredictionsConnectedCount = 0
+        var tripPredictionsDisconnectedCount = 0
+        var vehicleConnectedCount = 0
+        var vehicleDisconnectedCount = 0
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                tripPredictionsRepo =
+                    MockTripPredictionsRepository(
+                        { tripPredictionsConnectedCount += 1 },
+                        { tripPredictionsDisconnectedCount += 1 },
+                        tripPredictions
+                    ),
+                tripRepo =
+                    MockTripRepository(
+                        tripSchedulesResponse = tripSchedules,
+                        tripResponse = TripResponse(trip1)
+                    ),
+                vehicleRepo =
+                    MockVehicleRepository(
+                        { vehicleConnectedCount += 1 },
+                        { vehicleDisconnectedCount += 1 },
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
+                    )
+            )
+
+        val tripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
+        composeTestRule.setContent {
+            LaunchedEffect(Unit) { viewModel.handleTripFilterChange(tripFilter) }
+        }
+
+        composeTestRule.waitUntil {
+            tripPredictionsConnectedCount == 1 && vehicleConnectedCount == 1
+        }
+        assertEquals(2, tripPredictionsDisconnectedCount)
+        assertEquals(2, vehicleDisconnectedCount)
+
+        assertNotNull(viewModel.tripData.value)
+
+        viewModel.handleTripFilterChange(null)
+
+        composeTestRule.waitUntil {
+            tripPredictionsDisconnectedCount == 3 && vehicleDisconnectedCount == 3
+        }
+        assertEquals(3, tripPredictionsDisconnectedCount)
+        assertEquals(3, vehicleDisconnectedCount)
+
+        assertNull(viewModel.tripData.value)
     }
 
     @Test
@@ -257,7 +712,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         val stopFilters =
             mutableStateOf<StopDetailsPageFilters?>(StopDetailsPageFilters("stop1", null, null))
@@ -295,26 +750,155 @@ class StopDetailsViewModelTest {
     }
 
     @Test
+    fun testManagerHandlesTripFilterChange() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
+
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip1 = objects.trip(pattern) { headsign = "0" }
+        val schedule =
+            objects.schedule {
+                trip = trip1
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle =
+            objects.vehicle {
+                tripId = trip1.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        val tripPredictions = PredictionsStreamDataResponse(objects)
+        val tripSchedules = TripSchedulesResponse.Schedules(listOf(schedule))
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                tripPredictionsRepo = MockTripPredictionsRepository({}, {}, tripPredictions),
+                tripRepo =
+                    MockTripRepository(
+                        tripSchedulesResponse = tripSchedules,
+                        tripResponse = TripResponse(trip1)
+                    ),
+                vehicleRepo =
+                    MockVehicleRepository({}, {}, ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
+            )
+
+        val newTripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
+
+        val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.STARTED)
+
+        val stopFilters =
+            mutableStateOf<StopDetailsPageFilters?>(
+                StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null)
+            )
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+                var stopFilters by remember { stopFilters }
+                stopDetailsManagedVM(
+                    stopFilters,
+                    viewModel = viewModel,
+                    globalResponse = null,
+                    alertData = null,
+                    pinnedRoutes = setOf(),
+                    updateStopFilter = { _, _ -> },
+                    updateTripFilter = { _, _ -> }
+                )
+            }
+        }
+
+        composeTestRule.waitUntil { viewModel.stopData.value != null }
+        assertNull(viewModel.tripData.value)
+
+        stopFilters.value = stopFilters.value?.copy(tripFilter = newTripFilter)
+        composeTestRule.waitUntil { viewModel.tripData.value != null }
+        assertNotNull(viewModel.tripData.value)
+    }
+
+    @Test
     fun testManagerHandlesBackgrounding() = runTest {
         val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route()
 
-        var connectCount = 0
-        var disconnectCount = 0
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { headsign = "0" }
+            }
+        val trip0 = objects.trip(pattern) { headsign = "0" }
+
+        val schedule =
+            objects.schedule {
+                trip = trip0
+                routeId = route.id
+                stopId = stop.id
+            }
+        val vehicle0 =
+            objects.vehicle {
+                tripId = trip0.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+
+        var stopPredictionsConnectCount = 0
+        var stopPredictionsDisconnectCount = 0
+
+        var tripPredictionsConnectCount = 0
+        var tripPredictionsDisconnectCount = 0
+
+        var vehicleConnectCount = 0
+        var vehicleDisconnectCount = 0
 
         val predictionsRepo =
             MockPredictionsRepository(
                 connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
-                onConnectV2 = { connectCount += 1 },
-                onDisconnect = { disconnectCount += 1 }
+                onConnectV2 = { stopPredictionsConnectCount += 1 },
+                onDisconnect = { stopPredictionsDisconnectCount += 1 }
+            )
+
+        val tripPredictionsRepo =
+            MockTripPredictionsRepository(
+                { tripPredictionsConnectCount += 1 },
+                { tripPredictionsDisconnectCount += 1 },
+                PredictionsStreamDataResponse(objects)
+            )
+        val vehicleRepo =
+            MockVehicleRepository(
+                { vehicleConnectCount += 1 },
+                { vehicleDisconnectCount += 1 },
+                ApiResult.Ok(VehicleStreamDataResponse(vehicle0))
             )
 
         val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                tripPredictionsRepo,
+                vehicleRepo = vehicleRepo
+            )
 
-        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
+        val stopFilters =
+            mutableStateOf(
+                StopDetailsPageFilters(
+                    "stop1",
+                    StopDetailsFilter("route", 0),
+                    TripDetailsFilter("tripId", "vehicleId", 0)
+                )
+            )
 
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
 
@@ -336,25 +920,48 @@ class StopDetailsViewModelTest {
         composeTestRule.waitUntil {
             // In resumed state, so joined 1 time for stop, 1 time for resume.
             // Need to start with lifecycle resumed in order to test pause
-            connectCount == 2
+            stopPredictionsConnectCount == 2
+
+            // Trip channels rejoin is no-op because tripData hasn't been set yet
+            && tripPredictionsConnectCount == 1 && vehicleConnectCount == 1
         }
 
-        assertEquals(2, connectCount)
-        assertEquals(1, disconnectCount)
+        assertEquals(2, stopPredictionsConnectCount)
+        assertEquals(1, stopPredictionsDisconnectCount)
+
+        assertEquals(1, tripPredictionsConnectCount)
+        assertEquals(2, tripPredictionsDisconnectCount)
+
+        assertEquals(1, vehicleConnectCount)
+        assertEquals(2, vehicleDisconnectCount)
+
         assertEquals("stop1", viewModel.stopData.value?.stopId)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
-        composeTestRule.waitUntil { disconnectCount == 2 }
+        composeTestRule.waitUntil {
+            stopPredictionsDisconnectCount == 2 &&
+                tripPredictionsDisconnectCount == 3 &&
+                vehicleDisconnectCount == 3
+        }
 
-        assertEquals(2, connectCount)
-        assertEquals(2, disconnectCount)
+        assertEquals(2, stopPredictionsConnectCount)
+        assertEquals(2, stopPredictionsDisconnectCount)
+        assertEquals(3, tripPredictionsDisconnectCount)
+        assertEquals(3, vehicleDisconnectCount)
+
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        composeTestRule.waitUntil { connectCount == 3 }
+        composeTestRule.waitUntil {
+            stopPredictionsConnectCount == 3 &&
+                tripPredictionsConnectCount == 2 &&
+                vehicleConnectCount == 2
+        }
 
-        assertEquals(3, connectCount)
-        assertEquals(2, disconnectCount)
+        assertEquals(3, stopPredictionsConnectCount)
+        assertEquals(2, stopPredictionsDisconnectCount)
+        assertEquals(2, tripPredictionsConnectCount)
+        assertEquals(2, vehicleConnectCount)
     }
 
     @Test
@@ -371,7 +978,7 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
@@ -415,7 +1022,7 @@ class StopDetailsViewModelTest {
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -472,7 +1079,7 @@ class StopDetailsViewModelTest {
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters(stop.id, null, null))
 
-        val viewModel = StopDetailsViewModel(schedulesRepo, predictionsRepo, errorBannerRepo)
+        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
 
         var newStopFilter: StopDetailsFilter? = null
 
@@ -543,12 +1150,7 @@ class StopDetailsViewModelTest {
 
         objects.prediction(schedule) { departureTime = now.plus(10.minutes) }
 
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         val stopFilters =
             mutableStateOf(StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null))
@@ -620,12 +1222,7 @@ class StopDetailsViewModelTest {
 
         objects.prediction(schedule) { departureTime = now.plus(10.minutes) }
 
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         // There are no trips in direction 1
         val stopFilters =

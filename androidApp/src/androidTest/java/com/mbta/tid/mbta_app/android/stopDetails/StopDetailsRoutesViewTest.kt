@@ -13,9 +13,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -101,12 +98,7 @@ class StopDetailsRoutesViewTest {
     @Test
     fun testStopDetailsRoutesViewDisplaysCorrectly() {
 
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setDepartures(
             checkNotNull(
@@ -148,12 +140,7 @@ class StopDetailsRoutesViewTest {
     @Test
     fun testLoadingStateFiltered() {
 
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         composeTestRule.setContent {
             val filterState = remember {
@@ -179,12 +166,7 @@ class StopDetailsRoutesViewTest {
 
     @Test
     fun testLoadingStateUnfiltered() {
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }

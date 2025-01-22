@@ -36,7 +36,6 @@ import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -193,13 +192,7 @@ class StopDetailsViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStopDetailsViewDisplaysCorrectly() {
-
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setDepartures(
             StopDetailsDepartures(
@@ -279,12 +272,8 @@ class StopDetailsViewTest {
                 header = "Elevator alert header"
             }
 
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
+
         viewModel.setDepartures(
             StopDetailsDepartures(
                 listOf(

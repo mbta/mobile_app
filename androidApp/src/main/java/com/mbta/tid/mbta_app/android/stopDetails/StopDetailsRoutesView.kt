@@ -131,11 +131,11 @@ private fun StopDetailsRoutesViewPreview() {
 
     val viewModel =
         StopDetailsViewModel(
-            MockScheduleRepository(),
-            MockPredictionsRepository(),
             MockErrorBannerStateRepository(),
-            MockTripRepository(),
+            MockPredictionsRepository(),
+            MockScheduleRepository(),
             MockTripPredictionsRepository(),
+            MockTripRepository(),
             MockVehicleRepository()
         )
     viewModel.setDepartures(
