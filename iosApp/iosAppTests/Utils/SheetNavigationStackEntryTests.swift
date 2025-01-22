@@ -95,7 +95,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         )
 
         let nearbyEntry: SheetNavigationStackEntry = .nearby
-        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil)
+        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil, stop: nil)
 
         XCTAssertEqual(stopEntry.sheetItemIdentifiable()!.id, stop.id)
         XCTAssertEqual(tripEntry.sheetItemIdentifiable()!.id, "tripId")
@@ -118,7 +118,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
             routeId: "routeId",
             directionId: 0
         )
-        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil)
+        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil, stop: nil)
 
         var stack: [SheetNavigationStackEntry] = []
         XCTAssertNil(stack.lastStop)
@@ -144,7 +144,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
             routeId: "routeId",
             directionId: 0
         )
-        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil)
+        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil, stop: nil)
 
         var stack: [SheetNavigationStackEntry] = []
         XCTAssertNil(stack.lastStopId)

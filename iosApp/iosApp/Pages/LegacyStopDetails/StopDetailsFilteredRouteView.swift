@@ -177,7 +177,8 @@ struct StopDetailsFilteredRouteView: View {
                                                 pushNavEntry(.alertDetails(
                                                     alertId: alert.id,
                                                     line: patternsByStop.line,
-                                                    routes: patternsByStop.routes
+                                                    routes: patternsByStop.routes,
+                                                    stop: patternsByStop.stop
                                                 ))
                                                 analytics.tappedAlertDetailsLegacy(
                                                     routeId: patternsByStop.routeIdentifier,
@@ -197,7 +198,8 @@ struct StopDetailsFilteredRouteView: View {
                                                 pushNavEntry(.alertDetails(
                                                     alertId: alert.id,
                                                     line: patternsByStop.line,
-                                                    routes: patternsByStop.routes
+                                                    routes: patternsByStop.routes,
+                                                    stop: patternsByStop.stop
                                                 ))
                                                 analytics.tappedAlertDetailsLegacy(
                                                     routeId: patternsByStop.routeIdentifier,

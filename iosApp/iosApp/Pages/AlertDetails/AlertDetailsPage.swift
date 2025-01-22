@@ -13,6 +13,7 @@ struct AlertDetailsPage: View {
     var alertId: String
     var line: Line?
     var routes: [Route]?
+    var stop: Stop?
     var nearbyVM: NearbyViewModel
     var errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner
     var globalRepository: IGlobalRepository = RepositoryDI().global
@@ -73,6 +74,10 @@ struct AlertDetailsPage: View {
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
                     .frame(maxHeight: modeIconHeight, alignment: .topLeading)
+            } else if alert?.effect == .elevatorClosure {
+                AlertIcon(alertState: .elevator)
+                    .scaledToFit()
+                    .frame(maxHeight: modeIconHeight, alignment: .topLeading)
             }
             Text("Alert Details", comment: "Header on the alert details page").font(.headline)
             Spacer()
@@ -93,6 +98,7 @@ struct AlertDetailsPage: View {
                     alert: alert,
                     line: line,
                     routes: routes,
+                    stop: stop,
                     affectedStops: affectedStops,
                     stopId: nearbyVM.navigationStack.lastStopId,
                     now: now
@@ -140,7 +146,7 @@ struct AlertDetailsPage: View {
         // navigate back to the previous page.
         if alert == nil, nextAlert == nil {
             nearbyVM.navigationStack.removeAll { nav in
-                if case let .alertDetails(alertId, _, _) = nav {
+                if case let .alertDetails(alertId, _, _, _) = nav {
                     alertId == self.alertId
                 } else {
                     false
