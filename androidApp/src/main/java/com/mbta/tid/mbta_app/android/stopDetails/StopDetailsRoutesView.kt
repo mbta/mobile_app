@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.time.Duration.Companion.minutes
@@ -29,19 +30,21 @@ fun StopDetailsRoutesView(
     departures: StopDetailsDepartures?,
     global: GlobalResponse?,
     now: Instant,
-    filter: StopDetailsFilter?,
+    stopFilter: StopDetailsFilter?,
+    tripFilter: TripDetailsFilter?,
     pinRoute: (String) -> Unit,
     pinnedRoutes: Set<String>,
     updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
     if (departures == null) {
-        LoadingStopDetailsView(filter)
-    } else if (filter != null) {
+        LoadingStopDetailsView(stopFilter, tripFilter)
+    } else if (stopFilter != null) {
         StopDetailsFilteredRouteView(
             departures = departures,
             global = global,
             now = now,
-            filter = filter,
+            stopFilter = stopFilter,
+            tripFilter = tripFilter,
             updateStopFilter
         )
     } else {
@@ -160,7 +163,8 @@ private fun StopDetailsRoutesViewPreview() {
                 ),
             global = null,
             now = Clock.System.now(),
-            filter = null,
+            stopFilter = null,
+            tripFilter = null,
             pinRoute = {},
             pinnedRoutes = emptySet(),
             updateStopFilter = {}

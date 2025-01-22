@@ -38,8 +38,8 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: .init(routes: [
-                .init(route: routeDefaultSort1, stop: stop, patterns: []),
-                .init(route: routeDefaultSort0, stop: stop, patterns: []),
+                .init(route: routeDefaultSort1, stop: stop, patterns: [], elevatorAlerts: []),
+                .init(route: routeDefaultSort0, stop: stop, patterns: [], elevatorAlerts: []),
             ]),
             now: Date.now,
             errorBannerVM: .init(),
@@ -71,7 +71,7 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: .init(routes: [
-                .init(route: route, stop: stop, patterns: []),
+                .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             ]),
             now: Date.now,
             errorBannerVM: .init(),
@@ -105,7 +105,7 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: .init(routes: [
-                .init(route: route, stop: stop, patterns: []),
+                .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             ]),
             now: Date.now,
             errorBannerVM: .init(),

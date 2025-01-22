@@ -4,8 +4,11 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
@@ -24,7 +27,7 @@ struct ContentView: View {
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
-    var screenTracker: ScreenTracker = AnalyticsProvider.shared
+    let analytics: Analytics = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
 
@@ -51,8 +54,12 @@ struct ContentView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
+            Task { await contentVM.loadFeaturePromos() }
             Task { await contentVM.loadOnboardingScreens() }
             Task { await nearbyVM.loadDebugSetting() }
+            analytics.recordSession(colorScheme: colorScheme)
+            analytics.recordSession(voiceOver: voiceOver)
+            analytics.recordSession(hideMaps: contentVM.hideMaps)
         }
         .task {
             // We can't set stale caches in ResponseCache on init because of our Koin setup,
@@ -72,6 +79,15 @@ struct ContentView: View {
                 nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
             }
+        }
+        .onChange(of: colorScheme) { _ in
+            analytics.recordSession(colorScheme: colorScheme)
+        }
+        .onChange(of: voiceOver) { _ in
+            analytics.recordSession(voiceOver: voiceOver)
+        }
+        .onChange(of: contentVM.hideMaps) { _ in
+            analytics.recordSession(hideMaps: contentVM.hideMaps)
         }
         .onChange(of: contentVM.configResponse) { response in
             switch onEnum(of: response) {
@@ -99,7 +115,7 @@ struct ContentView: View {
                 MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
-                    .onAppear { screenTracker.track(screen: .settings) }
+                    .onAppear { analytics.track(screen: .settings) }
             }
         } else {
             nearbyTab
@@ -199,6 +215,7 @@ struct ContentView: View {
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
+            locationDataManager: locationDataManager,
             sheetHeight: $sheetHeight
         )
     }
@@ -282,7 +299,7 @@ struct ContentView: View {
                             viewportProvider: viewportProvider
                         )
                         .onAppear {
-                            screenTracker.track(
+                            analytics.track(
                                 screen: stopFilter != nil ? .stopDetailsFiltered : .stopDetailsUnfiltered
                             )
                         }
@@ -309,7 +326,7 @@ struct ContentView: View {
                         .toolbar(.hidden, for: .tabBar)
                         .onAppear {
                             let filtered = filter != nil
-                            screenTracker.track(
+                            analytics.track(
                                 screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
                             )
                         }
@@ -336,14 +353,14 @@ struct ContentView: View {
                             nearbyVM: nearbyVM,
                             mapVM: mapVM
                         ).toolbar(.hidden, for: .tabBar)
-                            .onAppear { screenTracker.track(screen: .tripDetails) }
+                            .onAppear { analytics.track(screen: .tripDetails) }
                     }
                     .transition(transition)
 
                 case .nearby:
                     nearbySheetContents
                         .transition(transition)
-                        .onAppear { screenTracker.track(screen: .nearbyTransit) }
+                        .onAppear { analytics.track(screen: .nearbyTransit) }
 
                 default: EmptyView()
                 }

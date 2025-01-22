@@ -41,7 +41,8 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let patternsByStop = PatternsByStop(
             route: route,
             stop: stop,
-            patterns: [patternsByHeadsignNorth, patternsByHeadsignSouth]
+            patterns: [patternsByHeadsignNorth, patternsByHeadsignSouth],
+            elevatorAlerts: []
         )
 
         let pushExpNorth = XCTestExpectation(description: "Push Nav Entry called for north")
@@ -101,7 +102,8 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let patternsByStop = PatternsByStop(
             route: route,
             stop: stop,
-            patterns: [patternsByHeadsignNorth, patternsByHeadsignSouth]
+            patterns: [patternsByHeadsignNorth, patternsByHeadsignSouth],
+            elevatorAlerts: []
         )
 
         let onPinCalledExp = XCTestExpectation(description: "On pin called")

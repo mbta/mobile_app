@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.search
 
-import android.os.Bundle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
@@ -13,8 +12,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -54,6 +54,7 @@ class SearchBarOverlayTest : KoinTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<Analytics> { MockAnalytics() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> { MockGlobalRepository() }
                 single<IGlobalRepository> {
@@ -65,7 +66,7 @@ class SearchBarOverlayTest : KoinTest {
                     object : ISearchResultRepository {
                         override suspend fun getSearchResults(
                             query: String
-                        ): ApiResult<SearchResults>? {
+                        ): ApiResult<SearchResults> {
                             return ApiResult.Ok(
                                 SearchResults(
                                     routes = emptyList(),
@@ -100,14 +101,18 @@ class SearchBarOverlayTest : KoinTest {
     @Test
     fun testSearchBarOverlayBehavesCorrectly() = runTest {
         val navigated = mutableStateOf(false)
-        var navBackStackEntry = mutableStateOf<NavBackStackEntry?>(null)
+        var expanded = mutableStateOf(false)
+
+        var currentNavEntry = mutableStateOf<SheetRoutes?>(null)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val focusRequester = remember { FocusRequester() }
                 SearchBarOverlay(
+                    expanded.value,
+                    { expanded.value = it },
                     onStopNavigation = { navigated.value = true },
-                    currentNavEntry = navBackStackEntry.value,
+                    currentNavEntry = currentNavEntry.value,
                     inputFieldFocusRequester = focusRequester,
                 ) {
                     Text("Content")
@@ -123,14 +128,12 @@ class SearchBarOverlayTest : KoinTest {
                 VisitHistory().apply { add(Visit.StopVisit(visitedStop.id)) }
             )
         }
-        navBackStackEntry.value =
-            NavBackStackEntry.create(
-                context = null,
-                arguments = Bundle().apply { putString("stopId", "visitedStopId") },
-                destination = NavDestination("stop")
-            )
+
+        currentNavEntry.value = SheetRoutes.StopDetails(visitedStop.id, null, null)
+
         composeTestRule.awaitIdle()
-        navBackStackEntry.value = null
+
+        currentNavEntry.value = null
 
         composeTestRule.waitUntilAtLeastOneExists(hasText("Search by stop"))
         val searchNode = composeTestRule.onNodeWithText("Search by stop")

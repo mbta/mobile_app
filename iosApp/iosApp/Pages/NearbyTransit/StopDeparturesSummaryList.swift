@@ -15,7 +15,9 @@ struct StopDeparturesSummaryList: View {
     let condenseHeadsignPredictions: Bool
     let now: Instant
     let context: TripInstantDisplay.Context
-    let pushNavEntry: (SheetNavigationStackEntry, Bool) -> Void
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let analytics: Analytics
+    let pinned: Bool
 
     var body: some View {
         ForEach(
@@ -29,19 +31,14 @@ struct StopDeparturesSummaryList: View {
             }
 
             VStack(spacing: 0) {
-                SheetNavigationLink(
-                    value: .legacyStopDetails(
-                        patternsByStop.stop,
-                        filterFor(patterns: patterns)
-                    ),
-                    action: { entry in pushNavEntry(entry, (patterns.alertsHere?.count ?? 0) > 0) }
-                ) {
-                    DestinationRowView(
-                        patterns: patterns,
-                        now: now, context: context,
-                        condenseHeadsignPredictions: condenseHeadsignPredictions
-                    )
-                }
+                DestinationRowView(
+                    patterns: patterns,
+                    stop: patternsByStop.stop, routeId: patternsByStop.routeIdentifier,
+                    now: now, context: context,
+                    condenseHeadsignPredictions: condenseHeadsignPredictions,
+                    pushNavEntry: pushNavEntry,
+                    analytics: analytics, pinned: pinned, routeType: patternsByStop.representativeRoute.type
+                )
                 .accessibilityInputLabels([inputLabel])
                 .padding(8)
                 .frame(minHeight: 44)
@@ -54,20 +51,5 @@ struct StopDeparturesSummaryList: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityHint(Text("Open for more arrivals"))
-    }
-
-    func filterFor(patterns: RealtimePatterns) -> StopDetailsFilter {
-        switch onEnum(of: patterns) {
-        case let .byHeadsign(patternsByHeadsign):
-            .init(
-                routeId: patternsByStop.routeIdentifier,
-                directionId: patternsByHeadsign.directionId()
-            )
-        case let .byDirection(patternsByDirection):
-            .init(
-                routeId: patternsByStop.routeIdentifier,
-                directionId: patternsByDirection.directionId()
-            )
-        }
     }
 }

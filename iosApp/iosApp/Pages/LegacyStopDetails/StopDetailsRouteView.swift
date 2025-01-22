@@ -11,7 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsRouteView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
@@ -26,7 +26,9 @@ struct StopDetailsRouteView: View {
                     condenseHeadsignPredictions: patternsByStop.routes.count > 1,
                     now: now,
                     context: .stopDetailsUnfiltered,
-                    pushNavEntry: navAnalytics(routeId: line.id)
+                    pushNavEntry: pushNavEntry,
+                    analytics: analytics,
+                    pinned: pinned
                 )
             }
         } else if let route = patternsByStop.routes.first {
@@ -36,23 +38,13 @@ struct StopDetailsRouteView: View {
                     condenseHeadsignPredictions: false,
                     now: now,
                     context: .stopDetailsUnfiltered,
-                    pushNavEntry: navAnalytics(routeId: route.id)
+                    pushNavEntry: pushNavEntry,
+                    analytics: analytics,
+                    pinned: pinned
                 )
             }
         } else {
             EmptyView()
-        }
-    }
-
-    private func navAnalytics(routeId: String) -> (SheetNavigationStackEntry, Bool) -> Void {
-        { entry, alerting in
-            pushNavEntry(entry)
-            analytics.tappedDepartureRow(
-                routeId: routeId,
-                stopId: patternsByStop.stop.id,
-                pinned: pinned,
-                alert: alerting
-            )
         }
     }
 }

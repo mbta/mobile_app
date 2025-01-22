@@ -13,10 +13,17 @@ fun NearbyRouteView(
     onPin: (String) -> Unit,
     now: Instant,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
+    showElevatorAccessibility: Boolean = false
 ) {
     RouteCard(nearbyRoute.route, pinned, onPin) {
         for (patternsAtStop in nearbyRoute.patternsByStop) {
-            NearbyStopView(patternsAtStop, now = now, onOpenStopDetails = onOpenStopDetails)
+            NearbyStopView(
+                patternsAtStop,
+                now = now,
+                pinned = pinned,
+                onOpenStopDetails = onOpenStopDetails,
+                showElevatorAccessibility = showElevatorAccessibility
+            )
         }
     }
 }

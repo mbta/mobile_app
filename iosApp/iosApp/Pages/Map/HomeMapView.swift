@@ -13,7 +13,7 @@ import shared
 import SwiftUI
 
 struct HomeMapView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -62,7 +62,7 @@ struct HomeMapView: View {
         stopRepository: IStopRepository = RepositoryDI().stop,
         vehiclesData: [Vehicle]? = nil,
         vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
-        locationDataManager: LocationDataManager = .init(distanceFilter: 1),
+        locationDataManager: LocationDataManager,
         sheetHeight: Binding<CGFloat>,
         globalMapData: GlobalMapData? = nil
     ) {

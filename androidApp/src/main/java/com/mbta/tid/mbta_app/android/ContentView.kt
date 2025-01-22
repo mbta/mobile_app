@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -18,6 +19,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.AnalyticsColorScheme
+import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.component.BottomNavBar
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheetState
@@ -32,6 +36,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -41,10 +46,11 @@ import org.koin.compose.koinInject
 fun ContentView(
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
+    accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
     val navController = rememberNavController()
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
-    val globalResponse = getGlobalData()
+    val globalResponse = getGlobalData("ContentView.getGlobalData")
     val hideMaps by viewModel.hideMaps.collectAsState()
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()
@@ -69,6 +75,15 @@ fun ContentView(
         (socket as? PhoenixSocketWrapper)?.attachLogging()
         onPauseOrDispose { socket.detach() }
     }
+
+    val analytics: Analytics = koinInject()
+
+    val colorScheme =
+        if (isSystemInDarkTheme()) AnalyticsColorScheme.Dark else AnalyticsColorScheme.Light
+    LaunchedEffect(colorScheme) { analytics.recordSession(colorScheme) }
+    LaunchedEffect(hideMaps) { analytics.recordSessionHideMaps(hideMaps) }
+    val screenReaderEnabled = accessibilityStatusRepository.isScreenReaderEnabled()
+    LaunchedEffect(screenReaderEnabled) { analytics.recordSessionVoiceOver(screenReaderEnabled) }
 
     if (!pendingOnboarding.isNullOrEmpty()) {
         OnboardingPage(
@@ -111,6 +126,7 @@ fun ContentView(
             )
         }
         composable<Routes.More> {
+            LaunchedEffect(null) { analytics.track(AnalyticsScreen.Settings) }
             MorePage(
                 bottomBar = {
                     BottomNavBar(

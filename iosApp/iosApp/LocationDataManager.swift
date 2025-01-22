@@ -17,23 +17,30 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus: CLAuthorizationStatus?
+    let analytics: Analytics
 
-    public init(
+    init(
         locationFetcher: LocationFetcher = CLLocationManager(),
         settingsRepository: ISettingsRepository = RepositoryDI().settings,
         subscribeToLocations: Bool = true,
-        distanceFilter: Double = kCLDistanceFilterNone
+        distanceFilter: Double = kCLDistanceFilterNone,
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.locationFetcher = locationFetcher
         self.locationFetcher.distanceFilter = distanceFilter
         self.settingsRepository = settingsRepository
         self.subscribeToLocations = subscribeToLocations
+        self.analytics = analytics
         super.init()
         self.locationFetcher.locationFetcherDelegate = self
     }
 
     public func locationFetcherDidChangeAuthorization(_ fetcher: LocationFetcher) {
         authorizationStatus = fetcher.authorizationStatus
+        analytics.recordSession(
+            locationAccess: fetcher.authorizationStatus,
+            locationAccuracy: fetcher.accuracyAuthorization
+        )
         if subscribeToLocations,
            fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
             fetcher.startUpdatingLocation()
@@ -63,6 +70,7 @@ extension LocationDataManager: CLLocationManagerDelegate {
 public protocol LocationFetcher: AnyObject {
     var locationFetcherDelegate: LocationFetcherDelegate? { get set }
     var authorizationStatus: CLAuthorizationStatus { get }
+    var accuracyAuthorization: CLAccuracyAuthorization { get }
     var distanceFilter: CLLocationDistance { get set }
     func startUpdatingLocation()
     func requestWhenInUseAuthorization()

@@ -8,14 +8,13 @@
 
 import Combine
 import CoreLocation
-import FirebaseAnalytics
 @_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
 
 struct NearbyTransitView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
@@ -523,7 +522,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
                                     ]
                                 ),
-                            ]
+                            ],
+                            elevatorAlerts: []
                         ),
                     ]
                 ),
@@ -550,7 +550,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
                                     ]
                                 ),
-                            ]
+                            ],
+                            elevatorAlerts: []
                         ),
                     ]
                 ),

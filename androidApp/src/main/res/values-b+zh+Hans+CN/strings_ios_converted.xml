@@ -11,6 +11,7 @@
     <string name="close_button_label">关闭</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
+    <string name="displays_more_info">显示详细信息</string>
     <string name="eastbound">东行</string>
     <string name="error_loading_data">加载数据时出错</string>
     <string name="feature_flag_debug_mode">调试模式</string>
@@ -73,6 +74,7 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="search_by_stop">按站点搜索</string>
     <string name="service_ended">服务已结束</string>
+    <string name="setting_elevator_accessibility">显示电梯可达性</string>
     <string name="setting_toggle_hide_maps">隐藏地图</string>
     <string name="settings_link">设置</string>
     <string name="shuttle">摆渡巴士</string>

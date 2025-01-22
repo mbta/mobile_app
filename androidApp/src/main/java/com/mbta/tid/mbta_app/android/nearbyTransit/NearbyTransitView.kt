@@ -16,11 +16,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -39,8 +41,10 @@ import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun NearbyTransitView(
@@ -66,16 +70,26 @@ fun NearbyTransitView(
     }
     val now = timer(updateInterval = 5.seconds)
     val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
-    val schedules = getSchedule(stopIds)
+    val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
+    val showElevatorAccessibility by nearbyVM.showElevatorAccessibility.collectAsState(false)
+    val analytics: Analytics = koinInject()
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(targetLocation == null) {
         if (targetLocation == null) {
             predictionsVM.reset()
         }
     }
+    val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
 
-    val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
+    fun togglePinnedRoute(routeId: String) {
+        coroutineScope.launch {
+            val pinned = rawTogglePinnedRoute(routeId)
+            analytics.toggledPinnedRoute(pinned, routeId)
+        }
+    }
 
     val nearbyWithRealtimeInfo =
         rememberSuspend(
@@ -112,7 +126,7 @@ fun NearbyTransitView(
             modifier =
                 Modifier.semantics { heading() }
                     .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {
@@ -142,17 +156,19 @@ fun NearbyTransitView(
                             NearbyRouteView(
                                 it,
                                 pinnedRoutes.orEmpty().contains(it.id),
-                                togglePinnedRoute,
+                                ::togglePinnedRoute,
                                 now,
-                                onOpenStopDetails
+                                onOpenStopDetails,
+                                showElevatorAccessibility
                             )
                         is StopsAssociated.WithLine ->
                             NearbyLineView(
                                 it,
                                 pinnedRoutes.orEmpty().contains(it.id),
-                                togglePinnedRoute,
+                                ::togglePinnedRoute,
                                 now,
-                                onOpenStopDetails
+                                onOpenStopDetails,
+                                showElevatorAccessibility
                             )
                     }
                 }

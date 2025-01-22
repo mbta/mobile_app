@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.util
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -46,19 +47,21 @@ class ManagePinnedRoutesTest {
         composeTestRule.awaitIdle()
         assertEquals(setOf("1"), mpr!!.pinnedRoutes)
 
-        mpr!!.togglePinnedRoute("place-a")
+        val toggleA = async { mpr!!.togglePinnedRoute("place-a") }
         getSync.send(Unit)
         assertEquals(setOf("2", "place-a"), pinnedRoutesRepo.setCalls.receive())
         assertEquals(setOf("1"), mpr!!.pinnedRoutes)
         getSync.send(Unit)
         composeTestRule.awaitIdle()
         assertEquals(setOf("3"), mpr!!.pinnedRoutes)
+        assertEquals(true, toggleA.await())
 
-        mpr!!.togglePinnedRoute("4")
+        val toggle4 = async { mpr!!.togglePinnedRoute("4") }
         getSync.send(Unit)
         assertEquals(emptySet<String>(), pinnedRoutesRepo.setCalls.receive())
         getSync.send(Unit)
         composeTestRule.awaitIdle()
         assertEquals(setOf("5"), mpr!!.pinnedRoutes)
+        assertEquals(false, toggle4.await())
     }
 }

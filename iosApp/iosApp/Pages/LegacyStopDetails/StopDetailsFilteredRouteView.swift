@@ -11,7 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsFilteredRouteView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop?
     let alerts: [shared.Alert]
     let downstreamAlerts: [shared.Alert]
@@ -179,7 +179,7 @@ struct StopDetailsFilteredRouteView: View {
                                                     line: patternsByStop.line,
                                                     routes: patternsByStop.routes
                                                 ))
-                                                analytics.tappedAlertDetails(
+                                                analytics.tappedAlertDetailsLegacy(
                                                     routeId: patternsByStop.routeIdentifier,
                                                     stopId: patternsByStop.stop.id,
                                                     alertId: alert.id
@@ -199,7 +199,7 @@ struct StopDetailsFilteredRouteView: View {
                                                     line: patternsByStop.line,
                                                     routes: patternsByStop.routes
                                                 ))
-                                                analytics.tappedAlertDetails(
+                                                analytics.tappedAlertDetailsLegacy(
                                                     routeId: patternsByStop.routeIdentifier,
                                                     stopId: patternsByStop.stop.id,
                                                     alertId: alert.id
@@ -213,12 +213,19 @@ struct StopDetailsFilteredRouteView: View {
                                 ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                                     VStack(spacing: 0) {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
+                                            let noTrips: RealtimePatterns
+                                                .NoTripsFormat? = switch onEnum(of: row.formatted) {
+                                            case let .noTrips(noTrips): noTrips.noTripsFormat
+                                            default: nil
+                                            }
                                             pushNavEntry(entry)
-                                            analytics.tappedDepartureRow(
+                                            analytics.tappedDeparture(
                                                 routeId: patternsByStop.routeIdentifier,
                                                 stopId: patternsByStop.stop.id,
                                                 pinned: pinned,
-                                                alert: alerts.count > 0
+                                                alert: alerts.count > 0,
+                                                routeType: patternsByStop.representativeRoute.type,
+                                                noTrips: noTrips
                                             )
                                         }) {
                                             HeadsignRowView(

@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="elevator_closure_count">
+        <item quantity="one">%d asansè fèmen</item>
+        <item quantity="few">%d asansè fèmen</item>
+        <item quantity="many">%d fèmti asansè</item>
+    </plurals>
 </resources>

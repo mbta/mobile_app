@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavBackStackEntry
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
@@ -48,18 +48,19 @@ import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 @ExperimentalMaterial3Api
 @Composable
 fun SearchBarOverlay(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
-    currentNavEntry: NavBackStackEntry?,
+    currentNavEntry: SheetRoutes?,
     inputFieldFocusRequester: FocusRequester,
     content: @Composable () -> Unit
 ) {
     var visible =
         remember(currentNavEntry) {
-            currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+            currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
         }
-    var expanded by rememberSaveable { mutableStateOf(false) }
     var searchInputState by rememberSaveable { mutableStateOf("") }
-    val globalResponse = getGlobalData()
+    val globalResponse = getGlobalData("SearchBar.getGlobalData")
     val searchResultsVm = getSearchResultsVm(globalResponse = globalResponse)
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 
@@ -71,6 +72,14 @@ fun SearchBarOverlay(
             disabledContentColor = colorResource(R.color.deemphasized),
         )
     LaunchedEffect(searchInputState, visible) { searchResultsVm.getSearchResults(searchInputState) }
+    LaunchedEffect(visible, expanded) {
+        if (visible) {
+            onExpandedChange(expanded)
+            if (!expanded) {
+                searchInputState = ""
+            }
+        }
+    }
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
@@ -106,7 +115,7 @@ fun SearchBarOverlay(
                             placeholder = { Text(stringResource(R.string.search_by_stop)) },
                             expanded = expanded,
                             onQueryChange = { searchInputState = it },
-                            onExpandedChange = { expanded = it },
+                            onExpandedChange = onExpandedChange,
                             modifier = Modifier.focusRequester(inputFieldFocusRequester),
                             onSearch = {},
                             leadingIcon = {
@@ -120,7 +129,7 @@ fun SearchBarOverlay(
                                 if (expanded) {
                                     Button(
                                         colors = buttonColors,
-                                        onClick = { expanded = false },
+                                        onClick = { onExpandedChange(false) },
                                     ) {
                                         Icon(
                                             painterResource(R.drawable.fa_xmark),

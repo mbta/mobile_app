@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.Prediction
@@ -52,6 +53,11 @@ class NearbyStopViewTest {
             id = "trip_1"
             headsign = "Sample Headsign"
         }
+    val elevatorAlert =
+        builder.alert {
+            effect = Alert.Effect.ElevatorClosure
+            header = "Test elevator alert"
+        }
 
     val patternsByStop =
         PatternsByStop(
@@ -83,7 +89,8 @@ class NearbyStopViewTest {
                         )
                     )
                 )
-            )
+            ),
+            listOf(elevatorAlert)
         )
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -95,6 +102,7 @@ class NearbyStopViewTest {
                 patternsAtStop = patternsByStop,
                 condenseHeadsignPredictions = false,
                 now = now,
+                pinned = false,
                 onOpenStopDetails = { _, _ -> }
             )
         }
@@ -102,5 +110,20 @@ class NearbyStopViewTest {
         composeTestRule.onNodeWithText("Sample Stop").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("Now").assertIsDisplayed()
+    }
+
+    @Test
+    fun testNearbyStopViewDisplaysElevatorAlerts() {
+        composeTestRule.setContent {
+            NearbyStopView(
+                patternsAtStop = patternsByStop,
+                condenseHeadsignPredictions = false,
+                now = now,
+                pinned = false,
+                onOpenStopDetails = { _, _ -> },
+                showElevatorAccessibility = true
+            )
+        }
+        composeTestRule.onNodeWithText("1 elevator closure").assertIsDisplayed()
     }
 }

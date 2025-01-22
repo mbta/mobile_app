@@ -27,7 +27,7 @@ class DrawableByNameTest {
 
     @Test
     fun `all secondary alert icon names are defined`() {
-        for (alertEffect in Alert.Effect.entries) {
+        for (alertEffect in Alert.Effect.entries - Alert.Effect.ElevatorClosure) {
             val alert = alert { effect = alertEffect }
             for (route in MapStopRoute.entries + null) {
                 val icon = RealtimePatterns.Format.SecondaryAlert(alert, route)

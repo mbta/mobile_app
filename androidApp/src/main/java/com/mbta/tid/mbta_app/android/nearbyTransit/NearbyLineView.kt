@@ -12,7 +12,8 @@ fun NearbyLineView(
     pinned: Boolean,
     onPin: (String) -> Unit,
     now: Instant,
-    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit
+    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
+    showElevatorAccessibility: Boolean = false
 ) {
     LineCard(nearbyLine.line, nearbyLine.routes, pinned, onPin) {
         for (patternsAtStop in nearbyLine.patternsByStop) {
@@ -20,7 +21,9 @@ fun NearbyLineView(
                 patternsAtStop,
                 condenseHeadsignPredictions = nearbyLine.condensePredictions,
                 now,
-                onOpenStopDetails
+                pinned,
+                onOpenStopDetails,
+                showElevatorAccessibility
             )
         }
     }

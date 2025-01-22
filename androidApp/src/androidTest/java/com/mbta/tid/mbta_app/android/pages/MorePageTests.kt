@@ -30,6 +30,7 @@ class MorePageTests : KoinTest {
         composeTestRule.onNodeWithText("MBTA Go").assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testSettings() = runTest {
         var hideMapToggleCalled = false
@@ -53,6 +54,8 @@ class MorePageTests : KoinTest {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
 
+        composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
+        composeTestRule.onNodeWithText("Settings").performScrollTo()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hide Maps").performClick()
 

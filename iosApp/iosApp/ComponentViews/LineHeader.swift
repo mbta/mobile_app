@@ -27,9 +27,9 @@ struct LineHeader<Content: View>: View {
         if let route = routes.first {
             TransitHeader(
                 name: line.longName,
+                routeType: route.type,
                 backgroundColor: Color(hex: line.color),
                 textColor: Color(hex: line.textColor),
-                modeIcon: routeIcon(route),
                 rightContent: rightContent
             )
             .accessibilityElement(children: .combine)

@@ -25,6 +25,20 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         hashValue
     }
 
+    private var caseId: String {
+        switch self {
+        case .stopDetails: "stopDetails"
+        case .legacyStopDetails: "legacyStopDetails"
+        case .tripDetails: "tripDetails"
+        case .nearby: "nearby"
+        case .alertDetails: "alertDetails"
+        }
+    }
+
+    func hasSamePage(as otherEntry: Self) -> Bool {
+        caseId == otherEntry.caseId
+    }
+
     func stop() -> Stop? {
         switch self {
         case let .legacyStopDetails(stop, _): stop

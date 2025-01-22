@@ -14,7 +14,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct LegacyStopDetailsView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
@@ -154,7 +154,7 @@ struct LegacyStopDetailsView: View {
         guard let departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
-        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
+        analytics.tappedRouteFilterLegacy(routeId: patterns.routeIdentifier, stopId: stop.id)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
             // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
             headsign.patterns.compactMap { pattern in (pattern as? RoutePattern)?.directionId }

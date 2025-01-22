@@ -41,6 +41,7 @@ class SettingsRepositoryTest : KoinTest {
                 Settings.DevDebugMode to true,
                 Settings.SearchRouteResults to false,
                 Settings.TripHeadsigns to false,
+                Settings.ElevatorAccessibility to false,
                 Settings.HideMaps to false,
             ),
             repo.getSettings()

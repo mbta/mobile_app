@@ -90,6 +90,7 @@ enum class SheetValue {
     Large,
     Medium,
     Small,
+    Hidden
 }
 
 /** @see androidx.compose.material3.ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection */

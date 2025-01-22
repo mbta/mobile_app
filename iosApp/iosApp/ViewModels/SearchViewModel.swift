@@ -32,6 +32,8 @@ class SearchViewModel: ObservableObject {
     private let searchResultsRepository: ISearchResultRepository
     private let globalRepository: IGlobalRepository
 
+    private let analytics: Analytics
+
     private var routeResultsEnabled: Bool
     private var globalResponse: GlobalResponse?
     private var latestVisits: [Result]?
@@ -42,13 +44,15 @@ class SearchViewModel: ObservableObject {
         settingsRepo: ISettingsRepository = RepositoryDI().settings,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
-        searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults
+        searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.routeResultsEnabled = routeResultsEnabled
         self.settingsRepo = settingsRepo
         self.globalRepository = globalRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.searchResultsRepository = searchResultsRepository
+        self.analytics = analytics
     }
 
     func getStopFor(id: String) -> Stop? {
@@ -56,6 +60,7 @@ class SearchViewModel: ObservableObject {
     }
 
     func determineStateFor(query: String) {
+        analytics.performedSearch(query: query)
         if query.isEmpty {
             fetchResultsTask?.cancel()
             resultsState = nil

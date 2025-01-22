@@ -21,7 +21,7 @@ struct RouteCard<Content: View>: View {
         TransitCard(header: {
             RouteHeader(route: route) {
                 PinButton(pinned: pinned, action: { onPin(route.id) })
-            }
+            }.accessibilityAddTraits(.isButton)
         }, content: content)
     }
 }

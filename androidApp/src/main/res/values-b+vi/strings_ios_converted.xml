@@ -11,6 +11,7 @@
     <string name="close_button_label">Đóng</string>
     <string name="detour">Đường vòng</string>
     <string name="directionTo">%1$s đến</string>
+    <string name="displays_more_info">hiển thị thêm thông tin</string>
     <string name="eastbound">Về hướng đông</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
@@ -73,6 +74,7 @@
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
+    <string name="setting_elevator_accessibility">Hiển thị khả năng tiếp cận thang máy</string>
     <string name="setting_toggle_hide_maps">Ẩn bản đồ</string>
     <string name="settings_link">Cài đặt</string>
     <string name="shuttle">Xe đưa đón</string>

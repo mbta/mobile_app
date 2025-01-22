@@ -1,9 +1,11 @@
 package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
@@ -22,28 +24,37 @@ class GlobalDataViewModel(
     private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
     var globalResponse: StateFlow<GlobalResponse?> = _globalResponse
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch { globalResponse.collect { getGlobalData() } }
-    }
-
-    fun getGlobalData() {
+    fun getGlobalData(errorKey: String) {
         CoroutineScope(Dispatchers.IO).launch {
             fetchApi(
                 errorBannerRepo = errorBannerRepository,
-                errorKey = "GlobalDataViewModel.getGlobalData",
+                errorKey = errorKey,
                 getData = { globalRepository.getGlobalData() },
                 onSuccess = { _globalResponse.emit(it) },
-                onRefreshAfterError = { getGlobalData() }
+                onRefreshAfterError = { getGlobalData(errorKey) }
             )
+        }
+    }
+
+    class Factory(
+        private val globalRepository: IGlobalRepository,
+        private val errorBannerRepository: IErrorBannerStateRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return GlobalDataViewModel(globalRepository, errorBannerRepository) as T
         }
     }
 }
 
 @Composable
 fun getGlobalData(
+    errorKey: String,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject()
 ): GlobalResponse? {
-    val viewModel = remember { GlobalDataViewModel(globalRepository, errorBannerRepository) }
+    val viewModel: GlobalDataViewModel =
+        viewModel(factory = GlobalDataViewModel.Factory(globalRepository, errorBannerRepository))
+
+    LaunchedEffect(key1 = null) { viewModel.getGlobalData(errorKey) }
     return viewModel.globalResponse.collectAsState(initial = null).value
 }

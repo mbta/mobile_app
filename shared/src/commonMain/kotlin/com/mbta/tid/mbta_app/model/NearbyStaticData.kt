@@ -496,7 +496,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
 
     val activeRelevantAlerts =
         alerts.alerts.values.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Accessibility
         }
 
     val allDataLoaded = schedules != null
@@ -671,7 +671,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
 
     val activeRelevantAlerts =
         alerts.alerts.values.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Accessibility
         }
 
     val allDataLoaded = schedules != null

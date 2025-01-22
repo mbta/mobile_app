@@ -6,11 +6,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Instant
+import org.koin.compose.koinInject
 
 @Composable
 fun StopDeparturesSummaryList(
@@ -18,25 +20,48 @@ fun StopDeparturesSummaryList(
     condenseHeadsignPredictions: Boolean,
     now: Instant,
     context: TripInstantDisplay.Context,
+    pinned: Boolean,
+    analytics: Analytics = koinInject(),
     onClick: (RealtimePatterns) -> Unit
 ) {
     val localContext = LocalContext.current
+
     for (patterns in patternsAtStop.patterns) {
+        fun analyticsTappedDeparture(predictions: RealtimePatterns.Format) {
+            val noTrips =
+                when (predictions) {
+                    is RealtimePatterns.Format.NoTrips -> predictions.noTripsFormat
+                    else -> null
+                }
+            analytics.tappedDeparture(
+                patternsAtStop.routeIdentifier,
+                patternsAtStop.stop.id,
+                pinned,
+                !patterns.alertsHere.isNullOrEmpty(),
+                patternsAtStop.representativeRoute.type,
+                noTrips
+            )
+        }
 
         when (patterns) {
             is RealtimePatterns.ByHeadsign -> {
-                HeadsignRowView(
-                    patterns.headsign,
+                val predictions =
                     patterns.format(
                         now,
                         patternsAtStop.representativeRoute.type,
                         if (condenseHeadsignPredictions) 1 else 2,
                         context
-                    ),
+                    )
+                HeadsignRowView(
+                    patterns.headsign,
+                    predictions,
                     modifier =
                         Modifier.clickable(
                             onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
-                            onClick = { onClick(patterns) }
+                            onClick = {
+                                onClick(patterns)
+                                analyticsTappedDeparture(predictions)
+                            }
                         ),
                     pillDecoration =
                         if (patternsAtStop.line != null) PillDecoration.OnRow(patterns.route)
@@ -44,13 +69,18 @@ fun StopDeparturesSummaryList(
                 )
             }
             is RealtimePatterns.ByDirection -> {
+                val predictions =
+                    patterns.format(now, patternsAtStop.representativeRoute.type, context)
                 DirectionRowView(
                     patterns.direction,
-                    patterns.format(now, patternsAtStop.representativeRoute.type, context),
+                    predictions,
                     modifier =
                         Modifier.clickable(
                             onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
-                            onClick = { onClick(patterns) }
+                            onClick = {
+                                onClick(patterns)
+                                analyticsTappedDeparture(predictions)
+                            }
                         ),
                     pillDecoration = PillDecoration.OnPrediction(patterns.routesByTrip)
                 )

@@ -2,8 +2,8 @@ package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.SearchResults
@@ -25,6 +25,7 @@ import org.koin.compose.koinInject
 @OptIn(kotlinx.coroutines.FlowPreview::class)
 class SearchResultsViewModel(
     private val globalResponse: GlobalResponse?,
+    private val analytics: Analytics,
     private val searchResultRepository: ISearchResultRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
 ) : ViewModel() {
@@ -33,6 +34,7 @@ class SearchResultsViewModel(
     val searchResults: StateFlow<SearchResults?> = _searchResults
 
     fun getSearchResults(query: String) {
+        analytics.performedSearch(query)
         job?.cancel()
         job =
             CoroutineScope(Dispatchers.IO).launch {
@@ -81,12 +83,18 @@ class SearchResultsViewModel(
 @Composable
 fun getSearchResultsVm(
     globalResponse: GlobalResponse?,
+    analytics: Analytics = koinInject(),
     searchResultRepository: ISearchResultRepository = koinInject(),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject()
 ): SearchResultsViewModel {
     val viewModel =
         remember(globalResponse) {
-            SearchResultsViewModel(globalResponse, searchResultRepository, visitHistoryUsecase)
+            SearchResultsViewModel(
+                globalResponse,
+                analytics,
+                searchResultRepository,
+                visitHistoryUsecase
+            )
         }
     return viewModel
 }

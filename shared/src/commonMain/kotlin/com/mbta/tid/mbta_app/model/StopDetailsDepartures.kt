@@ -16,6 +16,7 @@ data class TripAndFormat(
 
 data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     val allUpcomingTrips = routes.flatMap { it.allUpcomingTrips() }
+    val elevatorAlerts = routes.flatMap { it.elevatorAlerts }.distinct()
 
     val upcomingPatternIds = allUpcomingTrips.mapNotNull { it.trip.routePatternId }.toSet()
 
@@ -102,6 +103,29 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             tripId = filterTrip.trip.id,
             vehicleId = filterTrip.vehicle?.id,
             stopSequence = filterTrip.stopSequence
+        )
+    }
+
+    class ScreenReaderContext(
+        val routeType: RouteType,
+        val destination: String?,
+        val stopName: String
+    )
+
+    fun getScreenReaderTripDepartureContext(
+        previousFilters: StopDetailsPageFilters
+    ): ScreenReaderContext? {
+        val stopFilter = previousFilters.stopFilter ?: return null
+        val selectedPattern =
+            this.routes.firstOrNull { it.routeIdentifier == stopFilter.routeId } ?: return null
+        val trip = allUpcomingTrips.firstOrNull { it.trip.id == previousFilters.tripFilter?.tripId }
+        val destination =
+            trip?.trip?.headsign ?: selectedPattern.directions[stopFilter.directionId].destination
+
+        return ScreenReaderContext(
+            selectedPattern.representativeRoute.type,
+            destination,
+            selectedPattern.stop.name
         )
     }
 

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -65,10 +66,11 @@ class GetSearchResultTest {
             actualSearchResultsViewModel =
                 getSearchResultsVm(
                     GlobalResponse(builder),
+                    MockAnalytics(),
                     object : ISearchResultRepository {
                         override suspend fun getSearchResults(
                             query: String
-                        ): ApiResult<SearchResults>? {
+                        ): ApiResult<SearchResults> {
                             return ApiResult.Ok(searchResults)
                         }
                     },

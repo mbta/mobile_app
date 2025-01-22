@@ -19,6 +19,7 @@ data class Alert(
 ) : BackendObject {
     val alertState: StopAlertState =
         when (this.effect) {
+            Effect.ElevatorClosure -> StopAlertState.Elevator
             Effect.Shuttle -> StopAlertState.Shuttle
             in setOf(
                 Effect.Suspension,
@@ -45,6 +46,7 @@ data class Alert(
             ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
             // service changes are always secondary
             Effect.ServiceChange -> AlertSignificance.Secondary
+            Effect.ElevatorClosure -> AlertSignificance.Accessibility
             else -> AlertSignificance.None
         }
 
@@ -234,6 +236,28 @@ data class Alert(
                                 ?: it.appliesTo(directionId = directionId, routeId = routeId)
                         } && it.activities.contains(Alert.InformedEntity.Activity.Board)
                     }
+                }
+                .distinct()
+        }
+
+        /**
+         * Returns elevator alerts that are applicable to the passed in stops
+         *
+         * Criteria:
+         * - Alert effect is [Alert.Effect.ElevatorClosure]
+         * - Stop ID matches an alert [Alert.InformedEntity]
+         * - Alert's informed entity activities contains
+         *   [Alert.InformedEntity.Activity.UsingWheelchair]
+         */
+        fun elevatorAlerts(alerts: Collection<Alert>, stopIds: Set<String>): List<Alert> {
+            return alerts
+                .filter {
+                    it.effect == Alert.Effect.ElevatorClosure &&
+                        it.anyInformedEntity { entity ->
+                            entity.activities.contains(
+                                Alert.InformedEntity.Activity.UsingWheelchair
+                            ) && stopIds.any { stopId -> entity.appliesTo(stopId = stopId) }
+                        }
                 }
                 .distinct()
         }

@@ -21,6 +21,8 @@ import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
@@ -28,6 +30,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.map.RouteLineData
@@ -74,8 +77,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.compose.KoinContext
+import org.koin.core.module.dsl.*
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import org.koin.test.KoinTest
@@ -207,9 +210,12 @@ class NearbyTransitPageTest : KoinTest {
             )
         )
 
+    val analytics = MockAnalytics()
+
     val koinApplication = koinApplication {
         modules(
             module {
+                single<Analytics> { analytics }
                 single<ISettingsRepository> { MockSettingsRepository() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> {
@@ -271,6 +277,7 @@ class NearbyTransitPageTest : KoinTest {
                 single<IVehiclesRepository> { MockVehiclesRepository() }
                 single<ISearchResultRepository> { MockSearchResultRepository() }
                 viewModelOf(::NearbyTransitViewModel)
+                viewModelOf(::StopDetailsViewModel)
                 single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
                 single<VisitHistoryUsecase> { VisitHistoryUsecase(get()) }
             }

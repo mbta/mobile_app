@@ -55,7 +55,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(route: route, stop: stop, patterns: []),
+            downstreamAlerts: [],
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -111,7 +112,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(route: route, stop: stop, patterns: []),
+            downstreamAlerts: [],
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -166,7 +168,11 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            downstreamAlerts: [],
+            patternsByStop: .init(
+                routes: [route], line: line, stop: stop,
+                patterns: [], directions: [], elevatorAlerts: []
+            ),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -227,7 +233,11 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2, tile3],
             noPredictionsStatus: nil,
             alerts: [],
-            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            downstreamAlerts: [],
+            patternsByStop: .init(
+                routes: [route], line: line, stop: stop,
+                patterns: [], directions: [], elevatorAlerts: []
+            ),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -289,6 +299,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [tile1, tile2],
             noPredictionsStatus: nil,
             alerts: [],
+            downstreamAlerts: [],
             patternsByStop: .init(
                 routes: [route],
                 line: nil,
@@ -303,10 +314,12 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                             .init(trip: trip, schedule: schedule, prediction: prediction),
                         ]
                     ),
-                ], directions: [
+                ],
+                directions: [
                     .init(name: "", destination: "", id: 0),
                     .init(name: "", destination: "", id: 1),
-                ]
+                ],
+                elevatorAlerts: []
             ),
             pinned: false,
             now: Date.now,
@@ -339,7 +352,11 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tiles: [],
             noPredictionsStatus: RealtimePatterns.NoTripsFormatServiceEndedToday(),
             alerts: [],
-            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            downstreamAlerts: [],
+            patternsByStop: .init(
+                routes: [route], line: line, stop: stop,
+                patterns: [], directions: [], elevatorAlerts: []
+            ),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -352,5 +369,99 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
         XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
+    }
+
+    func testShowsSuspension() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.header = "Fuchsia Line suspended from Here to There"
+        }
+
+        // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
+        // skipped
+        let tile = TileData(
+            route: route,
+            headsign: "A",
+            formatted: RealtimePatterns.FormatSome(
+                trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
+                secondaryAlert: nil
+            )
+        )
+        let nearbyVM = NearbyViewModel()
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            tiles: [tile],
+            noPredictionsStatus: nil,
+            alerts: [alert],
+            downstreamAlerts: [],
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: .init()
+        ).environmentObject(ViewportProvider())
+
+        XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
+        XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
+        XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
+        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
+        try sut.inspect().find(button: "View details").tap()
+        XCTAssertEqual(nearbyVM.navigationStack.last, .alertDetails(alertId: alert.id, line: nil, routes: [route]))
+    }
+
+    func testShowsDownstreamAlert() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.header = "Fuchsia Line suspended from Here to There"
+        }
+
+        let tile = TileData(
+            route: route,
+            headsign: "A",
+            formatted: RealtimePatterns.FormatSome(
+                trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
+                secondaryAlert: nil
+            )
+        )
+        let nearbyVM = NearbyViewModel()
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            tiles: [tile],
+            noPredictionsStatus: nil,
+            alerts: [],
+            downstreamAlerts: [alert],
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: .init()
+        ).environmentObject(ViewportProvider())
+
+        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
+        XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
+        XCTAssertNotNil(try sut.inspect().find(text: "Suspension ahead"))
+        XCTAssertThrowsError(try sut.inspect().find(text: alert.header!))
+        try sut.inspect().find(AlertCard.self).button().tap()
+        XCTAssertEqual(nearbyVM.navigationStack.last, .alertDetails(alertId: alert.id, line: nil, routes: [route]))
     }
 }

@@ -23,7 +23,7 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
     init(
@@ -97,7 +97,7 @@ struct StopDetailsUnfilteredView: View {
                                         now: now.toKotlinInstant(),
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         pinned: stopDetailsVM.pinnedRoutes.contains(patternsByStop.routeIdentifier),
-                                        onPin: stopDetailsVM.togglePinnedRoute
+                                        onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } }
                                     )
                                 }
                             }.padding(.top, 16)

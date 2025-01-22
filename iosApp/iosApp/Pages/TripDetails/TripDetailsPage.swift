@@ -31,7 +31,7 @@ struct TripDetailsPage: View {
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
-    let analytics: TripDetailsAnalytics
+    let analytics: Analytics
 
     @State var now = Date.now.toKotlinInstant()
 
@@ -53,7 +53,7 @@ struct TripDetailsPage: View {
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle,
-        analytics: TripDetailsAnalytics = AnalyticsProvider.shared
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId

@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct AlertDetails: View {
-    var analytics: AlertDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
     var alert: shared.Alert
     var line: Line?
     var routes: [Route]?
@@ -28,18 +28,7 @@ struct AlertDetails: View {
     }
 
     private var effectLabel: String? {
-        // TODO: Add all possible alert effects if/when we start displaying non-disruption alerts here
-        switch alert.effect {
-        case .detour: NSLocalizedString("Detour", comment: "Possible alert effect")
-        case .dockClosure: NSLocalizedString("Dock Closure", comment: "Possible alert effect")
-        case .serviceChange: NSLocalizedString("Service Change", comment: "Possible alert effect")
-        case .shuttle: NSLocalizedString("Shuttle", comment: "Possible alert effect")
-        case .stationClosure: NSLocalizedString("Station Closure", comment: "Possible alert effect")
-        case .stopClosure: NSLocalizedString("Stop Closure", comment: "Possible alert effect")
-        case .stopMove, .stopMoved: NSLocalizedString("Station Moved", comment: "Possible alert effect")
-        case .suspension: NSLocalizedString("Suspension", comment: "Possible alert effect")
-        default: nil
-        }
+        FormattedAlert(alert: alert)?.effect
     }
 
     private var causeLabel: String? {

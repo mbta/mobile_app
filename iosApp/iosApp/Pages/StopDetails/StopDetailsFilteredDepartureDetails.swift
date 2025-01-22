@@ -19,6 +19,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var tiles: [TileData]
     var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
     var alerts: [shared.Alert]
+    var downstreamAlerts: [shared.Alert]
     var patternsByStop: PatternsByStop
     var pinned: Bool
 
@@ -31,7 +32,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: Analytics = AnalyticsProvider.shared
 
     var showTileHeadsigns: Bool {
         patternsByStop.line != nil || !tiles.allSatisfy { tile in
@@ -42,6 +43,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
 
     var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
+    var routeTextColor: Color { Color(hex: patternsByStop.representativeRoute.textColor) }
     var routeType: RouteType { patternsByStop.representativeRoute.type }
 
     var selectedTripIsCancelled: Bool {
@@ -55,6 +57,13 @@ struct StopDetailsFilteredDepartureDetails: View {
             false
         }
     }
+
+    var hasMajorAlert: Bool {
+        alerts.contains(where: { $0.significance == .major })
+    }
+
+    @AccessibilityFocusState private var selectedDepartureFocus: String?
+    private let cardFocusId = "_card"
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -77,7 +86,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .padding(.bottom, 6)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
-                        if !tiles.isEmpty {
+                        if !hasMajorAlert, !tiles.isEmpty {
                             departureTiles(view)
                                 .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                                 .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
@@ -85,12 +94,17 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                     alertCards
 
-                    if let noPredictionsStatus {
+                    if hasMajorAlert {
+                        EmptyView()
+                    } else if let noPredictionsStatus {
                         StopDetailsNoTripCard(
                             status: noPredictionsStatus,
                             accentColor: routeColor,
-                            routeType: routeType
+                            routeType: routeType,
+                            hideMaps: stopDetailsVM.hideMaps
                         )
+                        .accessibilityHeading(.h3)
+                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else if selectedTripIsCancelled {
                         StopDetailsIconCard(
                             accentColor: routeColor,
@@ -104,6 +118,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                             ),
                             icon: routeSlashIcon(routeType)
                         )
+                        .accessibilityHeading(.h4)
+                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else {
                         TripDetailsView(
                             tripFilter: tripFilter,
@@ -121,6 +137,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onAppear { handleViewportForStatus(noPredictionsStatus) }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
+        .onChange(of: tripFilter) { tripFilter in
+            selectedDepartureFocus = tiles.first { $0.upcoming?.trip.id == tripFilter?.tripId }?.id ?? cardFocusId
+        }
         .ignoresSafeArea(.all)
     }
 
@@ -157,11 +176,13 @@ struct StopDetailsFilteredDepartureDetails: View {
                                     stopSequence: upcoming.stopSequence,
                                     selectionLock: false
                                 )
-                                analytics.tappedDepartureRow(
+                                analytics.tappedDeparture(
                                     routeId: patternsByStop.routeIdentifier,
                                     stopId: patternsByStop.stop.id,
                                     pinned: pinned,
-                                    alert: alerts.count > 0
+                                    alert: alerts.count > 0,
+                                    routeType: patternsByStop.representativeRoute.type,
+                                    noTrips: nil
                                 )
                                 view.scrollTo(tileData.id)
                             }
@@ -170,7 +191,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                             .line != nil ? .onPrediction(route: tileData.route) : .none,
                         showHeadsign: showTileHeadsigns,
                         isSelected: tileData.upcoming?.trip.id == tripFilter?.tripId
-                    ).padding(.horizontal, 4)
+                    )
+                    .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
+                    .padding(.horizontal, 4)
                 }
             }
             .padding(.horizontal, 12)
@@ -179,24 +202,41 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
+    func getAlertDetailsHandler(_ alertId: String) -> () -> Void {
+        {
+            nearbyVM.pushNavEntry(.alertDetails(
+                alertId: alertId,
+                line: patternsByStop.line,
+                routes: patternsByStop.routes
+            ))
+            analytics.tappedAlertDetails(
+                routeId: patternsByStop.routeIdentifier,
+                stopId: patternsByStop.stop.id,
+                alertId: alertId
+            )
+        }
+    }
+
+    @ViewBuilder
+    func alertCard(_ alert: shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
+        AlertCard(
+            alert: alert,
+            spec: spec ?? (alert.significance == .major ? .major : .secondary),
+            color: routeColor,
+            textColor: routeTextColor,
+            onViewDetails: getAlertDetailsHandler(alert.id)
+        )
+    }
+
     @ViewBuilder
     var alertCards: some View {
-        ForEach(alerts, id: \.id) { alert in
-            VStack(spacing: 0) {
-                StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
-                    .onTapGesture {
-                        nearbyVM.pushNavEntry(.alertDetails(
-                            alertId: alert.id,
-                            line: patternsByStop.line,
-                            routes: patternsByStop.routes
-                        ))
-                        analytics.tappedAlertDetails(
-                            routeId: patternsByStop.routeIdentifier,
-                            stopId: patternsByStop.stop.id,
-                            alertId: alert.id
-                        )
-                    }.padding(.horizontal, 8)
+        VStack(spacing: 16) {
+            ForEach(alerts, id: \.id) { alert in
+                alertCard(alert)
             }
-        }
+            ForEach(downstreamAlerts, id: \.id) { alert in
+                alertCard(alert, .downstream)
+            }
+        }.padding(.horizontal, 16)
     }
 }

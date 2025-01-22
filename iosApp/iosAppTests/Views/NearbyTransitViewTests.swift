@@ -842,16 +842,15 @@ final class NearbyTransitViewTests: XCTestCase {
                     line: nil,
                     patterns: [pattern],
                     upcomingTrips: []
-
-                )]
-
+                )],
+                elevatorAlerts: []
             ),
             now: Date.now.toKotlinInstant(),
             pushNavEntry: pushNavEntry,
             pinned: false
         )
 
-        try sut.inspect().find(DestinationRowView.self).parent().parent().parent().button().tap()
+        try sut.inspect().find(DestinationRowView.self).find(ViewType.Button.self).tap()
 
         wait(for: [stopEntryPushedExp], timeout: 2)
     }
