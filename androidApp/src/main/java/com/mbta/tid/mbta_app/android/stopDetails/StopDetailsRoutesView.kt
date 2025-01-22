@@ -26,6 +26,9 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockTripRepository
+import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -130,7 +133,10 @@ private fun StopDetailsRoutesViewPreview() {
         StopDetailsViewModel(
             MockScheduleRepository(),
             MockPredictionsRepository(),
-            MockErrorBannerStateRepository()
+            MockErrorBannerStateRepository(),
+            MockTripRepository(),
+            MockTripPredictionsRepository(),
+            MockVehicleRepository()
         )
     viewModel.setDepartures(
         StopDetailsDepartures(

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -8,26 +9,38 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
+import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.StopData
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.ITripRepository
+import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -37,12 +50,20 @@ class StopDetailsViewModel(
     schedulesRepository: ISchedulesRepository,
     private val predictionsRepository: IPredictionsRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
+    private val tripRepository: ITripRepository,
+    private val tripPredictionsRepository: ITripPredictionsRepository,
+    private val vehicleRepository: IVehicleRepository
 ) : ViewModel() {
 
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
 
     private val _stopData = MutableStateFlow<StopData?>(null)
     val stopData: StateFlow<StopData?> = _stopData
+
+    private val _tripData = MutableStateFlow<TripData?>(null)
+    val tripData: StateFlow<TripData?> = _tripData
+
+    private val _handleTripChangeMutex = Mutex()
 
     private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
@@ -111,6 +132,11 @@ class StopDetailsViewModel(
         stopPredictionsFetcher.disconnect()
     }
 
+    fun leaveTripChannels() {
+        leaveTripPredictions()
+        leaveVehicle()
+    }
+
     fun setDepartures(departures: StopDetailsDepartures?) {
         _stopDepartures.value = departures
     }
@@ -121,11 +147,228 @@ class StopDetailsViewModel(
         errorBannerRepository.clearDataError("StopDetailsVM.getSchedule")
     }
 
+    private fun clearTripDetails() {
+        _tripData.value = null
+        errorBannerRepository.clearDataError("TripDetailsView.joinVehicle")
+        errorBannerRepository.clearDataError("TripDetailsView.loadTripSchedules")
+        errorBannerRepository.clearDataError("TripDetailsView.loadTrip")
+    }
+
+    private fun joinVehicle(tripFilter: TripDetailsFilter) {
+        leaveVehicle()
+        val vehicleId = tripFilter.vehicleId
+        if (vehicleId == null) {
+            // If the filter has a null vehicle ID, we can't join anything, clear the vehicle and
+            // return
+            _tripData.update { it?.copy(vehicle = null) }
+            return
+        } else {
+
+            val errorKey = "TripDetailsView.joinVehicle"
+            vehicleRepository.connect(vehicleId) { outcome ->
+                when (outcome) {
+                    is ApiResult.Ok -> {
+                        _tripData.update { it?.copy(vehicle = outcome.data.vehicle) }
+                        errorBannerRepository.clearDataError(errorKey)
+                    }
+                    is ApiResult.Error -> {
+                        _tripData.update { it?.copy(vehicle = null) }
+
+                        errorBannerRepository.setDataError(
+                            errorKey,
+                            { clearAndLoadTripDetails(tripFilter) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun clearAndLoadTripDetails(tripFilter: TripDetailsFilter) {
+        CoroutineScope(Dispatchers.IO).launch {
+            clearTripDetails()
+            loadTripDetails(tripFilter)
+            joinTripChannels(tripFilter)
+        }
+    }
+
+    private suspend fun loadTripDetails(tripFilter: TripDetailsFilter) {
+        val trip = loadTrip(tripFilter)
+        Log.i("KB", "loadTripDetails: trip ${trip}")
+        if (trip == null) {
+            _tripData.value = null
+        } else {
+            val schedules = loadTripSchedules(tripFilter)
+            _tripData.update {
+                TripData(
+                    tripFilter = tripFilter,
+                    trip = trip,
+                    tripSchedules = schedules,
+                    tripPredictions = null,
+                    vehicle = null
+                )
+            }
+        }
+    }
+
+    private suspend fun loadTrip(tripFilter: TripDetailsFilter): Trip? {
+        val errorKey = "TripDetailsView.loadTrip"
+
+        return withContext(Dispatchers.IO) {
+            when (val response = tripRepository.getTrip(tripFilter.tripId)) {
+                is ApiResult.Ok -> {
+                    errorBannerRepository.clearDataError(errorKey)
+                    response.data.trip
+                }
+                is ApiResult.Error -> {
+                    errorBannerRepository.setDataError(errorKey) {
+                        clearAndLoadTripDetails(tripFilter)
+                    }
+                    null
+                }
+            }
+        }
+    }
+
+    private suspend fun loadTripSchedules(tripFilter: TripDetailsFilter): TripSchedulesResponse? {
+        return CoroutineScope(Dispatchers.IO)
+            .async {
+                var result: TripSchedulesResponse? = null
+                fetchApi(
+                    errorBannerRepository,
+                    "TripDetailsView.loadTripSchedules",
+                    { tripRepository.getTripSchedules(tripFilter.tripId) },
+                    { schedules -> result = schedules },
+                    { clearAndLoadTripDetails(tripFilter) }
+                )
+                result
+            }
+            .await()
+    }
+
+    private fun joinTripChannels(tripFilter: TripDetailsFilter) {
+        joinVehicle(tripFilter)
+        joinTripPredictions(tripFilter)
+    }
+
+    private fun joinTripPredictions(tripFilter: TripDetailsFilter) {
+        leaveTripPredictions()
+
+        Log.i("KB", "joinTripPredictions Connect")
+
+        tripPredictionsRepository.connect(tripFilter.tripId) { outcome ->
+            when (outcome) {
+                // no error handling since persistent errors cause stale predictions
+                is ApiResult.Ok -> {
+                    Log.i("KB", "joinTripPredictions Received first")
+                    _tripData.update { it?.copy(tripPredictions = outcome.data) }
+                }
+                is ApiResult.Error -> {}
+            }
+            _tripData.update { it?.copy(tripPredictionsLoaded = true) }
+        }
+    }
+
+    private fun leaveTripPredictions() {
+        tripPredictionsRepository.disconnect()
+    }
+
+    private fun leaveVehicle() {
+        vehicleRepository.disconnect()
+    }
+
     fun handleStopChange(stopId: String?) {
         clearStopDetails()
 
         if (stopId != null) {
             loadStopDetails(stopId)
+        }
+    }
+
+    // TODO: Verify this works OK with afterUpdatecallback, esp.
+    fun handleTripChange(tripFilter: TripDetailsFilter?) {
+        if (tripFilter == null) {
+            Log.i("KB", "Clearing trip filter")
+            clearTripDetails()
+            return
+        }
+
+        var afterUpdateCallback: () -> Unit = {}
+
+        if (
+            _tripData.value?.tripFilter?.tripId == tripFilter.tripId &&
+                _tripData?.value?.tripFilter?.vehicleId == tripFilter.vehicleId
+        ) {
+            Log.i("KB", "handleTripChange: Going to update")
+
+            _tripData.update { currentTripData ->
+                if (currentTripData != null) {
+                    Log.i("KB", "handleTripChange: currentTripData not null")
+
+                    val currentFilter = currentTripData.tripFilter
+                    if (
+                        currentFilter.tripId == tripFilter.tripId &&
+                            currentFilter.vehicleId == tripFilter.vehicleId
+                    ) {
+                        Log.i("KB", "handleTripChange: same vehicle & trip")
+
+                        // If the filter changed but the trip and vehicle are the same, replace the
+                        // filter but keep all the data
+                        currentTripData.copy(tripFilter = tripFilter, tripPredictionsLoaded = true)
+                    } else if (currentFilter.tripId == tripFilter.tripId) {
+                        Log.i("KB", "handleTripChange: same trip")
+
+                        // If only the vehicle changed but the trip is the same, clear and reload
+                        // only the vehicle,
+                        // keep the prediction channel open and copy static trip data into new trip
+                        // data
+                        leaveVehicle()
+                        afterUpdateCallback = { joinVehicle(tripFilter) }
+
+                        currentTripData.copy(vehicle = null)
+                    } else if (currentFilter.vehicleId == tripFilter.vehicleId) {
+                        Log.i("KB", "handleTripChange: same vehicle")
+
+                        // If only the trip changed but the vehicle is the same, clear and reload
+                        // only the trip details,
+                        // keep the vehicle channel open and copy the last vehicle into the new trip
+                        // data
+                        val currentVehicle = currentTripData.vehicle
+                        leaveTripPredictions()
+
+                        afterUpdateCallback = {
+                            CoroutineScope(Dispatchers.Default).launch {
+                                loadTripDetails(tripFilter)
+                                _tripData.update { it?.copy(vehicle = currentVehicle) }
+                                joinTripPredictions(tripFilter)
+                            }
+                        }
+
+                        null
+                    } else {
+                        Log.i("KB", "handleTripChange: totally new")
+
+                        // If current trip data exists but neither the trip ID or vehicle ID match,
+                        // fall through and reload everything
+                        afterUpdateCallback = { clearAndLoadTripDetails(tripFilter) }
+
+                        null
+                    }
+                } else {
+                    Log.i("KB", "handleTripChange: totally new 2")
+
+                    afterUpdateCallback = { clearAndLoadTripDetails(tripFilter) }
+
+                    null
+                }
+            }
+            Log.i("KB", "handleTripChange: afterUpdateCallback invoke")
+
+            afterUpdateCallback()
+        } else {
+            Log.i("KB", "handleTripChange: else case - full clear & reload")
+
+            clearAndLoadTripDetails(tripFilter)
         }
     }
 
@@ -143,6 +386,18 @@ class StopDetailsViewModel(
                     )
             ) {
                 StopData(it.stopId, it.schedules, null, false)
+            } else {
+                it
+            }
+        }
+        _tripData.update {
+            if (
+                it != null &&
+                    tripPredictionsRepository.shouldForgetPredictions(
+                        it.tripPredictions?.predictionQuantity() ?: 0
+                    )
+            ) {
+                it.copy(tripPredictions = null)
             } else {
                 it
             }
@@ -174,8 +429,15 @@ fun stopDetailsManagedVM(
     val stopData = viewModel.stopData.collectAsState()
 
     val departures by viewModel.stopDepartures.collectAsState()
+    val tripData by viewModel.tripData.collectAsState()
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
+    LaunchedEffect(filters?.tripFilter) {
+        Log.i("KB", "Trip filter changed, call handle ${filters?.tripFilter}")
+
+        viewModel.handleTripChange(filters?.tripFilter)
+    }
+
     LifecycleResumeEffect(null) {
         viewModel.returnFromBackground()
         viewModel.rejoinStopPredictions()
@@ -235,6 +497,8 @@ fun stopDetailsManagedVM(
             }
         }
     }
+
+    LaunchedEffect(tripData) { Log.i("KB", "Trip data changed: ${tripData}") }
 
     return viewModel
 }
