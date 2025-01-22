@@ -120,7 +120,8 @@ class StopDetailsRoutesViewTest {
                 pinnedRoutes = emptySet(),
                 stopFilter = filterState.value,
                 updateStopFilter = filterState::value::set,
-                tripFilter = null
+                tripFilter = null,
+                openAlertDetails = {}
             )
         }
 
@@ -144,7 +145,8 @@ class StopDetailsRoutesViewTest {
                 pinnedRoutes = emptySet(),
                 stopFilter = filterState.value,
                 updateStopFilter = filterState::value::set,
-                tripFilter = null
+                tripFilter = null,
+                openAlertDetails = {}
             )
         }
 
@@ -164,7 +166,8 @@ class StopDetailsRoutesViewTest {
                 pinnedRoutes = emptySet(),
                 stopFilter = filterState.value,
                 updateStopFilter = filterState::value::set,
-                tripFilter = null
+                tripFilter = null,
+                openAlertDetails = {}
             )
         }
 

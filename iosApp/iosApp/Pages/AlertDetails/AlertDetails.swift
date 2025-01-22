@@ -269,3 +269,32 @@ struct AlertDetails: View {
         scrollContent
     }
 }
+
+#Preview {
+    let objects = ObjectCollectionBuilder()
+    let route = objects.route { route in
+        route.color = "ED8B00"
+        route.textColor = "FFFFFF"
+        route.longName = "Orange Line"
+    }
+    let stop = objects.stop { _ in }
+    let alert = objects.alert { alert in
+        alert.effect = .suspension
+        alert.cause = .maintenance
+        alert.activePeriod(
+            start: (Date.now - 3 * 24 * 60 * 60).toKotlinInstant(),
+            end: (Date.now + 3 * 24 * 60 * 60).toKotlinInstant()
+        )
+        alert
+            .description_ =
+            "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
+        alert.updatedAt = (Date.now - 10 * 60).toKotlinInstant()
+    }
+    AlertDetails(
+        alert: alert,
+        routes: [route],
+        affectedStops: [stop],
+        stopId: stop.id,
+        now: Date.now
+    )
+}

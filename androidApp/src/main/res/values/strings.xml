@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="accident">Accident</string>
+    <plurals name="affected_stops">
+        <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; affected stop</item>
+        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; affected stops</item>
+    </plurals>
     <string name="alert">Alert</string>
+    <string name="alert_details">Alert Details</string>
+    <string name="alert_ended">Alert is no longer in effect</string>
+    <string name="amtrak">Amtrak</string>
+    <string name="an_earlier_mechanical_problem">An Earlier Mechanical Problem</string>
+    <string name="an_earlier_signal_problem">An Earlier Signal Problem</string>
     <string name="app_version_number">version %1$s</string>
     <string name="arriving_abbr">ARR</string>
+    <string name="autos_impeding_service">Autos Impeding Service</string>
     <string name="back_button_label">Back</string>
     <string name="boarding_abbr">BRD</string>
     <string name="bus">bus</string>
     <string name="buses">buses</string>
     <string name="cancelled">Cancelled</string>
     <string name="close_button_label">Close</string>
+    <string name="coast_guard_restriction">Coast Guard Restriction</string>
+    <string name="congestion">Congestion</string>
+    <string name="construction">Construction</string>
+    <string name="crossing_malfunction">Crossing Malfunction</string>
+    <string name="demonstration">Demonstration</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
+    <string name="disabled_bus">Disabled Bus</string>
+    <string name="disabled_train">Disabled Train</string>
     <string name="displays_more_info">displays more information</string>
+    <string name="dock_closure">Dock Closure</string>
+    <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
+    <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="eastbound">Eastbound</string>
+    <string name="electrical_work">Electrical Work</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%d elevator closure</item>
         <item quantity="other">%d elevator closures</item>
     </plurals>
+    <string name="end">End</string>
     <string name="error_loading_data">Error loading data</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
@@ -24,7 +47,19 @@
     <string name="ferries">ferries</string>
     <string name="ferry">ferry</string>
     <string name="filterShowAll">All</string>
+    <string name="fire">Fire</string>
+    <string name="fire_department_activity">Fire Department Activity</string>
+    <string name="flooding">Flooding</string>
+    <string name="fog">Fog</string>
+    <string name="freight_train_interference">Freight Train Interference</string>
+    <string name="full_description">Full Description</string>
+    <string name="hazmat_condition">Hazmat Condition</string>
     <string name="heading">Heading</string>
+    <string name="heavy_ridership">Heavy Ridership</string>
+    <string name="high_winds">High Winds</string>
+    <string name="holiday">Holiday</string>
+    <string name="hurricane">Hurricane</string>
+    <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
     <string name="inbound">Inbound</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
@@ -33,6 +68,9 @@
     <string name="location_settings_prompt_keep_off">Keep Location Services Off</string>
     <string name="location_settings_prompt_title">MBTA Go works best with Location Services turned on</string>
     <string name="location_settings_prompt_turn_on">Turn On in Settings</string>
+    <string name="maintenance">Maintenance</string>
+    <string name="mechanical_problem">Mechanical Problem</string>
+    <string name="medical_emergency">Medical Emergency</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">More</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
@@ -69,6 +107,10 @@
     <string name="other_link_source_code">View source on GitHub</string>
     <string name="other_link_tos">Terms of Use</string>
     <string name="outbound">Outbound</string>
+    <string name="parade">Parade</string>
+    <string name="police_action">Police Action</string>
+    <string name="police_activity">Police Activity</string>
+    <string name="power_problem">Power Problem</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="recently_viewed">Recently Viewed</string>
     <string name="refresh">Refresh</string>
@@ -78,23 +120,48 @@
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="route_effect">%1$s %2$s</string>
     <string name="search_by_stop">Search by stop</string>
+    <string name="service_change">Service Change</string>
     <string name="service_ended">Service ended</string>
     <string name="setting_elevator_accessibility">Show elevator accessibility</string>
     <string name="setting_toggle_hide_maps">Hide Maps</string>
     <string name="settings_link">Settings</string>
+    <string name="severe_weather">Severe Weather</string>
     <string name="shuttle">Shuttle</string>
+    <string name="signal_problem">Signal Problem</string>
+    <string name="slippery_rail">Slippery Rail</string>
+    <string name="snow">Snow</string>
     <string name="southbound">Southbound</string>
+    <string name="special_event">Special Event</string>
+    <string name="speed_restriction">Speed Restriction</string>
     <string name="star_route">Star route</string>
     <string name="star_route_hint">pin route to the top of the list</string>
+    <string name="start">Start</string>
+    <string name="station_closure">Station Closure</string>
+    <string name="station_moved">Station Moved</string>
     <string name="stop_closed">Stop Closed</string>
+    <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
+    <string name="strike">Strike</string>
     <string name="suspension">Suspension</string>
+    <string name="switch_problem">Switch Problem</string>
+    <string name="technical_problem">Technical Problem</string>
+    <string name="tie_replacement">Tie Replacement</string>
+    <string name="track_problem">Track Problem</string>
+    <string name="track_work">Track Work</string>
+    <string name="traffic">Traffic</string>
     <string name="train">train</string>
     <string name="trains">trains</string>
     <string name="unable_to_connect">Unable to connect</string>
+    <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
+    <string name="updated_at">Updated: %1$s</string>
+    <plurals name="updated_mins_ago" tools:ignore="MissingTranslation">
+        <item quantity="one">Updated %1$d minute ago</item>
+        <item quantity="other">Updated %1$d minutes ago</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s arriving now</string>
     <string name="vehicle_arriving_other">and arriving now</string>
     <string name="vehicle_boarding_first">%1$s boarding now</string>
@@ -109,10 +176,6 @@
     <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
+    <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
-    <plurals name="updated_mins_ago" tools:ignore="MissingTranslation">
-        <item quantity="one">Updated %d minute ago</item>
-        <item quantity="other">Updated %d minutes ago</item>
-    </plurals>
-    <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
 </resources>

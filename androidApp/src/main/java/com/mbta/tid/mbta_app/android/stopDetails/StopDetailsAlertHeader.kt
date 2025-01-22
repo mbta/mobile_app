@@ -20,9 +20,14 @@ import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.model.Alert
 
 @Composable
-fun StopDetailsAlertHeader(alert: Alert, routeColor: Color?, showInfoIcon: Boolean = false) {
+fun StopDetailsAlertHeader(
+    alert: Alert,
+    routeColor: Color?,
+    modifier: Modifier = Modifier,
+    showInfoIcon: Boolean = false
+) {
     Row(
-        modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

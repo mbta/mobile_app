@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="affected_stops">
+        <item quantity="other">&lt;b>%d&lt;/b> điểm dừng bị ảnh hưởng</item>
+    </plurals>
     <plurals name="elevator_closure_count">
         <item quantity="other">%d thang máy đóng cửa</item>
     </plurals>

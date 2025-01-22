@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.LineHeader
@@ -39,7 +42,8 @@ fun StopDetailsFilteredRouteView(
     now: Instant,
     stopFilter: StopDetailsFilter?,
     tripFilter: TripDetailsFilter?,
-    updateStopFilter: (StopDetailsFilter?) -> Unit
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
     val patternsByStop = departures.routes.find { it.routeIdentifier == stopFilter?.routeId }
     val expectedDirection = stopFilter?.directionId
@@ -80,7 +84,23 @@ fun StopDetailsFilteredRouteView(
         Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
             for ((index, alert) in alerts.withIndex()) {
                 Column {
-                    StopDetailsAlertHeader(alert, routeColor)
+                    StopDetailsAlertHeader(
+                        alert,
+                        routeColor,
+                        modifier =
+                            Modifier.clickable(
+                                onClickLabel = stringResource(R.string.displays_more_info)
+                            ) {
+                                openAlertDetails(
+                                    ModalRoutes.AlertDetails(
+                                        alertId = alert.id,
+                                        line = patternsByStop.line,
+                                        routes = patternsByStop.routes,
+                                        stopId = patternsByStop.stop.id
+                                    )
+                                )
+                            }
+                    )
                     if (index < alerts.size - 1 || rows.isNotEmpty()) {
                         HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
                     }
