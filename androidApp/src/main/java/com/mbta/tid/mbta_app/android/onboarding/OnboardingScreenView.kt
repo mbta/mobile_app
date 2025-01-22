@@ -93,6 +93,7 @@ fun OnboardingScreenView(
     }
 
     val configuration = LocalConfiguration.current
+    val isDarkTheme = isSystemInDarkTheme()
 
     val screenHeightDp = configuration.screenHeightDp.dp
     val screenWidthDp = configuration.screenWidthDp.dp
@@ -146,13 +147,25 @@ fun OnboardingScreenView(
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     Image(
-                        painterResource(R.drawable.onboarding_more_button),
+                        painterResource(
+                            if (isDarkTheme) {
+                                R.drawable.onboarding_more_button_dark
+                            } else {
+                                R.drawable.onboarding_more_button
+                            }
+                        ),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier.fillMaxWidth().align(Alignment.Center)
                     )
                     Image(
-                        painterResource(R.drawable.onboarding_halo),
+                        painterResource(
+                            if (isDarkTheme) {
+                                R.drawable.onboarding_halo_dark
+                            } else {
+                                R.drawable.onboarding_halo
+                            }
+                        ),
                         contentDescription = null,
                         modifier =
                             Modifier.width(moreHaloSizeDp)
@@ -195,7 +208,15 @@ fun OnboardingScreenView(
                     modifier =
                         Modifier.fillMaxSize()
                             .paint(
-                                painter = painterResource(id = R.mipmap.onboarding_background_map),
+                                painter =
+                                    painterResource(
+                                        id =
+                                            if (isDarkTheme) {
+                                                R.mipmap.onboarding_background_map_dark
+                                            } else {
+                                                R.mipmap.onboarding_background_map
+                                            }
+                                    ),
                                 alignment = Alignment.Center,
                                 contentScale = ContentScale.FillBounds
                             ),
@@ -270,12 +291,19 @@ fun OnboardingScreenView(
                     modifier =
                         Modifier.fillMaxSize()
                             .paint(
-                                painter = painterResource(id = R.mipmap.onboarding_background_map),
+                                painter =
+                                    painterResource(
+                                        id =
+                                            if (isDarkTheme) {
+                                                R.mipmap.onboarding_background_map_dark
+                                            } else {
+                                                R.mipmap.onboarding_background_map
+                                            }
+                                    ),
                                 alignment = Alignment.Center,
                                 contentScale = ContentScale.FillBounds
                             ),
                 ) {
-                    val isDarkTheme = isSystemInDarkTheme()
                     Image(
                         painter =
                             painterResource(
