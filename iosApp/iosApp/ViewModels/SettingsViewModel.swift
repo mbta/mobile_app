@@ -29,6 +29,7 @@ class SettingsViewModel: ObservableObject {
     // swiftlint:disable:next function_body_length
     @MainActor func getSections() async {
         do {
+            let feedbackFormUrl = feedbackFormUrl(translation: Bundle.main.preferredLocalizations.first ?? "en")
             settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
             sections = [
                 MoreSection(id: .feedback, items: [
@@ -37,7 +38,7 @@ class SettingsViewModel: ObservableObject {
                             "Send app feedback",
                             comment: "Label for a More page link to a form to provide feedback on the app itself"
                         ),
-                        url: "https://mbta.com/appfeedback"
+                        url: feedbackFormUrl
                     ),
                 ]),
                 MoreSection(id: .resources, items: [
