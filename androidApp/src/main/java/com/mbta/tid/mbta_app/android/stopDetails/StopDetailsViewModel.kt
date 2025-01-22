@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -154,13 +153,10 @@ class StopDetailsViewModel(
     private fun joinTripPredictions(tripFilter: TripDetailsFilter) {
         leaveTripPredictions()
 
-        Log.i("KB", "joinTripPredictions Connect")
-
         tripPredictionsRepository.connect(tripFilter.tripId) { outcome ->
             when (outcome) {
                 // no error handling since persistent errors cause stale predictions
                 is ApiResult.Ok -> {
-                    Log.i("KB", "joinTripPredictions Received first")
                     _tripData.update { it?.copy(tripPredictions = outcome.data) }
                 }
                 is ApiResult.Error -> {}
@@ -220,8 +216,6 @@ class StopDetailsViewModel(
     }
 
     fun rejoinTripChannels() {
-        Log.i("KB", "rejoinTripChannels called ${tripData.value}")
-
         tripData.value?.let { joinTripChannels(it.tripFilter) }
     }
 
@@ -245,7 +239,6 @@ class StopDetailsViewModel(
 
     private fun clearAndLoadTripDetails(tripFilter: TripDetailsFilter) {
         CoroutineScope(Dispatchers.IO).launch {
-            Log.i("KB", "Clear and load trip details, incl. join channel ${tripFilter}")
             clearTripDetails()
             loadTripDetails(tripFilter)
             joinTripChannels(tripFilter)
@@ -254,7 +247,6 @@ class StopDetailsViewModel(
 
     private suspend fun loadTripDetails(tripFilter: TripDetailsFilter) {
         val trip = loadTrip(tripFilter)
-        Log.i("KB", "loadTripDetails: trip ${trip}")
         if (trip == null) {
             _tripData.value = null
         } else {
@@ -316,7 +308,6 @@ class StopDetailsViewModel(
 
     fun handleTripFilterChange(tripFilter: TripDetailsFilter?) {
         if (tripFilter == null) {
-            Log.i("KB", "Clearing trip filter")
             clearTripDetails()
             return
         }
@@ -326,25 +317,17 @@ class StopDetailsViewModel(
         must not need to be to atomically processed with the value change.
          */
         var filterChangeSideEffects: () -> Unit = {}
-        Log.i("KB", "handleTripChange: Going to update")
-
         _tripData.update { currentTripData ->
             if (currentTripData != null) {
-                Log.i("KB", "handleTripChange: currentTripData not null")
-
                 val currentFilter = currentTripData.tripFilter
                 if (
                     currentFilter.tripId == tripFilter.tripId &&
                         currentFilter.vehicleId == tripFilter.vehicleId
                 ) {
-                    Log.i("KB", "handleTripChange: same vehicle & trip")
-
                     // If the filter changed but the trip and vehicle are the same, replace the
                     // filter but keep all the data
                     currentTripData.copy(tripFilter = tripFilter, tripPredictionsLoaded = true)
                 } else if (currentFilter.tripId == tripFilter.tripId) {
-                    Log.i("KB", "handleTripChange: same trip")
-
                     // If only the vehicle changed but the trip is the same, clear and reload
                     // only the vehicle,
                     // keep the prediction channel open and copy static trip data into new trip
@@ -354,8 +337,6 @@ class StopDetailsViewModel(
 
                     currentTripData.copy(tripFilter = tripFilter, vehicle = null)
                 } else if (currentFilter.vehicleId == tripFilter.vehicleId) {
-                    Log.i("KB", "handleTripChange: same vehicle")
-
                     // If only the trip changed but the vehicle is the same, clear and reload
                     // only the trip details,
                     // keep the vehicle channel open and copy the last vehicle into the new trip
@@ -373,8 +354,6 @@ class StopDetailsViewModel(
 
                     null
                 } else {
-                    Log.i("KB", "handleTripChange: totally new")
-
                     // If current trip data exists but neither the trip ID or vehicle ID match,
                     // fall through and reload everything
                     filterChangeSideEffects = { clearAndLoadTripDetails(tripFilter) }
@@ -382,15 +361,11 @@ class StopDetailsViewModel(
                     null
                 }
             } else {
-                Log.i("KB", "handleTripChange: totally new 2")
-
                 filterChangeSideEffects = { clearAndLoadTripDetails(tripFilter) }
 
                 null
             }
         }
-        Log.i("KB", "handleTripChange: afterUpdateCallback invoke")
-
         filterChangeSideEffects()
     }
 
@@ -451,14 +426,9 @@ fun stopDetailsManagedVM(
     val stopData = viewModel.stopData.collectAsState()
 
     val departures by viewModel.stopDepartures.collectAsState()
-    val tripData by viewModel.tripData.collectAsState()
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
-    LaunchedEffect(filters?.tripFilter) {
-        Log.i("KB", "Trip filter changed, call handle ${filters?.tripFilter}")
-
-        viewModel.handleTripFilterChange(filters?.tripFilter)
-    }
+    LaunchedEffect(filters?.tripFilter) { viewModel.handleTripFilterChange(filters?.tripFilter) }
 
     LifecycleResumeEffect(null) {
         viewModel.returnFromBackground()
