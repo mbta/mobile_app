@@ -239,6 +239,7 @@ fun NearbyTransitPage(
 
     fun openModal(modal: ModalRoutes) {
         currentModal = modal
+        // modalSheetState.show() is implied by the `if (currentModal != null)`
     }
 
     fun closeModal() {
