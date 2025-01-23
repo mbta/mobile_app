@@ -202,30 +202,32 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func getAlertDetailsHandler(_ alertId: String, stopOnly: Bool = false) -> () -> Void {
+    func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {
         {
             nearbyVM.pushNavEntry(.alertDetails(
                 alertId: alertId,
-                line: stopOnly ? nil : patternsByStop.line,
-                routes: stopOnly ? nil : patternsByStop.routes,
+                line: spec == .elevator ? nil : patternsByStop.line,
+                routes: spec == .elevator ? nil : patternsByStop.routes,
                 stop: patternsByStop.stop
             ))
             analytics.tappedAlertDetails(
                 routeId: patternsByStop.routeIdentifier,
                 stopId: patternsByStop.stop.id,
-                alertId: alertId
+                alertId: alertId,
+                elevator: spec == .elevator
             )
         }
     }
 
     @ViewBuilder
     func alertCard(_ alert: shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
+        let spec = spec ?? (alert.significance == .major ? .major : .secondary)
         AlertCard(
             alert: alert,
-            spec: spec ?? (alert.significance == .major ? .major : .secondary),
+            spec: spec,
             color: routeColor,
             textColor: routeTextColor,
-            onViewDetails: getAlertDetailsHandler(alert.id, stopOnly: spec == .elevator)
+            onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
         )
     }
 
