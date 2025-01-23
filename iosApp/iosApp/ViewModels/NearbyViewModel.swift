@@ -7,7 +7,6 @@
 //
 
 import CoreLocation
-import Foundation
 import os
 import shared
 import SwiftUI
@@ -39,8 +38,9 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    @Published var showDebugMessages: Bool = false
     @Published var combinedStopAndTrip: Bool = false
+    @Published var showDebugMessages: Bool = false
+    @Published var showElevatorAccessibility: Bool = false
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
@@ -58,8 +58,9 @@ class NearbyViewModel: ObservableObject {
     init(
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
-        showDebugMessages: Bool = false,
         combinedStopAndTrip: Bool = false,
+        showDebugMessages: Bool = false,
+        showElevatorAccessibility: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
@@ -69,8 +70,10 @@ class NearbyViewModel: ObservableObject {
     ) {
         self.departures = departures
         self.navigationStack = navigationStack
-        self.showDebugMessages = showDebugMessages
+
         self.combinedStopAndTrip = combinedStopAndTrip
+        self.showDebugMessages = showDebugMessages
+        self.showElevatorAccessibility = showElevatorAccessibility
 
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
@@ -80,10 +83,13 @@ class NearbyViewModel: ObservableObject {
         self.settingsRepository = settingsRepository
     }
 
-    @MainActor
-    func loadDebugSetting() async {
-        showDebugMessages = await (try? settingsRepository.getSettings()[.devDebugMode]?.boolValue) ?? false
-        combinedStopAndTrip = await (try? settingsRepository.getSettings()[.combinedStopAndTrip]?.boolValue) ?? false
+    func loadSettings() async {
+        let loaded = await settingsRepository.load([.combinedStopAndTrip, .devDebugMode, .elevatorAccessibility])
+        Task { @MainActor in
+            combinedStopAndTrip = loaded.getSafe(.combinedStopAndTrip)
+            showDebugMessages = loaded.getSafe(.devDebugMode)
+            showElevatorAccessibility = loaded.getSafe(.elevatorAccessibility)
+        }
     }
 
     /**

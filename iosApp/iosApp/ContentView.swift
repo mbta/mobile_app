@@ -56,7 +56,7 @@ struct ContentView: View {
         .onAppear {
             Task { await contentVM.loadFeaturePromos() }
             Task { await contentVM.loadOnboardingScreens() }
-            Task { await nearbyVM.loadDebugSetting() }
+            Task { await nearbyVM.loadSettings() }
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
             analytics.recordSession(hideMaps: contentVM.hideMaps)
@@ -69,7 +69,7 @@ struct ContentView: View {
             } catch {}
         }
         .onChange(of: selectedTab) { _ in
-            Task { await nearbyVM.loadDebugSetting() }
+            Task { await nearbyVM.loadSettings() }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -384,8 +384,8 @@ struct ContentView: View {
         let entry = coverIdentityEntry.stackEntry
         return NavigationStack {
             switch entry {
-            case let .alertDetails(alertId, line, routes):
-                AlertDetailsPage(alertId: alertId, line: line, routes: routes, nearbyVM: nearbyVM)
+            case let .alertDetails(alertId, line, routes, stop):
+                AlertDetailsPage(alertId: alertId, line: line, routes: routes, stop: stop, nearbyVM: nearbyVM)
             default:
                 EmptyView()
             }

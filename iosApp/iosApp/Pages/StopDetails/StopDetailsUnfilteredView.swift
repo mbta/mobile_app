@@ -91,6 +91,32 @@ struct StopDetailsUnfilteredView: View {
                         Color.fill1.ignoresSafeArea(.all)
                         ScrollView {
                             LazyVStack(spacing: 0) {
+                                if stopDetailsVM.showElevatorAccessibility {
+                                    ForEach(departures.elevatorAlerts, id: \.id) { alert in
+                                        AlertCard(
+                                            alert: alert,
+                                            spec: .elevator,
+                                            color: Color.clear,
+                                            textColor: Color.text,
+                                            onViewDetails: {
+                                                nearbyVM.pushNavEntry(.alertDetails(
+                                                    alertId: alert.id,
+                                                    line: nil,
+                                                    routes: nil,
+                                                    stop: stop
+                                                ))
+                                                analytics.tappedAlertDetails(
+                                                    routeId: "",
+                                                    stopId: stopId,
+                                                    alertId: alert.id
+                                                )
+                                            }
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.bottom, 16)
+                                    }
+                                }
+
                                 ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                                     StopDetailsRouteView(
                                         patternsByStop: patternsByStop,

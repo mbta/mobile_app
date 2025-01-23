@@ -85,6 +85,38 @@ final class StopDetailsViewTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(button: "All"))
     }
 
+    func testShowsElevatorAlertsOnUnfiltered() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.shortName = "Blue"
+        }
+        let stop = objects.stop { _ in }
+        let alert = objects.alert { alert in
+            alert.effect = .elevatorClosure
+            alert.header = "Alert header"
+        }
+
+        let sut = StopDetailsView(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            departures: .init(routes: [
+                .init(route: route, stop: stop, patterns: [], elevatorAlerts: [alert]),
+            ]),
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(combinedStopAndTrip: true),
+            mapVM: .init(),
+            stopDetailsVM: .init()
+        )
+
+        ViewHosting.host(view: sut)
+        XCTAssertNil(try? sut.inspect().find(AlertCard.self))
+        XCTAssertNil(try? sut.inspect().find(text: alert.header!))
+    }
+
     func testDisplaysVehicleData() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in

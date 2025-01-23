@@ -19,7 +19,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case legacyStopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?, routeId: String, directionId: Int32)
     case nearby
-    case alertDetails(alertId: String, line: Line?, routes: [Route]?)
+    case alertDetails(alertId: String, line: Line?, routes: [Route]?, stop: Stop?)
 
     var id: Int {
         hashValue
@@ -89,7 +89,7 @@ struct NearbyCoverItem: Identifiable {
 
     var id: String {
         switch stackEntry {
-        case let .alertDetails(alertId, _, _): alertId
+        case let .alertDetails(alertId, _, _, _): alertId
         default: ""
         }
     }
