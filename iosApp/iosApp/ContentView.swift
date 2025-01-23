@@ -4,6 +4,30 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+enum SelectedTab: Hashable, CaseIterable {
+    case nearby
+    case more
+
+    var imageResource: ImageResource {
+        switch self {
+        case .nearby:
+            .tabIconNearby
+        case .more:
+            .tabIconMore
+        }
+    }
+
+    var text: String {
+        switch self {
+        case .nearby: NSLocalizedString(
+                "Nearby",
+                comment: "The label for the Nearby Transit page in the navigation bar"
+            )
+        case .more: NSLocalizedString("More", comment: "The label for the More page in the navigation bar")
+        }
+    }
+}
+
 // swiftlint:disable:next type_body_length
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -30,21 +54,6 @@ struct ContentView: View {
     let analytics: Analytics = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
-
-    private enum SelectedTab: Hashable {
-        case nearby
-        case more
-    }
-
-    private func tabText(_ tab: SelectedTab) -> String {
-        switch tab {
-        case .nearby: NSLocalizedString(
-                "Nearby",
-                comment: "The label for the Nearby Transit page in the navigation bar"
-            )
-        case .more: NSLocalizedString("More", comment: "The label for the More page in the navigation bar")
-        }
-    }
 
     @State private var selectedTab = SelectedTab.nearby
 
@@ -107,18 +116,16 @@ struct ContentView: View {
             OnboardingPage(screens: onboardingScreensPending, onFinish: {
                 contentVM.onboardingScreensPending = []
             })
-        } else if selectedTab == .more {
+        } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
                     .tag(SelectedTab.nearby)
-                    .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
+                    .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+                    .tabItem { TabLabel(tab: SelectedTab.more) }
                     .onAppear { analytics.track(screen: .settings) }
             }
-        } else {
-            nearbyTab
         }
     }
 
@@ -126,36 +133,30 @@ struct ContentView: View {
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
     @State private var showingLocationPermissionAlert = false
 
-    @ViewBuilder var nearbySheetContents: some View {
+    var nearbySheetContents: some View {
         // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
         // when re-opening nearby transit
-        VStack {
-            TabView(selection: $selectedTab) {
-                NearbyTransitPageView(
-                    errorBannerVM: errorBannerVM,
-                    nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    noNearbyStops: { NoNearbyStopsView(
-                        hideMaps: contentVM.hideMaps,
-                        onOpenSearch: { searchObserver.isFocused = true },
-                        onPanToDefaultCenter: { viewportProvider.animateTo(
-                            coordinates: ViewportProvider.Defaults.center,
-                            zoom: 13.75
-                        ) }
+        VStack(spacing: 0) {
+            NearbyTransitPageView(
+                errorBannerVM: errorBannerVM,
+                nearbyVM: nearbyVM,
+                viewportProvider: viewportProvider,
+                noNearbyStops: { NoNearbyStopsView(
+                    hideMaps: contentVM.hideMaps,
+                    onOpenSearch: { searchObserver.isFocused = true },
+                    onPanToDefaultCenter: { viewportProvider.animateTo(
+                        coordinates: ViewportProvider.Defaults.center,
+                        zoom: 13.75
                     ) }
-                )
-                .tag(SelectedTab.nearby)
-                .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
-                // we want to show nothing in the sheet when the settings tab is open,
-                // but an EmptyView here causes the tab to not be listed
-                VStack {}
-                    .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+                ) }
+            )
+            // When maps are hidden we no longer need sheet overlap workarounds
+            if !contentVM.hideMaps {
+                TabBar(selectedTab: $selectedTab)
             }
         }
     }
 
-    @ViewBuilder
     var nearbyTab: some View {
         VStack {
             if contentVM.hideMaps {
@@ -209,7 +210,7 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder var mapSection: some View {
+    var mapSection: some View {
         HomeMapView(
             contentVM: contentVM,
             mapVM: mapVM,
