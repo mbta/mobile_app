@@ -174,4 +174,47 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNil(try? sutWithStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))
         XCTAssertNotNil(try? sutWithStops.inspect().find(text: "More details"))
     }
+
+    func testStopEffectHeader() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let stop = objects.stop { stop in stop.name = "Stop" }
+
+        let now = Date.now
+
+        let alert = objects.alert { alert in
+            alert.activePeriod(
+                start: now.addingTimeInterval(-5).toKotlinInstant(),
+                end: now.addingTimeInterval(5).toKotlinInstant()
+            )
+            alert.cause = .maintenance
+            alert.effect = .elevatorClosure
+            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: nil, stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Stop Elevator Closure"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Maintenance"))
+    }
+
+    func testEffectOnlyHeader() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = Date.now
+
+        let alert = objects.alert { alert in
+            alert.activePeriod(
+                start: now.addingTimeInterval(-5).toKotlinInstant(),
+                end: now.addingTimeInterval(5).toKotlinInstant()
+            )
+            alert.cause = .freightTrainInterference
+            alert.effect = .serviceChange
+            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: nil, stop: nil, affectedStops: [], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Service Change"))
+    }
 }

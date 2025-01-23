@@ -19,6 +19,7 @@ struct AlertIcon: View {
     }
 
     private static let iconNames: [StopAlertState: String] = [
+        .elevator: "accessibility-icon-inaccessible",
         .issue: "alert-borderless-issue",
         .shuttle: "alert-borderless-shuttle",
         .suspension: "alert-borderless-suspension",

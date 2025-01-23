@@ -14,6 +14,7 @@ struct AlertDetails: View {
     var alert: shared.Alert
     var line: Line?
     var routes: [Route]?
+    var stop: Stop?
     var affectedStops: [Stop]
     var stopId: String?
     var now: Date
@@ -23,8 +24,12 @@ struct AlertDetails: View {
 
     @State var areStopsExpanded = false
 
-    private var routeLabel: String {
-        line?.longName ?? routes?.first?.label ?? ""
+    private var routeLabel: String? {
+        line?.longName ?? routes?.first?.label
+    }
+
+    private var stopLabel: String? {
+        stop?.name
     }
 
     private var effectLabel: String? {
@@ -99,16 +104,26 @@ struct AlertDetails: View {
         }
     }
 
-    @ViewBuilder
-    private var alertTitle: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if let effectLabel {
+    @ViewBuilder var effectTitle: some View {
+        if let effectLabel {
+            if let routeLabel {
                 Text("\(routeLabel) \(effectLabel)",
                      comment: """
                      First value is the route label, second value is an alert effect, \
                      resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'
-                     """).font(.title2).bold()
+                     """)
+            } else if let stopLabel {
+                Text("\(stopLabel) \(effectLabel)")
+            } else {
+                Text(effectLabel)
             }
+        }
+    }
+
+    @ViewBuilder
+    private var alertTitle: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            effectTitle.font(Typography.title2Bold)
             if let causeLabel { Text(causeLabel).font(.body).bold() }
         }
     }

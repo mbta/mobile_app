@@ -13,6 +13,7 @@ enum AlertCardSpec {
     case major
     case downstream
     case secondary
+    case elevator
 }
 
 struct AlertCard: View {
@@ -44,6 +45,7 @@ struct AlertCard: View {
                 ex. "[Detour] ahead", "[Shuttle buses] ahead"
                 """
             ), effectName)
+        case .elevator: alert.header ?? effectName
         default: effectName
         }
     }
@@ -54,8 +56,10 @@ struct AlertCard: View {
             HStack(spacing: 16) {
                 AlertIcon(alertState: alert.alertState, color: color)
                     .frame(width: iconSize, height: iconSize)
+                    .frame(maxHeight: spec == .elevator ? .infinity : iconSize, alignment: .top)
                 Text(headerString)
                     .font(spec == .major ? Typography.title2Bold : Typography.bodySemibold)
+                    .multilineTextAlignment(.leading)
                 if spec != .major {
                     Spacer()
                     InfoIcon(size: infoIconSize)
