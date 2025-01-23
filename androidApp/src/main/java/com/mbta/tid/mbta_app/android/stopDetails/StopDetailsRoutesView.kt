@@ -35,6 +35,7 @@ import kotlinx.datetime.Instant
 
 @Composable
 fun StopDetailsRoutesView(
+    stopId: String,
     viewModel: StopDetailsViewModel,
     global: GlobalResponse?,
     now: Instant,
@@ -53,6 +54,7 @@ fun StopDetailsRoutesView(
         LoadingStopDetailsView(stopFilter, tripFilter)
     } else if (stopFilter != null) {
         StopDetailsFilteredRouteView(
+            stopId,
             viewModel,
             global = global,
             now = now,
@@ -187,6 +189,7 @@ private fun StopDetailsRoutesViewPreview() {
 
     MyApplicationTheme {
         StopDetailsRoutesView(
+            stopId = stop.id,
             viewModel = viewModel,
             global = null,
             now = Clock.System.now(),
