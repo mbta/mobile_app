@@ -373,7 +373,7 @@ struct ContentView: View {
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
         guard newSheetHeight < (UIScreen.main.bounds.height / 2) else { return }
-        sheetHeight = newSheetHeight
+        sheetHeight = newSheetHeight - TabBar.height
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {

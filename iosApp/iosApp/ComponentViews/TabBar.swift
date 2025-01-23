@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct TabBar: View {
+    static let height: CGFloat = 55
+
     @Binding var selectedTab: SelectedTab
 
     var body: some View {
@@ -19,7 +21,7 @@ struct TabBar: View {
                     Button { selectedTab = tab } label: { tabLabel(tab) }
                 }
             }
-            .frame(height: 55)
+            .frame(height: Self.height)
             .background(.regularMaterial)
         }
     }
