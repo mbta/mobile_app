@@ -110,8 +110,6 @@ struct ContentView: View {
     @State private var showingLocationPermissionAlert = false
 
     var nearbySheetContents: some View {
-        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
-        // when re-opening nearby transit
         VStack(spacing: 0) {
             NearbyTransitPageView(
                 errorBannerVM: errorBannerVM,
