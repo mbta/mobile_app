@@ -416,7 +416,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
         try sut.inspect().find(button: "View details").tap()
-        XCTAssertEqual(nearbyVM.navigationStack.last, .alertDetails(alertId: alert.id, line: nil, routes: [route]))
+        XCTAssertEqual(
+            nearbyVM.navigationStack.last,
+            .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
+        )
     }
 
     func testShowsDownstreamAlert() throws {
@@ -462,6 +465,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Suspension ahead"))
         XCTAssertThrowsError(try sut.inspect().find(text: alert.header!))
         try sut.inspect().find(AlertCard.self).button().tap()
-        XCTAssertEqual(nearbyVM.navigationStack.last, .alertDetails(alertId: alert.id, line: nil, routes: [route]))
+        XCTAssertEqual(
+            nearbyVM.navigationStack.last,
+            .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
+        )
     }
 }

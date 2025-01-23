@@ -98,4 +98,32 @@ final class AlertCardTests: XCTestCase {
         try sut.inspect().button().tap()
         wait(for: [exp], timeout: 1)
     }
+
+    func testElevatorAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .elevatorClosure
+            alert.header = "Elevator header"
+        }
+
+        let exp = XCTestExpectation(description: "Card pressed")
+        let sut = AlertCard(
+            alert: alert,
+            spec: .elevator,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {
+                exp.fulfill()
+            }
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "accessibility-icon-inaccessible"
+        }))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
+        try sut.inspect().button().tap()
+        wait(for: [exp], timeout: 1)
+    }
 }

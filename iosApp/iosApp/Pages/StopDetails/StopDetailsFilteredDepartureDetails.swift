@@ -207,7 +207,8 @@ struct StopDetailsFilteredDepartureDetails: View {
             nearbyVM.pushNavEntry(.alertDetails(
                 alertId: alertId,
                 line: patternsByStop.line,
-                routes: patternsByStop.routes
+                routes: patternsByStop.routes,
+                stop: patternsByStop.stop
             ))
             analytics.tappedAlertDetails(
                 routeId: patternsByStop.routeIdentifier,
@@ -230,13 +231,15 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @ViewBuilder
     var alertCards: some View {
-        VStack(spacing: 16) {
-            ForEach(alerts, id: \.id) { alert in
-                alertCard(alert)
-            }
-            ForEach(downstreamAlerts, id: \.id) { alert in
-                alertCard(alert, .downstream)
-            }
-        }.padding(.horizontal, 16)
+        if !alerts.isEmpty || !downstreamAlerts.isEmpty {
+            VStack(spacing: 16) {
+                ForEach(alerts, id: \.id) { alert in
+                    alertCard(alert)
+                }
+                ForEach(downstreamAlerts, id: \.id) { alert in
+                    alertCard(alert, .downstream)
+                }
+            }.padding(.horizontal, 16)
+        }
     }
 }
