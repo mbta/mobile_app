@@ -396,7 +396,7 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testManagerChecksPredictionsStale() {
+    fun testManagerChecksPredictionsStale() = runTest {
         val objects = ObjectCollectionBuilder()
         objects.prediction()
 
@@ -430,6 +430,8 @@ class StopDetailsViewModelTest {
                 updateTripFilter = { _, _ -> }
             )
         }
+
+        composeTestRule.awaitIdle()
 
         composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }
     }
@@ -502,6 +504,8 @@ class StopDetailsViewModelTest {
                 )
             }
         }
+
+        composeTestRule.awaitIdle()
 
         composeTestRule.waitUntil {
             newStopFilter == StopDetailsFilter(route.id, routePattern.directionId)
@@ -579,6 +583,7 @@ class StopDetailsViewModelTest {
                 )
             }
         }
+        composeTestRule.awaitIdle()
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
 
@@ -661,6 +666,8 @@ class StopDetailsViewModelTest {
         }
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
+
+        composeTestRule.awaitIdle()
 
         composeTestRule.waitUntil(2_000) { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
