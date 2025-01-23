@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +28,6 @@ import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import kotlin.time.Duration.Companion.seconds
@@ -36,13 +37,14 @@ import org.koin.compose.koinInject
 fun StopDetailsView(
     modifier: Modifier = Modifier,
     stopId: String,
+    viewModel: StopDetailsViewModel,
     stopFilter: StopDetailsFilter?,
     tripFilter: TripDetailsFilter?,
-    departures: StopDetailsDepartures?,
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
@@ -54,6 +56,8 @@ fun StopDetailsView(
 
     val now = timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
+
+    val departures by viewModel.stopDepartures.collectAsState()
 
     val servedRoutes =
         remember(departures, globalResponse) {
@@ -149,14 +153,15 @@ fun StopDetailsView(
                 }
             }
             StopDetailsRoutesView(
-                departures,
+                viewModel,
                 globalResponse,
                 now,
-                stopFilter ?: departures?.autoStopFilter(),
+                stopFilter,
                 tripFilter,
                 togglePinnedRoute,
                 pinnedRoutes,
                 updateStopFilter,
+                updateTripDetailsFilter,
                 openAlertDetails = ::openAndRecordAlertDetails
             )
         }
