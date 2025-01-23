@@ -3,12 +3,16 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -25,6 +29,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 class StopDetailsViewModel(
@@ -32,6 +38,7 @@ class StopDetailsViewModel(
     private val predictionsRepository: IPredictionsRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
 ) : ViewModel() {
+
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
 
     private val _stopData = MutableStateFlow<StopData?>(null)
@@ -151,17 +158,22 @@ class StopDetailsViewModel(
  * - periodically checking for stale predictions
  */
 fun stopDetailsManagedVM(
-    stopId: String?,
+    filters: StopDetailsPageFilters?,
     globalResponse: GlobalResponse?,
     alertData: AlertsStreamDataResponse?,
     pinnedRoutes: Set<String>,
+    updateStopFilter: (String, StopDetailsFilter?) -> Unit,
+    updateTripFilter: (String, TripDetailsFilter?) -> Unit,
+    now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds
 ): StopDetailsViewModel {
-    val now = timer(updateInterval = 5.seconds)
+    val stopId = filters?.stopId
     val timer = timer(checkPredictionsStaleInterval)
 
     val stopData = viewModel.stopData.collectAsState()
+
+    val departures by viewModel.stopDepartures.collectAsState()
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
     LifecycleResumeEffect(null) {
@@ -171,7 +183,7 @@ fun stopDetailsManagedVM(
         onPauseOrDispose { viewModel.leaveStopPredictions() }
     }
 
-    LaunchedEffect(stopId, globalResponse, stopData, stopId, alertData, pinnedRoutes, now) {
+    LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
         withContext(Dispatchers.Default) {
             val departures: StopDetailsDepartures? =
                 if (globalResponse != null && stopId != null) {
@@ -191,6 +203,38 @@ fun stopDetailsManagedVM(
     }
 
     LaunchedEffect(key1 = timer) { viewModel.checkPredictionsStale() }
+
+    LaunchedEffect(filters) {
+        if (filters != null) {
+            val autoTripFilter =
+                departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
+
+            if (autoTripFilter != filters.tripFilter) {
+
+                updateTripFilter(filters.stopId, autoTripFilter)
+            }
+        }
+    }
+
+    LaunchedEffect(departures) {
+        if (filters != null && departures != null) {
+            val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
+
+            if (stopFilter != filters.stopFilter) {
+                updateStopFilter(filters.stopId, stopFilter)
+            }
+            // Wait until auto stopFilter has been applied to apply the trip filter
+            // to ensure that tripFilter doesn't overwrite the new stopFilter
+            if (filters.stopFilter == stopFilter) {
+                val autoTripFilter =
+                    departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
+
+                if (autoTripFilter != filters.tripFilter) {
+                    updateTripFilter(filters.stopId, autoTripFilter)
+                }
+            }
+        }
+    }
 
     return viewModel
 }

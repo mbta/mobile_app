@@ -13,6 +13,9 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -97,23 +100,34 @@ class StopDetailsRoutesViewTest {
 
     @Test
     fun testStopDetailsRoutesViewDisplaysCorrectly() {
+
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+
+        viewModel.setDepartures(
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )
+            )
+        )
+
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
             StopDetailsRoutesView(
-                departures =
-                    checkNotNull(
-                        StopDetailsDepartures.fromData(
-                            stop,
-                            globalResponse,
-                            null,
-                            PredictionsStreamDataResponse(builder),
-                            AlertsStreamDataResponse(emptyMap()),
-                            emptySet(),
-                            now,
-                            useTripHeadsigns = false,
-                        )
-                    ),
+                viewModel = viewModel,
                 global = globalResponse,
                 now = now,
                 pinRoute = {},
@@ -121,6 +135,7 @@ class StopDetailsRoutesViewTest {
                 stopFilter = filterState.value,
                 updateStopFilter = filterState::value::set,
                 tripFilter = null,
+                updateTripFilter = {},
                 openAlertDetails = {}
             )
         }
@@ -132,13 +147,21 @@ class StopDetailsRoutesViewTest {
 
     @Test
     fun testLoadingStateFiltered() {
+
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+
         composeTestRule.setContent {
             val filterState = remember {
                 mutableStateOf<StopDetailsFilter?>(StopDetailsFilter("routeId", 1))
             }
 
             StopDetailsRoutesView(
-                departures = null,
+                viewModel = viewModel,
                 global = globalResponse,
                 now = now,
                 pinRoute = {},
@@ -146,6 +169,7 @@ class StopDetailsRoutesViewTest {
                 stopFilter = filterState.value,
                 updateStopFilter = filterState::value::set,
                 tripFilter = null,
+                updateTripFilter = {},
                 openAlertDetails = {}
             )
         }
@@ -155,11 +179,18 @@ class StopDetailsRoutesViewTest {
 
     @Test
     fun testLoadingStateUnfiltered() {
+        val viewModel =
+            StopDetailsViewModel(
+                MockScheduleRepository(),
+                MockPredictionsRepository(),
+                MockErrorBannerStateRepository()
+            )
+
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
             StopDetailsRoutesView(
-                departures = null,
+                viewModel = viewModel,
                 global = globalResponse,
                 now = now,
                 pinRoute = {},
@@ -167,6 +198,7 @@ class StopDetailsRoutesViewTest {
                 stopFilter = filterState.value,
                 updateStopFilter = filterState::value::set,
                 tripFilter = null,
+                updateTripFilter = {},
                 openAlertDetails = {}
             )
         }

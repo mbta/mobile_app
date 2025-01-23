@@ -2,9 +2,11 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -27,7 +29,11 @@ private fun directionNameFormatted(direction: Direction) =
     localizedDirectionNames[direction.name] ?: R.string.heading
 
 @Composable
-fun DirectionLabel(direction: Direction, modifier: Modifier = Modifier) {
+fun DirectionLabel(
+    direction: Direction,
+    modifier: Modifier = Modifier,
+    textColor: Color = LocalContentColor.current
+) {
     val destination = direction.destination
     Column(modifier = modifier) {
         if (destination != null) {
@@ -36,11 +42,13 @@ fun DirectionLabel(direction: Direction, modifier: Modifier = Modifier) {
                     R.string.directionTo,
                     stringResource(directionNameFormatted(direction))
                 ),
+                color = textColor,
                 fontSize = 13.sp,
                 modifier = Modifier.placeholderIfLoading()
             )
             Text(
                 destination,
+                color = textColor,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.placeholderIfLoading()
@@ -48,6 +56,7 @@ fun DirectionLabel(direction: Direction, modifier: Modifier = Modifier) {
         } else {
             Text(
                 stringResource(directionNameFormatted(direction)),
+                color = textColor,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.placeholderIfLoading()

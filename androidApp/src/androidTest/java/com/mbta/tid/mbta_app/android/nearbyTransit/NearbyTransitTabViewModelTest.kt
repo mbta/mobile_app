@@ -21,21 +21,22 @@ class NearbyTransitTabViewModelTest {
         var popCalled = false
         var pushedRouteCalled = false
 
-        vm.setStopFilter(null, newFilter, { popCalled = true }, { pushedRouteCalled = true })
-        assertFalse(pushedRouteCalled)
+        vm.setStopFilter(null, "a", newFilter, { popCalled = true }, { pushedRouteCalled = true })
+        assertTrue(pushedRouteCalled)
         assertFalse(popCalled)
     }
 
     @Test
     fun testSetStopDetailsFilterOldFilterPopped() {
         val vm = NearbyTransitTabViewModel()
-        val newFilter = StopDetailsFilter("route_1", 1)
+        val newFilter = StopDetailsFilter("route_1", 0)
 
         var popCalled = false
         var pushedRoute: SheetRoutes? = null
 
         vm.setStopFilter(
-            SheetRoutes.StopDetails("", StopDetailsFilter("route", 1), null),
+            SheetRoutes.StopDetails("a", StopDetailsFilter("route", 1), null),
+            "a",
             newFilter,
             { popCalled = true },
             { pushedRoute = it }

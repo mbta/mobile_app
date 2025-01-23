@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android
 
 import android.os.Bundle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
+import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -29,6 +31,14 @@ sealed class SheetRoutes {
                 first.stopId != second.stopId
             } else {
                 first != second
+            }
+        }
+
+        fun fromNavBackStackEntry(backStackEntry: NavBackStackEntry): SheetRoutes {
+            return if (backStackEntry.destination.route?.contains("StopDetails") == true) {
+                backStackEntry.toRoute<StopDetails>()
+            } else {
+                backStackEntry.toRoute<NearbyTransit>()
             }
         }
     }
