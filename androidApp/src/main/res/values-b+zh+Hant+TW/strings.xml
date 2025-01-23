@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="affected_stops">
+        <item quantity="other">&lt;b>%d&lt;/b>個受影響的網站</item>
+    </plurals>
     <plurals name="elevator_closure_count">
         <item quantity="other">%d 電梯關閉</item>
     </plurals>
