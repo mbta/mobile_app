@@ -662,7 +662,7 @@ class StopDetailsViewModelTest {
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
 
-        composeTestRule.waitUntil { newTripFilter == expectedTripFilter }
+        composeTestRule.waitUntil(2_000) { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
     }
 }

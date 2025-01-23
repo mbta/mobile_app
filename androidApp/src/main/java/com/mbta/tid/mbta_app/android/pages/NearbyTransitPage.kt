@@ -6,12 +6,15 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -37,9 +40,11 @@ import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.StopFilterParameterType
 import com.mbta.tid.mbta_app.android.TripFilterParameterType
+import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -59,6 +64,7 @@ import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
+import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
@@ -251,6 +257,19 @@ fun NearbyTransitPage(
             typeOf<TripDetailsFilter?>() to TripFilterParameterType,
         )
 
+    val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var currentModal by
+        rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
+
+    fun openModal(modal: ModalRoutes) {
+        currentModal = modal
+        // modalSheetState.show() is implied by the `if (currentModal != null)`
+    }
+
+    fun closeModal() {
+        scope.launch { modalSheetState.hide() }.invokeOnCompletion { currentModal = null }
+    }
+
     @Composable
     fun SheetContent(modifier: Modifier = Modifier) {
         NavHost(
@@ -302,6 +321,7 @@ fun NearbyTransitPage(
                     updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
+                    openAlertDetails = ::openModal,
                     errorBannerViewModel = errorBannerViewModel
                 )
             }
@@ -417,6 +437,28 @@ fun NearbyTransitPage(
                         stopDetailsDepartures = stopDetailsDepartures,
                         viewModel = mapViewModel
                     )
+                }
+            }
+        }
+    }
+    if (currentModal != null) {
+        ModalBottomSheet(
+            onDismissRequest = { closeModal() },
+            sheetState = modalSheetState,
+            dragHandle = null
+        ) {
+            Column {
+                when (val modal = currentModal) {
+                    is ModalRoutes.AlertDetails ->
+                        AlertDetailsPage(
+                            modal.alertId,
+                            modal.lineId,
+                            modal.routeIds,
+                            modal.stopId,
+                            nearbyTransit.alertData,
+                            goBack = { closeModal() }
+                        )
+                    null -> {}
                 }
             }
         }

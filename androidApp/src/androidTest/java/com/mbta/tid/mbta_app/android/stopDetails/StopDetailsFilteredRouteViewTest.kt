@@ -138,7 +138,8 @@ class StopDetailsFilteredRouteViewTest {
                 stopFilter = filterState.value,
                 updateStopFilter = {},
                 tripFilter = null,
-                updateTripFilter = {}
+                updateTripFilter = {},
+                openAlertDetails = {}
             )
         }
 
@@ -186,7 +187,8 @@ class StopDetailsFilteredRouteViewTest {
                 stopFilter = filterState.value,
                 updateStopFilter = {},
                 tripFilter = null,
-                updateTripFilter = { tripFilter = it }
+                updateTripFilter = { tripFilter = it },
+                openAlertDetails = {}
             )
         }
 

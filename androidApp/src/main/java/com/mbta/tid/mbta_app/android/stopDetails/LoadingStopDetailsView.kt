@@ -51,7 +51,8 @@ fun LoadingStopDetailsView(stopFilter: StopDetailsFilter?, tripFilter: TripDetai
                         stopFilter = stopFilter,
                         tripFilter = tripFilter,
                         updateStopFilter = {},
-                        updateTripFilter = {}
+                        updateTripFilter = {},
+                        openAlertDetails = {}
                     )
                 }
             }

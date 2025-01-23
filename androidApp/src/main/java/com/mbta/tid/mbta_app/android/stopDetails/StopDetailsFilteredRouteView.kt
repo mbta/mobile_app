@@ -16,7 +16,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.LineHeader
@@ -39,6 +41,7 @@ fun StopDetailsFilteredRouteView(
     tripFilter: TripDetailsFilter?,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
+    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
     val departures = viewModel.stopDepartures.collectAsState().value
 
@@ -80,7 +83,23 @@ fun StopDetailsFilteredRouteView(
             Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
                 for ((index, alert) in alerts.withIndex()) {
                     Column {
-                        StopDetailsAlertHeader(alert, routeColor)
+                        StopDetailsAlertHeader(
+                            alert,
+                            routeColor,
+                            modifier =
+                                Modifier.clickable(
+                                    onClickLabel = stringResource(R.string.displays_more_info)
+                                ) {
+                                    openAlertDetails(
+                                        ModalRoutes.AlertDetails(
+                                            alertId = alert.id,
+                                            lineId = patternsByStop.line?.id,
+                                            routeIds = patternsByStop.routes.map { it.id },
+                                            stopId = patternsByStop.stop.id
+                                        )
+                                    )
+                                }
+                        )
                         if (index < alerts.size - 1 || data.isNotEmpty()) {
                             HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
                         }

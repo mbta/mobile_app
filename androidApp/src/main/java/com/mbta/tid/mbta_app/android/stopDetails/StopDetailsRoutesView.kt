@@ -6,11 +6,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -40,7 +40,8 @@ fun StopDetailsRoutesView(
     pinRoute: (String) -> Unit,
     pinnedRoutes: Set<String>,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripFilter: (TripDetailsFilter?) -> Unit
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
+    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
 
     val departures = viewModel.stopDepartures.collectAsState().value
@@ -55,7 +56,8 @@ fun StopDetailsRoutesView(
             stopFilter = stopFilter,
             tripFilter = tripFilter,
             updateStopFilter,
-            updateTripFilter
+            updateTripFilter,
+            openAlertDetails
         )
     } else {
         LazyColumn(Modifier.padding(top = 16.dp).background(colorResource(R.color.fill1))) {
@@ -187,7 +189,8 @@ private fun StopDetailsRoutesViewPreview() {
             pinRoute = {},
             pinnedRoutes = emptySet(),
             updateStopFilter = {},
-            updateTripFilter = {}
+            updateTripFilter = {},
+            openAlertDetails = {}
         )
     }
 }

@@ -255,7 +255,8 @@ class StopDetailsViewTest {
                             false,
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
-                        )
+                        ),
+                    openAlertDetails = {}
                 )
             }
         }
@@ -339,7 +340,8 @@ class StopDetailsViewTest {
                             false,
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
-                        )
+                        ),
+                    openAlertDetails = {}
                 )
             }
         }
