@@ -32,7 +32,7 @@ struct DirectionPicker: View {
     var body: some View {
         if availableDirections.count > 1 {
             let deselectedBackroundColor = deselectedBackgroundColor(route)
-            HStack(alignment: .center) {
+            HStack(alignment: .center, spacing: 2) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = filter?.directionId == direction
                     let action = { setFilter(.init(routeId: line?.id ?? route.id, directionId: direction)) }
