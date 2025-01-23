@@ -4,30 +4,6 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
-enum SelectedTab: Hashable, CaseIterable {
-    case nearby
-    case more
-
-    var imageResource: ImageResource {
-        switch self {
-        case .nearby:
-            .tabIconNearby
-        case .more:
-            .tabIconMore
-        }
-    }
-
-    var text: String {
-        switch self {
-        case .nearby: NSLocalizedString(
-                "Nearby",
-                comment: "The label for the Nearby Transit page in the navigation bar"
-            )
-        case .more: NSLocalizedString("More", comment: "The label for the More page in the navigation bar")
-        }
-    }
-}
-
 // swiftlint:disable:next type_body_length
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
