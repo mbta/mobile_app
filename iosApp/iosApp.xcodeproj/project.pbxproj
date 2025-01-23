@@ -242,7 +242,6 @@
 		ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */; };
 		ED5C93F62C4A1AD70086D017 /* TripDetailsHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */; };
 		ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */; };
-		ED85C0262D42AA56007F91A7 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED85C0252D42AA52007F91A7 /* TabBar.swift */; };
 		ED85C0282D42CAD5007F91A7 /* SelectedTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED85C0272D42CAD2007F91A7 /* SelectedTab.swift */; };
 		ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */; };
 		ED93D5FC2CB6C003003B1C12 /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED93D5FB2CB6C003003B1C12 /* SearchResultsView.swift */; };
@@ -551,7 +550,6 @@
 		ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeader.swift; sourceTree = "<group>"; };
 		ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeaderTests.swift; sourceTree = "<group>"; };
 		ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoenixProtocolConformance.swift; sourceTree = "<group>"; };
-		ED85C0252D42AA52007F91A7 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		ED85C0272D42CAD2007F91A7 /* SelectedTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedTab.swift; sourceTree = "<group>"; };
 		ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoenixChannelError.swift; sourceTree = "<group>"; };
 		ED93D5FB2CB6C003003B1C12 /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
@@ -1006,7 +1004,6 @@
 		9A4E8E572B7EC49A0066B936 /* ComponentViews */ = {
 			isa = PBXGroup;
 			children = (
-				ED85C0252D42AA52007F91A7 /* TabBar.swift */,
 				6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */,
 				8C255B982D388299003C4E3F /* AlertCard.swift */,
 				9A76022C2C5468C300B69A35 /* AlertIcon.swift */,
@@ -1630,7 +1627,6 @@
 				6E04D4322C1B50230055FD99 /* RouteHeader.swift in Sources */,
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */,
-				ED85C0262D42AA56007F91A7 /* TabBar.swift in Sources */,
 				8C5054582BB5EB6C00C6A51C /* LegacyStopDetailsPage.swift in Sources */,
 				8C05C57D2CD5659A000381E8 /* MoreNavTarget.swift in Sources */,
 				9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */,

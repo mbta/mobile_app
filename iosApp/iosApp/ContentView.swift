@@ -110,23 +110,28 @@ struct ContentView: View {
     @State private var showingLocationPermissionAlert = false
 
     var nearbySheetContents: some View {
-        VStack(spacing: 0) {
-            NearbyTransitPageView(
-                errorBannerVM: errorBannerVM,
-                nearbyVM: nearbyVM,
-                viewportProvider: viewportProvider,
-                noNearbyStops: { NoNearbyStopsView(
-                    hideMaps: contentVM.hideMaps,
-                    onOpenSearch: { searchObserver.isFocused = true },
-                    onPanToDefaultCenter: { viewportProvider.animateTo(
-                        coordinates: ViewportProvider.Defaults.center,
-                        zoom: 13.75
+        VStack {
+            TabView(selection: $selectedTab) {
+                NearbyTransitPageView(
+                    errorBannerVM: errorBannerVM,
+                    nearbyVM: nearbyVM,
+                    viewportProvider: viewportProvider,
+                    noNearbyStops: { NoNearbyStopsView(
+                        hideMaps: contentVM.hideMaps,
+                        onOpenSearch: { searchObserver.isFocused = true },
+                        onPanToDefaultCenter: { viewportProvider.animateTo(
+                            coordinates: ViewportProvider.Defaults.center,
+                            zoom: 13.75
+                        ) }
                     ) }
-                ) }
-            )
-            // When maps are hidden we no longer need sheet overlap workarounds
-            if !contentVM.hideMaps {
-                TabBar(selectedTab: $selectedTab)
+                )
+                .tag(SelectedTab.nearby)
+                .tabItem { TabLabel(tab: SelectedTab.nearby) }
+                // we want to show nothing in the sheet when the settings tab is open,
+                // but an EmptyView here causes the tab to not be listed
+                VStack {}
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel(tab: SelectedTab.more) }
             }
         }
     }
@@ -373,7 +378,7 @@ struct ContentView: View {
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
         guard newSheetHeight < (UIScreen.main.bounds.height / 2) else { return }
-        sheetHeight = newSheetHeight - TabBar.height
+        sheetHeight = newSheetHeight - 55
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {
