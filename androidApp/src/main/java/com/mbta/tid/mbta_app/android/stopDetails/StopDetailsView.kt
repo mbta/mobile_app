@@ -18,6 +18,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -42,6 +43,7 @@ fun StopDetailsView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
+    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
@@ -88,6 +90,15 @@ fun StopDetailsView(
         }
     }
 
+    fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
+        openAlertDetails(alertDetails)
+        analytics.tappedAlertDetails(
+            routeId = alertDetails.lineId ?: alertDetails.routeIds?.firstOrNull() ?: "",
+            stopId = alertDetails.stopId ?: "",
+            alertId = alertDetails.alertId
+        )
+    }
+
     if (stop != null) {
 
         Column(modifier) {
@@ -125,7 +136,11 @@ fun StopDetailsView(
                                 .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
                                 .clickable(
                                     onClickLabel = stringResource(R.string.displays_more_info)
-                                ) {}
+                                ) {
+                                    openAndRecordAlertDetails(
+                                        ModalRoutes.AlertDetails(it.id, null, null, stopId)
+                                    )
+                                }
                                 .padding(end = 8.dp)
                         ) {
                             StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
@@ -141,7 +156,8 @@ fun StopDetailsView(
                 tripFilter,
                 togglePinnedRoute,
                 pinnedRoutes,
-                updateStopFilter
+                updateStopFilter,
+                openAlertDetails = ::openAndRecordAlertDetails
             )
         }
     }

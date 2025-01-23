@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
@@ -31,6 +32,7 @@ fun StopDetailsPage(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
+    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val stopId = filters.stopId
@@ -60,6 +62,7 @@ fun StopDetailsPage(
         ::togglePinnedRoute,
         onClose,
         updateStopFilter,
+        openAlertDetails,
         errorBannerViewModel
     )
 }
