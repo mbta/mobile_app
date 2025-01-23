@@ -123,6 +123,7 @@ class StopDetailsFilteredRouteViewTest {
             }
 
             StopDetailsFilteredRouteView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,
@@ -167,6 +168,7 @@ class StopDetailsFilteredRouteViewTest {
             }
 
             StopDetailsFilteredRouteView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,

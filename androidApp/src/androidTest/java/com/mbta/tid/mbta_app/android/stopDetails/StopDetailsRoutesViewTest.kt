@@ -119,6 +119,7 @@ class StopDetailsRoutesViewTest {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
             StopDetailsRoutesView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,
@@ -148,6 +149,7 @@ class StopDetailsRoutesViewTest {
             }
 
             StopDetailsRoutesView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,
@@ -172,6 +174,7 @@ class StopDetailsRoutesViewTest {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
             StopDetailsRoutesView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,
