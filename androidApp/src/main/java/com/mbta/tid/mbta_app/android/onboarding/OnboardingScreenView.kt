@@ -198,6 +198,8 @@ fun OnboardingScreenView(
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_feedback_advance),
+                                color = colorResource(R.color.fill3),
+                                fontSize = 17.sp
                             )
                         }
                     }
@@ -349,7 +351,7 @@ fun OnboardingScreenView(
                         Text(
                             stringResource(R.string.onboarding_location_header),
                             fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp
+                            fontSize = 32.sp,
                         )
                         Text(stringResource(R.string.onboarding_location_body), fontSize = 20.sp)
                         Button(
@@ -359,6 +361,7 @@ fun OnboardingScreenView(
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_location_advance),
+                                color = colorResource(R.color.fill3),
                                 fontSize = 17.sp
                             )
                         }
