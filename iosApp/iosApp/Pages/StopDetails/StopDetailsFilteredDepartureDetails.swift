@@ -202,12 +202,12 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func getAlertDetailsHandler(_ alertId: String) -> () -> Void {
+    func getAlertDetailsHandler(_ alertId: String, stopOnly: Bool = false) -> () -> Void {
         {
             nearbyVM.pushNavEntry(.alertDetails(
                 alertId: alertId,
-                line: patternsByStop.line,
-                routes: patternsByStop.routes,
+                line: stopOnly ? nil : patternsByStop.line,
+                routes: stopOnly ? nil : patternsByStop.routes,
                 stop: patternsByStop.stop
             ))
             analytics.tappedAlertDetails(
@@ -225,19 +225,26 @@ struct StopDetailsFilteredDepartureDetails: View {
             spec: spec ?? (alert.significance == .major ? .major : .secondary),
             color: routeColor,
             textColor: routeTextColor,
-            onViewDetails: getAlertDetailsHandler(alert.id)
+            onViewDetails: getAlertDetailsHandler(alert.id, stopOnly: spec == .elevator)
         )
     }
 
     @ViewBuilder
     var alertCards: some View {
-        if !alerts.isEmpty || !downstreamAlerts.isEmpty {
+        if !alerts.isEmpty ||
+            !downstreamAlerts.isEmpty ||
+            (stopDetailsVM.showElevatorAccessibility && !patternsByStop.elevatorAlerts.isEmpty) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     alertCard(alert)
                 }
                 ForEach(downstreamAlerts, id: \.id) { alert in
                     alertCard(alert, .downstream)
+                }
+                if stopDetailsVM.showElevatorAccessibility {
+                    ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
+                        alertCard(alert, .elevator)
+                    }
                 }
             }.padding(.horizontal, 16)
         }
