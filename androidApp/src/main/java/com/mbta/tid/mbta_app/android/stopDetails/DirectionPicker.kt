@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,8 +51,8 @@ fun DirectionPicker(
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor = colorResource(deselectedBackgroundColor(route))
         Row(
-            Modifier.background(deselectedBackgroundColor, RoundedCornerShape(6.dp))
-                .border(2.dp, deselectedBackgroundColor, RoundedCornerShape(6.dp))
+            Modifier.background(deselectedBackgroundColor, RoundedCornerShape(8.dp))
+                .padding(2.dp)
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max),
             verticalAlignment = Alignment.CenterVertically,
