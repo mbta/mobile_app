@@ -37,6 +37,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.Rule
@@ -1049,6 +1051,8 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testManagersAppliesStopFilterAutomaticallyOnDepartureChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
         val objects = ObjectCollectionBuilder()
 
         val now = Clock.System.now()
@@ -1097,7 +1101,8 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, filter -> newStopFilter = filter },
-                updateTripFilter = { _, _ -> }
+                updateTripFilter = { _, _ -> },
+                coroutineDispatcher = dispatcher
             )
 
             LaunchedEffect(null) {
@@ -1116,7 +1121,7 @@ class StopDetailsViewModelTest {
             }
         }
 
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
 
         composeTestRule.waitUntil {
             newStopFilter == StopDetailsFilter(route.id, routePattern.directionId)
@@ -1189,7 +1194,7 @@ class StopDetailsViewModelTest {
                 )
             }
         }
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
 
@@ -1268,7 +1273,7 @@ class StopDetailsViewModelTest {
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
 
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
 
         composeTestRule.waitUntil(2_000) { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)

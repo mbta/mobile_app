@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -56,7 +57,8 @@ class StopDetailsViewModel(
     schedulesRepository: ISchedulesRepository,
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
-    private val vehicleRepository: IVehicleRepository
+    private val vehicleRepository: IVehicleRepository,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
     companion object {
@@ -238,7 +240,7 @@ class StopDetailsViewModel(
     }
 
     private fun clearAndLoadTripDetails(tripFilter: TripDetailsFilter) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(coroutineDispatcher).launch {
             clearTripDetails()
             loadTripDetails(tripFilter)
             joinTripChannels(tripFilter)
@@ -246,9 +248,9 @@ class StopDetailsViewModel(
     }
 
     private suspend fun loadTripDetails(tripFilter: TripDetailsFilter) {
-        val tripResult = CoroutineScope(Dispatchers.Default).async { loadTrip(tripFilter) }
+        val tripResult = CoroutineScope(coroutineDispatcher).async { loadTrip(tripFilter) }
         val schedulesResult =
-            CoroutineScope(Dispatchers.Default).async { loadTripSchedules(tripFilter) }
+            CoroutineScope(coroutineDispatcher).async { loadTripSchedules(tripFilter) }
 
         val trip = tripResult.await()
         val schedules = schedulesResult.await()
@@ -270,7 +272,7 @@ class StopDetailsViewModel(
     private suspend fun loadTrip(tripFilter: TripDetailsFilter): Trip? {
         val errorKey = "TripDetailsView.loadTrip"
 
-        return withContext(Dispatchers.IO) {
+        return withContext(coroutineDispatcher) {
             when (val response = tripRepository.getTrip(tripFilter.tripId)) {
                 is ApiResult.Ok -> {
                     errorBannerRepository.clearDataError(errorKey)
@@ -287,7 +289,7 @@ class StopDetailsViewModel(
     }
 
     private suspend fun loadTripSchedules(tripFilter: TripDetailsFilter): TripSchedulesResponse? {
-        return CoroutineScope(Dispatchers.IO)
+        return CoroutineScope(coroutineDispatcher)
             .async {
                 var result: TripSchedulesResponse? = null
                 fetchApi(
@@ -347,7 +349,7 @@ class StopDetailsViewModel(
                     leaveTripPredictions()
 
                     filterChangeSideEffects = {
-                        CoroutineScope(Dispatchers.Default).launch {
+                        CoroutineScope(coroutineDispatcher).launch {
                             loadTripDetails(tripFilter)
                             _tripData.update { it?.copy(vehicle = currentVehicle) }
                             joinTripPredictions(tripFilter)
@@ -420,7 +422,8 @@ fun stopDetailsManagedVM(
     updateTripFilter: (String, TripDetailsFilter?) -> Unit,
     now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
-    checkPredictionsStaleInterval: Duration = 5.seconds
+    checkPredictionsStaleInterval: Duration = 5.seconds,
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ): StopDetailsViewModel {
     val stopId = filters?.stopId
     val timer = timer(checkPredictionsStaleInterval)
@@ -444,7 +447,7 @@ fun stopDetailsManagedVM(
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
-        withContext(Dispatchers.Default) {
+        withContext(coroutineDispatcher) {
             val departures: StopDetailsDepartures? =
                 if (globalResponse != null && stopId != null) {
                     StopDetailsDepartures.fromData(
