@@ -246,9 +246,12 @@ class StopDetailsViewModel(
     }
 
     private suspend fun loadTripDetails(tripFilter: TripDetailsFilter) {
-        val trip = CoroutineScope(Dispatchers.Default).async { loadTrip(tripFilter) }.await()
-        val schedules =
-            CoroutineScope(Dispatchers.Default).async { loadTripSchedules(tripFilter) }.await()
+        val tripResult = CoroutineScope(Dispatchers.Default).async { loadTrip(tripFilter) }
+        val schedulesResult =
+            CoroutineScope(Dispatchers.Default).async { loadTripSchedules(tripFilter) }
+
+        val trip = tripResult.await()
+        val schedules = schedulesResult.await()
         if (trip == null) {
             _tripData.value = null
         } else {
