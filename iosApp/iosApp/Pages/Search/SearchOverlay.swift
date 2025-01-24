@@ -43,6 +43,7 @@ struct SearchOverlay: View {
                         nearbyVM: nearbyVM,
                         searchVM: searchVM
                     )
+                    .toolbar(.hidden, for: .tabBar)
                     Divider()
                         .frame(height: 2)
                         .overlay(Color.halo)
