@@ -153,6 +153,7 @@ fun StopDetailsView(
                 }
             }
             StopDetailsRoutesView(
+                stopId,
                 viewModel,
                 globalResponse,
                 now,

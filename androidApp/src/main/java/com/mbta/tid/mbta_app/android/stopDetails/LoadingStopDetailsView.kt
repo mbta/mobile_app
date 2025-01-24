@@ -45,6 +45,7 @@ fun LoadingStopDetailsView(stopFilter: StopDetailsFilter?, tripFilter: TripDetai
                     }
                 } else {
                     StopDetailsFilteredRouteView(
+                        stopId = "",
                         viewModel = viewModel,
                         global = null,
                         now = Clock.System.now(),

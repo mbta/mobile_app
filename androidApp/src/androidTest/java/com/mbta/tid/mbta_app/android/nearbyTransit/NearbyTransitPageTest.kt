@@ -23,6 +23,7 @@ import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
@@ -30,9 +31,9 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
-import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.map.RouteLineData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
@@ -48,27 +49,11 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
-import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
@@ -214,14 +199,12 @@ class NearbyTransitPageTest : KoinTest {
 
     val koinApplication = koinApplication {
         modules(
+            repositoriesModule(MockRepositories.buildWithDefaults()),
             module {
                 single<Analytics> { analytics }
-                single<ISettingsRepository> { MockSettingsRepository() }
-                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> {
                     MockGlobalRepository(response = GlobalResponse(builder))
                 }
-                single<ISchedulesRepository> { MockScheduleRepository() }
                 single<IPredictionsRepository> {
                     object : IPredictionsRepository {
                         override fun connect(
@@ -272,15 +255,8 @@ class NearbyTransitPageTest : KoinTest {
                         }
                     }
                 }
-                single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
-                single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
-                single<IVehiclesRepository> { MockVehiclesRepository() }
-                single<ISearchResultRepository> { MockSearchResultRepository() }
-                viewModelOf(::NearbyTransitViewModel)
-                viewModelOf(::StopDetailsViewModel)
-                single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
-                single<VisitHistoryUsecase> { VisitHistoryUsecase(get()) }
-            }
+            },
+            MainApplication.koinViewModelModule,
         )
     }
 
