@@ -917,6 +917,8 @@ class StopDetailsViewModelTest {
             }
         }
 
+        composeTestRule.awaitIdle()
+
         composeTestRule.waitUntil {
             // In resumed state, so joined 1 time for stop, 1 time for resume.
             // Need to start with lifecycle resumed in order to test pause
@@ -938,6 +940,7 @@ class StopDetailsViewModelTest {
         assertEquals("stop1", viewModel.stopData.value?.stopId)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+        composeTestRule.awaitIdle()
 
         composeTestRule.waitUntil {
             stopPredictionsDisconnectCount == 2 &&
@@ -952,6 +955,7 @@ class StopDetailsViewModelTest {
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
+        composeTestRule.awaitIdle()
         composeTestRule.waitUntil {
             stopPredictionsConnectCount == 3 &&
                 tripPredictionsConnectCount == 2 &&
