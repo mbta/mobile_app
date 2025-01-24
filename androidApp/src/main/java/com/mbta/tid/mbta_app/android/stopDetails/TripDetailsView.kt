@@ -37,10 +37,10 @@ fun TripDetailsView(
             withContext(Dispatchers.Default) {
                 if (
                     tripFilter != null &&
-                        vehicle != null &&
-                        tripData.tripFilter == tripFilter &&
-                        tripData.tripPredictionsLoaded &&
-                        globalResponse != null
+                    vehicle != null &&
+                    tripData.tripFilter == tripFilter &&
+                    tripData.tripPredictionsLoaded &&
+                    globalResponse != null
                 ) {
                     TripDetailsStopList.fromPieces(
                         tripFilter.tripId,
@@ -65,7 +65,7 @@ fun TripDetailsView(
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
 
-        TripDetailsHeader(tripId, headerSpec)
+        TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now)
         TripStops(
             stopId,
             stops,
