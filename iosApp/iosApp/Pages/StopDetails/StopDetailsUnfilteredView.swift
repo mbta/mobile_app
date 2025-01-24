@@ -108,7 +108,8 @@ struct StopDetailsUnfilteredView: View {
                                                 analytics.tappedAlertDetails(
                                                     routeId: "",
                                                     stopId: stopId,
-                                                    alertId: alert.id
+                                                    alertId: alert.id,
+                                                    elevator: true
                                                 )
                                             }
                                         )
