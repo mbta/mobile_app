@@ -246,11 +246,12 @@ class StopDetailsViewModel(
     }
 
     private suspend fun loadTripDetails(tripFilter: TripDetailsFilter) {
-        val trip = loadTrip(tripFilter)
+        val trip = CoroutineScope(Dispatchers.Default).async { loadTrip(tripFilter) }.await()
+        val schedules =
+            CoroutineScope(Dispatchers.Default).async { loadTripSchedules(tripFilter) }.await()
         if (trip == null) {
             _tripData.value = null
         } else {
-            val schedules = loadTripSchedules(tripFilter)
             _tripData.update {
                 TripData(
                     tripFilter = tripFilter,
@@ -328,19 +329,17 @@ class StopDetailsViewModel(
                     // filter but keep all the data
                     currentTripData.copy(tripFilter = tripFilter, tripPredictionsLoaded = true)
                 } else if (currentFilter.tripId == tripFilter.tripId) {
-                    // If only the vehicle changed but the trip is the same, clear and reload
-                    // only the vehicle,
-                    // keep the prediction channel open and copy static trip data into new trip
-                    // data
+                    // If only the vehicle changed but the trip is the same, clear and reload only
+                    // the vehicle, keep the prediction channel open and copy static trip data
+                    // into new trip data
                     leaveVehicle()
                     filterChangeSideEffects = { joinVehicle(tripFilter) }
 
                     currentTripData.copy(tripFilter = tripFilter, vehicle = null)
                 } else if (currentFilter.vehicleId == tripFilter.vehicleId) {
-                    // If only the trip changed but the vehicle is the same, clear and reload
-                    // only the trip details,
-                    // keep the vehicle channel open and copy the last vehicle into the new trip
-                    // data
+                    // If only the trip changed but the vehicle is the same, clear and reload only
+                    // the trip details, keep the vehicle channel open and copy the last
+                    // vehicle into the new trip data
                     val currentVehicle = currentTripData.vehicle
                     leaveTripPredictions()
 
