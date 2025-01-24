@@ -1132,6 +1132,8 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testManagerAppliesTripFilterAutomaticallyOnDepartureChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
 
@@ -1176,7 +1178,8 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
-                updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter }
+                updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
+                coroutineDispatcher = dispatcher
             )
 
             LaunchedEffect(null) {
@@ -1204,6 +1207,7 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testManagerAppliesTripFilterAutomaticallyOnFilterChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
 
@@ -1249,7 +1253,8 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
-                updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter }
+                updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
+                coroutineDispatcher = dispatcher
             )
 
             LaunchedEffect(null) {
