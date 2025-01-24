@@ -698,6 +698,7 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testManagerHandlesStopChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
 
         var connectCount = 0
@@ -714,7 +715,13 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
 
         val stopFilters =
             mutableStateOf<StopDetailsPageFilters?>(StopDetailsPageFilters("stop1", null, null))
@@ -731,10 +738,12 @@ class StopDetailsViewModelTest {
                     alertData = null,
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
-                    updateTripFilter = { _, _ -> }
+                    updateTripFilter = { _, _ -> },
+                    coroutineDispatcher = dispatcher
                 )
             }
         }
+        advanceUntilIdle()
 
         composeTestRule.waitUntil { connectCount == 1 }
 
@@ -743,6 +752,8 @@ class StopDetailsViewModelTest {
         assertEquals("stop1", viewModel.stopData.value?.stopId)
 
         stopFilters.value = StopDetailsPageFilters("stop2", null, null)
+
+        advanceUntilIdle()
 
         composeTestRule.waitUntil { connectCount == 2 }
 
@@ -753,6 +764,7 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testManagerHandlesTripFilterChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route = objects.route()
@@ -789,7 +801,8 @@ class StopDetailsViewModelTest {
                         tripResponse = TripResponse(trip1)
                     ),
                 vehicleRepo =
-                    MockVehicleRepository({}, {}, ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
+                    MockVehicleRepository({}, {}, ApiResult.Ok(VehicleStreamDataResponse(vehicle))),
+                coroutineDispatcher = dispatcher
             )
 
         val newTripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
@@ -811,21 +824,30 @@ class StopDetailsViewModelTest {
                     alertData = null,
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
-                    updateTripFilter = { _, _ -> }
+                    updateTripFilter = { _, _ -> },
+                    coroutineDispatcher = dispatcher
                 )
             }
         }
 
+        advanceUntilIdle()
         composeTestRule.waitUntil { viewModel.stopData.value != null }
         assertNull(viewModel.tripData.value)
 
-        stopFilters.value = stopFilters.value?.copy(tripFilter = newTripFilter)
+        composeTestRule.runOnIdle {
+            stopFilters.value = stopFilters.value?.copy(tripFilter = newTripFilter)
+        }
+        advanceUntilIdle()
+        // This test reliably fails without also using `awaitIdle`.
+        composeTestRule.awaitIdle()
+
         composeTestRule.waitUntil { viewModel.tripData.value != null }
         assertNotNull(viewModel.tripData.value)
     }
 
     @Test
     fun testManagerHandlesBackgrounding() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route = objects.route()
@@ -890,7 +912,8 @@ class StopDetailsViewModelTest {
                 predictionsRepo,
                 schedulesRepo,
                 tripPredictionsRepo,
-                vehicleRepo = vehicleRepo
+                vehicleRepo = vehicleRepo,
+                coroutineDispatcher = dispatcher
             )
 
         val stopFilters =
@@ -914,12 +937,13 @@ class StopDetailsViewModelTest {
                     alertData = null,
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
-                    updateTripFilter = { _, _ -> }
+                    updateTripFilter = { _, _ -> },
+                    coroutineDispatcher = dispatcher
                 )
             }
         }
 
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
 
         composeTestRule.waitUntil {
             // In resumed state, so joined 1 time for stop, 1 time for resume.
@@ -942,7 +966,7 @@ class StopDetailsViewModelTest {
         assertEquals("stop1", viewModel.stopData.value?.stopId)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
 
         composeTestRule.waitUntil {
             stopPredictionsDisconnectCount == 2 &&
@@ -957,7 +981,7 @@ class StopDetailsViewModelTest {
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
         composeTestRule.waitUntil {
             stopPredictionsConnectCount == 3 &&
                 tripPredictionsConnectCount == 2 &&
@@ -971,7 +995,8 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testManagerSetsDeparturesOnChange() {
+    fun testManagerSetsDeparturesOnChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
@@ -984,7 +1009,13 @@ class StopDetailsViewModelTest {
 
         val errorBannerRepo = MockErrorBannerStateRepository()
 
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
@@ -999,9 +1030,12 @@ class StopDetailsViewModelTest {
                 alertData = AlertsStreamDataResponse(objects),
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
-                updateTripFilter = { _, _ -> }
+                updateTripFilter = { _, _ -> },
+                coroutineDispatcher = dispatcher
             )
         }
+
+        advanceUntilIdle()
 
         composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
 
@@ -1010,6 +1044,7 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testManagerChecksPredictionsStale() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
         objects.prediction()
 
@@ -1028,7 +1063,13 @@ class StopDetailsViewModelTest {
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
 
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -1040,11 +1081,12 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
-                updateTripFilter = { _, _ -> }
+                updateTripFilter = { _, _ -> },
+                coroutineDispatcher = dispatcher
             )
         }
 
-        composeTestRule.awaitIdle()
+        advanceUntilIdle()
 
         composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }
     }
@@ -1087,7 +1129,13 @@ class StopDetailsViewModelTest {
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters(stop.id, null, null))
 
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
 
         var newStopFilter: StopDetailsFilter? = null
 
@@ -1161,7 +1209,7 @@ class StopDetailsViewModelTest {
 
         objects.prediction(schedule) { departureTime = now.plus(10.minutes) }
 
-        val viewModel = StopDetailsViewModel.mocked()
+        val viewModel = StopDetailsViewModel.mocked(coroutineDispatcher = dispatcher)
 
         val stopFilters =
             mutableStateOf(StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null))
@@ -1235,7 +1283,7 @@ class StopDetailsViewModelTest {
 
         objects.prediction(schedule) { departureTime = now.plus(10.minutes) }
 
-        val viewModel = StopDetailsViewModel.mocked()
+        val viewModel = StopDetailsViewModel.mocked(coroutineDispatcher = dispatcher)
 
         // There are no trips in direction 1
         val stopFilters =

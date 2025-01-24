@@ -68,7 +68,8 @@ class StopDetailsViewModel(
             schedulesRepo: ISchedulesRepository = MockScheduleRepository(),
             tripPredictionsRepo: ITripPredictionsRepository = MockTripPredictionsRepository(),
             tripRepo: ITripRepository = MockTripRepository(),
-            vehicleRepo: IVehicleRepository = MockVehicleRepository()
+            vehicleRepo: IVehicleRepository = MockVehicleRepository(),
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
         ): StopDetailsViewModel {
             return StopDetailsViewModel(
                 errorBannerRepo,
@@ -76,7 +77,8 @@ class StopDetailsViewModel(
                 schedulesRepo,
                 tripPredictionsRepo,
                 tripRepo,
-                vehicleRepo
+                vehicleRepo,
+                coroutineDispatcher
             )
         }
     }
