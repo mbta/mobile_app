@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.analytics
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import kotlin.experimental.ExperimentalObjCName
@@ -52,12 +53,19 @@ abstract class Analytics {
         )
     }
 
-    fun tappedAlertDetails(routeId: String, stopId: String, alertId: String) {
+    @DefaultArgumentInterop.Enabled
+    fun tappedAlertDetails(
+        routeId: String,
+        stopId: String,
+        alertId: String,
+        elevator: Boolean = false
+    ) {
         logEvent(
             "tapped_alert_details",
             "route_id" to routeId,
             "stop_id" to stopId,
             "alertId" to alertId,
+            "elevator" to elevator.toString()
         )
     }
 

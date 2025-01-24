@@ -202,42 +202,51 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func getAlertDetailsHandler(_ alertId: String) -> () -> Void {
+    func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {
         {
             nearbyVM.pushNavEntry(.alertDetails(
                 alertId: alertId,
-                line: patternsByStop.line,
-                routes: patternsByStop.routes,
+                line: spec == .elevator ? nil : patternsByStop.line,
+                routes: spec == .elevator ? nil : patternsByStop.routes,
                 stop: patternsByStop.stop
             ))
             analytics.tappedAlertDetails(
                 routeId: patternsByStop.routeIdentifier,
                 stopId: patternsByStop.stop.id,
-                alertId: alertId
+                alertId: alertId,
+                elevator: spec == .elevator
             )
         }
     }
 
     @ViewBuilder
     func alertCard(_ alert: shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
+        let spec = spec ?? (alert.significance == .major ? .major : .secondary)
         AlertCard(
             alert: alert,
-            spec: spec ?? (alert.significance == .major ? .major : .secondary),
+            spec: spec,
             color: routeColor,
             textColor: routeTextColor,
-            onViewDetails: getAlertDetailsHandler(alert.id)
+            onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
         )
     }
 
     @ViewBuilder
     var alertCards: some View {
-        if !alerts.isEmpty || !downstreamAlerts.isEmpty {
+        if !alerts.isEmpty ||
+            !downstreamAlerts.isEmpty ||
+            (stopDetailsVM.showElevatorAccessibility && !patternsByStop.elevatorAlerts.isEmpty) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     alertCard(alert)
                 }
                 ForEach(downstreamAlerts, id: \.id) { alert in
                     alertCard(alert, .downstream)
+                }
+                if stopDetailsVM.showElevatorAccessibility {
+                    ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
+                        alertCard(alert, .elevator)
+                    }
                 }
             }.padding(.horizontal, 16)
         }
