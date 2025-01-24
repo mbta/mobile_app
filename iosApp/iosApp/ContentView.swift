@@ -110,6 +110,8 @@ struct ContentView: View {
     @State private var showingLocationPermissionAlert = false
 
     var nearbySheetContents: some View {
+        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
+        // when re-opening nearby transit
         VStack {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
@@ -136,6 +138,7 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     var nearbyTab: some View {
         VStack {
             if contentVM.hideMaps {
@@ -189,6 +192,7 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     var mapSection: some View {
         HomeMapView(
             contentVM: contentVM,
