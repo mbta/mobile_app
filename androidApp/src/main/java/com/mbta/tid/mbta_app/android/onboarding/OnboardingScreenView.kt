@@ -155,8 +155,8 @@ fun OnboardingScreenView(
                             }
                         ),
                         contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.fillMaxWidth().align(Alignment.Center)
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize().align(Alignment.Center)
                     )
                     Image(
                         painterResource(
@@ -220,7 +220,7 @@ fun OnboardingScreenView(
                                             }
                                     ),
                                 alignment = Alignment.Center,
-                                contentScale = ContentScale.FillBounds
+                                contentScale = ContentScale.Crop
                             ),
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
@@ -303,7 +303,7 @@ fun OnboardingScreenView(
                                             }
                                     ),
                                 alignment = Alignment.Center,
-                                contentScale = ContentScale.FillBounds
+                                contentScale = ContentScale.Crop
                             ),
                 ) {
                     Image(
@@ -317,8 +317,8 @@ fun OnboardingScreenView(
                                     }
                             ),
                         contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.align(Alignment.Center).fillMaxWidth()
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.align(Alignment.Center).fillMaxSize()
                     )
                     Image(
                         painter =
