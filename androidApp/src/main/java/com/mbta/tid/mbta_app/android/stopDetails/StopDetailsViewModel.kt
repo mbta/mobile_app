@@ -8,41 +8,86 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
+import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.StopData
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.ITripRepository
+import com.mbta.tid.mbta_app.repositories.IVehicleRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockTripRepository
+import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 class StopDetailsViewModel(
-    schedulesRepository: ISchedulesRepository,
-    private val predictionsRepository: IPredictionsRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
+    private val predictionsRepository: IPredictionsRepository,
+    schedulesRepository: ISchedulesRepository,
+    private val tripPredictionsRepository: ITripPredictionsRepository,
+    private val tripRepository: ITripRepository,
+    private val vehicleRepository: IVehicleRepository,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
+
+    companion object {
+        fun mocked(
+            errorBannerRepo: IErrorBannerStateRepository = MockErrorBannerStateRepository(),
+            predictionsRepo: IPredictionsRepository = MockPredictionsRepository(),
+            schedulesRepo: ISchedulesRepository = MockScheduleRepository(),
+            tripPredictionsRepo: ITripPredictionsRepository = MockTripPredictionsRepository(),
+            tripRepo: ITripRepository = MockTripRepository(),
+            vehicleRepo: IVehicleRepository = MockVehicleRepository()
+        ): StopDetailsViewModel {
+            return StopDetailsViewModel(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                tripPredictionsRepo,
+                tripRepo,
+                vehicleRepo
+            )
+        }
+    }
 
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
 
     private val _stopData = MutableStateFlow<StopData?>(null)
     val stopData: StateFlow<StopData?> = _stopData
+
+    private val _tripData = MutableStateFlow<TripData?>(null)
+    val tripData: StateFlow<TripData?> = _tripData
 
     private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
@@ -102,13 +147,78 @@ class StopDetailsViewModel(
         stopPredictionsFetcher.connect(listOf(stopId))
     }
 
-    fun rejoinStopPredictions() {
+    private fun joinTripChannels(tripFilter: TripDetailsFilter) {
+        joinVehicle(tripFilter)
+        joinTripPredictions(tripFilter)
+    }
 
-        stopData.value?.let { joinStopPredictions(it.stopId) }
+    private fun joinTripPredictions(tripFilter: TripDetailsFilter) {
+        leaveTripPredictions()
+
+        tripPredictionsRepository.connect(tripFilter.tripId) { outcome ->
+            when (outcome) {
+                // no error handling since persistent errors cause stale predictions
+                is ApiResult.Ok -> {
+                    _tripData.update { it?.copy(tripPredictions = outcome.data) }
+                }
+                is ApiResult.Error -> {}
+            }
+            _tripData.update { it?.copy(tripPredictionsLoaded = true) }
+        }
+    }
+
+    private fun joinVehicle(tripFilter: TripDetailsFilter) {
+        leaveVehicle()
+        val vehicleId = tripFilter.vehicleId
+        if (vehicleId == null) {
+            // If the filter has a null vehicle ID, we can't join anything, clear the vehicle and
+            // return
+            _tripData.update { it?.copy(vehicle = null) }
+            return
+        } else {
+
+            val errorKey = "TripDetailsView.joinVehicle"
+            vehicleRepository.connect(vehicleId) { outcome ->
+                when (outcome) {
+                    is ApiResult.Ok -> {
+                        _tripData.update { it?.copy(vehicle = outcome.data.vehicle) }
+                        errorBannerRepository.clearDataError(errorKey)
+                    }
+                    is ApiResult.Error -> {
+                        _tripData.update { it?.copy(vehicle = null) }
+
+                        errorBannerRepository.setDataError(errorKey) {
+                            clearAndLoadTripDetails(tripFilter)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun leaveStopPredictions() {
         stopPredictionsFetcher.disconnect()
+    }
+
+    fun leaveTripChannels() {
+        leaveTripPredictions()
+        leaveVehicle()
+    }
+
+    private fun leaveVehicle() {
+        vehicleRepository.disconnect()
+    }
+
+    private fun leaveTripPredictions() {
+        tripPredictionsRepository.disconnect()
+    }
+
+    fun rejoinStopPredictions() {
+        stopData.value?.let { joinStopPredictions(it.stopId) }
+    }
+
+    fun rejoinTripChannels() {
+        tripData.value?.let { joinTripChannels(it.tripFilter) }
     }
 
     fun setDepartures(departures: StopDetailsDepartures?) {
@@ -121,6 +231,79 @@ class StopDetailsViewModel(
         errorBannerRepository.clearDataError("StopDetailsVM.getSchedule")
     }
 
+    fun clearTripDetails() {
+        leaveTripChannels()
+        _tripData.value = null
+        errorBannerRepository.clearDataError("TripDetailsView.joinVehicle")
+        errorBannerRepository.clearDataError("TripDetailsView.loadTripSchedules")
+        errorBannerRepository.clearDataError("TripDetailsView.loadTrip")
+    }
+
+    private fun clearAndLoadTripDetails(tripFilter: TripDetailsFilter) {
+        CoroutineScope(coroutineDispatcher).launch {
+            clearTripDetails()
+            loadTripDetails(tripFilter)
+            joinTripChannels(tripFilter)
+        }
+    }
+
+    private suspend fun loadTripDetails(tripFilter: TripDetailsFilter) {
+        val tripResult = CoroutineScope(coroutineDispatcher).async { loadTrip(tripFilter) }
+        val schedulesResult =
+            CoroutineScope(coroutineDispatcher).async { loadTripSchedules(tripFilter) }
+
+        val trip = tripResult.await()
+        val schedules = schedulesResult.await()
+        if (trip == null) {
+            _tripData.value = null
+        } else {
+            _tripData.update {
+                TripData(
+                    tripFilter = tripFilter,
+                    trip = trip,
+                    tripSchedules = schedules,
+                    tripPredictions = null,
+                    vehicle = null
+                )
+            }
+        }
+    }
+
+    private suspend fun loadTrip(tripFilter: TripDetailsFilter): Trip? {
+        val errorKey = "TripDetailsView.loadTrip"
+
+        return withContext(coroutineDispatcher) {
+            when (val response = tripRepository.getTrip(tripFilter.tripId)) {
+                is ApiResult.Ok -> {
+                    errorBannerRepository.clearDataError(errorKey)
+                    response.data.trip
+                }
+                is ApiResult.Error -> {
+                    errorBannerRepository.setDataError(errorKey) {
+                        clearAndLoadTripDetails(tripFilter)
+                    }
+                    null
+                }
+            }
+        }
+    }
+
+    private suspend fun loadTripSchedules(tripFilter: TripDetailsFilter): TripSchedulesResponse? {
+        return CoroutineScope(coroutineDispatcher)
+            .async {
+                var result: TripSchedulesResponse? = null
+                fetchApi(
+                    errorBannerRepository,
+                    "TripDetailsView.loadTripSchedules",
+                    { tripRepository.getTripSchedules(tripFilter.tripId) },
+                    { schedules -> result = schedules },
+                    { clearAndLoadTripDetails(tripFilter) }
+                )
+                result
+            }
+            .await()
+    }
+
     fun handleStopChange(stopId: String?) {
         clearStopDetails()
 
@@ -129,7 +312,68 @@ class StopDetailsViewModel(
         }
     }
 
-    fun checkPredictionsStale() {
+    fun handleTripFilterChange(tripFilter: TripDetailsFilter?) {
+        if (tripFilter == null) {
+            clearTripDetails()
+            return
+        }
+
+        /*
+        Callback to invoke after the _tripData value is atomically updated. These side effects
+        must not need to be to atomically processed with the value change.
+         */
+        var filterChangeSideEffects: () -> Unit = {}
+        _tripData.update { currentTripData ->
+            if (currentTripData != null) {
+                val currentFilter = currentTripData.tripFilter
+                if (
+                    currentFilter.tripId == tripFilter.tripId &&
+                        currentFilter.vehicleId == tripFilter.vehicleId
+                ) {
+                    // If the filter changed but the trip and vehicle are the same, replace the
+                    // filter but keep all the data
+                    currentTripData.copy(tripFilter = tripFilter, tripPredictionsLoaded = true)
+                } else if (currentFilter.tripId == tripFilter.tripId) {
+                    // If only the vehicle changed but the trip is the same, clear and reload only
+                    // the vehicle, keep the prediction channel open and copy static trip data
+                    // into new trip data
+                    leaveVehicle()
+                    filterChangeSideEffects = { joinVehicle(tripFilter) }
+
+                    currentTripData.copy(tripFilter = tripFilter, vehicle = null)
+                } else if (currentFilter.vehicleId == tripFilter.vehicleId) {
+                    // If only the trip changed but the vehicle is the same, clear and reload only
+                    // the trip details, keep the vehicle channel open and copy the last
+                    // vehicle into the new trip data
+                    val currentVehicle = currentTripData.vehicle
+                    leaveTripPredictions()
+
+                    filterChangeSideEffects = {
+                        CoroutineScope(coroutineDispatcher).launch {
+                            loadTripDetails(tripFilter)
+                            _tripData.update { it?.copy(vehicle = currentVehicle) }
+                            joinTripPredictions(tripFilter)
+                        }
+                    }
+
+                    null
+                } else {
+                    // If current trip data exists but neither the trip ID or vehicle ID match,
+                    // fall through and reload everything
+                    filterChangeSideEffects = { clearAndLoadTripDetails(tripFilter) }
+
+                    null
+                }
+            } else {
+                filterChangeSideEffects = { clearAndLoadTripDetails(tripFilter) }
+
+                null
+            }
+        }
+        filterChangeSideEffects()
+    }
+
+    fun checkStopPredictionsStale() {
         stopPredictionsFetcher.checkPredictionsStale(_stopData.value?.predictionsByStop)
     }
 
@@ -143,6 +387,18 @@ class StopDetailsViewModel(
                     )
             ) {
                 StopData(it.stopId, it.schedules, null, false)
+            } else {
+                it
+            }
+        }
+        _tripData.update {
+            if (
+                it != null &&
+                    tripPredictionsRepository.shouldForgetPredictions(
+                        it.tripPredictions?.predictionQuantity() ?: 0
+                    )
+            ) {
+                it.copy(tripPredictions = null)
             } else {
                 it
             }
@@ -166,7 +422,8 @@ fun stopDetailsManagedVM(
     updateTripFilter: (String, TripDetailsFilter?) -> Unit,
     now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
-    checkPredictionsStaleInterval: Duration = 5.seconds
+    checkPredictionsStaleInterval: Duration = 5.seconds,
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ): StopDetailsViewModel {
     val stopId = filters?.stopId
     val timer = timer(checkPredictionsStaleInterval)
@@ -176,15 +433,21 @@ fun stopDetailsManagedVM(
     val departures by viewModel.stopDepartures.collectAsState()
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
+    LaunchedEffect(filters?.tripFilter) { viewModel.handleTripFilterChange(filters?.tripFilter) }
+
     LifecycleResumeEffect(null) {
         viewModel.returnFromBackground()
         viewModel.rejoinStopPredictions()
+        viewModel.rejoinTripChannels()
 
-        onPauseOrDispose { viewModel.leaveStopPredictions() }
+        onPauseOrDispose {
+            viewModel.leaveStopPredictions()
+            viewModel.leaveTripChannels()
+        }
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
-        withContext(Dispatchers.Default) {
+        withContext(coroutineDispatcher) {
             val departures: StopDetailsDepartures? =
                 if (globalResponse != null && stopId != null) {
                     StopDetailsDepartures.fromData(
@@ -202,7 +465,7 @@ fun stopDetailsManagedVM(
         }
     }
 
-    LaunchedEffect(key1 = timer) { viewModel.checkPredictionsStale() }
+    LaunchedEffect(key1 = timer) { viewModel.checkStopPredictionsStale() }
 
     LaunchedEffect(filters) {
         if (filters != null) {

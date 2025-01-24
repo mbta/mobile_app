@@ -26,12 +26,16 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockTripRepository
+import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Composable
 fun StopDetailsRoutesView(
+    stopId: String,
     viewModel: StopDetailsViewModel,
     global: GlobalResponse?,
     now: Instant,
@@ -50,6 +54,7 @@ fun StopDetailsRoutesView(
         LoadingStopDetailsView(stopFilter, tripFilter)
     } else if (stopFilter != null) {
         StopDetailsFilteredRouteView(
+            stopId,
             viewModel,
             global = global,
             now = now,
@@ -128,9 +133,12 @@ private fun StopDetailsRoutesViewPreview() {
 
     val viewModel =
         StopDetailsViewModel(
-            MockScheduleRepository(),
+            MockErrorBannerStateRepository(),
             MockPredictionsRepository(),
-            MockErrorBannerStateRepository()
+            MockScheduleRepository(),
+            MockTripPredictionsRepository(),
+            MockTripRepository(),
+            MockVehicleRepository()
         )
     viewModel.setDepartures(
         StopDetailsDepartures(
@@ -181,6 +189,7 @@ private fun StopDetailsRoutesViewPreview() {
 
     MyApplicationTheme {
         StopDetailsRoutesView(
+            stopId = stop.id,
             viewModel = viewModel,
             global = null,
             now = Clock.System.now(),

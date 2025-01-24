@@ -14,9 +14,6 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -102,13 +99,7 @@ class StopDetailsFilteredRouteViewTest {
 
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly() {
-
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         viewModel.setDepartures(
             checkNotNull(
                 StopDetailsDepartures.fromData(
@@ -132,6 +123,7 @@ class StopDetailsFilteredRouteViewTest {
             }
 
             StopDetailsFilteredRouteView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,
@@ -152,12 +144,7 @@ class StopDetailsFilteredRouteViewTest {
     fun testTappingTripSetsFilter() {
         var tripFilter: TripDetailsFilter? = null
 
-        val viewModel =
-            StopDetailsViewModel(
-                MockScheduleRepository(),
-                MockPredictionsRepository(),
-                MockErrorBannerStateRepository()
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         viewModel.setDepartures(
             checkNotNull(
                 StopDetailsDepartures.fromData(
@@ -181,6 +168,7 @@ class StopDetailsFilteredRouteViewTest {
             }
 
             StopDetailsFilteredRouteView(
+                stopId = stop.id,
                 viewModel = viewModel,
                 global = globalResponse,
                 now = now,
