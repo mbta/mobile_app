@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
@@ -28,6 +29,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mapbox.maps.extension.style.style
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
@@ -53,17 +55,20 @@ fun TripHeaderCard(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier
-            .padding(vertical = 16.dp)
-            .padding(start = 30.dp, end = 16.dp)
-            .heightIn(min = 56.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier.padding(vertical = 16.dp).background(colorResource(R.color.fill3)),
     ) {
-        if (spec != null) {
-            TripMarker(spec, targetId, routeAccents)
-            Description(spec, tripId, targetId, routeAccents)
-            Spacer(Modifier.weight(1f))
-            TripIndicator(spec, routeAccents, now)
+        Row(
+            Modifier.padding(vertical = 16.dp)
+                .padding(start = 30.dp, end = 16.dp)
+                .heightIn(min = 56.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (spec != null) {
+                TripMarker(spec, targetId, routeAccents)
+                Description(spec, tripId, targetId, routeAccents)
+                Spacer(Modifier.weight(1f))
+                TripIndicator(spec, routeAccents, now)
+            }
         }
     }
     /*
@@ -184,7 +189,7 @@ private fun VehicleDescription(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             VehicleStatusDescription(vehicle.currentStatus, stopEntry) // TODO footnote
-            Text(stop.name, style = MaterialTheme.typography.headlineSmall) // TODO size and bold
+            Text(stop.name, style = MaterialTheme.typography.headlineLarge) // TODO size and bold
         }
     }
 }
@@ -209,7 +214,7 @@ private fun VehicleStatusDescription(
     vehicleStatus: Vehicle.CurrentStatus,
     stopEntry: TripDetailsStopList.Entry?
 ) {
-    Text(vehicleStatusString(vehicleStatus, stopEntry))
+    Text(vehicleStatusString(vehicleStatus, stopEntry), style = MaterialTheme.typography.bodySmall)
 }
 
 private fun vehicleStatusString(
@@ -235,7 +240,6 @@ private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: Tri
         TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
         is TripHeaderSpec.Scheduled ->
             StopDot(routeAccents, targeted = targetId == spec.stop.id, Modifier.size(36.dp))
-        //     StopDot(routeAccents, targeted = targetId == spec.stop.id, Modifier.size(36.dp))
         is TripHeaderSpec.VehicleOnTrip ->
             VehiclePuck(spec.vehicle, spec.stop, targetId, routeAccents)
     }
@@ -244,14 +248,15 @@ private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: Tri
 @Composable
 private fun VehicleCircle(routeAccents: TripRouteAccents) {
     Box(Modifier.size(36.dp).clearAndSetSemantics {}) {
-        Box(Modifier.size(32.dp).background(routeAccents.color, CircleShape))
-        val (icon, _) = routeIcon(routeAccents.type)
-        Image(
-            icon,
-            null,
-            Modifier.size(27.5.dp),
-            colorFilter = ColorFilter.tint(routeAccents.textColor)
-        )
+        Box(Modifier.size(32.dp).background(routeAccents.color, CircleShape)) {
+            val (icon, _) = routeIcon(routeAccents.type)
+            Image(
+                icon,
+                null,
+                Modifier.size(27.5.dp).align(Alignment.Center),
+                colorFilter = ColorFilter.tint(routeAccents.textColor)
+            )
+        }
     }
 }
 
@@ -281,7 +286,7 @@ private fun VehiclePuck(
         Image(
             icon,
             null,
-            Modifier.size(27.5.dp),
+            Modifier.size(27.5.dp).align(Alignment.Center),
             colorFilter = ColorFilter.tint(routeAccents.textColor)
         )
         if (targetId == stop.id && vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt) {
