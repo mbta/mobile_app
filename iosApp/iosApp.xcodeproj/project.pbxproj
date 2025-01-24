@@ -242,6 +242,7 @@
 		ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */; };
 		ED5C93F62C4A1AD70086D017 /* TripDetailsHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */; };
 		ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */; };
+		ED85C0282D42CAD5007F91A7 /* SelectedTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED85C0272D42CAD2007F91A7 /* SelectedTab.swift */; };
 		ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */; };
 		ED93D5FC2CB6C003003B1C12 /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED93D5FB2CB6C003003B1C12 /* SearchResultsView.swift */; };
 		ED93D5FE2CB6C047003B1C12 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED93D5FD2CB6C047003B1C12 /* EmptyStateView.swift */; };
@@ -549,6 +550,7 @@
 		ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeader.swift; sourceTree = "<group>"; };
 		ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeaderTests.swift; sourceTree = "<group>"; };
 		ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoenixProtocolConformance.swift; sourceTree = "<group>"; };
+		ED85C0272D42CAD2007F91A7 /* SelectedTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedTab.swift; sourceTree = "<group>"; };
 		ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoenixChannelError.swift; sourceTree = "<group>"; };
 		ED93D5FB2CB6C003003B1C12 /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
 		ED93D5FD2CB6C047003B1C12 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
@@ -1095,6 +1097,7 @@
 		9AC10BD82B80060E00EA4605 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ED85C0272D42CAD2007F91A7 /* SelectedTab.swift */,
 				6EC6F18C2CE661680022799F /* AlertExtension.swift */,
 				8C1587032C76524600AB5036 /* AppVariantExtension.swift */,
 				EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */,
@@ -1662,6 +1665,7 @@
 				9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */,
 				9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				ED85C0282D42CAD5007F91A7 /* SelectedTab.swift in Sources */,
 				9AAA26A32C2DB79E00A7745A /* DirectionRowView.swift in Sources */,
 				9ADB84A22BAE37C0006581CE /* StopExtension.swift in Sources */,
 				9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */,

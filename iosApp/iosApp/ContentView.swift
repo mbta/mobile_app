@@ -31,21 +31,6 @@ struct ContentView: View {
 
     let inspection = Inspection<Self>()
 
-    private enum SelectedTab: Hashable {
-        case nearby
-        case more
-    }
-
-    private func tabText(_ tab: SelectedTab) -> String {
-        switch tab {
-        case .nearby: NSLocalizedString(
-                "Nearby",
-                comment: "The label for the Nearby Transit page in the navigation bar"
-            )
-        case .more: NSLocalizedString("More", comment: "The label for the More page in the navigation bar")
-        }
-    }
-
     @State private var selectedTab = SelectedTab.nearby
 
     var body: some View {
@@ -107,18 +92,16 @@ struct ContentView: View {
             OnboardingPage(screens: onboardingScreensPending, onFinish: {
                 contentVM.onboardingScreensPending = []
             })
-        } else if selectedTab == .more {
+        } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
                     .tag(SelectedTab.nearby)
-                    .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
+                    .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+                    .tabItem { TabLabel(tab: SelectedTab.more) }
                     .onAppear { analytics.track(screen: .settings) }
             }
-        } else {
-            nearbyTab
         }
     }
 
@@ -126,7 +109,7 @@ struct ContentView: View {
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
     @State private var showingLocationPermissionAlert = false
 
-    @ViewBuilder var nearbySheetContents: some View {
+    var nearbySheetContents: some View {
         // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
         // when re-opening nearby transit
         VStack {
@@ -145,12 +128,12 @@ struct ContentView: View {
                     ) }
                 )
                 .tag(SelectedTab.nearby)
-                .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
+                .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 // we want to show nothing in the sheet when the settings tab is open,
                 // but an EmptyView here causes the tab to not be listed
                 VStack {}
                     .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+                    .tabItem { TabLabel(tab: SelectedTab.more) }
             }
         }
     }
@@ -209,7 +192,8 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder var mapSection: some View {
+    @ViewBuilder
+    var mapSection: some View {
         HomeMapView(
             contentVM: contentVM,
             mapVM: mapVM,
@@ -398,7 +382,7 @@ struct ContentView: View {
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
         guard newSheetHeight < (UIScreen.main.bounds.height / 2) else { return }
-        sheetHeight = newSheetHeight
+        sheetHeight = newSheetHeight - 55
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {

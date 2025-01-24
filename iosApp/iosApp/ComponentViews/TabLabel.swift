@@ -17,6 +17,11 @@ struct TabLabel: View {
         self.image = image
     }
 
+    init(tab: SelectedTab) {
+        title = tab.text
+        image = tab.imageResource
+    }
+
     var body: some View {
         Label(title: { Text(title) }, icon: { Image(image) })
     }
