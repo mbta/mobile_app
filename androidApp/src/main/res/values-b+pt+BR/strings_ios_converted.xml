@@ -45,6 +45,7 @@
     <string name="freight_train_interference">Interferência de trem de carga</string>
     <string name="full_description">Descrição completa</string>
     <string name="hazmat_condition">Condição de material perigoso</string>
+    <string name="header_at_stop">no &lt;b>%1$s&lt;/b></string>
     <string name="heading">Rumo</string>
     <string name="heavy_ridership">Excesso de passageiros</string>
     <string name="high_winds">Ventos fortes</string>

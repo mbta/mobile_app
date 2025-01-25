@@ -54,7 +54,7 @@ sealed interface PillFilter {
 @Composable
 fun StopDetailsFilterPills(
     servedRoutes: List<PillFilter>,
-    filter: StopDetailsFilter?,
+    filter: StopDetailsFilter? = null,
     onTapRoutePill: (PillFilter) -> Unit,
     onClearFilter: () -> Unit
 ) {
@@ -69,7 +69,7 @@ fun StopDetailsFilterPills(
         }
     }
 
-    Box(Modifier.fillMaxWidth().padding(end = 16.dp)) {
+    Box(Modifier.fillMaxWidth()) {
         val scrollState = rememberScrollState()
 
         Row(

@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +23,7 @@ import com.mbta.tid.mbta_app.android.R
 @ExperimentalMaterial3Api
 fun DragHandle() {
     Column(
-        modifier =
-            Modifier.height(36.dp).fillMaxWidth().background(colorResource(id = R.color.fill1)),
+        modifier = Modifier.height(18.dp).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

@@ -4,11 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -105,23 +106,35 @@ fun StopDetailsView(
 
     if (stop != null) {
 
-        Column(modifier) {
-            Column {
-                SheetHeader(onClose = onClose, title = stop.name)
-                if (servedRoutes.size > 1) {
-                    StopDetailsFilterPills(
-                        servedRoutes = servedRoutes,
-                        filter = stopFilter,
-                        onTapRoutePill = onTapRoutePill,
-                        onClearFilter = { updateStopFilter(null) }
-                    )
+        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            stopFilter?.let { filter ->
+                departures?.let {
+                    val patternsByStop =
+                        it.routes.find { patterns -> patterns.routeIdentifier == filter.routeId }
+                    patternsByStop?.let {
+                        StopDetailsFilteredHeader(
+                            patternsByStop.representativeRoute,
+                            patternsByStop.line,
+                            patternsByStop.stop,
+                            pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier),
+                            onPin = { togglePinnedRoute(patternsByStop.routeIdentifier) },
+                            onClose = onClose
+                        )
+                    }
                 }
-                HorizontalDivider(
-                    Modifier.fillMaxWidth()
-                        .padding(top = 8.dp)
-                        .border(2.dp, colorResource(R.color.halo))
-                )
             }
+                ?: run {
+                    SheetHeader(onClose = onClose, title = stop.name)
+                    if (servedRoutes.size > 1) {
+                        Box(Modifier.height(56.dp).fillMaxWidth()) {
+                            StopDetailsFilterPills(
+                                servedRoutes = servedRoutes,
+                                onTapRoutePill = onTapRoutePill,
+                                onClearFilter = { updateStopFilter(null) }
+                            )
+                        }
+                    }
+                }
 
             ErrorBanner(errorBannerViewModel)
 
