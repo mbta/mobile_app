@@ -33,8 +33,6 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 
-class StopDetailsFilteredSheetHeader {}
-
 @Composable
 fun StopDetailsFilteredHeader(
     route: Route?,
