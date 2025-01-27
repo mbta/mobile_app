@@ -117,7 +117,7 @@ class StopDetailsViewModel(
     ): PredictionsByStopJoinResponse? {
 
         return _stopData
-            ?.updateAndGet {
+            .updateAndGet {
                 it?.let {
                     StopData(
                         it.stopId,
@@ -128,7 +128,8 @@ class StopDetailsViewModel(
                                     message.trips,
                                     message.vehicles
                                 ))
-                            .mergePredictions(message)
+                            .mergePredictions(message),
+                        true
                     )
                 }
             }
@@ -450,12 +451,19 @@ fun stopDetailsManagedVM(
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
         withContext(coroutineDispatcher) {
-            val departures: StopDetailsDepartures? =
-                if (globalResponse != null && stopId != null) {
+            val schedules = stopData.value?.schedules
+            viewModel.setDepartures(
+                if (
+                    globalResponse != null &&
+                        stopId != null &&
+                        stopId == stopData.value?.stopId &&
+                        schedules != null &&
+                        stopData.value?.predictionsLoaded == true
+                ) {
                     StopDetailsDepartures.fromData(
                         stopId,
                         globalResponse,
-                        stopData.value?.schedules,
+                        schedules,
                         stopData.value?.predictionsByStop?.toPredictionsStreamDataResponse(),
                         alertData,
                         pinnedRoutes,
@@ -463,7 +471,7 @@ fun stopDetailsManagedVM(
                         useTripHeadsigns = false,
                     )
                 } else null
-            viewModel.setDepartures(departures)
+            )
         }
     }
 

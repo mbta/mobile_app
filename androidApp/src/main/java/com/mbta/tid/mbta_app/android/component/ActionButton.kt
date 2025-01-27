@@ -33,7 +33,7 @@ enum class ActionButtonKind(
 fun ActionButton(kind: ActionButtonKind, size: Dp = 32.dp, action: () -> Unit) {
     Button(
         onClick = action,
-        modifier = Modifier.size(size).width(size).placeholderIfLoading(),
+        modifier = Modifier.placeholderIfLoading().size(size).width(size),
         shape = CircleShape,
         colors =
             ButtonDefaults.buttonColors(
