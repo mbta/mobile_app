@@ -158,6 +158,14 @@
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
+    <plurals name="stops_away">
+        <item quantity="zero">%1$d kanpe lwen</item>
+        <item quantity="one">%1$d kanpe lwen</item>
+        <item quantity="two">%1$d kanpe lwen</item>
+        <item quantity="few">%1$d kanpe lwen</item>
+        <item quantity="many">%1$d kanpe lwen</item>
+        <item quantity="other">%1$d kanpe lwen</item>
+    </plurals>
     <string name="strike">Grèv</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_problem">Pwoblèm Bouton</string>

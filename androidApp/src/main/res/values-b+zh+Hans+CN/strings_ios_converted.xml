@@ -149,6 +149,9 @@
     <string name="stop_closure">站点关闭</string>
     <string name="stop_filter_pills_filter_hint">应用过滤器，以便仅显示来自该路线的到达</string>
     <string name="stop_filter_pills_remove_hint">删除过滤器并显示所有路线</string>
+    <plurals name="stops_away">
+        <item quantity="other">还有%1$d站</item>
+    </plurals>
     <string name="strike">罢工</string>
     <string name="suspension">暂停</string>
     <string name="switch_problem">道岔故障</string>

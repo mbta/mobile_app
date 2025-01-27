@@ -149,6 +149,9 @@
     <string name="stop_closure">Đóng điểm dừng</string>
     <string name="stop_filter_pills_filter_hint">Áp dụng bộ lọc để chỉ hiển thị các chuyến đến từ tuyến đường này</string>
     <string name="stop_filter_pills_remove_hint">Xóa bộ lọc và hiển thị tất cả các tuyến đường</string>
+    <plurals name="stops_away">
+        <item quantity="other">%1$d điểm dừng nữa</item>
+    </plurals>
     <string name="strike">Biểu tình</string>
     <string name="suspension">Đình chỉ</string>
     <string name="switch_problem">Vấn đề chuyển đổi</string>

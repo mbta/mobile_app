@@ -153,6 +153,11 @@
     <string name="stop_closure">Fechamento de parada</string>
     <string name="stop_filter_pills_filter_hint">Aplique um filtro para que apenas as chegadas desta rota sejam exibidas</string>
     <string name="stop_filter_pills_remove_hint">Remova o filtro e exiba todas as rotas</string>
+    <plurals name="stops_away">
+        <item quantity="one">a %1$d parada</item>
+        <item quantity="many">a %1$d paradas</item>
+        <item quantity="other">a %1$d paradas</item>
+    </plurals>
     <string name="strike">Greve</string>
     <string name="suspension">Suspensão</string>
     <string name="switch_problem">Problema de troca</string>
