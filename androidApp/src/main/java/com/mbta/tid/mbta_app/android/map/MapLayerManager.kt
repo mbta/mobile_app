@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.map
 
 import android.content.Context
 import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.GeoJSONSourceData
 import com.mapbox.maps.MapboxMap
@@ -31,7 +32,16 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
     }
 
     suspend fun addSource(source: GeoJsonSource) {
-        withContext(Dispatchers.Main) { map.addSource(source) }
+        withContext(Dispatchers.Main) {
+            try {
+                map.addSource(source)
+            } catch (error: Exception) {
+                Log.e(
+                    "MapLayerManager",
+                    "Failed to add source (${source.sourceId}):\n${error.localizedMessage}"
+                )
+            }
+        }
     }
 
     suspend fun addLayers(colorPalette: ColorPalette) {

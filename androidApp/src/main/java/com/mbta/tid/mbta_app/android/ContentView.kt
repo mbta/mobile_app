@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -94,7 +92,7 @@ fun ContentView(
         return
     }
 
-    val sheetModifier = Modifier.fillMaxSize().background(colorResource(id = R.color.fill1))
+    val sheetModifier = Modifier.fillMaxSize()
     NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
         composable<Routes.NearbyTransit> {
             LaunchedEffect(null) { viewModel.loadHideMaps() }
