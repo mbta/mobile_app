@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -275,7 +274,7 @@ fun NearbyTransitPage(
         NavHost(
             navController,
             startDestination = SheetRoutes.NearbyTransit,
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface).then(modifier),
+            modifier = Modifier.then(modifier),
             enterTransition = {
                 val initialStopId = this.initialState.arguments?.getString("stopId")
                 val targetStopId = this.targetState.arguments?.getString("stopId")
@@ -409,12 +408,11 @@ fun NearbyTransitPage(
                                         with(density) { it.boundsInWindow().height.toDp() }
                                 }
                                 .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surface)
                     ) {
                         SheetContent(Modifier.height(sheetHeight).padding(outerSheetPadding))
                     }
                 },
-                sheetContainerColor = MaterialTheme.colorScheme.surface,
+                sheetContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                 scaffoldState = nearbyTransit.scaffoldState
             ) { sheetPadding ->
                 SearchBarOverlay(

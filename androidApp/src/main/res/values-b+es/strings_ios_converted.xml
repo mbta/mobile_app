@@ -48,6 +48,7 @@
     <string name="freight_train_interference">Interferencia con trenes de carga</string>
     <string name="full_description">Descripción completa</string>
     <string name="hazmat_condition">Condición de materiales peligrosos</string>
+    <string name="header_at_stop">en &lt;b>%1$s&lt;/b></string>
     <string name="heading">Rumbo</string>
     <string name="heavy_ridership">Gran cantidad de pasajeros</string>
     <string name="hides_remaining_stops">Oculta las paradas restantes</string>

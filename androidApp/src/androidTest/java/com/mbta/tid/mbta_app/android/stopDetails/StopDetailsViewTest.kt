@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
@@ -191,7 +192,7 @@ class StopDetailsViewTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testStopDetailsViewDisplaysCorrectly() {
+    fun testStopDetailsViewDisplaysUnfilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setDepartures(
@@ -239,7 +240,7 @@ class StopDetailsViewTest {
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = {},
-                    stopFilter = filterState.value,
+                    stopFilter = null,
                     tripFilter = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
@@ -257,6 +258,84 @@ class StopDetailsViewTest {
         composeTestRule.waitUntilExactlyOneExists(hasText("Sample Stop"))
 
         composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("Sample Route").assertExists()
+        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
+        composeTestRule.onNodeWithText("1 min").assertExists()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testStopDetailsViewDisplaysFilteredCorrectly() {
+        val viewModel = StopDetailsViewModel.mocked()
+
+        viewModel.setDepartures(
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        route = route,
+                        stop = stop,
+                        patterns =
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    staticData =
+                                        NearbyStaticData.StaticPatterns.ByHeadsign(
+                                            route = route,
+                                            headsign = trip.headsign,
+                                            line = line,
+                                            patterns = listOf(routePatternOne, routePatternTwo),
+                                            stopIds = setOf(stop.id),
+                                        ),
+                                    upcomingTripsMap =
+                                        mapOf(
+                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                                                trip.routeId,
+                                                routePatternOne.id,
+                                                stop.id
+                                            ) to listOf(UpcomingTrip(trip, prediction))
+                                        ),
+                                    parentStopId = stop.id,
+                                    alertsHere = emptyList(),
+                                    alertsDownstream = emptyList(),
+                                    hasSchedulesTodayByPattern = null,
+                                    allDataLoaded = false
+                                )
+                            )
+                    )
+                )
+            )
+        )
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                val filterState = remember {
+                    mutableStateOf<StopDetailsFilter?>(StopDetailsFilter(route.id, 0))
+                }
+                StopDetailsView(
+                    stopId = stop.id,
+                    viewModel = viewModel,
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    stopFilter = filterState.value,
+                    tripFilter = null,
+                    updateStopFilter = filterState::value::set,
+                    updateTripDetailsFilter = {},
+                    errorBannerViewModel =
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        ),
+                    openAlertDetails = {}
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExists(hasText("at Sample Stop"))
+
+        composeTestRule.onNodeWithContentDescription("Star route").assertExists()
+        composeTestRule.onNodeWithContentDescription("Close").assertExists()
+        composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertIsDisplayed()
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
