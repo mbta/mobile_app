@@ -11,6 +11,7 @@
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">An Earlier Mechanical Problem</string>
     <string name="an_earlier_signal_problem">An Earlier Signal Problem</string>
+    <string name="approaching">Approaching</string>
     <string name="app_version_number">version %1$s</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Autos Impeding Service</string>
@@ -49,6 +50,7 @@
     <string name="ferries">ferries</string>
     <string name="ferry">ferry</string>
     <string name="filterShowAll">All</string>
+    <string name="finishing_another_trip">Finishing another trip</string>
     <string name="fire">Fire</string>
     <string name="fire_department_activity">Fire Department Activity</string>
     <string name="first_stop">%1$s, first stop</string>
@@ -69,7 +71,9 @@
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
     <string name="lists_remaining_stops">Lists remaining stops</string>
+    <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
+    <string name="location_not_available_yet">Location not available yet</string>
     <string name="location_services_off">Location Services is off</string>
     <string name="location_settings_prompt_body">You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go.</string>
     <string name="location_settings_prompt_keep_off">Keep Location Services Off</string>
@@ -89,6 +93,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
+    <string name="next_stop">Next stop</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_service">No Service</string>
     <string name="no_service_today">No service today</string>
@@ -98,6 +103,7 @@
     <string name="no_stops_nearby_title">No nearby stops</string>
     <string name="northbound">Northbound</string>
     <string name="now">Now</string>
+    <string name="now_at">Now at</string>
     <string name="onboarding_feedback_advance">Get started</string>
     <string name="onboarding_feedback_body">MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features.</string>
     <string name="onboarding_feedback_header">Help us improve</string>
@@ -118,6 +124,7 @@
     <string name="police_action">Police Action</string>
     <string name="police_activity">Police Activity</string>
     <string name="power_problem">Power Problem</string>
+    <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="recently_viewed">Recently Viewed</string>
     <string name="refresh">Refresh</string>
@@ -129,6 +136,9 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="scheduled_to_depart">Scheduled to depart</string>
+    <string name="scheduled_to_depart_accessibility_desc">%1$s scheduled to depart %2$s</string>
+    <string name="scheduled_to_depart_selected_stop_accessibility_desc" translatable="false">%1$s scheduled to depart %2$s, selected stop</string>
     <string name="search_by_stop">Search by stop</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
@@ -182,6 +192,8 @@
     <string name="vehicle_boarding_other">and boarding now</string>
     <string name="vehicle_cancelled_first">%1$s arriving at %2$s cancelled</string>
     <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
+    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
+    <string name="vehicle_desc_accessibility_desc_selected_stop" translatable="false">%1$s %2$s %3$s, selected stop</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
@@ -190,19 +202,7 @@
     <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
+    <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
-    <string name="finishing_another_trip">Finishing another trip</string>
-    <string name="location_not_available_yet">Location not available yet</string>
-    <string name="scheduled_to_depart">Scheduled to depart</string>
-    <string name="scheduled_to_depart_selected_stop_accessibility_desc">%1$s scheduled to depart %2$s, selected stop</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s scheduled to depart %2$s</string>
-    <string name="approaching">Approaching</string>
-    <string name="next_stop">Next stop</string>
-    <string name="waiting_to_depart">Waiting to depart</string>
-    <string name="now_at">Now at</string>
-    <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
-    <string name="live">Live</string>
-    <string name="vehicle_desc_accessibility_desc_selected_stop">%1$s %2$s %3$s, selected stop</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
 </resources>
