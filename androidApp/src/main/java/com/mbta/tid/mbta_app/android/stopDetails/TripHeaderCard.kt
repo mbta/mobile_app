@@ -24,9 +24,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,7 +67,11 @@ fun TripHeaderCard(
         Row(
             Modifier.padding(vertical = 16.dp)
                 .padding(start = 30.dp, end = 16.dp)
-                .heightIn(min = 56.dp),
+                .heightIn(min = 56.dp)
+                .semantics(mergeDescendants = true) {
+                    heading()
+                    liveRegion = LiveRegionMode.Polite
+                },
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (spec != null) {
@@ -194,7 +200,7 @@ private fun VehicleDescription(
     val context = LocalContext.current
     if (vehicle.tripId == tripId) {
         Column(
-            Modifier.semantics(mergeDescendants = true) {
+            Modifier.clearAndSetSemantics {
                 contentDescription =
                     vehicleDescriptionAccessibilityText(
                         vehicle,
@@ -246,7 +252,7 @@ private fun VehicleStatusDescription(
     val context = LocalContext.current
     Text(
         vehicleStatusString(context, vehicleStatus, stopEntry),
-        style = MaterialTheme.typography.bodySmall
+        style = MaterialTheme.typography.bodySmall,
     )
 }
 
@@ -302,33 +308,38 @@ private fun VehiclePuck(
     routeAccents: TripRouteAccents
 ) {
     Box(Modifier.padding(bottom = 6.dp).clearAndSetSemantics {}) {
-        Box(Modifier.rotate(225f)) {
+        Box(Modifier.padding(top = 10.dp)) {
+            Box(Modifier.rotate(225f)) {
+                Image(
+                    painterResource(R.drawable.vehicle_halo),
+                    null,
+                    Modifier.size(36.dp),
+                    colorFilter = ColorFilter.tint(colorResource(R.color.fill3))
+                )
+                Image(
+                    painterResource(R.drawable.vehicle_puck),
+                    null,
+                    Modifier.size(32.dp),
+                    colorFilter = ColorFilter.tint(routeAccents.color)
+                )
+            }
+            val (icon, _) = routeIcon(routeAccents.type)
             Image(
-                painterResource(R.drawable.vehicle_halo),
+                icon,
                 null,
-                Modifier.size(36.dp),
-                colorFilter = ColorFilter.tint(colorResource(R.color.fill3))
-            )
-            Image(
-                painterResource(R.drawable.vehicle_puck),
-                null,
-                Modifier.size(32.dp),
-                colorFilter = ColorFilter.tint(routeAccents.color)
+                Modifier.size(27.5.dp).align(Alignment.Center),
+                colorFilter = ColorFilter.tint(routeAccents.textColor)
             )
         }
-        val (icon, _) = routeIcon(routeAccents.type)
-        Image(
-            icon,
-            null,
-            Modifier.size(27.5.dp).align(Alignment.Center),
-            colorFilter = ColorFilter.tint(routeAccents.textColor)
-        )
+
         if (targetId == stop.id && vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt) {
-            Image(
-                painterResource(R.drawable.stop_pin_indicator),
-                null,
-                Modifier.size(20.dp, 26.dp).padding(bottom = 36.dp)
-            )
+            Box(modifier = Modifier.align(Alignment.Center).padding(bottom = 36.dp)) {
+                Image(
+                    painterResource(R.drawable.stop_pin_indicator),
+                    null,
+                    Modifier.size(20.dp, 26.dp)
+                )
+            }
         }
     }
 }
