@@ -54,6 +54,7 @@
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="full_description">Full Description</string>
     <string name="hazmat_condition">Hazmat Condition</string>
+    <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
     <string name="high_winds">High Winds</string>

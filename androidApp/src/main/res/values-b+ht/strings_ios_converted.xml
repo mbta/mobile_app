@@ -60,6 +60,7 @@
     <string name="freight_train_interference">Blokaj Nan Tren Machandiz</string>
     <string name="full_description">Deskripsyon Konplè</string>
     <string name="hazmat_condition">Eta Matyè Danjere</string>
+    <string name="header_at_stop">nan &lt;b>%1$s&lt;/b></string>
     <string name="heading">Prale nan direksyon</string>
     <string name="heavy_ridership">Anpil Moun Ap Pase la</string>
     <string name="high_winds">Gwo Van</string>

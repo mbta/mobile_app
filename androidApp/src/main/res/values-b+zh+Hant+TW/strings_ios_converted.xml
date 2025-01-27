@@ -51,6 +51,7 @@
     <string name="freight_train_interference">貨運列車干擾</string>
     <string name="full_description">完整說明</string>
     <string name="hazmat_condition">危險物質</string>
+    <string name="header_at_stop">在&lt;b>%1$s&lt;/b></string>
     <string name="heading">方向</string>
     <string name="heavy_ridership">客流過大</string>
     <string name="high_winds">強風</string>

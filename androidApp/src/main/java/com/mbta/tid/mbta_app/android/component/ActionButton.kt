@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -17,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 enum class ActionButtonKind(
     val iconSize: Dp,
@@ -28,10 +30,10 @@ enum class ActionButtonKind(
 }
 
 @Composable
-fun ActionButton(kind: ActionButtonKind, action: () -> Unit) {
+fun ActionButton(kind: ActionButtonKind, size: Dp = 32.dp, action: () -> Unit) {
     Button(
         onClick = action,
-        modifier = Modifier.size(32.dp),
+        modifier = Modifier.size(size).width(size).placeholderIfLoading(),
         shape = CircleShape,
         colors =
             ButtonDefaults.buttonColors(
