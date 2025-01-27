@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,10 +49,6 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-/**
- * TODO: Add localization Accessibility Add tests verify accessibility behavior? Check behavior when
- *   stopped at stop
- */
 @Composable
 fun TripHeaderCard(
     tripId: String,
@@ -333,7 +330,12 @@ private fun VehiclePuck(
         }
 
         if (targetId == stop.id && vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt) {
-            Box(modifier = Modifier.align(Alignment.Center).padding(bottom = 36.dp)) {
+            Box(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(bottom = 36.dp)
+                        .testTag("stop_pin_indicator")
+            ) {
                 Image(
                     painterResource(R.drawable.stop_pin_indicator),
                     null,
