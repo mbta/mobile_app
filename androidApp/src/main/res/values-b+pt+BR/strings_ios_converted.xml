@@ -23,6 +23,8 @@
     <string name="close_button_label">Fechar</string>
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="congestion">Congestionamento</string>
+    <string name="connection_to">Conexão para %1$s</string>
+    <string name="connections_to_and">Conexões para %1$s e %2$s</string>
     <string name="construction">Obras</string>
     <string name="crossing_malfunction">Problemas no cruzamento</string>
     <string name="demonstration">Manifestação</string>
@@ -50,6 +52,7 @@
     <string name="filterShowAll">Tudo</string>
     <string name="fire">Incêndio</string>
     <string name="fire_department_activity">Atividade do corpo de bombeiros</string>
+    <string name="first_stop">%1$s, primeira parada</string>
     <string name="flooding">Inundação</string>
     <string name="fog">Neblina</string>
     <string name="freight_train_interference">Interferência de trem de carga</string>
@@ -58,11 +61,14 @@
     <string name="header_at_stop">no &lt;b>%1$s&lt;/b></string>
     <string name="heading">Rumo</string>
     <string name="heavy_ridership">Excesso de passageiros</string>
+    <string name="hides_remaining_stops">Oculta as paradas restantes</string>
     <string name="high_winds">Ventos fortes</string>
     <string name="holiday">Feriado</string>
     <string name="hurricane">Furacão</string>
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="inbound">Entrada</string>
+    <string name="is_stops_away_from">%1$s está a %2$d paradas de %3$s</string>
+    <string name="lists_remaining_stops">Lista as paradas restantes</string>
     <string name="loading">Carregando...</string>
     <string name="location_services_off">Serviços de localização desativados</string>
     <string name="location_settings_prompt_body">Você verá opções de transporte próximas e obterá melhores resultados se ativar os Serviços de Localização para o MBTA Go.</string>
@@ -121,7 +127,10 @@
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_with_type">%1$s %2$s</string>
     <string name="search_by_stop">Pesquisar por parada</string>
+    <string name="selected_stop">%1$s, parada selecionada</string>
+    <string name="selected_stop_first_stop">%1$s, parada selecionada, primeira parada</string>
     <string name="service_change">Troca de serviço</string>
     <string name="service_ended">Serviço encerrado</string>
     <string name="setting_elevator_accessibility">Mostrar acessibilidade do elevador</string>

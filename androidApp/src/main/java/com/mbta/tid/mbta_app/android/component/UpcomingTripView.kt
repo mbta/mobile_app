@@ -66,12 +66,13 @@ fun formatTime(time: Instant): String =
 @Composable
 fun UpcomingTripView(
     state: UpcomingTripViewState,
+    modifier: Modifier = Modifier,
     routeType: RouteType? = null,
     isFirst: Boolean = true,
     isOnly: Boolean = true,
     hideRealtimeIndicators: Boolean = false
 ) {
-    val modifier = Modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
+    val modifier = modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
     val context = LocalContext.current
     // TODO: actually pull through vehicle type
     val vehicleType = routeType?.typeText(context, isOnly) ?: ""
