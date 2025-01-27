@@ -112,6 +112,17 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         val stopName: String
     )
 
+    /*
+    Whether the upcoming trip with the given id is cancelled in the upcoming departures
+     */
+    fun tripIsCancelled(tripId: String): Boolean {
+        return this.routes.any {
+            it.patterns.any { pattern ->
+                pattern.upcomingTrips.any { trip -> trip.trip.id == tripId && trip.isCancelled }
+            }
+        }
+    }
+
     fun getScreenReaderTripDepartureContext(
         previousFilters: StopDetailsPageFilters
     ): ScreenReaderContext? {

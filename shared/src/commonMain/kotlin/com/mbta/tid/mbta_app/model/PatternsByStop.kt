@@ -186,6 +186,15 @@ data class PatternsByStop(
             .distinct()
     }
 
+    /*
+    Whether the upcoming trip with the given id is cancelled
+     */
+    fun tripIsCancelled(tripId: String): Boolean {
+        return this.patterns.any {
+            it.upcomingTrips.any { trip -> trip.trip.id == tripId && trip.isCancelled }
+        }
+    }
+
     /** get the alerts downstream of the patterns in the given direction */
     fun alertsDownstream(directionId: Int): List<Alert> {
         val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
