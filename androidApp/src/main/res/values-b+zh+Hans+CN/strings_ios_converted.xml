@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">事件</string>
+    <plurals name="affected_stops">
+        <item quantity="other">&lt;b>%1$d&lt;/b>个受影响的站点</item>
+    </plurals>
     <string name="alert">警报</string>
     <string name="alert_details">警报详情</string>
     <string name="alert_ended">警报已失效</string>
@@ -30,6 +33,9 @@
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="eastbound">东行</string>
     <string name="electrical_work">电力作业</string>
+    <plurals name="elevator_closure_count">
+        <item quantity="other">%1$d 电梯关闭</item>
+    </plurals>
     <string name="end">结束日期</string>
     <string name="error_loading_data">加载数据时出错</string>
     <string name="feature_flag_debug_mode">调试模式</string>
@@ -147,6 +153,9 @@
     <string name="unruly_passenger">乘客干扰</string>
     <string name="unstar_route_hint">从列表顶部取消固定路线</string>
     <string name="updated_at">最后更新：%1$s</string>
+    <plurals name="updated_mins_ago">
+        <item quantity="other">%1$d 分钟前更新</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s现已到站</string>
     <string name="vehicle_arriving_other">下一趟车现已到站</string>
     <string name="vehicle_boarding_first">%1$s正在上客</string>
