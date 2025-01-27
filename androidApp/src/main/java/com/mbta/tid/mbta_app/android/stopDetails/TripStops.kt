@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -63,7 +65,7 @@ fun TripStops(
 
     val lastStopSequence = stops.stops.lastOrNull()?.stopSequence
 
-    Column {
+    Column(Modifier.background(colorResource(R.color.fill2))) {
         if (splitStops != null && target != null) {
             if (showFirstStopSeparately) {
                 val firstStop = splitStops.firstStop
