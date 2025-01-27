@@ -18,6 +18,8 @@
     <string name="close_button_label">Đóng</string>
     <string name="coast_guard_restriction">Hạn chế của cảnh sát biển</string>
     <string name="congestion">Tắc nghẽn</string>
+    <string name="connection_to">Kết nối với %1$s</string>
+    <string name="connections_to_and">Kết nối với %1$s và %2$s</string>
     <string name="construction">Thi công</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
     <string name="demonstration">Biểu tình</string>
@@ -40,6 +42,7 @@
     <string name="filterShowAll">Tất cả</string>
     <string name="fire">Hỏa hoạn</string>
     <string name="fire_department_activity">Hoạt động của Sở Cứu Hỏa</string>
+    <string name="first_stop">%1$s, điểm dừng đầu tiên</string>
     <string name="flooding">Lũ lụt</string>
     <string name="fog">Sương mù</string>
     <string name="freight_train_interference">Bị tàu chở hàng chặn</string>
@@ -48,11 +51,14 @@
     <string name="header_at_stop">tại &lt;b>%1$s&lt;/b></string>
     <string name="heading">Tiêu đề</string>
     <string name="heavy_ridership">Có đông người đi xe</string>
+    <string name="hides_remaining_stops">Ẩn các điểm dừng còn lại</string>
     <string name="high_winds">Gió mạnh</string>
     <string name="holiday">Ngày lễ</string>
     <string name="hurricane">Bão</string>
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="inbound">Đến</string>
+    <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
+    <string name="lists_remaining_stops">Liệt kê các điểm dừng còn lại</string>
     <string name="loading">Đang tải...</string>
     <string name="location_services_off">Dịch vụ định vị đã tắt</string>
     <string name="location_settings_prompt_body">Bạn sẽ thấy các lựa chọn phương tiện công cộng ở gần và có được kết quả tìm kiếm tốt hơn khi bật dịch vụ vị trí cho MBTA Go.</string>
@@ -111,7 +117,10 @@
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_with_type">%1$s %2$s</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
+    <string name="selected_stop">%1$s, điểm dừng được chọn</string>
+    <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
     <string name="service_change">Thay đổi dịch vụ</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
     <string name="setting_elevator_accessibility">Hiển thị khả năng tiếp cận thang máy</string>

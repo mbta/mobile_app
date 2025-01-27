@@ -173,7 +173,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
-                RouteType.BUS,
+                routeType = RouteType.BUS,
                 isFirst = false
             )
         }
@@ -190,7 +190,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
-                RouteType.BUS,
+                routeType = RouteType.BUS,
                 isFirst = true,
                 isOnly = false
             )

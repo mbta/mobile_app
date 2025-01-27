@@ -971,13 +971,127 @@
       }
     },
     "%@, first stop" : {
-      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line"
+      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, primera parada"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, premye kanpe"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, primeira parada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, điểm dừng đầu tiên"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@，第一站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@，第一站"
+          }
+        }
+      }
     },
     "%@, selected stop" : {
-      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the selected one"
+      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the selected one",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, parada seleccionada"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, chwazi sispann"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, parada selecionada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, điểm dừng được chọn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@，选定站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@，選定站點"
+          }
+        }
+      }
     },
     "%@, selected stop, first stop" : {
-      "comment" : "Screen reader text for a stop name on the stop details page when that stop is both selected and first"
+      "comment" : "Screen reader text for a stop name on the stop details page when that stop is both selected and first",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, parada seleccionada, primera parada"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, chwazi kanpe, premye kanpe"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, parada selecionada, primeira parada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@, điểm dừng đã chọn, điểm dừng đầu tiên"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@，选定站点，第一站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@，選定站點，第一站"
+          }
+        }
+      }
     },
     "%1$@ has departed %2$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] has departed [Central]\", \"[bus] has departed [Harvard]\""
@@ -4425,7 +4539,45 @@
       }
     },
     "Hides remaining stops" : {
-      "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected when it's already open (closes the accordion listing those stops)"
+      "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected when it's already open (closes the accordion listing those stops)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Oculta las paradas restantes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kache arè ki rete yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Oculta as paradas restantes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ẩn các điểm dừng còn lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "隐藏剩余站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "隱藏剩餘站點"
+          }
+        }
+      }
     },
     "High Winds" : {
       "comment" : "Possible alert cause",
@@ -4803,7 +4955,45 @@
       }
     },
     "Lists remaining stops" : {
-      "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)"
+      "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enumera las paradas restantes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lis arè ki rete yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lista as paradas restantes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liệt kê các điểm dừng còn lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "列出剩余站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "列出剩餘站點"
+          }
+        }
+      }
     },
     "Live" : {
       "comment" : "Indicates that data is being updated in real-time",

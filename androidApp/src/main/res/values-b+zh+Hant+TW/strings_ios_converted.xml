@@ -18,6 +18,8 @@
     <string name="close_button_label">關閉</string>
     <string name="coast_guard_restriction">海岸警衛隊警戒</string>
     <string name="congestion">交通擁堵</string>
+    <string name="connection_to">連接到%1$s</string>
+    <string name="connections_to_and">連接到%1$s和%2$s</string>
     <string name="construction">建築施工</string>
     <string name="crossing_malfunction">交通信號燈故障</string>
     <string name="demonstration">示威</string>
@@ -40,6 +42,7 @@
     <string name="filterShowAll">全部</string>
     <string name="fire">火災</string>
     <string name="fire_department_activity">消防局活動</string>
+    <string name="first_stop">%1$s，第一站</string>
     <string name="flooding">洪水</string>
     <string name="fog">大霧</string>
     <string name="freight_train_interference">貨運列車干擾</string>
@@ -48,11 +51,14 @@
     <string name="header_at_stop">在&lt;b>%1$s&lt;/b></string>
     <string name="heading">方向</string>
     <string name="heavy_ridership">客流過大</string>
+    <string name="hides_remaining_stops">隱藏剩餘站點</string>
     <string name="high_winds">強風</string>
     <string name="holiday">節假日</string>
     <string name="hurricane">颶風</string>
     <string name="ice_in_harbor">港口結冰</string>
     <string name="inbound">進站</string>
+    <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
+    <string name="lists_remaining_stops">列出剩餘站點</string>
     <string name="loading">正在載入……</string>
     <string name="location_services_off">定位服務已關閉</string>
     <string name="location_settings_prompt_body">打開MBTA Go的定位服務後，您將看到附近的交通選擇並獲得更好的搜尋結果。</string>
@@ -111,7 +117,10 @@
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_with_type">%1$s %2$s</string>
     <string name="search_by_stop">按站點搜尋</string>
+    <string name="selected_stop">%1$s，選定站點</string>
+    <string name="selected_stop_first_stop">%1$s，選定站點，第一站</string>
     <string name="service_change">服務變更</string>
     <string name="service_ended">服務已結束</string>
     <string name="setting_elevator_accessibility">顯示電梯可及性</string>
