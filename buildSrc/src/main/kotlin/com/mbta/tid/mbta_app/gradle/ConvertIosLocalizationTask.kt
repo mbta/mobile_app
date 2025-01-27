@@ -126,7 +126,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                     val otherTranslation = items.getValue(Quantity.other)
                     // only patch this if the quantity is actually formatted as an integer
                     if (otherTranslation.contains("%1\$d")) {
-                        items + mapOf(Quantity.many to items.getValue(Quantity.other))
+                        items + mapOf(Quantity.many to otherTranslation)
                     } else items
                 } else items
             }
