@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -32,9 +32,8 @@ fun TripDetailsView(
     if (
         tripFilter != null &&
             vehicle != null &&
-            tripData != null &&
-            tripData!!.tripFilter == tripFilter &&
-            tripData!!.tripPredictionsLoaded &&
+            tripData.tripFilter == tripFilter &&
+            tripData.tripPredictionsLoaded &&
             globalResponse != null
     ) {
         val stops =
@@ -49,19 +48,30 @@ fun TripDetailsView(
                 globalResponse
             )
         if (stops != null) {
-            // TODO: routeAccents
+            val route = globalResponse.routes[tripData.trip.routeId]
+            val routeAccents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
             val terminalStop = getParentFor(tripData.trip.stopIds?.first(), globalResponse.stops)
-            val vehicleStop = getParentFor(vehicle?.stopId, globalResponse.stops)
+            val vehicleStop = getParentFor(vehicle.stopId, globalResponse.stops)
             val tripId = tripFilter.tripId
             val headerSpec: TripHeaderSpec? =
                 TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
 
             TripDetailsHeader(tripId, headerSpec)
-            TripStops(stopId, stops, tripFilter.stopSequence, headerSpec, now, globalResponse)
+            TripStops(
+                stopId,
+                stops,
+                tripFilter.stopSequence,
+                headerSpec,
+                now,
+                globalResponse,
+                routeAccents
+            )
         } else {
             // TODO: loading
+            CircularProgressIndicator()
         }
     } else {
         // TODO: loading
+        CircularProgressIndicator()
     }
 }

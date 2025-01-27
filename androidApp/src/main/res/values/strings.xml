@@ -22,6 +22,8 @@
     <string name="close_button_label">Close</string>
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="congestion">Congestion</string>
+    <string name="connection_to">Connection to %1$s</string>
+    <string name="connections_to_and">Connections to %1$s and %2$s</string>
     <string name="construction">Construction</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="demonstration">Demonstration</string>
@@ -49,6 +51,7 @@
     <string name="filterShowAll">All</string>
     <string name="fire">Fire</string>
     <string name="fire_department_activity">Fire Department Activity</string>
+    <string name="first_stop">%1$s, first stop</string>
     <string name="flooding">Flooding</string>
     <string name="fog">Fog</string>
     <string name="freight_train_interference">Freight Train Interference</string>
@@ -56,12 +59,15 @@
     <string name="hazmat_condition">Hazmat Condition</string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
+    <string name="hides_remaining_stops">Hides remaining stops</string>
     <string name="high_winds">High Winds</string>
     <string name="holiday">Holiday</string>
     <string name="hurricane">Hurricane</string>
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
     <string name="inbound">Inbound</string>
+    <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
+    <string name="lists_remaining_stops">Lists remaining stops</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_services_off">Location Services is off</string>
     <string name="location_settings_prompt_body">You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go.</string>
@@ -121,7 +127,10 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_with_type">%1$s %2$s</string>
     <string name="search_by_stop">Search by stop</string>
+    <string name="selected_stop">%1$s, selected stop</string>
+    <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
     <string name="service_change">Service Change</string>
     <string name="service_ended">Service ended</string>
     <string name="setting_elevator_accessibility">Show elevator accessibility</string>
@@ -144,6 +153,10 @@
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
+    <plurals name="stops_away" tools:ignore="MissingTranslation">
+        <item quantity="one">%1$d stop away</item>
+        <item quantity="other">%1$d stops away</item>
+    </plurals>
     <string name="strike">Strike</string>
     <string name="suspension">Suspension</string>
     <string name="switch_problem">Switch Problem</string>
