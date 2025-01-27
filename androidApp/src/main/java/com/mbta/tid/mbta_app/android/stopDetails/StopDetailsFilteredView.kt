@@ -56,7 +56,7 @@ fun StopDetailsFilteredView(
             stopFilter = stopFilter,
             tripFilter = tripFilter,
             patternsByStop = patternsByStop,
-            data =
+            tileData =
                 departures.stopDetailsFormattedTrips(
                     stopFilter.routeId,
                     stopFilter.directionId,
@@ -83,7 +83,7 @@ fun StopDetailsFilteredView(
                     stopFilter = stopFilter,
                     tripFilter = tripFilter,
                     patternsByStop = placeholderDepartures.routes.first(),
-                    data =
+                    tileData =
                         placeholderDepartures.stopDetailsFormattedTrips(
                             stopFilter.routeId,
                             stopFilter.directionId,

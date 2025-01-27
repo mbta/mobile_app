@@ -131,7 +131,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState.value,
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
-                data =
+                tileData =
                     departures.stopDetailsFormattedTrips(
                         filterState.value.routeId,
                         filterState.value.directionId,
@@ -186,7 +186,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState.value,
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
-                data =
+                tileData =
                     departures.stopDetailsFormattedTrips(
                         filterState.value.routeId,
                         filterState.value.directionId,

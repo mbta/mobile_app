@@ -44,7 +44,7 @@ fun StopDetailsFilteredDeparturesView(
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     patternsByStop: PatternsByStop,
-    data: List<TripAndFormat>,
+    tileData: List<TripAndFormat>,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
     now: Instant,
@@ -146,15 +146,15 @@ fun StopDetailsFilteredDeparturesView(
                                         )
                                     }
                             )
-                            if (index < alerts.size - 1 || data.isNotEmpty()) {
+                            if (index < alerts.size - 1 || tileData.isNotEmpty()) {
                                 HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
                             }
                         }
                     }
 
-                    for ((index, row) in data.withIndex()) {
+                    for ((index, row) in tileData.withIndex()) {
                         val modifier =
-                            if (index == 0 || index == data.size - 1)
+                            if (index == 0 || index == tileData.size - 1)
                                 Modifier.background(
                                     colorResource(R.color.fill3),
                                     RoundedCornerShape(8.dp)
