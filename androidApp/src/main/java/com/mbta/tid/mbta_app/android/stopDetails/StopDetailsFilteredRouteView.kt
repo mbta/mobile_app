@@ -46,8 +46,7 @@ fun StopDetailsFilteredRouteView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
-) {
-    val departures = viewModel.stopDepartures.collectAsState().value
+) {  val departures = viewModel.stopDepartures.collectAsState().value
 
     if (departures != null) {
         val patternsByStop = departures.routes.find { it.routeIdentifier == stopFilter.routeId }
@@ -96,18 +95,18 @@ fun StopDetailsFilteredRouteView(
                                 alert,
                                 routeColor,
                                 modifier =
-                                    Modifier.clickable(
-                                        onClickLabel = stringResource(R.string.displays_more_info)
-                                    ) {
-                                        openAlertDetails(
-                                            ModalRoutes.AlertDetails(
-                                                alertId = alert.id,
-                                                lineId = patternsByStop.line?.id,
-                                                routeIds = patternsByStop.routes.map { it.id },
-                                                stopId = patternsByStop.stop.id
-                                            )
+                                Modifier.clickable(
+                                    onClickLabel = stringResource(R.string.displays_more_info)
+                                ) {
+                                    openAlertDetails(
+                                        ModalRoutes.AlertDetails(
+                                            alertId = alert.id,
+                                            lineId = patternsByStop.line?.id,
+                                            routeIds = patternsByStop.routes.map { it.id },
+                                            stopId = patternsByStop.stop.id
                                         )
-                                    }
+                                    )
+                                }
                             )
                             if (index < alerts.size - 1 || data.isNotEmpty()) {
                                 HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
@@ -144,9 +143,9 @@ fun StopDetailsFilteredRouteView(
                                         }
                                     ),
                                 pillDecoration =
-                                    if (patternsByStop.line != null)
-                                        PillDecoration.OnRow(route = route)
-                                    else null
+                                if (patternsByStop.line != null)
+                                    PillDecoration.OnRow(route = route)
+                                else null
                             )
                         }
                     }
