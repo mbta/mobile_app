@@ -39,7 +39,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         }
     }
 
-    /** Returns (English key => (BCP 47 tag => translated resource)) for non-plural strings. */
+    /** Returns (English key => (BCP 47 tag => translated resource)). */
     private fun readIosStrings(): Map<String, Map<String, Resource>> {
         val inputData = xcstrings.asFile.readText()
         val strings = Json.decodeFromString<XcStrings>(inputData)
