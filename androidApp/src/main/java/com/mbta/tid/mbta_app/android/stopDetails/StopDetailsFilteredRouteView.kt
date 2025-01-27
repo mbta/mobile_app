@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -123,16 +122,6 @@ fun StopDetailsFilteredRouteView(
                             row.upcoming.trip.headsign,
                             RealtimePatterns.Format.Some(listOf(row.formatted), null),
                             Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-                                .border(
-                                    BorderStroke(
-                                        if (row.upcoming.trip.id == tripFilter?.tripId) {
-                                            10.dp
-                                        } else {
-                                            0.dp
-                                        },
-                                        colorResource(R.color.key)
-                                    )
-                                )
                                 .clickable(
                                     onClickLabel = null,
                                     onClick = {
