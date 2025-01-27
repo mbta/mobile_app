@@ -8,6 +8,7 @@
     <string name="an_earlier_mechanical_problem">Một vấn đề về cơ khí trước đó</string>
     <string name="an_earlier_signal_problem">Một vấn đề về đèn tín hiệu trước đó</string>
     <string name="app_version_number">phiên bản %1$s</string>
+    <string name="approaching">Đang đến gần</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Xe hơi cản trở dịch vụ</string>
     <string name="back_button_label">Mặt sau</string>
@@ -40,6 +41,7 @@
     <string name="ferries">phà</string>
     <string name="ferry">phà</string>
     <string name="filterShowAll">Tất cả</string>
+    <string name="finishing_another_trip">Kết thúc thêm một chuyến đi</string>
     <string name="fire">Hỏa hoạn</string>
     <string name="fire_department_activity">Hoạt động của Sở Cứu Hỏa</string>
     <string name="first_stop">%1$s, điểm dừng đầu tiên</string>
@@ -59,7 +61,9 @@
     <string name="inbound">Đến</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
     <string name="lists_remaining_stops">Liệt kê các điểm dừng còn lại</string>
+    <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
+    <string name="location_not_available_yet">Vị trí chưa có sẵn</string>
     <string name="location_services_off">Dịch vụ định vị đã tắt</string>
     <string name="location_settings_prompt_body">Bạn sẽ thấy các lựa chọn phương tiện công cộng ở gần và có được kết quả tìm kiếm tốt hơn khi bật dịch vụ vị trí cho MBTA Go.</string>
     <string name="location_settings_prompt_keep_off">Tắt dịch vụ định vị</string>
@@ -79,6 +83,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
+    <string name="next_stop">Điểm dừng tiếp theo</string>
     <string name="no_predictions">Dự đoán không có sẵn</string>
     <string name="no_service">Không có dịch vụ</string>
     <string name="no_service_today">Hôm nay không có dịch vụ</string>
@@ -88,6 +93,7 @@
     <string name="no_stops_nearby_title">Không có điểm dừng gần đó</string>
     <string name="northbound">Về hướng bắc</string>
     <string name="now">Hiện nay</string>
+    <string name="now_at">Hiện giờ tại</string>
     <string name="onboarding_feedback_advance">Bắt đầu</string>
     <string name="onboarding_feedback_body">MBTA Go đang trong giai đoạn đầu! Chúng tôi muốn nghe ý kiến đóng góp của bạn để tiếp tục cải thiện và bổ sung các tính năng mới.</string>
     <string name="onboarding_feedback_header">Giúp chúng tôi cải thiện</string>
@@ -108,6 +114,7 @@
     <string name="police_action">Hành động của cảnh sát</string>
     <string name="police_activity">Hoạt động của cảnh sát</string>
     <string name="power_problem">Vấn đề về điện</string>
+    <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
     <string name="recently_viewed">Đã xem gần đây</string>
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>
@@ -118,6 +125,8 @@
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="scheduled_to_depart">Đã lên lịch khởi hành</string>
+    <string name="scheduled_to_depart_accessibility_desc">%1$s dự kiến khởi hành %2$s</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="selected_stop">%1$s, điểm dừng được chọn</string>
     <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
@@ -163,6 +172,7 @@
     <string name="vehicle_boarding_other">và đang cho khách lên</string>
     <string name="vehicle_cancelled_first">%1$s đến %2$s bị hủy</string>
     <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
+    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s sẽ đến sau %2$d phút nữa</string>
     <string name="vehicle_prediction_minutes_other">và sau %1$d phút nữa</string>
     <string name="vehicle_prediction_time_first">%1$s sẽ đến lúc %2$s</string>
@@ -171,6 +181,7 @@
     <string name="vehicle_schedule_minutes_other">và sau %1$d phút nữa theo lịch trình</string>
     <string name="vehicle_schedule_time_first">%1$s sẽ đến lúc %2$s theo lịch trình</string>
     <string name="vehicle_schedule_time_other">và lúc %1$s theo lịch trình</string>
+    <string name="waiting_to_depart">Đang chờ khởi hành</string>
     <string name="weather">Thời tiết</string>
     <string name="westbound">Về hướng tây</string>
 </resources>

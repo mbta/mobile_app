@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -46,14 +47,9 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 /**
- * TODO:
- * Add localization
- * Accessibility
- * Add tests
- * verify accessibility behavior?
- * Check behavior when stopped at stop
+ * TODO: Add localization Accessibility Add tests verify accessibility behavior? Check behavior when
+ *   stopped at stop
  */
-
 @Composable
 fun TripHeaderCard(
     tripId: String,
@@ -119,12 +115,18 @@ private fun Description(
 
 @Composable
 private fun FinishingAnotherTripDescription() {
-    Text("Finishing another trip", style = MaterialTheme.typography.bodySmall) // TODO footnote?
+    Text(
+        stringResource(R.string.finishing_another_trip),
+        style = MaterialTheme.typography.bodySmall
+    ) // TODO footnote?
 }
 
 @Composable
 private fun NoVehicleDescription() {
-    Text("Location not available yet", style = MaterialTheme.typography.bodySmall) // TODO footnote?
+    Text(
+        stringResource(R.string.location_not_available_yet),
+        style = MaterialTheme.typography.bodySmall
+    ) // TODO footnote?
 }
 
 @Composable
@@ -148,7 +150,7 @@ private fun ScheduleDescription(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                "Scheduled to depart",
+                stringResource(R.string.scheduled_to_depart),
                 style = MaterialTheme.typography.bodySmall
             ) // TODO footnote?
             Text(
@@ -166,9 +168,17 @@ private fun scheduleDescriptionAccessibilityText(
     context: Context
 ): String {
     return if (targetId == stopEntry.stop.id) {
-        "${routeAccents.type.typeText(context, isOnly = true)} scheduled to depart ${stopEntry.stop.name}, selected stop"
+        context.getString(
+            R.string.scheduled_to_depart_selected_stop_accessibility_desc,
+            routeAccents.type.typeText(context, isOnly = true),
+            stopEntry.stop.name
+        )
     } else {
-        "${routeAccents.type.typeText(context, isOnly = true)} scheduled to depart ${stopEntry.stop.name}"
+        context.getString(
+            R.string.scheduled_to_depart_accessibility_desc,
+            routeAccents.type.typeText(context, isOnly = true),
+            stopEntry.stop.name
+        )
     }
 }
 
@@ -212,9 +222,19 @@ private fun vehicleDescriptionAccessibilityText(
     context: Context
 ): String {
     return if (targetId == stop.id) {
-        "${routeAccents.type.typeText(context, isOnly = true)} ${vehicleStatusString(vehicle.currentStatus, stopEntry)} ${stop.name}, selected stop"
+        context.getString(
+            R.string.vehicle_desc_accessibility_desc_selected_stop,
+            routeAccents.type.typeText(context, isOnly = true),
+            vehicleStatusString(context, vehicle.currentStatus, stopEntry),
+            stop.name
+        )
     } else {
-        "${routeAccents.type.typeText(context, isOnly = true)} ${vehicleStatusString(vehicle.currentStatus, stopEntry)} ${stop.name}"
+        context.getString(
+            R.string.vehicle_desc_accessibility_desc,
+            routeAccents.type.typeText(context, isOnly = true),
+            vehicleStatusString(context, vehicle.currentStatus, stopEntry),
+            stop.name
+        )
     }
 }
 
@@ -223,21 +243,26 @@ private fun VehicleStatusDescription(
     vehicleStatus: Vehicle.CurrentStatus,
     stopEntry: TripDetailsStopList.Entry?
 ) {
-    Text(vehicleStatusString(vehicleStatus, stopEntry), style = MaterialTheme.typography.bodySmall)
+    val context = LocalContext.current
+    Text(
+        vehicleStatusString(context, vehicleStatus, stopEntry),
+        style = MaterialTheme.typography.bodySmall
+    )
 }
 
 private fun vehicleStatusString(
+    context: Context,
     vehicleStatus: Vehicle.CurrentStatus,
     stopEntry: TripDetailsStopList.Entry?
 ): String {
     return when (vehicleStatus) {
-        Vehicle.CurrentStatus.IncomingAt -> "Approaching"
-        Vehicle.CurrentStatus.InTransitTo -> "Next stop"
+        Vehicle.CurrentStatus.IncomingAt -> context.getString(R.string.approaching)
+        Vehicle.CurrentStatus.InTransitTo -> context.getString(R.string.next_stop)
         Vehicle.CurrentStatus.StoppedAt ->
             if (stopEntry != null) {
-                "Waiting to depart"
+                context.getString(R.string.waiting_to_depart)
             } else {
-                "Now at"
+                context.getString(R.string.now_at)
             }
     }
 }
@@ -331,15 +356,19 @@ private fun TripIndicator(spec: TripHeaderSpec, routeAccents: TripRouteAccents, 
 
 @Composable
 private fun LiveIndicator() {
+    val desc = stringResource(R.string.real_time_arrivals_updating_live)
     Row(
         modifier =
             Modifier.alpha(0.6f).clearAndSetSemantics {
                 heading()
-                contentDescription = "Real-time arrivals updating live"
+                contentDescription = desc
             }
     ) {
         Image(painterResource(R.drawable.live_data), null, Modifier.size(16.dp))
-        Text("Live", style = MaterialTheme.typography.bodySmall) // TODO footnote
+        Text(
+            stringResource(R.string.live),
+            style = MaterialTheme.typography.bodySmall
+        ) // TODO footnote
     }
 }
 

@@ -192,4 +192,17 @@
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
+    <string name="finishing_another_trip">Finishing another trip</string>
+    <string name="location_not_available_yet">Location not available yet</string>
+    <string name="scheduled_to_depart">Scheduled to depart</string>
+    <string name="scheduled_to_depart_selected_stop_accessibility_desc">%1$s scheduled to depart %2$s, selected stop</string>
+    <string name="scheduled_to_depart_accessibility_desc">%1$s scheduled to depart %2$s</string>
+    <string name="approaching">Approaching</string>
+    <string name="next_stop">Next stop</string>
+    <string name="waiting_to_depart">Waiting to depart</string>
+    <string name="now_at">Now at</string>
+    <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
+    <string name="live">Live</string>
+    <string name="vehicle_desc_accessibility_desc_selected_stop">%1$s %2$s %3$s, selected stop</string>
+    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
 </resources>
