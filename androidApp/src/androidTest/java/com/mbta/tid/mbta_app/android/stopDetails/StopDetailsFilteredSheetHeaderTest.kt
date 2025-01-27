@@ -26,7 +26,7 @@ class StopDetailsFilteredSheetHeaderTest {
             directionNames = listOf("North", "South")
             directionDestinations = listOf("Downtown", "Uptown")
             longName = "Sample Route Long Name"
-            shortName = "Sample Route"
+            shortName = "111"
             textColor = "000000"
             lineId = "line_1"
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
@@ -46,7 +46,13 @@ class StopDetailsFilteredSheetHeaderTest {
     @Test
     fun testStopDetailsFilteredHeaderContent() {
         composeTestRule.setContent {
-            StopDetailsFilteredHeader(route = route, line = null, stop = stop)
+            StopDetailsFilteredHeader(
+                route = route,
+                line = null,
+                stop = stop,
+                onPin = {},
+                onClose = {}
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExists(hasText("at Sample Stop"))
