@@ -194,7 +194,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                     }
                     is Resource.Plural -> {
                         appendLine("    <plurals name=\"$id\">")
-                        for ((quantity, value) in resource.itemsPotentiallyExtended(languageTag)) {
+                        val itemsToWrite =
+                            resource.itemsPotentiallyExtended(languageTag).entries.sortedBy {
+                                it.key
+                            }
+                        for ((quantity, value) in itemsToWrite) {
                             appendLine(
                                 "        <item quantity=\"${quantity.name}\">${escapeXML(value)}</item>"
                             )

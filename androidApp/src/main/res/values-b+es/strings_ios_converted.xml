@@ -3,8 +3,8 @@
     <string name="accident">Accidente</string>
     <plurals name="affected_stops">
         <item quantity="one">&lt;b>%1$d&lt;/b> parada afectada</item>
-        <item quantity="other">&lt;b>%1$d&lt;/b> paradas afectadas</item>
         <item quantity="many">&lt;b>%1$d&lt;/b> paradas afectadas</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b> paradas afectadas</item>
     </plurals>
     <string name="alert">Alerta</string>
     <string name="alert_details">Detalles de la alerta</string>
@@ -37,8 +37,8 @@
     <string name="electrical_work">Trabajo eléctrico</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d cierre de ascensor</item>
-        <item quantity="other">%1$d cierres de ascensor</item>
         <item quantity="many">%1$d cierres de ascensor</item>
+        <item quantity="other">%1$d cierres de ascensor</item>
     </plurals>
     <string name="end">Fin</string>
     <string name="error_loading_data">Error al cargar datos</string>
@@ -159,8 +159,8 @@
     <string name="updated_at">Actualizado: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Actualizado hace %1$d minuto</item>
-        <item quantity="other">Actualizado hace %1$d minutos</item>
         <item quantity="many">Actualizado hace %1$d minutos</item>
+        <item quantity="other">Actualizado hace %1$d minutos</item>
     </plurals>
     <string name="vehicle_arriving_first">%1$s está llegando ahora</string>
     <string name="vehicle_arriving_other">y llegando ahora</string>
