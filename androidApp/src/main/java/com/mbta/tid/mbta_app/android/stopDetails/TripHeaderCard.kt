@@ -45,6 +45,15 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
+/**
+ * TODO:
+ * Add localization
+ * Accessibility
+ * Add tests
+ * verify accessibility behavior?
+ * Check behavior when stopped at stop
+ */
+
 @Composable
 fun TripHeaderCard(
     tripId: String,
