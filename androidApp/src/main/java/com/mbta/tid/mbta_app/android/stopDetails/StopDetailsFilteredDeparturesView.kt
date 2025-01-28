@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -23,69 +24,105 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.ErrorBanner
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
-import com.mbta.tid.mbta_app.android.component.LineHeader
 import com.mbta.tid.mbta_app.android.component.PillDecoration
-import com.mbta.tid.mbta_app.android.component.RouteHeader
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.TripAndFormat
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
 @Composable
-fun StopDetailsFilteredRouteView(
+fun StopDetailsFilteredDeparturesView(
     stopId: String,
-    viewModel: StopDetailsViewModel,
-    global: GlobalResponse?,
-    now: Instant,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
+    patternsByStop: PatternsByStop,
+    tileData: List<TripAndFormat>,
+    elevatorAlerts: List<Alert>,
+    global: GlobalResponse?,
+    now: Instant,
+    viewModel: StopDetailsViewModel,
+    errorBannerViewModel: ErrorBannerViewModel,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
+    pinnedRoutes: Set<String>,
+    togglePinnedRoute: (String) -> Unit,
+    onClose: () -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
-    val departures = viewModel.stopDepartures.collectAsState().value
+    val expectedDirection = stopFilter.directionId
+    // TODO: Set this from the StopDetailsViewModel based on the feature toggle once the VM exists
+    val showElevatorAccessibility = false
 
-    if (departures != null) {
-        val patternsByStop = departures.routes.find { it.routeIdentifier == stopFilter.routeId }
-        val expectedDirection = stopFilter.directionId
-        if (patternsByStop == null) {
-            return
+    val alerts: List<Alert> =
+        if (global != null) {
+            patternsByStop.alertsHereFor(directionId = expectedDirection, global = global)
+        } else {
+            emptyList()
         }
 
-        val data =
-            departures.stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
+    val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
+    val routeColor: Color = Color.fromHex(routeHex)
 
-        val alerts: List<Alert> =
-            if (global != null) {
-                patternsByStop.alertsHereFor(directionId = expectedDirection, global = global)
-            } else {
-                emptyList()
-            }
+    Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+        StopDetailsFilteredHeader(
+            patternsByStop.representativeRoute,
+            patternsByStop.line,
+            patternsByStop.stop,
+            pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier),
+            onPin = { togglePinnedRoute(patternsByStop.routeIdentifier) },
+            onClose = onClose
+        )
 
-        val routeHex: String =
-            patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
-        val routeColor: Color = Color.fromHex(routeHex)
+        ErrorBanner(errorBannerViewModel)
+
         Box(Modifier.fillMaxSize().background(routeColor)) {
             HorizontalDivider(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
-            Column(
-                Modifier.fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (patternsByStop.line != null) {
-                    LineHeader(patternsByStop.line!!, patternsByStop.routes)
-                } else {
-                    RouteHeader(patternsByStop.representativeRoute)
-                }
+            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+
+                if (showElevatorAccessibility && elevatorAlerts.isNotEmpty()) {
+                    Column(
+                        Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        elevatorAlerts.map {
+                            Column(
+                                Modifier.background(
+                                        colorResource(R.color.fill3),
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .border(
+                                        0.dp,
+                                        Color.Unspecified,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .clickable(
+                                        onClickLabel = stringResource(R.string.displays_more_info)
+                                    ) {
+                                        openAlertDetails(
+                                            ModalRoutes.AlertDetails(it.id, null, null, stopId)
+                                        )
+                                    }
+                                    .padding(end = 8.dp)
+                            ) {
+                                StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
+                            }
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.padding(8.dp))
 
@@ -111,14 +148,15 @@ fun StopDetailsFilteredRouteView(
                                         )
                                     }
                             )
-                            if (index < alerts.size - 1 || data.isNotEmpty()) {
+                            if (index < alerts.size - 1 || tileData.isNotEmpty()) {
                                 HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
                             }
                         }
                     }
-                    for ((index, row) in data.withIndex()) {
+
+                    for ((index, row) in tileData.withIndex()) {
                         val modifier =
-                            if (index == 0 || index == data.size - 1)
+                            if (index == 0 || index == tileData.size - 1)
                                 Modifier.background(
                                     colorResource(R.color.fill3),
                                     RoundedCornerShape(8.dp)

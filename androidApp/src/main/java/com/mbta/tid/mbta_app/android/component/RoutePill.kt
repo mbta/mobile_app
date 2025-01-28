@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
@@ -95,7 +96,7 @@ fun RoutePill(
     val typeText = route?.type?.typeText(LocalContext.current, true)
 
     val finalModifier =
-        modifier.withColor().withSizePadding().semantics {
+        modifier.placeholderIfLoading().withColor().withSizePadding().semantics {
             contentDescription = "${route?.label ?: line?.longName ?: ""} ${typeText ?: ""}"
         }
 

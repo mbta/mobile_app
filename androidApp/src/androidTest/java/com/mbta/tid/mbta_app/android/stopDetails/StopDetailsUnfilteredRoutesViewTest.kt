@@ -3,8 +3,8 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -13,12 +13,14 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 
-class StopDetailsRoutesViewTest {
+class StopDetailsUnfilteredRoutesViewTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
@@ -93,14 +95,15 @@ class StopDetailsRoutesViewTest {
             )
         )
 
+    private val errorBannerViewModel =
+        ErrorBannerViewModel(false, MockErrorBannerStateRepository(), MockSettingsRepository())
+
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun testStopDetailsRoutesViewDisplaysCorrectly() {
 
-        val viewModel = StopDetailsViewModel.mocked()
-
-        viewModel.setDepartures(
+        val departures =
             checkNotNull(
                 StopDetailsDepartures.fromData(
                     stop,
@@ -113,84 +116,27 @@ class StopDetailsRoutesViewTest {
                     useTripHeadsigns = false,
                 )
             )
-        )
 
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            StopDetailsRoutesView(
-                stopId = stop.id,
-                viewModel = viewModel,
-                global = globalResponse,
+            StopDetailsUnfilteredRoutesView(
+                stop = stop,
+                departures = departures,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = errorBannerViewModel,
                 now = now,
                 pinRoute = {},
                 pinnedRoutes = emptySet(),
-                stopFilter = filterState.value,
+                onClose = {},
+                onTapRoutePill = {},
                 updateStopFilter = filterState::value::set,
-                tripFilter = null,
-                updateTripFilter = {},
-                setMapSelectedVehicle = {},
-                openAlertDetails = {}
+                openAlertDetails = {},
             )
         }
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
-    }
-
-    @Test
-    fun testLoadingStateFiltered() {
-
-        val viewModel = StopDetailsViewModel.mocked()
-
-        composeTestRule.setContent {
-            val filterState = remember {
-                mutableStateOf<StopDetailsFilter?>(StopDetailsFilter("routeId", 1))
-            }
-
-            StopDetailsRoutesView(
-                stopId = stop.id,
-                viewModel = viewModel,
-                global = globalResponse,
-                now = now,
-                pinRoute = {},
-                pinnedRoutes = emptySet(),
-                stopFilter = filterState.value,
-                updateStopFilter = filterState::value::set,
-                tripFilter = null,
-                updateTripFilter = {},
-                setMapSelectedVehicle = {},
-                openAlertDetails = {}
-            )
-        }
-
-        composeTestRule.onNodeWithContentDescription("Loading...").assertExists()
-    }
-
-    @Test
-    fun testLoadingStateUnfiltered() {
-        val viewModel = StopDetailsViewModel.mocked()
-
-        composeTestRule.setContent {
-            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
-
-            StopDetailsRoutesView(
-                stopId = stop.id,
-                viewModel = viewModel,
-                global = globalResponse,
-                now = now,
-                pinRoute = {},
-                pinnedRoutes = emptySet(),
-                stopFilter = filterState.value,
-                updateStopFilter = filterState::value::set,
-                tripFilter = null,
-                updateTripFilter = {},
-                setMapSelectedVehicle = {},
-                openAlertDetails = {}
-            )
-        }
-
-        composeTestRule.onNodeWithContentDescription("Loading...").assertExists()
     }
 }

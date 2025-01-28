@@ -82,6 +82,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -100,7 +101,12 @@ data class NearbyTransit(
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
 }
 
-@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, FlowPreview::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    MapboxExperimental::class,
+    FlowPreview::class,
+    ExperimentalSerializationApi::class
+)
 @Composable
 fun NearbyTransitPage(
     modifier: Modifier = Modifier,
@@ -276,12 +282,28 @@ fun NearbyTransitPage(
             startDestination = SheetRoutes.NearbyTransit,
             modifier = Modifier.then(modifier),
             enterTransition = {
-                val initialStopId = this.initialState.arguments?.getString("stopId")
-                val targetStopId = this.targetState.arguments?.getString("stopId")
+                val initialRoute = SheetRoutes.fromNavBackStackEntry(this.initialState)
+                val (initialStopId, initialStopFilter) =
+                    when (initialRoute) {
+                        is SheetRoutes.StopDetails ->
+                            Pair(initialRoute.stopId, initialRoute.stopFilter)
+                        else -> Pair(null, null)
+                    }
+
+                val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
+                val (targetStopId, targetStopFilter) =
+                    when (targetRoute) {
+                        is SheetRoutes.StopDetails ->
+                            Pair(targetRoute.stopId, targetRoute.stopFilter)
+                        else -> Pair(null, null)
+                    }
 
                 // Skip animation if navigating within a single stop
                 if (
-                    initialStopId != null && targetStopId != null && initialStopId == targetStopId
+                    initialStopId != null &&
+                        targetStopId != null &&
+                        initialStopId == targetStopId &&
+                        initialStopFilter?.routeId == targetStopFilter?.routeId
                 ) {
                     EnterTransition.None
                 } else {
