@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">Aksidan</string>
+    <plurals name="affected_stops">
+        <item quantity="zero">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="one">&lt;b>%1$d&lt;/b> arè ki afekte</item>
+        <item quantity="two">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="few">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="many">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+    </plurals>
     <string name="alert">Alèt</string>
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
@@ -8,6 +16,7 @@
     <string name="an_earlier_mechanical_problem">Yon Pwoblèm Mekanik Ki Rive Pi Bonè</string>
     <string name="an_earlier_signal_problem">Yon Siyal Ki Rive Pi Bonè</string>
     <string name="app_version_number">vèsyon %1$s</string>
+    <string name="approaching">Ap apwoche</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Machin Ki Bloke Sèvis la</string>
     <string name="back_button_label">Retounen</string>
@@ -32,6 +41,13 @@
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="electrical_work">Travay Elektrik</string>
+    <plurals name="elevator_closure_count">
+        <item quantity="one">%1$d asansè fèmen</item>
+        <item quantity="two">%1$d asansè fèmen</item>
+        <item quantity="few">%1$d asansè fèmen</item>
+        <item quantity="many">%1$d fèmti asansè</item>
+        <item quantity="other">%1$d fèmti asansè</item>
+    </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
     <string name="feature_flag_debug_mode">Mòd Debug</string>
@@ -40,6 +56,7 @@
     <string name="ferries">bato yo</string>
     <string name="ferry">bato</string>
     <string name="filterShowAll">Tout</string>
+    <string name="finishing_another_trip">Fini yon lòt vwayaj</string>
     <string name="fire">Dife</string>
     <string name="fire_department_activity">Aktivite Ponpye</string>
     <string name="first_stop">%1$s, premye kanpe</string>
@@ -59,7 +76,9 @@
     <string name="inbound">Antran</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
     <string name="lists_remaining_stops">Lis arè ki rete yo</string>
+    <string name="live">An dirèk</string>
     <string name="loading">Chajman...</string>
+    <string name="location_not_available_yet">Pozisyon poko disponib</string>
     <string name="location_services_off">Sèvis Pozisyon Fèmen</string>
     <string name="location_settings_prompt_body">W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w ouvri Sèvis Pozisyon an pou MBTA Go.</string>
     <string name="location_settings_prompt_keep_off">Kenbe Sèvis Pozisyon Fèmen</string>
@@ -79,6 +98,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
+    <string name="next_stop">Pwochen arè</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
@@ -88,6 +108,7 @@
     <string name="no_stops_nearby_title">Pa gen arè ki tou pre</string>
     <string name="northbound">Nan direksyon nò</string>
     <string name="now">Kounye a</string>
+    <string name="now_at">Kounye a li nan</string>
     <string name="onboarding_feedback_advance">Kòmanse</string>
     <string name="onboarding_feedback_body">MBTA Go nan etap kòmansman yo! Nou vle kòmantè w pandan n ap kontinye fè amelyorasyon epi ajoute nouvo opsyon.</string>
     <string name="onboarding_feedback_header">Ede nou amelyore</string>
@@ -108,6 +129,7 @@
     <string name="police_action">Aksyon Polis</string>
     <string name="police_activity">Aktivite Polis</string>
     <string name="power_problem">Pwoblèm Kouran</string>
+    <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
@@ -118,6 +140,8 @@
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="scheduled_to_depart">Pwograme pou ale</string>
+    <string name="scheduled_to_depart_accessibility_desc">%1$s ki pwograme pou kite %2$s</string>
     <string name="search_by_stop">Chèche pa kanpe</string>
     <string name="selected_stop">%1$s, chwazi sispann</string>
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
@@ -143,6 +167,14 @@
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
+    <plurals name="stops_away">
+        <item quantity="zero">%1$d kanpe lwen</item>
+        <item quantity="one">%1$d kanpe lwen</item>
+        <item quantity="two">%1$d kanpe lwen</item>
+        <item quantity="few">%1$d kanpe lwen</item>
+        <item quantity="many">%1$d kanpe lwen</item>
+        <item quantity="other">%1$d kanpe lwen</item>
+    </plurals>
     <string name="strike">Grèv</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_problem">Pwoblèm Bouton</string>
@@ -157,12 +189,21 @@
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unstar_route_hint">retire wout ki soti anlè lis la</string>
     <string name="updated_at">Mizajou: %1$s</string>
+    <plurals name="updated_mins_ago">
+        <item quantity="zero">Mizajou %1$d minit de sa</item>
+        <item quantity="one">Mete ajou %1$d minit de sa</item>
+        <item quantity="two">Mete ajou %1$d minit de sa</item>
+        <item quantity="few">Mete ajou %1$d minit de sa</item>
+        <item quantity="many">Mete ajou %1$d minit de sa</item>
+        <item quantity="other">Mete ajou %1$d minit de sa</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
     <string name="vehicle_boarding_first">%1$s ap pran moun kounye a</string>
     <string name="vehicle_boarding_other">epi ap pran moun kounye a</string>
     <string name="vehicle_cancelled_first">%1$s ap rive a %2$s anile</string>
     <string name="vehicle_cancelled_other">epi a %1$s anile</string>
+    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s ap rive nan %2$d minit</string>
     <string name="vehicle_prediction_minutes_other">epi nan %1$d minit</string>
     <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>
@@ -171,6 +212,7 @@
     <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
     <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
     <string name="vehicle_schedule_time_other">epi a %1$s pwograme</string>
+    <string name="waiting_to_depart">Ap tann pou yo pati</string>
     <string name="weather">Tan</string>
     <string name="westbound">Pran direksyon lwès</string>
 </resources>

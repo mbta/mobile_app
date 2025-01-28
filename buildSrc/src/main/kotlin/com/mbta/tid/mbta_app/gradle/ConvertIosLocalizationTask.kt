@@ -9,6 +9,8 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 
 abstract class ConvertIosLocalizationTask : DefaultTask() {
     @get:InputFile abstract var androidEnglishStrings: RegularFile
@@ -19,16 +21,16 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
     fun run() {
         val iosStrings = readIosStrings()
         val languageTags = iosStrings.values.map { it.keys }.reduce(Set<String>::plus) - "en"
-        val androidEnglishStringsById = parseAndroidStrings(androidEnglishStrings)
-        val androidIdsByEnglishString =
-            androidEnglishStringsById.entries.groupBy({ it.value }, { it.key })
+        val androidResourcesById = parseAndroidStrings(androidEnglishStrings)
+        val androidIdsByIosKey =
+            androidResourcesById.entries.groupBy({ it.value.key() }, { it.key })
 
         for (languageTag in languageTags) {
-            val iosStringsByEnglishString = iosStrings.mapValues { it.value[languageTag] }
+            val iosResourcesByEnglishKey = iosStrings.mapValues { it.value[languageTag] }
             val translatedStringsById =
-                iosStringsByEnglishString
-                    .flatMap { (englishString, translations) ->
-                        val androidIds = androidIdsByEnglishString[englishString]
+                iosResourcesByEnglishKey
+                    .flatMap { (englishKey, translations) ->
+                        val androidIds = androidIdsByIosKey[englishKey]
                         if (androidIds == null || translations == null) return@flatMap emptyList()
                         androidIds.map { Pair(it, translations) }
                     }
@@ -37,11 +39,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         }
     }
 
-    /** Returns (English text => (BCP 47 tag => translated text)) for non-plural strings. */
-    private fun readIosStrings(): Map<String, Map<String, String>> {
+    /** Returns (English key => (BCP 47 tag => translated resource)). */
+    private fun readIosStrings(): Map<String, Map<String, Resource>> {
         val inputData = xcstrings.asFile.readText()
         val strings = Json.decodeFromString<XcStrings>(inputData)
-        return strings.staticStringsByEnglishText()
+        return strings.resourcesByKey()
     }
 
     @Serializable
@@ -50,12 +52,12 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val strings: Map<String, XcStringInfo>,
         val version: String,
     ) {
-        fun staticStringsByEnglishText(): Map<String, Map<String, String>> {
+        fun resourcesByKey(): Map<String, Map<String, Resource>> {
             return strings
                 .mapNotNull {
-                    val translations = it.value.invariantLocalizations() ?: return@mapNotNull null
-                    val englishText = translations["en"] ?: convertIosTemplate(it.key)
-                    Pair(englishText, translations)
+                    val translations = it.value.resources() ?: return@mapNotNull null
+                    val englishKey = translations["en"]?.key() ?: convertIosTemplate(it.key)
+                    Pair(englishKey, translations)
                 }
                 .toMap()
         }
@@ -68,12 +70,12 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val localizations: Map<String, Localization>? = null,
     ) {
 
-        fun invariantLocalizations() =
+        fun resources() =
             localizations
                 ?.mapNotNull {
                     Pair(
                         convertIosTemplate(it.key),
-                        convertIosTemplate(it.value.stringUnit?.value ?: return@mapNotNull null)
+                        it.value.resource()?.convertIosTemplate() ?: return@mapNotNull null
                     )
                 }
                 ?.toMap()
@@ -83,28 +85,97 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
     private data class Localization(
         val stringUnit: StringUnit? = null,
         val variations: Variations? = null,
-    )
+    ) {
+        fun resource(): Resource? = stringUnit?.resource() ?: variations?.resource()
+    }
 
-    @Serializable private data class StringUnit(val state: String, val value: String)
+    @Serializable
+    private data class StringUnit(val state: String, val value: String) {
+        fun resource() = Resource.StaticString(value)
+    }
 
-    @Serializable private data class Variations(val plural: Map<String, Localization>)
+    @Serializable
+    private data class Variations(val plural: Map<Quantity, Localization>) {
+        fun resource() =
+            Resource.Plural(plural.mapValues { checkNotNull(it.value.stringUnit).value })
+    }
 
-    /** @return A map from IDs to text content. */
-    private fun parseAndroidStrings(stringsFile: RegularFile): Map<String, String> {
+    private sealed interface Resource {
+        fun key(): String
+
+        fun convertIosTemplate(): Resource
+
+        data class StaticString(val text: String) : Resource {
+            override fun key() = text
+
+            override fun convertIosTemplate() = StaticString(convertIosTemplate(text))
+        }
+
+        data class Plural(val items: Map<Quantity, String>) : Resource {
+            override fun key() = checkNotNull(items[Quantity.other])
+
+            override fun convertIosTemplate() =
+                Plural(items.mapValues { convertIosTemplate(it.value) })
+
+            fun itemsPotentiallyExtended(languageTag: String): Map<Quantity, String> {
+                // For Spanish and Portuguese, decimals are formatted under the `many` case rather
+                // than `other` (in Spanish, "2 days" is "2 días" but "0.5 days" is "0.5 de días"),
+                // and so Android complains that we have not given "many" even if it's not actually
+                // going to happen.
+                return if (languageTag in setOf("es", "pt-BR")) {
+                    val otherTranslation = items.getValue(Quantity.other)
+                    // only patch this if the quantity is actually formatted as an integer
+                    if (otherTranslation.contains("%1\$d")) {
+                        items + mapOf(Quantity.many to otherTranslation)
+                    } else items
+                } else items
+            }
+        }
+    }
+
+    @Suppress("EnumEntryName")
+    @Serializable
+    private enum class Quantity {
+        zero,
+        one,
+        two,
+        few,
+        many,
+        other
+    }
+
+    /** @return A map from IDs to resources. */
+    private fun parseAndroidStrings(stringsFile: RegularFile): Map<String, Resource> {
         val parser = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xmlDocument = parser.parse(stringsFile.asFile)
+        val result = mutableMapOf<String, Resource>()
+
         val stringElements = xmlDocument.getElementsByTagName("string")
-        val result = mutableMapOf<String, String>()
-        for (i in 0 until stringElements.length) {
-            val stringElement = stringElements.item(i)
+        for (stringElement in stringElements) {
             val id = stringElement.attributes.getNamedItem("name").textContent
             val value = stringElement.textContent
-            result[id] = value
+            result[id] = Resource.StaticString(value)
         }
+
+        val pluralElements = xmlDocument.getElementsByTagName("plurals")
+        for (pluralElement in pluralElements) {
+            val id = pluralElement.attributes.getNamedItem("name").textContent
+            val values = buildMap {
+                for (child in pluralElement.childNodes) {
+                    if (child.nodeName == "item") {
+                        val quantity =
+                            Quantity.valueOf(child.attributes.getNamedItem("quantity").textContent)
+                        set(quantity, child.textContent)
+                    }
+                }
+            }
+            result[id] = Resource.Plural(values)
+        }
+
         return result
     }
 
-    private fun writeAndroidStrings(languageTag: String, stringsById: Map<String, String>) {
+    private fun writeAndroidStrings(languageTag: String, stringsById: Map<String, Resource>) {
         val outputDir = resources.dir("values-b+${languageTag.replace("-", "+")}")
         outputDir.asFile.mkdirs()
         val overrideFile = outputDir.file("strings.xml")
@@ -115,14 +186,42 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val result = buildString {
             appendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
             appendLine("<resources>")
-            for ((id, value) in entriesToWrite) {
-                val escapedValue = value.replace("&", "&amp;").replace("<", "&lt;")
-                appendLine("    <string name=\"$id\">$escapedValue</string>")
+            for ((id, resource) in entriesToWrite) {
+                when (resource) {
+                    is Resource.StaticString -> {
+                        val escapedValue = escapeXML(resource.text)
+                        appendLine("    <string name=\"$id\">$escapedValue</string>")
+                    }
+                    is Resource.Plural -> {
+                        appendLine("    <plurals name=\"$id\">")
+                        val itemsToWrite =
+                            resource.itemsPotentiallyExtended(languageTag).entries.sortedBy {
+                                it.key
+                            }
+                        for ((quantity, value) in itemsToWrite) {
+                            appendLine(
+                                "        <item quantity=\"${quantity.name}\">${escapeXML(value)}</item>"
+                            )
+                        }
+                        appendLine("    </plurals>")
+                    }
+                }
             }
             appendLine("</resources>")
         }
         outputFile.asFile.writeText(result)
     }
+
+    private fun escapeXML(text: String) = text.replace("&", "&amp;").replace("<", "&lt;")
+
+    operator fun NodeList.iterator() =
+        object : Iterator<Node> {
+            var index = 0
+
+            override fun hasNext() = index < this@iterator.length
+
+            override fun next() = this@iterator.item(index).also { index++ }
+        }
 
     companion object {
         private val template = Regex("""%(?:(?<index>\d+)\$)?l?(?<format>[\w@])""")

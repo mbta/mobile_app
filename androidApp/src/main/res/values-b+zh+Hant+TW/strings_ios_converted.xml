@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">事件</string>
+    <plurals name="affected_stops">
+        <item quantity="other">&lt;b>%1$d&lt;/b>個受影響的網站</item>
+    </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
     <string name="alert_ended">警報已失效</string>
@@ -8,6 +11,7 @@
     <string name="an_earlier_mechanical_problem">早前的機械故障</string>
     <string name="an_earlier_signal_problem">早前的信號問題</string>
     <string name="app_version_number">版本 %1$s</string>
+    <string name="approaching">正在接近</string>
     <string name="arriving_abbr">到站</string>
     <string name="autos_impeding_service">交通事故</string>
     <string name="back_button_label">後退</string>
@@ -32,6 +36,9 @@
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="eastbound">東行</string>
     <string name="electrical_work">電力作業</string>
+    <plurals name="elevator_closure_count">
+        <item quantity="other">%1$d 電梯關閉</item>
+    </plurals>
     <string name="end">結束日期</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
     <string name="feature_flag_debug_mode">調試模式</string>
@@ -40,6 +47,7 @@
     <string name="ferries">輪渡</string>
     <string name="ferry">輪渡</string>
     <string name="filterShowAll">全部</string>
+    <string name="finishing_another_trip">結束另一趟旅程</string>
     <string name="fire">火災</string>
     <string name="fire_department_activity">消防局活動</string>
     <string name="first_stop">%1$s，第一站</string>
@@ -59,7 +67,9 @@
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
     <string name="lists_remaining_stops">列出剩餘站點</string>
+    <string name="live">即時</string>
     <string name="loading">正在載入……</string>
+    <string name="location_not_available_yet">位置尚未確定</string>
     <string name="location_services_off">定位服務已關閉</string>
     <string name="location_settings_prompt_body">打開MBTA Go的定位服務後，您將看到附近的交通選擇並獲得更好的搜尋結果。</string>
     <string name="location_settings_prompt_keep_off">保持關閉定位服務</string>
@@ -79,6 +89,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
+    <string name="next_stop">下一站</string>
     <string name="no_predictions">預測不可用</string>
     <string name="no_service">無服務</string>
     <string name="no_service_today">今日無服務</string>
@@ -88,6 +99,7 @@
     <string name="no_stops_nearby_title">附近沒有停靠站</string>
     <string name="northbound">北行</string>
     <string name="now">現在</string>
+    <string name="now_at">現在停靠</string>
     <string name="onboarding_feedback_advance">開始</string>
     <string name="onboarding_feedback_body">MBTA Go尚處於試運行階段！我們希望收到您的回饋，以便我們繼續改進和新增功能。</string>
     <string name="onboarding_feedback_header">幫助我們改進</string>
@@ -108,6 +120,7 @@
     <string name="police_action">警方行動</string>
     <string name="police_activity">警方活動</string>
     <string name="power_problem">電力故障</string>
+    <string name="real_time_arrivals_updating_live">即時到達即時更新</string>
     <string name="recently_viewed">近期查看過</string>
     <string name="refresh">重新整理</string>
     <string name="refresh_predictions">重新整理預測</string>
@@ -118,6 +131,8 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="scheduled_to_depart">預定出發</string>
+    <string name="scheduled_to_depart_accessibility_desc">這%1$s預定從 %2$s 出發</string>
     <string name="search_by_stop">按站點搜尋</string>
     <string name="selected_stop">%1$s，選定站點</string>
     <string name="selected_stop_first_stop">%1$s，選定站點，第一站</string>
@@ -143,6 +158,9 @@
     <string name="stop_closure">網站關閉</string>
     <string name="stop_filter_pills_filter_hint">應用過濾器，以便僅顯示來自該路線的到達</string>
     <string name="stop_filter_pills_remove_hint">刪除過濾器並顯示所有路由</string>
+    <plurals name="stops_away">
+        <item quantity="other">還有%1$d站</item>
+    </plurals>
     <string name="strike">罷工</string>
     <string name="suspension">暫停</string>
     <string name="switch_problem">道岔故障</string>
@@ -157,12 +175,16 @@
     <string name="unruly_passenger">乘客干擾</string>
     <string name="unstar_route_hint">從清單頂部取消固定路線</string>
     <string name="updated_at">最後更新：%1$s</string>
+    <plurals name="updated_mins_ago">
+        <item quantity="other">%1$d 分鐘前更新</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s現已到站</string>
     <string name="vehicle_arriving_other">下一趟車現已到站</string>
     <string name="vehicle_boarding_first">%1$s正在上客</string>
     <string name="vehicle_boarding_other">正在上客</string>
     <string name="vehicle_cancelled_first">於%2$s到站的%1$s已取消</string>
     <string name="vehicle_cancelled_other">於%1$s到站的下一趟車已取消</string>
+    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s將在%2$d分鐘內到站</string>
     <string name="vehicle_prediction_minutes_other">下一趟車將在%1$d分鐘內抵達</string>
     <string name="vehicle_prediction_time_first">%1$s於%2$s到站</string>
@@ -171,6 +193,7 @@
     <string name="vehicle_schedule_minutes_other">下一趟車預定將在%1$d分鐘內抵達</string>
     <string name="vehicle_schedule_time_first">%1$s預定於%2$s到站</string>
     <string name="vehicle_schedule_time_other">下一趟車預定將於%1$s到站</string>
+    <string name="waiting_to_depart">等待離開</string>
     <string name="weather">天氣</string>
     <string name="westbound">西行</string>
 </resources>
