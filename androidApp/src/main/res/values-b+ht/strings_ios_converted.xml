@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">Aksidan</string>
+    <plurals name="affected_stops">
+        <item quantity="zero">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="one">&lt;b>%1$d&lt;/b> arè ki afekte</item>
+        <item quantity="two">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="few">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="many">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
+    </plurals>
     <string name="alert">Alèt</string>
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
@@ -33,6 +41,13 @@
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="electrical_work">Travay Elektrik</string>
+    <plurals name="elevator_closure_count">
+        <item quantity="one">%1$d asansè fèmen</item>
+        <item quantity="two">%1$d asansè fèmen</item>
+        <item quantity="few">%1$d asansè fèmen</item>
+        <item quantity="many">%1$d fèmti asansè</item>
+        <item quantity="other">%1$d fèmti asansè</item>
+    </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
     <string name="feature_flag_debug_mode">Mòd Debug</string>
@@ -152,6 +167,14 @@
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
+    <plurals name="stops_away">
+        <item quantity="zero">%1$d kanpe lwen</item>
+        <item quantity="one">%1$d kanpe lwen</item>
+        <item quantity="two">%1$d kanpe lwen</item>
+        <item quantity="few">%1$d kanpe lwen</item>
+        <item quantity="many">%1$d kanpe lwen</item>
+        <item quantity="other">%1$d kanpe lwen</item>
+    </plurals>
     <string name="strike">Grèv</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_problem">Pwoblèm Bouton</string>
@@ -166,6 +189,14 @@
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unstar_route_hint">retire wout ki soti anlè lis la</string>
     <string name="updated_at">Mizajou: %1$s</string>
+    <plurals name="updated_mins_ago">
+        <item quantity="zero">Mizajou %1$d minit de sa</item>
+        <item quantity="one">Mete ajou %1$d minit de sa</item>
+        <item quantity="two">Mete ajou %1$d minit de sa</item>
+        <item quantity="few">Mete ajou %1$d minit de sa</item>
+        <item quantity="many">Mete ajou %1$d minit de sa</item>
+        <item quantity="other">Mete ajou %1$d minit de sa</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
     <string name="vehicle_boarding_first">%1$s ap pran moun kounye a</string>

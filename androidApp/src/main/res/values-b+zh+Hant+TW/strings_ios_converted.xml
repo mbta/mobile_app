@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">事件</string>
+    <plurals name="affected_stops">
+        <item quantity="other">&lt;b>%1$d&lt;/b>個受影響的網站</item>
+    </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
     <string name="alert_ended">警報已失效</string>
@@ -33,6 +36,9 @@
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="eastbound">東行</string>
     <string name="electrical_work">電力作業</string>
+    <plurals name="elevator_closure_count">
+        <item quantity="other">%1$d 電梯關閉</item>
+    </plurals>
     <string name="end">結束日期</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
     <string name="feature_flag_debug_mode">調試模式</string>
@@ -152,6 +158,9 @@
     <string name="stop_closure">網站關閉</string>
     <string name="stop_filter_pills_filter_hint">應用過濾器，以便僅顯示來自該路線的到達</string>
     <string name="stop_filter_pills_remove_hint">刪除過濾器並顯示所有路由</string>
+    <plurals name="stops_away">
+        <item quantity="other">還有%1$d站</item>
+    </plurals>
     <string name="strike">罷工</string>
     <string name="suspension">暫停</string>
     <string name="switch_problem">道岔故障</string>
@@ -166,6 +175,9 @@
     <string name="unruly_passenger">乘客干擾</string>
     <string name="unstar_route_hint">從清單頂部取消固定路線</string>
     <string name="updated_at">最後更新：%1$s</string>
+    <plurals name="updated_mins_ago">
+        <item quantity="other">%1$d 分鐘前更新</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s現已到站</string>
     <string name="vehicle_arriving_other">下一趟車現已到站</string>
     <string name="vehicle_boarding_first">%1$s正在上客</string>
