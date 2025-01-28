@@ -68,10 +68,6 @@ struct StopDetailsView: View {
         }
     }
 
-    var stop: Stop? {
-        stopDetailsVM.global?.stops[stopId]
-    }
-
     var body: some View {
         if let stopFilter {
             StopDetailsFilteredView(

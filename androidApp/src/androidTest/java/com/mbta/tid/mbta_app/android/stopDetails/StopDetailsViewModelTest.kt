@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
@@ -37,6 +38,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -1040,6 +1042,136 @@ class StopDetailsViewModelTest {
         composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
 
         assertNotNull(viewModel.stopDepartures.value)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testManagerDoesNotSetDeparturesWhenNothingLoaded() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val objects = ObjectCollectionBuilder()
+        objects.stop { id = "stop1" }
+
+        val emptyPredictionsRepo = MockPredictionsRepository()
+        val emptySchedulesRepo = IdleScheduleRepository()
+
+        val errorBannerRepo = MockErrorBannerStateRepository()
+
+        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
+
+        val viewModelNothingLoaded =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                emptyPredictionsRepo,
+                emptySchedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
+
+        assertNull(viewModelNothingLoaded.stopDepartures.value)
+
+        composeTestRule.setContent {
+            var stopFilters by remember { stopFilters }
+            stopDetailsManagedVM(
+                stopFilters,
+                viewModel = viewModelNothingLoaded,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> },
+                coroutineDispatcher = dispatcher
+            )
+        }
+
+        advanceUntilIdle()
+
+        assertNull(viewModelNothingLoaded.stopDepartures.value)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testManagerDoesNotSetDeparturesWhenOnlySchedulesLoaded() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val objects = ObjectCollectionBuilder()
+        objects.stop { id = "stop1" }
+
+        val emptyPredictionsRepo = MockPredictionsRepository()
+        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
+
+        val errorBannerRepo = MockErrorBannerStateRepository()
+
+        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
+
+        val viewModelSchedulesLoaded =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                emptyPredictionsRepo,
+                schedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
+
+        assertNull(viewModelSchedulesLoaded.stopDepartures.value)
+
+        composeTestRule.setContent {
+            var stopFilters by remember { stopFilters }
+            stopDetailsManagedVM(
+                stopFilters,
+                viewModel = viewModelSchedulesLoaded,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> },
+                coroutineDispatcher = dispatcher
+            )
+        }
+
+        advanceUntilIdle()
+
+        assertNull(viewModelSchedulesLoaded.stopDepartures.value)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testManagerDoesNotSetDeparturesWhenOnlyPredictionsLoaded() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val objects = ObjectCollectionBuilder()
+        objects.stop { id = "stop1" }
+
+        val predictionsRepo =
+            MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
+        val emptySchedulesRepo = IdleScheduleRepository()
+
+        val errorBannerRepo = MockErrorBannerStateRepository()
+
+        val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
+
+        val viewModelPredictionsLoaded =
+            StopDetailsViewModel.mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                emptySchedulesRepo,
+                coroutineDispatcher = dispatcher
+            )
+
+        assertNull(viewModelPredictionsLoaded.stopDepartures.value)
+
+        composeTestRule.setContent {
+            var stopFilters by remember { stopFilters }
+            stopDetailsManagedVM(
+                stopFilters,
+                viewModel = viewModelPredictionsLoaded,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> },
+                coroutineDispatcher = dispatcher
+            )
+        }
+
+        advanceUntilIdle()
+
+        assertNull(viewModelPredictionsLoaded.stopDepartures.value)
     }
 
     @Test

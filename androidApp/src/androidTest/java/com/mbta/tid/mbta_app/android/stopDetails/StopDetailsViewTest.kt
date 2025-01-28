@@ -337,7 +337,6 @@ class StopDetailsViewTest {
         composeTestRule.onNodeWithContentDescription("Close").assertExists()
         composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
     }

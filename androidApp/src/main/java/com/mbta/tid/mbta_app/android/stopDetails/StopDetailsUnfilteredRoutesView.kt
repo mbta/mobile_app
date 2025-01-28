@@ -2,77 +2,81 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.ErrorBanner
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripRepository
-import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Composable
-fun StopDetailsRoutesView(
-    stopId: String,
-    viewModel: StopDetailsViewModel,
-    global: GlobalResponse?,
+fun StopDetailsUnfilteredRoutesView(
+    stop: Stop,
+    departures: StopDetailsDepartures,
+    servedRoutes: List<PillFilter>,
+    errorBannerViewModel: ErrorBannerViewModel,
     now: Instant,
-    stopFilter: StopDetailsFilter?,
-    tripFilter: TripDetailsFilter?,
     pinRoute: (String) -> Unit,
     pinnedRoutes: Set<String>,
+    onClose: () -> Unit,
+    onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripFilter: (TripDetailsFilter?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
+    // TODO: Set this from the StopDetailsViewModel based on the feature toggle once the VM exists
+    val showElevatorAccessibility = false
 
-    val departures = viewModel.stopDepartures.collectAsState().value
+    Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+        SheetHeader(onClose = onClose, title = stop.name)
+        if (servedRoutes.size > 1) {
+            Box(Modifier.height(56.dp).fillMaxWidth()) {
+                StopDetailsFilterPills(
+                    servedRoutes = servedRoutes,
+                    onTapRoutePill = onTapRoutePill,
+                    onClearFilter = { updateStopFilter(null) }
+                )
+            }
+        }
 
-    if (departures == null) {
-        LoadingStopDetailsView(stopFilter, tripFilter)
-    } else if (stopFilter != null) {
-        StopDetailsFilteredRouteView(
-            stopId,
-            viewModel,
-            global = global,
-            now = now,
-            stopFilter = stopFilter,
-            tripFilter = tripFilter,
-            updateStopFilter,
-            updateTripFilter,
-            openAlertDetails
-        )
-    } else {
+        ErrorBanner(errorBannerViewModel)
+
         Box(Modifier.background(MaterialTheme.colorScheme.surface).fillMaxSize()) {
             HorizontalDivider(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
@@ -81,6 +85,44 @@ fun StopDetailsRoutesView(
                 verticalArrangement = Arrangement.spacedBy(0.dp),
                 contentPadding = PaddingValues(top = 16.dp)
             ) {
+                if (showElevatorAccessibility && departures.elevatorAlerts.isNotEmpty()) {
+                    item {
+                        Column(
+                            Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            departures.elevatorAlerts.map {
+                                Column(
+                                    Modifier.background(
+                                            colorResource(R.color.fill3),
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .border(
+                                            0.dp,
+                                            Color.Unspecified,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .clickable(
+                                            onClickLabel =
+                                                stringResource(R.string.displays_more_info)
+                                        ) {
+                                            openAlertDetails(
+                                                ModalRoutes.AlertDetails(it.id, null, null, stop.id)
+                                            )
+                                        }
+                                        .padding(end = 8.dp)
+                                ) {
+                                    StopDetailsAlertHeader(
+                                        it,
+                                        Color.Unspecified,
+                                        showInfoIcon = true
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
                 items(departures.routes, key = { it.routeIdentifier }) { patternsByStop ->
                     StopDetailsRouteView(
                         patternsByStop,
@@ -147,16 +189,7 @@ private fun StopDetailsRoutesViewPreview() {
             scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
         }
 
-    val viewModel =
-        StopDetailsViewModel(
-            MockErrorBannerStateRepository(),
-            MockPredictionsRepository(),
-            MockScheduleRepository(),
-            MockTripPredictionsRepository(),
-            MockTripRepository(),
-            MockVehicleRepository()
-        )
-    viewModel.setDepartures(
+    val departures =
         StopDetailsDepartures(
             listOf(
                 PatternsByStop(
@@ -201,20 +234,19 @@ private fun StopDetailsRoutesViewPreview() {
                 )
             )
         )
-    )
 
     MyApplicationTheme {
-        StopDetailsRoutesView(
-            stopId = stop.id,
-            viewModel = viewModel,
-            global = null,
+        StopDetailsUnfilteredRoutesView(
+            stop,
+            departures,
+            listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
+            ErrorBannerViewModel(false, MockErrorBannerStateRepository(), MockSettingsRepository()),
             now = Clock.System.now(),
-            stopFilter = null,
-            tripFilter = null,
             pinRoute = {},
             pinnedRoutes = emptySet(),
+            onClose = {},
+            onTapRoutePill = {},
             updateStopFilter = {},
-            updateTripFilter = {},
             openAlertDetails = {}
         )
     }
