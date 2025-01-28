@@ -18,6 +18,8 @@
     <string name="close_button_label">Fèmen</string>
     <string name="coast_guard_restriction">Gad Kot Mete Restriksyon</string>
     <string name="congestion">Blokis</string>
+    <string name="connection_to">Koneksyon ak %1$s</string>
+    <string name="connections_to_and">Koneksyon ak %1$s epi %2$s</string>
     <string name="construction">Konstriksyon</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="demonstration">Demonstrasyon</string>
@@ -40,6 +42,7 @@
     <string name="filterShowAll">Tout</string>
     <string name="fire">Dife</string>
     <string name="fire_department_activity">Aktivite Ponpye</string>
+    <string name="first_stop">%1$s, premye kanpe</string>
     <string name="flooding">Inondasyon</string>
     <string name="fog">Bwouya</string>
     <string name="freight_train_interference">Blokaj Nan Tren Machandiz</string>
@@ -48,11 +51,14 @@
     <string name="header_at_stop">nan &lt;b>%1$s&lt;/b></string>
     <string name="heading">Prale nan direksyon</string>
     <string name="heavy_ridership">Anpil Moun Ap Pase la</string>
+    <string name="hides_remaining_stops">Kache arè ki rete yo</string>
     <string name="high_winds">Gwo Van</string>
     <string name="holiday">Vakans</string>
     <string name="hurricane">Siklòn</string>
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="inbound">Antran</string>
+    <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
+    <string name="lists_remaining_stops">Lis arè ki rete yo</string>
     <string name="loading">Chajman...</string>
     <string name="location_services_off">Sèvis Pozisyon Fèmen</string>
     <string name="location_settings_prompt_body">W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w ouvri Sèvis Pozisyon an pou MBTA Go.</string>
@@ -111,7 +117,10 @@
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_with_type">%1$s %2$s</string>
     <string name="search_by_stop">Chèche pa kanpe</string>
+    <string name="selected_stop">%1$s, chwazi sispann</string>
+    <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
     <string name="service_change">Chanjman Sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
     <string name="setting_elevator_accessibility">Montre aksè nan asansè</string>
