@@ -119,7 +119,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                             icon: routeSlashIcon(routeType)
                         )
                         .accessibilityHeading(.h4)
-                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else {
                         TripDetailsView(
                             tripFilter: tripFilter,
