@@ -349,7 +349,7 @@ fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) 
         }
     val icon =
         when (effect) {
-            DisruptionViewEffect.Detour -> painterResource(R.drawable.baseline_circle_24)
+            DisruptionViewEffect.Detour -> painterResource(R.drawable.baseline_warning_24)
             DisruptionViewEffect.Shuttle -> painterResource(R.drawable.baseline_directions_bus_24)
             DisruptionViewEffect.StopClosed ->
                 painterResource(R.drawable.baseline_report_gmailerrorred_24)
