@@ -131,6 +131,7 @@ class StopDetailsFilteredRouteViewTest {
                 updateStopFilter = {},
                 tripFilter = null,
                 updateTripFilter = {},
+                setMapSelectedVehicle = {},
                 openAlertDetails = {}
             )
         }
@@ -176,6 +177,7 @@ class StopDetailsFilteredRouteViewTest {
                 updateStopFilter = {},
                 tripFilter = null,
                 updateTripFilter = { tripFilter = it },
+                setMapSelectedVehicle = {},
                 openAlertDetails = {}
             )
         }

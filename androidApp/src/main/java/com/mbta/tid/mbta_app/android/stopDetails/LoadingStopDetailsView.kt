@@ -53,6 +53,7 @@ fun LoadingStopDetailsView(stopFilter: StopDetailsFilter?, tripFilter: TripDetai
                         tripFilter = tripFilter,
                         updateStopFilter = {},
                         updateTripFilter = {},
+                        setMapSelectedVehicle = {},
                         openAlertDetails = {}
                     )
                 }

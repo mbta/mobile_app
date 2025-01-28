@@ -30,13 +30,8 @@ import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripRepository
-import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -53,6 +48,7 @@ fun StopDetailsRoutesView(
     pinnedRoutes: Set<String>,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
+    setMapSelectedVehicle: (Vehicle?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
 
@@ -70,6 +66,7 @@ fun StopDetailsRoutesView(
             tripFilter = tripFilter,
             updateStopFilter,
             updateTripFilter,
+            setMapSelectedVehicle,
             openAlertDetails
         )
     } else {
@@ -147,15 +144,7 @@ private fun StopDetailsRoutesViewPreview() {
             scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
         }
 
-    val viewModel =
-        StopDetailsViewModel(
-            MockErrorBannerStateRepository(),
-            MockPredictionsRepository(),
-            MockScheduleRepository(),
-            MockTripPredictionsRepository(),
-            MockTripRepository(),
-            MockVehicleRepository()
-        )
+    val viewModel = StopDetailsViewModel.mocked()
     viewModel.setDepartures(
         StopDetailsDepartures(
             listOf(
@@ -215,6 +204,7 @@ private fun StopDetailsRoutesViewPreview() {
             pinnedRoutes = emptySet(),
             updateStopFilter = {},
             updateTripFilter = {},
+            setMapSelectedVehicle = {},
             openAlertDetails = {}
         )
     }
