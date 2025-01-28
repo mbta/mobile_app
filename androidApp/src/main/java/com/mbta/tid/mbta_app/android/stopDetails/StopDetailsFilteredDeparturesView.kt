@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,14 +14,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.focused
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
@@ -29,10 +35,12 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.PillDecoration
+import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripAndFormat
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -70,8 +78,12 @@ fun StopDetailsFilteredDeparturesView(
             emptyList()
         }
 
+    val selectedTripIsCancelled: Boolean =
+        tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false
+
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
     val routeColor: Color = Color.fromHex(routeHex)
+    val routeType: RouteType = patternsByStop.representativeRoute.type
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         StopDetailsFilteredHeader(
@@ -182,14 +194,37 @@ fun StopDetailsFilteredDeparturesView(
                         }
                     }
                 }
-
-                TripDetailsView(
-                    tripFilter = tripFilter,
-                    stopId = stopId,
-                    stopDetailsVM = viewModel,
-                    setMapSelectedVehicle = setMapSelectedVehicle,
-                    now = now
-                )
+                if (selectedTripIsCancelled) {
+                    Row(
+                        modifier = Modifier.padding(vertical = 16.dp).semantics { focused = true }
+                    ) {
+                        StopDetailsIconCard(
+                            routeColor,
+                            details = {
+                                Text(
+                                    "This trip has been cancelled. We’re sorry for the inconvenience."
+                                )
+                            },
+                            header = { modifier -> Text("Trip cancelled", modifier = modifier) },
+                            icon = { modifier, tint ->
+                                Icon(
+                                    painter = routeSlashIcon(routeType = routeType),
+                                    contentDescription = null,
+                                    modifier = modifier.testTag("route_slash_icon"),
+                                    tint = tint
+                                )
+                            }
+                        )
+                    }
+                } else {
+                    TripDetailsView(
+                        tripFilter = tripFilter,
+                        stopId = stopId,
+                        stopDetailsVM = viewModel,
+                        setMapSelectedVehicle = setMapSelectedVehicle,
+                        now = now
+                    )
+                }
             }
         }
     }

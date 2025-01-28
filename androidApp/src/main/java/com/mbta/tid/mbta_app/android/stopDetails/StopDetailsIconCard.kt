@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +42,7 @@ fun StopDetailsIconCard(
                 .padding(16.dp)
     ) {
         Row() {
-            icon(Modifier.weight(1f).requiredSize(35.dp).clearAndSetSemantics {}, accentColor)
+            icon(Modifier.weight(1f).requiredSize(35.dp), accentColor)
             CompositionLocalProvider(
                 LocalTextStyle provides
                     LocalTextStyle.current.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
