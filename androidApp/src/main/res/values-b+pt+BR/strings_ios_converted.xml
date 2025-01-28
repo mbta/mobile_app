@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">Acidente</string>
+    <plurals name="affected_stops">
+        <item quantity="one">&lt;b>%1$d&lt;/b> parada afetada</item>
+        <item quantity="many">&lt;b>%1$d&lt;/b> paradas afetadas</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b> paradas afetadas</item>
+    </plurals>
     <string name="alert">Alerta</string>
     <string name="alert_details">Detalhes do alerta</string>
     <string name="alert_ended">O alerta não está mais em efeito</string>
@@ -8,6 +13,7 @@
     <string name="an_earlier_mechanical_problem">Um problema mecânico anterior</string>
     <string name="an_earlier_signal_problem">Um problema de sinal anterior</string>
     <string name="app_version_number">versão %1$s</string>
+    <string name="approaching">Chegando</string>
     <string name="arriving_abbr">CHE</string>
     <string name="autos_impeding_service">Carros impedindo serviço</string>
     <string name="back_button_label">Voltar</string>
@@ -32,6 +38,11 @@
     <string name="drawbridge_being_raised">Ponte móvel em elevação</string>
     <string name="eastbound">Sentido leste</string>
     <string name="electrical_work">Obra elétrica</string>
+    <plurals name="elevator_closure_count">
+        <item quantity="one">%1$d fechamento de elevador</item>
+        <item quantity="many">%1$d fechamentos de elevador</item>
+        <item quantity="other">%1$d fechamentos de elevador</item>
+    </plurals>
     <string name="end">Fim</string>
     <string name="error_loading_data">Erro ao carregar dados</string>
     <string name="feature_flag_debug_mode">Modo de depuração</string>
@@ -40,6 +51,7 @@
     <string name="ferries">balsas</string>
     <string name="ferry">balsa</string>
     <string name="filterShowAll">Tudo</string>
+    <string name="finishing_another_trip">Terminando mais uma viagem</string>
     <string name="fire">Incêndio</string>
     <string name="fire_department_activity">Atividade do corpo de bombeiros</string>
     <string name="first_stop">%1$s, primeira parada</string>
@@ -59,7 +71,9 @@
     <string name="inbound">Entrada</string>
     <string name="is_stops_away_from">%1$s está a %2$d paradas de %3$s</string>
     <string name="lists_remaining_stops">Lista as paradas restantes</string>
+    <string name="live">Ao vivo</string>
     <string name="loading">Carregando...</string>
+    <string name="location_not_available_yet">Localização ainda não disponível</string>
     <string name="location_services_off">Serviços de localização desativados</string>
     <string name="location_settings_prompt_body">Você verá opções de transporte próximas e obterá melhores resultados se ativar os Serviços de Localização para o MBTA Go.</string>
     <string name="location_settings_prompt_keep_off">Manter serviços de localização desativados</string>
@@ -79,6 +93,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
+    <string name="next_stop">Próxima parada</string>
     <string name="no_predictions">Previsões indisponíveis</string>
     <string name="no_service">Sem serviço</string>
     <string name="no_service_today">Sem serviço hoje</string>
@@ -88,6 +103,7 @@
     <string name="no_stops_nearby_title">Nenhuma parada próxima</string>
     <string name="northbound">Sentido norte</string>
     <string name="now">Agora</string>
+    <string name="now_at">Agora em</string>
     <string name="onboarding_feedback_advance">Comece aqui</string>
     <string name="onboarding_feedback_body">O MBTA Go está no estágio inicial! Queremos seus comentários enquanto continuamos a fazer melhorias e adicionar novos recursos.</string>
     <string name="onboarding_feedback_header">Ajude-nos a melhorar</string>
@@ -108,6 +124,7 @@
     <string name="police_action">Ação policial</string>
     <string name="police_activity">Atividade policial</string>
     <string name="power_problem">Problema de energia</string>
+    <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>
@@ -118,6 +135,8 @@
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="scheduled_to_depart">Programado para partir</string>
+    <string name="scheduled_to_depart_accessibility_desc">%1$s programado para partir de %2$s</string>
     <string name="search_by_stop">Pesquisar por parada</string>
     <string name="selected_stop">%1$s, parada selecionada</string>
     <string name="selected_stop_first_stop">%1$s, parada selecionada, primeira parada</string>
@@ -143,6 +162,11 @@
     <string name="stop_closure">Fechamento de parada</string>
     <string name="stop_filter_pills_filter_hint">Aplique um filtro para que apenas as chegadas desta rota sejam exibidas</string>
     <string name="stop_filter_pills_remove_hint">Remova o filtro e exiba todas as rotas</string>
+    <plurals name="stops_away">
+        <item quantity="one">a %1$d parada</item>
+        <item quantity="many">a %1$d paradas</item>
+        <item quantity="other">a %1$d paradas</item>
+    </plurals>
     <string name="strike">Greve</string>
     <string name="suspension">Suspensão</string>
     <string name="switch_problem">Problema de troca</string>
@@ -157,12 +181,18 @@
     <string name="unruly_passenger">Passageiro indisciplinado</string>
     <string name="unstar_route_hint">desafixar a rota do topo da lista</string>
     <string name="updated_at">Atualização: %1$s</string>
+    <plurals name="updated_mins_ago">
+        <item quantity="one">Atualizado há %1$d minuto</item>
+        <item quantity="many">Atualizado há %1$d minutos</item>
+        <item quantity="other">Atualizado há %1$d minutos</item>
+    </plurals>
     <string name="vehicle_arriving_first">%1$s chegando agora</string>
     <string name="vehicle_arriving_other">e chegando agora</string>
     <string name="vehicle_boarding_first">%1$s embarcando agora</string>
     <string name="vehicle_boarding_other">e embarcando agora</string>
     <string name="vehicle_cancelled_first">%1$s chegando às %2$s cancelado</string>
     <string name="vehicle_cancelled_other">e às %1$s cancelado</string>
+    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s chegando em %2$d min</string>
     <string name="vehicle_prediction_minutes_other">e em %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s chegando às %2$s</string>
@@ -171,6 +201,7 @@
     <string name="vehicle_schedule_minutes_other">e em %1$d min programado</string>
     <string name="vehicle_schedule_time_first">%1$s chegando às %2$s programado</string>
     <string name="vehicle_schedule_time_other">e às %1$s programado</string>
+    <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
     <string name="westbound">Sentido oeste</string>
 </resources>

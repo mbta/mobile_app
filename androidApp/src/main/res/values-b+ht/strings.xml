@@ -1,16 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <plurals name="affected_stops">
-        <item quantity="few">&lt;b>%d&lt;/b> arè ki afekte yo</item>
-        <item quantity="many">&lt;b>%d&lt;/b> arè ki afekte yo</item>
-        <item quantity="one">&lt;b>%d&lt;/b> arè ki afekte</item>
-        <item quantity="other">&lt;b>%d&lt;/b> arè ki afekte yo</item>
-        <item quantity="two">&lt;b>%d&lt;/b> arè ki afekte yo</item>
-        <item quantity="zero">&lt;b>%d&lt;/b> arè ki afekte yo</item>
-    </plurals>
-    <plurals name="elevator_closure_count">
-        <item quantity="one">%d asansè fèmen</item>
-        <item quantity="few">%d asansè fèmen</item>
-        <item quantity="many">%d fèmti asansè</item>
-    </plurals>
 </resources>
