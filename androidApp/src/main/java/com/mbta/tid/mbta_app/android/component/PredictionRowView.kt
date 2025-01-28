@@ -83,6 +83,7 @@ fun PredictionRowView(
                             ) {
                                 UpcomingTripView(
                                     UpcomingTripViewState.Some(prediction.format),
+                                    modifier = Modifier.weight(1f, fill = false),
                                     isFirst = index == 0,
                                     isOnly = index == 0 && predictions.trips.count() == 1
                                 )
@@ -137,20 +138,74 @@ private fun PredictionRowViewPreview() {
         }
     val trip = objects.trip()
 
-    PredictionRowView(
-        predictions =
+    Column {
+        PredictionRowView(
+            predictions =
+                RealtimePatterns.Format.Some(
+                    listOf(
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            trip.id,
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Boarding
+                        )
+                    ),
+                    null
+                ),
+            pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+        ) {
+            Text("Destination")
+        }
+
+        PredictionRowView(
             RealtimePatterns.Format.Some(
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip.id,
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Boarding
+                        TripInstantDisplay.Overridden("Stopped 10 stops away")
                     )
                 ),
                 null
             ),
-        pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
-    ) {
-        Text("Destination")
+            pillDecoration = PillDecoration.OnRow(greenB)
+        ) {
+            Text("Destination")
+        }
+
+        PredictionRowView(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip.id,
+                        RouteType.LIGHT_RAIL,
+                        TripInstantDisplay.Overridden("Stopped 10 stops away")
+                    )
+                ),
+                null
+            ),
+            pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+        ) {
+            Text("Destination")
+        }
+
+        PredictionRowView(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        "a",
+                        RouteType.BUS,
+                        TripInstantDisplay.ScheduleMinutes(6)
+                    ),
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        "b",
+                        RouteType.BUS,
+                        TripInstantDisplay.ScheduleMinutes(15)
+                    ),
+                ),
+                null
+            )
+        ) {
+            Text("Destination")
+        }
     }
 }

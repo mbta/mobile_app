@@ -84,7 +84,8 @@ fun UpcomingTripView(
                         Text(
                             state.trip.text,
                             fontSize = 13.sp,
-                            modifier = Modifier.placeholderIfLoading()
+                            modifier = Modifier.placeholderIfLoading(),
+                            textAlign = TextAlign.End
                         )
                     }
                 is TripInstantDisplay.Hidden -> {}
@@ -248,6 +249,7 @@ fun UpcomingTripView(
                                         )
                                 }
                                 .placeholderIfLoading(),
+                        textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
@@ -290,11 +292,26 @@ fun UpcomingTripView(
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
                 is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
-                    Text(stringResource(R.string.no_predictions), modifier, fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.no_predictions),
+                        modifier,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.End
+                    )
                 is RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
-                    Text(stringResource(R.string.service_ended), modifier, fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.service_ended),
+                        modifier,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.End
+                    )
                 is RealtimePatterns.NoTripsFormat.NoSchedulesToday ->
-                    Text(stringResource(R.string.no_service_today), modifier, fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.no_service_today),
+                        modifier,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.End
+                    )
             }
         is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
     }
