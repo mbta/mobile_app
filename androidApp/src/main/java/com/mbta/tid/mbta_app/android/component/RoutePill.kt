@@ -92,7 +92,8 @@ fun RoutePill(
 
     val finalModifier =
         modifier
-            .placeholderIfLoading().withColor()
+            .placeholderIfLoading()
+            .withColor()
             .withSizePadding()
             .wrapContentHeight(Alignment.CenterVertically)
             .semantics {

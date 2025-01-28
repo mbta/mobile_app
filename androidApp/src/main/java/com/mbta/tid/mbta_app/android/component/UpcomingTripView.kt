@@ -72,7 +72,7 @@ fun UpcomingTripView(
     isOnly: Boolean = true,
     hideRealtimeIndicators: Boolean = false
 ) {
-    val modifier = modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
+    val modifier = modifier.widthIn(min = 48.dp).padding(vertical = 2.dp)
     val context = LocalContext.current
     // TODO: actually pull through vehicle type
     val vehicleType = routeType?.typeText(context, isOnly) ?: ""

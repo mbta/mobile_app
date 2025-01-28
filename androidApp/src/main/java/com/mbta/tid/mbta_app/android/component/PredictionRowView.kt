@@ -9,20 +9,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.TripInstantDisplay
 
 sealed interface PillDecoration {
     data class OnRow(val route: Route) : PillDecoration
@@ -71,7 +77,10 @@ fun PredictionRowView(
                 when (predictions) {
                     is RealtimePatterns.Format.Some ->
                         predictions.trips.mapIndexed { index, prediction ->
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 UpcomingTripView(
                                     UpcomingTripViewState.Some(prediction.format),
                                     isFirst = index == 0,
@@ -83,7 +92,9 @@ fun PredictionRowView(
                                         route,
                                         null,
                                         RoutePillType.Flex,
-                                        modifier = Modifier.scale(0.75f).padding(start = 2.dp)
+                                        modifier =
+                                            Modifier.wrapContentHeight(Alignment.CenterVertically)
+                                                .scale(0.75f)
                                     )
                                 }
                             }
@@ -107,5 +118,39 @@ fun PredictionRowView(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PredictionRowViewPreview() {
+    val objects = ObjectCollectionBuilder()
+    val green = objects.line()
+    val greenB =
+        objects.route {
+            lineId = green.id
+            color = "00843D"
+            textColor = "FFFFFF"
+            shortName = "B"
+            longName = "Green Line B"
+            type = RouteType.LIGHT_RAIL
+        }
+    val trip = objects.trip()
+
+    PredictionRowView(
+        predictions =
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip.id,
+                        RouteType.LIGHT_RAIL,
+                        TripInstantDisplay.Boarding
+                    )
+                ),
+                null
+            ),
+        pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+    ) {
+        Text("Destination")
     }
 }
