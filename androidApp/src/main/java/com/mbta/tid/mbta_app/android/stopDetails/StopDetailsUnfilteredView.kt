@@ -34,6 +34,7 @@ fun StopDetailsUnfilteredView(
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
+    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
 
     val stop: Stop? = globalResponse?.stops?.get(stopId)
 
@@ -88,6 +89,7 @@ fun StopDetailsUnfilteredView(
                 notNullDepartures,
                 servedRoutes,
                 errorBannerViewModel,
+                showElevatorAccessibility,
                 now,
                 togglePinnedRoute,
                 pinnedRoutes,
@@ -114,6 +116,7 @@ fun StopDetailsUnfilteredView(
                         placeholderDepartures,
                         filterRoutes,
                         errorBannerViewModel,
+                        showElevatorAccessibility,
                         now,
                         {},
                         emptySet(),

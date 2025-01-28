@@ -37,11 +37,7 @@ class NearbyTransitViewModel(
 
     private var fetchNearbyTask: Job? = null
 
-    init {
-        loadElevatorAccessibility()
-    }
-
-    private fun loadElevatorAccessibility() {
+    fun loadSettings() {
         CoroutineScope(Dispatchers.IO).launch {
             val data = settingsRepository.getSettings()
             _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false

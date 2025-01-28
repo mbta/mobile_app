@@ -913,7 +913,7 @@ class StopDetailsViewModelTest {
                 errorBannerRepo,
                 predictionsRepo,
                 schedulesRepo,
-                tripPredictionsRepo,
+                tripPredictionsRepo = tripPredictionsRepo,
                 vehicleRepo = vehicleRepo,
                 coroutineDispatcher = dispatcher
             )

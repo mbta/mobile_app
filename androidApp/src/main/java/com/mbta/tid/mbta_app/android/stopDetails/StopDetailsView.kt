@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,6 +33,8 @@ fun StopDetailsView(
     val analytics: Analytics = koinInject()
 
     val departures by viewModel.stopDepartures.collectAsState()
+
+    LaunchedEffect(null) { viewModel.loadSettings() }
 
     fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
         openAlertDetails(alertDetails)

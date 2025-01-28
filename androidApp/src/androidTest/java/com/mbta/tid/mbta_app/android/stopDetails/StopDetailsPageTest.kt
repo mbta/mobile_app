@@ -15,12 +15,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripRepository
-import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -44,16 +39,7 @@ class StopDetailsPageTest : KoinTest {
 
     @Test
     fun testCallsUpdateDepartures() = runTest {
-        val viewModel =
-            StopDetailsViewModel(
-                MockErrorBannerStateRepository(),
-                MockPredictionsRepository(),
-                MockScheduleRepository(),
-                MockTripPredictionsRepository(),
-                MockTripRepository(),
-                MockVehicleRepository()
-            )
-
+        val viewModel = StopDetailsViewModel.mocked()
         val filters = mutableStateOf(StopDetailsPageFilters("stop", null, null))
 
         var departuresUpdated = false

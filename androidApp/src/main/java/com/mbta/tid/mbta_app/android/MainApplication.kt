@@ -50,7 +50,7 @@ class MainApplication : Application() {
         val koinViewModelModule = module {
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
-            viewModel { StopDetailsViewModel(get(), get(), get(), get(), get(), get()) }
+            viewModel { StopDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
         }
     }
 }

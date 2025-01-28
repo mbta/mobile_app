@@ -58,6 +58,8 @@ fun NearbyTransitView(
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
     errorBannerViewModel: ErrorBannerViewModel
 ) {
+    LaunchedEffect(null) { nearbyVM.loadSettings() }
+
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
             nearbyVM.getNearby(
