@@ -147,6 +147,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
+                setMapSelectedVehicle = {},
                 openAlertDetails = {}
             )
         }
@@ -202,6 +203,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
+                setMapSelectedVehicle = {},
                 openAlertDetails = {}
             )
         }

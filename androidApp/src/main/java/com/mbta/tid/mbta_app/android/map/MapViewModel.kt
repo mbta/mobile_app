@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ConfigResponse
@@ -31,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -46,6 +48,7 @@ interface IMapViewModel {
     var stopSourceData: Flow<FeatureCollection?>
     var globalResponse: Flow<GlobalResponse?>
     var railRouteShapes: Flow<MapFriendlyRouteResponse?>
+    val selectedVehicle: StateFlow<Vehicle?>
 
     suspend fun loadConfig()
 
@@ -60,6 +63,8 @@ interface IMapViewModel {
     suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?)
 
     suspend fun setGlobalResponse(globalResponse: GlobalResponse?)
+
+    fun setSelectedVehicle(selectedVehicle: Vehicle?)
 }
 
 open class MapViewModel(
@@ -81,6 +86,8 @@ open class MapViewModel(
     override var globalResponse: Flow<GlobalResponse?> = _globalResponse
     private val _railRouteShapes = MutableStateFlow<MapFriendlyRouteResponse?>(null)
     override var railRouteShapes: Flow<MapFriendlyRouteResponse?> = _railRouteShapes
+    private val _selectedVehicle = MutableStateFlow<Vehicle?>(null)
+    override val selectedVehicle = _selectedVehicle.asStateFlow()
 
     private var alertsData: AlertsStreamDataResponse? by mutableStateOf(null)
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
@@ -144,6 +151,10 @@ open class MapViewModel(
 
     override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {
         _globalResponse.value = globalResponse
+    }
+
+    override fun setSelectedVehicle(selectedVehicle: Vehicle?) {
+        _selectedVehicle.value = selectedVehicle
     }
 
     private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? {

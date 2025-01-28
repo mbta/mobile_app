@@ -250,6 +250,7 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
+                    setMapSelectedVehicle = {},
                     openAlertDetails = {}
                 )
             }
@@ -326,6 +327,7 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
+                    setMapSelectedVehicle = {},
                     openAlertDetails = {}
                 )
             }
@@ -413,6 +415,7 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
+                    setMapSelectedVehicle = {},
                     openAlertDetails = {}
                 )
             }
@@ -495,6 +498,7 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
+                    setMapSelectedVehicle = {},
                     openAlertDetails = {}
                 )
             }

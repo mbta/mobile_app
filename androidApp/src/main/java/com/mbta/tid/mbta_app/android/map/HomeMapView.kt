@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.mapbox.geojson.Point
@@ -91,6 +92,11 @@ fun HomeMapView(
     val stopSourceData = viewModel.stopSourceData.collectAsState(initial = null).value
     val globalResponse = viewModel.globalResponse.collectAsState(initial = null).value
     val railRouteLineData = viewModel.railRouteLineData.collectAsState(initial = null).value
+    val selectedVehicle =
+        viewModel.selectedVehicle.collectAsState().value.takeIf {
+            currentNavEntry is SheetRoutes.StopDetails
+        }
+    val previousSelectedVehicleId = rememberPrevious(current = selectedVehicle?.id)
 
     val now = timer(updateInterval = 300.seconds)
     val globalMapData = viewModel.rememberGlobalMapData(now)
@@ -102,6 +108,7 @@ fun HomeMapView(
 
     val analytics: Analytics = koinInject()
     val context = LocalContext.current
+    val density = LocalDensity.current
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -134,9 +141,9 @@ fun HomeMapView(
     }
 
     suspend fun updateDisplayedRoutesBasedOnStop() {
-        val globalResponse = globalResponse ?: return
-        val railRouteShapes = railRouteShapes ?: return
-        val stopMapData = stopMapData ?: return
+        if (globalResponse == null) return
+        if (railRouteShapes == null) return
+        if (stopMapData == null) return
 
         val filteredRoutes =
             if (currentNavEntry is SheetRoutes.StopDetails && currentNavEntry.stopFilter != null) {
@@ -212,6 +219,15 @@ fun HomeMapView(
     val zoomLevel by
         cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
 
+    val allVehicles =
+        remember(vehiclesData, selectedVehicle) {
+            when {
+                selectedVehicle == null -> vehiclesData
+                else ->
+                    vehiclesData.filterNot { it.id == selectedVehicle.id } + listOf(selectedVehicle)
+            }
+        }
+
     Box(modifier, contentAlignment = Alignment.Center) {
         MapboxMap(
             Modifier.fillMaxSize(),
@@ -259,6 +275,11 @@ fun HomeMapView(
                 viewModel.refreshStopFeatures(now, selectedStop)
             }
             LaunchedEffect(stopSourceData) { refreshStopSource() }
+            LaunchedEffect(selectedVehicle) {
+                if (selectedVehicle != null && selectedVehicle.id != previousSelectedVehicleId) {
+                    viewportProvider.vehicleOverview(selectedVehicle, selectedStop, density)
+                }
+            }
 
             LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
             LaunchedEffect(currentNavEntry) { updateDisplayedRoutesBasedOnStop() }
@@ -327,19 +348,21 @@ fun HomeMapView(
                 }
             }
 
-            for (vehicle in vehiclesData) {
+            for (vehicle in allVehicles) {
                 val route = globalResponse?.routes?.get(vehicle.routeId) ?: continue
+                val isSelected = vehicle.id == selectedVehicle?.id
                 ViewAnnotation(
                     options =
                         viewAnnotationOptions {
+                            selected(isSelected)
                             geometry(Point.fromLngLat(vehicle.longitude, vehicle.latitude))
                             annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                             allowOverlap(true)
                             allowOverlapWithPuck(true)
-                            visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)
+                            visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected)
                         }
                 ) {
-                    VehiclePuck(vehicle = vehicle, route = route)
+                    VehiclePuck(vehicle = vehicle, route = route, selected = isSelected)
                 }
             }
         }

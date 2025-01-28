@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.Vehicle
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -31,6 +32,7 @@ fun StopDetailsFilteredView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
+    setMapSelectedVehicle: (Vehicle?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
@@ -72,6 +74,7 @@ fun StopDetailsFilteredView(
             pinnedRoutes = pinnedRoutes,
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
+            setMapSelectedVehicle = setMapSelectedVehicle,
             openAlertDetails = ::openAndRecordAlertDetails
         )
     } else {
@@ -99,6 +102,7 @@ fun StopDetailsFilteredView(
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = onClose,
+                    setMapSelectedVehicle = {},
                     openAlertDetails = {}
                 )
             }

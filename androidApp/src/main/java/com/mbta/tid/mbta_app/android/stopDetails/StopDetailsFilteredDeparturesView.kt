@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripAndFormat
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
@@ -56,6 +57,7 @@ fun StopDetailsFilteredDeparturesView(
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
+    setMapSelectedVehicle: (Vehicle?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
     val expectedDirection = stopFilter.directionId
@@ -185,6 +187,7 @@ fun StopDetailsFilteredDeparturesView(
                     tripFilter = tripFilter,
                     stopId = stopId,
                     stopDetailsVM = viewModel,
+                    setMapSelectedVehicle = setMapSelectedVehicle,
                     now = now
                 )
             }
