@@ -93,10 +93,10 @@ fun SearchBarOverlay(
             if (visible) {
                 Box(
                     modifier =
-                        Modifier.absoluteOffset(y = 3.5.dp)
-                            .height(64.dp)
+                        Modifier.absoluteOffset(y = 4.dp)
+                            .height(60.dp)
                             .width(364.dp)
-                            .border(2.dp, colorResource(R.color.halo), RoundedCornerShape(10.dp))
+                            .border(2.dp, colorResource(R.color.halo), RoundedCornerShape(12.dp))
                 )
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
@@ -106,13 +106,20 @@ fun SearchBarOverlay(
                         SearchBarDefaults.InputField(
                             colors =
                                 SearchBarDefaults.inputFieldColors(
-                                    focusedTextColor = colorResource(R.color.deemphasized),
-                                    unfocusedTextColor = colorResource(R.color.deemphasized),
+                                    focusedTextColor = colorResource(R.color.text),
+                                    unfocusedTextColor = colorResource(R.color.text),
                                     focusedPlaceholderColor = colorResource(R.color.deemphasized),
                                     unfocusedPlaceholderColor = colorResource(R.color.deemphasized),
                                 ),
                             query = searchInputState,
-                            placeholder = { Text(stringResource(R.string.search_by_stop)) },
+                            placeholder = {
+                                Text(
+                                    stringResource(R.string.stops),
+                                    // This will be drawn in bodyLarge if we don't re-override it
+                                    // here
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            },
                             expanded = expanded,
                             onQueryChange = { searchInputState = it },
                             onExpandedChange = onExpandedChange,

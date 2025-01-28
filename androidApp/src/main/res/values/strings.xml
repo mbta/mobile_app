@@ -164,6 +164,7 @@
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
+    <string name="stops">Stops</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
         <item quantity="other">%1$d stops away</item>

@@ -158,6 +158,7 @@
     <string name="stop_closure">網站關閉</string>
     <string name="stop_filter_pills_filter_hint">應用過濾器，以便僅顯示來自該路線的到達</string>
     <string name="stop_filter_pills_remove_hint">刪除過濾器並顯示所有路由</string>
+    <string name="stops">網站</string>
     <plurals name="stops_away">
         <item quantity="other">還有%1$d站</item>
     </plurals>
