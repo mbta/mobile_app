@@ -117,7 +117,7 @@ fun StopDetailsUnfilteredView(
                         now,
                         {},
                         emptySet(),
-                        onClose = {},
+                        onClose = onClose,
                         onTapRoutePill = {},
                         updateStopFilter = {},
                         openAlertDetails = {}

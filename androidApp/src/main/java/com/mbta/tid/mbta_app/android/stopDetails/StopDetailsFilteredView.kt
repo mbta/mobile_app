@@ -98,7 +98,7 @@ fun StopDetailsFilteredView(
                     updateTripFilter = {},
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
-                    onClose = {},
+                    onClose = onClose,
                     openAlertDetails = {}
                 )
             }

@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 enum class ActionButtonKind(
     val iconSize: Dp,
@@ -33,7 +32,7 @@ enum class ActionButtonKind(
 fun ActionButton(kind: ActionButtonKind, size: Dp = 32.dp, action: () -> Unit) {
     Button(
         onClick = action,
-        modifier = Modifier.placeholderIfLoading().size(size).width(size),
+        modifier = Modifier.size(size).width(size),
         shape = CircleShape,
         colors =
             ButtonDefaults.buttonColors(
