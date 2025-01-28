@@ -2,12 +2,14 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
@@ -21,6 +23,7 @@ fun TripDetailsView(
     tripFilter: TripDetailsFilter?,
     stopId: String,
     stopDetailsVM: StopDetailsViewModel,
+    setMapSelectedVehicle: (Vehicle?) -> Unit,
     now: Instant
 ) {
 
@@ -30,6 +33,14 @@ fun TripDetailsView(
 
     fun getParentFor(stopId: String?, stops: Map<String, Stop>): Stop? {
         return stopId.let { stops[stopId]?.resolveParent(stops) }
+    }
+
+    LaunchedEffect(vehicle) {
+        if (vehicle?.id == tripFilter?.vehicleId) {
+            setMapSelectedVehicle(vehicle)
+        } else {
+            setMapSelectedVehicle(null)
+        }
     }
 
     val stops =

@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.Vehicle
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -30,6 +31,7 @@ fun StopDetailsPage(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
+    setMapSelectedVehicle: (Vehicle?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
@@ -61,6 +63,7 @@ fun StopDetailsPage(
         onClose,
         updateStopFilter,
         updateTripFilter,
+        setMapSelectedVehicle,
         openAlertDetails,
         errorBannerViewModel
     )

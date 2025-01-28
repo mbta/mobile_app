@@ -41,6 +41,7 @@ import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -58,6 +59,7 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -330,6 +332,7 @@ class NearbyTransitPageTest : KoinTest {
             override var globalResponse: Flow<GlobalResponse?> = MutableStateFlow(value = null)
             override var railRouteShapes: Flow<MapFriendlyRouteResponse?> =
                 MutableStateFlow(value = null)
+            override val selectedVehicle: StateFlow<Vehicle?> = MutableStateFlow(value = null)
 
             var loadConfigCalledCount = 0
 
@@ -353,6 +356,8 @@ class NearbyTransitPageTest : KoinTest {
             override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
 
             override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {}
+
+            override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
         }
 
         val mockMapVM = MockMapVM()
