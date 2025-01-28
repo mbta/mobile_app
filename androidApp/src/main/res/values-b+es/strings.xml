@@ -1,11 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <plurals name="affected_stops">
-        <item quantity="one">&lt;b>%d&lt;/b> parada afectada</item>
-        <item quantity="many">&lt;b>%d&lt;/b> paradas afectadas</item>
-    </plurals>
-    <plurals name="elevator_closure_count">
-        <item quantity="one">%d cierre de ascensor</item>
-        <item quantity="many">%d cierres de ascensor</item>
-    </plurals>
 </resources>

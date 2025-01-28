@@ -38,8 +38,8 @@
     <string name="eastbound">Eastbound</string>
     <string name="electrical_work">Electrical Work</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%d elevator closure</item>
-        <item quantity="other">%d elevator closures</item>
+        <item quantity="one">%1$d elevator closure</item>
+        <item quantity="other">%1$d elevator closures</item>
     </plurals>
     <string name="end">End</string>
     <string name="error_loading_data">Error loading data</string>
@@ -154,7 +154,7 @@
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
-    <plurals name="stops_away" tools:ignore="MissingTranslation">
+    <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
         <item quantity="other">%1$d stops away</item>
     </plurals>
@@ -172,7 +172,7 @@
     <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
     <string name="updated_at">Updated: %1$s</string>
-    <plurals name="updated_mins_ago" tools:ignore="MissingTranslation">
+    <plurals name="updated_mins_ago">
         <item quantity="one">Updated %1$d minute ago</item>
         <item quantity="other">Updated %1$d minutes ago</item>
     </plurals>
