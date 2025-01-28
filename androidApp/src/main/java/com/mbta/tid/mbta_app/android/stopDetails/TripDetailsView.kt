@@ -65,7 +65,7 @@ fun TripDetailsView(
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
 
-        TripDetailsHeader(tripId, headerSpec)
+        TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now)
         TripStops(
             stopId,
             stops,
