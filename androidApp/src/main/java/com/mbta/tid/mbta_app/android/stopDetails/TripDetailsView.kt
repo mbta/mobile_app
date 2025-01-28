@@ -37,10 +37,10 @@ fun TripDetailsView(
             withContext(Dispatchers.Default) {
                 if (
                     tripFilter != null &&
-                    vehicle != null &&
-                    tripData.tripFilter == tripFilter &&
-                    tripData.tripPredictionsLoaded &&
-                    globalResponse != null
+                        vehicle != null &&
+                        tripData.tripFilter == tripFilter &&
+                        tripData.tripPredictionsLoaded &&
+                        globalResponse != null
                 ) {
                     TripDetailsStopList.fromPieces(
                         tripFilter.tripId,

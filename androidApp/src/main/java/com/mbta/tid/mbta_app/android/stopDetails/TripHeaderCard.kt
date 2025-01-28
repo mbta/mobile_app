@@ -360,6 +360,7 @@ private fun TripIndicator(spec: TripHeaderSpec, routeAccents: TripRouteAccents, 
         if (upcomingTripViewState != null) {
             UpcomingTripView(
                 upcomingTripViewState,
+                modifier = Modifier,
                 routeAccents.type,
                 hideRealtimeIndicators = true
             ) // TODO color text opacity 0.6
