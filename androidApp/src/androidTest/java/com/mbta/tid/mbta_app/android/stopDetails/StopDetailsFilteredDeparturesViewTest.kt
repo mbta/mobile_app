@@ -304,9 +304,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                 tripFilter = TripDetailsFilter(trip.id, null, null, false),
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
-<<<<<<< HEAD
-                tileData = departures.stopDetailsFormattedTrips(route.id, trip.directionId, now),
-=======
                 tileData =
                 departures.stopDetailsFormattedTrips(
                     route.id,
@@ -314,7 +311,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     now
                 ),
                 noPredictionsStatus = null,
->>>>>>> 61f4c6b9 (WIP)
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,

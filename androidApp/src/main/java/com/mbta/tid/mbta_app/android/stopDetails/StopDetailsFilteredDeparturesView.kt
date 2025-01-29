@@ -71,6 +71,7 @@ fun StopDetailsFilteredDeparturesView(
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+    val hideMaps by viewModel.hideMaps.collectAsState()
 
     val alerts: List<Alert> =
         if (global != null) {
@@ -197,12 +198,11 @@ fun StopDetailsFilteredDeparturesView(
                 }
 
                 if (noPredictionsStatus != null) {
-                    // TODO: pull in settings changes from es-android-combined-accessibility-alerts
                     StopDetailsNoTripCard(
                         status = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
                         accentColor = routeColor,
                         routeType = routeType,
-                        hideMaps = false
+                        hideMaps = hideMaps
                     )
                 } else if (selectedTripIsCancelled) {
                     Row(
