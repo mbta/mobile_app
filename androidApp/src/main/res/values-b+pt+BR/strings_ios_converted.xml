@@ -124,6 +124,7 @@
     <string name="police_action">Ação policial</string>
     <string name="police_activity">Atividade policial</string>
     <string name="power_problem">Problema de energia</string>
+    <string name="predictions_unavailable_details">O serviço está em execução, mas os horários de chegada previstos não estão disponíveis. O mapa mostra onde %1$s nesta rota estão atualmente.</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>

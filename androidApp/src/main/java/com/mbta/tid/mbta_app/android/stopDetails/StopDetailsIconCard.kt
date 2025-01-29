@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,14 +45,18 @@ fun StopDetailsIconCard(
                 .background(colorResource(R.color.fill3))
                 .padding(16.dp)
     ) {
-        Row() {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+
             CompositionLocalProvider(LocalContentColor provides accentColor) {
-                icon(Modifier.weight(1f).requiredSize(35.dp))
+                icon(Modifier.requiredSize(35.dp).border(1.dp, Color.Magenta))
             }
             ProvideTextStyle(TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)) {
-                header(Modifier.semantics { heading() })
+                header(Modifier.semantics { heading() }.border(1.dp, Color.Cyan))
             }
-            Spacer(modifier = Modifier.weight(1.0F))
+            Spacer(Modifier.weight(1f))
         }
 
         if (details != null) {

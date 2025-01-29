@@ -124,6 +124,8 @@
     <string name="police_action">Police Action</string>
     <string name="police_activity">Police Activity</string>
     <string name="power_problem">Power Problem</string>
+    <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. The map shows where %1$s on this route currently are.</string>
+    <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="recently_viewed">Recently Viewed</string>

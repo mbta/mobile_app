@@ -55,6 +55,7 @@ fun StopDetailsFilteredDeparturesView(
     tripFilter: TripDetailsFilter?,
     patternsByStop: PatternsByStop,
     tileData: List<TripAndFormat>,
+    noPredictionsStatus: RealtimePatterns.NoTripsFormat?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
     now: Instant,
@@ -194,7 +195,16 @@ fun StopDetailsFilteredDeparturesView(
                         }
                     }
                 }
-                if (selectedTripIsCancelled) {
+
+                if (noPredictionsStatus != null) {
+                    // TODO: pull in settings changes from es-android-combined-accessibility-alerts
+                    StopDetailsNoTripCard(
+                        status = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                        accentColor = routeColor,
+                        routeType = routeType,
+                        hideMaps = false
+                    )
+                } else if (selectedTripIsCancelled) {
                     Row(
                         modifier = Modifier.padding(vertical = 16.dp).semantics { focused = true }
                     ) {
