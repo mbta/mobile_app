@@ -171,6 +171,8 @@
     <string name="traffic">Giao thông</string>
     <string name="train">tàu</string>
     <string name="trains">tàu</string>
+    <string name="trip_cancelled">Chuyến đi bị hủy</string>
+    <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>
     <string name="unable_to_connect">Không thể kết nối</string>
     <string name="unruly_passenger">Hành khách ngỗ ngược</string>
     <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>

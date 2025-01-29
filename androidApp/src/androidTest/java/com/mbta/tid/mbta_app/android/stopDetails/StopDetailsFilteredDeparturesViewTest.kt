@@ -2,16 +2,22 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.Prediction
+import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -19,6 +25,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
@@ -213,5 +220,110 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
 
         assertEquals(tripFilter?.tripId, trip.id)
+    }
+
+    @Test
+    fun testShowsCancelledTripCard() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+        val route =
+            objects.route {
+                id = "route_1"
+                type = RouteType.BUS
+                color = "DA291C"
+                routePatternIds = mutableListOf("pattern_1")
+            }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "pattern_1"
+                directionId = 0
+                representativeTripId = "trip_1"
+            }
+
+        val stop = objects.stop { id = "stop_1" }
+        val trip =
+            objects.trip {
+                id = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                routePatternId = "pattern_1"
+            }
+
+        val schedule =
+            objects.schedule {
+                tripId = "trip_1"
+                stopId = "stop_1"
+                departureTime = now.plus(10.minutes)
+            }
+        val prediction =
+            objects.prediction {
+                id = "prediction_1"
+                stopId = "stop_1"
+                tripId = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                departureTime = now.plus(10.minutes)
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+
+        val globalResponse =
+            GlobalResponse(
+                objects,
+                mutableMapOf(
+                    stop.id to listOf(routePattern.id),
+                )
+            )
+
+        val viewModel = StopDetailsViewModel.mocked()
+
+        val departures =
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        route,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                route,
+                                trip.headsign,
+                                null,
+                                listOf(routePattern),
+                                listOf(UpcomingTrip(trip, schedule, prediction))
+                            )
+                        )
+                    )
+                )
+            )
+        viewModel.setDepartures(departures)
+
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
+                tripFilter = TripDetailsFilter(trip.id, null, null, false),
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData = departures.stopDetailsFormattedTrips(route.id, trip.directionId, now),
+                elevatorAlerts = emptyList(),
+                global = globalResponse,
+                now = now,
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                setMapSelectedVehicle = {},
+                openAlertDetails = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Trip cancelled").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("This trip has been cancelled. We’re sorry for the inconvenience.")
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("route_slash_icon", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 }

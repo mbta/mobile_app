@@ -9,7 +9,7 @@ iOS
   - [ ] Add temporary machine translations, marked "Needs Review"
 
 android
-- [ ] All user-facing strings added to strings resource
+- [ ] All user-facing strings added to strings resource in alphabetical order
 - [ ] Expensive calculations are run in `withContext(Dispatchers.Default)` where possible
 
 ### Testing

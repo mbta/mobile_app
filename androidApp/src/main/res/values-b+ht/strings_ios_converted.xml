@@ -185,6 +185,8 @@
     <string name="traffic">Sikilasyon</string>
     <string name="train">tren</string>
     <string name="trains">tren yo</string>
+    <string name="trip_cancelled">Vwayaj anile</string>
+    <string name="trip_cancelled_details">Vwayaj sa a te anile. Nou regrèt deranjman an.</string>
     <string name="unable_to_connect">Pa ka konekte</string>
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unstar_route_hint">retire wout ki soti anlè lis la</string>

@@ -171,6 +171,8 @@
     <string name="traffic">交通</string>
     <string name="train">列车</string>
     <string name="trains">列车</string>
+    <string name="trip_cancelled">行程取消</string>
+    <string name="trip_cancelled_details">此行程已取消。我们对此造成的不便深表歉意。</string>
     <string name="unable_to_connect">无法连接</string>
     <string name="unruly_passenger">乘客干扰</string>
     <string name="unstar_route_hint">从列表顶部取消固定路线</string>
