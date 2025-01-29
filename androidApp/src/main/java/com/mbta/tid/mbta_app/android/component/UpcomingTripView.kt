@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,8 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
+import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
@@ -313,7 +316,17 @@ fun UpcomingTripView(
                         textAlign = TextAlign.End
                     )
             }
-        is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
+        is UpcomingTripViewState.Loading ->
+            CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                UpcomingTripView(
+                    UpcomingTripViewState.Some(TripInstantDisplay.Minutes(10)),
+                    modifier.loadingShimmer().placeholderIfLoading(),
+                    routeType,
+                    isFirst,
+                    isOnly,
+                    hideRealtimeIndicators
+                )
+            }
     }
 }
 
@@ -369,19 +382,22 @@ fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) 
 @Preview
 @Composable
 fun UpcomingTripViewPreview() {
-    Column(horizontalAlignment = Alignment.End) {
-        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
-        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
-        UpcomingTripView(
-            UpcomingTripViewState.Some(
-                TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes, true)
+    MyApplicationTheme {
+        Column(horizontalAlignment = Alignment.End) {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes, true)
+                )
             )
-        )
-        UpcomingTripView(
-            UpcomingTripViewState.Some(
-                TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes)
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes)
+                )
             )
-        )
+            UpcomingTripView(UpcomingTripViewState.Loading)
+        }
     }
 }
 
