@@ -74,7 +74,7 @@ fun StopDetailsUnfilteredRoutesView(
             }
         }
 
-        ErrorBanner(errorBannerViewModel)
+        ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
 
         Box(Modifier.background(MaterialTheme.colorScheme.surface).fillMaxSize()) {
             HorizontalDivider(
