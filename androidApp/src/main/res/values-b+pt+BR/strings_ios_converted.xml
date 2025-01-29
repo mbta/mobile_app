@@ -178,6 +178,7 @@
     <string name="train">trem</string>
     <string name="trains">trens</string>
     <string name="trip_cancelled">Viagem cancelada</string>
+    <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
     <string name="unable_to_connect">Impossível conectar</string>
     <string name="unruly_passenger">Passageiro indisciplinado</string>
     <string name="unstar_route_hint">desafixar a rota do topo da lista</string>

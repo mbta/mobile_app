@@ -275,36 +275,49 @@ class StopDetailsFilteredDeparturesViewTest {
             )
 
         val viewModel = StopDetailsViewModel.mocked()
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route,
-                        stop,
-                        listOf(
-                            RealtimePatterns.ByHeadsign(
-                                route,
-                                trip.headsign,
-                                null,
-                                listOf(routePattern),
-                                listOf(UpcomingTrip(trip, schedule, prediction))
-                            )
+
+        val departures = StopDetailsDepartures(
+            listOf(
+                PatternsByStop(
+                    route,
+                    stop,
+                    listOf(
+                        RealtimePatterns.ByHeadsign(
+                            route,
+                            trip.headsign,
+                            null,
+                            listOf(routePattern),
+                            listOf(UpcomingTrip(trip, schedule, prediction))
                         )
                     )
                 )
             )
         )
+        viewModel.setDepartures(departures)
 
         composeTestRule.setContent {
-            StopDetailsFilteredRouteView(
+            StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                viewModel = viewModel,
+                stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
+                tripFilter = TripDetailsFilter(trip.id, null, null, false),
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData =
+                departures.stopDetailsFormattedTrips(
+                    route.id,
+                    trip.directionId,
+                    now
+                ),
+                elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
-                stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
-                tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                updateTripFilter = {},
+                updateTripFilter = { },
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                setMapSelectedVehicle = {},
                 openAlertDetails = {}
             )
         }
