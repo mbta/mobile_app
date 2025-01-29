@@ -121,6 +121,7 @@
     <string name="police_activity">Hoạt động của cảnh sát</string>
     <string name="power_problem">Vấn đề về điện</string>
     <string name="predictions_unavailable_details">Dịch vụ đang chạy, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
+    <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang chạy nhưng không có thời gian đến dự kiến.</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
     <string name="recently_viewed">Đã xem gần đây</string>
     <string name="refresh">Làm mới</string>
