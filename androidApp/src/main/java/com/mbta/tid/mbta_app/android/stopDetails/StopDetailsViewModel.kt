@@ -26,15 +26,18 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -55,6 +58,7 @@ class StopDetailsViewModel(
     private val errorBannerRepository: IErrorBannerStateRepository,
     private val predictionsRepository: IPredictionsRepository,
     schedulesRepository: ISchedulesRepository,
+    private val settingsRepository: ISettingsRepository,
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
@@ -66,6 +70,7 @@ class StopDetailsViewModel(
             errorBannerRepo: IErrorBannerStateRepository = MockErrorBannerStateRepository(),
             predictionsRepo: IPredictionsRepository = MockPredictionsRepository(),
             schedulesRepo: ISchedulesRepository = MockScheduleRepository(),
+            settingsRepository: ISettingsRepository = MockSettingsRepository(),
             tripPredictionsRepo: ITripPredictionsRepository = MockTripPredictionsRepository(),
             tripRepo: ITripRepository = MockTripRepository(),
             vehicleRepo: IVehicleRepository = MockVehicleRepository(),
@@ -75,6 +80,7 @@ class StopDetailsViewModel(
                 errorBannerRepo,
                 predictionsRepo,
                 schedulesRepo,
+                settingsRepository,
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
@@ -94,6 +100,9 @@ class StopDetailsViewModel(
     private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
 
+    private val _showElevatorAccessibility = MutableStateFlow(false)
+    val showElevatorAccessibility: StateFlow<Boolean> = _showElevatorAccessibility
+
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
             predictionsRepository,
@@ -101,6 +110,13 @@ class StopDetailsViewModel(
             ::onJoinMessage,
             ::onPushMessage
         )
+
+    fun loadSettings() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val data = settingsRepository.getSettings()
+            _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false
+        }
+    }
 
     fun loadStopDetails(stopId: String) {
         _stopData.value = StopData(stopId, null, null, false)

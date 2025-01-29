@@ -40,11 +40,11 @@ import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -344,15 +344,20 @@ class StopDetailsViewTest {
     }
 
     @Test
-    @Ignore("TODO: Remove ignore once feature toggle is properly pulled from stop details VM")
-    fun testStopDetailsViewDisplaysElevatorAlerts() {
+    fun testStopDetailsViewDisplaysElevatorAlertsOnUnfiltered() {
         val alert =
             builder.alert {
                 effect = Alert.Effect.ElevatorClosure
                 header = "Elevator alert header"
             }
 
-        val viewModel = StopDetailsViewModel.mocked()
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                settingsRepository =
+                    MockSettingsRepository(
+                        settings = mapOf(Pair(Settings.ElevatorAccessibility, true))
+                    )
+            )
 
         viewModel.setDepartures(
             StopDetailsDepartures(
@@ -394,6 +399,89 @@ class StopDetailsViewTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+                StopDetailsView(
+                    stopId = stop.id,
+                    viewModel = viewModel,
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    stopFilter = filterState.value,
+                    tripFilter = null,
+                    updateStopFilter = filterState::value::set,
+                    updateTripDetailsFilter = {},
+                    errorBannerViewModel =
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        ),
+                    setMapSelectedVehicle = {},
+                    openAlertDetails = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(alert.header!!).assertExists()
+    }
+
+    @Test
+    fun testStopDetailsViewDisplaysElevatorAlertsOnFiltered() {
+        val alert =
+            builder.alert {
+                effect = Alert.Effect.ElevatorClosure
+                header = "Elevator alert header"
+            }
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                settingsRepository =
+                    MockSettingsRepository(
+                        settings = mapOf(Pair(Settings.ElevatorAccessibility, true))
+                    )
+            )
+
+        viewModel.setDepartures(
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        route = route,
+                        stop = stop,
+                        patterns =
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    staticData =
+                                        NearbyStaticData.StaticPatterns.ByHeadsign(
+                                            route = route,
+                                            headsign = trip.headsign,
+                                            line = line,
+                                            patterns = listOf(routePatternOne, routePatternTwo),
+                                            stopIds = setOf(stop.id),
+                                        ),
+                                    upcomingTripsMap =
+                                        mapOf(
+                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                                                trip.routeId,
+                                                routePatternOne.id,
+                                                stop.id
+                                            ) to listOf(UpcomingTrip(trip, prediction))
+                                        ),
+                                    parentStopId = stop.id,
+                                    alertsHere = emptyList(),
+                                    alertsDownstream = emptyList(),
+                                    hasSchedulesTodayByPattern = null,
+                                    allDataLoaded = false
+                                )
+                            ),
+                        listOf(alert)
+                    )
+                )
+            )
+        )
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                val filterState = remember {
+                    mutableStateOf<StopDetailsFilter?>(StopDetailsFilter(route.id, 0))
+                }
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,

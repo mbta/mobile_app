@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -52,6 +53,7 @@ fun StopDetailsUnfilteredRoutesView(
     departures: StopDetailsDepartures,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
+    showElevatorAccessibility: Boolean,
     now: Instant,
     pinRoute: (String) -> Unit,
     pinnedRoutes: Set<String>,
@@ -60,9 +62,6 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
-    // TODO: Set this from the StopDetailsViewModel based on the feature toggle once the VM exists
-    val showElevatorAccessibility = false
-
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         SheetHeader(onClose = onClose, title = stop.name)
         if (servedRoutes.size > 1) {
@@ -88,8 +87,8 @@ fun StopDetailsUnfilteredRoutesView(
                 if (showElevatorAccessibility && departures.elevatorAlerts.isNotEmpty()) {
                     item {
                         Column(
-                            Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             departures.elevatorAlerts.map {
                                 Column(
@@ -241,6 +240,7 @@ private fun StopDetailsRoutesViewPreview() {
             departures,
             listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
             ErrorBannerViewModel(false, MockErrorBannerStateRepository(), MockSettingsRepository()),
+            showElevatorAccessibility = true,
             now = Clock.System.now(),
             pinRoute = {},
             pinnedRoutes = emptySet(),

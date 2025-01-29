@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -60,8 +61,7 @@ fun StopDetailsFilteredDeparturesView(
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
 ) {
     val expectedDirection = stopFilter.directionId
-    // TODO: Set this from the StopDetailsViewModel based on the feature toggle once the VM exists
-    val showElevatorAccessibility = false
+    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
 
     val alerts: List<Alert> =
         if (global != null) {
@@ -89,42 +89,33 @@ fun StopDetailsFilteredDeparturesView(
             HorizontalDivider(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
+            Column(
+                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
 
                 if (showElevatorAccessibility && elevatorAlerts.isNotEmpty()) {
-                    Column(
-                        Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        elevatorAlerts.map {
-                            Column(
-                                Modifier.background(
-                                        colorResource(R.color.fill3),
-                                        RoundedCornerShape(8.dp)
+                    elevatorAlerts.map {
+                        Column(
+                            Modifier.background(
+                                    colorResource(R.color.fill3),
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .clip(RoundedCornerShape(8.dp))
+                                .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
+                                .clickable(
+                                    onClickLabel = stringResource(R.string.displays_more_info)
+                                ) {
+                                    openAlertDetails(
+                                        ModalRoutes.AlertDetails(it.id, null, null, stopId)
                                     )
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .border(
-                                        0.dp,
-                                        Color.Unspecified,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .clickable(
-                                        onClickLabel = stringResource(R.string.displays_more_info)
-                                    ) {
-                                        openAlertDetails(
-                                            ModalRoutes.AlertDetails(it.id, null, null, stopId)
-                                        )
-                                    }
-                                    .padding(end = 8.dp)
-                            ) {
-                                StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
-                            }
+                                }
+                        ) {
+                            StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.padding(8.dp))
 
                 Column(
                     Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))

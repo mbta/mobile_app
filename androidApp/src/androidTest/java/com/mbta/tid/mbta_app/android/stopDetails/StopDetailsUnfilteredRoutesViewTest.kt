@@ -125,6 +125,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 departures = departures,
                 servedRoutes = emptyList(),
                 errorBannerViewModel = errorBannerViewModel,
+                showElevatorAccessibility = false,
                 now = now,
                 pinRoute = {},
                 pinnedRoutes = emptySet(),

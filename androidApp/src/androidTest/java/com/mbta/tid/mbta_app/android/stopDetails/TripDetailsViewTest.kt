@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
@@ -23,6 +24,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -54,6 +56,7 @@ class TripDetailsViewTest {
         single<IGlobalRepository> { MockGlobalRepository(globalResponse) }
         single<IPredictionsRepository> { MockPredictionsRepository() }
         single<ISchedulesRepository> { MockScheduleRepository() }
+        single<ISettingsRepository> { MockSettingsRepository() }
         single<ITripPredictionsRepository> { MockTripPredictionsRepository() }
         single<ITripRepository> { MockTripRepository(tripResponse = TripResponse(trip)) }
         single<IVehicleRepository> {
