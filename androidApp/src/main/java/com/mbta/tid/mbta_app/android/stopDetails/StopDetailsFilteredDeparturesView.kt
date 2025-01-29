@@ -200,12 +200,10 @@ fun StopDetailsFilteredDeparturesView(
                     ) {
                         StopDetailsIconCard(
                             routeColor,
-                            details = {
-                                Text(
-                                    "This trip has been cancelled. We’re sorry for the inconvenience."
-                                )
+                            details = { Text(stringResource(R.string.trip_cancelled_details)) },
+                            header = { modifier ->
+                                Text(stringResource(R.string.trip_cancelled), modifier = modifier)
                             },
-                            header = { modifier -> Text("Trip cancelled", modifier = modifier) },
                             icon = { modifier, tint ->
                                 Icon(
                                     painter = routeSlashIcon(routeType = routeType),

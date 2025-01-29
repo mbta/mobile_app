@@ -205,4 +205,6 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
+    <string name="trip_cancelled">Trip cancelled</string>
+    <string name="trip_cancelled_details">This trip has been cancelled. We\'re sorry for the inconvenience.</string>
 </resources>
