@@ -199,7 +199,7 @@ fun StopDetailsFilteredDeparturesView(
 
                 if (noPredictionsStatus != null) {
                     StopDetailsNoTripCard(
-                        status = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                        status = noPredictionsStatus,
                         accentColor = routeColor,
                         routeType = routeType,
                         hideMaps = hideMaps
