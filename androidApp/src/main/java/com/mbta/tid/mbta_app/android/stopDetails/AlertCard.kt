@@ -1,0 +1,143 @@
+package com.mbta.tid.mbta_app.android.stopDetails
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.AlertIcon
+import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
+import com.mbta.tid.mbta_app.android.util.effectDescription
+import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+
+enum class AlertCardSpec {
+    Major,
+    Downstream,
+    Secondary,
+    Elevator
+}
+
+@Composable
+fun AlertCard(
+    alert: Alert,
+    spec: AlertCardSpec,
+    color: Color,
+    textColor: Color,
+    onViewDetails: (() -> Unit)?,
+    modifier: Modifier = Modifier
+) {
+    val effectName: String =
+        FormattedAlert.format(alert)?.effect?.let { stringResource(it) } ?: alert.effect.name
+    val headerText: String =
+        when (spec) {
+            AlertCardSpec.Downstream -> alert.effectDescription()
+            AlertCardSpec.Elevator -> alert.header ?: effectName
+            else -> effectName
+        }
+    val iconSize =
+        when (spec) {
+            AlertCardSpec.Major -> 48.dp
+            else -> 20.dp
+        }
+    Column(
+        modifier =
+            modifier
+                .clickable {
+                    if (spec != AlertCardSpec.Major && onViewDetails != null) onViewDetails()
+                }
+                .background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                .border(1.dp, colorResource(R.color.halo), RoundedCornerShape(8.dp))
+                .padding(all = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AlertIcon(
+                alertState = alert.alertState,
+                color = color,
+                modifier = Modifier.size(iconSize)
+            )
+            Text(
+                headerText,
+                Modifier.weight(1f),
+                fontSize = 24.sp,
+                fontWeight =
+                    if (spec == AlertCardSpec.Major) FontWeight.Bold else FontWeight.SemiBold
+            )
+            if (spec != AlertCardSpec.Major) {
+                InfoCircle()
+            }
+        }
+        if (spec == AlertCardSpec.Major) {
+            HorizontalDivider(color = color.copy(alpha = 0.25f), thickness = 2.dp)
+            Text(alert.header ?: "", fontSize = 16.sp)
+            onViewDetails?.let {
+                TextButton(
+                    it,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonColors(color, color, color, color),
+                    modifier = Modifier.heightIn(min = 44.dp).fillMaxWidth()
+                ) {
+                    Text(
+                        stringResource(R.string.view_details),
+                        color = textColor,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@Preview
+fun AlertCardPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AlertCard(
+            ObjectCollectionBuilder.Single.alert({
+                header = "Orange Line suspended from point A to point B"
+                effect = Alert.Effect.Suspension
+            }),
+            AlertCardSpec.Major,
+            textColor = Color.fromHex("FFFFFF"),
+            color = Color.fromHex("ED8B00"),
+            onViewDetails = {}
+        )
+        AlertCard(
+            ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
+            AlertCardSpec.Secondary,
+            textColor = Color.fromHex("FFFFFF"),
+            color = Color.fromHex("80276C"),
+            onViewDetails = {}
+        )
+    }
+}

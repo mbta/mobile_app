@@ -36,6 +36,7 @@
     <string name="dock_closure">Đóng bến tàu</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="eastbound">Về hướng đông</string>
+    <string name="effect_ahead">%1$s phía trước</string>
     <string name="electrical_work">Thi công điện</string>
     <plurals name="elevator_closure_count">
         <item quantity="other">%1$d thang máy đóng cửa</item>
@@ -147,14 +148,17 @@
     <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
     <string name="service_change">Thay đổi dịch vụ</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
+    <string name="service_suspended">Dịch vụ bị đình chỉ</string>
     <string name="setting_elevator_accessibility">Hiển thị khả năng tiếp cận thang máy</string>
     <string name="setting_toggle_hide_maps">Ẩn bản đồ</string>
     <string name="settings_link">Cài đặt</string>
     <string name="severe_weather">Thời tiết khắc nghiệt</string>
     <string name="shuttle">Xe đưa đón</string>
+    <string name="shuttle_buses">Xe đưa đón</string>
     <string name="signal_problem">Vấn đề đèn tín hiệu</string>
     <string name="slippery_rail">Đường ray trơn trượt</string>
     <string name="snow">Tuyết</string>
+    <string name="snow_route">Tuyến đường tuyết</string>
     <string name="southbound">Về hướng nam</string>
     <string name="special_event">Sự kiện đặc biệt</string>
     <string name="speed_restriction">Giới hạn tốc độ</string>
@@ -205,6 +209,7 @@
     <string name="vehicle_schedule_minutes_other">và sau %1$d phút nữa theo lịch trình</string>
     <string name="vehicle_schedule_time_first">%1$s sẽ đến lúc %2$s theo lịch trình</string>
     <string name="vehicle_schedule_time_other">và lúc %1$s theo lịch trình</string>
+    <string name="view_details">Xem chi tiết</string>
     <string name="waiting_to_depart">Đang chờ khởi hành</string>
     <string name="weather">Thời tiết</string>
     <string name="westbound">Về hướng tây</string>
