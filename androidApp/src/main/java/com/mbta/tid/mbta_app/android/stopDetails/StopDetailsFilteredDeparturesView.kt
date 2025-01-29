@@ -204,12 +204,11 @@ fun StopDetailsFilteredDeparturesView(
                             header = { modifier ->
                                 Text(stringResource(R.string.trip_cancelled), modifier = modifier)
                             },
-                            icon = { modifier, tint ->
+                            icon = { modifier ->
                                 Icon(
                                     painter = routeSlashIcon(routeType = routeType),
                                     contentDescription = null,
                                     modifier = modifier.testTag("route_slash_icon"),
-                                    tint = tint
                                 )
                             }
                         )

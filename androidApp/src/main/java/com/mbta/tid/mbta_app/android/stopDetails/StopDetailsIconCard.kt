@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +33,7 @@ fun StopDetailsIconCard(
     accentColor: Color,
     details: (@Composable() () -> Unit)?,
     header: @Composable() (modifier: Modifier) -> Unit,
-    icon: @Composable() (modifier: Modifier, tint: Color) -> Unit
+    icon: @Composable() (modifier: Modifier) -> Unit
 ) {
 
     Column(
@@ -42,11 +45,10 @@ fun StopDetailsIconCard(
                 .padding(16.dp)
     ) {
         Row() {
-            icon(Modifier.weight(1f).requiredSize(35.dp), accentColor)
-            CompositionLocalProvider(
-                LocalTextStyle provides
-                    LocalTextStyle.current.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            ) {
+            CompositionLocalProvider(LocalContentColor provides accentColor) {
+                icon(Modifier.weight(1f).requiredSize(35.dp))
+            }
+            ProvideTextStyle(TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)) {
                 header(Modifier.semantics { heading() })
             }
             Spacer(modifier = Modifier.weight(1.0F))

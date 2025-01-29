@@ -178,6 +178,8 @@
     <string name="traffic">Traffic</string>
     <string name="train">train</string>
     <string name="trains">trains</string>
+    <string name="trip_cancelled">Trip cancelled</string>
+    <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
     <string name="unable_to_connect">Unable to connect</string>
     <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
@@ -205,6 +207,4 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
-    <string name="trip_cancelled">Trip cancelled</string>
-    <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
 </resources>
