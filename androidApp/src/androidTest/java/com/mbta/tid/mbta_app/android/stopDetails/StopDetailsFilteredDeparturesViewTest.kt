@@ -329,4 +329,45 @@ class StopDetailsFilteredDeparturesViewTest {
             .onNodeWithTag("route_slash_icon", useUnmergedTree = true)
             .assertIsDisplayed()
     }
+
+    @Test
+    fun testShowsNoTripCard() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route { id = "Green-B" }
+        val line = objects.line { id = "Green" }
+
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = StopDetailsFilter(route.id, 0),
+                tripFilter = null,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileData = listOf(),
+                noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                elevatorAlerts = listOf(),
+                patternsByStop =
+                    PatternsByStop(
+                        routes = listOf(route),
+                        line = line,
+                        stop = stop,
+                        patterns = listOf(),
+                        directions = listOf(),
+                        elevatorAlerts = listOf()
+                    ),
+                global = globalResponse,
+                now = now,
+                viewModel = StopDetailsViewModel.mocked(),
+                errorBannerViewModel = errorBannerViewModel,
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                setMapSelectedVehicle = {},
+                openAlertDetails = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
+    }
 }

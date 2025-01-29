@@ -50,10 +50,10 @@ fun StopDetailsIconCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CompositionLocalProvider(LocalContentColor provides accentColor) {
-                icon(Modifier.requiredSize(35.dp).border(1.dp, Color.Magenta))
+                icon(Modifier.requiredSize(35.dp))
             }
             ProvideTextStyle(TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)) {
-                header(Modifier.semantics { heading() }.border(1.dp, Color.Cyan))
+                header(Modifier.semantics { heading() })
             }
             Spacer(Modifier.weight(1f))
         }
