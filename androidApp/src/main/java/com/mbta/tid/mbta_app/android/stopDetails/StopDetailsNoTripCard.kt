@@ -27,8 +27,8 @@ fun StopDetailsNoTripCard(
         accentColor = accentColor,
         details = DetailText(status, routeType, hideMaps),
         header = { modifier -> HeaderText(status, modifier) }
-    ) { modifier, tint ->
-        HeaderImage(status, routeType, tint, modifier)
+    ) { modifier ->
+        HeaderImage(status, routeType, modifier)
     }
 }
 
@@ -78,7 +78,6 @@ private fun DetailText(
 private fun HeaderImage(
     status: RealtimePatterns.NoTripsFormat,
     routeType: RouteType,
-    tint: Color,
     modifier: Modifier = Modifier
 ) {
     when (status) {
@@ -86,7 +85,6 @@ private fun HeaderImage(
             Icon(
                 painterResource(R.drawable.live_data_slash),
                 null,
-                tint = tint,
                 modifier = modifier.testTag("live_data_slash")
             )
         is RealtimePatterns.NoTripsFormat.NoSchedulesToday,
@@ -94,8 +92,7 @@ private fun HeaderImage(
             Icon(
                 routeSlashIcon(routeType = routeType),
                 null,
-                tint = tint,
-                modifier = modifier.testTag("route_type_slash")
+                modifier = modifier.testTag("route_slash_icon")
             )
     }
 }

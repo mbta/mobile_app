@@ -304,12 +304,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                 tripFilter = TripDetailsFilter(trip.id, null, null, false),
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
-                tileData =
-                departures.stopDetailsFormattedTrips(
-                    route.id,
-                    trip.directionId,
-                    now
-                ),
+                tileData = departures.stopDetailsFormattedTrips(route.id, trip.directionId, now),
                 noPredictionsStatus = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,

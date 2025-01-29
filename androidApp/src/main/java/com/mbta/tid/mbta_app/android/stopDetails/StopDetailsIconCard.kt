@@ -49,7 +49,6 @@ fun StopDetailsIconCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
             CompositionLocalProvider(LocalContentColor provides accentColor) {
                 icon(Modifier.requiredSize(35.dp).border(1.dp, Color.Magenta))
             }
