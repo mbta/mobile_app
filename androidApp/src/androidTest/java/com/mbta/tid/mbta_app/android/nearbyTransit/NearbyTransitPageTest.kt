@@ -299,7 +299,7 @@ class NearbyTransitPageTest : KoinTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
         composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading..."))
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
