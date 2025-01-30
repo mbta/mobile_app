@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,9 +52,8 @@ fun StopDetailsIconCard(
                 icon(Modifier.requiredSize(35.dp))
             }
             ProvideTextStyle(TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)) {
-                header(Modifier.semantics { heading() })
+                header(Modifier.semantics { heading() }.weight(1f))
             }
-            Spacer(Modifier.weight(1f))
         }
 
         if (details != null) {
