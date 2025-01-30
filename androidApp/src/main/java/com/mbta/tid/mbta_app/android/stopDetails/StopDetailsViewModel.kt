@@ -103,6 +103,9 @@ class StopDetailsViewModel(
     private val _showElevatorAccessibility = MutableStateFlow(false)
     val showElevatorAccessibility: StateFlow<Boolean> = _showElevatorAccessibility
 
+    private val _hideMaps = MutableStateFlow(false)
+    val hideMaps: StateFlow<Boolean> = _hideMaps
+
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
             predictionsRepository,
@@ -115,6 +118,7 @@ class StopDetailsViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             val data = settingsRepository.getSettings()
             _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false
+            _hideMaps.value = data[Settings.HideMaps] ?: false
         }
     }
 

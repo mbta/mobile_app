@@ -129,6 +129,8 @@
     <string name="police_action">Aksyon Polis</string>
     <string name="police_activity">Aktivite Polis</string>
     <string name="power_problem">Pwoblèm Kouran</string>
+    <string name="predictions_unavailable_details">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib. Kat la montre ki kote %1$s sou wout sa a ye kounye a.</string>
+    <string name="predictions_unavailable_details_hide_maps">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib.</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="refresh">Rafrechi</string>

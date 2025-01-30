@@ -55,6 +55,7 @@ fun StopDetailsFilteredDeparturesView(
     tripFilter: TripDetailsFilter?,
     patternsByStop: PatternsByStop,
     tileData: List<TripAndFormat>,
+    noPredictionsStatus: RealtimePatterns.NoTripsFormat?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
     now: Instant,
@@ -70,6 +71,7 @@ fun StopDetailsFilteredDeparturesView(
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+    val hideMaps by viewModel.hideMaps.collectAsState()
 
     val alerts: List<Alert> =
         if (global != null) {
@@ -194,7 +196,15 @@ fun StopDetailsFilteredDeparturesView(
                         }
                     }
                 }
-                if (selectedTripIsCancelled) {
+
+                if (noPredictionsStatus != null) {
+                    StopDetailsNoTripCard(
+                        status = noPredictionsStatus,
+                        accentColor = routeColor,
+                        routeType = routeType,
+                        hideMaps = hideMaps
+                    )
+                } else if (selectedTripIsCancelled) {
                     Row(
                         modifier = Modifier.padding(vertical = 16.dp).semantics { focused = true }
                     ) {
