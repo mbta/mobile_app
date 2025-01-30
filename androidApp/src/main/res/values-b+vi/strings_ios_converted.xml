@@ -27,6 +27,7 @@
     <string name="construction">Thi công</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
     <string name="demonstration">Biểu tình</string>
+    <string name="details">Thông tin chi tiết</string>
     <string name="detour">Đường vòng</string>
     <string name="directionTo">%1$s đến</string>
     <string name="disabled_bus">Xe buýt bị sự cố</string>
@@ -41,6 +42,12 @@
     </plurals>
     <string name="end">Kết thúc</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
+    <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
+    <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
+    <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
+    <string name="explainer_text_finishing_another">%1$s được chỉ định cho tuyến đường này hiện đang phục vụ một chuyến đi khác. Chúng tôi sẽ hiển thị nó trên tuyến đường khi nó bắt đầu chuyến đi này.</string>
+    <string name="explainer_text_no_prediction">Chúng tôi chưa có dự đoán trực tiếp cho chuyến đi này, nhưng chúng sẽ xuất hiện gần với thời gian dự kiến hơn. Nếu chuyến đi bị hoãn hoặc hủy, chúng tôi sẽ thông báo cho bạn tại đây.</string>
+    <string name="explainer_text_no_vehicle">Vị trí %1$s có thể không khả dụng trước nếu xe chưa được chỉ định. Khi tài xế bắt đầu chuyến đi, chúng tôi sẽ bắt đầu hiển thị vị trí trực tiếp.</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi ý phản hồi về ứng dụng</string>

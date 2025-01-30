@@ -27,6 +27,7 @@
     <string name="construction">建築施工</string>
     <string name="crossing_malfunction">交通信號燈故障</string>
     <string name="demonstration">示威</string>
+    <string name="details">詳情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
     <string name="disabled_bus">巴士拋錨</string>
@@ -41,6 +42,12 @@
     </plurals>
     <string name="end">結束日期</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
+    <string name="explainer_headline_finishing_another">結束另一趟旅程</string>
+    <string name="explainer_headline_no_prediction">預測尚不可用</string>
+    <string name="explainer_headline_no_vehicle">%1$s位置尚未確定</string>
+    <string name="explainer_text_finishing_another">分配給此路線的%1$s目前正在為另一趟行程提供服務。一旦旅行開始，我們就會在路線上顯示它。</string>
+    <string name="explainer_text_no_prediction">我們還沒有這次旅行的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。</string>
+    <string name="explainer_text_no_vehicle">如果尚未分配車輛，%1$s位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。</string>
     <string name="feature_flag_debug_mode">調試模式</string>
     <string name="feature_flag_route_search">線路搜尋</string>
     <string name="feedback_link_form">傳送應用程式回饋</string>

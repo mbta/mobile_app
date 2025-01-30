@@ -342,7 +342,7 @@ fun NearbyTransitPage(
                     updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
-                    openAlertDetails = ::openModal,
+                    openModal = ::openModal,
                     setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
@@ -479,6 +479,8 @@ fun NearbyTransitPage(
                             nearbyTransit.alertData,
                             goBack = { closeModal() }
                         )
+                    is ModalRoutes.Explainer ->
+                        ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })
                     null -> {}
                 }
             }

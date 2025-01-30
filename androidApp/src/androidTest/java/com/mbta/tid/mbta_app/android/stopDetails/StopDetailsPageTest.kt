@@ -60,7 +60,7 @@ class StopDetailsPageTest : KoinTest {
                     updateStopFilter = {},
                     updateTripFilter = {},
                     updateDepartures = { departuresUpdated = true },
-                    openAlertDetails = {},
+                    openModal = {},
                     setMapSelectedVehicle = {},
                     errorBannerViewModel = errorBannerVM
                 )

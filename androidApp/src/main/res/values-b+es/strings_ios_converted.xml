@@ -29,6 +29,7 @@
     <string name="construction">Construcción</string>
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="demonstration">Demostración</string>
+    <string name="details">Detalles</string>
     <string name="detour">Desvío</string>
     <string name="directionTo">%1$s a</string>
     <string name="disabled_bus">Autobús averiado</string>
@@ -45,6 +46,12 @@
     </plurals>
     <string name="end">Fin</string>
     <string name="error_loading_data">Error al cargar datos</string>
+    <string name="explainer_headline_finishing_another">Terminando otro viaje</string>
+    <string name="explainer_headline_no_prediction">Predicción aún no disponible</string>
+    <string name="explainer_headline_no_vehicle">la ubicación del %1$s aún no está disponible</string>
+    <string name="explainer_text_finishing_another">El %1$s asignado a esta ruta actualmente está realizando otro viaje. Lo mostraremos en la ruta una vez que comience este viaje.</string>
+    <string name="explainer_text_no_prediction">Aún no tenemos predicciones en vivo para este viaje, pero aparecerán más cerca de la hora programada. Si el viaje se retrasa o se cancela, te lo informaremos aquí.</string>
+    <string name="explainer_text_no_vehicle">Es posible que la ubicación %1$s no esté disponible con anticipación si aún no se ha asignado un vehículo. Una vez que el conductor comience el viaje, comenzaremos a mostrar la ubicación en vivo.</string>
     <string name="feature_flag_debug_mode">Modo de Depuración</string>
     <string name="feature_flag_route_search">Buscador de rutas</string>
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>

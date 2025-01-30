@@ -4,14 +4,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +27,7 @@ fun TripDetailsView(
     stopId: String,
     stopDetailsVM: StopDetailsViewModel,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
+    openExplainer: (ModalRoutes.Explainer) -> Unit,
     now: Instant
 ) {
 
@@ -76,7 +80,26 @@ fun TripDetailsView(
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
 
-        TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now)
+        val explainerType: ExplainerType? =
+            when (headerSpec) {
+                is TripHeaderSpec.Scheduled ->
+                    if (routeAccents.type == RouteType.FERRY) {
+                        ExplainerType.NoPrediction
+                    } else {
+                        null
+                    }
+                is TripHeaderSpec.FinishingAnotherTrip -> ExplainerType.FinishingAnotherTrip
+                is TripHeaderSpec.NoVehicle -> ExplainerType.NoVehicle
+                else -> null
+            }
+        val onHeaderTap: (() -> Unit)? =
+            if (explainerType != null) {
+                { openExplainer(ModalRoutes.Explainer(explainerType, routeAccents)) }
+            } else {
+                null
+            }
+
+        TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         TripStops(
             stopId,
             stops,

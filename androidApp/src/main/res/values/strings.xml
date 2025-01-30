@@ -28,6 +28,7 @@
     <string name="construction">Construction</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="demonstration">Demonstration</string>
+    <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
     <string name="disabled_bus">Disabled Bus</string>
@@ -44,6 +45,12 @@
     </plurals>
     <string name="end">End</string>
     <string name="error_loading_data">Error loading data</string>
+    <string name="explainer_headline_finishing_another">Finishing another trip</string>
+    <string name="explainer_headline_no_prediction">Prediction not available yet</string>
+    <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
+    <string name="explainer_text_finishing_another">The %1$s assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip.</string>
+    <string name="explainer_text_no_prediction">We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here.</string>
+    <string name="explainer_text_no_vehicle">The %1$s location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send app feedback</string>
@@ -209,4 +216,5 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
+
 </resources>

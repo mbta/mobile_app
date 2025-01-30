@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
+import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,4 +19,7 @@ sealed interface ModalRoutes {
         val routeIds: List<String>?,
         val stopId: String?
     ) : ModalRoutes
+
+    @Serializable
+    data class Explainer(val type: ExplainerType, val routeAccents: TripRouteAccents) : ModalRoutes
 }

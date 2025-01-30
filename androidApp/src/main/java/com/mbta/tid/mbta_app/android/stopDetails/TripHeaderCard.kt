@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mapbox.maps.extension.style.style
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
@@ -56,10 +58,13 @@ fun TripHeaderCard(
     targetId: String,
     routeAccents: TripRouteAccents,
     now: Instant,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTap: (() -> Unit)? = null,
 ) {
     Row(
-        modifier.padding(vertical = 16.dp).background(colorResource(R.color.fill3)),
+        modifier.background(colorResource(R.color.fill3)).clickable(onTap != null) {
+            onTap?.let { it() }
+        },
     ) {
         Row(
             Modifier.padding(vertical = 16.dp)
@@ -75,7 +80,7 @@ fun TripHeaderCard(
                 TripMarker(spec, targetId, routeAccents)
                 Description(spec, tripId, targetId, routeAccents)
                 Spacer(Modifier.weight(1f))
-                TripIndicator(spec, routeAccents, now)
+                TripIndicator(spec, routeAccents, now, onTap)
             }
         }
     }
@@ -347,11 +352,20 @@ private fun VehiclePuck(
 }
 
 @Composable
-private fun TripIndicator(spec: TripHeaderSpec, routeAccents: TripRouteAccents, now: Instant) {
+private fun TripIndicator(
+    spec: TripHeaderSpec,
+    routeAccents: TripRouteAccents,
+    now: Instant,
+    onTap: (() -> Unit)?
+) {
     Column {
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip,
-            TripHeaderSpec.NoVehicle -> {}
+            TripHeaderSpec.NoVehicle -> {
+                if (onTap != null) {
+                    InfoCircle()
+                }
+            }
             is TripHeaderSpec.VehicleOnTrip -> LiveIndicator()
             is TripHeaderSpec.Scheduled -> {}
         }
