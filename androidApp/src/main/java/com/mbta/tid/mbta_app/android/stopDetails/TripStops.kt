@@ -1,9 +1,13 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,13 +16,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.util.typeText
@@ -65,7 +72,12 @@ fun TripStops(
 
     val lastStopSequence = stops.stops.lastOrNull()?.stopSequence
 
-    Column(Modifier.background(colorResource(R.color.fill2))) {
+    Column(
+        Modifier.border(2.dp, colorResource(R.color.halo), shape = RoundedCornerShape(8.dp))
+            .padding(1.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(colorResource(R.color.fill2))
+    ) {
         if (splitStops != null && target != null) {
             if (showFirstStopSeparately) {
                 val firstStop = splitStops.firstStop
@@ -91,10 +103,13 @@ fun TripStops(
                                     target.stop.name
                                 )
                         }
+                        .padding(horizontal = 8.dp)
+                        .defaultMinSize(minHeight = 48.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 if (stopsExpanded) {
@@ -117,7 +132,10 @@ fun TripStops(
                     now,
                     routeAccents,
                     targeted = true,
-                    firstStop = showFirstStopSeparately && target == stops.startTerminalEntry
+                    firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
+                    modifier =
+                        Modifier.background(colorResource(R.color.fill3))
+                            .border(2.dp, colorResource(R.color.halo))
                 )
             }
             StopList(splitStops.followingStops, lastStopSequence, now, routeAccents)
