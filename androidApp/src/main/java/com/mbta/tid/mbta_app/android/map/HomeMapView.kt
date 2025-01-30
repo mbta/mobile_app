@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.mapbox.geojson.Point
@@ -255,6 +256,7 @@ fun HomeMapView(
                 },
             compass = {},
             scaleBar = {},
+            logo = { Logo(Modifier.clearAndSetSemantics {}) },
             mapViewportState = viewportProvider.viewport,
             style = {
                 MapStyle(
