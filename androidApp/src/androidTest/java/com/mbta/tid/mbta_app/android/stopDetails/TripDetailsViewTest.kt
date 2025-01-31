@@ -95,6 +95,7 @@ class TripDetailsViewTest {
                     stopId = stop.id,
                     stopDetailsVM = viewModel,
                     setMapSelectedVehicle = mapSelectedVehicleValues::add,
+                    openExplainer = {},
                     now
                 )
             }

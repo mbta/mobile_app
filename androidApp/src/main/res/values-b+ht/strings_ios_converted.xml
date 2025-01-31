@@ -32,6 +32,7 @@
     <string name="construction">Konstriksyon</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="demonstration">Demonstrasyon</string>
+    <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
@@ -50,6 +51,12 @@
     </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
+    <string name="explainer_headline_finishing_another">Fini yon lòt vwayaj</string>
+    <string name="explainer_headline_no_prediction">Prediksyon an poko disponib</string>
+    <string name="explainer_headline_no_vehicle">pozisyon %1$s la poko disponib</string>
+    <string name="explainer_text_finishing_another">%1$s ki asiyen nan wout sa a kounye a ap sèvi yon lòt vwayaj. Nou pral montre li sou wout la yon fwa li kòmanse vwayaj sa a.</string>
+    <string name="explainer_text_no_prediction">Nou poko gen prediksyon an dirèk pou vwayaj sa a, men yo pral parèt pi pre lè pwograme a. Si vwayaj la an reta oswa anile, n ap fè w konnen isit la.</string>
+    <string name="explainer_text_no_vehicle">Kote %1$s a ka pa disponib davans si yo poko plase yon machin. Yon fwa chofè a kòmanse vwayaj la, nou pral kòmanse montre kote a ap viv la.</string>
     <string name="feature_flag_debug_mode">Mòd Debug</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye kòmantè sou aplikasyon</string>

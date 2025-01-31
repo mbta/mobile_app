@@ -67,7 +67,8 @@ fun StopDetailsFilteredDeparturesView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
+    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
+    openExplainer: (ModalRoutes.Explainer) -> Unit,
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
@@ -229,6 +230,7 @@ fun StopDetailsFilteredDeparturesView(
                         stopId = stopId,
                         stopDetailsVM = viewModel,
                         setMapSelectedVehicle = setMapSelectedVehicle,
+                        openExplainer = openExplainer,
                         now = now
                     )
                 }

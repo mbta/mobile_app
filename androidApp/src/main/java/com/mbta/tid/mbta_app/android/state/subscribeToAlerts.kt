@@ -34,7 +34,7 @@ class AlertsViewModel(
                         synchronized(alertFlow) { alertFlow.notifyAll() }
                 }
                 is ApiResult.Error -> {
-                    /* TODO("handle errors") */
+                    /* TODO: handle errors */
                 }
             }
         }
