@@ -59,7 +59,7 @@ class MoreViewModelTests {
 
         composeTestRule.waitForIdle()
         assertEquals(
-            "https://mbta.com/appfeedback?lang=es-US",
+            "https://mbta.com/androidappfeedback?lang=es-US",
             vm.sections.value
                 .first { it.id == MoreSection.Category.Feedback }
                 .items
