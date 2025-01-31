@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
@@ -59,7 +62,12 @@ fun TripHeaderCard(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier.padding(vertical = 16.dp).background(colorResource(R.color.fill3)),
+        modifier
+            .padding(top = 16.dp)
+            .border(2.dp, colorResource(R.color.halo), shape = RoundedCornerShape(8.dp))
+            .padding(1.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(colorResource(R.color.fill3)),
     ) {
         Row(
             Modifier.padding(vertical = 16.dp)
