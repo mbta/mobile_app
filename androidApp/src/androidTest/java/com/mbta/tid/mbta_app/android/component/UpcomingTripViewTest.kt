@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
@@ -200,5 +201,11 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("buses arriving in 5 min", substring = true)
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithLoading() {
+        composeTestRule.setContent { UpcomingTripView(UpcomingTripViewState.Loading) }
+        composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
     }
 }
