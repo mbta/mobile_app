@@ -1,8 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -129,8 +127,6 @@ class HeadsignRowViewTest {
     fun showsLoading() {
         init("Headsign", RealtimePatterns.Format.Loading)
 
-        composeTestRule
-            .onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
     }
 }

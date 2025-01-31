@@ -97,7 +97,7 @@ fun StopDetailsFilteredDeparturesView(
             onClose = onClose
         )
 
-        ErrorBanner(errorBannerViewModel)
+        ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
 
         Box(Modifier.fillMaxSize().background(routeColor)) {
             HorizontalDivider(

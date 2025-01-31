@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,11 +38,12 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
 @Composable
-fun ErrorBanner(vm: ErrorBannerViewModel) {
+fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
     val state by vm.errorState.collectAsState()
     when (state) {
         is ErrorBannerState.DataError -> {
             ErrorCard(
+                modifier,
                 details = {
                     Text(
                         stringResource(R.string.error_loading_data),
@@ -60,6 +60,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
         }
         is ErrorBannerState.NetworkError -> {
             ErrorCard(
+                modifier,
                 details = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(painterResource(R.drawable.wifi_slash), contentDescription = "")
@@ -76,7 +77,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
         is ErrorBannerState.StalePredictions -> {
             if (vm.loadingWhenPredictionsStale) {
                 Row(
-                    modifier = Modifier.heightIn(60.dp),
+                    modifier = modifier.heightIn(60.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
@@ -85,6 +86,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
                 }
             } else {
                 ErrorCard(
+                    modifier,
                     details = {
                         val minutes = (state as ErrorBannerState.StalePredictions).minutesAgo()
                         Text(
@@ -110,10 +112,15 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
 }
 
 @Composable
-private fun ErrorCard(details: @Composable () -> Unit, button: (@Composable () -> Unit)? = null) {
+private fun ErrorCard(
+    modifier: Modifier = Modifier,
+    details: @Composable () -> Unit,
+    button: (@Composable () -> Unit)? = null
+) {
     Row(
         modifier =
-            Modifier.padding(16.dp)
+            modifier
+                .padding(horizontal = 16.dp)
                 .heightIn(60.dp)
                 .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
         verticalAlignment = Alignment.CenterVertically
@@ -177,13 +184,13 @@ private fun ErrorBannerPreviews() {
     LaunchedEffect(null) { staleVM.activate() }
     LaunchedEffect(null) { staleLoadingVM.activate() }
     Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.SpaceEvenly
+        modifier =
+            Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ErrorBanner(networkErrorVM)
         ErrorBanner(dataErrorVM)
         ErrorBanner(staleVM)
         ErrorBanner(staleLoadingVM)
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
