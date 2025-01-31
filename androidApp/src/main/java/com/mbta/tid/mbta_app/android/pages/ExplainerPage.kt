@@ -78,11 +78,10 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
     val context = LocalContext.current
     Text(
         when (type) {
-            is ExplainerType.FinishingAnotherTrip ->
+            ExplainerType.FinishingAnotherTrip ->
                 stringResource(R.string.explainer_headline_finishing_another)
-            is ExplainerType.NoPrediction ->
-                stringResource(R.string.explainer_headline_no_prediction)
-            is ExplainerType.NoVehicle ->
+            ExplainerType.NoPrediction -> stringResource(R.string.explainer_headline_no_prediction)
+            ExplainerType.NoVehicle ->
                 stringResource(
                         R.string.explainer_headline_no_vehicle,
                         routeType.typeText(context, true)
@@ -104,7 +103,7 @@ fun ExplanationImage(
     modifier: Modifier = Modifier
 ) {
     when (type) {
-        is ExplainerType.FinishingAnotherTrip ->
+        ExplainerType.FinishingAnotherTrip ->
             Box(modifier.clearAndSetSemantics {}) {
                 Image(
                     routeTurnaroundResource(routeAccents.type),
@@ -139,7 +138,7 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
     val context = LocalContext.current
     Text(
         when (type) {
-            is ExplainerType.FinishingAnotherTrip ->
+            ExplainerType.FinishingAnotherTrip ->
                 stringResource(
                         R.string.explainer_text_finishing_another,
                         routeType.typeText(context, true)
@@ -147,8 +146,8 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
                     }
-            is ExplainerType.NoPrediction -> stringResource(R.string.explainer_text_no_prediction)
-            is ExplainerType.NoVehicle ->
+            ExplainerType.NoPrediction -> stringResource(R.string.explainer_text_no_prediction)
+            ExplainerType.NoVehicle ->
                 stringResource(
                         R.string.explainer_text_no_vehicle,
                         routeType.typeText(context, true)
