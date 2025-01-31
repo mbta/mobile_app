@@ -32,6 +32,7 @@ fun StopDetailsFilteredView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
+    openExplainer: (ModalRoutes.Explainer) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
@@ -84,7 +85,8 @@ fun StopDetailsFilteredView(
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
             setMapSelectedVehicle = setMapSelectedVehicle,
-            openAlertDetails = ::openAndRecordAlertDetails
+            openAlertDetails = ::openAndRecordAlertDetails,
+            openExplainer = openExplainer,
         )
     } else {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -113,7 +115,8 @@ fun StopDetailsFilteredView(
                     togglePinnedRoute = {},
                     onClose = onClose,
                     setMapSelectedVehicle = {},
-                    openAlertDetails = {}
+                    openAlertDetails = {},
+                    openExplainer = {},
                 )
             }
         }

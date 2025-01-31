@@ -10,14 +10,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +33,7 @@ fun TripDetailsView(
     stopId: String,
     stopDetailsVM: StopDetailsViewModel,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
+    openExplainer: (ModalRoutes.Explainer) -> Unit,
     now: Instant
 ) {
 
@@ -54,7 +58,7 @@ fun TripDetailsView(
             withContext(Dispatchers.Default) {
                 if (
                     tripFilter != null &&
-                        vehicle != null &&
+                        tripData != null &&
                         tripData.tripFilter == tripFilter &&
                         tripData.tripPredictionsLoaded &&
                         globalResponse != null
@@ -73,18 +77,38 @@ fun TripDetailsView(
             }
         }
 
-    if (tripFilter != null && vehicle != null && globalResponse != null && stops != null) {
+    if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
         val route = globalResponse.routes[tripData.trip.routeId]
         val routeAccents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
         val terminalStop = getParentFor(tripData.trip.stopIds?.first(), globalResponse.stops)
-        val vehicleStop = getParentFor(vehicle.stopId, globalResponse.stops)
+        val vehicleStop =
+            if (vehicle != null) getParentFor(vehicle.stopId, globalResponse.stops) else null
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
 
+        val explainerType: ExplainerType? =
+            when (headerSpec) {
+                is TripHeaderSpec.Scheduled ->
+                    if (routeAccents.type != RouteType.FERRY) {
+                        ExplainerType.NoPrediction
+                    } else {
+                        null
+                    }
+                is TripHeaderSpec.FinishingAnotherTrip -> ExplainerType.FinishingAnotherTrip
+                is TripHeaderSpec.NoVehicle -> ExplainerType.NoVehicle
+                else -> null
+            }
+        val onHeaderTap: (() -> Unit)? =
+            if (explainerType != null) {
+                { openExplainer(ModalRoutes.Explainer(explainerType, routeAccents)) }
+            } else {
+                null
+            }
+
         Column() {
             Column(Modifier.zIndex(1F)) {
-                TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now)
+                TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
             }
             Column(Modifier.offset(y = (-6).dp).padding(horizontal = 4.dp)) {
                 TripStops(
