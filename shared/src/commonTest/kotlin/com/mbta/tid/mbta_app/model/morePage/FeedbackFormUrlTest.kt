@@ -3,44 +3,44 @@ package com.mbta.tid.mbta_app.model.morePage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FeedbackFormUrlTest {
+class LocalizedFeedbackFormUrlTest {
     @Test
     fun testEN() {
-        assertEquals("https://mbta.com/androidappfeedback", feedbackFormUrl("en"))
+        assertEquals("baseUrl", localizedFeedbackFormUrl("baseUrl","en"))
     }
 
     @Test
     fun testES() {
-        assertEquals("https://mbta.com/androidappfeedback?lang=es-US", feedbackFormUrl("es"))
+        assertEquals("baseUrl?lang=es-US", localizedFeedbackFormUrl("baseUrl","es"))
     }
 
     @Test
     fun testHT() {
-        assertEquals("https://mbta.com/androidappfeedback", feedbackFormUrl("ht"))
+        assertEquals("baseUrl", localizedFeedbackFormUrl("baseUrl", "ht"))
     }
 
     @Test
     fun testPTBR() {
-        assertEquals("https://mbta.com/androidappfeedback?lang=pt-BR", feedbackFormUrl("pt-BR"))
+        assertEquals("baseUrl?lang=pt-BR", localizedFeedbackFormUrl("baseUrl","pt-BR"))
     }
 
     @Test
     fun testVI() {
-        assertEquals("https://mbta.com/androidappfeedback?lang=vi", feedbackFormUrl("vi"))
+        assertEquals("baseUrl?lang=vi", localizedFeedbackFormUrl("baseUrl","vi"))
     }
 
     @Test
     fun testZHHans() {
-        assertEquals("https://mbta.com/androidappfeedback?lang=zh-Hans", feedbackFormUrl("zh-Hans-CN"))
+        assertEquals("baseUrl?lang=zh-Hans", localizedFeedbackFormUrl("baseUrl","zh-Hans-CN"))
     }
 
     @Test
     fun testZHHant() {
-        assertEquals("https://mbta.com/androidappfeedback?lang=zh-Hant", feedbackFormUrl("zh-Hant-TW"))
+        assertEquals("baseUrl?lang=zh-Hant", localizedFeedbackFormUrl("baseUrl","zh-Hant-TW"))
     }
 
     @Test
     fun testUnknown() {
-        assertEquals("https://mbta.com/androidappfeedback", feedbackFormUrl("tok"))
+        assertEquals("baseUrl", localizedFeedbackFormUrl("baseUrl","tok"))
     }
 }

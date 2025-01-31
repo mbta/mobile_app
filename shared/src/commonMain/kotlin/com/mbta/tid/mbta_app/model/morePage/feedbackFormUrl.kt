@@ -1,14 +1,13 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-fun feedbackFormUrl(translation: String): String {
-    val formLink = "https://mbta.com/androidappfeedback"
+fun localizedFeedbackFormUrl(baseUrl: String, translation: String): String {
     return when (translation) {
-        "es" -> "${formLink}?lang=es-US"
-        "ht" -> formLink
-        "pt-BR" -> "${formLink}?lang=pt-BR"
-        "vi" -> "${formLink}?lang=vi"
-        "zh-Hans-CN" -> "${formLink}?lang=zh-Hans"
-        "zh-Hant-TW" -> "${formLink}?lang=zh-Hant"
-        else -> formLink
+        "es" -> "${baseUrl}?lang=es-US"
+        "ht" -> baseUrl
+        "pt-BR" -> "${baseUrl}?lang=pt-BR"
+        "vi" -> "${baseUrl}?lang=vi"
+        "zh-Hans-CN" -> "${baseUrl}?lang=zh-Hans"
+        "zh-Hant-TW" -> "${baseUrl}?lang=zh-Hant"
+        else -> baseUrl
     }
 }
