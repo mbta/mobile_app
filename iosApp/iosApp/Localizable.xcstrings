@@ -1099,23 +1099,22 @@
     "%1$@ to %2$@ has departed %3$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] to [Alewife] has departed [Central]\", \"[bus] to [Nubian] has departed [Harvard]\""
     },
-    "%ld elevator closures" : {
+    "%ld elevators closed" : {
       "comment" : "Header displayed when elevators are not working at a station",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "variations" : {
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ld elevator closure"
+                  "state" : "translated",
+                  "value" : "%ld elevator closed"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ld elevator closures"
+                  "state" : "translated",
+                  "value" : "%ld elevators closed"
                 }
               }
             }
@@ -1127,13 +1126,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "%ld cierre de ascensor"
+                  "value" : "%ld ascensor cerrado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "%ld cierres de ascensor"
+                  "value" : "%ld ascensores cerrados"
                 }
               }
             }
@@ -1181,13 +1180,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "%ld fechamento de elevador"
+                  "value" : "%ld elevador fechado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "%ld fechamentos de elevador"
+                  "value" : "%ld elevadores fechados"
                 }
               }
             }
@@ -1211,7 +1210,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "%ld 电梯关闭"
+                  "value" : "%ld部电梯关闭"
                 }
               }
             }
@@ -1223,7 +1222,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "needs_review",
-                  "value" : "%ld 電梯關閉"
+                  "value" : "%ld部電梯關閉"
                 }
               }
             }
@@ -1651,6 +1650,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所有線路"
+          }
+        }
+      }
+    },
+    "Alternative path" : {
+      "comment" : "Header for the details of an elevator closure",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Camino alternativo"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chemen altènatif"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Caminho alternativo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đường dẫn thay thế"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "替代路径"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "替代路徑"
           }
         }
       }

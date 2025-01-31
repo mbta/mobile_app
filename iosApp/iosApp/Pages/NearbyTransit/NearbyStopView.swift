@@ -46,18 +46,19 @@ struct NearbyStopView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 if showElevatorAccessibility, hasElevatorAlerts {
-                    Image(.accessibilityIconInaccessible)
+                    Image(.accessibilityIconAlert)
                         .accessibilityHidden(true)
                 }
                 Text(patternsAtStop.stop.name)
                     .font(Typography.callout)
                     .foregroundStyle(Color.text)
-            }
-            if showElevatorAccessibility, hasElevatorAlerts {
-                Text(
-                    "\(elevatorAlerts, specifier: "%ld") elevator closures",
-                    comment: "Header displayed when elevators are not working at a station"
-                )
+                if showElevatorAccessibility, hasElevatorAlerts {
+                    Spacer()
+                    Text(
+                        "\(elevatorAlerts, specifier: "%ld") elevators closed",
+                        comment: "Header displayed when elevators are not working at a station"
+                    )
+                }
             }
         }
         .padding(.horizontal, 16)
@@ -74,4 +75,20 @@ struct NearbyStopView: View {
             pinned: pinned
         )
     }
+}
+
+#Preview {
+    let objects = ObjectCollectionBuilder()
+    let route = objects.route { _ in }
+    let stop = objects.stop { $0.name = "Long Stop Name like Malcolm X Blvd opp Madison Park HS" }
+    let alert = objects.alert { _ in }
+    NearbyStopView(
+        patternsAtStop: .init(routes: [route], line: nil, stop: stop, patterns: [], directions: [],
+                              elevatorAlerts: [alert]),
+        condenseHeadsignPredictions: false,
+        showElevatorAccessibility: true,
+        now: Date.now.toKotlinInstant(),
+        pushNavEntry: { _ in },
+        pinned: false
+    )
 }

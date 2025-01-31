@@ -9,6 +9,7 @@
 import shared
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct AlertDetails: View {
     var analytics: Analytics = AnalyticsProvider.shared
     var alert: shared.Alert
@@ -30,6 +31,10 @@ struct AlertDetails: View {
 
     private var stopLabel: String? {
         stop?.name
+    }
+
+    private var isElevatorClosure: Bool {
+        alert.effect == .elevatorClosure
     }
 
     private var effectLabel: String? {
@@ -106,7 +111,7 @@ struct AlertDetails: View {
 
     @ViewBuilder var effectTitle: some View {
         if let effectLabel {
-            if let routeLabel {
+            if let routeLabel, !isElevatorClosure {
                 Text("\(routeLabel) \(effectLabel)",
                      comment: """
                      First value is the route label, second value is an alert effect, \
@@ -124,7 +129,9 @@ struct AlertDetails: View {
     private var alertTitle: some View {
         VStack(alignment: .leading, spacing: 10) {
             effectTitle.font(Typography.title2Bold)
-            if let causeLabel { Text(causeLabel).font(.body).bold() }
+            if isElevatorClosure, let header = alert.header {
+                Text(header).font(Typography.bodySemibold)
+            } else if let causeLabel { Text(causeLabel).font(.body).bold() }
         }
     }
 
@@ -228,7 +235,7 @@ struct AlertDetails: View {
 
     private var alertDescriptionParagraphs: [String] {
         var paragraphs: [String] = []
-        if let header = alert.header {
+        if let header = alert.header, !isElevatorClosure {
             paragraphs += splitDetails(header)
         }
         if let description = alert.description_ {
@@ -242,7 +249,11 @@ struct AlertDetails: View {
     private var alertDescription: some View {
         if !alertDescriptionParagraphs.isEmpty {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Full Description", comment: "Header for the details of a disruption").bold()
+                if isElevatorClosure {
+                    Text("Alternative path", comment: "Header for the details of an elevator closure").bold()
+                } else {
+                    Text("Full Description", comment: "Header for the details of a disruption").bold()
+                }
                 ForEach(alertDescriptionParagraphs, id: \.hashValue) { section in
                     Text(section).fixedSize(horizontal: false, vertical: true)
                 }
@@ -268,12 +279,17 @@ struct AlertDetails: View {
         let scrollContent = ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 alertTitle
-                alertPeriod
-                VStack(alignment: .leading, spacing: 16) {
-                    affectedStopCollapsible
-                    tripPlannerLink
+                if !isElevatorClosure {
+                    alertPeriod
+                    VStack(alignment: .leading, spacing: 16) {
+                        affectedStopCollapsible
+                        tripPlannerLink
+                    }
                 }
                 alertDescription
+                if isElevatorClosure {
+                    alertPeriod
+                }
                 alertFooter
             }.padding(.horizontal, 16).padding(.top, 24)
         }
@@ -285,7 +301,7 @@ struct AlertDetails: View {
     }
 }
 
-#Preview {
+#Preview("Suspension") {
     let objects = ObjectCollectionBuilder()
     let route = objects.route { route in
         route.color = "ED8B00"
@@ -316,6 +332,46 @@ struct AlertDetails: View {
     return AlertDetails(
         alert: alert,
         routes: [route],
+        affectedStops: [stop],
+        stopId: stop.id,
+        now: Date.now
+    )
+}
+
+#Preview("Elevator Closure") {
+    let objects = ObjectCollectionBuilder()
+    let route = objects.route { route in
+        route.color = "DA291C"
+        route.textColor = "FFFFFF"
+        route.longName = "Red Line"
+    }
+    let stop = objects.stop { $0.name = "Park Street" }
+    let alert = objects.alert { alert in
+        alert.effect = .elevatorClosure
+        alert
+            .header =
+            "Elevator 804 (Government Center & North lobby to Tremont Street, Winter Street) unavailable on Thu Feb 6 due to maintenance"
+        alert.cause = .maintenance
+        alert.activePeriod(
+            start: (Date.now - 3 * 24 * 60 * 60).toKotlinInstant(),
+            end: nil
+        )
+        alert.description_ =
+            """
+            To exit, travel down the Winter St concourse towards Downtown Crossing. At the end of the concourse, exit \
+            through the faregate and use Downtown Crossing Elevator 892 to access the corner of Washington St and \
+            Winter St. To board, travel down Winter St towards Downtown Crossing to the corner of Washington St and \
+            Winter St, and use Downtown Crossing 892 to access the Downtown Crossing lobby. At the lobby, exit \
+            through the faregate, turn left and proceed up the Winter St concourse to Park Street. Alternatively, \
+            cross Tremont St to the Boston Common and use Park Street Elevator 978 to access the Green Line Copley \
+            and westbound platform.
+            """
+        alert.updatedAt = (Date.now - 10 * 60).toKotlinInstant()
+    }
+    return AlertDetails(
+        alert: alert,
+        routes: [route],
+        stop: stop,
         affectedStops: [stop],
         stopId: stop.id,
         now: Date.now
