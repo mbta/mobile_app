@@ -82,7 +82,7 @@ struct NearbyStopView: View {
     let route = objects.route { _ in }
     let stop = objects.stop { $0.name = "Long Stop Name like Malcolm X Blvd opp Madison Park HS" }
     let alert = objects.alert { _ in }
-    NearbyStopView(
+    return NearbyStopView(
         patternsAtStop: .init(routes: [route], line: nil, stop: stop, patterns: [], directions: [],
                               elevatorAlerts: [alert]),
         condenseHeadsignPredictions: false,
