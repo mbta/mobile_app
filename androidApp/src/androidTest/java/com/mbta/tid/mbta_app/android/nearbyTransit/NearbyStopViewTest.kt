@@ -124,6 +124,6 @@ class NearbyStopViewTest {
                 showElevatorAccessibility = true
             )
         }
-        composeTestRule.onNodeWithText("1 elevator closure").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 elevator closed").assertIsDisplayed()
     }
 }

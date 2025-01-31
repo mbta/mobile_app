@@ -39,9 +39,9 @@
     <string name="eastbound">En dirección este</string>
     <string name="electrical_work">Trabajo eléctrico</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d cierre de ascensor</item>
-        <item quantity="many">%1$d cierres de ascensor</item>
-        <item quantity="other">%1$d cierres de ascensor</item>
+        <item quantity="one">%1$d ascensor cerrado</item>
+        <item quantity="many">%1$d ascensores cerrados</item>
+        <item quantity="other">%1$d ascensores cerrados</item>
     </plurals>
     <string name="end">Fin</string>
     <string name="error_loading_data">Error al cargar datos</string>

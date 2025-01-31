@@ -37,7 +37,7 @@
     <string name="eastbound">东行</string>
     <string name="electrical_work">电力作业</string>
     <plurals name="elevator_closure_count">
-        <item quantity="other">%1$d 电梯关闭</item>
+        <item quantity="other">%1$d部电梯关闭</item>
     </plurals>
     <string name="end">结束日期</string>
     <string name="error_loading_data">加载数据时出错</string>
