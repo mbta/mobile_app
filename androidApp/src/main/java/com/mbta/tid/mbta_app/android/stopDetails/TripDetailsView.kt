@@ -1,9 +1,15 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
@@ -100,16 +106,22 @@ fun TripDetailsView(
                 null
             }
 
-        TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
-        TripStops(
-            stopId,
-            stops,
-            tripFilter.stopSequence,
-            headerSpec,
-            now,
-            globalResponse,
-            routeAccents
-        )
+        Column() {
+            Column(Modifier.zIndex(1F)) {
+                TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
+            }
+            Column(Modifier.offset(y = (-6).dp).padding(horizontal = 4.dp)) {
+                TripStops(
+                    stopId,
+                    stops,
+                    tripFilter.stopSequence,
+                    headerSpec,
+                    now,
+                    globalResponse,
+                    routeAccents
+                )
+            }
+        }
     } else {
         // TODO: loading
         CircularProgressIndicator()
