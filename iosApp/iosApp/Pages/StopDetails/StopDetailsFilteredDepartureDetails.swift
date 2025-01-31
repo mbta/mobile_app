@@ -48,11 +48,8 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var selectedTripIsCancelled: Bool {
         if let tripFilter {
-            patternsByStop.patterns.contains { pattern in
-                pattern.upcomingTrips.contains { trip in
-                    trip.trip.id == tripFilter.tripId && trip.isCancelled
-                }
-            }
+            patternsByStop.tripIsCancelled(tripId: tripFilter.tripId)
+
         } else {
             false
         }
@@ -119,7 +116,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                             icon: routeSlashIcon(routeType)
                         )
                         .accessibilityHeading(.h4)
-                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else {
                         TripDetailsView(
                             tripFilter: tripFilter,

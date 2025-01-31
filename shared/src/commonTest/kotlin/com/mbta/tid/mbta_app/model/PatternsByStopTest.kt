@@ -6,6 +6,9 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class PatternsByStopTest {
     @Test
@@ -549,6 +552,72 @@ class PatternsByStopTest {
             )
         val southboundDownstreamAlerts = patternsByStop.alertsDownstream(0)
         assertEquals(listOf(jfkShuttleAlert), southboundDownstreamAlerts)
+    }
+
+    @Test
+    fun testTripIsCancelled() {
+        val objects = ObjectCollectionBuilder()
+        val now = Clock.System.now()
+        val route =
+            objects.route {
+                id = "route_1"
+                type = RouteType.BUS
+                color = "DA291C"
+                routePatternIds = mutableListOf("pattern_1")
+            }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "pattern_1"
+                directionId = 0
+                representativeTripId = "trip_1"
+            }
+
+        val stop =
+            objects.stop {
+                id = "stop_1"
+            }
+        val trip =
+            objects.trip {
+                id = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                routePatternId = "pattern_1"
+            }
+
+        val schedule = objects.schedule {
+            tripId = "trip_1"
+            stopId = "stop_1"
+            departureTime = now.plus(10.minutes)
+
+        }
+        val prediction =
+            objects.prediction {
+                id = "prediction_1"
+                stopId = "stop_1"
+                tripId = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                departureTime = now.plus(10.minutes)
+            }
+
+        val predictionCancelled =
+            objects.prediction {
+                id = "prediction_1"
+                stopId = "stop_1"
+                tripId = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                departureTime = now.plus(10.minutes)
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+
+        assertTrue(PatternsByStop(route, stop,
+            listOf(RealtimePatterns.ByHeadsign(route, trip.headsign, null, listOf(routePattern), listOf(
+                UpcomingTrip(trip, schedule, predictionCancelled))))).tripIsCancelled(trip.id))
+
+        assertFalse(PatternsByStop(route, stop,
+            listOf(RealtimePatterns.ByHeadsign(route, trip.headsign, null, listOf(routePattern), listOf(
+                UpcomingTrip(trip, schedule, prediction))))).tripIsCancelled(trip.id))
     }
 
     object GroupedGLTestPatterns {

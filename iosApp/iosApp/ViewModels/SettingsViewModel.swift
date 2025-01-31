@@ -29,7 +29,11 @@ class SettingsViewModel: ObservableObject {
     // swiftlint:disable:next function_body_length
     @MainActor func getSections() async {
         do {
-            let feedbackFormUrl = feedbackFormUrl(translation: Bundle.main.preferredLocalizations.first ?? "en")
+            let feedbackFormUrl = localizedFeedbackFormUrl(
+                baseUrl: "https://mbta.com/appfeedback",
+                translation: Bundle.main.preferredLocalizations.first ?? "en",
+                separateHTForm: true
+            )
             settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
             sections = [
                 MoreSection(id: .feedback, items: [

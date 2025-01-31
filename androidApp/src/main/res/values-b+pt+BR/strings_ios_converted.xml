@@ -124,6 +124,8 @@
     <string name="police_action">Ação policial</string>
     <string name="police_activity">Atividade policial</string>
     <string name="power_problem">Problema de energia</string>
+    <string name="predictions_unavailable_details">O serviço está em execução, mas os horários de chegada previstos não estão disponíveis. O mapa mostra onde %1$s nesta rota estão atualmente.</string>
+    <string name="predictions_unavailable_details_hide_maps">O serviço está em execução, mas os horários previstos de chegada não estão disponíveis.</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>
@@ -178,6 +180,8 @@
     <string name="traffic">Tráfego</string>
     <string name="train">trem</string>
     <string name="trains">trens</string>
+    <string name="trip_cancelled">Viagem cancelada</string>
+    <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
     <string name="unable_to_connect">Impossível conectar</string>
     <string name="unruly_passenger">Passageiro indisciplinado</string>
     <string name="unstar_route_hint">desafixar a rota do topo da lista</string>

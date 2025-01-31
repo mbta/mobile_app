@@ -7360,7 +7360,45 @@
       }
     },
     "Service is running, but predicted arrival times aren’t available." : {
-      "comment" : "Explanation under the 'Predictions unavailable' header in stop details."
+      "comment" : "Explanation under the 'Predictions unavailable' header in stop details.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El servicio está funcionando, pero los horarios de llegada previstos no están disponibles."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sèvis ap fonksyone, men lè yo prevwa arive pa disponib."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "O serviço está em execução, mas os horários previstos de chegada não estão disponíveis."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dịch vụ đang chạy nhưng không có thời gian đến dự kiến."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "服务正在运行，但无法提供预计到达时间。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "服務正在運行，但無法提供預計到達時間。"
+          }
+        }
+      }
     },
     "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are." : {
       "comment" : "Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.\nThe interpolated value can be \"buses\" or \"trains\".",

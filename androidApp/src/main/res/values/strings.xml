@@ -124,6 +124,8 @@
     <string name="police_action">Police Action</string>
     <string name="police_activity">Police Activity</string>
     <string name="power_problem">Power Problem</string>
+    <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. The map shows where %1$s on this route currently are.</string>
+    <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="recently_viewed">Recently Viewed</string>
@@ -179,6 +181,8 @@
     <string name="traffic">Traffic</string>
     <string name="train">train</string>
     <string name="trains">trains</string>
+    <string name="trip_cancelled">Trip cancelled</string>
+    <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
     <string name="unable_to_connect">Unable to connect</string>
     <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>

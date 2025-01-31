@@ -93,11 +93,11 @@ class ObjectCollectionBuilder {
 
     class LineBuilder : ObjectBuilder<Line> {
         var id = uuid()
-        var color = ""
+        var color = "FFFFFF"
         var longName = ""
         var shortName = ""
         var sortOrder = 0
-        var textColor = ""
+        var textColor = "000000"
 
         override fun built() = Line(id, color, longName, shortName, sortOrder, textColor)
     }

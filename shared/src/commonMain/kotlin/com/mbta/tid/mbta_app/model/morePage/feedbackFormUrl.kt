@@ -1,12 +1,17 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-fun feedbackFormUrl(translation: String) =
-    when (translation) {
-        "es" -> "https://mbta.com/appfeedback?lang=es-US"
-        "ht" -> "https://mbta.com/appfeedback-ht"
-        "pt-BR" -> "https://mbta.com/appfeedback?lang=pt-BR"
-        "vi" -> "https://mbta.com/appfeedback?lang=vi"
-        "zh-Hans-CN" -> "https://mbta.com/appfeedback?lang=zh-Hans"
-        "zh-Hant-TW" -> "https://mbta.com/appfeedback?lang=zh-Hant"
-        else -> "https://mbta.com/appfeedback"
+fun localizedFeedbackFormUrl(
+    baseUrl: String,
+    translation: String,
+    separateHTForm: Boolean = false
+): String {
+    return when (translation) {
+        "es" -> "${baseUrl}?lang=es-US"
+        "ht" -> if (separateHTForm) "${baseUrl}-ht" else baseUrl
+        "pt-BR" -> "${baseUrl}?lang=pt-BR"
+        "vi" -> "${baseUrl}?lang=vi"
+        "zh-Hans-CN" -> "${baseUrl}?lang=zh-Hans"
+        "zh-Hant-TW" -> "${baseUrl}?lang=zh-Hant"
+        else -> baseUrl
     }
+}

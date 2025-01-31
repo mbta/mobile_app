@@ -120,6 +120,8 @@
     <string name="police_action">警方行動</string>
     <string name="police_activity">警方活動</string>
     <string name="power_problem">電力故障</string>
+    <string name="predictions_unavailable_details">服務正在運行，但無法提供預計到達時間。地圖顯示了該路線上%1$s目前所在的位置。</string>
+    <string name="predictions_unavailable_details_hide_maps">服務正在運行，但無法提供預計到達時間。</string>
     <string name="real_time_arrivals_updating_live">即時到達即時更新</string>
     <string name="recently_viewed">近期查看過</string>
     <string name="refresh">重新整理</string>
@@ -172,6 +174,8 @@
     <string name="traffic">交通</string>
     <string name="train">列車</string>
     <string name="trains">列車</string>
+    <string name="trip_cancelled">行程取消</string>
+    <string name="trip_cancelled_details">這次旅行已取消。對於造成您的不便，我們深表歉意。</string>
     <string name="unable_to_connect">無法連接</string>
     <string name="unruly_passenger">乘客干擾</string>
     <string name="unstar_route_hint">從清單頂部取消固定路線</string>
