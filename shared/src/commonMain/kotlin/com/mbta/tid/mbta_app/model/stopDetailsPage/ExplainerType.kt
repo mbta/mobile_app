@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class ExplainerType {
-    data object NoPrediction : ExplainerType()
+    @Serializable data object NoPrediction : ExplainerType()
 
-    data object FinishingAnotherTrip : ExplainerType()
+    @Serializable data object FinishingAnotherTrip : ExplainerType()
 
-    data object NoVehicle : ExplainerType()
+    @Serializable data object NoVehicle : ExplainerType()
 }
