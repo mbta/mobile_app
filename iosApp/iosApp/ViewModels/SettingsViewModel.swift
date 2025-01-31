@@ -31,7 +31,8 @@ class SettingsViewModel: ObservableObject {
         do {
             let feedbackFormUrl = localizedFeedbackFormUrl(
                 baseUrl: "https://mbta.com/appfeedback",
-                translation: Bundle.main.preferredLocalizations.first ?? "en"
+                translation: Bundle.main.preferredLocalizations.first ?? "en",
+                separateHTForm: true
             )
             settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
             sections = [

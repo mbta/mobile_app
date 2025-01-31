@@ -1,9 +1,13 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-fun localizedFeedbackFormUrl(baseUrl: String, translation: String): String {
+fun localizedFeedbackFormUrl(
+    baseUrl: String,
+    translation: String,
+    separateHTForm: Boolean = false
+): String {
     return when (translation) {
         "es" -> "${baseUrl}?lang=es-US"
-        "ht" -> baseUrl
+        "ht" -> if (separateHTForm) "${baseUrl}-ht" else baseUrl
         "pt-BR" -> "${baseUrl}?lang=pt-BR"
         "vi" -> "${baseUrl}?lang=vi"
         "zh-Hans-CN" -> "${baseUrl}?lang=zh-Hans"

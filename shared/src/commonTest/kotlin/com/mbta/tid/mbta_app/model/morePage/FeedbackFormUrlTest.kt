@@ -17,6 +17,8 @@ class LocalizedFeedbackFormUrlTest {
     @Test
     fun testHT() {
         assertEquals("baseUrl", localizedFeedbackFormUrl("baseUrl", "ht"))
+        assertEquals("baseUrl-ht", localizedFeedbackFormUrl("baseUrl", "ht", true))
+
     }
 
     @Test
