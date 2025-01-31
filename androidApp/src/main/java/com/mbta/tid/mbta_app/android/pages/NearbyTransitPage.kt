@@ -82,7 +82,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -105,7 +104,6 @@ data class NearbyTransit(
     ExperimentalMaterial3Api::class,
     MapboxExperimental::class,
     FlowPreview::class,
-    ExperimentalSerializationApi::class
 )
 @Composable
 fun NearbyTransitPage(

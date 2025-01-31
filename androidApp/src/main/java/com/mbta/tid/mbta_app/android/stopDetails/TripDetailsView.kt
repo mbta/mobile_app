@@ -52,7 +52,7 @@ fun TripDetailsView(
             withContext(Dispatchers.Default) {
                 if (
                     tripFilter != null &&
-                        vehicle != null &&
+                        tripData != null &&
                         tripData.tripFilter == tripFilter &&
                         tripData.tripPredictionsLoaded &&
                         globalResponse != null
@@ -71,11 +71,12 @@ fun TripDetailsView(
             }
         }
 
-    if (tripFilter != null && vehicle != null && globalResponse != null && stops != null) {
+    if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
         val route = globalResponse.routes[tripData.trip.routeId]
         val routeAccents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
         val terminalStop = getParentFor(tripData.trip.stopIds?.first(), globalResponse.stops)
-        val vehicleStop = getParentFor(vehicle.stopId, globalResponse.stops)
+        val vehicleStop =
+            if (vehicle != null) getParentFor(vehicle.stopId, globalResponse.stops) else null
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
@@ -83,7 +84,7 @@ fun TripDetailsView(
         val explainerType: ExplainerType? =
             when (headerSpec) {
                 is TripHeaderSpec.Scheduled ->
-                    if (routeAccents.type == RouteType.FERRY) {
+                    if (routeAccents.type != RouteType.FERRY) {
                         ExplainerType.NoPrediction
                     } else {
                         null
