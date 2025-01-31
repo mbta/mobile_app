@@ -143,15 +143,16 @@ struct AlertDetails: View {
     @ViewBuilder
     private var alertPeriod: some View {
         if let currentPeriod {
-            HStack(alignment: .center, spacing: 8) {
-                VStack(alignment: .leading, spacing: 14) {
+            Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
+                GridRow {
                     Text("Start", comment: "Label for the start date of a disruption")
-                    Text("End", comment: "Label for the end date of a disruption")
-                }.frame(minWidth: 48)
-                VStack(alignment: .leading, spacing: 14) {
+                        .frame(minWidth: 48, alignment: .leading)
                     Text(currentPeriod.formatStart())
+                }
+                GridRow {
+                    Text("End", comment: "Label for the end date of a disruption")
                     Text(currentPeriod.formatEnd())
-                }.layoutPriority(1)
+                }
             }
         } else {
             Text("Alert is no longer in effect")
