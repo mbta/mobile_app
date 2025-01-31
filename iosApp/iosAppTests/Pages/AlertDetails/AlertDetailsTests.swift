@@ -217,4 +217,45 @@ final class AlertDetailsTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: "Service Change"))
     }
+
+    func testElevatorClosure() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = Date.now
+
+        let route = objects.route { _ in }
+        let stop = objects.stop { $0.name = "Park Street" }
+        let alert = objects.alert { alert in
+            alert.effect = .elevatorClosure
+            alert.header = "Elevator 123 (Foo to Bar) unavailable due to demonstration"
+            alert.cause = .demonstration
+            alert.activePeriod(
+                start: (now - 3 * 24 * 60 * 60).toKotlinInstant(),
+                end: nil
+            )
+            alert.informedEntity(
+                activities: [.usingWheelchair],
+                directionId: nil,
+                facility: nil,
+                route: nil,
+                routeType: nil,
+                stop: stop.id,
+                trip: nil
+            )
+            alert.description_ = "To exit, go somewhere."
+            alert.updatedAt = (now - 10 * 60).toKotlinInstant()
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Park Street Elevator Closure"))
+        try sut.inspect().findAll(ViewType.Text.self).forEach { try debugPrint($0.string()) }
+        XCTAssertNotNil(try sut.inspect().find(text: "Elevator 123 (Foo to Bar) unavailable due to demonstration"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Alternative path"))
+        XCTAssertNotNil(try sut.inspect().find(text: "To exit, go somewhere."))
+
+        XCTAssertThrowsError(try sut.inspect().find(text: "Demonstration"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Full Description"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "1 stop affected"))
+    }
 }

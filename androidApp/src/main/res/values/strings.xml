@@ -40,8 +40,8 @@
     <string name="eastbound">Eastbound</string>
     <string name="electrical_work">Electrical Work</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d elevator closure</item>
-        <item quantity="other">%1$d elevator closures</item>
+        <item quantity="one">%1$d elevator closed</item>
+        <item quantity="other">%1$d elevators closed</item>
     </plurals>
     <string name="end">End</string>
     <string name="error_loading_data">Error loading data</string>

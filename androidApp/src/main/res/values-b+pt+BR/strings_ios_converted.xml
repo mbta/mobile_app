@@ -40,9 +40,9 @@
     <string name="eastbound">Sentido leste</string>
     <string name="electrical_work">Obra elétrica</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d fechamento de elevador</item>
-        <item quantity="many">%1$d fechamentos de elevador</item>
-        <item quantity="other">%1$d fechamentos de elevador</item>
+        <item quantity="one">%1$d elevador fechado</item>
+        <item quantity="many">%1$d elevadores fechados</item>
+        <item quantity="other">%1$d elevadores fechados</item>
     </plurals>
     <string name="end">Fim</string>
     <string name="error_loading_data">Erro ao carregar dados</string>

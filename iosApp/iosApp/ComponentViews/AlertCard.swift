@@ -24,12 +24,14 @@ struct AlertCard: View {
     let onViewDetails: (() -> Void)?
 
     @ScaledMetric var majorIconSize = 48
+    @ScaledMetric var elevatorIconSize = 28
     @ScaledMetric var miniIconSize = 20
     @ScaledMetric var infoIconSize = 16
 
     var iconSize: Double {
         switch spec {
         case .major: majorIconSize
+        case .elevator: elevatorIconSize
         default: miniIconSize
         }
     }
@@ -53,13 +55,15 @@ struct AlertCard: View {
     @ViewBuilder
     var card: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 16) {
-                AlertIcon(alertState: alert.alertState, color: color)
-                    .frame(width: iconSize, height: iconSize)
-                    .frame(maxHeight: spec == .elevator ? .infinity : iconSize, alignment: .top)
-                Text(headerString)
-                    .font(spec == .major ? Typography.title2Bold : Typography.bodySemibold)
-                    .multilineTextAlignment(.leading)
+            HStack {
+                HStack(alignment: .top, spacing: 16) {
+                    AlertIcon(alertState: alert.alertState, color: color)
+                        .scaledToFit()
+                        .frame(width: iconSize, height: iconSize, alignment: .top)
+                    Text(headerString)
+                        .font(spec == .major ? Typography.title2Bold : Typography.bodySemibold)
+                        .multilineTextAlignment(.leading)
+                }
                 if spec != .major {
                     Spacer()
                     InfoIcon(size: infoIconSize)
@@ -125,6 +129,17 @@ struct AlertCard: View {
             },
             spec: .secondary,
             color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+        )
+        .padding(32)
+        .background(Color.fill2)
+
+        AlertCard(
+            alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                alert.effect = .elevatorClosure
+                alert.header = "Ruggles elevator 321 (Orange Line Platform to lobby) unavailable due to maintenance"
+            },
+            spec: .elevator,
+            color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
         )
         .padding(32)
         .background(Color.fill2)

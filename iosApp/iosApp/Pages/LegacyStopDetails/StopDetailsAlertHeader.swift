@@ -18,6 +18,7 @@ struct StopDetailsAlertHeader: View {
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             AlertIcon(alertState: alert.alertState, color: routeColor)
+                .scaledToFit()
                 .frame(width: 36, height: 36)
                 .padding(6)
             Text(alert.header ?? "")
