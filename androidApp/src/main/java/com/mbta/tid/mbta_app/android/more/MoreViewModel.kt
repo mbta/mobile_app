@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
-import com.mbta.tid.mbta_app.model.morePage.feedbackFormUrl
+import com.mbta.tid.mbta_app.model.morePage.localizedFeedbackFormUrl
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +46,7 @@ class MoreViewModel(
                     primaryLocale.language == "zh" && primaryLocale.script == "Hant" -> "zh-Hant-TW"
                     else -> "en"
                 }
-            feedbackFormUrl(translation)
+            localizedFeedbackFormUrl("https://mbta.com/androidappfeedback", translation)
         }
         return listOf(
             MoreSection(

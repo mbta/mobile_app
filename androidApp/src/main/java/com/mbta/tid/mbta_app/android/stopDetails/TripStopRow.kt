@@ -2,10 +2,12 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import android.content.Context
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -20,8 +22,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -47,30 +49,31 @@ fun TripStopRow(
     lastStop: Boolean = false
 ) {
     val context = LocalContext.current
-    Column(modifier) {
+    Column(modifier.defaultMinSize(minHeight = 48.dp)) {
         Box(contentAlignment = Alignment.BottomCenter) {
             if (!lastStop && !targeted) {
                 HaloSeparator()
             }
-            Column {
+            Column(Modifier.padding(vertical = 12.dp, horizontal = 8.dp)) {
                 Row(
                     Modifier.semantics(mergeDescendants = true) {
                         if (targeted) {
                             heading()
                         }
-                    }
+                    },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         stop.stop.name,
                         Modifier.semantics {
-                            contentDescription =
-                                stopAccessibilityLabel(stop, targeted, firstStop, context)
-                        },
+                                contentDescription =
+                                    stopAccessibilityLabel(stop, targeted, firstStop, context)
+                            }
+                            .weight(1F),
                         color = colorResource(R.color.text),
-                        textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyLarge,
                     )
-                    Spacer(Modifier.weight(1f))
                     CompositionLocalProvider(
                         LocalContentColor provides colorResource(R.color.text)
                     ) {
@@ -105,7 +108,10 @@ private fun connectionLabel(route: Route, context: Context) =
 
 @Composable
 fun ScrollRoutes(stop: TripDetailsStopList.Entry, modifier: Modifier = Modifier) {
-    Row(modifier.horizontalScroll(rememberScrollState())) {
+    Row(
+        modifier.horizontalScroll(rememberScrollState()).padding(top = 8.dp, end = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         for (route in stop.routes) {
             RoutePill(route, type = RoutePillType.Flex)
         }

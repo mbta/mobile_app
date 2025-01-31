@@ -120,6 +120,8 @@
     <string name="police_action">警方行动</string>
     <string name="police_activity">警方活动</string>
     <string name="power_problem">电力故障</string>
+    <string name="predictions_unavailable_details">服务正在运行，但无法提供预计到达时间。地图显示此路线上的%1$s目前所在的位置。</string>
+    <string name="predictions_unavailable_details_hide_maps">服务正在运行，但无法提供预计到达时间。</string>
     <string name="real_time_arrivals_updating_live">实时到达实时更新</string>
     <string name="recently_viewed">近期查看过</string>
     <string name="refresh">刷新</string>
@@ -158,6 +160,7 @@
     <string name="stop_closure">站点关闭</string>
     <string name="stop_filter_pills_filter_hint">应用过滤器，以便仅显示来自该路线的到达</string>
     <string name="stop_filter_pills_remove_hint">删除过滤器并显示所有路线</string>
+    <string name="stops">站点</string>
     <plurals name="stops_away">
         <item quantity="other">还有%1$d站</item>
     </plurals>

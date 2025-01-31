@@ -53,17 +53,26 @@ fun StopDetailsFilteredView(
     }
 
     if (patternsByStop != null) {
+
+        val tileData =
+            departures.stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
+
+        val realtimePatterns =
+            patternsByStop.patterns.filter { it.directionId() == stopFilter.directionId }
+        val noPredictionsStatus =
+            if (tileData.isEmpty()) {
+                StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+            } else {
+                null
+            }
+
         StopDetailsFilteredDeparturesView(
             stopId = stopId,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
             patternsByStop = patternsByStop,
-            tileData =
-                departures.stopDetailsFormattedTrips(
-                    stopFilter.routeId,
-                    stopFilter.directionId,
-                    now
-                ),
+            tileData = tileData,
+            noPredictionsStatus = noPredictionsStatus,
             elevatorAlerts = departures.elevatorAlerts,
             global = globalResponse,
             now = now,
@@ -92,6 +101,7 @@ fun StopDetailsFilteredView(
                             stopFilter.directionId,
                             now
                         ),
+                    noPredictionsStatus = null,
                     elevatorAlerts = placeholderDepartures.elevatorAlerts,
                     global = globalResponse,
                     now = now,

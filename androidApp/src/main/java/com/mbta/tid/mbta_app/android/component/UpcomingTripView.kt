@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,8 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
+import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
@@ -72,7 +75,7 @@ fun UpcomingTripView(
     isOnly: Boolean = true,
     hideRealtimeIndicators: Boolean = false
 ) {
-    val modifier = modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
+    val modifier = modifier.widthIn(min = 48.dp).padding(vertical = 2.dp)
     val context = LocalContext.current
     // TODO: actually pull through vehicle type
     val vehicleType = routeType?.typeText(context, isOnly) ?: ""
@@ -84,7 +87,8 @@ fun UpcomingTripView(
                         Text(
                             state.trip.text,
                             fontSize = 13.sp,
-                            modifier = Modifier.placeholderIfLoading()
+                            modifier = Modifier.placeholderIfLoading(),
+                            textAlign = TextAlign.End
                         )
                     }
                 is TripInstantDisplay.Hidden -> {}
@@ -248,6 +252,7 @@ fun UpcomingTripView(
                                         )
                                 }
                                 .placeholderIfLoading(),
+                        textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
@@ -290,13 +295,38 @@ fun UpcomingTripView(
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
                 is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
-                    Text(stringResource(R.string.no_predictions), modifier, fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.no_predictions),
+                        modifier,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.End
+                    )
                 is RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
-                    Text(stringResource(R.string.service_ended), modifier, fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.service_ended),
+                        modifier,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.End
+                    )
                 is RealtimePatterns.NoTripsFormat.NoSchedulesToday ->
-                    Text(stringResource(R.string.no_service_today), modifier, fontSize = 13.sp)
+                    Text(
+                        stringResource(R.string.no_service_today),
+                        modifier,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.End
+                    )
             }
-        is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
+        is UpcomingTripViewState.Loading ->
+            CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                UpcomingTripView(
+                    UpcomingTripViewState.Some(TripInstantDisplay.Minutes(10)),
+                    modifier.loadingShimmer().placeholderIfLoading(),
+                    routeType,
+                    isFirst,
+                    isOnly,
+                    hideRealtimeIndicators
+                )
+            }
     }
 }
 
@@ -332,7 +362,7 @@ fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) 
         }
     val icon =
         when (effect) {
-            DisruptionViewEffect.Detour -> painterResource(R.drawable.baseline_circle_24)
+            DisruptionViewEffect.Detour -> painterResource(R.drawable.baseline_warning_24)
             DisruptionViewEffect.Shuttle -> painterResource(R.drawable.baseline_directions_bus_24)
             DisruptionViewEffect.StopClosed ->
                 painterResource(R.drawable.baseline_report_gmailerrorred_24)
@@ -352,19 +382,22 @@ fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) 
 @Preview
 @Composable
 fun UpcomingTripViewPreview() {
-    Column(horizontalAlignment = Alignment.End) {
-        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
-        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
-        UpcomingTripView(
-            UpcomingTripViewState.Some(
-                TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes, true)
+    MyApplicationTheme {
+        Column(horizontalAlignment = Alignment.End) {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes, true)
+                )
             )
-        )
-        UpcomingTripView(
-            UpcomingTripViewState.Some(
-                TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes)
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes)
+                )
             )
-        )
+            UpcomingTripView(UpcomingTripViewState.Loading)
+        }
     }
 }
 

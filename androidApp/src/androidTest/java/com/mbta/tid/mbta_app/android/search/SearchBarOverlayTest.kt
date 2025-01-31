@@ -135,8 +135,8 @@ class SearchBarOverlayTest : KoinTest {
 
         currentNavEntry.value = null
 
-        composeTestRule.waitUntilAtLeastOneExists(hasText("Search by stop"))
-        val searchNode = composeTestRule.onNodeWithText("Search by stop")
+        composeTestRule.waitUntilAtLeastOneExists(hasText("Stops"))
+        val searchNode = composeTestRule.onNodeWithText("Stops")
         searchNode.assertExists()
         searchNode.requestFocus()
         composeTestRule.awaitIdle()

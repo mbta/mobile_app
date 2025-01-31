@@ -122,12 +122,10 @@ fun NearbyTransitView(
             }
         }
 
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.nearby_transit),
-            modifier =
-                Modifier.semantics { heading() }
-                    .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.semantics { heading() }.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.titleLarge,
         )
         ErrorBanner(errorBannerViewModel)

@@ -124,6 +124,8 @@
     <string name="police_action">Police Action</string>
     <string name="police_activity">Police Activity</string>
     <string name="power_problem">Power Problem</string>
+    <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. The map shows where %1$s on this route currently are.</string>
+    <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="recently_viewed">Recently Viewed</string>
@@ -164,6 +166,7 @@
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
+    <string name="stops">Stops</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
         <item quantity="other">%1$d stops away</item>

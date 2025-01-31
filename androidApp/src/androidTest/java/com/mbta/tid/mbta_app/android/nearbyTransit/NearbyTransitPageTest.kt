@@ -299,14 +299,14 @@ class NearbyTransitPageTest : KoinTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
         composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading..."))
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
             .performSemanticsAction(SemanticsActions.Expand)
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Search by stop").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stops").assertIsDisplayed()
 
         composeTestRule.onNodeWithText("Green Line Long Name").assertExists()
         composeTestRule.onNodeWithText("Green Line Stop").assertExists()

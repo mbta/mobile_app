@@ -124,6 +124,8 @@
     <string name="police_action">Ação policial</string>
     <string name="police_activity">Atividade policial</string>
     <string name="power_problem">Problema de energia</string>
+    <string name="predictions_unavailable_details">O serviço está em execução, mas os horários de chegada previstos não estão disponíveis. O mapa mostra onde %1$s nesta rota estão atualmente.</string>
+    <string name="predictions_unavailable_details_hide_maps">O serviço está em execução, mas os horários previstos de chegada não estão disponíveis.</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>
@@ -162,6 +164,7 @@
     <string name="stop_closure">Fechamento de parada</string>
     <string name="stop_filter_pills_filter_hint">Aplique um filtro para que apenas as chegadas desta rota sejam exibidas</string>
     <string name="stop_filter_pills_remove_hint">Remova o filtro e exiba todas as rotas</string>
+    <string name="stops">Paradas</string>
     <plurals name="stops_away">
         <item quantity="one">a %1$d parada</item>
         <item quantity="many">a %1$d paradas</item>
