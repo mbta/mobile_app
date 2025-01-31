@@ -44,7 +44,7 @@ fun TransitHeader(
         Text(
             text = name,
             maxLines = 1,
-            modifier = Modifier.semantics { heading() }.placeholderIfLoading(),
+            modifier = Modifier.semantics { heading() }.weight(1.0f).placeholderIfLoading(),
             style =
                 LocalTextStyle.current.copy(
                     color = textColor,
@@ -53,7 +53,6 @@ fun TransitHeader(
                 )
         )
         if (rightContent != null) {
-            Spacer(modifier = Modifier.weight(1.0F))
             rightContent(textColor)
         }
     }
