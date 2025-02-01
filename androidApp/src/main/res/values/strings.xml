@@ -8,6 +8,7 @@
     <string name="alert">Alert</string>
     <string name="alert_details">Alert Details</string>
     <string name="alert_ended">Alert is no longer in effect</string>
+    <string name="alternative_path">Alternative path</string>
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">An Earlier Mechanical Problem</string>
     <string name="an_earlier_signal_problem">An Earlier Signal Problem</string>
@@ -39,6 +40,7 @@
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="eastbound">Eastbound</string>
     <string name="electrical_work">Electrical Work</string>
+    <string name="elevator_closure">Elevator Closure</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d elevator closed</item>
         <item quantity="other">%1$d elevators closed</item>
@@ -217,5 +219,4 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
-
 </resources>

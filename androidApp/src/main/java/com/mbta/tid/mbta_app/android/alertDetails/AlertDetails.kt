@@ -67,13 +67,14 @@ fun AlertDetails(
     alert: Alert,
     line: Line?,
     routes: List<Route>?,
-    stopId: String?,
+    stop: Stop?,
     affectedStops: List<Stop>,
     now: Instant,
     analytics: Analytics = koinInject()
 ) {
     val routeId = line?.id ?: routes?.firstOrNull()?.id ?: ""
-    val routeLabel = line?.longName ?: routes?.firstOrNull()?.label ?: ""
+    val routeLabel = line?.longName ?: routes?.firstOrNull()?.label
+    val stopLabel = stop?.name
     val effectLabel = FormattedAlert.format(alert)?.effect?.let { stringResource(it) }
     val causeLabel =
         when (alert.cause) {
@@ -129,6 +130,8 @@ fun AlertDetails(
             else -> null
         }
     val currentPeriod = alert.activePeriod.firstOrNull { it.activeAt(now) }
+    val isElevatorAlert = alert.effect == Alert.Effect.ElevatorClosure
+    val elevatorSubtitle = if (isElevatorAlert) alert.header else null
 
     Column(
         Modifier.verticalScroll(rememberScrollState())
@@ -136,39 +139,74 @@ fun AlertDetails(
             .padding(top = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        AlertTitle(routeLabel, effectLabel, causeLabel)
-        AlertPeriod(currentPeriod)
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            AffectedStopCollapsible(
-                affectedStops,
-                onTappedAffectedStops = {
-                    analytics.tappedAffectedStops(routeId, stopId ?: "", alert.id)
-                }
-            )
-            TripPlannerLink(
-                onTappedTripPlanner = {
-                    analytics.tappedTripPlanner(routeId, stopId ?: "", alert.id)
-                }
-            )
+        AlertTitle(
+            routeLabel,
+            stopLabel,
+            effectLabel,
+            causeLabel,
+            elevatorSubtitle,
+            isElevatorAlert
+        )
+        if (!isElevatorAlert) {
+            AlertPeriod(currentPeriod)
+
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                AffectedStopCollapsible(
+                    affectedStops,
+                    onTappedAffectedStops = {
+                        analytics.tappedAffectedStops(routeId, stop?.id ?: "", alert.id)
+                    }
+                )
+                TripPlannerLink(
+                    onTappedTripPlanner = {
+                        analytics.tappedTripPlanner(routeId, stop?.id ?: "", alert.id)
+                    }
+                )
+            }
         }
         AlertDescription(alert, affectedStopsKnown = affectedStops.isNotEmpty())
+        if (isElevatorAlert) {
+            AlertPeriod(currentPeriod)
+        }
         AlertFooter(alert.updatedAt)
     }
 }
 
 @Composable
-private fun AlertTitle(routeLabel: String, effectLabel: String?, causeLabel: String?) {
+private fun AlertTitle(
+    routeLabel: String?,
+    stopLabel: String?,
+    effectLabel: String?,
+    causeLabel: String?,
+    elevatorSubtitle: String?,
+    isElevatorAlert: Boolean = false,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         if (effectLabel != null) {
-            Text(
-                stringResource(R.string.route_effect, routeLabel, effectLabel),
-                style = MaterialTheme.typography.titleLarge
-            )
+            if (routeLabel != null) {
+                Text(
+                    stringResource(R.string.route_effect, routeLabel, effectLabel),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            } else if (stopLabel != null) {
+                Text(
+                    stringResource(R.string.route_effect, stopLabel, effectLabel),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            } else {
+                Text(effectLabel, style = MaterialTheme.typography.titleLarge)
+            }
         }
-        if (causeLabel != null) {
+        if (!isElevatorAlert && causeLabel != null) {
             Text(
                 causeLabel,
                 fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodySmall
+            )
+        } else if (isElevatorAlert && elevatorSubtitle != null) {
+            Text(
+                elevatorSubtitle,
+                fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -297,9 +335,10 @@ private fun splitDetails(details: String, separator: String? = null): List<Strin
 
 @Composable
 private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
+    val isElevatorAlert = alert.effect == Alert.Effect.ElevatorClosure
     val alertDescriptionParagraphs = buildList {
         val header = alert.header
-        if (header != null) {
+        if (!isElevatorAlert && header != null) {
             addAll(splitDetails(header))
         }
         val description = alert.description
@@ -314,7 +353,9 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
     if (alertDescriptionParagraphs.isNotEmpty()) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(
-                stringResource(R.string.full_description),
+                if (alert.effect != Alert.Effect.ElevatorClosure)
+                    stringResource(R.string.full_description)
+                else stringResource(R.string.alternative_path),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -366,7 +407,7 @@ private fun AlertDetailsPreview() {
                 updatedAt = now - 10.minutes
             }
         Column(Modifier.background(colorResource(R.color.fill2)).padding(16.dp)) {
-            AlertDetails(alert, null, listOf(route), stop.id, listOf(stop), now, MockAnalytics())
+            AlertDetails(alert, null, listOf(route), stop, listOf(stop), now, MockAnalytics())
         }
     }
 }

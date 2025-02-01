@@ -13,6 +13,7 @@ data class FormattedAlert(@StringRes val effect: Int) {
                 when (alert.effect) {
                     Alert.Effect.Detour -> R.string.detour
                     Alert.Effect.DockClosure -> R.string.dock_closure
+                    Alert.Effect.ElevatorClosure -> R.string.elevator_closure
                     Alert.Effect.ServiceChange -> R.string.service_change
                     Alert.Effect.Shuttle -> R.string.shuttle
                     Alert.Effect.StationClosure -> R.string.station_closure
