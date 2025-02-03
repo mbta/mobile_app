@@ -45,6 +45,7 @@
     </plurals>
     <string name="end">Kết thúc</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
     <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
@@ -72,6 +73,7 @@
     <string name="hides_remaining_stops">Ẩn các điểm dừng còn lại</string>
     <string name="high_winds">Gió mạnh</string>
     <string name="holiday">Ngày lễ</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> giờ &lt;b>%2$d&lt;/b> phút</string>
     <string name="hurricane">Bão</string>
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="inbound">Đến</string>

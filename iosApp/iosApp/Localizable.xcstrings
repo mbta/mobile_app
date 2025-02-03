@@ -139,7 +139,45 @@
       }
     },
     "**%ld** hr" : {
-      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
+      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld**小时"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld**小時*"
+          }
+        }
+      }
     },
     "**%ld** hr **%ld** min" : {
       "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",

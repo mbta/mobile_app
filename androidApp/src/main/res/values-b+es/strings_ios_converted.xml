@@ -49,6 +49,7 @@
     </plurals>
     <string name="end">Fin</string>
     <string name="error_loading_data">Error al cargar datos</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Terminando otro viaje</string>
     <string name="explainer_headline_no_prediction">Predicción aún no disponible</string>
     <string name="explainer_headline_no_vehicle">la ubicación del %1$s aún no está disponible</string>
@@ -76,6 +77,7 @@
     <string name="hides_remaining_stops">Oculta las paradas restantes</string>
     <string name="high_winds">Vientos fuertes</string>
     <string name="holiday">Día festivo</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> h &lt;b>%2$d&lt;/b> min</string>
     <string name="hurricane">Huracán</string>
     <string name="ice_in_harbor">Hielo en el puerto</string>
     <string name="inbound">Entrante</string>
