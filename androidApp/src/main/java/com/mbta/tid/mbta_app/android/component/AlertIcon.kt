@@ -25,6 +25,8 @@ fun AlertIcon(alertState: StopAlertState, color: Color?, modifier: Modifier = Mo
         painterResource(iconId),
         contentDescription = stringResource(R.string.alert),
         modifier,
-        tint = color ?: colorResource(R.color.text)
+        tint =
+            if (alertState == StopAlertState.Elevator) Color.Unspecified
+            else color ?: colorResource(R.color.text)
     )
 }
