@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -116,28 +115,6 @@ fun StopDetailsFilteredDeparturesView(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
-
-                if (showElevatorAccessibility && elevatorAlerts.isNotEmpty()) {
-                    elevatorAlerts.map {
-                        Column(
-                            Modifier.background(
-                                    colorResource(R.color.fill3),
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
-                                .clickable(
-                                    onClickLabel = stringResource(R.string.displays_more_info)
-                                ) {
-                                    openAlertDetails(
-                                        ModalRoutes.AlertDetails(it.id, null, null, stopId)
-                                    )
-                                }
-                        ) {
-                            StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
-                        }
-                    }
-                }
 
                 Column(
                     Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
