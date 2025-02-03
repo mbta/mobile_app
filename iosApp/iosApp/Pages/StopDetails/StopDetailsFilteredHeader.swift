@@ -56,6 +56,7 @@ struct StopDetailsFilteredHeader: View {
                 ActionButton(kind: .close, action: onClose)
             }
         }
+        .frame(minHeight: 64)
         .padding(.horizontal, 16)
         .padding(.top, 11)
     }
