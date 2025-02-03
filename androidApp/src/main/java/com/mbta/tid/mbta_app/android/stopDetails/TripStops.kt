@@ -1,5 +1,10 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -116,32 +121,40 @@ fun TripStops(
                         .defaultMinSize(minHeight = 48.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                    AnimatedContent(
+                        stopsExpanded,
+                        transitionSpec = {
+                            fadeIn(animationSpec = tween(500)) togetherWith
+                                fadeOut(animationSpec = tween(500))
+                        }
                     ) {
-                        if (stopsExpanded) {
-                            Icon(
-                                painterResource(R.drawable.fa_caret_right),
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp).rotate(90f),
-                                tint = colorResource(R.color.deemphasized)
-                            )
-                            ColoredRouteLine(
-                                routeAccents.color,
-                                Modifier.padding(start = 14.dp, end = 18.dp).fillMaxHeight()
-                            )
-                        } else {
-                            Icon(
-                                painterResource(R.drawable.fa_caret_right),
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp),
-                                tint = colorResource(R.color.deemphasized)
-                            )
-                            RouteLineTwist(
-                                routeAccents.color,
-                                Modifier.padding(start = 2.dp, end = 6.dp)
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        ) {
+                            if (it) {
+                                Icon(
+                                    painterResource(R.drawable.fa_caret_right),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp).rotate(90f),
+                                    tint = colorResource(R.color.deemphasized)
+                                )
+                                ColoredRouteLine(
+                                    routeAccents.color,
+                                    Modifier.padding(start = 14.dp, end = 18.dp).fillMaxHeight()
+                                )
+                            } else {
+                                Icon(
+                                    painterResource(R.drawable.fa_caret_right),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp),
+                                    tint = colorResource(R.color.deemphasized)
+                                )
+                                RouteLineTwist(
+                                    routeAccents.color,
+                                    Modifier.padding(start = 2.dp, end = 6.dp)
+                                )
+                            }
                         }
                     }
                     Text(
