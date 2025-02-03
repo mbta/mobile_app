@@ -99,7 +99,7 @@ fun AlertDetailsPage(
             if (alert?.effect == Alert.Effect.ElevatorClosure) {
                 Image(
                     painterResource(R.drawable.elevator_alert_monochrome),
-                    "",
+                    null,
                     Modifier.height(24.dp),
                     colorFilter = ColorFilter.tint(headerTextColor)
                 )
