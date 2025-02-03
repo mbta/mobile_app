@@ -23,10 +23,17 @@ struct PredictionText: View {
 
     var predictionKey: String {
         if hours >= 1 {
-            String(format: NSLocalizedString(
-                "**%ld** hr **%ld** min",
-                comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
-            ), hours, remainingMinutes)
+            if remainingMinutes == 0 {
+                String(format: NSLocalizedString(
+                    "**%ld** hr",
+                    comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
+                ), hours)
+            } else {
+                String(format: NSLocalizedString(
+                    "**%ld** hr **%ld** min",
+                    comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
+                ), hours, remainingMinutes)
+            }
         } else {
             String(format: NSLocalizedString(
                 "**%ld** min",

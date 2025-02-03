@@ -214,6 +214,7 @@ fun UpcomingTripView(
                 is TripInstantDisplay.Minutes ->
                     WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
                         Text(
+                            // TODO: hrs and mins
                             text =
                                 AnnotatedString.fromHtml(
                                     stringResource(R.string.minutes_abbr, state.trip.minutes)
