@@ -3,9 +3,9 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -40,27 +41,30 @@ fun NearbyStopView(
         modifier =
             Modifier.background(colorResource(id = R.color.fill2))
                 .fillMaxWidth()
-                .padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp)
+                .padding(top = 11.dp, bottom = 11.dp, start = 8.dp, end = 16.dp)
     ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (showElevatorAccessibility && hasElevatorAlerts) {
-                    Image(
-                        painterResource(R.drawable.accessibility_icon_inaccessible),
-                        "",
-                        modifier =
-                            Modifier.size(24.dp).placeholderIfLoading().clearAndSetSemantics {}
-                    )
-                }
-                Text(
-                    text = patternsAtStop.stop.name,
-                    modifier = Modifier.placeholderIfLoading(),
-                    style = MaterialTheme.typography.headlineSmall
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (showElevatorAccessibility && hasElevatorAlerts) {
+                Image(
+                    painterResource(R.drawable.elevator_alert),
+                    "",
+                    modifier = Modifier.height(24.dp).placeholderIfLoading().clearAndSetSemantics {}
                 )
             }
+            Text(
+                text = patternsAtStop.stop.name,
+                modifier =
+                    Modifier.placeholderIfLoading()
+                        .padding(
+                            start =
+                                if (showElevatorAccessibility && hasElevatorAlerts) 0.dp else 8.dp
+                        )
+                        .weight(1f),
+                style = MaterialTheme.typography.headlineSmall
+            )
             if (showElevatorAccessibility && hasElevatorAlerts) {
                 Text(
                     text =
@@ -69,7 +73,7 @@ fun NearbyStopView(
                             patternsAtStop.elevatorAlerts.size,
                             patternsAtStop.elevatorAlerts.size
                         ),
-                    modifier = Modifier.placeholderIfLoading().padding(top = 8.dp),
+                    modifier = Modifier.placeholderIfLoading().alpha(0.6f),
                     style = MaterialTheme.typography.labelLarge
                 )
             }

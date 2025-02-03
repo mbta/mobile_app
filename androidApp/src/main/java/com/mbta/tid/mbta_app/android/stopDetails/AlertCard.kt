@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,17 +64,20 @@ fun AlertCard(
     val iconSize =
         when (spec) {
             AlertCardSpec.Major -> 48.dp
+            AlertCardSpec.Elevator -> 28.dp
             else -> 20.dp
         }
     Column(
         modifier =
             modifier
+                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
+                .padding(2.dp)
+                .background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(8.dp))
                 .clickable {
                     if (spec != AlertCardSpec.Major && onViewDetails != null) onViewDetails()
                 }
-                .background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                .border(1.dp, colorResource(R.color.halo), RoundedCornerShape(8.dp))
-                .padding(all = 16.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start
     ) {
@@ -82,15 +88,14 @@ fun AlertCard(
             AlertIcon(
                 alertState = alert.alertState,
                 color = color,
-                modifier = Modifier.size(iconSize)
+                modifier =
+                    Modifier.size(iconSize)
+                        .align(
+                            if (spec == AlertCardSpec.Elevator) Alignment.Top
+                            else Alignment.CenterVertically
+                        )
             )
-            Text(
-                headerText,
-                Modifier.weight(1f),
-                fontSize = 24.sp,
-                fontWeight =
-                    if (spec == AlertCardSpec.Major) FontWeight.Bold else FontWeight.SemiBold
-            )
+            Text(headerText, Modifier.weight(1f), style = alertHeaderTypography(spec))
             if (spec != AlertCardSpec.Major) {
                 InfoCircle()
             }
@@ -119,6 +124,21 @@ fun AlertCard(
 }
 
 @Composable
+fun alertHeaderTypography(spec: AlertCardSpec): TextStyle =
+    (if (spec == AlertCardSpec.Elevator) MaterialTheme.typography.bodySmall
+        else TextStyle(fontSize = 24.sp))
+        .merge(
+            TextStyle(
+                fontWeight =
+                    when (spec) {
+                        AlertCardSpec.Major -> FontWeight.Bold
+                        AlertCardSpec.Elevator -> FontWeight.Normal
+                        else -> FontWeight.SemiBold
+                    }
+            )
+        )
+
+@Composable
 @Preview
 fun AlertCardPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -137,6 +157,17 @@ fun AlertCardPreview() {
             AlertCardSpec.Secondary,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("80276C"),
+            onViewDetails = {}
+        )
+        AlertCard(
+            ObjectCollectionBuilder.Single.alert({
+                effect = Alert.Effect.ElevatorClosure
+                header =
+                    "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
+            }),
+            AlertCardSpec.Elevator,
+            textColor = Color.fromHex("FFFFFF"),
+            color = Color.fromHex("ED8B00"),
             onViewDetails = {}
         )
     }
