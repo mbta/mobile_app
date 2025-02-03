@@ -10,7 +10,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.model.RouteType
@@ -23,9 +25,11 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.utils.resolveParentId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
+import org.koin.compose.koinInject
 
 @Composable
 fun TripDetailsView(
@@ -33,8 +37,10 @@ fun TripDetailsView(
     stopId: String,
     stopDetailsVM: StopDetailsViewModel,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    openExplainer: (ModalRoutes.Explainer) -> Unit,
-    now: Instant
+    openSheetRoute: (SheetRoutes) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    now: Instant,
+    analytics: Analytics = koinInject()
 ) {
 
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
@@ -43,6 +49,17 @@ fun TripDetailsView(
 
     fun getParentFor(stopId: String?, stops: Map<String, Stop>): Stop? {
         return stopId.let { stops[stopId]?.resolveParent(stops) }
+    }
+
+    fun onTapStop(stop: TripDetailsStopList.Entry) {
+        val parentStationId = globalResponse?.stops?.resolveParentId(stop.stop.id) ?: stop.stop.id
+        openSheetRoute(SheetRoutes.StopDetails(parentStationId, null, null))
+        analytics.tappedDownstreamStop(
+            routeId = tripData?.trip?.routeId ?: "",
+            stopId = parentStationId,
+            tripId = tripFilter?.tripId ?: "",
+            connectingRouteId = null
+        )
     }
 
     LaunchedEffect(vehicle) {
@@ -101,12 +118,12 @@ fun TripDetailsView(
             }
         val onHeaderTap: (() -> Unit)? =
             if (explainerType != null) {
-                { openExplainer(ModalRoutes.Explainer(explainerType, routeAccents)) }
+                { openModal(ModalRoutes.Explainer(explainerType, routeAccents)) }
             } else {
                 null
             }
 
-        Column() {
+        Column {
             Column(Modifier.zIndex(1F)) {
                 TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
             }
@@ -118,6 +135,7 @@ fun TripDetailsView(
                     headerSpec,
                     now,
                     globalResponse,
+                    ::onTapStop,
                     routeAccents
                 )
             }

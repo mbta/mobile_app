@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -16,7 +16,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import kotlinx.datetime.Instant
-import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsFilteredView(
@@ -31,8 +30,8 @@ fun StopDetailsFilteredView(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
-    openExplainer: (ModalRoutes.Explainer) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
@@ -41,17 +40,6 @@ fun StopDetailsFilteredView(
         departures?.let {
             it.routes.find { patterns -> patterns.routeIdentifier == stopFilter.routeId }
         }
-
-    val analytics: Analytics = koinInject()
-
-    fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
-        openAlertDetails(alertDetails)
-        analytics.tappedAlertDetails(
-            routeId = alertDetails.lineId ?: alertDetails.routeIds?.firstOrNull() ?: "",
-            stopId = alertDetails.stopId ?: "",
-            alertId = alertDetails.alertId
-        )
-    }
 
     if (patternsByStop != null) {
 
@@ -85,8 +73,8 @@ fun StopDetailsFilteredView(
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
             setMapSelectedVehicle = setMapSelectedVehicle,
-            openAlertDetails = ::openAndRecordAlertDetails,
-            openExplainer = openExplainer,
+            openModal = openModal,
+            openSheetRoute = openSheetRoute
         )
     } else {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -115,8 +103,8 @@ fun StopDetailsFilteredView(
                     togglePinnedRoute = {},
                     onClose = onClose,
                     setMapSelectedVehicle = {},
-                    openAlertDetails = {},
-                    openExplainer = {},
+                    openModal = {},
+                    openSheetRoute = {}
                 )
             }
         }

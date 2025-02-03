@@ -132,7 +132,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 onClose = {},
                 onTapRoutePill = {},
                 updateStopFilter = filterState::value::set,
-                openAlertDetails = {},
+                openModal = {},
             )
         }
 

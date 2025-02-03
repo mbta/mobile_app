@@ -42,6 +42,7 @@ fun TripStops(
     headerSpec: TripHeaderSpec?,
     now: Instant,
     global: GlobalResponse?,
+    onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents
 ) {
     val context = LocalContext.current
@@ -82,7 +83,7 @@ fun TripStops(
             if (showFirstStopSeparately) {
                 val firstStop = splitStops.firstStop
                 if (firstStop != null) {
-                    TripStopRow(stop = firstStop, now, routeAccents, firstStop = true)
+                    TripStopRow(stop = firstStop, now, onTapLink, routeAccents, firstStop = true)
                 }
             }
             if (splitStops.collapsedStops.isNotEmpty() && stopsAway != null) {
@@ -119,6 +120,7 @@ fun TripStops(
                             list = splitStops.collapsedStops,
                             lastStopSequence,
                             now,
+                            onTapLink,
                             routeAccents
                         )
                     }
@@ -130,6 +132,7 @@ fun TripStops(
                 TripStopRow(
                     stop = target,
                     now,
+                    onTapLink,
                     routeAccents,
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
@@ -138,9 +141,9 @@ fun TripStops(
                             .border(2.dp, colorResource(R.color.halo))
                 )
             }
-            StopList(splitStops.followingStops, lastStopSequence, now, routeAccents)
+            StopList(splitStops.followingStops, lastStopSequence, now, onTapLink, routeAccents)
         } else {
-            StopList(stops.stops, lastStopSequence, now, routeAccents)
+            StopList(stops.stops, lastStopSequence, now, onTapLink, routeAccents)
         }
     }
 }
@@ -150,9 +153,16 @@ private fun StopList(
     list: List<TripDetailsStopList.Entry>,
     lastStopSequence: Int?,
     now: Instant,
+    onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents
 ) {
     for (stop in list) {
-        TripStopRow(stop, now, routeAccents, lastStop = stop.stopSequence == lastStopSequence)
+        TripStopRow(
+            stop,
+            now,
+            onTapLink,
+            routeAccents,
+            lastStop = stop.stopSequence == lastStopSequence
+        )
     }
 }

@@ -156,8 +156,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -214,8 +214,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -319,8 +319,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -367,8 +367,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
