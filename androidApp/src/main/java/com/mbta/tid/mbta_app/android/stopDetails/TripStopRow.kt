@@ -35,6 +35,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -80,7 +81,8 @@ fun TripStopRow(
                                     contentDescription =
                                         stopAccessibilityLabel(stop, targeted, firstStop, context)
                                 }
-                                .weight(1F),
+                                .weight(1F)
+                                .placeholderIfLoading(),
                             color = colorResource(R.color.text),
                             style = MaterialTheme.typography.bodyLarge,
                         )
