@@ -111,10 +111,15 @@ fun StopDetailsFilteredDeparturesView(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
             Column(
-                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(10.dp),
+                Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 10.dp)
+                    .padding(top = 14.dp, bottom = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                Box(Modifier.padding(horizontal = 2.dp)) {
+                    DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                }
 
                 Column(
                     Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
