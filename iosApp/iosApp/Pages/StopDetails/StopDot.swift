@@ -19,7 +19,10 @@ struct StopDot: View {
             .frame(width: 14, height: 14)
             .overlay {
                 if targeted {
-                    Image(.stopPinIndicator).padding(.bottom, 32).accessibilityHidden(true)
+                    Image(.stopPinIndicator).resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .scaledToFit()
+                        .frame(width: 24, height: 24).padding(.bottom, 32).accessibilityHidden(true)
                 }
             }
     }
