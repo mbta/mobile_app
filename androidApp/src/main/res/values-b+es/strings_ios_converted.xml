@@ -38,6 +38,7 @@
     <string name="dock_closure">Cierre del muelle</string>
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="eastbound">En dirección este</string>
+    <string name="effect_ahead">%1$s adelante</string>
     <string name="electrical_work">Trabajo eléctrico</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d ascensor cerrado</item>
@@ -151,14 +152,17 @@
     <string name="selected_stop_first_stop">%1$s, parada seleccionada, primera parada</string>
     <string name="service_change">Cambio de servicio</string>
     <string name="service_ended">Servicio finalizado</string>
+    <string name="service_suspended">Servicio suspendido</string>
     <string name="setting_elevator_accessibility">Mostrar accesibilidad del ascensor</string>
     <string name="setting_toggle_hide_maps">Ocultar Mapas</string>
     <string name="settings_link">Configuración</string>
     <string name="severe_weather">Clima severo</string>
     <string name="shuttle">Autobús de enlace</string>
+    <string name="shuttle_buses">Autobuses de enlace</string>
     <string name="signal_problem">Problema de señal</string>
     <string name="slippery_rail">Riel resbaloso</string>
     <string name="snow">Nieve</string>
+    <string name="snow_route">Ruta de nieve</string>
     <string name="southbound">En dirección sur</string>
     <string name="special_event">Evento especial</string>
     <string name="speed_restriction">Restricción de velocidad</string>
@@ -213,6 +217,7 @@
     <string name="vehicle_schedule_minutes_other">y en %1$d min programado</string>
     <string name="vehicle_schedule_time_first">%1$s llegará a la(s) %2$s como se programó</string>
     <string name="vehicle_schedule_time_other">y a la(s) %1$s como se programó</string>
+    <string name="view_details">Ver detalles</string>
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
     <string name="westbound">En dirección oeste</string>
