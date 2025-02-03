@@ -53,6 +53,7 @@ struct StopDetailsFilteredHeader: View {
                 PinButton(pinned: pinned, action: onPin)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 44, maxHeight: 44)
+                    .foregroundStyle(Color.text)
                 ActionButton(kind: .close, action: onClose)
             }
         }
