@@ -11,6 +11,7 @@ import SwiftUI
 struct StopDot: View {
     let routeAccents: TripRouteAccents
     let targeted: Bool
+    @ScaledMetric private var pinSize: CGFloat = 24
 
     var body: some View {
         Circle()
@@ -22,7 +23,7 @@ struct StopDot: View {
                     Image(.stopPinIndicator).resizable()
                         .aspectRatio(contentMode: .fit)
                         .scaledToFit()
-                        .frame(width: 24, height: 24).padding(.bottom, 32).accessibilityHidden(true)
+                        .frame(width: pinSize, height: pinSize).padding(.bottom, pinSize).accessibilityHidden(true)
                 }
             }
     }

@@ -138,6 +138,9 @@
         }
       }
     },
+    "**%ld** hr" : {
+      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
+    },
     "**%ld** hr **%ld** min" : {
       "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
       "localizations" : {
