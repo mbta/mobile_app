@@ -39,6 +39,7 @@
     <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="eastbound">Eastbound</string>
+    <string name="effect_ahead">%1$s ahead</string>
     <string name="electrical_work">Electrical Work</string>
     <string name="elevator_closure">Elevator Closure</string>
     <plurals name="elevator_closure_count">
@@ -155,14 +156,17 @@
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
     <string name="service_change">Service Change</string>
     <string name="service_ended">Service ended</string>
+    <string name="service_suspended">Service suspended</string>
     <string name="setting_elevator_accessibility">Show elevator accessibility</string>
     <string name="setting_toggle_hide_maps">Hide Maps</string>
     <string name="settings_link">Settings</string>
     <string name="severe_weather">Severe Weather</string>
     <string name="shuttle">Shuttle</string>
+    <string name="shuttle_buses">Shuttle buses</string>
     <string name="signal_problem">Signal Problem</string>
     <string name="slippery_rail">Slippery Rail</string>
     <string name="snow">Snow</string>
+    <string name="snow_route">Snow route</string>
     <string name="southbound">Southbound</string>
     <string name="special_event">Special Event</string>
     <string name="speed_restriction">Speed Restriction</string>
@@ -216,6 +220,7 @@
     <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
+    <string name="view_details">View details</string>
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>

@@ -42,6 +42,7 @@
     <string name="dock_closure">Waf la Fèmen</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
+    <string name="effect_ahead">%1$s devan</string>
     <string name="electrical_work">Travay Elektrik</string>
     <string name="elevator_closure">Fèmti Asansè</string>
     <plurals name="elevator_closure_count">
@@ -158,14 +159,17 @@
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
     <string name="service_change">Chanjman Sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
+    <string name="service_suspended">Sèvis ki kanpe</string>
     <string name="setting_elevator_accessibility">Montre aksè nan asansè</string>
     <string name="setting_toggle_hide_maps">Kache Kat yo</string>
     <string name="settings_link">Paramèt</string>
     <string name="severe_weather">Move Tan</string>
     <string name="shuttle">Navèt</string>
+    <string name="shuttle_buses">Otobis navèt</string>
     <string name="signal_problem">Pwoblèm Siyal</string>
     <string name="slippery_rail">Ray ki Glise</string>
     <string name="snow">Nèj</string>
+    <string name="snow_route">Wout nèj</string>
     <string name="southbound">Nan direksyon sid</string>
     <string name="special_event">Evènman Espesyal</string>
     <string name="speed_restriction">Limit Vitès</string>
@@ -226,6 +230,7 @@
     <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
     <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
     <string name="vehicle_schedule_time_other">epi a %1$s pwograme</string>
+    <string name="view_details">Gade detay</string>
     <string name="waiting_to_depart">Ap tann pou yo pati</string>
     <string name="weather">Tan</string>
     <string name="westbound">Pran direksyon lwès</string>

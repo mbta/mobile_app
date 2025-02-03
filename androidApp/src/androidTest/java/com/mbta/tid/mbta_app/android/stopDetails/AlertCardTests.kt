@@ -1,0 +1,108 @@
+package com.mbta.tid.mbta_app.android.stopDetails
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import kotlin.test.assertTrue
+import org.junit.Rule
+import org.junit.Test
+
+class AlertCardTests {
+
+    @get:Rule val composeTestRule = createComposeRule()
+
+    private val color = Color.fromHex("ED8B00")
+    private val textColor = Color.fromHex("FFFFFF")
+
+    @Test
+    fun testDownstreamAlertCard() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Detour
+            }
+        var onViewDetailsClicked = false
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertCardSpec.Downstream,
+                color,
+                textColor,
+                { onViewDetailsClicked = true }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Detour ahead").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
+        assertTrue { onViewDetailsClicked }
+    }
+
+    @Test
+    fun testMajorAlertCard() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Suspension
+            }
+        var onViewDetailsClicked = false
+        composeTestRule.setContent {
+            AlertCard(alert, AlertCardSpec.Major, color, textColor, { onViewDetailsClicked = true })
+        }
+
+        composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Alert header").assertIsDisplayed()
+        composeTestRule.onNodeWithText("View details").performClick()
+        assertTrue { onViewDetailsClicked }
+    }
+
+    @Test
+    fun testSecondaryAlertCard() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Detour
+            }
+        var onViewDetailsClicked = false
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertCardSpec.Secondary,
+                color,
+                textColor,
+                { onViewDetailsClicked = true }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Detour").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
+        assertTrue { onViewDetailsClicked }
+    }
+
+    @Test
+    fun testElevatorAlertCard() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.ElevatorClosure
+            }
+        var onViewDetailsClicked = false
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertCardSpec.Elevator,
+                color,
+                textColor,
+                { onViewDetailsClicked = true }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Alert header").assertIsDisplayed().performClick()
+        assertTrue { onViewDetailsClicked }
+    }
+}

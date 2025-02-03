@@ -37,6 +37,7 @@
     <string name="dock_closure">碼頭關閉</string>
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="eastbound">東行</string>
+    <string name="effect_ahead">%1$s 前面</string>
     <string name="electrical_work">電力作業</string>
     <string name="elevator_closure">電梯關閉</string>
     <plurals name="elevator_closure_count">
@@ -149,14 +150,17 @@
     <string name="selected_stop_first_stop">%1$s，選定站點，第一站</string>
     <string name="service_change">服務變更</string>
     <string name="service_ended">服務已結束</string>
+    <string name="service_suspended">服務暫停</string>
     <string name="setting_elevator_accessibility">顯示電梯可及性</string>
     <string name="setting_toggle_hide_maps">隱藏地圖</string>
     <string name="settings_link">設定</string>
     <string name="severe_weather">惡劣天氣</string>
     <string name="shuttle">擺渡巴士</string>
+    <string name="shuttle_buses">穿梭巴士</string>
     <string name="signal_problem">信號故障</string>
     <string name="slippery_rail">軌道濕滑</string>
     <string name="snow">降雪</string>
+    <string name="snow_route">雪道</string>
     <string name="southbound">南行</string>
     <string name="special_event">特殊事件</string>
     <string name="speed_restriction">速度限制</string>
@@ -207,6 +211,7 @@
     <string name="vehicle_schedule_minutes_other">下一趟車預定將在%1$d分鐘內抵達</string>
     <string name="vehicle_schedule_time_first">%1$s預定於%2$s到站</string>
     <string name="vehicle_schedule_time_other">下一趟車預定將於%1$s到站</string>
+    <string name="view_details">查看詳細信息</string>
     <string name="waiting_to_depart">等待離開</string>
     <string name="weather">天氣</string>
     <string name="westbound">西行</string>

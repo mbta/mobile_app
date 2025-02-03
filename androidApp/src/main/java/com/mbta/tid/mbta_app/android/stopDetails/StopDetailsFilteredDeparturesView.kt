@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -38,6 +37,7 @@ import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
@@ -81,12 +81,18 @@ fun StopDetailsFilteredDeparturesView(
             emptyList()
         }
 
+    val downstreamAlerts: List<Alert> =
+        if (global != null) patternsByStop.alertsDownstream(expectedDirection) else emptyList()
+
     val selectedTripIsCancelled: Boolean =
         tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false
 
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
     val routeColor: Color = Color.fromHex(routeHex)
     val routeType: RouteType = patternsByStop.representativeRoute.type
+    val textHex: String =
+        patternsByStop.line?.textColor ?: patternsByStop.representativeRoute.textColor
+    val routeTextColor: Color = Color.fromHex(textHex)
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         StopDetailsFilteredHeader(
@@ -110,56 +116,9 @@ fun StopDetailsFilteredDeparturesView(
             ) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
 
-                if (showElevatorAccessibility && elevatorAlerts.isNotEmpty()) {
-                    elevatorAlerts.map {
-                        Column(
-                            Modifier.background(
-                                    colorResource(R.color.fill3),
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
-                                .clickable(
-                                    onClickLabel = stringResource(R.string.displays_more_info)
-                                ) {
-                                    openAlertDetails(
-                                        ModalRoutes.AlertDetails(it.id, null, null, stopId)
-                                    )
-                                }
-                        ) {
-                            StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
-                        }
-                    }
-                }
-
                 Column(
                     Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
                 ) {
-                    for ((index, alert) in alerts.withIndex()) {
-                        Column {
-                            StopDetailsAlertHeader(
-                                alert,
-                                routeColor,
-                                modifier =
-                                    Modifier.clickable(
-                                        onClickLabel = stringResource(R.string.displays_more_info)
-                                    ) {
-                                        openAlertDetails(
-                                            ModalRoutes.AlertDetails(
-                                                alertId = alert.id,
-                                                lineId = patternsByStop.line?.id,
-                                                routeIds = patternsByStop.routes.map { it.id },
-                                                stopId = patternsByStop.stop.id
-                                            )
-                                        )
-                                    }
-                            )
-                            if (index < alerts.size - 1 || tileData.isNotEmpty()) {
-                                HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
-                            }
-                        }
-                    }
-
                     for ((index, row) in tileData.withIndex()) {
                         val modifier =
                             if (index == 0 || index == tileData.size - 1)
@@ -194,6 +153,51 @@ fun StopDetailsFilteredDeparturesView(
                                         PillDecoration.OnRow(route = route)
                                     else null
                             )
+                        }
+                    }
+                }
+
+                @Composable
+                fun AlertCard(alert: Alert, spec: AlertCardSpec? = null) {
+                    val spec =
+                        spec
+                            ?: if (alert.significance == AlertSignificance.Major) {
+                                AlertCardSpec.Major
+                            } else {
+                                AlertCardSpec.Secondary
+                            }
+                    AlertCard(
+                        alert,
+                        spec,
+                        color = routeColor,
+                        textColor = routeTextColor,
+                        onViewDetails = {
+                            openAlertDetails(
+                                ModalRoutes.AlertDetails(
+                                    alertId = alert.id,
+                                    lineId =
+                                        if (spec == AlertCardSpec.Elevator) null
+                                        else patternsByStop.line?.id,
+                                    routeIds =
+                                        if (spec == AlertCardSpec.Elevator) null
+                                        else patternsByStop.routes.map { it.id },
+                                    stopId = patternsByStop.stop.id
+                                )
+                            )
+                        }
+                    )
+                }
+
+                if (
+                    alerts.isNotEmpty() ||
+                        downstreamAlerts.isNotEmpty() ||
+                        (showElevatorAccessibility && elevatorAlerts.isNotEmpty())
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        alerts.forEach { AlertCard(it) }
+                        downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
+                        if (showElevatorAccessibility) {
+                            elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
                         }
                     }
                 }
