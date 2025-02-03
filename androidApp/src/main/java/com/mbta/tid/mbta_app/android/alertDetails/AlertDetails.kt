@@ -353,8 +353,7 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
     if (alertDescriptionParagraphs.isNotEmpty()) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(
-                if (alert.effect != Alert.Effect.ElevatorClosure)
-                    stringResource(R.string.full_description)
+                if (!isElevatorAlert) stringResource(R.string.full_description)
                 else stringResource(R.string.alternative_path),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodySmall
