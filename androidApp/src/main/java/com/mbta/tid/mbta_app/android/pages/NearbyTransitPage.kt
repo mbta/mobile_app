@@ -82,7 +82,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -105,7 +104,6 @@ data class NearbyTransit(
     ExperimentalMaterial3Api::class,
     MapboxExperimental::class,
     FlowPreview::class,
-    ExperimentalSerializationApi::class
 )
 @Composable
 fun NearbyTransitPage(
@@ -342,7 +340,7 @@ fun NearbyTransitPage(
                     updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
-                    openAlertDetails = ::openModal,
+                    openModal = ::openModal,
                     setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
@@ -479,6 +477,8 @@ fun NearbyTransitPage(
                             nearbyTransit.alertData,
                             goBack = { closeModal() }
                         )
+                    is ModalRoutes.Explainer ->
+                        ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })
                     null -> {}
                 }
             }

@@ -28,7 +28,7 @@ fun StopDetailsView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val now = timer(updateInterval = 5.seconds)
@@ -39,12 +39,16 @@ fun StopDetailsView(
     LaunchedEffect(null) { viewModel.loadSettings() }
 
     fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
-        openAlertDetails(alertDetails)
+        openModal(alertDetails)
         analytics.tappedAlertDetails(
             routeId = alertDetails.lineId ?: alertDetails.routeIds?.firstOrNull() ?: "",
             stopId = alertDetails.stopId ?: "",
             alertId = alertDetails.alertId
         )
+    }
+
+    fun openExplainer(explainer: ModalRoutes.Explainer) {
+        openModal(explainer)
     }
 
     if (stopFilter != null) {
@@ -61,6 +65,7 @@ fun StopDetailsView(
             updateStopFilter,
             updateTripDetailsFilter,
             ::openAndRecordAlertDetails,
+            ::openExplainer,
             setMapSelectedVehicle,
             errorBannerViewModel,
         )

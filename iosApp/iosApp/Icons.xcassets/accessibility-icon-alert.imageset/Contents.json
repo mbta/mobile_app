@@ -1,7 +1,7 @@
 {
   "images": [
     {
-      "filename": "accessibility-icon-inaccessible.svg",
+      "filename": "elevator-alert-light.svg",
       "idiom": "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value": "dark"
         }
       ],
-      "filename": "accessibility-icon-inaccessible-dark.svg",
+      "filename": "elevator-alert-dark.svg",
       "idiom": "universal"
     }
   ],

@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -68,13 +70,6 @@ fun RoutePill(
             else -> 24.dp
         }
 
-    val lineHeight =
-        when (spec.size) {
-            RoutePillSpec.Size.CircleSmall,
-            RoutePillSpec.Size.FlexPillSmall -> 16.sp
-            else -> 24.sp
-        }
-
     fun Modifier.withSizePadding() =
         when (spec.size) {
             RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
@@ -96,9 +91,14 @@ fun RoutePill(
     val typeText = route?.type?.typeText(LocalContext.current, true)
 
     val finalModifier =
-        modifier.placeholderIfLoading().withColor().withSizePadding().semantics {
-            contentDescription = "${route?.label ?: line?.longName ?: ""} ${typeText ?: ""}"
-        }
+        modifier
+            .placeholderIfLoading()
+            .withColor()
+            .withSizePadding()
+            .wrapContentHeight(Alignment.CenterVertically)
+            .semantics {
+                contentDescription = "${route?.label ?: line?.longName ?: ""} ${typeText ?: ""}"
+            }
 
     when (pillContent) {
         RoutePillSpec.Content.Empty -> {}
@@ -111,7 +111,6 @@ fun RoutePill(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
                 textAlign = TextAlign.Center,
-                lineHeight = lineHeight,
                 maxLines = 1
             )
         is RoutePillSpec.Content.ModeImage -> {

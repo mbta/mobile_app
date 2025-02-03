@@ -32,7 +32,7 @@ fun StopDetailsPage(
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val stopId = filters.stopId
@@ -64,7 +64,7 @@ fun StopDetailsPage(
         updateStopFilter,
         updateTripFilter,
         setMapSelectedVehicle,
-        openAlertDetails,
+        openModal,
         errorBannerViewModel
     )
 }

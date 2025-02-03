@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -111,7 +112,8 @@ fun MyApplicationTheme(
     @Composable
     fun textStyle(fontSize: TextUnit, fontWeight: FontWeight? = null): TextStyle =
         TextStyle(
-            color = colorResource(R.color.text),
+            // setting to unspecified will inherit local color correctly
+            color = Color.Unspecified,
             fontFamily = fontFamily,
             fontSize = fontSize,
             fontWeight = fontWeight
@@ -134,5 +136,8 @@ fun MyApplicationTheme(
             large = RoundedCornerShape(0.dp)
         )
 
-    MaterialTheme(colorScheme = colors, typography = typography, shapes = shapes, content = content)
+    MaterialTheme(colorScheme = colors, typography = typography, shapes = shapes) {
+        // default text style is bodyLarge
+        ProvideTextStyle(value = MaterialTheme.typography.bodySmall, content = content)
+    }
 }

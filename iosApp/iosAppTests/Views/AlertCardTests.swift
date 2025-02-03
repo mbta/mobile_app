@@ -68,7 +68,7 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "fa-circle-info"
         }))
-        try sut.inspect().button().tap()
+        try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
 
@@ -95,7 +95,7 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "fa-circle-info"
         }))
-        try sut.inspect().button().tap()
+        try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
 
@@ -118,12 +118,12 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "accessibility-icon-inaccessible"
+            try image.actualImage().name() == "accessibility-icon-alert"
         }))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "fa-circle-info"
         }))
-        try sut.inspect().button().tap()
+        try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
 }

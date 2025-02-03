@@ -814,6 +814,44 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    func testElevatorClosed() throws {
+        let objects = ObjectCollectionBuilder()
+        objects.alert { alert in
+            alert.activePeriod(start: Date.now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
+            alert.effect = .elevatorClosure
+            alert.informedEntity(
+                activities: [.usingWheelchair],
+                directionId: nil,
+                facility: nil,
+                route: nil,
+                routeType: nil,
+                stop: "8552",
+                trip: nil
+            )
+        }
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(objects: objects)
+        nearbyVM.showElevatorAccessibility = true
+        var sut = NearbyTransitView(
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
+            schedulesRepository: MockScheduleRepository(),
+            getNearby: { _, _ in },
+            state: .constant(route52State),
+            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
+        )
+
+        let exp = sut.on(\.didLoadData) { view in
+            XCTAssertNotNil(try view.find(text: "1 elevator closed"))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
+    }
+
     func testStopPageLink() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }

@@ -32,6 +32,7 @@
     <string name="construction">Konstriksyon</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="demonstration">Demonstrasyon</string>
+    <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
@@ -40,6 +41,7 @@
     <string name="dock_closure">Waf la Fèmen</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
+    <string name="effect_ahead">%1$s devan</string>
     <string name="electrical_work">Travay Elektrik</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d asansè fèmen</item>
@@ -50,6 +52,12 @@
     </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
+    <string name="explainer_headline_finishing_another">Fini yon lòt vwayaj</string>
+    <string name="explainer_headline_no_prediction">Prediksyon an poko disponib</string>
+    <string name="explainer_headline_no_vehicle">pozisyon %1$s la poko disponib</string>
+    <string name="explainer_text_finishing_another">%1$s ki asiyen nan wout sa a kounye a ap sèvi yon lòt vwayaj. Nou pral montre li sou wout la yon fwa li kòmanse vwayaj sa a.</string>
+    <string name="explainer_text_no_prediction">Nou poko gen prediksyon an dirèk pou vwayaj sa a, men yo pral parèt pi pre lè pwograme a. Si vwayaj la an reta oswa anile, n ap fè w konnen isit la.</string>
+    <string name="explainer_text_no_vehicle">Kote %1$s a ka pa disponib davans si yo poko plase yon machin. Yon fwa chofè a kòmanse vwayaj la, nou pral kòmanse montre kote a ap viv la.</string>
     <string name="feature_flag_debug_mode">Mòd Debug</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye kòmantè sou aplikasyon</string>
@@ -149,14 +157,17 @@
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
     <string name="service_change">Chanjman Sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
+    <string name="service_suspended">Sèvis ki kanpe</string>
     <string name="setting_elevator_accessibility">Montre aksè nan asansè</string>
     <string name="setting_toggle_hide_maps">Kache Kat yo</string>
     <string name="settings_link">Paramèt</string>
     <string name="severe_weather">Move Tan</string>
     <string name="shuttle">Navèt</string>
+    <string name="shuttle_buses">Otobis navèt</string>
     <string name="signal_problem">Pwoblèm Siyal</string>
     <string name="slippery_rail">Ray ki Glise</string>
     <string name="snow">Nèj</string>
+    <string name="snow_route">Wout nèj</string>
     <string name="southbound">Nan direksyon sid</string>
     <string name="special_event">Evènman Espesyal</string>
     <string name="speed_restriction">Limit Vitès</string>
@@ -169,6 +180,7 @@
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
+    <string name="stops">Arè</string>
     <plurals name="stops_away">
         <item quantity="zero">%1$d kanpe lwen</item>
         <item quantity="one">%1$d kanpe lwen</item>
@@ -216,6 +228,7 @@
     <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
     <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
     <string name="vehicle_schedule_time_other">epi a %1$s pwograme</string>
+    <string name="view_details">Gade detay</string>
     <string name="waiting_to_depart">Ap tann pou yo pati</string>
     <string name="weather">Tan</string>
     <string name="westbound">Pran direksyon lwès</string>

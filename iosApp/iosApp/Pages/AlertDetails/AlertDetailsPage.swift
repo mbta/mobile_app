@@ -75,7 +75,7 @@ struct AlertDetailsPage: View {
                     .scaledToFit()
                     .frame(maxHeight: modeIconHeight, alignment: .topLeading)
             } else if alert?.effect == .elevatorClosure {
-                AlertIcon(alertState: .elevator)
+                AlertIcon(alertState: .elevator, elevatorClosureIcon: .mono)
                     .scaledToFit()
                     .frame(maxHeight: modeIconHeight, alignment: .topLeading)
             }

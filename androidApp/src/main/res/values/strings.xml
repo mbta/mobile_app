@@ -28,6 +28,7 @@
     <string name="construction">Construction</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="demonstration">Demonstration</string>
+    <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
     <string name="disabled_bus">Disabled Bus</string>
@@ -37,13 +38,20 @@
     <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="eastbound">Eastbound</string>
+    <string name="effect_ahead">%1$s ahead</string>
     <string name="electrical_work">Electrical Work</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d elevator closure</item>
-        <item quantity="other">%1$d elevator closures</item>
+        <item quantity="one">%1$d elevator closed</item>
+        <item quantity="other">%1$d elevators closed</item>
     </plurals>
     <string name="end">End</string>
     <string name="error_loading_data">Error loading data</string>
+    <string name="explainer_headline_finishing_another">Finishing another trip</string>
+    <string name="explainer_headline_no_prediction">Prediction not available yet</string>
+    <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
+    <string name="explainer_text_finishing_another">The %1$s assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip.</string>
+    <string name="explainer_text_no_prediction">We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here.</string>
+    <string name="explainer_text_no_vehicle">The %1$s location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send app feedback</string>
@@ -146,14 +154,17 @@
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
     <string name="service_change">Service Change</string>
     <string name="service_ended">Service ended</string>
+    <string name="service_suspended">Service suspended</string>
     <string name="setting_elevator_accessibility">Show elevator accessibility</string>
     <string name="setting_toggle_hide_maps">Hide Maps</string>
     <string name="settings_link">Settings</string>
     <string name="severe_weather">Severe Weather</string>
     <string name="shuttle">Shuttle</string>
+    <string name="shuttle_buses">Shuttle buses</string>
     <string name="signal_problem">Signal Problem</string>
     <string name="slippery_rail">Slippery Rail</string>
     <string name="snow">Snow</string>
+    <string name="snow_route">Snow route</string>
     <string name="southbound">Southbound</string>
     <string name="special_event">Special Event</string>
     <string name="speed_restriction">Speed Restriction</string>
@@ -166,6 +177,7 @@
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
+    <string name="stops">Stops</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
         <item quantity="other">%1$d stops away</item>
@@ -206,6 +218,7 @@
     <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
+    <string name="view_details">View details</string>
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>

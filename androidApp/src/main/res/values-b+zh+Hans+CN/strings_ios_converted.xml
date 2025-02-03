@@ -27,6 +27,7 @@
     <string name="construction">建筑施工</string>
     <string name="crossing_malfunction">交通信号灯故障</string>
     <string name="demonstration">示威</string>
+    <string name="details">详情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
     <string name="disabled_bus">巴士抛锚</string>
@@ -35,12 +36,19 @@
     <string name="dock_closure">码头关闭</string>
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="eastbound">东行</string>
+    <string name="effect_ahead">%1$s 前面</string>
     <string name="electrical_work">电力作业</string>
     <plurals name="elevator_closure_count">
-        <item quantity="other">%1$d 电梯关闭</item>
+        <item quantity="other">%1$d部电梯关闭</item>
     </plurals>
     <string name="end">结束日期</string>
     <string name="error_loading_data">加载数据时出错</string>
+    <string name="explainer_headline_finishing_another">完成另一趟旅程</string>
+    <string name="explainer_headline_no_prediction">预测尚不可用</string>
+    <string name="explainer_headline_no_vehicle">%1$s位置尚未确定</string>
+    <string name="explainer_text_finishing_another">指定给此路线的%1$s目前正在为另一趟行程提供服务。一旦它开始此趟行程，我们将在路线上显示它。</string>
+    <string name="explainer_text_no_prediction">我们目前还没有此行程的实时预测，但会在接近预定时间时显示。如果行程延误或取消，我们会在这里通知您。</string>
+    <string name="explainer_text_no_vehicle">如果尚未分配车辆，%1$s位置可能无法提前显示。一旦司机开始行程，我们将开始显示实时位置。</string>
     <string name="feature_flag_debug_mode">调试模式</string>
     <string name="feature_flag_route_search">线路搜索</string>
     <string name="feedback_link_form">发送应用程序反馈</string>
@@ -140,14 +148,17 @@
     <string name="selected_stop_first_stop">%1$s，选定站点，第一站</string>
     <string name="service_change">服务变更</string>
     <string name="service_ended">服务已结束</string>
+    <string name="service_suspended">服务暂停</string>
     <string name="setting_elevator_accessibility">显示电梯可达性</string>
     <string name="setting_toggle_hide_maps">隐藏地图</string>
     <string name="settings_link">设置</string>
     <string name="severe_weather">恶劣天气</string>
     <string name="shuttle">摆渡巴士</string>
+    <string name="shuttle_buses">穿梭巴士</string>
     <string name="signal_problem">信号故障</string>
     <string name="slippery_rail">轨道湿滑</string>
     <string name="snow">降雪</string>
+    <string name="snow_route">雪道</string>
     <string name="southbound">南行</string>
     <string name="special_event">特殊事件</string>
     <string name="speed_restriction">速度限制</string>
@@ -160,6 +171,7 @@
     <string name="stop_closure">站点关闭</string>
     <string name="stop_filter_pills_filter_hint">应用过滤器，以便仅显示来自该路线的到达</string>
     <string name="stop_filter_pills_remove_hint">删除过滤器并显示所有路线</string>
+    <string name="stops">站点</string>
     <plurals name="stops_away">
         <item quantity="other">还有%1$d站</item>
     </plurals>
@@ -197,6 +209,7 @@
     <string name="vehicle_schedule_minutes_other">下一趟车预定将在%1$d分钟内抵达</string>
     <string name="vehicle_schedule_time_first">%1$s预定于%2$s到站</string>
     <string name="vehicle_schedule_time_other">下一趟车预定将于%1$s到站</string>
+    <string name="view_details">查看详细信息</string>
     <string name="waiting_to_depart">等待出发</string>
     <string name="weather">天气</string>
     <string name="westbound">西行</string>

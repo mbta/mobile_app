@@ -24,7 +24,9 @@ class StopMapViewModel(private val stopRepository: IStopRepository) : ViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             when (val data = stopRepository.getStopMapData(stopId)) {
                 is ApiResult.Ok -> _stopMapResponse.emit(data.data)
-                is ApiResult.Error -> TODO("handle errors")
+                is ApiResult.Error -> {
+                    /* TODO: handle errors */
+                }
             }
         }
     }
