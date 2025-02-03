@@ -27,6 +27,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -84,7 +85,11 @@ fun TripStopRow(
                                 .weight(1F)
                                 .placeholderIfLoading(),
                             color = colorResource(R.color.text),
-                            style = MaterialTheme.typography.bodyLarge,
+                            style =
+                                MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight =
+                                        if (targeted) FontWeight.Bold else FontWeight.Normal
+                                ),
                         )
                         CompositionLocalProvider(
                             LocalContentColor provides colorResource(R.color.text)

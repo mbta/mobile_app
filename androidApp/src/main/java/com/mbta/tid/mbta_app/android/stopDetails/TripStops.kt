@@ -147,6 +147,7 @@ fun TripStops(
                     Text(
                         pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
                         style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
                     )
                 }
                 if (stopsExpanded) {
