@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ fun AlertDetailsPage(
 
     val line = globalResponse?.getLine(lineId)
     val routes = routeIds?.mapNotNull { globalResponse?.routes?.get(it) }
+    val stop = globalResponse?.stops?.get(stopId)
 
     val firstRoute = routes?.firstOrNull()
 
@@ -93,7 +96,14 @@ fun AlertDetailsPage(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (firstRoute != null) {
+            if (alert?.effect == Alert.Effect.ElevatorClosure) {
+                Image(
+                    painterResource(R.drawable.elevator_alert_monochrome),
+                    null,
+                    Modifier.height(24.dp),
+                    colorFilter = ColorFilter.tint(headerTextColor)
+                )
+            } else if (firstRoute != null) {
                 val (icon, description) = routeIcon(firstRoute)
                 Image(
                     icon,
@@ -112,7 +122,7 @@ fun AlertDetailsPage(
             ActionButton(ActionButtonKind.Close) { goBack() }
         }
         if (alert != null) {
-            AlertDetails(alert, line, routes, stopId, affectedStops, now)
+            AlertDetails(alert, line, routes, stop, affectedStops, now)
         } else {
             CircularProgressIndicator()
         }
