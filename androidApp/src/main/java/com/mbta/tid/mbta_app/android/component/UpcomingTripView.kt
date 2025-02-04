@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -107,7 +107,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -125,7 +124,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -143,7 +141,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -164,7 +161,6 @@ fun UpcomingTripView(
                                                 )
                                     }
                                     .placeholderIfLoading(),
-                            style = MaterialTheme.typography.headlineMedium,
                         )
                     }
                 is TripInstantDisplay.Time ->
@@ -182,7 +178,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -202,7 +197,6 @@ fun UpcomingTripView(
                             }
                             .placeholderIfLoading(),
                         textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         fontSize =
                             if (state.trip.headline) {
@@ -230,7 +224,6 @@ fun UpcomingTripView(
                                                 )
                                     }
                                     .placeholderIfLoading(),
-                            style = MaterialTheme.typography.headlineMedium,
                         )
                     }
                 is TripInstantDisplay.ScheduleMinutes ->
@@ -253,7 +246,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                         textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
                     Row(
@@ -274,7 +266,6 @@ fun UpcomingTripView(
                             stringResource(R.string.cancelled),
                             color = colorResource(R.color.deemphasized),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontSize = 13.sp
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -284,7 +275,7 @@ fun UpcomingTripView(
                             textAlign = TextAlign.End,
                             style =
                                 TextStyle(textDecoration = TextDecoration.LineThrough)
-                                    .merge(MaterialTheme.typography.headlineMedium),
+                                    .merge(LocalTextStyle.current),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                         )

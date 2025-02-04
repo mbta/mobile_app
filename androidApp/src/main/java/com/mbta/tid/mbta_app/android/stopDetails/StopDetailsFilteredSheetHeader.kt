@@ -76,7 +76,7 @@ fun StopDetailsFilteredHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (onPin != null) {
-                PinButton(pinned, colorResource(R.color.key), onPin)
+                PinButton(pinned, colorResource(R.color.text), onPin)
             }
             if (onClose != null) {
                 ActionButton(ActionButtonKind.Close) { onClose() }

@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -221,7 +222,7 @@ private fun VehicleDescription(
     val context = LocalContext.current
     if (vehicle.tripId == tripId) {
         Column(
-            Modifier.clearAndSetSemantics {
+            Modifier.placeholderIfLoading().clearAndSetSemantics {
                 contentDescription =
                     vehicleDescriptionAccessibilityText(
                         vehicle,
@@ -235,7 +236,11 @@ private fun VehicleDescription(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             VehicleStatusDescription(vehicle.currentStatus, stopEntry) // TODO footnote
-            Text(stop.name, style = MaterialTheme.typography.headlineLarge) // TODO size and bold
+            Text(
+                stop.name,
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.placeholderIfLoading()
+            ) // TODO size and bold
         }
     }
 }
@@ -414,7 +419,8 @@ private fun LiveIndicator() {
         Image(painterResource(R.drawable.live_data), null, Modifier.size(16.dp))
         Text(
             stringResource(R.string.live),
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.placeholderIfLoading()
         ) // TODO footnote
     }
 }
