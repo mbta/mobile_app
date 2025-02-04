@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +47,7 @@ import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -116,11 +116,6 @@ fun TripHeaderCard(
             else -> {}
         }
     }
-}
-
-@Composable
-fun ColoredRouteLine(color: Color, modifier: Modifier = Modifier) {
-    Box(modifier.width(4.dp).height(IntrinsicSize.Max).background(color))
 }
 
 @Composable
@@ -237,7 +232,7 @@ private fun VehicleDescription(
     val context = LocalContext.current
     if (vehicle.tripId == tripId) {
         Column(
-            Modifier.clearAndSetSemantics {
+            Modifier.placeholderIfLoading().clearAndSetSemantics {
                 contentDescription =
                     vehicleDescriptionAccessibilityText(
                         vehicle,
@@ -428,10 +423,14 @@ private fun LiveIndicator() {
             Image(
                 painterResource(R.drawable.live_data),
                 null,
-                Modifier.size(16.dp),
+                Modifier.placeholderIfLoading().size(16.dp),
                 colorFilter = ColorFilter.tint(colorResource(R.color.text))
             )
-            Text(stringResource(R.string.live), style = MaterialTheme.typography.labelLarge)
+            Text(
+                stringResource(R.string.live),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.placeholderIfLoading()
+            )
         }
     }
 }
