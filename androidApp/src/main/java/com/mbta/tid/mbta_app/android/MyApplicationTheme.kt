@@ -120,14 +120,18 @@ fun MyApplicationTheme(
         )
     val typography =
         Typography(
-            bodySmall = textStyle(fontSize = 16.sp),
-            bodyMedium = textStyle(fontSize = 17.sp),
             bodyLarge = textStyle(fontSize = 24.sp),
-            headlineSmall = textStyle(fontSize = 16.sp),
-            headlineMedium = textStyle(fontSize = 17.sp),
-            headlineLarge = textStyle(fontSize = 20.sp),
-            titleLarge = textStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-            labelSmall = textStyle(fontSize = 11.sp),
+            bodyMedium = textStyle(fontSize = 17.sp), // Body
+            bodySmall = textStyle(fontSize = 16.sp),
+            headlineLarge = textStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold), // Headline
+            headlineMedium = textStyle(fontSize = 16.sp), // Callout
+            headlineSmall = textStyle(fontSize = 15.sp), // Subheadline
+            titleLarge = textStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold), // Title 1
+            titleMedium = textStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold), // Title 2
+            titleSmall = textStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold), // Title 3
+            labelLarge = textStyle(fontSize = 13.sp, fontWeight = FontWeight.Normal), // Footnote
+            labelMedium = textStyle(fontSize = 12.sp, fontWeight = FontWeight.Normal), // Caption 1
+            labelSmall = textStyle(fontSize = 11.sp, fontWeight = FontWeight.Normal), // Caption 2
         )
     val shapes =
         Shapes(

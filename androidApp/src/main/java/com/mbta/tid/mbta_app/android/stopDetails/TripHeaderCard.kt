@@ -3,26 +3,30 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -37,12 +41,13 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mapbox.maps.extension.style.style
+import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -66,51 +71,56 @@ fun TripHeaderCard(
     onTap: (() -> Unit)? = null,
 ) {
     val clickable = onTap != null
-    Row(
-        modifier
-            .border(2.dp, colorResource(R.color.halo), shape = RoundedCornerShape(8.dp))
-            .padding(1.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(colorResource(R.color.fill3))
-            .clickable(clickable) { onTap?.let { it() } },
-    ) {
-        Row(
-            Modifier.padding(vertical = 16.dp)
-                .padding(start = 30.dp, end = 16.dp)
-                .heightIn(min = 56.dp)
-                .semantics(mergeDescendants = true) {
-                    heading()
-                    liveRegion = LiveRegionMode.Polite
-                },
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (spec != null) {
-                TripMarker(spec, targetId, routeAccents)
-                Description(spec, tripId, targetId, routeAccents, clickable)
-                Spacer(Modifier.weight(1f))
-                TripIndicator(spec, routeAccents, now, clickable)
+    Box(Modifier.height(IntrinsicSize.Min), contentAlignment = Alignment.BottomStart) {
+        Row(modifier.haloContainer(2.dp).clickable(clickable) { onTap?.let { it() } }) {
+            Box(Modifier.height(IntrinsicSize.Min)) {
+                Row(
+                    Modifier.padding(start = 30.dp, end = 16.dp).heightIn(min = 56.dp).semantics(
+                        mergeDescendants = true
+                    ) {
+                        heading()
+                        liveRegion = LiveRegionMode.Polite
+                    },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (spec != null) {
+                        TripMarker(spec, targetId, routeAccents)
+                        Description(spec, tripId, targetId, routeAccents, clickable)
+                        Spacer(Modifier.weight(1f))
+                        TripIndicator(spec, routeAccents, now, clickable)
+                    }
+                }
+                when (spec) {
+                    is TripHeaderSpec.Scheduled,
+                    is TripHeaderSpec.VehicleOnTrip ->
+                        Column(
+                            Modifier.zIndex(-1f).padding(start = 46.dp).fillMaxHeight(),
+                            verticalArrangement = Arrangement.spacedBy(0.dp)
+                        ) {
+                            ColoredRouteLine(Color.Unspecified, Modifier.weight(1f))
+                            ColoredRouteLine(routeAccents.color, Modifier.weight(1f))
+                        }
+                    else -> {}
+                }
             }
         }
+        when (spec) {
+            is TripHeaderSpec.Scheduled,
+            is TripHeaderSpec.VehicleOnTrip ->
+                // Small 2x4 dp portion of route line over the outer card border
+                ColoredRouteLine(
+                    routeAccents.color,
+                    Modifier.zIndex(1f).padding(start = 48.dp).height(2.dp)
+                )
+            else -> {}
+        }
     }
-    /*
-    .background(Color.fill3)
-    .foregroundStyle(Color.text)
-    .clipShape(RoundedRectangle(cornerRadius: 8))
-    .padding(1)
-    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
-    .padding([.horizontal], 6)
-    .fixedSize(horizontal: false, vertical: true)
-    .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-    .onTapGesture { if let onTap { onTap() } }
-    .accessibilityElement(children: .combine)
-    .accessibilityAddTraits(onTap != nil ? .isButton : [])
-    .accessibilityAddTraits([.isHeader, .updatesFrequently])
-    .accessibilityHint(onTap != nil ? NSLocalizedString(
-        "displays more information",
-        comment: "Screen reader hint for tapping on the trip details header on the stop page"
-    ) : "")
-    .accessibilityHeading(.h4)
-     */
+}
+
+@Composable
+fun ColoredRouteLine(color: Color, modifier: Modifier = Modifier) {
+    Box(modifier.width(4.dp).height(IntrinsicSize.Max).background(color))
 }
 
 @Composable
@@ -121,13 +131,22 @@ private fun Description(
     routeAccents: TripRouteAccents,
     clickable: Boolean
 ) {
-    when (spec) {
-        TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
-        TripHeaderSpec.NoVehicle -> NoVehicleDescription()
-        is TripHeaderSpec.Scheduled ->
-            ScheduleDescription(spec.entry, targetId, routeAccents, clickable)
-        is TripHeaderSpec.VehicleOnTrip ->
-            VehicleDescription(spec.vehicle, spec.stop, spec.entry, tripId, targetId, routeAccents)
+    Box(Modifier.padding(vertical = 16.dp)) {
+        when (spec) {
+            TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
+            TripHeaderSpec.NoVehicle -> NoVehicleDescription()
+            is TripHeaderSpec.Scheduled ->
+                ScheduleDescription(spec.entry, targetId, routeAccents, clickable)
+            is TripHeaderSpec.VehicleOnTrip ->
+                VehicleDescription(
+                    spec.vehicle,
+                    spec.stop,
+                    spec.entry,
+                    tripId,
+                    targetId,
+                    routeAccents
+                )
+        }
     }
 }
 
@@ -135,16 +154,16 @@ private fun Description(
 private fun FinishingAnotherTripDescription() {
     Text(
         stringResource(R.string.finishing_another_trip),
-        style = MaterialTheme.typography.bodySmall
-    ) // TODO footnote?
+        style = MaterialTheme.typography.labelLarge
+    )
 }
 
 @Composable
 private fun NoVehicleDescription() {
     Text(
         stringResource(R.string.location_not_available_yet),
-        style = MaterialTheme.typography.bodySmall
-    ) // TODO footnote?
+        style = MaterialTheme.typography.labelLarge
+    )
 }
 
 @Composable
@@ -174,16 +193,13 @@ private fun ScheduleDescription(
             ) {
                 Text(
                     stringResource(R.string.scheduled_to_depart),
-                    style = MaterialTheme.typography.bodySmall
-                ) // TODO footnote?
+                    style = MaterialTheme.typography.labelLarge
+                )
                 if (clickable) {
                     InfoCircle(Modifier.size(16.dp))
                 }
             }
-            Text(
-                startTerminalEntry.stop.name,
-                style = MaterialTheme.typography.headlineSmall
-            ) // TODO size and bold
+            Text(startTerminalEntry.stop.name, style = MaterialTheme.typography.headlineLarge)
         }
     }
 }
@@ -234,8 +250,8 @@ private fun VehicleDescription(
             },
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            VehicleStatusDescription(vehicle.currentStatus, stopEntry) // TODO footnote
-            Text(stop.name, style = MaterialTheme.typography.headlineLarge) // TODO size and bold
+            VehicleStatusDescription(vehicle.currentStatus, stopEntry)
+            Text(stop.name, style = MaterialTheme.typography.headlineLarge)
         }
     }
 }
@@ -273,7 +289,7 @@ private fun VehicleStatusDescription(
     val context = LocalContext.current
     Text(
         vehicleStatusString(context, vehicleStatus, stopEntry),
-        style = MaterialTheme.typography.bodySmall,
+        style = MaterialTheme.typography.labelLarge,
     )
 }
 
@@ -296,28 +312,28 @@ private fun vehicleStatusString(
 
 @Composable
 private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: TripRouteAccents) {
-    when (spec) {
-        TripHeaderSpec.FinishingAnotherTrip,
-        TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
-        is TripHeaderSpec.Scheduled ->
-            StopDot(routeAccents, targeted = targetId == spec.stop.id, Modifier.size(36.dp))
-        is TripHeaderSpec.VehicleOnTrip ->
-            VehiclePuck(spec.vehicle, spec.stop, targetId, routeAccents)
+    Box(Modifier.size(36.dp).clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
+        when (spec) {
+            TripHeaderSpec.FinishingAnotherTrip,
+            TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
+            is TripHeaderSpec.Scheduled ->
+                StopDot(routeAccents, targeted = targetId == spec.stop.id, Modifier.size(14.dp))
+            is TripHeaderSpec.VehicleOnTrip ->
+                VehiclePuck(spec.vehicle, spec.stop, targetId, routeAccents)
+        }
     }
 }
 
 @Composable
 private fun VehicleCircle(routeAccents: TripRouteAccents) {
-    Box(Modifier.size(36.dp).clearAndSetSemantics {}) {
-        Box(Modifier.size(32.dp).background(routeAccents.color, CircleShape)) {
-            val (icon, _) = routeIcon(routeAccents.type)
-            Image(
-                icon,
-                null,
-                Modifier.size(27.5.dp).align(Alignment.Center),
-                colorFilter = ColorFilter.tint(routeAccents.textColor)
-            )
-        }
+    Box(Modifier.size(32.dp).background(routeAccents.color, CircleShape)) {
+        val (icon, _) = routeIcon(routeAccents.type)
+        Image(
+            icon,
+            null,
+            Modifier.size(27.5.dp).align(Alignment.Center),
+            colorFilter = ColorFilter.tint(routeAccents.textColor)
+        )
     }
 }
 
@@ -328,14 +344,14 @@ private fun VehiclePuck(
     targetId: String,
     routeAccents: TripRouteAccents
 ) {
-    Box(Modifier.padding(bottom = 6.dp).clearAndSetSemantics {}) {
-        Box(Modifier.padding(top = 10.dp)) {
-            Box(Modifier.rotate(225f)) {
+    Box(Modifier.clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
+        Box(contentAlignment = Alignment.Center) {
+            Box(Modifier.rotate(225f), contentAlignment = Alignment.Center) {
                 Image(
                     painterResource(R.drawable.vehicle_halo),
                     null,
                     Modifier.size(36.dp),
-                    colorFilter = ColorFilter.tint(colorResource(R.color.fill3))
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background)
                 )
                 Image(
                     painterResource(R.drawable.vehicle_puck),
@@ -377,7 +393,7 @@ private fun TripIndicator(
     now: Instant,
     clickable: Boolean = false
 ) {
-    Column {
+    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.End) {
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> {
@@ -393,10 +409,9 @@ private fun TripIndicator(
         if (upcomingTripViewState != null) {
             UpcomingTripView(
                 upcomingTripViewState,
-                modifier = Modifier,
-                routeAccents.type,
+                routeType = routeAccents.type,
                 hideRealtimeIndicators = true
-            ) // TODO color text opacity 0.6
+            )
         }
     }
 }
@@ -404,18 +419,20 @@ private fun TripIndicator(
 @Composable
 private fun LiveIndicator() {
     val desc = stringResource(R.string.real_time_arrivals_updating_live)
-    Row(
-        modifier =
-            Modifier.alpha(0.6f).clearAndSetSemantics {
-                heading()
-                contentDescription = desc
-            }
-    ) {
-        Image(painterResource(R.drawable.live_data), null, Modifier.size(16.dp))
-        Text(
-            stringResource(R.string.live),
-            style = MaterialTheme.typography.bodySmall
-        ) // TODO footnote
+    CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
+        Row(
+            Modifier.alpha(0.6f).clearAndSetSemantics { contentDescription = desc },
+            Arrangement.spacedBy(4.dp),
+            Alignment.Bottom
+        ) {
+            Image(
+                painterResource(R.drawable.live_data),
+                null,
+                Modifier.size(16.dp),
+                colorFilter = ColorFilter.tint(colorResource(R.color.text))
+            )
+            Text(stringResource(R.string.live), style = MaterialTheme.typography.labelLarge)
+        }
     }
 }
 
@@ -492,6 +509,16 @@ private fun TripHeaderCardPreview() {
     val davis = objects.stop { name = "Davis" }
     val nubian = objects.stop { name = "Nubian" }
 
+    val rlEntry =
+        TripDetailsStopList.Entry(
+            davis,
+            0,
+            null,
+            null,
+            objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
+            null,
+            listOf(red)
+        )
     val busEntry =
         TripDetailsStopList.Entry(
             nubian,
@@ -506,7 +533,7 @@ private fun TripHeaderCardPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         TripHeaderCard(
             tripId = trip.id,
-            spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, null),
+            spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
             targetId = "",
             routeAccents = TripRouteAccents(red),
             now = Clock.System.now(),
