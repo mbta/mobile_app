@@ -3,8 +3,8 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -12,7 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.model.LoadingPlaceholders
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -73,7 +77,9 @@ fun TripDetailsView(
                         AlertsStreamDataResponse(mapOf()),
                         globalResponse
                     )
-                } else null
+                } else {
+                    null
+                }
             }
         }
 
@@ -106,24 +112,76 @@ fun TripDetailsView(
                 null
             }
 
-        Column() {
-            Column(Modifier.zIndex(1F)) {
-                TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
-            }
-            Column(Modifier.offset(y = (-6).dp).padding(horizontal = 4.dp)) {
-                TripStops(
+        TripDetailsView(
+            tripId,
+            headerSpec,
+            onHeaderTap,
+            routeAccents,
+            stopId,
+            stops,
+            tripFilter,
+            now,
+            globalResponse
+        )
+    } else {
+        val placeholderTripInfo = LoadingPlaceholders.tripDetailsInfo()
+        val placeholderTripStops = LoadingPlaceholders.tripDetailsStops()
+        val placeholderTripId = placeholderTripInfo.vehicle.tripId ?: ""
+
+        val placeholderHeaderSpec =
+            TripHeaderSpec.getSpec(
+                placeholderTripId,
+                placeholderTripInfo.stops,
+                null,
+                placeholderTripInfo.vehicle,
+                placeholderTripInfo.vehicleStop
+            )
+        val placeholderRouteAccents = TripRouteAccents(placeholderTripInfo.route)
+
+        CompositionLocalProvider(IsLoadingSheetContents provides true) {
+            Column(modifier = Modifier.loadingShimmer()) {
+                TripDetailsView(
+                    placeholderTripId,
+                    placeholderHeaderSpec,
+                    null,
+                    placeholderRouteAccents,
                     stopId,
-                    stops,
-                    tripFilter.stopSequence,
-                    headerSpec,
+                    placeholderTripStops,
+                    tripFilter,
                     now,
-                    globalResponse,
-                    routeAccents
+                    globalResponse ?: GlobalResponse(ObjectCollectionBuilder())
                 )
             }
         }
-    } else {
-        // TODO: loading
-        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun TripDetailsView(
+    tripId: String,
+    headerSpec: TripHeaderSpec?,
+    onHeaderTap: (() -> Unit)?,
+    routeAccents: TripRouteAccents,
+    stopId: String,
+    stops: TripDetailsStopList,
+    tripFilter: TripDetailsFilter?,
+    now: Instant,
+    globalResponse: GlobalResponse
+) {
+    Column() {
+        Column(Modifier.zIndex(1F)) {
+            TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
+        }
+        Column(Modifier.offset(y = (-6).dp).padding(horizontal = 4.dp)) {
+            TripStops(
+                stopId,
+                stops,
+                tripFilter?.stopSequence,
+                headerSpec,
+                now,
+                globalResponse,
+                routeAccents
+            )
+        }
     }
 }
