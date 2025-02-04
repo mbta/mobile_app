@@ -81,6 +81,14 @@ class SettingsViewModel: ObservableObject {
                         setting: .hideMaps,
                         value: settings[.hideMaps] ?? false
                     ),
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Show elevator accessibility",
+                            comment: "A setting on the More page to display elevator accessibility"
+                        ),
+                        setting: .elevatorAccessibility,
+                        value: settings[.elevatorAccessibility] ?? false
+                    ),
                 ]),
                 MoreSection(id: .featureFlags, items: [
                     .toggle(
@@ -98,14 +106,6 @@ class SettingsViewModel: ObservableObject {
                         ),
                         setting: .combinedStopAndTrip,
                         value: settings[.combinedStopAndTrip] ?? false
-                    ),
-                    .toggle(
-                        label: NSLocalizedString(
-                            "Show elevator accessibility",
-                            comment: "A setting on the More page to display elevator accessibility"
-                        ),
-                        setting: .elevatorAccessibility,
-                        value: settings[.elevatorAccessibility] ?? false
                     ),
                     .toggle(
                         label: NSLocalizedString(

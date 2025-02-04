@@ -39,12 +39,16 @@ class OnboardingPageTest {
         composeTestRule.waitUntil { completedScreens.size == 1 }
         assertEquals(1, completedScreens.size)
 
-        composeTestRule.onNodeWithText("Show maps").performClick()
+        composeTestRule.onNodeWithText("Skip").performClick()
         composeTestRule.waitUntil { completedScreens.size == 2 }
         assertEquals(2, completedScreens.size)
 
-        composeTestRule.onNodeWithText("Get started").performClick()
+        composeTestRule.onNodeWithText("Show maps").performClick()
         composeTestRule.waitUntil { completedScreens.size == 3 }
+        assertEquals(3, completedScreens.size)
+
+        composeTestRule.onNodeWithText("Get started").performClick()
+        composeTestRule.waitUntil { completedScreens.size == 4 }
         assertEquals(OnboardingScreen.entries.toSet(), completedScreens)
         assertTrue(finished)
     }

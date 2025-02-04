@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -50,6 +52,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
@@ -89,6 +92,13 @@ fun OnboardingScreenView(
         } else {
             sharingLocation = true
             permissions.launchMultiplePermissionRequest()
+        }
+    }
+
+    fun showStationAccessibility(show: Boolean) {
+        coroutineScope.launch {
+            settingsRepository.setSettings(mapOf(Settings.ElevatorAccessibility to show))
+            advance()
         }
     }
 
@@ -369,6 +379,108 @@ fun OnboardingScreenView(
                     }
                 }
             }
+            OnboardingScreen.StationAccessibility -> {
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .paint(
+                                painter =
+                                    painterResource(
+                                        id =
+                                            if (isDarkTheme) {
+                                                R.mipmap.onboarding_background_map_dark
+                                            } else {
+                                                R.mipmap.onboarding_background_map
+                                            }
+                                    ),
+                                alignment = Alignment.Center,
+                                contentScale = ContentScale.Crop
+                            ),
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.accessibility_icon_accessible),
+                        contentDescription = null,
+                        modifier =
+                            Modifier.align(Alignment.Center)
+                                .size(192.dp)
+                                .absoluteOffset(y = haloOffsetDp)
+                    )
+                    Column(
+                        modifier =
+                            Modifier.align(Alignment.BottomCenter)
+                                .padding(
+                                    start = sidePadding,
+                                    top = 16.dp,
+                                    end = sidePadding,
+                                    bottom = bottomPadding
+                                ),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Text(
+                            stringResource(R.string.onboarding_station_accessibility_header),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 32.sp,
+                        )
+                        Text(
+                            stringResource(R.string.onboarding_station_accessibility_body),
+                            fontSize = 20.sp
+                        )
+
+                        Button(
+                            modifier = Modifier.fillMaxWidth().height(52.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            onClick = { showStationAccessibility(true) },
+                            colors =
+                                buttonColors(
+                                    containerColor = colorResource(R.color.key),
+                                    contentColor = colorResource(R.color.fill1)
+                                )
+                        ) {
+                            Text(
+                                stringResource(R.string.onboarding_station_accessibility_show),
+                                Modifier.padding(start = 32.dp, end = 32.dp),
+                                fontSize = 17.sp,
+                                color = colorResource(R.color.fill3)
+                            )
+                        }
+                        Button(
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .height(52.dp)
+                                    .border(
+                                        1.dp,
+                                        color = colorResource(R.color.key),
+                                        shape = RoundedCornerShape(8.dp)
+                                    ),
+                            shape = RoundedCornerShape(8.dp),
+                            onClick = { showStationAccessibility(false) },
+                            colors =
+                                buttonColors(
+                                    containerColor = colorResource(R.color.fill1),
+                                    contentColor = colorResource(R.color.key)
+                                )
+                        ) {
+                            Text(
+                                stringResource(R.string.onboarding_station_accessibility_hide),
+                                Modifier.padding(start = 32.dp, end = 32.dp),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
+}
+
+@Preview
+@Composable
+private fun OnboardingScreenViewPreview() {
+    OnboardingScreenView(
+        OnboardingScreen.StationAccessibility,
+        advance = {},
+        locationDataManager = LocationDataManager(),
+        settingsRepository = MockSettingsRepository()
+    )
 }
