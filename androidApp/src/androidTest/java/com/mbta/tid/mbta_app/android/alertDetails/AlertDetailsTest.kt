@@ -54,7 +54,7 @@ class AlertDetailsTest {
                 alert,
                 null,
                 listOf(route),
-                stopId = null,
+                stop = null,
                 affectedStops = listOf(stop1, stop2, stop3),
                 now = now
             )
@@ -94,7 +94,7 @@ class AlertDetailsTest {
                 alert,
                 line = null,
                 routes = null,
-                stopId = null,
+                stop = null,
                 affectedStops = emptyList(),
                 now = now
             )
@@ -124,7 +124,7 @@ class AlertDetailsTest {
                 alert,
                 line = null,
                 routes = null,
-                stopId = null,
+                stop = null,
                 affectedStops = emptyList(),
                 now = now
             )
@@ -154,7 +154,7 @@ class AlertDetailsTest {
                 alert,
                 line = null,
                 routes = null,
-                stopId = null,
+                stop = null,
                 affectedStops = emptyList(),
                 now = now
             )
@@ -192,7 +192,7 @@ class AlertDetailsTest {
                 alert,
                 line = null,
                 routes = null,
-                stopId = null,
+                stop = null,
                 affectedStops = affectedStops.value,
                 now = now
             )
@@ -214,5 +214,75 @@ class AlertDetailsTest {
             .onNodeWithText("Affected stops:\nStop 1\nStop 2\nStop 3")
             .assertDoesNotExist()
         composeTestRule.onNodeWithText("More details").assertIsDisplayed()
+    }
+
+    @Test
+    fun testStopHeader() {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val stop = objects.stop { name = "Stop" }
+
+        val alert =
+            objects.alert {
+                activePeriod(now - 5.minutes, now + 5.minutes)
+                cause = Alert.Cause.UnrulyPassenger
+                effect = Alert.Effect.StopClosure
+                effectName = "Closure"
+                updatedAt = now - 100.minutes
+                header = "Alert header"
+                description = "Alert description"
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stop = stop,
+                affectedStops = listOf(stop),
+                now = now
+            )
+        }
+
+        composeTestRule.onNodeWithText("${stop.name} Stop Closure").assertExists()
+    }
+
+    @Test
+    fun testElevatorAlert() {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val stop = objects.stop { name = "Stop" }
+
+        val alert =
+            objects.alert {
+                activePeriod(now - 5.minutes, now + 5.minutes)
+                cause = Alert.Cause.Maintenance
+                effect = Alert.Effect.ElevatorClosure
+                effectName = "Elevator Closure"
+                updatedAt = now - 100.minutes
+                header = "Alert header"
+                description = "Alert description"
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stop = stop,
+                affectedStops = listOf(stop),
+                now = now
+            )
+        }
+
+        composeTestRule.onNodeWithText("${stop.name} Elevator Closure").assertIsDisplayed()
+        composeTestRule.onNodeWithText(alert.header!!).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Alternative path").assertIsDisplayed()
+        composeTestRule.onNodeWithText(alert.description!!).assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 affected stop").assertDoesNotExist()
     }
 }

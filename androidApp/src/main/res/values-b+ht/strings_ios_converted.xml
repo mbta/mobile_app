@@ -12,6 +12,7 @@
     <string name="alert">Alèt</string>
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
+    <string name="alternative_path">Chemen altènatif</string>
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">Yon Pwoblèm Mekanik Ki Rive Pi Bonè</string>
     <string name="an_earlier_signal_problem">Yon Siyal Ki Rive Pi Bonè</string>
@@ -43,6 +44,7 @@
     <string name="eastbound">Pran direksyon lès</string>
     <string name="effect_ahead">%1$s devan</string>
     <string name="electrical_work">Travay Elektrik</string>
+    <string name="elevator_closure">Fèmti Asansè</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d asansè fèmen</item>
         <item quantity="two">%1$d asansè fèmen</item>

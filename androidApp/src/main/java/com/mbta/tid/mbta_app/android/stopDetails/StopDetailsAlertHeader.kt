@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.component.AlertIcon
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.StopAlertState
 
 @Composable
 fun StopDetailsAlertHeader(
@@ -27,14 +30,17 @@ fun StopDetailsAlertHeader(
     showInfoIcon: Boolean = false
 ) {
     Row(
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+        modifier = modifier.padding(start = 12.dp, end = 8.dp).padding(vertical = 12.dp),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         AlertIcon(
             alertState = alert.alertState,
             color = routeColor,
-            modifier = Modifier.size(36.dp).padding(6.dp)
+            modifier =
+                if (alert.alertState == StopAlertState.Elevator)
+                    Modifier.height(24.dp).width(36.dp).padding(end = 8.dp).fillMaxHeight()
+                else Modifier.size(36.dp).padding(6.dp)
         )
         Text(
             alert.header ?: "",
@@ -43,7 +49,9 @@ fun StopDetailsAlertHeader(
             fontWeight = FontWeight.SemiBold
         )
         if (showInfoIcon) {
-            Box(Modifier.height(IntrinsicSize.Max).align(Alignment.CenterVertically)) {
+            Box(
+                Modifier.padding(4.dp).height(IntrinsicSize.Max).align(Alignment.CenterVertically)
+            ) {
                 InfoCircle()
             }
         }
