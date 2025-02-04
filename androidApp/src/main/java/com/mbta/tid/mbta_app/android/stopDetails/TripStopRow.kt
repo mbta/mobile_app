@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -86,13 +88,14 @@ fun TripStopRow(
                                 .placeholderIfLoading(),
                             color = colorResource(R.color.text),
                             style =
-                                MaterialTheme.typography.bodyLarge.copy(
+                                MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight =
                                         if (targeted) FontWeight.Bold else FontWeight.Normal
                                 ),
                         )
                         CompositionLocalProvider(
-                            LocalContentColor provides colorResource(R.color.text)
+                            LocalContentColor provides colorResource(R.color.text),
+                            LocalTextStyle provides LocalTextStyle.current.copy(fontSize = 13.sp)
                         ) {
                             UpcomingTripView(
                                 upcomingTripViewState(stop, now, routeAccents),

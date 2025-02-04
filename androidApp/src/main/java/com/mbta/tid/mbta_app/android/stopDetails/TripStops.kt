@@ -159,7 +159,7 @@ fun TripStops(
                     }
                     Text(
                         pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
                 }
