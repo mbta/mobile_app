@@ -7,6 +7,7 @@
     <string name="alert">Báo động</string>
     <string name="alert_details">Chi tiết cảnh báo</string>
     <string name="alert_ended">Cảnh báo không còn hiệu lực</string>
+    <string name="alternative_path">Đường dẫn thay thế</string>
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">Một vấn đề về cơ khí trước đó</string>
     <string name="an_earlier_signal_problem">Một vấn đề về đèn tín hiệu trước đó</string>
@@ -38,6 +39,7 @@
     <string name="eastbound">Về hướng đông</string>
     <string name="effect_ahead">%1$s phía trước</string>
     <string name="electrical_work">Thi công điện</string>
+    <string name="elevator_closure">Đóng thang máy</string>
     <plurals name="elevator_closure_count">
         <item quantity="other">%1$d thang máy đóng cửa</item>
     </plurals>

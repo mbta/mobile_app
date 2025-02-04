@@ -111,10 +111,15 @@ fun StopDetailsFilteredDeparturesView(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
             Column(
-                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 10.dp)
+                    .padding(top = 14.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                Box(Modifier.padding(horizontal = 2.dp)) {
+                    DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                }
 
                 Column(
                     Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
@@ -193,7 +198,7 @@ fun StopDetailsFilteredDeparturesView(
                         downstreamAlerts.isNotEmpty() ||
                         (showElevatorAccessibility && elevatorAlerts.isNotEmpty())
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         alerts.forEach { AlertCard(it) }
                         downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
                         if (showElevatorAccessibility) {

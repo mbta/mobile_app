@@ -9,6 +9,7 @@
     <string name="alert">Alerta</string>
     <string name="alert_details">Detalhes do alerta</string>
     <string name="alert_ended">O alerta não está mais em efeito</string>
+    <string name="alternative_path">Caminho alternativo</string>
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">Um problema mecânico anterior</string>
     <string name="an_earlier_signal_problem">Um problema de sinal anterior</string>
@@ -40,6 +41,7 @@
     <string name="eastbound">Sentido leste</string>
     <string name="effect_ahead">%1$s à frente</string>
     <string name="electrical_work">Obra elétrica</string>
+    <string name="elevator_closure">Fechamento de elevador</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d elevador fechado</item>
         <item quantity="many">%1$d elevadores fechados</item>

@@ -7,6 +7,7 @@
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
     <string name="alert_ended">警報已失效</string>
+    <string name="alternative_path">替代路徑</string>
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">早前的機械故障</string>
     <string name="an_earlier_signal_problem">早前的信號問題</string>
@@ -38,6 +39,7 @@
     <string name="eastbound">東行</string>
     <string name="effect_ahead">%1$s 前面</string>
     <string name="electrical_work">電力作業</string>
+    <string name="elevator_closure">電梯關閉</string>
     <plurals name="elevator_closure_count">
         <item quantity="other">%1$d部電梯關閉</item>
     </plurals>
