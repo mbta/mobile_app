@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -16,7 +15,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import kotlinx.datetime.Instant
-import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsFilteredView(
@@ -41,17 +39,6 @@ fun StopDetailsFilteredView(
         departures?.let {
             it.routes.find { patterns -> patterns.routeIdentifier == stopFilter.routeId }
         }
-
-    val analytics: Analytics = koinInject()
-
-    fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
-        openAlertDetails(alertDetails)
-        analytics.tappedAlertDetails(
-            routeId = alertDetails.lineId ?: alertDetails.routeIds?.firstOrNull() ?: "",
-            stopId = alertDetails.stopId ?: "",
-            alertId = alertDetails.alertId
-        )
-    }
 
     if (patternsByStop != null) {
 
@@ -85,7 +72,7 @@ fun StopDetailsFilteredView(
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
             setMapSelectedVehicle = setMapSelectedVehicle,
-            openAlertDetails = ::openAndRecordAlertDetails,
+            openAlertDetails = openAlertDetails,
             openExplainer = openExplainer,
         )
     } else {
