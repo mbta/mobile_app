@@ -5,11 +5,16 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,19 +22,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -54,45 +63,57 @@ fun TripStopRow(
             if (!lastStop && !targeted) {
                 HaloSeparator()
             }
-            Column(Modifier.padding(vertical = 12.dp, horizontal = 8.dp)) {
-                Row(
-                    Modifier.semantics(mergeDescendants = true) {
-                        if (targeted) {
-                            heading()
-                        }
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        stop.stop.name,
-                        Modifier.semantics {
-                                contentDescription =
-                                    stopAccessibilityLabel(stop, targeted, firstStop, context)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.height(IntrinsicSize.Min)
+            ) {
+                RouteLine(routeAccents.color, firstStop, lastStop, routeAccents, targeted)
+                Column(Modifier.padding(vertical = 12.dp, horizontal = 8.dp)) {
+                    Row(
+                        Modifier.semantics(mergeDescendants = true) {
+                            if (targeted) {
+                                heading()
                             }
-                            .weight(1F),
-                        color = colorResource(R.color.text),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    CompositionLocalProvider(
-                        LocalContentColor provides colorResource(R.color.text)
+                        },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        UpcomingTripView(
-                            upcomingTripViewState(stop, now, routeAccents),
-                            Modifier.alpha(0.6f),
-                            routeType = routeAccents.type,
-                            hideRealtimeIndicators = true
+                        Text(
+                            stop.stop.name,
+                            Modifier.semantics {
+                                    contentDescription =
+                                        stopAccessibilityLabel(stop, targeted, firstStop, context)
+                                }
+                                .weight(1F)
+                                .placeholderIfLoading(),
+                            color = colorResource(R.color.text),
+                            style =
+                                MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight =
+                                        if (targeted) FontWeight.Bold else FontWeight.Normal
+                                ),
+                        )
+                        CompositionLocalProvider(
+                            LocalContentColor provides colorResource(R.color.text),
+                            LocalTextStyle provides LocalTextStyle.current.copy(fontSize = 13.sp)
+                        ) {
+                            UpcomingTripView(
+                                upcomingTripViewState(stop, now, routeAccents),
+                                Modifier.alpha(0.6f),
+                                routeType = routeAccents.type,
+                                hideRealtimeIndicators = true
+                            )
+                        }
+                    }
+
+                    if (stop.routes.isNotEmpty()) {
+                        ScrollRoutes(
+                            stop,
+                            Modifier.semantics {
+                                contentDescription = scrollRoutesAccessibilityLabel(stop, context)
+                            }
                         )
                     }
-                }
-
-                if (stop.routes.isNotEmpty()) {
-                    ScrollRoutes(
-                        stop,
-                        Modifier.semantics {
-                            contentDescription = scrollRoutesAccessibilityLabel(stop, context)
-                        }
-                    )
                 }
             }
         }
@@ -198,4 +219,30 @@ private fun TripStopRowPreview() {
         Clock.System.now(),
         TripRouteAccents.default.copy(type = RouteType.HEAVY_RAIL)
     )
+}
+
+@Composable
+private fun RouteLine(
+    color: Color,
+    firstStop: Boolean,
+    lastStop: Boolean,
+    routeAccents: TripRouteAccents,
+    targeted: Boolean
+) {
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(start = 32.dp).width(20.dp)
+    ) {
+        Column(Modifier.fillMaxHeight()) {
+            if (firstStop) {
+                Row(Modifier.weight(1f)) { ColoredRouteLine(Color.Transparent) }
+            }
+            Row(Modifier.weight(1f)) { ColoredRouteLine(color) }
+            if (lastStop) {
+                Row(Modifier.weight(1f)) { ColoredRouteLine(Color.Transparent) }
+            }
+        }
+        StopDot(routeAccents, targeted)
+    }
 }
