@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,8 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.focused
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
@@ -114,50 +111,50 @@ fun StopDetailsFilteredDeparturesView(
                 Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 10.dp)
-                    .padding(top = 14.dp, bottom = 12.dp),
+                    .padding(top = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(Modifier.padding(horizontal = 2.dp)) {
-                    DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
-                }
+                DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
 
-                Column(
-                    Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                ) {
-                    for ((index, row) in tileData.withIndex()) {
-                        val modifier =
-                            if (index == 0 || index == tileData.size - 1)
-                                Modifier.background(
-                                    colorResource(R.color.fill3),
-                                    RoundedCornerShape(8.dp)
-                                )
-                            else Modifier.background(colorResource(R.color.fill3))
+                if (!tileData.isEmpty()) {
+                    Column(
+                        Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                    ) {
+                        for ((index, row) in tileData.withIndex()) {
+                            val modifier =
+                                if (index == 0 || index == tileData.size - 1)
+                                    Modifier.background(
+                                        colorResource(R.color.fill3),
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                else Modifier.background(colorResource(R.color.fill3))
 
-                        val route =
-                            patternsByStop.routes.first { it.id == row.upcoming.trip.routeId }
+                            val route =
+                                patternsByStop.routes.first { it.id == row.upcoming.trip.routeId }
 
-                        Column(modifier.border(1.dp, colorResource(R.color.halo))) {
-                            HeadsignRowView(
-                                row.upcoming.trip.headsign,
-                                RealtimePatterns.Format.Some(listOf(row.formatted), null),
-                                Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-                                    .clickable(
-                                        onClickLabel = null,
-                                        onClick = {
-                                            updateTripFilter(
-                                                TripDetailsFilter(
-                                                    row.upcoming.trip.id,
-                                                    row.upcoming.vehicle?.id,
-                                                    row.upcoming.stopSequence
+                            Column(modifier.border(1.dp, colorResource(R.color.halo))) {
+                                HeadsignRowView(
+                                    row.upcoming.trip.headsign,
+                                    RealtimePatterns.Format.Some(listOf(row.formatted), null),
+                                    Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                                        .clickable(
+                                            onClickLabel = null,
+                                            onClick = {
+                                                updateTripFilter(
+                                                    TripDetailsFilter(
+                                                        row.upcoming.trip.id,
+                                                        row.upcoming.vehicle?.id,
+                                                        row.upcoming.stopSequence
+                                                    )
                                                 )
-                                            )
-                                        }
-                                    ),
-                                pillDecoration =
-                                    if (patternsByStop.line != null)
-                                        PillDecoration.OnRow(route = route)
-                                    else null
-                            )
+                                            }
+                                        ),
+                                    pillDecoration =
+                                        if (patternsByStop.line != null)
+                                            PillDecoration.OnRow(route = route)
+                                        else null
+                                )
+                            }
                         }
                     }
                 }
@@ -208,16 +205,16 @@ fun StopDetailsFilteredDeparturesView(
                 }
 
                 if (noPredictionsStatus != null) {
-                    StopDetailsNoTripCard(
-                        status = noPredictionsStatus,
-                        accentColor = routeColor,
-                        routeType = routeType,
-                        hideMaps = hideMaps
-                    )
+                    Box(modifier = Modifier.padding(bottom = 12.dp)) {
+                        StopDetailsNoTripCard(
+                            status = noPredictionsStatus,
+                            accentColor = routeColor,
+                            routeType = routeType,
+                            hideMaps = hideMaps
+                        )
+                    }
                 } else if (selectedTripIsCancelled) {
-                    Row(
-                        modifier = Modifier.padding(vertical = 16.dp).semantics { focused = true }
-                    ) {
+                    Box(modifier = Modifier.padding(vertical = 16.dp)) {
                         StopDetailsIconCard(
                             routeColor,
                             details = { Text(stringResource(R.string.trip_cancelled_details)) },

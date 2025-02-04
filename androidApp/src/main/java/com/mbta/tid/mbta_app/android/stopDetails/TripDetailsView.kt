@@ -168,11 +168,11 @@ private fun TripDetailsView(
     now: Instant,
     globalResponse: GlobalResponse
 ) {
-    Column() {
+    Column {
         Column(Modifier.zIndex(1F)) {
             TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         }
-        Column(Modifier.offset(y = (-6).dp).padding(horizontal = 4.dp)) {
+        Column(Modifier.offset(y = (-16).dp).padding(horizontal = 4.dp)) {
             TripStops(
                 stopId,
                 stops,

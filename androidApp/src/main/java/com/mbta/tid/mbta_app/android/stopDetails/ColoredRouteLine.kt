@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -24,9 +23,9 @@ fun ColoredRouteLine(color: Color, modifier: Modifier = Modifier) {
 @Composable
 fun RouteLineTwist(color: Color, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(Modifier.weight(1f)) { ColoredRouteLine(color) }
+        ColoredRouteLine(color, Modifier.weight(1f))
 
-        Box() {
+        Box {
             Icon(
                 painterResource(R.drawable.stop_trip_line_twist),
                 contentDescription = null,
@@ -35,6 +34,6 @@ fun RouteLineTwist(color: Color, modifier: Modifier = Modifier) {
             Icon(painterResource(R.drawable.stop_trip_line_twist_shadow), contentDescription = null)
         }
 
-        Row(Modifier.weight(1f)) { ColoredRouteLine(color) }
+        ColoredRouteLine(color, Modifier.weight(1f))
     }
 }
