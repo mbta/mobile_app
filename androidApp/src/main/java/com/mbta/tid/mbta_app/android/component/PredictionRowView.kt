@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -69,44 +70,54 @@ fun PredictionRowView(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                when (predictions) {
-                    is RealtimePatterns.Format.Some ->
-                        predictions.trips.mapIndexed { index, prediction ->
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                UpcomingTripView(
-                                    UpcomingTripViewState.Some(prediction.format),
-                                    modifier = Modifier.weight(1f, fill = false),
-                                    isFirst = index == 0,
-                                    isOnly = index == 0 && predictions.trips.count() == 1
-                                )
-                                if (pillDecoration is PillDecoration.OnPrediction) {
-                                    val route = pillDecoration.routesByTrip.getValue(prediction.id)
-                                    RoutePill(
-                                        route,
-                                        null,
-                                        RoutePillType.Flex,
-                                        modifier =
-                                            Modifier.wrapContentHeight(Alignment.CenterVertically)
-                                                .scale(0.75f)
+            ProvideTextStyle(value = MaterialTheme.typography.headlineMedium) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    when (predictions) {
+                        is RealtimePatterns.Format.Some ->
+                            predictions.trips.mapIndexed { index, prediction ->
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    UpcomingTripView(
+                                        UpcomingTripViewState.Some(prediction.format),
+                                        modifier = Modifier.weight(1f, fill = false),
+                                        isFirst = index == 0,
+                                        isOnly = index == 0 && predictions.trips.count() == 1
                                     )
+                                    if (pillDecoration is PillDecoration.OnPrediction) {
+                                        val route =
+                                            pillDecoration.routesByTrip.getValue(prediction.id)
+                                        RoutePill(
+                                            route,
+                                            null,
+                                            RoutePillType.Flex,
+                                            modifier =
+                                                Modifier.wrapContentHeight(
+                                                        Alignment.CenterVertically
+                                                    )
+                                                    .scale(0.75f)
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    is RealtimePatterns.Format.Disruption ->
-                        UpcomingTripView(UpcomingTripViewState.Disruption(predictions.alert.effect))
-                    is RealtimePatterns.Format.NoTrips ->
-                        UpcomingTripView((UpcomingTripViewState.NoTrips(predictions.noTripsFormat)))
-                    is RealtimePatterns.Format.Loading ->
-                        UpcomingTripView(UpcomingTripViewState.Loading)
+                        is RealtimePatterns.Format.Disruption ->
+                            UpcomingTripView(
+                                UpcomingTripViewState.Disruption(predictions.alert.effect)
+                            )
+                        is RealtimePatterns.Format.NoTrips ->
+                            UpcomingTripView(
+                                (UpcomingTripViewState.NoTrips(predictions.noTripsFormat))
+                            )
+                        is RealtimePatterns.Format.Loading ->
+                            UpcomingTripView(UpcomingTripViewState.Loading)
+                    }
                 }
+                //
             }
 
             Column(
