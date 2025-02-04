@@ -249,31 +249,28 @@ object MapExp {
 
     // Get the label to display for this stop
     fun stopLabelTextExp(forBus: Boolean = false): Exp<String> {
-        return Exp.case(
-            Exp.get(StopFeaturesBuilder.propIsSelectedKey) to
-                Exp.get(StopFeaturesBuilder.propNameKey),
-            fallback =
-                Exp.step(
-                    Exp.zoom(),
-                    // Above mid zoom, never display any labels
-                    Exp(""),
-                    // At mid zoom, only display labels for terminal rail stops
-                    Exp(MapDefaults.midZoomThreshold) to
-                        Exp.case(
-                            Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)) to Exp(""),
-                            Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
-                                busSwitchExp(
-                                    forBus = forBus,
-                                    Exp.get(StopFeaturesBuilder.propNameKey)
-                                ),
-                            fallback = Exp("")
-                        ),
-                    // At close zoom, display labels for all non-bus stops
-                    Exp(MapDefaults.closeZoomThreshold) to
-                        Exp.case(
-                            Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(""),
-                            busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey))
-                        )
+        return Exp.step(
+            Exp.zoom(),
+            // Above mid zoom, never display any labels
+            Exp(""),
+            // At mid zoom, only display labels for terminal rail stops
+            Exp(MapDefaults.midZoomThreshold) to
+                Exp.case(
+                    // selected label on selectedPinlayer
+                    selectedExp to Exp(""),
+                    Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)) to Exp(""),
+                    Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
+                        busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey)),
+                    fallback = Exp("")
+                ),
+            // At close zoom, display labels for all non-bus stops
+            Exp(MapDefaults.closeZoomThreshold) to
+                Exp.case(
+                    // selected label on selectedPinlayer
+                    selectedExp to Exp(""),
+                    Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(""),
+                    fallback =
+                        busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey))
                 )
         )
     }
