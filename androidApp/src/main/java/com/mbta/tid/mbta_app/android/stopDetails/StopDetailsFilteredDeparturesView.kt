@@ -118,17 +118,17 @@ fun StopDetailsFilteredDeparturesView(
             ) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
                 if (!hasMajorAlert && !tileData.isEmpty()) {
-                        Column(
-                            Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                        ) {
-                            for ((index, row) in tileData.withIndex()) {
-                                val modifier =
-                                    if (index == 0 || index == tileData.size - 1)
-                                        Modifier.background(
-                                            colorResource(R.color.fill3),
-                                            RoundedCornerShape(8.dp)
-                                        )
-                                    else Modifier.background(colorResource(R.color.fill3))
+                    Column(
+                        Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                    ) {
+                        for ((index, row) in tileData.withIndex()) {
+                            val modifier =
+                                if (index == 0 || index == tileData.size - 1)
+                                    Modifier.background(
+                                        colorResource(R.color.fill3),
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                else Modifier.background(colorResource(R.color.fill3))
 
                             val route =
                                 patternsByStop.routes.first { it.id == row.upcoming.trip.routeId }
