@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.state
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -42,7 +43,10 @@ class SearchResultsViewModel(
                     delay(500)
                     when (val data = searchResultRepository.getSearchResults(query)) {
                         is ApiResult.Ok -> _searchResults.emit(data.data)
-                        is ApiResult.Error -> _searchResults.emit(null)
+                        is ApiResult.Error -> {
+                            Log.e("SearchResultsViewModel", "getSearchResults failed: $data")
+                            _searchResults.emit(null)
+                        }
                         null -> {}
                     }
                 } else {

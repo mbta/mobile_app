@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -302,6 +303,7 @@ class StopDetailsViewModel(
                     response.data.trip
                 }
                 is ApiResult.Error -> {
+                    Log.e("StopDetailsViewModel", "loadTrip failed: $response")
                     errorBannerRepository.setDataError(errorKey) {
                         clearAndLoadTripDetails(tripFilter)
                     }

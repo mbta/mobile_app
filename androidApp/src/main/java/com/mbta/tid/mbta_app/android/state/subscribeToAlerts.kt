@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.state
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
@@ -34,7 +35,7 @@ class AlertsViewModel(
                         synchronized(alertFlow) { alertFlow.notifyAll() }
                 }
                 is ApiResult.Error -> {
-                    /* TODO: handle errors */
+                    Log.e("AlertsViewModel", "subscribeToAlerts failed: $it")
                 }
             }
         }
