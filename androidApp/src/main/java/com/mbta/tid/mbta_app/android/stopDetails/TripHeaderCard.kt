@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -72,7 +73,10 @@ fun TripHeaderCard(
     onTap: (() -> Unit)? = null,
 ) {
     val clickable = onTap != null
-    Box(Modifier.height(IntrinsicSize.Min), contentAlignment = Alignment.BottomStart) {
+    Box(
+        Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
+        contentAlignment = Alignment.BottomStart
+    ) {
         Row(modifier.haloContainer(2.dp).clickable(clickable) { onTap?.let { it() } }) {
             Box(Modifier.height(IntrinsicSize.Min)) {
                 Row(
@@ -87,8 +91,14 @@ fun TripHeaderCard(
                 ) {
                     if (spec != null) {
                         TripMarker(spec, targetId, routeAccents)
-                        Description(spec, tripId, targetId, routeAccents, clickable)
-                        Spacer(Modifier.weight(1f))
+                        Description(
+                            spec,
+                            tripId,
+                            targetId,
+                            routeAccents,
+                            clickable,
+                            Modifier.weight(1f)
+                        )
                         TripIndicator(spec, routeAccents, now, clickable)
                     }
                 }
@@ -125,9 +135,10 @@ private fun Description(
     tripId: String,
     targetId: String,
     routeAccents: TripRouteAccents,
-    clickable: Boolean
+    clickable: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    Box(Modifier.padding(vertical = 16.dp)) {
+    Box(modifier.padding(vertical = 16.dp)) {
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
             TripHeaderSpec.NoVehicle -> NoVehicleDescription()
@@ -192,7 +203,7 @@ private fun ScheduleDescription(
                     style = MaterialTheme.typography.labelLarge
                 )
                 if (clickable) {
-                    InfoCircle(Modifier.size(16.dp))
+                    InfoCircle(Modifier.aspectRatio(1f).size(16.dp))
                 }
             }
             Text(startTerminalEntry.stop.name, style = MaterialTheme.typography.headlineLarge)
@@ -313,7 +324,10 @@ private fun vehicleStatusString(
 
 @Composable
 private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: TripRouteAccents) {
-    Box(Modifier.width(36.dp).clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
+    Box(
+        Modifier.width(36.dp).fillMaxHeight().clearAndSetSemantics {},
+        contentAlignment = Alignment.Center
+    ) {
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
@@ -505,7 +519,7 @@ private fun TripHeaderCardPreview() {
             tripId = trip.id
         }
     val davis = objects.stop { name = "Davis" }
-    val nubian = objects.stop { name = "Nubian" }
+    val cityPoint = objects.stop { name = "City Point Bus Terminal" }
 
     val rlEntry =
         TripDetailsStopList.Entry(
@@ -519,7 +533,7 @@ private fun TripHeaderCardPreview() {
         )
     val busEntry =
         TripDetailsStopList.Entry(
-            nubian,
+            cityPoint,
             0,
             null,
             objects.schedule { departureTime = Clock.System.now().plus(5.minutes) },
@@ -539,8 +553,8 @@ private fun TripHeaderCardPreview() {
 
         TripHeaderCard(
             tripId = trip.id,
-            spec = TripHeaderSpec.Scheduled(nubian, busEntry),
-            targetId = nubian.id,
+            spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
+            targetId = cityPoint.id,
             routeAccents = TripRouteAccents(bus),
             onTap = {},
             now = Clock.System.now(),
