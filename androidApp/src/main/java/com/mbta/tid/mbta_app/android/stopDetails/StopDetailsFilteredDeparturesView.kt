@@ -84,6 +84,8 @@ fun StopDetailsFilteredDeparturesView(
     val selectedTripIsCancelled: Boolean =
         tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false
 
+    val hasMajorAlert = alerts.any { it.significance == AlertSignificance.Major }
+
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
     val routeColor: Color = Color.fromHex(routeHex)
     val routeType: RouteType = patternsByStop.representativeRoute.type
@@ -115,8 +117,7 @@ fun StopDetailsFilteredDeparturesView(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
-
-                if (!tileData.isEmpty()) {
+                if (!hasMajorAlert && !tileData.isEmpty()) {
                     Column(
                         Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
                     ) {
@@ -204,7 +205,9 @@ fun StopDetailsFilteredDeparturesView(
                     }
                 }
 
-                if (noPredictionsStatus != null) {
+                if (hasMajorAlert) {
+                    Box {}
+                } else if (noPredictionsStatus != null) {
                     Box(modifier = Modifier.padding(bottom = 12.dp)) {
                         StopDetailsNoTripCard(
                             status = noPredictionsStatus,
