@@ -47,7 +47,7 @@ fun MorePage(
             ) {
                 Text(
                     text = stringResource(R.string.more_title),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Text(
                     stringResource(R.string.app_version_number, BuildConfig.VERSION_NAME),

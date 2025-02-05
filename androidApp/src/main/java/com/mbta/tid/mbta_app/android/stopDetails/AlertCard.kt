@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,9 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +30,7 @@ import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.effectDescription
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 
@@ -70,10 +67,7 @@ fun AlertCard(
     Column(
         modifier =
             modifier
-                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
-                .padding(2.dp)
-                .background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                .clip(RoundedCornerShape(8.dp))
+                .haloContainer(2.dp)
                 .clickable {
                     if (spec != AlertCardSpec.Major && onViewDetails != null) onViewDetails()
                 }

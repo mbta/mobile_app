@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,19 +31,20 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
+import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -58,17 +59,18 @@ fun TripStopRow(
     lastStop: Boolean = false
 ) {
     val context = LocalContext.current
-    Column(modifier.defaultMinSize(minHeight = 48.dp)) {
+    Column(modifier.height(IntrinsicSize.Min).defaultMinSize(minHeight = 48.dp)) {
         Box(contentAlignment = Alignment.BottomCenter) {
             if (!lastStop && !targeted) {
                 HaloSeparator()
             }
             Row(
+                Modifier.fillMaxHeight(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.height(IntrinsicSize.Min)
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 RouteLine(routeAccents.color, firstStop, lastStop, routeAccents, targeted)
-                Column(Modifier.padding(vertical = 12.dp, horizontal = 8.dp)) {
+                Column(Modifier.padding(vertical = 12.dp).padding(start = 8.dp)) {
                     Row(
                         Modifier.semantics(mergeDescendants = true) {
                             if (targeted) {
@@ -94,12 +96,11 @@ fun TripStopRow(
                                 ),
                         )
                         CompositionLocalProvider(
-                            LocalContentColor provides colorResource(R.color.text),
-                            LocalTextStyle provides LocalTextStyle.current.copy(fontSize = 13.sp)
+                            LocalContentColor provides colorResource(R.color.text)
                         ) {
                             UpcomingTripView(
                                 upcomingTripViewState(stop, now, routeAccents),
-                                Modifier.alpha(0.6f),
+                                Modifier.alpha(0.6f).padding(end = 12.dp),
                                 routeType = routeAccents.type,
                                 hideRealtimeIndicators = true
                             )
@@ -189,38 +190,6 @@ private fun upcomingTripViewState(
     }
 }
 
-@Preview
-@Composable
-private fun TripStopRowPreview() {
-    val objects = ObjectCollectionBuilder()
-    TripStopRow(
-        stop =
-            TripDetailsStopList.Entry(
-                objects.stop { name = "ABC" },
-                stopSequence = 10,
-                alert = null,
-                schedule = null,
-                prediction = null,
-                vehicle = null,
-                routes =
-                    listOf(
-                        objects.route {
-                            longName = "Red Line"
-                            color = "DA291C"
-                            textColor = "FFFFFF"
-                        },
-                        objects.route {
-                            longName = "Green Line"
-                            color = "00843D"
-                            textColor = "FFFFFF"
-                        }
-                    )
-            ),
-        Clock.System.now(),
-        TripRouteAccents.default.copy(type = RouteType.HEAVY_RAIL)
-    )
-}
-
 @Composable
 private fun RouteLine(
     color: Color,
@@ -229,20 +198,75 @@ private fun RouteLine(
     routeAccents: TripRouteAccents,
     targeted: Boolean
 ) {
-
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.padding(start = 32.dp).width(20.dp)
+        modifier = Modifier.fillMaxHeight().padding(start = 34.dp).width(20.dp)
     ) {
         Column(Modifier.fillMaxHeight()) {
             if (firstStop) {
-                Row(Modifier.weight(1f)) { ColoredRouteLine(Color.Transparent) }
+                ColoredRouteLine(Color.Transparent, Modifier.weight(1f))
             }
-            Row(Modifier.weight(1f)) { ColoredRouteLine(color) }
+            ColoredRouteLine(color, Modifier.weight(1f))
             if (lastStop) {
-                Row(Modifier.weight(1f)) { ColoredRouteLine(Color.Transparent) }
+                ColoredRouteLine(Color.Transparent, Modifier.weight(1f))
             }
         }
         StopDot(routeAccents, targeted)
+    }
+}
+
+@Preview
+@Composable
+private fun TripStopRowPreview() {
+    val objects = ObjectCollectionBuilder()
+    Column(Modifier.background(colorResource(R.color.fill3))) {
+        TripStopRow(
+            stop =
+                TripDetailsStopList.Entry(
+                    objects.stop { name = "ABC" },
+                    stopSequence = 10,
+                    alert = null,
+                    schedule = null,
+                    prediction =
+                        objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
+                    vehicle = null,
+                    routes =
+                        listOf(
+                            objects.route {
+                                longName = "Red Line"
+                                color = "DA291C"
+                                textColor = "FFFFFF"
+                            },
+                            objects.route {
+                                longName = "Green Line"
+                                color = "00843D"
+                                textColor = "FFFFFF"
+                            }
+                        )
+                ),
+            Clock.System.now(),
+            TripRouteAccents.default.copy(
+                type = RouteType.HEAVY_RAIL,
+                color = Color.fromHex("DA291C")
+            )
+        )
+        TripStopRow(
+            stop =
+                TripDetailsStopList.Entry(
+                    objects.stop { name = "ABC" },
+                    stopSequence = 10,
+                    alert = null,
+                    schedule = null,
+                    prediction =
+                        objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
+                    vehicle = null,
+                    routes = emptyList()
+                ),
+            Clock.System.now(),
+            TripRouteAccents.default.copy(
+                type = RouteType.HEAVY_RAIL,
+                color = Color.fromHex("DA291C")
+            )
+        )
     }
 }

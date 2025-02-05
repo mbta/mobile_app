@@ -29,7 +29,7 @@ fun SheetHeader(title: String? = null, onClose: (() -> Unit)? = null) {
             Text(
                 title,
                 modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleSmall
             )
         } else {
             Spacer(Modifier.weight(1f))
