@@ -126,7 +126,7 @@ fun NearbyTransitView(
         Text(
             text = stringResource(R.string.nearby_transit),
             modifier = Modifier.semantics { heading() }.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleSmall,
         )
         ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {

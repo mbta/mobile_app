@@ -186,15 +186,15 @@ private fun AlertTitle(
             if (routeLabel != null) {
                 Text(
                     stringResource(R.string.route_effect, routeLabel, effectLabel),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleSmall
                 )
             } else if (stopLabel != null) {
                 Text(
                     stringResource(R.string.route_effect, stopLabel, effectLabel),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleSmall
                 )
             } else {
-                Text(effectLabel, style = MaterialTheme.typography.titleLarge)
+                Text(effectLabel, style = MaterialTheme.typography.titleSmall)
             }
         }
         if (!isElevatorAlert && causeLabel != null) {

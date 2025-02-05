@@ -48,10 +48,8 @@ fun DirectionPicker(
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor = colorResource(deselectedBackgroundColor(route))
         Row(
-            Modifier.background(
-                    deselectedBackgroundColor.copy(alpha = 0.6f),
-                    RoundedCornerShape(8.dp)
-                )
+            Modifier.padding(horizontal = 2.dp)
+                .background(deselectedBackgroundColor.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
                 .padding(2.dp)
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max),

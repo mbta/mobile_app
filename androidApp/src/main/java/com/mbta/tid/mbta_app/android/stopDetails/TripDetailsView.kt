@@ -86,7 +86,7 @@ fun TripDetailsView(
     if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
         val route = globalResponse.routes[tripData.trip.routeId]
         val routeAccents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
-        val terminalStop = getParentFor(tripData.trip.stopIds?.first(), globalResponse.stops)
+        val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse.stops)
         val vehicleStop =
             if (vehicle != null) getParentFor(vehicle.stopId, globalResponse.stops) else null
         val tripId = tripFilter.tripId
@@ -168,11 +168,11 @@ private fun TripDetailsView(
     now: Instant,
     globalResponse: GlobalResponse
 ) {
-    Column() {
+    Column {
         Column(Modifier.zIndex(1F)) {
             TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         }
-        Column(Modifier.offset(y = (-6).dp).padding(horizontal = 4.dp)) {
+        Column(Modifier.offset(y = (-16).dp).padding(horizontal = 4.dp)) {
             TripStops(
                 stopId,
                 stops,
