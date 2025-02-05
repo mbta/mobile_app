@@ -156,6 +156,22 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeHoursAndMinutes() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)))
+        }
+        composeTestRule.onNodeWithText("1 hr 5 min").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeHours() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)))
+        }
+        composeTestRule.onNodeWithText("1 hr").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeScheduleMinutes() {
         val instant = Instant.fromEpochSeconds(1722535384)
         composeTestRule.setContent {

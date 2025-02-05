@@ -45,6 +45,7 @@
     </plurals>
     <string name="end">结束日期</string>
     <string name="error_loading_data">加载数据时出错</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小时</string>
     <string name="explainer_headline_finishing_another">完成另一趟旅程</string>
     <string name="explainer_headline_no_prediction">预测尚不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s位置尚未确定</string>
@@ -72,6 +73,7 @@
     <string name="hides_remaining_stops">隐藏剩余站点</string>
     <string name="high_winds">强风</string>
     <string name="holiday">节假日</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b>小时&lt;b>%2$d&lt;/b>分钟</string>
     <string name="hurricane">飓风</string>
     <string name="ice_in_harbor">港口结冰</string>
     <string name="inbound">进站</string>
