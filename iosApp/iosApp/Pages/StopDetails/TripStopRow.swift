@@ -46,6 +46,7 @@ struct TripStopRow: View {
                             HStack {
                                 Text(stop.stop.name)
                                     .font(Typography.body)
+                                    .fontWeight(targeted ? Font.Weight.bold : Font.Weight.regular)
                                     .foregroundStyle(Color.text)
                                     .multilineTextAlignment(.leading)
                                     .accessibilityLabel(stopAccessibilityLabel)

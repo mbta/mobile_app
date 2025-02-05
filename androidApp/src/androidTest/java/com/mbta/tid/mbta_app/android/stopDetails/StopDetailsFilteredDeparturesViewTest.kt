@@ -172,8 +172,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -231,8 +231,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -339,8 +339,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -387,8 +387,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openExplainer = {},
-                openAlertDetails = {}
+                openModal = {},
+                openSheetRoute = {}
             )
         }
 
@@ -461,9 +461,9 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openAlertDetails = {},
+                openModal = {},
+                openSheetRoute = {},
                 noPredictionsStatus = null,
-                openExplainer = {}
             )
         }
 
@@ -537,9 +537,9 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openAlertDetails = {},
+                openModal = {},
+                openSheetRoute = {},
                 noPredictionsStatus = null,
-                openExplainer = {}
             )
         }
 
@@ -601,9 +601,9 @@ class StopDetailsFilteredDeparturesViewTest {
                 togglePinnedRoute = {},
                 onClose = {},
                 setMapSelectedVehicle = {},
-                openAlertDetails = {},
+                openModal = {},
+                openSheetRoute = {},
                 noPredictionsStatus = null,
-                openExplainer = {}
             )
         }
 

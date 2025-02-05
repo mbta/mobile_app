@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -30,8 +31,8 @@ fun StopDetailsFilteredView(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
-    openExplainer: (ModalRoutes.Explainer) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
@@ -87,8 +88,8 @@ fun StopDetailsFilteredView(
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
             setMapSelectedVehicle = setMapSelectedVehicle,
-            openAlertDetails = openAlertDetails,
-            openExplainer = openExplainer,
+            openModal = openModal,
+            openSheetRoute = openSheetRoute
         )
     } else {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -125,8 +126,8 @@ fun StopDetailsFilteredView(
                     togglePinnedRoute = {},
                     onClose = onClose,
                     setMapSelectedVehicle = {},
-                    openAlertDetails = {},
-                    openExplainer = {},
+                    openModal = {},
+                    openSheetRoute = {}
                 )
             }
         }
