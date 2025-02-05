@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
@@ -543,50 +544,52 @@ private fun TripHeaderCardPreview() {
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        TripHeaderCard(
-            tripId = trip.id,
-            spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
-            targetId = davis.id,
-            routeAccents = TripRouteAccents(red),
-            now = Clock.System.now(),
-        )
+        MyApplicationTheme {
+            TripHeaderCard(
+                tripId = trip.id,
+                spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
+                targetId = davis.id,
+                routeAccents = TripRouteAccents(red),
+                now = Clock.System.now(),
+            )
 
-        TripHeaderCard(
-            tripId = trip.id,
-            spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
-            targetId = cityPoint.id,
-            routeAccents = TripRouteAccents(bus),
-            onTap = {},
-            now = Clock.System.now(),
-        )
+            TripHeaderCard(
+                tripId = trip.id,
+                spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
+                targetId = cityPoint.id,
+                routeAccents = TripRouteAccents(bus),
+                onTap = {},
+                now = Clock.System.now(),
+            )
 
-        TripHeaderCard(
-            tripId = trip.id,
-            spec = TripHeaderSpec.FinishingAnotherTrip,
-            targetId = "",
-            routeAccents = TripRouteAccents(commuter),
-            onTap = {},
-            now = Clock.System.now(),
-        )
+            TripHeaderCard(
+                tripId = trip.id,
+                spec = TripHeaderSpec.FinishingAnotherTrip,
+                targetId = "",
+                routeAccents = TripRouteAccents(commuter),
+                onTap = {},
+                now = Clock.System.now(),
+            )
 
-        TripHeaderCard(
-            tripId = trip.id,
-            spec = TripHeaderSpec.NoVehicle,
-            targetId = "",
-            routeAccents = TripRouteAccents(ferry),
-            onTap = {},
-            now = Clock.System.now(),
-        )
+            TripHeaderCard(
+                tripId = trip.id,
+                spec = TripHeaderSpec.NoVehicle,
+                targetId = "",
+                routeAccents = TripRouteAccents(ferry),
+                onTap = {},
+                now = Clock.System.now(),
+            )
 
-        CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            Column(modifier = Modifier.loadingShimmer()) {
-                TripHeaderCard(
-                    tripId = trip.id,
-                    spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
-                    targetId = "",
-                    routeAccents = TripRouteAccents.default,
-                    now = Clock.System.now(),
-                )
+            CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                Column(modifier = Modifier.loadingShimmer()) {
+                    TripHeaderCard(
+                        tripId = trip.id,
+                        spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
+                        targetId = "",
+                        routeAccents = TripRouteAccents.default,
+                        now = Clock.System.now(),
+                    )
+                }
             }
         }
     }
