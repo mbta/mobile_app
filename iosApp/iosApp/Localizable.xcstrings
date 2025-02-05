@@ -138,6 +138,47 @@
         }
       }
     },
+    "**%ld** hr" : {
+      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld**小时"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld**小時*"
+          }
+        }
+      }
+    },
     "**%ld** hr **%ld** min" : {
       "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
       "localizations" : {
@@ -4783,6 +4824,47 @@
         }
       }
     },
+    "in %ld hr" : {
+      "comment" : "                    \"Shorthand displayed number of hours  until arrival for VoiceOver,\n                    ex 'in 1 hr'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "en %ld horas"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nan %ld èdtan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "em %ld horas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sau %ld giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld 小时后"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld小時後"
+          }
+        }
+      }
+    },
     "in %ld hr %ld min" : {
       "comment" : "Shorthand displayed number of hours and minutes until arrival for VoiceOver,\nex 'in 1 hr 32 min'",
       "localizations" : {
@@ -4949,6 +5031,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保持關閉定位服務"
+          }
+        }
+      }
+    },
+    "Know about elevator closures" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Infórmese sobre los cierres de ascensores"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Konnen sou fèmti asansè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Saiba mais sobre fechamentos de elevadores"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tìm hiểu về việc đóng cửa thang máy"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "了解电梯关闭"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "了解電梯關閉"
           }
         }
       }
@@ -7686,6 +7808,47 @@
         }
       }
     },
+    "Show elevator closures" : {
+      "comment" : "Onboarding button text for setting station accessibility to shown",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostrar cierres de ascensores"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Montre fèmen asansè yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostrar fechamentos de elevadores"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hiển thị thang máy đóng cửa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "显示电梯关闭"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "顯示電梯關閉"
+          }
+        }
+      }
+    },
     "Show maps" : {
       "comment" : "Onboarding button text for setting maps to shown",
       "localizations" : {
@@ -7887,6 +8050,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "信號故障"
+          }
+        }
+      }
+    },
+    "Skip" : {
+      "comment" : "Onboarding button text for setting station accessibility to hidden",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Omitir"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sote"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pular"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bỏ qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跳过"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跳過"
           }
         }
       }
@@ -10035,6 +10239,46 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "等待離開"
+          }
+        }
+      }
+    },
+    "We can tell you when elevators are closed at a station." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Podemos informarle cuando los ascensores están cerrados en una estación."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nou ka di w lè asansè yo fèmen nan yon estasyon."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Podemos dizer quando os elevadores estão fechados em uma estação."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chúng tôi có thể cho bạn biết khi nào thang máy đóng cửa tại một nhà ga."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们可以告诉您车站的电梯何时关闭。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們可以告訴您車站的電梯何時關閉。"
           }
         }
       }

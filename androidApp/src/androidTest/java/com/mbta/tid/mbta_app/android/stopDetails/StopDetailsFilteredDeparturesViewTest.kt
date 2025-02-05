@@ -2,12 +2,14 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
@@ -23,9 +25,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
@@ -62,6 +67,14 @@ class StopDetailsFilteredDeparturesViewTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
+    val downstreamStop =
+        builder.stop {
+            id = "stop_2"
+            name = "Sample Stop 2"
+            locationType = LocationType.STOP
+            latitude = 0.0
+            longitude = 0.0
+        }
     val stop =
         builder.stop {
             id = "stop_1"
@@ -83,6 +96,7 @@ class StopDetailsFilteredDeparturesViewTest {
             directionId = 0
             headsign = "Sample Headsign"
             routePatternId = "pattern_1"
+            stopIds = listOf(stop.id, downstreamStop.id)
         }
     val prediction =
         builder.prediction {
@@ -373,5 +387,214 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsSuspension() {
+        val now = Clock.System.now()
+        val alert =
+            builder.alert {
+                activePeriod(now - 5.seconds, now + 5.seconds)
+                effect = Alert.Effect.Suspension
+                header = "Fuchsia Line suspended from Here to There"
+                informedEntity(
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                    directionId = 0,
+                    route = route.id,
+                    stop = stop.id
+                )
+            }
+        val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
+        val departures =
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    alertResponse,
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )
+            )
+        val viewModel = StopDetailsViewModel.mocked()
+        viewModel.setDepartures(departures)
+
+        composeTestRule.setContent {
+            val filterState = remember {
+                mutableStateOf(StopDetailsFilter(routeId = route.id, directionId = 0))
+            }
+
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = filterState.value,
+                tripFilter = null,
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData =
+                    departures.stopDetailsFormattedTrips(
+                        filterState.value.routeId,
+                        filterState.value.directionId,
+                        now
+                    ),
+                elevatorAlerts = emptyList(),
+                global = globalResponse,
+                now = now,
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                setMapSelectedVehicle = {},
+                openModal = {},
+                openSheetRoute = {},
+                noPredictionsStatus = null,
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("Fuchsia Line suspended from Here to There")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("View details").assertHasClickAction()
+    }
+
+    @Test
+    fun testShowsDownstreamAlert() {
+        val alert =
+            builder.alert {
+                activePeriod(now - 5.seconds, now + 5.seconds)
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                    directionId = 0,
+                    route = route.id,
+                    stop = downstreamStop.id
+                )
+            }
+        val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
+        val departures =
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    alertResponse,
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )
+            )
+        val viewModel = StopDetailsViewModel.mocked()
+        viewModel.setDepartures(departures)
+
+        composeTestRule.setContent {
+            val filterState = remember {
+                mutableStateOf(StopDetailsFilter(routeId = route.id, directionId = 0))
+            }
+
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = filterState.value,
+                tripFilter = null,
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData =
+                    departures.stopDetailsFormattedTrips(
+                        filterState.value.routeId,
+                        filterState.value.directionId,
+                        now
+                    ),
+                elevatorAlerts = emptyList(),
+                global = globalResponse,
+                now = now,
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                setMapSelectedVehicle = {},
+                openModal = {},
+                openSheetRoute = {},
+                noPredictionsStatus = null,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Service suspended ahead").assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsElevatorAlert() {
+        val alert =
+            builder.alert {
+                effect = Alert.Effect.ElevatorClosure
+                header = "Elevator Alert Header"
+            }
+        val departures =
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )
+            )
+        val settings =
+            MockSettingsRepository(settings = mapOf(Settings.ElevatorAccessibility to true))
+        val viewModel = StopDetailsViewModel.mocked(settingsRepository = settings)
+        viewModel.setDepartures(departures)
+        viewModel.loadSettings()
+
+        composeTestRule.setContent {
+            val filterState = remember {
+                mutableStateOf(StopDetailsFilter(routeId = route.id, directionId = 0))
+            }
+
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = filterState.value,
+                tripFilter = null,
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData =
+                    departures.stopDetailsFormattedTrips(
+                        filterState.value.routeId,
+                        filterState.value.directionId,
+                        now
+                    ),
+                elevatorAlerts = listOf(alert),
+                global = globalResponse,
+                now = now,
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                setMapSelectedVehicle = {},
+                openModal = {},
+                openSheetRoute = {},
+                noPredictionsStatus = null,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
     }
 }

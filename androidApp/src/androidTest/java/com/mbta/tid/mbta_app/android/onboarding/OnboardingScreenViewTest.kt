@@ -48,6 +48,39 @@ class OnboardingScreenViewTest {
     }
 
     @Test
+    fun testStationAccessibilityFlow() {
+        var savedSetting = false
+        val settingsRepo =
+            MockSettingsRepository(
+                settings = mapOf(Settings.ElevatorAccessibility to false),
+                onSaveSettings = {
+                    assertEquals(mapOf(Settings.ElevatorAccessibility to true), it)
+                    savedSetting = true
+                }
+            )
+        var advanced = false
+        composeTestRule.setContent {
+            OnboardingScreenView(
+                screen = OnboardingScreen.StationAccessibility,
+                advance = { advanced = true },
+                locationDataManager = MockLocationDataManager(Location("mock")),
+                settingsRepository = settingsRepo
+            )
+        }
+
+        composeTestRule.onNodeWithText("Know about elevator closures").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("We can tell you when elevators are closed at a station.")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Skip").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Show elevator closures").performClick()
+
+        composeTestRule.waitForIdle()
+        assertTrue(savedSetting)
+        assertTrue(advanced)
+    }
+
+    @Test
     fun testHideMapsFlow() {
         var savedSetting = false
         val settingsRepo =

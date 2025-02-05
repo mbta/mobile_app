@@ -49,6 +49,7 @@
     </plurals>
     <string name="end">Fim</string>
     <string name="error_loading_data">Erro ao carregar dados</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Terminando mais uma viagem</string>
     <string name="explainer_headline_no_prediction">Previsão ainda não disponível</string>
     <string name="explainer_headline_no_vehicle">localização do %1$s ainda não disponível</string>
@@ -76,6 +77,7 @@
     <string name="hides_remaining_stops">Oculta as paradas restantes</string>
     <string name="high_winds">Ventos fortes</string>
     <string name="holiday">Feriado</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> h &lt;b>%2$d&lt;/b> min</string>
     <string name="hurricane">Furacão</string>
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="inbound">Entrada</string>
@@ -125,6 +127,10 @@
     <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
     <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
     <string name="onboarding_location_header">Ver transporte perto de você</string>
+    <string name="onboarding_station_accessibility_body">Podemos dizer quando os elevadores estão fechados em uma estação.</string>
+    <string name="onboarding_station_accessibility_header">Saiba mais sobre fechamentos de elevadores</string>
+    <string name="onboarding_station_accessibility_hide">Pular</string>
+    <string name="onboarding_station_accessibility_show">Mostrar fechamentos de elevadores</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>

@@ -54,6 +54,7 @@
     </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon an poko disponib</string>
     <string name="explainer_headline_no_vehicle">pozisyon %1$s la poko disponib</string>
@@ -81,6 +82,7 @@
     <string name="hides_remaining_stops">Kache arè ki rete yo</string>
     <string name="high_winds">Gwo Van</string>
     <string name="holiday">Vakans</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> lè &lt;b>%2$d&lt;/b> minit</string>
     <string name="hurricane">Siklòn</string>
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="inbound">Antran</string>
@@ -130,6 +132,10 @@
     <string name="onboarding_location_body">Nou itilize pozisyon w pou montre w opsyon transpò piblik ki toupre yo.</string>
     <string name="onboarding_location_footer">Ou ka toujou chanje paramèt pozisyon yo apre nan paramèt aplikasyon an.</string>
     <string name="onboarding_location_header">Gade transpò piblik toupre w</string>
+    <string name="onboarding_station_accessibility_body">Nou ka di w lè asansè yo fèmen nan yon estasyon.</string>
+    <string name="onboarding_station_accessibility_header">Konnen sou fèmti asansè</string>
+    <string name="onboarding_station_accessibility_hide">Sote</string>
+    <string name="onboarding_station_accessibility_show">Montre fèmen asansè yo</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
     <string name="other_link_privacy_policy">Règleman sou Vi Prive</string>
     <string name="other_link_source_code">Gade sous sou GitHub</string>

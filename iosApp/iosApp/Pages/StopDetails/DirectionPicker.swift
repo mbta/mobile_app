@@ -31,7 +31,7 @@ struct DirectionPicker: View {
 
     var body: some View {
         if availableDirections.count > 1 {
-            let deselectedBackroundColor = deselectedBackgroundColor(route)
+            let deselectedBackroundColor = Color.deselectedToggle2.opacity(0.6)
             HStack(alignment: .center, spacing: 2) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = filter?.directionId == direction
@@ -49,7 +49,7 @@ struct DirectionPicker: View {
                         "switches direction",
                         comment: "Screen reader hint for the direction toggle action"
                     ))
-                    .background(isSelected ? route.uiColor : deselectedBackroundColor)
+                    .background(isSelected ? route.uiColor : Color.clear)
                     .foregroundStyle(isSelected ? route.uiTextColor : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 6))
                 }
@@ -66,14 +66,6 @@ struct DirectionPicker: View {
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h2)
         }
-    }
-
-    private func deselectedBackgroundColor(_ route: Route) -> Color {
-        // Exceptions for contrast
-        if route.type == RouteType.commuterRail || route.id == "Blue" {
-            return Color.deselectedToggle2
-        }
-        return Color.deselectedToggle1
     }
 }
 

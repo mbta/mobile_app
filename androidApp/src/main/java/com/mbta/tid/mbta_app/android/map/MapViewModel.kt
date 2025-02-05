@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.map
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -160,7 +161,10 @@ open class MapViewModel(
     private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? {
         return when (val data = railRouteShapeRepository.getRailRouteShapes()) {
             is ApiResult.Ok -> data.data
-            is ApiResult.Error -> null
+            is ApiResult.Error -> {
+                Log.e("MapViewModel", "fetchRailRouteShapes failed: $data")
+                null
+            }
         }
     }
 

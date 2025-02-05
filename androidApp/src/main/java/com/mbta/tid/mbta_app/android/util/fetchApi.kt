@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.util
 
+import android.util.Log
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 
@@ -23,6 +24,7 @@ suspend fun <T : Any> fetchApi(
         }
     when (result) {
         is ApiResult.Error -> {
+            Log.e("fetchApi", "API request $errorKey failed: $result")
             errorBannerRepo.setDataError(key = errorKey, action = onRefreshAfterError)
         }
         is ApiResult.Ok -> {

@@ -40,4 +40,15 @@ final class PredictionTextTests: XCTestCase {
                 .accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
+
+    func testPredictionTextOneHour() {
+        let sut = PredictionText(
+            minutes: 60
+        )
+        XCTAssertEqual(
+            "in 1 hr",
+            try sut.inspect().find(text: "1 hr")
+                .accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
+    }
 }

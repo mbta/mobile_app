@@ -34,6 +34,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
@@ -49,6 +50,14 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         stringResource(R.string.error_loading_data),
                         style = MaterialTheme.typography.headlineSmall
                     )
+                    if (vm.showDebugMessages) {
+                        DebugView {
+                            Text(
+                                (state as? ErrorBannerState.DataError)?.messages?.joinToString()
+                                    ?: ""
+                            )
+                        }
+                    }
                 },
                 button = {
                     RefreshButton(label = stringResource(R.string.reload_data)) {
@@ -125,7 +134,7 @@ private fun ErrorCard(
                 .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) { details() }
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) { details() }
         Spacer(Modifier.weight(1f))
         if (button != null) {
             Box(modifier = Modifier.padding(horizontal = 16.dp)) { button() }
@@ -166,9 +175,15 @@ private fun ErrorBannerPreviews() {
     val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo, MockSettingsRepository())
     val dataErrorRepo =
         MockErrorBannerStateRepository(
-            state = ErrorBannerState.DataError(messages = emptySet(), action = {})
+            state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
     val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo, MockSettingsRepository())
+    val dataErrorDebugVM =
+        ErrorBannerViewModel(
+            false,
+            dataErrorRepo,
+            MockSettingsRepository(mapOf(Settings.DevDebugMode to true))
+        )
     val staleRepo =
         MockErrorBannerStateRepository(
             state =
@@ -181,6 +196,7 @@ private fun ErrorBannerPreviews() {
     val staleLoadingVM = ErrorBannerViewModel(true, staleRepo, MockSettingsRepository())
     LaunchedEffect(null) { networkErrorVM.activate() }
     LaunchedEffect(null) { dataErrorVM.activate() }
+    LaunchedEffect(null) { dataErrorDebugVM.activate() }
     LaunchedEffect(null) { staleVM.activate() }
     LaunchedEffect(null) { staleLoadingVM.activate() }
     Column(
@@ -190,6 +206,7 @@ private fun ErrorBannerPreviews() {
     ) {
         ErrorBanner(networkErrorVM)
         ErrorBanner(dataErrorVM)
+        ErrorBanner(dataErrorDebugVM)
         ErrorBanner(staleVM)
         ErrorBanner(staleLoadingVM)
     }

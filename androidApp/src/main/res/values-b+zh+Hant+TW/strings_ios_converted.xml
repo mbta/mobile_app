@@ -45,6 +45,7 @@
     </plurals>
     <string name="end">結束日期</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小時*</string>
     <string name="explainer_headline_finishing_another">結束另一趟旅程</string>
     <string name="explainer_headline_no_prediction">預測尚不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s位置尚未確定</string>
@@ -72,6 +73,7 @@
     <string name="hides_remaining_stops">隱藏剩餘站點</string>
     <string name="high_winds">強風</string>
     <string name="holiday">節假日</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b>小時&lt;b>%2$d&lt;/b>分鐘</string>
     <string name="hurricane">颶風</string>
     <string name="ice_in_harbor">港口結冰</string>
     <string name="inbound">進站</string>
@@ -121,6 +123,10 @@
     <string name="onboarding_location_body">我們使用您的位置向您顯示附近的交通選擇。</string>
     <string name="onboarding_location_footer">您可以隨時在「設定」應用程式中變更位置設定。</string>
     <string name="onboarding_location_header">查看您附近的交通</string>
+    <string name="onboarding_station_accessibility_body">我們可以告訴您車站的電梯何時關閉。</string>
+    <string name="onboarding_station_accessibility_header">了解電梯關閉</string>
+    <string name="onboarding_station_accessibility_hide">跳過</string>
+    <string name="onboarding_station_accessibility_show">顯示電梯關閉</string>
     <string name="open_for_more_arrivals">開啟獲得更多到站資訊</string>
     <string name="other_link_privacy_policy">隱私政策</string>
     <string name="other_link_source_code">在GitHub上查看原始程式碼</string>

@@ -43,7 +43,6 @@ struct TripHeaderCard: View {
                 Spacer()
                 tripIndicator
             }
-
             .padding([.trailing, .vertical], 16)
             .padding(.leading, 30)
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)

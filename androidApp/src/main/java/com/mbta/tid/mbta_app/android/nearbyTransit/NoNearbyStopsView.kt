@@ -54,7 +54,7 @@ fun NoNearbyStopsView(
             )
             Text(
                 stringResource(R.string.no_stops_nearby_title),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleSmall
             )
         }
         Text(stringResource(R.string.no_stops_nearby), style = MaterialTheme.typography.bodyMedium)

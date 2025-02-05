@@ -45,6 +45,7 @@
     </plurals>
     <string name="end">Kết thúc</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
     <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
@@ -72,6 +73,7 @@
     <string name="hides_remaining_stops">Ẩn các điểm dừng còn lại</string>
     <string name="high_winds">Gió mạnh</string>
     <string name="holiday">Ngày lễ</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> giờ &lt;b>%2$d&lt;/b> phút</string>
     <string name="hurricane">Bão</string>
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="inbound">Đến</string>
@@ -121,6 +123,10 @@
     <string name="onboarding_location_body">Chúng tôi sử dụng vị trí của bạn để hiển thị cho bạn các lựa chọn phương tiện công cộng ở gần.</string>
     <string name="onboarding_location_footer">Bạn luôn có thể thay đổi cài đặt vị trí sau trong ứng dụng Cài đặt.</string>
     <string name="onboarding_location_header">Xem phương tiện công cộng gần bạn</string>
+    <string name="onboarding_station_accessibility_body">Chúng tôi có thể cho bạn biết khi nào thang máy đóng cửa tại một nhà ga.</string>
+    <string name="onboarding_station_accessibility_header">Tìm hiểu về việc đóng cửa thang máy</string>
+    <string name="onboarding_station_accessibility_hide">Bỏ qua</string>
+    <string name="onboarding_station_accessibility_show">Hiển thị thang máy đóng cửa</string>
     <string name="open_for_more_arrivals">Mở cửa đón thêm khách đến</string>
     <string name="other_link_privacy_policy">Chính sách bảo mật</string>
     <string name="other_link_source_code">Xem nguồn trên GitHub</string>
