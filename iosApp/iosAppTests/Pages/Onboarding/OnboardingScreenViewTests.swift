@@ -36,6 +36,24 @@ final class OnboardingScreenViewTests: XCTestCase {
         wait(for: [exp], timeout: 5)
     }
 
+    @MainActor func testStationAccessibilityFlow() throws {
+        let saveSettingsExp = expectation(description: "saves station accessibility setting")
+        let settingsRepo = MockSettingsRepository(settings: [.elevatorAccessibility: false], onSaveSettings: {
+            XCTAssertEqual($0, [.elevatorAccessibility: true])
+            saveSettingsExp.fulfill()
+        })
+        let advanceExp = expectation(description: "calls advance()")
+        let sut = OnboardingScreenView(
+            screen: .stationAccessibility,
+            advance: { advanceExp.fulfill() },
+            settingsRepository: settingsRepo
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "We can tell you when elevators are closed at a station."))
+        XCTAssertNotNil(try sut.inspect().find(button: "Skip"))
+        try sut.inspect().find(button: "Show elevator closures").tap()
+        wait(for: [saveSettingsExp, advanceExp], timeout: 1)
+    }
+
     func testHideMapsFlow() throws {
         let saveSettingExp = expectation(description: "saves hide maps setting")
         let settingsRepo = MockSettingsRepository(settings: [.hideMaps: false], onSaveSettings: {

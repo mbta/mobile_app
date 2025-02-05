@@ -125,6 +125,10 @@
     <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
     <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
     <string name="onboarding_location_header">Ver transporte perto de você</string>
+    <string name="onboarding_station_accessibility_body">Podemos dizer quando os elevadores estão fechados em uma estação.</string>
+    <string name="onboarding_station_accessibility_header">Saiba mais sobre fechamentos de elevadores</string>
+    <string name="onboarding_station_accessibility_hide">Pular</string>
+    <string name="onboarding_station_accessibility_show">Mostrar fechamentos de elevadores</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>
