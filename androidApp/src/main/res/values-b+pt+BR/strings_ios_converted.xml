@@ -30,6 +30,7 @@
     <string name="construction">Obras</string>
     <string name="crossing_malfunction">Problemas no cruzamento</string>
     <string name="demonstration">Manifestação</string>
+    <string name="departure_tile_on_click_label">exibe mais informações sobre esta viagem</string>
     <string name="details">Detalhes</string>
     <string name="detour">Desvio</string>
     <string name="directionTo">%1$s para</string>

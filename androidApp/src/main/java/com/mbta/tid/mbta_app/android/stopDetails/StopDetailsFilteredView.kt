@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,7 +44,21 @@ fun StopDetailsFilteredView(
     if (patternsByStop != null) {
 
         val tileData =
-            departures.stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
+            departures
+                .stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
+                .mapNotNull { tripAndFormat ->
+                    val upcoming = tripAndFormat.upcoming
+                    val route = patternsByStop.routes.find { it.id == upcoming.trip.routeId }
+                    if (route == null) {
+                        Log.e(
+                            "StopDetailsFilteredView",
+                            "Failed to find route ID ${upcoming.trip.routeId} from upcoming trip in patternsByStop.routes (${patternsByStop.routes.map { it.id }}"
+                        )
+                        null
+                    } else {
+                        TileData.fromUpcoming(upcoming, route, now)
+                    }
+                }
 
         val realtimePatterns =
             patternsByStop.patterns.filter { it.directionId() == stopFilter.directionId }
@@ -85,11 +100,19 @@ fun StopDetailsFilteredView(
                     tripFilter = tripFilter,
                     patternsByStop = placeholderDepartures.routes.first(),
                     tileData =
-                        placeholderDepartures.stopDetailsFormattedTrips(
-                            stopFilter.routeId,
-                            stopFilter.directionId,
-                            now
-                        ),
+                        placeholderDepartures
+                            .stopDetailsFormattedTrips(
+                                stopFilter.routeId,
+                                stopFilter.directionId,
+                                now
+                            )
+                            .mapNotNull { tripAndFormat ->
+                                TileData.fromUpcoming(
+                                    tripAndFormat.upcoming,
+                                    placeholderDepartures.routes.first().representativeRoute,
+                                    now
+                                )
+                            },
                     noPredictionsStatus = null,
                     elevatorAlerts = placeholderDepartures.elevatorAlerts,
                     global = globalResponse,

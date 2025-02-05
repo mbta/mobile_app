@@ -153,11 +153,13 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
@@ -176,7 +178,6 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
-        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
 
@@ -211,11 +212,13 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
@@ -234,7 +237,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
-        composeTestRule.onNodeWithText("Sample Headsign").assertExists().performClick()
+        composeTestRule.onNodeWithText("1 min").assertExists().performClick()
         composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
 
         assertEquals(tripFilter?.tripId, trip.id)
@@ -320,7 +323,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                 tripFilter = TripDetailsFilter(trip.id, null, null, false),
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
-                tileData = departures.stopDetailsFormattedTrips(route.id, trip.directionId, now),
+                tileData =
+                    departures
+                        .stopDetailsFormattedTrips(route.id, trip.directionId, now)
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
@@ -437,11 +443,13 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -511,11 +519,13 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -573,11 +583,13 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 elevatorAlerts = listOf(alert),
                 global = globalResponse,
                 now = now,

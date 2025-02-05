@@ -32,7 +32,7 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
-@ColorRes fun deselectedBackgroundColor(route: Route): Int = R.color.deselected_toggle_2
+@ColorRes private fun deselectedBackgroundColor(route: Route): Int = R.color.deselected_toggle_2
 
 @Composable
 fun DirectionPicker(

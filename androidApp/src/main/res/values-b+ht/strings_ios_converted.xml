@@ -33,6 +33,7 @@
     <string name="construction">Konstriksyon</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="demonstration">Demonstrasyon</string>
+    <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
     <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
