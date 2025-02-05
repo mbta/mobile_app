@@ -1,12 +1,15 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.printToLog
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -54,7 +57,12 @@ class MorePageTests : KoinTest {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
+        try {
+            composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
+        } catch (ex: ComposeTimeoutException) {
+            composeTestRule.onRoot().printToLog("ci-keep")
+            throw ex
+        }
         composeTestRule.onNodeWithText("Settings").performScrollTo()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hide Maps").performClick()
