@@ -7644,43 +7644,43 @@
         }
       }
     },
-    "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are." : {
+    "Service is running, but predicted arrival times aren’t available. Check the map to see where %@ are right now." : {
       "comment" : "Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.\nThe interpolated value can be \"buses\" or \"trains\".",
       "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "El servicio está en funcionamiento, pero no hay horarios de llegada previstos. El mapa muestra dónde se encuentra %@ en esta ruta en este momento."
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "El servicio está en funcionamiento, pero no hay horarios de llegada previstos. El mapa muestra dónde se encuentra %@ en esta ruta en este momento."
           }
         },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sèvis ap fonksyone, men lè yo prevwa arive pa disponib. Kat la montre ki kote %@ sou wout sa a ye kounye a."
+        "ht": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Sèvis ap fonksyone, men lè yo prevwa arive pa disponib. Kat la montre ki kote %@ sou wout sa a ye kounye a."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "O serviço está em execução, mas os horários de chegada previstos não estão disponíveis. O mapa mostra onde %@ nesta rota estão atualmente."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "O serviço está em execução, mas os horários de chegada previstos não estão disponíveis. O mapa mostra onde %@ nesta rota estão atualmente."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dịch vụ đang chạy, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %@ trên tuyến đường này."
+        "vi": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Dịch vụ đang chạy, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %@ trên tuyến đường này."
           }
         },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "服务正在运行，但无法提供预计到达时间。地图显示此路线上的%@目前所在的位置。"
+        "zh-Hans-CN": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "服务正在运行，但无法提供预计到达时间。地图显示此路线上的%@目前所在的位置。"
           }
         },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "服務正在運行，但無法提供預計到達時間。地圖顯示了該路線上%@目前所在的位置。"
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "服務正在運行，但無法提供預計到達時間。地圖顯示了該路線上%@目前所在的位置。"
           }
         }
       }
