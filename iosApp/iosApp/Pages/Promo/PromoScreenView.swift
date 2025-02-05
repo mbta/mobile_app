@@ -54,7 +54,9 @@ struct PromoScreenView: View {
             Spacer()
             Text(
                 "See arrivals and track vehicles in one place",
-                comment: "Promo text header that displays when users first open the app after a redesign of the stop page"
+                comment: """
+                Promo text header that displays when users first open the app after a redesign of the stop page
+                """
             )
             .font(Typography.title1Bold)
             .accessibilityHeading(.h1)
