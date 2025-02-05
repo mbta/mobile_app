@@ -4374,6 +4374,9 @@
         }
       }
     },
+    "Got it" : {
+
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7235,6 +7238,9 @@
           }
         }
       }
+    },
+    "See arrivals and track vehicles in one place" : {
+
     },
     "See transit near you" : {
       "localizations" : {
@@ -10282,6 +10288,9 @@
           }
         }
       }
+    },
+    "We created a new view that allows you to see arrivals at your stop and track vehicle locations all at once. Send us feedback to let us know what you think!" : {
+
     },
     "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
       "localizations" : {
