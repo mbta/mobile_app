@@ -89,6 +89,11 @@ class MoreViewModel(
                             label = context.resources.getString(R.string.setting_toggle_hide_maps),
                             settings = Settings.HideMaps,
                             value = settings[Settings.HideMaps] ?: false
+                        ),
+                        MoreItem.Toggle(
+                            label = context.getString(R.string.setting_elevator_accessibility),
+                            settings = Settings.ElevatorAccessibility,
+                            value = settings[Settings.ElevatorAccessibility] ?: false
                         )
                     )
             ),
@@ -100,11 +105,6 @@ class MoreViewModel(
                             label = context.getString(R.string.feature_flag_debug_mode),
                             settings = Settings.DevDebugMode,
                             value = settings[Settings.DevDebugMode] ?: false
-                        ),
-                        MoreItem.Toggle(
-                            label = context.getString(R.string.setting_elevator_accessibility),
-                            settings = Settings.ElevatorAccessibility,
-                            value = settings[Settings.ElevatorAccessibility] ?: false
                         ),
                         MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_route_search),

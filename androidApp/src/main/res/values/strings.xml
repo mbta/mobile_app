@@ -48,6 +48,7 @@
     </plurals>
     <string name="end">End</string>
     <string name="error_loading_data">Error loading data</string>
+    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
     <string name="explainer_headline_finishing_another">Finishing another trip</string>
     <string name="explainer_headline_no_prediction">Prediction not available yet</string>
     <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
@@ -75,6 +76,7 @@
     <string name="hides_remaining_stops">Hides remaining stops</string>
     <string name="high_winds">High Winds</string>
     <string name="holiday">Holiday</string>
+    <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
     <string name="hurricane">Hurricane</string>
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
@@ -125,6 +127,10 @@
     <string name="onboarding_location_body">We use your location to show you nearby transit options.</string>
     <string name="onboarding_location_footer">You can always change location settings later in the Settings app.</string>
     <string name="onboarding_location_header">See transit near you</string>
+    <string name="onboarding_station_accessibility_body">We can tell you when elevators are closed at a station.</string>
+    <string name="onboarding_station_accessibility_header">Know about elevator closures</string>
+    <string name="onboarding_station_accessibility_hide">Skip</string>
+    <string name="onboarding_station_accessibility_show">Show elevator closures</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
     <string name="other_link_source_code">View source on GitHub</string>

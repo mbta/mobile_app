@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -107,7 +108,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -125,7 +125,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -143,7 +142,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -164,7 +162,6 @@ fun UpcomingTripView(
                                                 )
                                     }
                                     .placeholderIfLoading(),
-                            style = MaterialTheme.typography.headlineMedium,
                         )
                     }
                 is TripInstantDisplay.Time ->
@@ -182,7 +179,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -202,7 +198,6 @@ fun UpcomingTripView(
                             }
                             .placeholderIfLoading(),
                         textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         fontSize =
                             if (state.trip.headline) {
@@ -216,7 +211,7 @@ fun UpcomingTripView(
                         Text(
                             text =
                                 AnnotatedString.fromHtml(
-                                    stringResource(R.string.minutes_abbr, state.trip.minutes)
+                                    predictionTextMinutes(context, state.trip.minutes)
                                 ),
                             modifier =
                                 Modifier.semantics {
@@ -230,7 +225,6 @@ fun UpcomingTripView(
                                                 )
                                     }
                                     .placeholderIfLoading(),
-                            style = MaterialTheme.typography.headlineMedium,
                         )
                     }
                 is TripInstantDisplay.ScheduleMinutes ->
@@ -253,7 +247,6 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                         textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
                     Row(
@@ -274,7 +267,6 @@ fun UpcomingTripView(
                             stringResource(R.string.cancelled),
                             color = colorResource(R.color.deemphasized),
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
                             fontSize = 13.sp
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -284,7 +276,7 @@ fun UpcomingTripView(
                             textAlign = TextAlign.End,
                             style =
                                 TextStyle(textDecoration = TextDecoration.LineThrough)
-                                    .merge(MaterialTheme.typography.headlineMedium),
+                                    .merge(LocalTextStyle.current),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                         )
@@ -327,6 +319,21 @@ fun UpcomingTripView(
                     hideRealtimeIndicators
                 )
             }
+    }
+}
+
+fun predictionTextMinutes(context: Context, minutes: Int): String {
+    val hours = Math.floorDiv(minutes, 60)
+    val remainingMinutes = minutes - (hours * 60)
+
+    return if (hours >= 1) {
+        if (remainingMinutes == 0) {
+            context.getString(R.string.exact_hours_format_abbr, hours)
+        } else {
+            context.getString(R.string.hr_min_abbr, hours, remainingMinutes)
+        }
+    } else {
+        context.getString(R.string.minutes_abbr, minutes)
     }
 }
 

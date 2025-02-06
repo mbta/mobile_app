@@ -49,6 +49,7 @@
     </plurals>
     <string name="end">Fin</string>
     <string name="error_loading_data">Error al cargar datos</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Terminando otro viaje</string>
     <string name="explainer_headline_no_prediction">Predicción aún no disponible</string>
     <string name="explainer_headline_no_vehicle">la ubicación del %1$s aún no está disponible</string>
@@ -76,6 +77,7 @@
     <string name="hides_remaining_stops">Oculta las paradas restantes</string>
     <string name="high_winds">Vientos fuertes</string>
     <string name="holiday">Día festivo</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> h &lt;b>%2$d&lt;/b> min</string>
     <string name="hurricane">Huracán</string>
     <string name="ice_in_harbor">Hielo en el puerto</string>
     <string name="inbound">Entrante</string>
@@ -125,6 +127,10 @@
     <string name="onboarding_location_body">Usamos su ubicación para mostrarle opciones de tráfico cercanas.</string>
     <string name="onboarding_location_footer">Puede cambiar la configuración de ubicación en la aplicación de Configuración.</string>
     <string name="onboarding_location_header">Ver tráfico cerca de usted</string>
+    <string name="onboarding_station_accessibility_body">Podemos informarle cuando los ascensores están cerrados en una estación.</string>
+    <string name="onboarding_station_accessibility_header">Infórmese sobre los cierres de ascensores</string>
+    <string name="onboarding_station_accessibility_hide">Omitir</string>
+    <string name="onboarding_station_accessibility_show">Mostrar cierres de ascensores</string>
     <string name="open_for_more_arrivals">Abierto para más llegadas</string>
     <string name="other_link_privacy_policy">Política de privacidad</string>
     <string name="other_link_source_code">Ver código fuente en GitHub</string>

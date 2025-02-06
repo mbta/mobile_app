@@ -91,7 +91,7 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
                     }
         },
         modifier,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleSmall,
         fontWeight = FontWeight.Bold
     )
 }

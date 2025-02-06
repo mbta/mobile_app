@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.state
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,9 +25,7 @@ class StopMapViewModel(private val stopRepository: IStopRepository) : ViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             when (val data = stopRepository.getStopMapData(stopId)) {
                 is ApiResult.Ok -> _stopMapResponse.emit(data.data)
-                is ApiResult.Error -> {
-                    /* TODO: handle errors */
-                }
+                is ApiResult.Error -> Log.e("StopMapViewModel", "getStopMapData failed: $data")
             }
         }
     }

@@ -104,7 +104,8 @@ fun RoutePill(
         RoutePillSpec.Content.Empty -> {}
         is RoutePillSpec.Content.Text ->
             Text(
-                pillContent.text.uppercase(),
+                if (route?.type == RouteType.COMMUTER_RAIL) pillContent.text
+                else pillContent.text.uppercase(),
                 modifier = finalModifier,
                 color = if (isActive) textColor else Color.Unspecified,
                 fontSize = fontSize,

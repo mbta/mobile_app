@@ -210,6 +210,48 @@ struct OnboardingScreenView: View {
                         }
                     }
                 }.edgesIgnoringSafeArea(.all)
+
+            case .stationAccessibility:
+                VStack(alignment: .leading, spacing: 16) {
+                    Spacer()
+                    Text("Know about elevator closures")
+                        .font(Typography.title1Bold)
+                        .accessibilityHeading(.h1)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityFocused($focusHeader, equals: .stationAccessibility)
+                    Text("We can tell you when elevators are closed at a station.")
+                        .font(Typography.title3)
+                        .padding(.bottom, 8)
+                    Button(action: { showStationAccessibility(true) }) {
+                        Text(
+                            "Show elevator closures",
+                            comment: "Onboarding button text for setting station accessibility to shown"
+                        )
+                        .onboardingKeyButton()
+                    }
+                    Button(action: { showStationAccessibility(false) }) {
+                        Text("Skip", comment: "Onboarding button text for setting station accessibility to hidden")
+                            .onboardingSecondaryButton()
+                    }
+                }
+                .dynamicTypeSize(...DynamicTypeSize.accessibility4)
+                .padding(.horizontal, sidePadding)
+                .padding(.bottom, bottomPadding)
+                .background {
+                    ZStack(alignment: .center) {
+                        Image(.onboardingBackgroundMap)
+                            .resizable()
+                            .scaledToFill()
+                            .accessibilityHidden(true)
+                        if typeSize < .xxxLarge {
+                            Image(.accessibilityIconAccessibleLarge)
+                                .resizable()
+                                .frame(width: 196, height: 196)
+                                .offset(x: 0, y: haloOffset)
+                                .accessibilityHidden(true)
+                        }
+                    }
+                }.edgesIgnoringSafeArea(.all)
             }
         }
         .onChange(of: screen) { nextScreen in
@@ -245,6 +287,14 @@ struct OnboardingScreenView: View {
         }
     }
 
+    func showStationAccessibility(_ stationAccessibility: Bool) {
+        Task {
+            try await settingsRepository
+                .setSettings(settings: [.elevatorAccessibility: KotlinBoolean(bool: stationAccessibility)])
+            advance()
+        }
+    }
+
     private class LocationPermissionHandler: NSObject, LocationFetcherDelegate, CLLocationManagerDelegate {
         let screen: OnboardingScreen
         let advance: () -> Void
@@ -272,5 +322,6 @@ struct OnboardingScreenView: View {
 }
 
 #Preview {
-    OnboardingScreenView(screen: .location, advance: {})
+    OnboardingScreenView(screen: .stationAccessibility, advance: {},
+                         settingsRepository: MockSettingsRepository())
 }
