@@ -114,13 +114,15 @@ class NearbyViewModel: ObservableObject {
         if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
             appendNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
         } else {
-            navigationStack.append(entry)
+            if entry != navigationStack.lastSafe() {
+                navigationStack.append(entry)
+            }
         }
     }
 
     // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
     // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
-    /*
+    /**
      Updates the stack so that the given entry is the last entry.
      Optionally pops the previous entry to prevent the stack from building too deep. For example, when pushing
      a `stopDetails` entry for a new stop on top of a `stopDetails` entry for a different stop, the previous entry
