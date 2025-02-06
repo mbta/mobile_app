@@ -19,7 +19,6 @@ value class PhoenixSocketWrapper(private val socket: Socket) : PhoenixSocket {
     override fun detach() = socket.disconnect()
 
     fun attachLogging() {
-        socket.onMessage { message -> Log.i("Socket", message.toString()) }
         socket.onError { throwable, response ->
             Log.e("Socket", response?.toString() ?: throwable.toString(), throwable)
         }
