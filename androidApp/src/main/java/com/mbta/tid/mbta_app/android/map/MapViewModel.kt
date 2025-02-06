@@ -103,11 +103,13 @@ open class MapViewModel(
     }
 
     override suspend fun loadConfig() {
-        val latestConfig = configUseCase.getConfig()
-        if (latestConfig is ApiResult.Ok) {
-            configureMapboxToken(latestConfig.data.mapboxPublicToken)
+        withContext(Dispatchers.IO) {
+            val latestConfig = configUseCase.getConfig()
+            if (latestConfig is ApiResult.Ok) {
+                configureMapboxToken(latestConfig.data.mapboxPublicToken)
+            }
+            _config.value = latestConfig
         }
-        _config.value = latestConfig
     }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
