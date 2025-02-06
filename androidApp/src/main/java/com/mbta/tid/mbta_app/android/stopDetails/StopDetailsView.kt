@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -29,6 +30,7 @@ fun StopDetailsView(
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val now = timer(updateInterval = 5.seconds)
@@ -38,17 +40,15 @@ fun StopDetailsView(
 
     LaunchedEffect(null) { viewModel.loadSettings() }
 
-    fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
-        openModal(alertDetails)
-        analytics.tappedAlertDetails(
-            routeId = alertDetails.lineId ?: alertDetails.routeIds?.firstOrNull() ?: "",
-            stopId = alertDetails.stopId ?: "",
-            alertId = alertDetails.alertId
-        )
-    }
-
-    fun openExplainer(explainer: ModalRoutes.Explainer) {
-        openModal(explainer)
+    fun openModalAndRecord(modal: ModalRoutes) {
+        openModal(modal)
+        if (modal is ModalRoutes.AlertDetails) {
+            analytics.tappedAlertDetails(
+                routeId = modal.lineId ?: modal.routeIds?.firstOrNull() ?: "",
+                stopId = modal.stopId ?: "",
+                alertId = modal.alertId
+            )
+        }
     }
 
     if (stopFilter != null) {
@@ -64,8 +64,8 @@ fun StopDetailsView(
             onClose,
             updateStopFilter,
             updateTripDetailsFilter,
-            ::openAndRecordAlertDetails,
-            ::openExplainer,
+            ::openModalAndRecord,
+            openSheetRoute,
             setMapSelectedVehicle,
             errorBannerViewModel,
         )
@@ -78,7 +78,7 @@ fun StopDetailsView(
             togglePinnedRoute,
             onClose,
             updateStopFilter,
-            ::openAndRecordAlertDetails,
+            ::openModalAndRecord,
             errorBannerViewModel,
         )
     }
