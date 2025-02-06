@@ -124,6 +124,7 @@ class TripDetailsViewTest {
                 TripDetailsView(
                     tripFilter,
                     stopId = stop.id,
+                    allAlerts = null,
                     stopDetailsVM = viewModel,
                     setMapSelectedVehicle = mapSelectedVehicleValues::add,
                     openSheetRoute = {},
@@ -169,6 +170,7 @@ class TripDetailsViewTest {
                 TripDetailsView(
                     tripFilter,
                     stopId = stop.id,
+                    allAlerts = null,
                     stopDetailsVM = viewModel,
                     setMapSelectedVehicle = {},
                     openSheetRoute = openedSheetRoutes::add,

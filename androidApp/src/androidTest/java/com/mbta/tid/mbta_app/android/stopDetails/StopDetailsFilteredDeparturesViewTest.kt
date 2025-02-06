@@ -159,6 +159,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         now
                     ),
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -217,6 +218,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         now
                     ),
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -322,6 +324,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData = departures.stopDetailsFormattedTrips(route.id, trip.directionId, now),
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -363,6 +366,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 updateTripFilter = {},
                 tileData = listOf(),
                 noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                allAlerts = null,
                 elevatorAlerts = listOf(),
                 patternsByStop =
                     PatternsByStop(
@@ -442,6 +446,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         filterState.value.directionId,
                         now
                     ),
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -516,6 +521,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         filterState.value.directionId,
                         now
                     ),
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -578,6 +584,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         filterState.value.directionId,
                         now
                     ),
+                allAlerts = null,
                 elevatorAlerts = listOf(alert),
                 global = globalResponse,
                 now = now,

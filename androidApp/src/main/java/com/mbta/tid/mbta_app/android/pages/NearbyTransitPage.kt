@@ -336,6 +336,7 @@ fun NearbyTransitPage(
                     modifier = modifier,
                     viewModel = stopDetailsVM,
                     filters = filters,
+                    allAlerts = nearbyTransit.alertData,
                     onClose = { navController.popBackStack() },
                     updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },

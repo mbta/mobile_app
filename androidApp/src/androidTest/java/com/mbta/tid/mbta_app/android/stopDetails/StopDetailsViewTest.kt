@@ -242,6 +242,7 @@ class StopDetailsViewTest {
                     onClose = {},
                     stopFilter = null,
                     tripFilter = null,
+                    allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     errorBannerViewModel =
@@ -320,6 +321,7 @@ class StopDetailsViewTest {
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
+                    allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     errorBannerViewModel =
@@ -409,6 +411,7 @@ class StopDetailsViewTest {
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
+                    allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     errorBannerViewModel =
@@ -493,6 +496,7 @@ class StopDetailsViewTest {
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
+                    allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     errorBannerViewModel =

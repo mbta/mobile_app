@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripAndFormat
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
@@ -54,6 +55,7 @@ fun StopDetailsFilteredDeparturesView(
     patternsByStop: PatternsByStop,
     tileData: List<TripAndFormat>,
     noPredictionsStatus: RealtimePatterns.NoTripsFormat?,
+    allAlerts: AlertsStreamDataResponse?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
     now: Instant,
@@ -72,7 +74,7 @@ fun StopDetailsFilteredDeparturesView(
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
     val hideMaps by viewModel.hideMaps.collectAsState()
 
-    val alerts: List<Alert> =
+    val alertsHere: List<Alert> =
         if (global != null) {
             patternsByStop.alertsHereFor(directionId = expectedDirection, global = global)
         } else {
@@ -85,7 +87,7 @@ fun StopDetailsFilteredDeparturesView(
     val selectedTripIsCancelled: Boolean =
         tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false
 
-    val hasMajorAlert = alerts.any { it.significance == AlertSignificance.Major }
+    val hasMajorAlert = alertsHere.any { it.significance == AlertSignificance.Major }
 
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
     val routeColor: Color = Color.fromHex(routeHex)
@@ -193,12 +195,12 @@ fun StopDetailsFilteredDeparturesView(
                 }
 
                 if (
-                    alerts.isNotEmpty() ||
+                    alertsHere.isNotEmpty() ||
                         downstreamAlerts.isNotEmpty() ||
                         (showElevatorAccessibility && elevatorAlerts.isNotEmpty())
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        alerts.forEach { AlertCard(it) }
+                        alertsHere.forEach { AlertCard(it) }
                         downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
                         if (showElevatorAccessibility) {
                             elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
@@ -238,6 +240,7 @@ fun StopDetailsFilteredDeparturesView(
                     TripDetailsView(
                         tripFilter = tripFilter,
                         stopId = stopId,
+                        allAlerts = allAlerts,
                         stopDetailsVM = viewModel,
                         setMapSelectedVehicle = setMapSelectedVehicle,
                         openSheetRoute = openSheetRoute,
