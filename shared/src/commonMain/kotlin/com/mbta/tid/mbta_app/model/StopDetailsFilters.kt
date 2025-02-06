@@ -15,7 +15,19 @@ constructor(
     override val routeId: String,
     override val directionId: Int,
     val autoFilter: Boolean = false
-) : RouteDirection
+) : RouteDirection {
+    companion object {
+        // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+        // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+        // the entry with the old filter should be popped and replaced with the new value.
+        fun shouldPopLastStopEntry(
+            lastFilter: StopDetailsFilter?,
+            newFilter: StopDetailsFilter?
+        ): Boolean {
+            return (lastFilter != null) || (lastFilter == null && newFilter?.autoFilter == true)
+        }
+    }
+}
 
 @Serializable
 data class TripDetailsFilter(
