@@ -208,7 +208,6 @@
     <string name="vehicle_boarding_other">và đang cho khách lên</string>
     <string name="vehicle_cancelled_first">%1$s đến %2$s bị hủy</string>
     <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s sẽ đến sau %2$d phút nữa</string>
     <string name="vehicle_prediction_minutes_other">và sau %1$d phút nữa</string>
     <string name="vehicle_prediction_time_first">%1$s sẽ đến lúc %2$s</string>

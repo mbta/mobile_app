@@ -208,7 +208,6 @@
     <string name="vehicle_boarding_other">正在上客</string>
     <string name="vehicle_cancelled_first">于%2$s到站的%1$s已取消</string>
     <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s将在%2$d分钟内到站</string>
     <string name="vehicle_prediction_minutes_other">下一趟车将在%1$d分钟内抵达</string>
     <string name="vehicle_prediction_time_first">%1$s于%2$s到站</string>

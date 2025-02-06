@@ -139,17 +139,17 @@ struct TripHeaderCard: View {
         _ stopEntry: TripDetailsStopList.Entry?
     ) -> Text {
         targetId == stop.id ? Text(
-            "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name), selected stop",
+            "Selected \(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name), selected stop",
             comment: """
             Screen reader text for the vehicle status on the trip details page when the stop is selected,
-            ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard], selected stop'
+            ex 'Selected [train] [approaching] [Alewife], selected stop' or 'Selected [bus] [now at] [Harvard], selected stop'
             Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
             """
         ) : Text(
-            "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name)",
+            "Selected \(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name)",
             comment: """
             Screen reader text for the vehicle status on the trip details page,
-            ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
+            ex 'Selected [train] [approaching] [Alewife]' or 'Selected [bus] [now at] [Harvard]'
             Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
             """
         )
