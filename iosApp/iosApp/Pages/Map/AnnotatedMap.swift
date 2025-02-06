@@ -48,7 +48,10 @@ struct AnnotatedMap: View {
             .debugOptions(devDebugMode ? .camera : [])
             .cameraBounds(.init(maxZoom: 18, minZoom: 6))
             .onCameraChanged { change in handleCameraChange(change) }
-            .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
+            .ornamentOptions(.init(
+                scaleBar: .init(visibility: .hidden),
+                attributionButton: .init(margins: .init(x: 0, y: 8))
+            ))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
             .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
             .onStyleLoaded { _ in
@@ -61,7 +64,8 @@ struct AnnotatedMap: View {
                     handleStyleLoaded()
                 }
             }
-            .additionalSafeAreaInsets(.bottom, sheetHeight)
+            .additionalSafeAreaInsets(.bottom, sheetHeight + 8)
+            .additionalSafeAreaInsets(.top, 20)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom
