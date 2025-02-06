@@ -309,7 +309,7 @@ final class TripHeaderCardTests: XCTestCase {
             now: now
         )
         XCTAssertNotNil(try withVehicleAtStop.inspect().find(
-            viewWithAccessibilityLabel: "bus Approaching stop, selected stop"
+            viewWithAccessibilityLabel: "Selected bus Approaching stop, selected stop"
         ))
 
         let otherStop = objects.stop { stop in
@@ -323,7 +323,7 @@ final class TripHeaderCardTests: XCTestCase {
             now: now
         )
         XCTAssertNotNil(try withVehicleAtOtherStop.inspect().find(
-            viewWithAccessibilityLabel: "bus Approaching other stop"
+            viewWithAccessibilityLabel: "Selected bus Approaching other stop"
         ))
 
         let schedule = objects.schedule { schedule in

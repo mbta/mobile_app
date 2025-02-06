@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
 enum class FeaturePromo(val addedInAndroidVersion: AppVersion, val addedInIosVersion: AppVersion) {
-    // ktfmt does not like empty enums as of the version we get with spotless
-    Nothing(AppVersion(0u, 0u, 0u));
+
+    CombinedStopAndTrip(AppVersion(0u, 0u, 0u), AppVersion(1u, 2u, 0u));
 
     constructor(addedInVersion: AppVersion) : this(addedInVersion, addedInVersion)
 

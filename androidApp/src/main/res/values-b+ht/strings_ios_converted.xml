@@ -227,7 +227,6 @@
     <string name="vehicle_boarding_other">epi ap pran moun kounye a</string>
     <string name="vehicle_cancelled_first">%1$s ap rive a %2$s anile</string>
     <string name="vehicle_cancelled_other">epi a %1$s anile</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s ap rive nan %2$d minit</string>
     <string name="vehicle_prediction_minutes_other">epi nan %1$d minit</string>
     <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>

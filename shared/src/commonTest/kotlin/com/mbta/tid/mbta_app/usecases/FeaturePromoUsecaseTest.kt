@@ -39,7 +39,7 @@ class FeaturePromoUsecaseTest {
             MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
             MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
         )
-        assertEquals(listOf(), useCase.getFeaturePromos())
+        assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
     }
 
     @Test
@@ -50,6 +50,6 @@ class FeaturePromoUsecaseTest {
             MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
             MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
         )
-        assertEquals(emptyList(), useCase.getFeaturePromos())
+        assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
     }
 }

@@ -320,7 +320,7 @@ class TripHeaderCardTest {
 
         composeTestRule
             .onNodeWithContentDescription(
-                "bus Approaching stop, selected stop",
+                "Selected bus Approaching stop, selected stop",
                 useUnmergedTree = true
             )
             .assertIsDisplayed()
@@ -347,7 +347,10 @@ class TripHeaderCardTest {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("bus Approaching other stop", useUnmergedTree = true)
+            .onNodeWithContentDescription(
+                "Selected bus Approaching other stop",
+                useUnmergedTree = true
+            )
             .assertIsDisplayed()
     }
 

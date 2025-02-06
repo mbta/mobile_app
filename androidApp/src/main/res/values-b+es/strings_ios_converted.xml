@@ -216,7 +216,6 @@
     <string name="vehicle_boarding_other">abordando ahora</string>
     <string name="vehicle_cancelled_first">%1$s que llega a las %2$s cancelado</string>
     <string name="vehicle_cancelled_other">y a las %1$s cancelado</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s llegará en %2$d min.</string>
     <string name="vehicle_prediction_minutes_other">y en %1$d min.</string>
     <string name="vehicle_prediction_time_first">%1$s llegará a la(s) %2$s</string>

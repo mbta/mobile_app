@@ -92,6 +92,10 @@ struct ContentView: View {
             OnboardingPage(screens: onboardingScreensPending, onFinish: {
                 contentVM.onboardingScreensPending = []
             })
+        } else if let featurePromosPending = contentVM.featurePromosPending, !featurePromosPending.isEmpty {
+            PromoPage(screens: featurePromosPending, onFinish: {
+                contentVM.featurePromosPending = []
+            })
         } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
