@@ -30,7 +30,7 @@ class StopDetailsNoTripCardTests {
         composeTestRule
             .onNodeWithText(
                 "Service is running, but predicted arrival times aren’t available." +
-                    " The map shows where buses on this route currently are."
+                    " Check the map to see where buses are right now."
             )
             .assertIsDisplayed()
     }

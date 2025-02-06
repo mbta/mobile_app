@@ -31,7 +31,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(ViewType.Divider.self))
         XCTAssertNotNil(try sut.inspect().find(
             text: "Service is running, but predicted arrival times aren’t available." +
-                " The map shows where buses on this route currently are."
+                " Check the map to see where buses are right now."
         ))
     }
 

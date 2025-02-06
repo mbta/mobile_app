@@ -141,7 +141,7 @@
     <string name="police_action">Police Action</string>
     <string name="police_activity">Police Activity</string>
     <string name="power_problem">Power Problem</string>
-    <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. The map shows where %1$s on this route currently are.</string>
+    <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
@@ -217,8 +217,8 @@
     <string name="vehicle_boarding_other">and boarding now</string>
     <string name="vehicle_cancelled_first">%1$s arriving at %2$s cancelled</string>
     <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
-    <string name="vehicle_desc_accessibility_desc_selected_stop" translatable="false">%1$s %2$s %3$s, selected stop</string>
+    <string name="vehicle_desc_accessibility_desc" translatable="false">Selected %1$s %2$s %3$s</string>
+    <string name="vehicle_desc_accessibility_desc_selected_stop" translatable="false">Selected %1$s %2$s %3$s, selected stop</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
