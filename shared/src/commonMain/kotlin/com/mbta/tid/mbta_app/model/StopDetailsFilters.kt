@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.serialization.Serializable
 
 interface RouteDirection {
@@ -8,8 +9,13 @@ interface RouteDirection {
 }
 
 @Serializable
-data class StopDetailsFilter(override val routeId: String, override val directionId: Int) :
-    RouteDirection
+data class StopDetailsFilter
+@DefaultArgumentInterop.Enabled
+constructor(
+    override val routeId: String,
+    override val directionId: Int,
+    val autoFilter: Boolean = false
+) : RouteDirection
 
 @Serializable
 data class TripDetailsFilter(
