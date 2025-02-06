@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
@@ -41,6 +42,7 @@ fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = 
                         Log.i("More", "Failed to navigate to link on MoreLink click")
                     }
                 }
+                .semantics(mergeDescendants = true) {}
                 .background(
                     color =
                         if (isKey) {
@@ -78,7 +80,7 @@ fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = 
             }
             Icon(
                 painterResource(R.drawable.arrow_up_right),
-                contentDescription = stringResource(id = R.string.icon_description_external_link),
+                contentDescription = stringResource(id = R.string.more_link_external),
                 modifier = Modifier.size(12.dp),
                 tint =
                     if (isKey) {

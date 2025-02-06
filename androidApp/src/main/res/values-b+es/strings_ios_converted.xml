@@ -37,6 +37,7 @@
     <string name="disabled_train">Tren averiado</string>
     <string name="displays_more_info">muestra más información</string>
     <string name="dock_closure">Cierre del muelle</string>
+    <string name="drag_handle">Mango de arrastre</string>
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="eastbound">En dirección este</string>
     <string name="effect_ahead">%1$s adelante</string>
@@ -96,6 +97,8 @@
     <string name="medical_emergency">Emergencia médica</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">Más</string>
+    <string name="more_link_call">Seleccionar para llamar</string>
+    <string name="more_link_external">Enlace externo</string>
     <string name="more_page_footer">Hecho con ♥ por T</string>
     <string name="more_section_feature_flags">Banderas de características</string>
     <string name="more_section_resources">Recursos</string>
@@ -143,6 +146,7 @@
     <string name="predictions_unavailable_details">El servicio está en funcionamiento, pero no hay horarios de llegada previstos. El mapa muestra dónde se encuentra %1$s en esta ruta en este momento.</string>
     <string name="predictions_unavailable_details_hide_maps">El servicio está funcionando, pero los horarios de llegada previstos no están disponibles.</string>
     <string name="real_time_arrivals_updating_live">Llegadas en tiempo real actualizadas en vivo</string>
+    <string name="recenter">Volver a centrar el mapa en mi ubicación</string>
     <string name="recently_viewed">Visto recientemente</string>
     <string name="refresh">Refrescar</string>
     <string name="refresh_predictions">Refrescar predicciones</string>
@@ -154,7 +158,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Programado para salir</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s programado para salir de %2$s</string>
     <string name="search_by_stop">Buscar por parada</string>
     <string name="selected_stop">%1$s, parada seleccionada</string>
     <string name="selected_stop_first_stop">%1$s, parada seleccionada, primera parada</string>
