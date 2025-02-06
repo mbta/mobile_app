@@ -130,13 +130,15 @@ fun StopDetailsFilteredDeparturesView(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
             Column(
-                Modifier.fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 10.dp)
-                    .padding(top = 14.dp),
+                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(top = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                DirectionPicker(
+                    patternsByStop,
+                    stopFilter,
+                    updateStopFilter,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
                 if (!hasMajorAlert && !tileData.isEmpty()) {
                     DepartureTiles(
                         tripFilter,
@@ -186,7 +188,10 @@ fun StopDetailsFilteredDeparturesView(
                         downstreamAlerts.isNotEmpty() ||
                         (showElevatorAccessibility && elevatorAlerts.isNotEmpty())
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Column(
+                        Modifier.padding(horizontal = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         alerts.forEach { AlertCard(it) }
                         downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
                         if (showElevatorAccessibility) {
@@ -198,7 +203,7 @@ fun StopDetailsFilteredDeparturesView(
                 if (hasMajorAlert) {
                     Box {}
                 } else if (noPredictionsStatus != null) {
-                    Box(modifier = Modifier.padding(bottom = 12.dp)) {
+                    Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
                         StopDetailsNoTripCard(
                             status = noPredictionsStatus,
                             accentColor = routeColor,
@@ -207,7 +212,7 @@ fun StopDetailsFilteredDeparturesView(
                         )
                     }
                 } else if (selectedTripIsCancelled) {
-                    Box(modifier = Modifier.padding(vertical = 16.dp)) {
+                    Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
                         StopDetailsIconCard(
                             routeColor,
                             details = { Text(stringResource(R.string.trip_cancelled_details)) },
@@ -231,7 +236,8 @@ fun StopDetailsFilteredDeparturesView(
                         setMapSelectedVehicle = setMapSelectedVehicle,
                         openSheetRoute = openSheetRoute,
                         openModal = openModal,
-                        now = now
+                        now = now,
+                        modifier = Modifier.padding(horizontal = 10.dp)
                     )
                 }
             }
@@ -255,7 +261,7 @@ private fun DepartureTiles(
     val showTileHeadsigns =
         patternsByStop.line != null || !tiles.all { it.headsign == tiles.firstOrNull()?.headsign }
     Row(
-        Modifier.horizontalScroll(rememberScrollState()),
+        Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         for (tileData in tiles) {
