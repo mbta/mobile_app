@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +33,7 @@ fun StopDetailsPage(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
+    tileScrollState: ScrollState,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -65,6 +67,7 @@ fun StopDetailsPage(
         onClose,
         updateStopFilter,
         updateTripFilter,
+        tileScrollState,
         setMapSelectedVehicle,
         openModal,
         openSheetRoute,

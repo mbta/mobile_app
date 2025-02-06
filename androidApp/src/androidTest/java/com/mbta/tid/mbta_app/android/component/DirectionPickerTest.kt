@@ -53,9 +53,11 @@ class DirectionPickerTest {
             )
         var filter: StopDetailsFilter? = StopDetailsFilter(routeId = route.id, directionId = 0)
         composeTestRule.setContent {
-            DirectionPicker(patternsByStop = patternsByStop, filter = filter) { newFilter ->
-                filter = newFilter
-            }
+            DirectionPicker(
+                patternsByStop = patternsByStop,
+                filter = filter,
+                updateStopFilter = { newFilter -> filter = newFilter }
+            )
         }
 
         composeTestRule.onNodeWithText("Northbound").assertIsDisplayed()
