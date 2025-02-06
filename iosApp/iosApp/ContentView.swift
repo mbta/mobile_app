@@ -173,7 +173,6 @@ struct ContentView: View {
                                 RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
                                     viewportProvider.follow()
                                 }
-                                .accessibilityIdentifier("mapRecenterButton")
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isOverview,

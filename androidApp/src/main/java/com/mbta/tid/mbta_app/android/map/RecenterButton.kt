@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.android.R
 
@@ -16,7 +17,7 @@ import com.mbta.tid.mbta_app.android.R
 fun RecenterButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(
         onClick = onClick,
-        modifier,
+        modifier.semantics(mergeDescendants = true) {},
         colors =
             IconButtonDefaults.iconButtonColors(
                 containerColor = colorResource(R.color.fill3),

@@ -35,6 +35,7 @@
     <string name="disabled_train">列车停运</string>
     <string name="displays_more_info">显示详细信息</string>
     <string name="dock_closure">码头关闭</string>
+    <string name="drag_handle">拖动控制柄</string>
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="eastbound">东行</string>
     <string name="effect_ahead">%1$s 前面</string>
@@ -92,6 +93,8 @@
     <string name="medical_emergency">医疗急救</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b>分钟</string>
     <string name="more_link">更多</string>
+    <string name="more_link_call">选择呼叫</string>
+    <string name="more_link_external">外部链接</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">功能标记</string>
     <string name="more_section_resources">资源</string>
@@ -139,6 +142,7 @@
     <string name="predictions_unavailable_details">服务正在运行，但无法提供预计到达时间。地图显示此路线上的%1$s目前所在的位置。</string>
     <string name="predictions_unavailable_details_hide_maps">服务正在运行，但无法提供预计到达时间。</string>
     <string name="real_time_arrivals_updating_live">实时到达实时更新</string>
+    <string name="recenter">将地图重新定位到我的位置</string>
     <string name="recently_viewed">近期查看过</string>
     <string name="refresh">刷新</string>
     <string name="refresh_predictions">刷新预测</string>
@@ -150,7 +154,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">预计出发</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s计划从 %2$s 出发</string>
     <string name="search_by_stop">按站点搜索</string>
     <string name="selected_stop">%1$s，选定站点</string>
     <string name="selected_stop_first_stop">%1$s，选定站点，第一站</string>
