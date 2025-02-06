@@ -40,6 +40,6 @@ struct MorePhone: View {
             }
         }
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint(Text("Select to call"))
+        .accessibilityHint(Text("Select to call", comment: "Screen reader text for a link to call a phone number"))
     }
 }

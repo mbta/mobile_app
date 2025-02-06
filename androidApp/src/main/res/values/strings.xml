@@ -36,7 +36,7 @@
     <string name="disabled_train">Disabled Train</string>
     <string name="displays_more_info">displays more information</string>
     <string name="dock_closure">Dock Closure</string>
-    <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
+    <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="eastbound">Eastbound</string>
     <string name="effect_ahead">%1$s ahead</string>
@@ -79,7 +79,6 @@
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
     <string name="hurricane">Hurricane</string>
     <string name="ice_in_harbor">Ice In Harbor</string>
-    <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
     <string name="lists_remaining_stops">Lists remaining stops</string>
@@ -96,6 +95,8 @@
     <string name="medical_emergency">Medical Emergency</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">More</string>
+    <string name="more_link_call">Select to call</string>
+    <string name="more_link_external">External link</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">Feature Flags</string>
     <string name="more_section_resources">Resources</string>
@@ -143,7 +144,7 @@
     <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
-    <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
+    <string name="recenter">Recenter map on my location</string>
     <string name="recently_viewed">Recently Viewed</string>
     <string name="refresh">Refresh</string>
     <string name="refresh_predictions">Refresh predictions</string>
@@ -155,8 +156,8 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Scheduled to depart</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s scheduled to depart %2$s</string>
-    <string name="scheduled_to_depart_selected_stop_accessibility_desc" translatable="false">%1$s scheduled to depart %2$s, selected stop</string>
+    <string name="scheduled_to_depart_accessibility_desc" translatable="false">Selected %1$s scheduled to depart %2$s</string>
+    <string name="scheduled_to_depart_selected_stop_accessibility_desc" translatable="false">Selected %1$s scheduled to depart %2$s, selected stop</string>
     <string name="search_by_stop">Search by stop</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
