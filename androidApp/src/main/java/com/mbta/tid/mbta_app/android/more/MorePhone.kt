@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
@@ -39,6 +40,7 @@ fun MorePhone(label: String, phoneNumber: String) {
                         Log.i("More", "Failed to dial number on MorePhone click")
                     }
                 }
+                .semantics(mergeDescendants = true) {}
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -47,7 +49,7 @@ fun MorePhone(label: String, phoneNumber: String) {
         Column { Text(label, style = MaterialTheme.typography.bodyMedium) }
         Icon(
             painterResource(R.drawable.fa_phone),
-            contentDescription = stringResource(id = R.string.icon_description_external_link),
+            contentDescription = stringResource(id = R.string.more_link_call),
             modifier = Modifier.size(12.dp),
             tint = colorResource(R.color.deemphasized),
         )

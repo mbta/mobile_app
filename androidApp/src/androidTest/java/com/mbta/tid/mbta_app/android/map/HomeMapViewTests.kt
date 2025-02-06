@@ -43,7 +43,9 @@ class HomeMapViewTests {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("Recenter").assertDoesNotExist()
+        composeTestRule
+            .onNodeWithContentDescription("Recenter map on my location")
+            .assertDoesNotExist()
     }
 
     @Test
@@ -68,7 +70,9 @@ class HomeMapViewTests {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("Recenter").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Recenter map on my location")
+            .assertIsDisplayed()
     }
 
     @Test

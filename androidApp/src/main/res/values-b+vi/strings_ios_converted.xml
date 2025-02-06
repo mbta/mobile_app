@@ -36,6 +36,7 @@
     <string name="disabled_train">Tàu bị sự cố</string>
     <string name="displays_more_info">hiển thị thêm thông tin</string>
     <string name="dock_closure">Đóng bến tàu</string>
+    <string name="drag_handle">Tay cầm kéo</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="eastbound">Về hướng đông</string>
     <string name="effect_ahead">%1$s phía trước</string>
@@ -93,6 +94,8 @@
     <string name="medical_emergency">Cấp cứu y tế</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> phút</string>
     <string name="more_link">Thêm</string>
+    <string name="more_link_call">Chọn để gọi</string>
+    <string name="more_link_external">Liên kết ngoài</string>
     <string name="more_page_footer">Được tạo ra với ♥ bởi T</string>
     <string name="more_section_feature_flags">Cờ tính năng</string>
     <string name="more_section_resources">Nguồn</string>
@@ -140,6 +143,7 @@
     <string name="predictions_unavailable_details">Dịch vụ đang chạy, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang chạy nhưng không có thời gian đến dự kiến.</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
+    <string name="recenter">Bản đồ định vị lại vị trí của tôi</string>
     <string name="recently_viewed">Đã xem gần đây</string>
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>
@@ -151,7 +155,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Đã lên lịch khởi hành</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s dự kiến khởi hành %2$s</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="selected_stop">%1$s, điểm dừng được chọn</string>
     <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
