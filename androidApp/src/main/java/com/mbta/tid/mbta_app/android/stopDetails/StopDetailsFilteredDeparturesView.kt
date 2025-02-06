@@ -1,23 +1,31 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -25,13 +33,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.HeadsignRowView
-import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
@@ -40,19 +47,21 @@ import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.TripAndFormat
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import org.koin.compose.koinInject
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StopDetailsFilteredDeparturesView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     patternsByStop: PatternsByStop,
-    tileData: List<TripAndFormat>,
+    tileData: List<TileData>,
     noPredictionsStatus: RealtimePatterns.NoTripsFormat?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
@@ -61,12 +70,14 @@ fun StopDetailsFilteredDeparturesView(
     errorBannerViewModel: ErrorBannerViewModel,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
+    tileScrollState: ScrollState,
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
-    openSheetRoute: (SheetRoutes) -> Unit
+    openSheetRoute: (SheetRoutes) -> Unit,
+    analytics: Analytics = koinInject()
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
@@ -78,6 +89,7 @@ fun StopDetailsFilteredDeparturesView(
         } else {
             emptyList()
         }
+    val pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier)
 
     val downstreamAlerts: List<Alert> =
         if (global != null) patternsByStop.alertsDownstream(expectedDirection) else emptyList()
@@ -94,12 +106,21 @@ fun StopDetailsFilteredDeparturesView(
         patternsByStop.line?.textColor ?: patternsByStop.representativeRoute.textColor
     val routeTextColor: Color = Color.fromHex(textHex)
 
+    // keys are trip IDs
+    val bringIntoViewRequesters = remember { mutableStateMapOf<String, BringIntoViewRequester>() }
+
+    LaunchedEffect(tripFilter) {
+        if (tripFilter != null) {
+            bringIntoViewRequesters[tripFilter.tripId]?.bringIntoView()
+        }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         StopDetailsFilteredHeader(
             patternsByStop.representativeRoute,
             patternsByStop.line,
             patternsByStop.stop,
-            pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier),
+            pinned = pinned,
             onPin = { togglePinnedRoute(patternsByStop.routeIdentifier) },
             onClose = onClose
         )
@@ -111,54 +132,27 @@ fun StopDetailsFilteredDeparturesView(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
             Column(
-                Modifier.fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 10.dp)
-                    .padding(top = 14.dp),
+                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(top = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                DirectionPicker(
+                    patternsByStop,
+                    stopFilter,
+                    updateStopFilter,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
                 if (!hasMajorAlert && !tileData.isEmpty()) {
-                    Column(
-                        Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                    ) {
-                        for ((index, row) in tileData.withIndex()) {
-                            val modifier =
-                                if (index == 0 || index == tileData.size - 1)
-                                    Modifier.background(
-                                        colorResource(R.color.fill3),
-                                        RoundedCornerShape(8.dp)
-                                    )
-                                else Modifier.background(colorResource(R.color.fill3))
-
-                            val route =
-                                patternsByStop.routes.first { it.id == row.upcoming.trip.routeId }
-
-                            Column(modifier.border(1.dp, colorResource(R.color.halo))) {
-                                HeadsignRowView(
-                                    row.upcoming.trip.headsign,
-                                    RealtimePatterns.Format.Some(listOf(row.formatted), null),
-                                    Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-                                        .clickable(
-                                            onClickLabel = null,
-                                            onClick = {
-                                                updateTripFilter(
-                                                    TripDetailsFilter(
-                                                        row.upcoming.trip.id,
-                                                        row.upcoming.vehicle?.id,
-                                                        row.upcoming.stopSequence
-                                                    )
-                                                )
-                                            }
-                                        ),
-                                    pillDecoration =
-                                        if (patternsByStop.line != null)
-                                            PillDecoration.OnRow(route = route)
-                                        else null
-                                )
-                            }
-                        }
-                    }
+                    DepartureTiles(
+                        tripFilter,
+                        patternsByStop,
+                        tileData,
+                        alerts,
+                        updateTripFilter,
+                        pinned,
+                        analytics,
+                        bringIntoViewRequesters,
+                        tileScrollState
+                    )
                 }
 
                 @Composable
@@ -197,7 +191,10 @@ fun StopDetailsFilteredDeparturesView(
                         downstreamAlerts.isNotEmpty() ||
                         (showElevatorAccessibility && elevatorAlerts.isNotEmpty())
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Column(
+                        Modifier.padding(horizontal = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         alerts.forEach { AlertCard(it) }
                         downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
                         if (showElevatorAccessibility) {
@@ -209,7 +206,7 @@ fun StopDetailsFilteredDeparturesView(
                 if (hasMajorAlert) {
                     Box {}
                 } else if (noPredictionsStatus != null) {
-                    Box(modifier = Modifier.padding(bottom = 12.dp)) {
+                    Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
                         StopDetailsNoTripCard(
                             status = noPredictionsStatus,
                             accentColor = routeColor,
@@ -218,7 +215,7 @@ fun StopDetailsFilteredDeparturesView(
                         )
                     }
                 } else if (selectedTripIsCancelled) {
-                    Box(modifier = Modifier.padding(vertical = 16.dp)) {
+                    Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
                         StopDetailsIconCard(
                             routeColor,
                             details = { Text(stringResource(R.string.trip_cancelled_details)) },
@@ -242,10 +239,65 @@ fun StopDetailsFilteredDeparturesView(
                         setMapSelectedVehicle = setMapSelectedVehicle,
                         openSheetRoute = openSheetRoute,
                         openModal = openModal,
-                        now = now
+                        now = now,
+                        modifier = Modifier.padding(horizontal = 10.dp)
                     )
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun DepartureTiles(
+    tripFilter: TripDetailsFilter?,
+    patternsByStop: PatternsByStop,
+    tiles: List<TileData>,
+    alerts: List<Alert>,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
+    pinned: Boolean,
+    analytics: Analytics,
+    bringIntoViewRequesters: MutableMap<String, BringIntoViewRequester>,
+    scrollState: ScrollState
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val showTileHeadsigns =
+        patternsByStop.line != null || !tiles.all { it.headsign == tiles.firstOrNull()?.headsign }
+    Row(
+        Modifier.horizontalScroll(scrollState).padding(horizontal = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        for (tileData in tiles) {
+            val bringIntoViewRequester =
+                bringIntoViewRequesters.getOrPut(tileData.id, ::BringIntoViewRequester)
+            DepartureTile(
+                data = tileData,
+                onTap = {
+                    val upcoming = tileData.upcoming
+                    updateTripFilter(
+                        TripDetailsFilter(
+                            tripId = upcoming.trip.id,
+                            vehicleId = upcoming.prediction?.vehicleId,
+                            stopSequence = upcoming.stopSequence,
+                            selectionLock = false
+                        )
+                    )
+                    analytics.tappedDeparture(
+                        routeId = patternsByStop.routeIdentifier,
+                        stopId = patternsByStop.stop.id,
+                        pinned = pinned,
+                        alert = alerts.isNotEmpty(),
+                        routeType = patternsByStop.representativeRoute.type,
+                        noTrips = null
+                    )
+                    coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
+                },
+                modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
+                showRoutePill = patternsByStop.line != null,
+                showHeadsign = showTileHeadsigns,
+                isSelected = tileData.upcoming.trip.id == tripFilter?.tripId
+            )
         }
     }
 }
