@@ -54,11 +54,7 @@ struct DepartureTile: View {
         ))
     }
 
-    private func deselectedBackgroundColor(_ route: Route) -> Color {
+    private func deselectedBackgroundColor(_: Route) -> Color {
         // Exceptions for contrast
-        if route.type == RouteType.commuterRail || route.id == "Blue" {
-            return Color.deselectedToggle2
-        }
-        return Color.deselectedToggle1
     }
 }

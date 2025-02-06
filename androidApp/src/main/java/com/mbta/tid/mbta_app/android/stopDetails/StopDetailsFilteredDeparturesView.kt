@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -119,6 +120,42 @@ fun StopDetailsFilteredDeparturesView(
             ) {
                 Box(Modifier.padding(horizontal = 2.dp)) {
                     DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
+                }
+
+                val horizontalScrollState = rememberScrollState()
+                Row(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .horizontalScroll(horizontalScrollState)
+                ) {
+                    tileData.mapIndexed { index, tile ->
+                        StopDetailsDepartureTile(
+                            tileData = tile,
+                            onTap = {
+                                updateTripFilter(
+                                    TripDetailsFilter(
+                                        tile.upcoming.trip.id,
+                                        tile.upcoming.vehicle?.id,
+                                        tile.upcoming.stopSequence
+                                    )
+                                )
+                            },
+                            pillDecoration =
+                                if (patternsByStop.line != null) {
+                                    PillDecoration.OnPrediction(
+                                        patternsByStop.routes.associateBy { it.id }
+                                    )
+                                } else null,
+                            showHeadsign =
+                                patternsByStop.line != null ||
+                                    !tileData.all { t ->
+                                        t.upcoming.trip.headsign ==
+                                            tileData.first()?.upcoming?.trip?.headsign
+                                    },
+                            isSelected = tile.upcoming.trip.id == tripFilter?.tripId
+                        )
+                    }
                 }
 
                 Column(
