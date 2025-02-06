@@ -127,6 +127,7 @@ class TripStopsTest {
                 stopSequence = 1,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null),
                 now,
+                onTapLink = {},
                 routeAccents = TripRouteAccents(route),
                 global = GlobalResponse(objects)
             )
@@ -222,6 +223,7 @@ class TripStopsTest {
                 stopSequence = 0,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null),
                 now,
+                onTapLink = {},
                 routeAccents = TripRouteAccents(route),
                 global = GlobalResponse(objects)
             )
@@ -307,6 +309,7 @@ class TripStopsTest {
                 stopSequence = 1,
                 TripHeaderSpec.Scheduled(stop1, firstStop),
                 now,
+                onTapLink = {},
                 routeAccents = TripRouteAccents(route),
                 global = GlobalResponse(objects)
             )
@@ -402,6 +405,7 @@ class TripStopsTest {
                 stopSequence = 3,
                 TripHeaderSpec.FinishingAnotherTrip,
                 now,
+                onTapLink = {},
                 routeAccents = TripRouteAccents(route),
                 global = GlobalResponse(objects)
             )

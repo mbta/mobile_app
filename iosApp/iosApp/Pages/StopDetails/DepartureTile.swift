@@ -41,7 +41,7 @@ struct DepartureTile: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 10)
         .frame(minHeight: 56)
-        .background(isSelected ? Color.fill3 : deselectedBackgroundColor(data.route).opacity(0.5))
+        .background(isSelected ? Color.fill3 : Color.deselectedToggle2.opacity(0.6))
         .foregroundStyle(isSelected ? Color.text : Color.deselectedToggleText)
         .clipShape(.rect(cornerRadius: 8))
         .padding(1)
@@ -52,13 +52,5 @@ struct DepartureTile: View {
             "displays more information about this trip",
             comment: "Screen reader hint for tapping a departure card in stop details"
         ))
-    }
-
-    private func deselectedBackgroundColor(_ route: Route) -> Color {
-        // Exceptions for contrast
-        if route.type == RouteType.commuterRail || route.id == "Blue" {
-            return Color.deselectedToggle2
-        }
-        return Color.deselectedToggle1
     }
 }

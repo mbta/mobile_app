@@ -7,8 +7,10 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -33,6 +35,7 @@ class TripStopRowTest {
             TripStopRow(
                 TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route)),
                 now,
+                onTapLink = {},
                 TripRouteAccents(route)
             )
         }
@@ -54,6 +57,7 @@ class TripStopRowTest {
             TripStopRow(
                 TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route)),
                 now,
+                onTapLink = {},
                 TripRouteAccents(route)
             )
         }
@@ -80,6 +84,7 @@ class TripStopRowTest {
             TripStopRow(
                 stopEntry,
                 now,
+                onTapLink = {},
                 TripRouteAccents(route),
                 targeted = selected,
                 firstStop = first
@@ -100,5 +105,26 @@ class TripStopRowTest {
 
         selected = false
         composeTestRule.onNodeWithContentDescription("stop, first stop").assertIsDisplayed()
+    }
+
+    @Test
+    fun testClickable() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Worcester" }
+        val schedule = objects.schedule { departureTime = now + 5.seconds }
+        val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
+        val route = objects.route()
+
+        val entry =
+            TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route))
+        var linkTappedWith: TripDetailsStopList.Entry? = null
+
+        composeTestRule.setContent {
+            TripStopRow(entry, now, onTapLink = { linkTappedWith = it }, TripRouteAccents(route))
+        }
+
+        composeTestRule.onNodeWithText(stop.name).performClick()
+        assertEquals(entry, linkTappedWith)
     }
 }

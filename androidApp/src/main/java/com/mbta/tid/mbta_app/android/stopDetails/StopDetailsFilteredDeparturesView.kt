@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
@@ -64,8 +65,8 @@ fun StopDetailsFilteredDeparturesView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
-    openExplainer: (ModalRoutes.Explainer) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
@@ -83,6 +84,8 @@ fun StopDetailsFilteredDeparturesView(
 
     val selectedTripIsCancelled: Boolean =
         tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false
+
+    val hasMajorAlert = alerts.any { it.significance == AlertSignificance.Major }
 
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
     val routeColor: Color = Color.fromHex(routeHex)
@@ -115,8 +118,7 @@ fun StopDetailsFilteredDeparturesView(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
-
-                if (!tileData.isEmpty()) {
+                if (!hasMajorAlert && !tileData.isEmpty()) {
                     Column(
                         Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
                     ) {
@@ -174,7 +176,7 @@ fun StopDetailsFilteredDeparturesView(
                         color = routeColor,
                         textColor = routeTextColor,
                         onViewDetails = {
-                            openAlertDetails(
+                            openModal(
                                 ModalRoutes.AlertDetails(
                                     alertId = alert.id,
                                     lineId =
@@ -204,7 +206,9 @@ fun StopDetailsFilteredDeparturesView(
                     }
                 }
 
-                if (noPredictionsStatus != null) {
+                if (hasMajorAlert) {
+                    Box {}
+                } else if (noPredictionsStatus != null) {
                     Box(modifier = Modifier.padding(bottom = 12.dp)) {
                         StopDetailsNoTripCard(
                             status = noPredictionsStatus,
@@ -236,7 +240,8 @@ fun StopDetailsFilteredDeparturesView(
                         stopId = stopId,
                         stopDetailsVM = viewModel,
                         setMapSelectedVehicle = setMapSelectedVehicle,
-                        openExplainer = openExplainer,
+                        openSheetRoute = openSheetRoute,
+                        openModal = openModal,
                         now = now
                     )
                 }

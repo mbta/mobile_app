@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +53,7 @@ import kotlinx.datetime.Instant
 fun TripStopRow(
     stop: TripDetailsStopList.Entry,
     now: Instant,
+    onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
     modifier: Modifier = Modifier,
     targeted: Boolean = false,
@@ -73,10 +75,11 @@ fun TripStopRow(
                 Column(Modifier.padding(vertical = 12.dp).padding(start = 8.dp)) {
                     Row(
                         Modifier.semantics(mergeDescendants = true) {
-                            if (targeted) {
-                                heading()
+                                if (targeted) {
+                                    heading()
+                                }
                             }
-                        },
+                            .clickable { onTapLink(stop) },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -111,8 +114,10 @@ fun TripStopRow(
                         ScrollRoutes(
                             stop,
                             Modifier.semantics {
-                                contentDescription = scrollRoutesAccessibilityLabel(stop, context)
-                            }
+                                    contentDescription =
+                                        scrollRoutesAccessibilityLabel(stop, context)
+                                }
+                                .clickable { onTapLink(stop) }
                         )
                     }
                 }
@@ -245,6 +250,7 @@ private fun TripStopRowPreview() {
                         )
                 ),
             Clock.System.now(),
+            onTapLink = {},
             TripRouteAccents.default.copy(
                 type = RouteType.HEAVY_RAIL,
                 color = Color.fromHex("DA291C")
@@ -263,6 +269,7 @@ private fun TripStopRowPreview() {
                     routes = emptyList()
                 ),
             Clock.System.now(),
+            onTapLink = {},
             TripRouteAccents.default.copy(
                 type = RouteType.HEAVY_RAIL,
                 color = Color.fromHex("DA291C")

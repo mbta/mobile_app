@@ -251,7 +251,8 @@ class StopDetailsViewTest {
                             MockSettingsRepository()
                         ),
                     setMapSelectedVehicle = {},
-                    openModal = {}
+                    openModal = {},
+                    openSheetRoute = {}
                 )
             }
         }
@@ -328,7 +329,8 @@ class StopDetailsViewTest {
                             MockSettingsRepository()
                         ),
                     setMapSelectedVehicle = {},
-                    openModal = {}
+                    openModal = {},
+                    openSheetRoute = {}
                 )
             }
         }
@@ -416,7 +418,8 @@ class StopDetailsViewTest {
                             MockSettingsRepository()
                         ),
                     setMapSelectedVehicle = {},
-                    openModal = {}
+                    openModal = {},
+                    openSheetRoute = {}
                 )
             }
         }
@@ -499,7 +502,8 @@ class StopDetailsViewTest {
                             MockSettingsRepository()
                         ),
                     setMapSelectedVehicle = {},
-                    openModal = {}
+                    openModal = {},
+                    openSheetRoute = {}
                 )
             }
         }

@@ -1,8 +1,13 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MainApplication
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -10,7 +15,9 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -29,6 +36,7 @@ import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
@@ -48,8 +56,25 @@ class TripDetailsViewTest {
     val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
     val stopSequence = 10
 
+    val downstreamStopSequence = 20
+    lateinit var downstreamStop: Stop
+    val downstreamStopParent =
+        objects.stop { downstreamStop = childStop { name = "North Station" } }
+    val schedule =
+        objects.schedule {
+            this.trip = this@TripDetailsViewTest.trip
+            stopId = downstreamStop.id
+            stopSequence = downstreamStopSequence
+            departureTime = now + 5.minutes
+        }
+    val prediction = objects.prediction(schedule) { departureTime = now + 5.minutes }
+
     val globalResponse = GlobalResponse(objects)
     val alertData = AlertsStreamDataResponse(objects)
+    val predictionsResponse = PredictionsStreamDataResponse(objects)
+    val tripSchedulesResponse = TripSchedulesResponse.Schedules(listOf(schedule))
+
+    val tripFilter = TripDetailsFilter(trip.id, vehicle.id, stopSequence)
 
     val koinModule = module {
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
@@ -57,8 +82,15 @@ class TripDetailsViewTest {
         single<IPredictionsRepository> { MockPredictionsRepository() }
         single<ISchedulesRepository> { MockScheduleRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
-        single<ITripPredictionsRepository> { MockTripPredictionsRepository() }
-        single<ITripRepository> { MockTripRepository(tripResponse = TripResponse(trip)) }
+        single<ITripPredictionsRepository> {
+            MockTripPredictionsRepository(response = predictionsResponse)
+        }
+        single<ITripRepository> {
+            MockTripRepository(
+                tripSchedulesResponse = tripSchedulesResponse,
+                tripResponse = TripResponse(trip)
+            )
+        }
         single<IVehicleRepository> {
             MockVehicleRepository(outcome = ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
         }
@@ -71,7 +103,6 @@ class TripDetailsViewTest {
     fun testSetsMapSelectedVehicle() {
         val mapSelectedVehicleValues = mutableListOf<Vehicle?>()
 
-        val tripFilter = TripDetailsFilter(trip.id, vehicle.id, stopSequence)
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val viewModel =
@@ -95,8 +126,10 @@ class TripDetailsViewTest {
                     stopId = stop.id,
                     stopDetailsVM = viewModel,
                     setMapSelectedVehicle = mapSelectedVehicleValues::add,
-                    openExplainer = {},
-                    now
+                    openSheetRoute = {},
+                    openModal = {},
+                    now,
+                    analytics = MockAnalytics()
                 )
             }
         }
@@ -104,5 +137,67 @@ class TripDetailsViewTest {
         composeTestRule.waitForIdle()
 
         assertEquals(mapSelectedVehicleValues, listOf(null, vehicle))
+    }
+
+    @Test
+    fun testOpensDownstreamStop() {
+        val openedSheetRoutes = mutableListOf<SheetRoutes>()
+        val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
+        val analytics =
+            MockAnalytics(
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
+            )
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                val viewModel =
+                    stopDetailsManagedVM(
+                        filters =
+                            StopDetailsPageFilters(
+                                stop.id,
+                                StopDetailsFilter(route.id, routePattern.directionId),
+                                tripFilter
+                            ),
+                        globalResponse,
+                        alertData,
+                        pinnedRoutes = emptySet(),
+                        updateStopFilter = { _, _ -> },
+                        updateTripFilter = { _, _ -> },
+                        now
+                    )
+
+                TripDetailsView(
+                    tripFilter,
+                    stopId = stop.id,
+                    stopDetailsVM = viewModel,
+                    setMapSelectedVehicle = {},
+                    openSheetRoute = openedSheetRoutes::add,
+                    openModal = {},
+                    now,
+                    analytics
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(downstreamStop.name).performClick()
+        assertEquals<List<SheetRoutes>>(
+            listOf(SheetRoutes.StopDetails(downstreamStopParent.id, null, null)),
+            openedSheetRoutes
+        )
+        assertEquals(
+            listOf(
+                Pair(
+                    "tapped_downstream_stop",
+                    mapOf(
+                        "route_id" to route.id,
+                        "stop_id" to downstreamStopParent.id,
+                        "trip_id" to trip.id,
+                        "connecting_route_id" to ""
+                    )
+                )
+            ),
+            loggedEvents
+        )
     }
 }

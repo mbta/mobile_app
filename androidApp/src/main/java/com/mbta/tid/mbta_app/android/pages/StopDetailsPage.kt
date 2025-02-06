@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
@@ -33,6 +34,7 @@ fun StopDetailsPage(
     updateDepartures: (StopDetailsDepartures?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val stopId = filters.stopId
@@ -65,6 +67,7 @@ fun StopDetailsPage(
         updateTripFilter,
         setMapSelectedVehicle,
         openModal,
+        openSheetRoute,
         errorBannerViewModel
     )
 }

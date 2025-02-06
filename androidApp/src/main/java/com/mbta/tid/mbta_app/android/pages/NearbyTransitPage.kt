@@ -341,6 +341,7 @@ fun NearbyTransitPage(
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
                     openModal = ::openModal,
+                    openSheetRoute = navController::navigate,
                     setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )

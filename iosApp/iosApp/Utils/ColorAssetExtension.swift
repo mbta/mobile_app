@@ -11,7 +11,6 @@ import SwiftUI
 extension Color {
     static let contrast = Color("Contrast")
     static let deemphasized = Color("Deemphasized")
-    static let deselectedToggle1 = Color("Deselected Toggle 1")
     static let deselectedToggle2 = Color("Deselected Toggle 2")
     static let deselectedToggleText = Color("Deselected Toggle Text")
     static let fill1 = Color("Fill 1")
@@ -31,7 +30,6 @@ extension UIColor {
     // but if they're removed, the fallback using Color will not be responsive to theme.
     static let contrast = UIColor(named: "Contrast") ?? UIColor(Color(.contrast))
     static let deemphasized = UIColor(named: "Deemphasized") ?? UIColor(Color(.deemphasized))
-    static let deselectedToggle1 = UIColor(named: "Deselected Toggle 1") ?? UIColor(Color(.deselectedToggle1))
     static let deselectedToggle2 = UIColor(named: "Deselected Toggle 2") ?? UIColor(Color(.deselectedToggle2))
     static let deselectedToggleText = UIColor(named: "Deselected Toggle Text") ?? UIColor(Color(.deselectedToggleText))
     static let fill1 = UIColor(named: "Fill 1") ?? UIColor(Color(.fill1))

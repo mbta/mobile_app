@@ -107,7 +107,7 @@ struct RoutePill: View {
 
     var body: some View {
         getPillBase()
-            .textCase(.uppercase)
+            .textCase(route?.type == .commuterRail ? .none : .uppercase)
             .font(.custom("Helvetica Neue", size: fontSize).bold())
             .tracking(0.5)
             .modifier(FramePaddingModifier(spec: spec))

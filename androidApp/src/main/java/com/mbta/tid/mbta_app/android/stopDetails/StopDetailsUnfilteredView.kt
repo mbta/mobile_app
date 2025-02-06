@@ -30,7 +30,7 @@ fun StopDetailsUnfilteredView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
@@ -52,15 +52,6 @@ fun StopDetailsUnfilteredView(
                     ?: 0
             updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
         }
-    }
-
-    fun openAndRecordAlertDetails(alertDetails: ModalRoutes.AlertDetails) {
-        openAlertDetails(alertDetails)
-        analytics.tappedAlertDetails(
-            routeId = alertDetails.lineId ?: alertDetails.routeIds?.firstOrNull() ?: "",
-            stopId = alertDetails.stopId ?: "",
-            alertId = alertDetails.alertId
-        )
     }
 
     fun getFilterPillRoutes(
@@ -96,7 +87,7 @@ fun StopDetailsUnfilteredView(
                 onClose,
                 onTapRoutePill,
                 updateStopFilter,
-                ::openAndRecordAlertDetails
+                openModal
             )
         }
     }
@@ -123,7 +114,7 @@ fun StopDetailsUnfilteredView(
                         onClose = onClose,
                         onTapRoutePill = {},
                         updateStopFilter = {},
-                        openAlertDetails = {}
+                        openModal = {}
                     )
                 }
             }

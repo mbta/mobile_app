@@ -40,7 +40,7 @@ if [ -d $JDK_PATH ]; then
 fi
 
 retry brew install asdf
-retry asdf plugin-add java
+retry asdf plugin add java
 retry asdf install java
 DEFAULT_JAVA_PATH="$(asdf where java)"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"

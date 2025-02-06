@@ -56,7 +56,7 @@ fun StopDetailsUnfilteredRoutesView(
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit
+    openModal: (ModalRoutes) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         SheetHeader(onClose = onClose, title = stop.name)
@@ -93,7 +93,7 @@ fun StopDetailsUnfilteredRoutesView(
                                     Color.Unspecified,
                                     MaterialTheme.colorScheme.onPrimary,
                                     {
-                                        openAlertDetails(
+                                        openModal(
                                             ModalRoutes.AlertDetails(it.id, null, null, stop.id)
                                         )
                                     }
@@ -227,7 +227,7 @@ private fun StopDetailsRoutesViewPreview() {
             onClose = {},
             onTapRoutePill = {},
             updateStopFilter = {},
-            openAlertDetails = {}
+            openModal = {}
         )
     }
 }

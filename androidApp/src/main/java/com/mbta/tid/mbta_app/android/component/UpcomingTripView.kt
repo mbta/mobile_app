@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -210,7 +211,7 @@ fun UpcomingTripView(
                         Text(
                             text =
                                 AnnotatedString.fromHtml(
-                                    stringResource(R.string.minutes_abbr, state.trip.minutes)
+                                    predictionTextMinutes(context, state.trip.minutes)
                                 ),
                             modifier =
                                 Modifier.semantics {
@@ -318,6 +319,21 @@ fun UpcomingTripView(
                     hideRealtimeIndicators
                 )
             }
+    }
+}
+
+fun predictionTextMinutes(context: Context, minutes: Int): String {
+    val hours = Math.floorDiv(minutes, 60)
+    val remainingMinutes = minutes - (hours * 60)
+
+    return if (hours >= 1) {
+        if (remainingMinutes == 0) {
+            context.getString(R.string.exact_hours_format_abbr, hours)
+        } else {
+            context.getString(R.string.hr_min_abbr, hours, remainingMinutes)
+        }
+    } else {
+        context.getString(R.string.minutes_abbr, minutes)
     }
 }
 
