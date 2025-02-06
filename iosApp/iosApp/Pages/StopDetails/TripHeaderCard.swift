@@ -104,13 +104,13 @@ struct TripHeaderCard: View {
         _ stopEntry: TripDetailsStopList.Entry
     ) -> Text {
         targetId == stopEntry.stop.id ? Text(
-            "\(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name), selected stop",
+            "Selected \(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name), selected stop",
             comment: """
             Screen reader text for the departure status on the trip details page when the stop is selected,
             ex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard], selected stop'
             """
         ) : Text(
-            "\(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name)",
+            "Selected \(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name)",
             comment: """
             Screen reader text for the departure status on the trip details page,
             ex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'

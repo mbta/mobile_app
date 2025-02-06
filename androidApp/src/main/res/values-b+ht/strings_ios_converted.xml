@@ -33,6 +33,7 @@
     <string name="construction">Konstriksyon</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="demonstration">Demonstrasyon</string>
+    <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
     <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
@@ -40,6 +41,7 @@
     <string name="disabled_train">Tren Ki Pa Aktif</string>
     <string name="displays_more_info">montre plis enfòmasyon</string>
     <string name="dock_closure">Waf la Fèmen</string>
+    <string name="drag_handle">Trennen manch</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="effect_ahead">%1$s devan</string>
@@ -101,6 +103,8 @@
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
     <string name="more_link">Plis</string>
+    <string name="more_link_call">Chwazi rele</string>
+    <string name="more_link_external">Lyen ekstèn</string>
     <string name="more_page_footer">Ki fèt ak ♥ pa T a</string>
     <string name="more_section_feature_flags">Drapo Opsyon</string>
     <string name="more_section_resources">Resous</string>
@@ -148,6 +152,7 @@
     <string name="predictions_unavailable_details">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib. Kat la montre ki kote %1$s sou wout sa a ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib.</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
+    <string name="recenter">Resantre kat jeyografik sou kote mwen an</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
@@ -159,7 +164,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Pwograme pou ale</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s ki pwograme pou kite %2$s</string>
     <string name="search_by_stop">Chèche pa kanpe</string>
     <string name="selected_stop">%1$s, chwazi sispann</string>
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
