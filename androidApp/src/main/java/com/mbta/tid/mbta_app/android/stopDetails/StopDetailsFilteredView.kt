@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import android.util.Log
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -31,6 +33,7 @@ fun StopDetailsFilteredView(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
+    tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
@@ -84,6 +87,7 @@ fun StopDetailsFilteredView(
             errorBannerViewModel = errorBannerViewModel,
             updateStopFilter = updateStopFilter,
             updateTripFilter = updateTripDetailsFilter,
+            tileScrollState = tileScrollState,
             pinnedRoutes = pinnedRoutes,
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
@@ -122,6 +126,7 @@ fun StopDetailsFilteredView(
                     errorBannerViewModel = errorBannerViewModel,
                     updateStopFilter = {},
                     updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = onClose,

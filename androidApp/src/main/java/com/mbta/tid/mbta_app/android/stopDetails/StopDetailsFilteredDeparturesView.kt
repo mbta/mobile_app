@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -69,6 +70,7 @@ fun StopDetailsFilteredDeparturesView(
     errorBannerViewModel: ErrorBannerViewModel,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
+    tileScrollState: ScrollState,
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
@@ -148,7 +150,8 @@ fun StopDetailsFilteredDeparturesView(
                         updateTripFilter,
                         pinned,
                         analytics,
-                        bringIntoViewRequesters
+                        bringIntoViewRequesters,
+                        tileScrollState
                     )
                 }
 
@@ -255,13 +258,14 @@ private fun DepartureTiles(
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     pinned: Boolean,
     analytics: Analytics,
-    bringIntoViewRequesters: MutableMap<String, BringIntoViewRequester>
+    bringIntoViewRequesters: MutableMap<String, BringIntoViewRequester>,
+    scrollState: ScrollState
 ) {
     val coroutineScope = rememberCoroutineScope()
     val showTileHeadsigns =
         patternsByStop.line != null || !tiles.all { it.headsign == tiles.firstOrNull()?.headsign }
     Row(
-        Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 10.dp),
+        Modifier.horizontalScroll(scrollState).padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         for (tileData in tiles) {

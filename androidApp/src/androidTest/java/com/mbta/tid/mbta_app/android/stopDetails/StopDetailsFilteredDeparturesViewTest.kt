@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertHasClickAction
@@ -168,6 +169,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -227,6 +229,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = { tripFilter = it },
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -335,6 +338,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -367,6 +371,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 tileData = listOf(),
                 noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
                 elevatorAlerts = listOf(),
@@ -457,6 +462,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -533,6 +539,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -597,6 +604,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
