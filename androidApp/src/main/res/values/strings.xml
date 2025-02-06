@@ -156,8 +156,8 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Scheduled to depart</string>
-    <string name="scheduled_to_depart_accessibility_desc" translatable="false">Selected %1$s scheduled to depart %2$s</string>
-    <string name="scheduled_to_depart_selected_stop_accessibility_desc" translatable="false">Selected %1$s scheduled to depart %2$s, selected stop</string>
+    <string name="scheduled_to_depart_accessibility_desc" tools:ignore="MissingTranslation">Selected %1$s scheduled to depart %2$s</string>
+    <string name="scheduled_to_depart_selected_stop_accessibility_desc" tools:ignore="MissingTranslation">Selected %1$s scheduled to depart %2$s, selected stop</string>
     <string name="search_by_stop">Search by stop</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
@@ -217,8 +217,8 @@
     <string name="vehicle_boarding_other">and boarding now</string>
     <string name="vehicle_cancelled_first">%1$s arriving at %2$s cancelled</string>
     <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
-    <string name="vehicle_desc_accessibility_desc" translatable="false">Selected %1$s %2$s %3$s</string>
-    <string name="vehicle_desc_accessibility_desc_selected_stop" translatable="false">Selected %1$s %2$s %3$s, selected stop</string>
+    <string name="vehicle_desc_accessibility_desc" tools:ignore="MissingTranslation">Selected %1$s %2$s %3$s</string>
+    <string name="vehicle_desc_accessibility_desc_selected_stop" tools:ignore="MissingTranslation">Selected %1$s %2$s %3$s, selected stop</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
