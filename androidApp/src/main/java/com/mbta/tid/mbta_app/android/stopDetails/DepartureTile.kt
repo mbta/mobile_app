@@ -5,24 +5,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -61,6 +57,7 @@ fun DepartureTile(
                 onClick = onTap
             )
             .heightIn(min = 56.dp)
+            .width(IntrinsicSize.Max)
             .haloContainer(
                 borderWidth = 2.dp,
                 outlineColor = if (isSelected) colorResource(R.color.halo) else Color.Transparent,
@@ -83,26 +80,15 @@ fun DepartureTile(
                 if (isSelected) colorResource(R.color.text)
                 else colorResource(R.color.deselected_toggle_text)
         ) {
-            // If you can figure out a better way to make the pill left aligned to the text and the
-            // status right aligned to the text whether the text is wider or narrower than the pill
-            // + status, please do.
-            val density = LocalDensity.current
-            var textWidth by remember { mutableStateOf(0.dp) }
-
             if (showHeadsign) {
                 Text(
                     data.headsign,
-                    modifier =
-                        Modifier.onSizeChanged { textWidth = with(density) { (it.width).toDp() } },
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.labelLarge
                 )
             }
-            Row(
-                Modifier.widthIn(min = textWidth),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 if (showRoutePill) {
                     Box(Modifier.padding(end = 8.dp)) {
                         RoutePill(data.route, type = RoutePillType.Flex)
