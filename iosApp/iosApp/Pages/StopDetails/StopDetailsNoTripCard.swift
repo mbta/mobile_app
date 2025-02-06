@@ -54,7 +54,7 @@ struct StopDetailsNoTripCard: View {
 
     var predictionsUnavailableString: String {
         String(format: NSLocalizedString(
-            "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
+            "Service is running, but predicted arrival times aren’t available. Check the map to see where %@ are right now.",
             comment: """
             Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.
             The interpolated value can be "buses" or "trains".

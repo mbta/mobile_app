@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
@@ -64,8 +65,8 @@ fun StopDetailsFilteredDeparturesView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    openAlertDetails: (ModalRoutes.AlertDetails) -> Unit,
-    openExplainer: (ModalRoutes.Explainer) -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
@@ -175,7 +176,7 @@ fun StopDetailsFilteredDeparturesView(
                         color = routeColor,
                         textColor = routeTextColor,
                         onViewDetails = {
-                            openAlertDetails(
+                            openModal(
                                 ModalRoutes.AlertDetails(
                                     alertId = alert.id,
                                     lineId =
@@ -239,7 +240,8 @@ fun StopDetailsFilteredDeparturesView(
                         stopId = stopId,
                         stopDetailsVM = viewModel,
                         setMapSelectedVehicle = setMapSelectedVehicle,
-                        openExplainer = openExplainer,
+                        openSheetRoute = openSheetRoute,
+                        openModal = openModal,
                         now = now
                     )
                 }

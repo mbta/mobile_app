@@ -92,6 +92,10 @@ struct ContentView: View {
             OnboardingPage(screens: onboardingScreensPending, onFinish: {
                 contentVM.onboardingScreensPending = []
             })
+        } else if let featurePromosPending = contentVM.featurePromosPending, !featurePromosPending.isEmpty {
+            PromoPage(screens: featurePromosPending, onFinish: {
+                contentVM.featurePromosPending = []
+            })
         } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
@@ -169,7 +173,6 @@ struct ContentView: View {
                                 RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
                                     viewportProvider.follow()
                                 }
-                                .accessibilityIdentifier("mapRecenterButton")
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isOverview,

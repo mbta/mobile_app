@@ -37,6 +37,7 @@
     <string name="disabled_train">Trem desativado</string>
     <string name="displays_more_info">exibe mais informações</string>
     <string name="dock_closure">Fechamento de doca</string>
+    <string name="drag_handle">Alça de arrasto</string>
     <string name="drawbridge_being_raised">Ponte móvel em elevação</string>
     <string name="eastbound">Sentido leste</string>
     <string name="effect_ahead">%1$s à frente</string>
@@ -49,6 +50,7 @@
     </plurals>
     <string name="end">Fim</string>
     <string name="error_loading_data">Erro ao carregar dados</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Terminando mais uma viagem</string>
     <string name="explainer_headline_no_prediction">Previsão ainda não disponível</string>
     <string name="explainer_headline_no_vehicle">localização do %1$s ainda não disponível</string>
@@ -76,6 +78,7 @@
     <string name="hides_remaining_stops">Oculta as paradas restantes</string>
     <string name="high_winds">Ventos fortes</string>
     <string name="holiday">Feriado</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> h &lt;b>%2$d&lt;/b> min</string>
     <string name="hurricane">Furacão</string>
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="inbound">Entrada</string>
@@ -94,6 +97,8 @@
     <string name="medical_emergency">Emergência médica</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">Mais</string>
+    <string name="more_link_call">Selecionar para chamar</string>
+    <string name="more_link_external">Link externo</string>
     <string name="more_page_footer">Feito com ♥ pelo T</string>
     <string name="more_section_feature_flags">Exibir sinalizações</string>
     <string name="more_section_resources">Recursos</string>
@@ -141,6 +146,7 @@
     <string name="predictions_unavailable_details">O serviço está em execução, mas os horários de chegada previstos não estão disponíveis. O mapa mostra onde %1$s nesta rota estão atualmente.</string>
     <string name="predictions_unavailable_details_hide_maps">O serviço está em execução, mas os horários previstos de chegada não estão disponíveis.</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
+    <string name="recenter">Mapa mais recente sobre minha localização</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>
@@ -152,7 +158,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Programado para partir</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s programado para partir de %2$s</string>
     <string name="search_by_stop">Pesquisar por parada</string>
     <string name="selected_stop">%1$s, parada selecionada</string>
     <string name="selected_stop_first_stop">%1$s, parada selecionada, primeira parada</string>
@@ -214,7 +219,6 @@
     <string name="vehicle_boarding_other">e embarcando agora</string>
     <string name="vehicle_cancelled_first">%1$s chegando às %2$s cancelado</string>
     <string name="vehicle_cancelled_other">e às %1$s cancelado</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s chegando em %2$d min</string>
     <string name="vehicle_prediction_minutes_other">e em %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s chegando às %2$s</string>

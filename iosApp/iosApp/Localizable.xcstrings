@@ -138,6 +138,47 @@
         }
       }
     },
+    "**%ld** hr" : {
+      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** h"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld**小时"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld**小時*"
+          }
+        }
+      }
+    },
     "**%ld** hr **%ld** min" : {
       "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
       "localizations" : {
@@ -274,7 +315,7 @@
       }
     },
     "%@ %@ %@" : {
-      "comment" : "Screen reader text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"\nVoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "comment" : "VoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -316,17 +357,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@ %3$@"
-          }
-        }
-      }
-    },
-    "%@ %@ %@, selected stop" : {
-      "comment" : "Screen reader text for the vehicle status on the trip details page when the stop is selected,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard], selected stop'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@ %3$@, selected stop"
           }
         }
       }
@@ -867,64 +897,6 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "%@位置尚未確定"
-          }
-        }
-      }
-    },
-    "%@ scheduled to depart %@" : {
-      "comment" : "Screen reader text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ scheduled to depart %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ programado para salir de %2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ ki pwograme pou kite %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ programado para partir de %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ dự kiến khởi hành %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@计划从 %2$@ 出发"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "這%1$@預定從 %2$@ 出發"
-          }
-        }
-      }
-    },
-    "%@ scheduled to depart %@, selected stop" : {
-      "comment" : "Screen reader text for the departure status on the trip details page when the stop is selected,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard], selected stop'",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ scheduled to depart %2$@, selected stop"
           }
         }
       }
@@ -3555,6 +3527,48 @@
         }
       }
     },
+    "Drag handle" : {
+      "comment" : "Screen reader text for the sheet drag handle to move the textual content over the map",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mango de arrastre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trennen manch"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alça de arrasto"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tay cầm kéo"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "拖动控制柄"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "拖曳控制柄"
+          }
+        }
+      }
+    },
     "Drawbridge Being Raised" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -3797,6 +3811,48 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "載入資料時發生錯誤"
+          }
+        }
+      }
+    },
+    "External link" : {
+      "comment" : "Screen reader text describing an external link on the more page",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enlace externo"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lyen ekstèn"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Link externo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liên kết ngoài"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "外部链接"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "外部連結"
           }
         }
       }
@@ -4333,6 +4389,47 @@
         }
       }
     },
+    "Got it" : {
+      "comment" : "The continue button text on a page displaying new features since last update",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Entiendo"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Konprann"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Entendi"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hiểu rồi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "明白了"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "知道了"
+          }
+        }
+      }
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4779,6 +4876,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "港口結冰"
+          }
+        }
+      }
+    },
+    "in %ld hr" : {
+      "comment" : "                    \"Shorthand displayed number of hours  until arrival for VoiceOver,\n                    ex 'in 1 hr'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "en %ld horas"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nan %ld èdtan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "em %ld horas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sau %ld giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld 小时后"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld小時後"
           }
         }
       }
@@ -6707,6 +6845,47 @@
         }
       }
     },
+    "Recenter map on my location" : {
+      "comment" : "Screen reader text describing the behavior of the map recenter button",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Volver a centrar el mapa en mi ubicación"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Resantre kat jeyografik sou kote mwen an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mapa mais recente sobre minha localização"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bản đồ định vị lại vị trí của tôi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将地图重新定位到我的位置"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "將地圖重新定位到我的位置"
+          }
+        }
+      }
+    },
     "Recently Viewed" : {
       "localizations" : {
         "es" : {
@@ -7154,6 +7333,47 @@
         }
       }
     },
+    "See arrivals and track vehicles in one place" : {
+      "comment" : "Promo text header that displays when users first open the app after a redesign of the stop page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vea las llegadas y rastree los vehículos en un solo lugar"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gade arive epi swiv machin yo nan yon sèl kote"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Veja chegadas e rastreie veículos em um só lugar"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xem thông tin về xe đến và theo dõi xe ở một nơi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在一个地方查看到达情况并跟踪车辆"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在一個地方查看到達情況並追蹤車輛"
+          }
+        }
+      }
+    },
     "See transit near you" : {
       "localizations" : {
         "es" : {
@@ -7236,6 +7456,7 @@
       }
     },
     "Select to call" : {
+      "comment" : "Screen reader text for a link to call a phone number",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -7271,6 +7492,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "選擇呼叫"
+          }
+        }
+      }
+    },
+    "Selected %@ %@ %@" : {
+      "comment" : "Screen reader text for the vehicle status on the trip details page,\nex 'Selected [train] [approaching] [Alewife]' or 'Selected [bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected %1$@ %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "Selected %@ %@ %@, selected stop" : {
+      "comment" : "Screen reader text for the vehicle status on the trip details page when the stop is selected,\nex 'Selected [train] [approaching] [Alewife], selected stop' or 'Selected [bus] [now at] [Harvard], selected stop'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected %1$@ %2$@ %3$@, selected stop"
+          }
+        }
+      }
+    },
+    "Selected %@ scheduled to depart %@" : {
+      "comment" : "Screen reader text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected %1$@ scheduled to depart %2$@"
+          }
+        }
+      }
+    },
+    "Selected %@ scheduled to depart %@, selected stop" : {
+      "comment" : "Screen reader text for the departure status on the trip details page when the stop is selected,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard], selected stop'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected %1$@ scheduled to depart %2$@, selected stop"
           }
         }
       }
@@ -7480,7 +7745,7 @@
         }
       }
     },
-    "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are." : {
+    "Service is running, but predicted arrival times aren’t available. Check the map to see where %@ are right now." : {
       "comment" : "Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.\nThe interpolated value can be \"buses\" or \"trains\".",
       "localizations" : {
         "es" : {
@@ -10197,6 +10462,47 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "我們可以告訴您車站的電梯何時關閉。"
+          }
+        }
+      }
+    },
+    "We created a new view that allows you to see arrivals at your stop and track vehicle locations all at once. Send us feedback to let us know what you think!" : {
+      "comment" : "Promo text that displays when users first open the app after a redesign of the stop page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Creamos una nueva vista que te permite ver las llegadas a tu parada y rastrear las ubicaciones de los vehículos al mismo tiempo. ¡Envíanos tus comentarios para que sepamos qué opinas!"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nou kreye yon nouvo vi ki pèmèt ou wè arive yo nan arè ou epi swiv kote machin yo tout an menm tan. Voye nou fidbak pou fè nou konnen sa ou panse!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Criamos uma nova visualização que permite que você veja as chegadas em sua parada e rastreie os locais dos veículos de uma só vez. Envie-nos um feedback para que saibamos o que você acha!"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chúng tôi đã tạo ra một chế độ xem mới cho phép bạn xem các điểm đến tại điểm dừng và vị trí xe theo dõi cùng một lúc. Hãy gửi phản hồi cho chúng tôi để cho chúng tôi biết suy nghĩ của bạn!"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们创建了一个新视图，让您可以同时查看站点的到达情况和车辆位置。向我们发送反馈，让我们知道您的想法！"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們建立了一個新視圖，讓您可以同時查看站點的到達情況並追蹤車輛位置。向我們發送回饋，讓我們知道您的想法！"
           }
         }
       }

@@ -1,5 +1,5 @@
 //
-//  OnboardingButtonModifiers.swift
+//  FullWidthButtonModifiers.swift
 //  iosApp
 //
 //  Created by esimon on 10/29/24.
@@ -33,11 +33,11 @@ struct SecondaryButton: ViewModifier {
 }
 
 extension View {
-    func onboardingKeyButton() -> some View {
+    func fullWidthKeyButton() -> some View {
         modifier(KeyButton())
     }
 
-    func onboardingSecondaryButton() -> some View {
+    func fullWidthSecondaryButton() -> some View {
         modifier(SecondaryButton())
     }
 }

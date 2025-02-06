@@ -35,6 +35,7 @@
     <string name="disabled_train">Tàu bị sự cố</string>
     <string name="displays_more_info">hiển thị thêm thông tin</string>
     <string name="dock_closure">Đóng bến tàu</string>
+    <string name="drag_handle">Tay cầm kéo</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="eastbound">Về hướng đông</string>
     <string name="effect_ahead">%1$s phía trước</string>
@@ -45,6 +46,7 @@
     </plurals>
     <string name="end">Kết thúc</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
     <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
@@ -72,6 +74,7 @@
     <string name="hides_remaining_stops">Ẩn các điểm dừng còn lại</string>
     <string name="high_winds">Gió mạnh</string>
     <string name="holiday">Ngày lễ</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> giờ &lt;b>%2$d&lt;/b> phút</string>
     <string name="hurricane">Bão</string>
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="inbound">Đến</string>
@@ -90,6 +93,8 @@
     <string name="medical_emergency">Cấp cứu y tế</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> phút</string>
     <string name="more_link">Thêm</string>
+    <string name="more_link_call">Chọn để gọi</string>
+    <string name="more_link_external">Liên kết ngoài</string>
     <string name="more_page_footer">Được tạo ra với ♥ bởi T</string>
     <string name="more_section_feature_flags">Cờ tính năng</string>
     <string name="more_section_resources">Nguồn</string>
@@ -137,6 +142,7 @@
     <string name="predictions_unavailable_details">Dịch vụ đang chạy, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang chạy nhưng không có thời gian đến dự kiến.</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
+    <string name="recenter">Bản đồ định vị lại vị trí của tôi</string>
     <string name="recently_viewed">Đã xem gần đây</string>
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>
@@ -148,7 +154,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Đã lên lịch khởi hành</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s dự kiến khởi hành %2$s</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="selected_stop">%1$s, điểm dừng được chọn</string>
     <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
@@ -206,7 +211,6 @@
     <string name="vehicle_boarding_other">và đang cho khách lên</string>
     <string name="vehicle_cancelled_first">%1$s đến %2$s bị hủy</string>
     <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s sẽ đến sau %2$d phút nữa</string>
     <string name="vehicle_prediction_minutes_other">và sau %1$d phút nữa</string>
     <string name="vehicle_prediction_time_first">%1$s sẽ đến lúc %2$s</string>

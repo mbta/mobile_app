@@ -88,7 +88,7 @@ struct OnboardingScreenView: View {
                         Spacer()
                     }
                     Button(action: advance) {
-                        Text("Get started").onboardingKeyButton()
+                        Text("Get started").fullWidthKeyButton()
                     }
                 }
                 .padding(.horizontal, sidePadding)
@@ -143,11 +143,11 @@ struct OnboardingScreenView: View {
                     Spacer()
                     Button(action: { hideMaps(true) }) {
                         Text("Hide maps", comment: "Onboarding button text for setting maps to hidden")
-                            .onboardingKeyButton()
+                            .fullWidthKeyButton()
                     }
                     Button(action: { hideMaps(false) }) {
                         Text("Show maps", comment: "Onboarding button text for setting maps to shown")
-                            .onboardingSecondaryButton()
+                            .fullWidthSecondaryButton()
                     }
                 }
                 .padding(.horizontal, sidePadding)
@@ -176,7 +176,7 @@ struct OnboardingScreenView: View {
                         Spacer()
                     }
                     Button(action: shareLocation) {
-                        Text("Continue").onboardingKeyButton()
+                        Text("Continue").fullWidthKeyButton()
                     }
                     Text("You can always change location settings later in the Settings app.")
                         .padding(.bottom, 8)
@@ -227,11 +227,11 @@ struct OnboardingScreenView: View {
                             "Show elevator closures",
                             comment: "Onboarding button text for setting station accessibility to shown"
                         )
-                        .onboardingKeyButton()
+                        .fullWidthKeyButton()
                     }
                     Button(action: { showStationAccessibility(false) }) {
                         Text("Skip", comment: "Onboarding button text for setting station accessibility to hidden")
-                            .onboardingSecondaryButton()
+                            .fullWidthSecondaryButton()
                     }
                 }
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)

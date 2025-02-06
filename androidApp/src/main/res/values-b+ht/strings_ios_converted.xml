@@ -40,6 +40,7 @@
     <string name="disabled_train">Tren Ki Pa Aktif</string>
     <string name="displays_more_info">montre plis enfòmasyon</string>
     <string name="dock_closure">Waf la Fèmen</string>
+    <string name="drag_handle">Trennen manch</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="effect_ahead">%1$s devan</string>
@@ -54,6 +55,7 @@
     </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
+    <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon an poko disponib</string>
     <string name="explainer_headline_no_vehicle">pozisyon %1$s la poko disponib</string>
@@ -81,6 +83,7 @@
     <string name="hides_remaining_stops">Kache arè ki rete yo</string>
     <string name="high_winds">Gwo Van</string>
     <string name="holiday">Vakans</string>
+    <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> lè &lt;b>%2$d&lt;/b> minit</string>
     <string name="hurricane">Siklòn</string>
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="inbound">Antran</string>
@@ -99,6 +102,8 @@
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
     <string name="more_link">Plis</string>
+    <string name="more_link_call">Chwazi rele</string>
+    <string name="more_link_external">Lyen ekstèn</string>
     <string name="more_page_footer">Ki fèt ak ♥ pa T a</string>
     <string name="more_section_feature_flags">Drapo Opsyon</string>
     <string name="more_section_resources">Resous</string>
@@ -146,6 +151,7 @@
     <string name="predictions_unavailable_details">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib. Kat la montre ki kote %1$s sou wout sa a ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib.</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
+    <string name="recenter">Resantre kat jeyografik sou kote mwen an</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
@@ -157,7 +163,6 @@
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="scheduled_to_depart">Pwograme pou ale</string>
-    <string name="scheduled_to_depart_accessibility_desc">%1$s ki pwograme pou kite %2$s</string>
     <string name="search_by_stop">Chèche pa kanpe</string>
     <string name="selected_stop">%1$s, chwazi sispann</string>
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
@@ -225,7 +230,6 @@
     <string name="vehicle_boarding_other">epi ap pran moun kounye a</string>
     <string name="vehicle_cancelled_first">%1$s ap rive a %2$s anile</string>
     <string name="vehicle_cancelled_other">epi a %1$s anile</string>
-    <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s</string>
     <string name="vehicle_prediction_minutes_first">%1$s ap rive nan %2$d minit</string>
     <string name="vehicle_prediction_minutes_other">epi nan %1$d minit</string>
     <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>
