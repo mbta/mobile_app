@@ -40,18 +40,7 @@ object StopLayerGenerator {
             )
         stopSelectedPinLayer.textField =
             Exp.case(MapExp.selectedExp to Exp.get(StopFeaturesBuilder.propNameKey), Exp(""))
-
-        stopSelectedPinLayer.textColor = Exp(colorPalette.text).downcastToColor()
-        stopSelectedPinLayer.textFont = listOf("Inter Regular")
-        stopSelectedPinLayer.textHaloColor = Exp(colorPalette.fill3).downcastToColor()
-        stopSelectedPinLayer.textHaloWidth = 2.0
-        stopSelectedPinLayer.textSize = 13.0
-        stopSelectedPinLayer.textVariableAnchor =
-            listOf(TextAnchor.RIGHT, TextAnchor.BOTTOM, TextAnchor.TOP, TextAnchor.LEFT)
-        stopSelectedPinLayer.textJustify = TextJustify.AUTO
-        stopSelectedPinLayer.textAllowOverlap = true
-        stopSelectedPinLayer.textOptional = true
-        stopSelectedPinLayer.textOffset = MapExp.labelOffsetExp
+        includedDefaultTextProps(stopSelectedPinLayer, colorPalette)
         stopSelectedPinLayer.iconOffset = offsetPinValue()
         stopTouchTargetLayer.filter =
             Exp.ge(
@@ -104,6 +93,7 @@ object StopLayerGenerator {
         stopLayer.textField = (MapExp.stopLabelTextExp(forBus = forBus))
         includedDefaultTextProps(stopLayer, colorPalette)
         stopLayer.textAllowOverlap = false
+
         includeSharedProps(stopLayer, forBus)
         return stopLayer
     }
