@@ -25,6 +25,12 @@ sealed class TripInstantDisplay {
     data class Time(val predictionTime: Instant, val headline: Boolean = false) :
         TripInstantDisplay()
 
+    data class TimeWithStatus(
+        val predictionTime: Instant,
+        val status: String,
+        val headline: Boolean = false
+    ) : TripInstantDisplay()
+
     data class Minutes(val minutes: Int) : TripInstantDisplay()
 
     data class ScheduleTime(val scheduledTime: Instant, val headline: Boolean = false) :
@@ -54,8 +60,8 @@ sealed class TripInstantDisplay {
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
             val forceAsTime = context == Context.TripDetails
-            prediction?.status?.let {
-                return Overridden(it)
+            if (prediction?.status != null && routeType != RouteType.COMMUTER_RAIL) {
+                return Overridden(prediction.status)
             }
             if (prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Skipped) {
                 schedule?.scheduleTime?.let {
@@ -126,8 +132,17 @@ sealed class TripInstantDisplay {
             val timeRemaining = prediction.predictionTime!!.minus(now)
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
 
+            fun Time.potentiallyWithStatus(): TripInstantDisplay {
+                val status = prediction.status ?: return this
+                return when (routeType) {
+                    RouteType.COMMUTER_RAIL ->
+                        TimeWithStatus(this.predictionTime, status, this.headline)
+                    else -> this
+                }
+            }
+
             if (forceAsTime) {
-                return Time(prediction.predictionTime)
+                return Time(prediction.predictionTime).potentiallyWithStatus()
             }
 
             /**
@@ -154,7 +169,7 @@ sealed class TripInstantDisplay {
                 return Approaching
             }
             if (scheduleBasedRouteType) {
-                return Time(prediction.predictionTime, headline = true)
+                return Time(prediction.predictionTime, headline = true).potentiallyWithStatus()
             }
             return Minutes(minutes)
         }

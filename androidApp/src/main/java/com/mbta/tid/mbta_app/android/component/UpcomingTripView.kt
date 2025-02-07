@@ -182,6 +182,24 @@ fun UpcomingTripView(
                             fontWeight = FontWeight.Bold
                         )
                     }
+                is TripInstantDisplay.TimeWithStatus ->
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            formatTime(state.trip.predictionTime),
+                            Modifier.semantics {
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.predictedTimeLabel(
+                                            context,
+                                            time = formatTime(state.trip.predictionTime),
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                }
+                                .placeholderIfLoading(),
+                            textAlign = TextAlign.End,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
                         formatTime(state.trip.scheduledTime),

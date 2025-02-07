@@ -127,6 +127,23 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithStatus() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "All aboard"))
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(instant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving at $shortTime", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithText("All aboard").assertDoesNotExist()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeScheduleTime() {
         val instant = Instant.fromEpochSeconds(1722535384)
         val shortTime = formatTime(instant)

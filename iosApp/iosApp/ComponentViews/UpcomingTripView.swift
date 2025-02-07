@@ -89,6 +89,17 @@ struct UpcomingTripView: View {
                         )
                         : accessibilityFormatters
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
+            case let .timeWithStatus(format):
+                Text(Date(instant: format.predictionTime), style: .time)
+                    .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.distantFutureFirst(
+                            date: format.predictionTime.toNSDate(),
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
+                        : accessibilityFormatters
+                        .distantFutureOther(date: format.predictionTime.toNSDate()))
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
                     .realtime(hideIndicator: hideRealtimeIndicators)
