@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlinx.datetime.Instant
 
 @Composable
@@ -26,6 +27,7 @@ fun StopDetailsFilteredView(
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     departures: StopDetailsDepartures?,
+    allAlerts: AlertsStreamDataResponse?,
     now: Instant,
     viewModel: StopDetailsViewModel,
     pinnedRoutes: Set<String>,
@@ -80,6 +82,7 @@ fun StopDetailsFilteredView(
             patternsByStop = patternsByStop,
             tileData = tileData,
             noPredictionsStatus = noPredictionsStatus,
+            allAlerts = allAlerts,
             elevatorAlerts = departures.elevatorAlerts,
             global = globalResponse,
             now = now,
@@ -119,6 +122,7 @@ fun StopDetailsFilteredView(
                                 )
                             },
                     noPredictionsStatus = null,
+                    allAlerts = null,
                     elevatorAlerts = placeholderDepartures.elevatorAlerts,
                     global = globalResponse,
                     now = now,

@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -29,6 +30,7 @@ fun StopDetailsPage(
     modifier: Modifier = Modifier,
     viewModel: StopDetailsViewModel,
     filters: StopDetailsPageFilters,
+    allAlerts: AlertsStreamDataResponse?,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -62,6 +64,7 @@ fun StopDetailsPage(
         viewModel,
         filters.stopFilter,
         filters.tripFilter,
+        allAlerts,
         pinnedRoutes.orEmpty(),
         ::togglePinnedRoute,
         onClose,

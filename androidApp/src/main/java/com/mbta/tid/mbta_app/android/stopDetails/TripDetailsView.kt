@@ -39,6 +39,7 @@ import org.koin.compose.koinInject
 fun TripDetailsView(
     tripFilter: TripDetailsFilter?,
     stopId: String,
+    allAlerts: AlertsStreamDataResponse?,
     stopDetailsVM: StopDetailsViewModel,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -76,7 +77,7 @@ fun TripDetailsView(
     }
 
     val stops =
-        rememberSuspend(tripFilter, tripData, globalResponse) {
+        rememberSuspend(tripFilter, tripData, allAlerts, globalResponse) {
             withContext(Dispatchers.Default) {
                 if (
                     tripFilter != null &&
@@ -91,8 +92,7 @@ fun TripDetailsView(
                         tripData.tripSchedules,
                         tripData.tripPredictions,
                         vehicle,
-                        // TODO alerts
-                        AlertsStreamDataResponse(mapOf()),
+                        allAlerts,
                         globalResponse
                     )
                 } else {

@@ -1,11 +1,13 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -124,6 +126,7 @@ class TripDetailsViewTest {
                 TripDetailsView(
                     tripFilter,
                     stopId = stop.id,
+                    allAlerts = alertData,
                     stopDetailsVM = viewModel,
                     setMapSelectedVehicle = mapSelectedVehicleValues::add,
                     openSheetRoute = {},
@@ -169,6 +172,7 @@ class TripDetailsViewTest {
                 TripDetailsView(
                     tripFilter,
                     stopId = stop.id,
+                    allAlerts = alertData,
                     stopDetailsVM = viewModel,
                     setMapSelectedVehicle = {},
                     openSheetRoute = openedSheetRoutes::add,
@@ -199,5 +203,68 @@ class TripDetailsViewTest {
             ),
             loggedEvents
         )
+    }
+
+    @Test
+    fun testDownstreamAlertShown() {
+        val openedSheetRoutes = mutableListOf<SheetRoutes>()
+        val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
+        val analytics =
+            MockAnalytics(
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
+            )
+
+        objects.alert {
+            cause = Alert.Cause.Parade
+            effect = Alert.Effect.Shuttle
+            activePeriod(now.minus(5.minutes), now.plus(30.minutes))
+            informedEntity(
+                activities =
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                directionId = 0,
+                route = route.id,
+                stop = downstreamStop.id
+            )
+        }
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                val viewModel =
+                    stopDetailsManagedVM(
+                        filters =
+                            StopDetailsPageFilters(
+                                stop.id,
+                                StopDetailsFilter(route.id, routePattern.directionId),
+                                tripFilter
+                            ),
+                        globalResponse,
+                        AlertsStreamDataResponse(objects),
+                        pinnedRoutes = emptySet(),
+                        updateStopFilter = { _, _ -> },
+                        updateTripFilter = { _, _ -> },
+                        now
+                    )
+
+                TripDetailsView(
+                    tripFilter,
+                    stopId = stop.id,
+                    allAlerts = AlertsStreamDataResponse(objects),
+                    stopDetailsVM = viewModel,
+                    setMapSelectedVehicle = {},
+                    openSheetRoute = openedSheetRoutes::add,
+                    openModal = {},
+                    now,
+                    analytics
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(downstreamStop.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText("SHUTTLE").assertIsDisplayed()
     }
 }

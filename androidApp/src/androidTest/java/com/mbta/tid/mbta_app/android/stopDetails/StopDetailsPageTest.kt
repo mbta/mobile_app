@@ -56,6 +56,7 @@ class StopDetailsPageTest : KoinTest {
 
                 StopDetailsPage(
                     viewModel = viewModel,
+                    allAlerts = null,
                     filters = filters,
                     onClose = {},
                     updateStopFilter = {},

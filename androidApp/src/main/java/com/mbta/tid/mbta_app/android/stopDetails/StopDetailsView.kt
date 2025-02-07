@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
 
@@ -24,6 +25,7 @@ fun StopDetailsView(
     viewModel: StopDetailsViewModel,
     stopFilter: StopDetailsFilter?,
     tripFilter: TripDetailsFilter?,
+    allAlerts: AlertsStreamDataResponse?,
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
@@ -59,6 +61,7 @@ fun StopDetailsView(
             stopFilter,
             tripFilter,
             departures,
+            allAlerts,
             now,
             viewModel,
             pinnedRoutes,

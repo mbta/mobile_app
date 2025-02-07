@@ -162,6 +162,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         )
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -222,6 +223,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         )
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -331,6 +333,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         .stopDetailsFormattedTrips(route.id, trip.directionId, now)
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -374,6 +377,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 tileScrollState = rememberScrollState(),
                 tileData = listOf(),
                 noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                allAlerts = null,
                 elevatorAlerts = listOf(),
                 patternsByStop =
                     PatternsByStop(
@@ -455,6 +459,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             now
                         )
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -532,6 +537,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             now
                         )
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = alertResponse,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -597,6 +603,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             now
                         )
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = null,
                 elevatorAlerts = listOf(alert),
                 global = globalResponse,
                 now = now,
