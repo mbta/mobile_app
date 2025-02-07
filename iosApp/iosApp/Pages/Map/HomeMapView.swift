@@ -208,9 +208,9 @@ struct HomeMapView: View {
 
     private var crosshairs: some View {
         VStack {
-            Image("map-nearby-location-cursor")
+            Image(.mapNearbyLocationCursor)
             Spacer()
-                .frame(height: sheetHeight)
+                .frame(height: sheetHeight - 12)
         }
     }
 
