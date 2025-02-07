@@ -148,7 +148,7 @@ fun StopDetailsFilteredDeparturesView(
                         tripFilter,
                         patternsByStop,
                         tileData,
-                        alerts,
+                        downstreamAlerts,
                         updateTripFilter,
                         pinned,
                         analytics,

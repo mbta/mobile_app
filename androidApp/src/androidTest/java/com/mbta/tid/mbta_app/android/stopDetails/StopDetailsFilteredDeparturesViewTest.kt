@@ -537,7 +537,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             now
                         )
                         .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
-                allAlerts = null,
+                allAlerts = alertResponse,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
