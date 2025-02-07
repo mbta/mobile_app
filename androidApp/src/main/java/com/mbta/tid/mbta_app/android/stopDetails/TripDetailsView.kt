@@ -44,7 +44,8 @@ fun TripDetailsView(
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     now: Instant,
-    analytics: Analytics = koinInject()
+    analytics: Analytics = koinInject(),
+    modifier: Modifier = Modifier
 ) {
 
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
@@ -139,7 +140,8 @@ fun TripDetailsView(
             stops,
             tripFilter,
             now,
-            globalResponse
+            globalResponse,
+            modifier
         )
     } else {
         val placeholderTripInfo = LoadingPlaceholders.tripDetailsInfo()
@@ -157,7 +159,7 @@ fun TripDetailsView(
         val placeholderRouteAccents = TripRouteAccents(placeholderTripInfo.route)
 
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            Column(modifier = Modifier.loadingShimmer()) {
+            Column(modifier = modifier.loadingShimmer()) {
                 TripDetailsView(
                     placeholderTripId,
                     placeholderHeaderSpec,
@@ -186,9 +188,10 @@ private fun TripDetailsView(
     stops: TripDetailsStopList,
     tripFilter: TripDetailsFilter?,
     now: Instant,
-    globalResponse: GlobalResponse
+    globalResponse: GlobalResponse,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier) {
         Column(Modifier.zIndex(1F)) {
             TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         }

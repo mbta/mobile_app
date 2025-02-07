@@ -54,3 +54,58 @@ struct DepartureTile: View {
         ))
     }
 }
+
+#Preview {
+    let objects = ObjectCollectionBuilder()
+    let route1 = objects.route { _ in }
+    let routeB = objects.route { route in
+        route.color = "00843D"
+        route.longName = "Green Line B"
+        route.shortName = "B"
+        route.textColor = "FFFFFF"
+        route.type = .lightRail
+    }
+
+    return HStack {
+        DepartureTile(
+            data: .init(
+                route: route1,
+                headsign: "Nubian",
+                formatted: RealtimePatterns.FormatSome(trips: [
+                    .init(id: "1", routeType: .bus, format: .Minutes(minutes: 5)),
+                ], secondaryAlert: nil)
+            ),
+            onTap: {},
+            showHeadsign: false,
+            isSelected: true
+        )
+        DepartureTile(
+            data: .init(
+                route: route1,
+                headsign: "Harvard",
+                formatted: RealtimePatterns.FormatSome(trips: [
+                    .init(id: "2", routeType: .bus, format: .Minutes(minutes: 9)),
+                ], secondaryAlert: nil)
+            ),
+            onTap: {},
+            showHeadsign: true,
+            isSelected: false
+        )
+        DepartureTile(
+            data: .init(
+                route: routeB,
+                headsign: "Government Center",
+                formatted: RealtimePatterns.FormatSome(trips: [
+                    .init(id: "3", routeType: .lightRail, format: .Minutes(minutes: 12)),
+                ], secondaryAlert: nil)
+            ),
+            onTap: {},
+            pillDecoration: .onPrediction(route: routeB),
+            showHeadsign: true,
+            isSelected: false
+        )
+    }
+    .padding(16)
+    .background(Color(hex: "00843D"))
+    .fixedSize(horizontal: true, vertical: true)
+}

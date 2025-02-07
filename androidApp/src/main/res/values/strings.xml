@@ -29,6 +29,7 @@
     <string name="construction">Construction</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="demonstration">Demonstration</string>
+    <string name="departure_tile_on_click_label">displays more information about this trip</string>
     <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>

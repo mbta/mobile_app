@@ -103,11 +103,13 @@ open class MapViewModel(
     }
 
     override suspend fun loadConfig() {
-        val latestConfig = configUseCase.getConfig()
-        if (latestConfig is ApiResult.Ok) {
-            configureMapboxToken(latestConfig.data.mapboxPublicToken)
+        withContext(Dispatchers.IO) {
+            val latestConfig = configUseCase.getConfig()
+            if (latestConfig is ApiResult.Ok) {
+                configureMapboxToken(latestConfig.data.mapboxPublicToken)
+            }
+            _config.value = latestConfig
         }
-        _config.value = latestConfig
     }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
@@ -124,26 +126,30 @@ open class MapViewModel(
     }
 
     override suspend fun refreshRouteLineData(now: Instant) {
-        val globalResponse = globalResponse.first() ?: return
-        val railRouteShapes = railRouteShapes.first() ?: return
-        _railRouteLineData.value =
-            RouteFeaturesBuilder.generateRouteLines(
-                railRouteShapes.routesWithSegmentedShapes,
-                globalResponse.routes,
-                globalResponse.stops,
-                globalMapData(now)?.alertsByStop
-            )
+        withContext(Dispatchers.Default) {
+            val globalResponse = globalResponse.first() ?: return@withContext
+            val railRouteShapes = railRouteShapes.first() ?: return@withContext
+            _railRouteLineData.value =
+                RouteFeaturesBuilder.generateRouteLines(
+                    railRouteShapes.routesWithSegmentedShapes,
+                    globalResponse.routes,
+                    globalResponse.stops,
+                    globalMapData(now)?.alertsByStop
+                )
+        }
     }
 
     override suspend fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {
-        val routeLineData = railRouteLineData.first() ?: return
-        _stopSourceData.value =
-            StopFeaturesBuilder.buildCollection(
-                    StopSourceData(selectedStopId = selectedStop?.id),
-                    globalMapData(now)?.mapStops.orEmpty(),
-                    routeLineData
-                )
-                .toMapbox()
+        withContext(Dispatchers.Default) {
+            val routeLineData = railRouteLineData.first() ?: return@withContext
+            _stopSourceData.value =
+                StopFeaturesBuilder.buildCollection(
+                        StopSourceData(selectedStopId = selectedStop?.id),
+                        globalMapData(now)?.mapStops.orEmpty(),
+                        routeLineData
+                    )
+                    .toMapbox()
+        }
     }
 
     override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {
