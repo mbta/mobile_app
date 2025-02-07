@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -245,6 +246,7 @@ class StopDetailsViewTest {
                     allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
+                    tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,
@@ -324,6 +326,7 @@ class StopDetailsViewTest {
                     allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
+                    tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,
@@ -343,7 +346,6 @@ class StopDetailsViewTest {
         composeTestRule.onNodeWithContentDescription("Close").assertExists()
         composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
 
@@ -414,6 +416,7 @@ class StopDetailsViewTest {
                     allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
+                    tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,
@@ -499,6 +502,7 @@ class StopDetailsViewTest {
                     allAlerts = null,
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
+                    tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -181,7 +182,19 @@ fun NearbyTransitPage(
         )
 
     val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
+    val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(previousNavEntry) {
+        if (
+            previousNavEntry is SheetRoutes.StopDetails &&
+                currentNavEntry is SheetRoutes.StopDetails &&
+                (previousNavEntry.stopId != currentNavEntry.stopId ||
+                    previousNavEntry.stopFilter != currentNavEntry.stopFilter)
+        ) {
+            tileScrollState.scrollTo(0)
+        }
+    }
 
     var vehiclesData: List<Vehicle> =
         subscribeToVehicles(
@@ -341,6 +354,7 @@ fun NearbyTransitPage(
                     updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                     updateDepartures = { viewModel.setStopDetailsDepartures(it) },
+                    tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
                     setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },

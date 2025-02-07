@@ -3484,7 +3484,45 @@
       }
     },
     "displays more information about this trip" : {
-      "comment" : "Screen reader hint for tapping a departure card in stop details"
+      "comment" : "Screen reader hint for tapping a departure card in stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Muestra más información sobre este viaje."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "montre plis enfòmasyon sou vwayaj sa a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "exibe mais informações sobre esta viagem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hiển thị thêm thông tin về chuyến đi này"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "显示有关此行程的更多信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "顯示有​​關此行程的更多信息"
+          }
+        }
+      }
     },
     "Dock Closure" : {
       "comment" : "Possible alert effect",

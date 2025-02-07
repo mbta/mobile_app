@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,6 +31,7 @@ fun StopDetailsView(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
+    tileScrollState: ScrollState,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -67,6 +69,7 @@ fun StopDetailsView(
             onClose,
             updateStopFilter,
             updateTripDetailsFilter,
+            tileScrollState,
             ::openModalAndRecord,
             openSheetRoute,
             setMapSelectedVehicle,
