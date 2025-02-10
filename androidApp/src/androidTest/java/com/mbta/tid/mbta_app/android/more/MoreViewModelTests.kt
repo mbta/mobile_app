@@ -57,7 +57,9 @@ class MoreViewModelTests {
             vm = MoreViewModel(subContext, MockSettingsRepository())
         }
 
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil {
+            vm.sections.value.any { it.id == MoreSection.Category.Feedback }
+        }
         assertEquals(
             "https://mbta.com/androidappfeedback?lang=es-US",
             vm.sections.value

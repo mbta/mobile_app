@@ -70,6 +70,7 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
                             )
                         is MoreItem.Phone ->
                             MorePhone(label = item.label, phoneNumber = item.phoneNumber)
+                        is MoreItem.Action -> MoreButton(label = item.label, action = item.action)
                     }
 
                     if (index < section.items.size - 1) {

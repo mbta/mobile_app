@@ -28,6 +28,7 @@
     <string name="construction">建築施工</string>
     <string name="crossing_malfunction">交通信號燈故障</string>
     <string name="demonstration">示威</string>
+    <string name="departure_tile_on_click_label">顯示有​​關此行程的更多信息</string>
     <string name="details">詳情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
