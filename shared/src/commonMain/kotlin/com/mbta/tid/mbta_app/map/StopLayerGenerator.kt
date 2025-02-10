@@ -38,6 +38,9 @@ object StopLayerGenerator {
                 MapExp.selectedExp to Exp.image(Exp(StopIcons.stopPinIcon)),
                 Exp.image(Exp(""))
             )
+        stopSelectedPinLayer.textField =
+            Exp.case(MapExp.selectedExp to Exp.get(StopFeaturesBuilder.propNameKey), Exp(""))
+        includedDefaultTextProps(stopSelectedPinLayer, colorPalette)
         stopSelectedPinLayer.iconOffset = offsetPinValue()
         stopTouchTargetLayer.filter =
             Exp.ge(
@@ -88,21 +91,25 @@ object StopLayerGenerator {
         val stopLayer = SymbolLayer(id = id, source = StopFeaturesBuilder.stopSourceId)
         stopLayer.iconImage = (StopIcons.getStopLayerIcon(forBus = forBus))
         stopLayer.textField = (MapExp.stopLabelTextExp(forBus = forBus))
-
-        stopLayer.textColor = Exp(colorPalette.text).downcastToColor()
-        stopLayer.textFont = listOf("Inter Regular")
-        stopLayer.textHaloColor = Exp(colorPalette.fill3).downcastToColor()
-        stopLayer.textHaloWidth = 2.0
-        stopLayer.textSize = 13.0
-        stopLayer.textVariableAnchor =
-            listOf(TextAnchor.RIGHT, TextAnchor.BOTTOM, TextAnchor.TOP, TextAnchor.LEFT)
-        stopLayer.textJustify = TextJustify.AUTO
-        stopLayer.textAllowOverlap = true
-        stopLayer.textOptional = true
-        stopLayer.textOffset = MapExp.labelOffsetExp
+        includedDefaultTextProps(stopLayer, colorPalette)
+        stopLayer.textAllowOverlap = false
 
         includeSharedProps(stopLayer, forBus)
         return stopLayer
+    }
+
+    fun includedDefaultTextProps(layer: SymbolLayer, colorPalette: ColorPalette) {
+        layer.textColor = Exp(colorPalette.text).downcastToColor()
+        layer.textFont = listOf("Inter Regular")
+        layer.textHaloColor = Exp(colorPalette.fill3).downcastToColor()
+        layer.textHaloWidth = 2.0
+        layer.textSize = 13.0
+        layer.textVariableAnchor =
+            listOf(TextAnchor.RIGHT, TextAnchor.BOTTOM, TextAnchor.TOP, TextAnchor.LEFT)
+        layer.textJustify = TextJustify.AUTO
+        layer.textAllowOverlap = true
+        layer.textOptional = true
+        layer.textOffset = MapExp.labelOffsetExp
     }
 
     fun includeSharedProps(layer: SymbolLayer, forBus: Boolean) {
