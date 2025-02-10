@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,11 +56,13 @@ class StopDetailsPageTest : KoinTest {
 
                 StopDetailsPage(
                     viewModel = viewModel,
+                    allAlerts = null,
                     filters = filters,
                     onClose = {},
                     updateStopFilter = {},
                     updateTripFilter = {},
                     updateDepartures = { departuresUpdated = true },
+                    tileScrollState = rememberScrollState(),
                     openModal = {},
                     openSheetRoute = {},
                     setMapSelectedVehicle = {},

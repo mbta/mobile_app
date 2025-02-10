@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,6 +20,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -28,10 +30,12 @@ fun StopDetailsPage(
     modifier: Modifier = Modifier,
     viewModel: StopDetailsViewModel,
     filters: StopDetailsPageFilters,
+    allAlerts: AlertsStreamDataResponse?,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
+    tileScrollState: ScrollState,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -60,11 +64,13 @@ fun StopDetailsPage(
         viewModel,
         filters.stopFilter,
         filters.tripFilter,
+        allAlerts,
         pinnedRoutes.orEmpty(),
         ::togglePinnedRoute,
         onClose,
         updateStopFilter,
         updateTripFilter,
+        tileScrollState,
         setMapSelectedVehicle,
         openModal,
         openSheetRoute,

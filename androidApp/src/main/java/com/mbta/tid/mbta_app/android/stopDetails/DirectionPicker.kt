@@ -32,13 +32,14 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
-@ColorRes fun deselectedBackgroundColor(route: Route): Int = R.color.deselected_toggle_2
+@ColorRes private fun deselectedBackgroundColor(route: Route): Int = R.color.deselected_toggle_2
 
 @Composable
 fun DirectionPicker(
     patternsByStop: PatternsByStop,
     filter: StopDetailsFilter?,
-    updateStopFilter: (StopDetailsFilter?) -> Unit
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val availableDirections = patternsByStop.patterns.map { it.directionId() }.distinct().sorted()
     val directions = patternsByStop.directions
@@ -48,7 +49,8 @@ fun DirectionPicker(
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor = colorResource(deselectedBackgroundColor(route))
         Row(
-            Modifier.padding(horizontal = 2.dp)
+            modifier
+                .padding(horizontal = 2.dp)
                 .background(deselectedBackgroundColor.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
                 .padding(2.dp)
                 .fillMaxWidth()

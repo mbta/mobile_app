@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertHasClickAction
@@ -153,12 +154,15 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -166,6 +170,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -176,7 +181,6 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
-        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
 
@@ -211,12 +215,15 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -224,6 +231,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = { tripFilter = it },
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -234,7 +242,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
-        composeTestRule.onNodeWithText("Sample Headsign").assertExists().performClick()
+        composeTestRule.onNodeWithText("1 min").assertExists().performClick()
         composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
 
         assertEquals(tripFilter?.tripId, trip.id)
@@ -320,8 +328,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                 tripFilter = TripDetailsFilter(trip.id, null, null, false),
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
-                tileData = departures.stopDetailsFormattedTrips(route.id, trip.directionId, now),
+                tileData =
+                    departures
+                        .stopDetailsFormattedTrips(route.id, trip.directionId, now)
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
                 noPredictionsStatus = null,
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -329,6 +341,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -361,8 +374,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 tileData = listOf(),
                 noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                allAlerts = null,
                 elevatorAlerts = listOf(),
                 patternsByStop =
                     PatternsByStop(
@@ -437,11 +452,14 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = null,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -449,6 +467,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -511,11 +530,14 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = alertResponse,
                 elevatorAlerts = emptyList(),
                 global = globalResponse,
                 now = now,
@@ -523,6 +545,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
@@ -573,11 +596,14 @@ class StopDetailsFilteredDeparturesViewTest {
                 tripFilter = null,
                 patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
                 tileData =
-                    departures.stopDetailsFormattedTrips(
-                        filterState.value.routeId,
-                        filterState.value.directionId,
-                        now
-                    ),
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = null,
                 elevatorAlerts = listOf(alert),
                 global = globalResponse,
                 now = now,
@@ -585,6 +611,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
