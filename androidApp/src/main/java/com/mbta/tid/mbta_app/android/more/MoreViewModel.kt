@@ -115,7 +115,7 @@ class MoreViewModel(
                         MoreItem.Action(
                             label = "Crash App",
                             action = {
-                                Sentry.captureMessage("Local test")
+                                Sentry.captureMessage("Debug test sentry message")
                                 throw RuntimeException("Debug test crash")
                             }
                         )
