@@ -24,6 +24,7 @@ platform :android do
       else
         raise "Unknown flavor #{options[:flavor]}"
       end
+
     version_codes = google_play_track_version_codes(
       package_name: package_name,
       track: "internal",
@@ -40,13 +41,13 @@ platform :android do
     gradle(
       task: 'assemble',
       flavor: options[:flavor],
-      build_type: 'Release',
+      build_type: options[:build_type],
       properties: properties
     )
     gradle(
       task: 'bundle',
       flavor: options[:flavor],
-      build_type: 'Release',
+      build_type: options[:build_type],
       properties: properties
     )
   end
