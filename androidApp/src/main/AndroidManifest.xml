@@ -13,6 +13,7 @@
         android:label="MBTA Go"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="false"
+        android:windowSoftInputMode="adjustResize"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"

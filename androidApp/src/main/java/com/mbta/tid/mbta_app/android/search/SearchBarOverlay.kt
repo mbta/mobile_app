@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,10 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -58,6 +63,10 @@ fun SearchBarOverlay(
     var visible =
         remember(currentNavEntry) {
             currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
+        }
+    val navigationBarHeight =
+        with(LocalDensity.current) {
+            WindowInsets.navigationBars.getBottom(Density(LocalContext.current)).toDp()
         }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
@@ -93,7 +102,7 @@ fun SearchBarOverlay(
             if (visible) {
                 Box(
                     modifier =
-                        Modifier.absoluteOffset(y = 4.dp)
+                        Modifier.absoluteOffset(y = 3.dp + navigationBarHeight)
                             .height(60.dp)
                             .width(364.dp)
                             .border(2.dp, colorResource(R.color.halo), RoundedCornerShape(12.dp))
