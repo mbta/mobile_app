@@ -1304,10 +1304,10 @@ class StopDetailsViewModelTest {
         advanceUntilIdle()
 
         composeTestRule.waitUntil {
-            newStopFilter == StopDetailsFilter(route.id, routePattern.directionId)
+            newStopFilter == StopDetailsFilter(route.id, routePattern.directionId, true)
         }
 
-        assertEquals(StopDetailsFilter(route.id, routePattern.directionId), newStopFilter)
+        assertEquals(StopDetailsFilter(route.id, routePattern.directionId, true), newStopFilter)
     }
 
     @Test
