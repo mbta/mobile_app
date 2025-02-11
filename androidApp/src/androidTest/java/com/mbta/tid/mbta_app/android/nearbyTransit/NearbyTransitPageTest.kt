@@ -333,6 +333,7 @@ class NearbyTransitPageTest : KoinTest {
             override var railRouteShapes: Flow<MapFriendlyRouteResponse?> =
                 MutableStateFlow(value = null)
             override val selectedVehicle: StateFlow<Vehicle?> = MutableStateFlow(value = null)
+            override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
 
             var loadConfigCalledCount = 0
 
