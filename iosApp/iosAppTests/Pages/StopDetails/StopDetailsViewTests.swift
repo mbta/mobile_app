@@ -154,8 +154,10 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
+        let oldEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
+
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
+            navigationStack: [oldEntry, .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
             combinedStopAndTrip: true
         )
         let sut = StopDetailsView(
@@ -174,7 +176,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         try? sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
-        XCTAssert(nearbyVM.navigationStack.isEmpty)
+        XCTAssertEqual([oldEntry], nearbyVM.navigationStack)
     }
 
     func testDebugModeNotShownByDefault() throws {
