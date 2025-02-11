@@ -219,4 +219,89 @@ final class TripDetailsViewTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(TripStops.self).find(text: targetStop.name))
     }
+
+    func testTappingDownstreamStopAppendsToNavStack() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { _ in }
+        let pattern = objects.routePattern(route: route) { _ in }
+        let trip = objects.trip(routePattern: pattern)
+        let targetStop = objects.stop { _ in }
+        let vehicleStop = objects.stop { _ in }
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.routeId = route.id
+            vehicle.currentStatus = .inTransitTo
+            vehicle.stopId = vehicleStop.id
+        }
+
+        let schedule = objects.schedule { schedule in
+            schedule.routeId = route.id
+            schedule.stopId = targetStop.id
+            schedule.trip = trip
+        }
+        objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+            prediction.vehicleId = vehicle.id
+        }
+        let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
+
+        let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry], combinedStopAndTrip: true)
+        nearbyVM.alerts = .init(objects: objects)
+
+        let stopDetailsVM = StopDetailsViewModel(
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
+            tripPredictionsRepository: MockTripPredictionsRepository(),
+            tripRepository: MockTripRepository(
+                tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
+                tripResponse: .init(trip: trip)
+            ),
+            vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
+        )
+        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.pinnedRoutes = .init()
+        stopDetailsVM.stopData = .init(
+            stopId: targetStop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
+        stopDetailsVM.tripData = TripData(
+            tripFilter: .init(
+                tripId: trip.id,
+                vehicleId: vehicle.id,
+                stopSequence: nil,
+                selectionLock: false
+            ),
+            trip: trip,
+            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+            tripPredictions: .init(objects: objects),
+            tripPredictionsLoaded: true,
+            vehicle: vehicle
+        )
+
+        let sut = TripDetailsView(
+            tripFilter: stopDetailsVM.tripData?.tripFilter,
+            stopId: targetStop.id,
+            now: now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM
+        )
+
+        let newNavEntry: SheetNavigationStackEntry = .stopDetails(
+            stopId: targetStop.id,
+            stopFilter: nil,
+            tripFilter: nil
+        )
+
+        sut.onTapStop(entry: newNavEntry,
+                      stop: TripDetailsStopList.Entry(stop: targetStop, stopSequence: 0,
+                                                      alert: nil, schedule: nil, prediction: nil,
+                                                      vehicle: nil, routes: []),
+                      connectingRouteId: "route")
+        XCTAssertEqual(nearbyVM.navigationStack, [oldNavEntry, newNavEntry])
+    }
 }
