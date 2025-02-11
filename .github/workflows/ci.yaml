@@ -117,8 +117,8 @@ jobs:
           kotlin-cache: true
           rsvg: true
           ruby: true
-          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          gcp-provider: ""
+          gcp-service-account: ""
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
@@ -129,11 +129,3 @@ jobs:
           SENTRY_ENVIRONMENT: "debug"
         run: |
           bundle exec fastlane android build flavor:Staging build_type:Debug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: androidApp/build/outputs/apk/staging/debug/androidApp-staging-debug.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: android-aab
-          path: androidApp/build/outputs/bundle/stagingDebug/androidApp-staging-debug.aab
