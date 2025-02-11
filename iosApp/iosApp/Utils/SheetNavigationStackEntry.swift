@@ -120,10 +120,9 @@ extension [SheetNavigationStackEntry] {
                 stopFilter: lastFilter,
                 tripFilter: _
             ) = self.last {
-                // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
-                // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
-                // the entry with the old filter should be popped and replaced with the new value.
-                if lastFilter != nil { _ = self.popLast() }
+                if StopDetailsFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newValue) {
+                    _ = self.popLast()
+                }
                 if self.shouldSkipStopFilterUpdate(newStop: stopId, newFilter: newValue) { return }
                 self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
             }

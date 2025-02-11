@@ -105,8 +105,10 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: .init()
         )
 
+        XCTAssertEqual(3, nearbyVM.navigationStack.count)
+
         try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
-        XCTAssert(nearbyVM.navigationStack.isEmpty)
+        XCTAssertEqual(2, nearbyVM.navigationStack.count)
     }
 
     func testRejoinsPredictionsAfterBackgrounding() throws {
@@ -285,7 +287,7 @@ final class StopDetailsPageTests: XCTestCase {
         try await Task.sleep(for: .seconds(1))
         XCTAssertEqual(
             nearbyVM.navigationStack.lastStopDetailsFilter,
-            StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId)
+            StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId, autoFilter: true)
         )
     }
 
