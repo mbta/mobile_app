@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -45,6 +46,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.isCRCore
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -83,21 +85,44 @@ fun TripStopRow(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            stop.stop.name,
-                            Modifier.semantics {
-                                    contentDescription =
-                                        stopAccessibilityLabel(stop, targeted, firstStop, context)
-                                }
-                                .weight(1F)
-                                .placeholderIfLoading(),
-                            color = colorResource(R.color.text),
-                            style =
-                                MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight =
-                                        if (targeted) FontWeight.Bold else FontWeight.Normal
-                                ),
-                        )
+                        Column(
+                            Modifier.weight(1f),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                stop.stop.name,
+                                Modifier.semantics {
+                                        contentDescription =
+                                            stopAccessibilityLabel(
+                                                stop,
+                                                targeted,
+                                                firstStop,
+                                                context
+                                            )
+                                    }
+                                    .placeholderIfLoading(),
+                                color = colorResource(R.color.text),
+                                style =
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight =
+                                            if (targeted) FontWeight.Bold else FontWeight.Normal
+                                    ),
+                            )
+                            val trackNumber = stop.trackNumber
+                            if (
+                                trackNumber != null &&
+                                    routeAccents.type == RouteType.COMMUTER_RAIL &&
+                                    stop.stop.isCRCore
+                            ) {
+                                Text(
+                                    "Track $trackNumber",
+                                    Modifier.placeholderIfLoading(),
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
                         CompositionLocalProvider(
                             LocalContentColor provides colorResource(R.color.text)
                         ) {
@@ -224,56 +249,64 @@ private fun RouteLine(
 @Composable
 private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder()
-    Column(Modifier.background(colorResource(R.color.fill3))) {
-        TripStopRow(
-            stop =
-                TripDetailsStopList.Entry(
-                    objects.stop { name = "ABC" },
-                    stopSequence = 10,
-                    alert = null,
-                    schedule = null,
-                    prediction =
-                        objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
-                    vehicle = null,
-                    routes =
-                        listOf(
-                            objects.route {
-                                longName = "Red Line"
-                                color = "DA291C"
-                                textColor = "FFFFFF"
+    MyApplicationTheme {
+        Column(Modifier.background(colorResource(R.color.fill3))) {
+            TripStopRow(
+                stop =
+                    TripDetailsStopList.Entry(
+                        objects.stop { name = "Park Street" },
+                        stopSequence = 10,
+                        alert = null,
+                        schedule = null,
+                        prediction =
+                            objects.prediction {
+                                departureTime = Clock.System.now().plus(5.minutes)
                             },
-                            objects.route {
-                                longName = "Green Line"
-                                color = "00843D"
-                                textColor = "FFFFFF"
-                            }
-                        )
-                ),
-            Clock.System.now(),
-            onTapLink = {},
-            TripRouteAccents.default.copy(
-                type = RouteType.HEAVY_RAIL,
-                color = Color.fromHex("DA291C")
+                        predictionStop = null,
+                        vehicle = null,
+                        routes =
+                            listOf(
+                                objects.route {
+                                    longName = "Red Line"
+                                    color = "DA291C"
+                                    textColor = "FFFFFF"
+                                },
+                                objects.route {
+                                    longName = "Green Line"
+                                    color = "00843D"
+                                    textColor = "FFFFFF"
+                                }
+                            )
+                    ),
+                Clock.System.now(),
+                onTapLink = {},
+                TripRouteAccents.default.copy(
+                    type = RouteType.HEAVY_RAIL,
+                    color = Color.fromHex("DA291C")
+                )
             )
-        )
-        TripStopRow(
-            stop =
-                TripDetailsStopList.Entry(
-                    objects.stop { name = "ABC" },
-                    stopSequence = 10,
-                    alert = null,
-                    schedule = null,
-                    prediction =
-                        objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
-                    vehicle = null,
-                    routes = emptyList()
-                ),
-            Clock.System.now(),
-            onTapLink = {},
-            TripRouteAccents.default.copy(
-                type = RouteType.HEAVY_RAIL,
-                color = Color.fromHex("DA291C")
+            TripStopRow(
+                stop =
+                    TripDetailsStopList.Entry(
+                        objects.stop { name = "South Station" },
+                        stopSequence = 10,
+                        alert = null,
+                        schedule = null,
+                        prediction =
+                            objects.prediction {
+                                departureTime = Clock.System.now().plus(5.minutes)
+                            },
+                        predictionStop = objects.stop { platformCode = "1" },
+                        vehicle = null,
+                        routes = emptyList()
+                    ),
+                Clock.System.now(),
+                onTapLink = {},
+                TripRouteAccents.default.copy(
+                    type = RouteType.COMMUTER_RAIL,
+                    color = Color.fromHex("DA291C")
+                )
             )
-        )
+        }
     }
 }

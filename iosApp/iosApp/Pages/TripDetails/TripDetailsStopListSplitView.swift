@@ -83,6 +83,7 @@ struct TripDetailsStopListSplitView: View {
             alert: nil,
             schedule: nil,
             prediction: prediction,
+            predictionStop: nil,
             vehicle: nil,
             routes: []
         )

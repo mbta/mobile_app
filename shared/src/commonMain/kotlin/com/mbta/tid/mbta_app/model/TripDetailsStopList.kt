@@ -16,12 +16,17 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val alert: Alert?,
         val schedule: Schedule?,
         val prediction: Prediction?,
+        val predictionStop: Stop?,
         val vehicle: Vehicle?,
         val routes: List<Route>
     ) {
+        val trackNumber: String?
+            get() = predictionStop?.platformCode
+
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
                 prediction,
+                predictionStop,
                 schedule,
                 vehicle,
                 routeType,
@@ -197,6 +202,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                     getAlert(working, alertsData, globalData, tripId, directionId),
                     working.schedule,
                     working.prediction,
+                    globalData.stops[working.prediction?.stopId],
                     working.vehicle,
                     getTransferRoutes(working, globalData)
                 )

@@ -45,7 +45,7 @@ object LoadingPlaceholders {
                     stopId = stop.id
                     departureTime = Clock.System.now() + departsIn
                 }
-            return UpcomingTrip(trip, prediction)
+            return UpcomingTrip(trip, prediction = prediction)
         }
 
         return PatternsByStop(
@@ -135,6 +135,7 @@ object LoadingPlaceholders {
                         alert = null,
                         schedule = null,
                         prediction,
+                        predictionStop = null,
                         vehicle,
                         listOf(otherRoute)
                     )
