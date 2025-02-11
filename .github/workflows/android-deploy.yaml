@@ -54,7 +54,7 @@ jobs:
           SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
           SENTRY_ENVIRONMENT: "prod"
         run: |
-          bundle exec fastlane android build flavor:Prod
+          bundle exec fastlane android build flavor:Prod build_type:Release
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
@@ -65,9 +65,6 @@ jobs:
           path: androidApp/build/outputs/bundle/prodRelease/androidApp-prod-release.aab
   deploy-android:
     name: Upload to Google Play
-    concurrency:
-      group: deploy-android
-      cancel-in-progress: false
     needs:
       - build-android
     runs-on: ubuntu-latest

@@ -24,29 +24,38 @@ platform :android do
       else
         raise "Unknown flavor #{options[:flavor]}"
       end
-    version_codes = google_play_track_version_codes(
-      package_name: package_name,
-      track: "internal",
-    )
-    last_version_code = version_codes.max
+
+  last_version_code = if options[:build_type] == "Debug"
+      0
+    else
+      google_play_track_version_codes(
+            package_name: package_name,
+            track: "internal",
+          ).max
+    end
+
     next_version_code = last_version_code + 1
-    properties = {
-      "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
-      "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
-      "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
-      "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
-      "android.injected.version.code" => next_version_code,
-    }
+    properties = if options[:build_type] == "Debug"
+      { "android.injected.version.code" => next_version_code }
+    else
+      {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
+        "android.injected.version.code" => next_version_code,
+      }
+    end
     gradle(
       task: 'assemble',
       flavor: options[:flavor],
-      build_type: 'Release',
+      build_type: options[:build_type],
       properties: properties
     )
     gradle(
       task: 'bundle',
       flavor: options[:flavor],
-      build_type: 'Release',
+      build_type: options[:build_type],
       properties: properties
     )
   end
