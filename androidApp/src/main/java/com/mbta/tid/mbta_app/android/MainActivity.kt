@@ -43,8 +43,8 @@ class MainActivity : ComponentActivity() {
         val dsn = BuildConfig.SENTRY_DSN
         val env = BuildConfig.SENTRY_ENVIRONMENT
 
-        if (dsn.isNotEmpty() && env.isNotEmpty() && !BuildConfig.DEBUG) {
-            initializeSentry(dsn, env)
+        if (dsn.isNotEmpty() && !BuildConfig.DEBUG) {
+            initializeSentry(dsn, env.ifEmpty { "debug" })
             Log.i("MainActivity", "Sentry initialized")
         } else {
             Log.w("MainActivity", "skipping sentry initialization")
