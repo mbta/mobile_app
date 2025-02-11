@@ -250,7 +250,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             patternsByRouteAndStop
                 .mapNotNull { (route, patternsByStop) ->
                     val line = global.lines[route.lineId]
-                    val isGrouped = groupedLines.contains(route.lineId) && line != null
+                    val isGrouped = line?.isGrouped == true
                     val lineRoutes = byLine[line?.id]?.map { (route, _) -> route } ?: emptyList()
 
                     if (isGrouped && touchedLines.contains(line)) {
@@ -289,8 +289,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     )
 
     companion object {
-        val groupedLines = listOf("line-Green")
-
         fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
             schedules?.let { scheduleResponse ->
                 val scheduledTrips = scheduleResponse.trips
