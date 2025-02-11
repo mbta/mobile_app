@@ -210,7 +210,7 @@ struct TripDetailsView: View {
             )
         default: entry
         }
-        nearbyVM.pushNavEntry(realEntry)
+        nearbyVM.appendNavEntry(realEntry)
         analytics.tappedDownstreamStop(
             routeId: stopDetailsVM.tripData?.trip.routeId ?? "",
             stopId: stop.stop.id,

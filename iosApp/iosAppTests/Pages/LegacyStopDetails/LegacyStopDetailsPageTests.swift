@@ -431,7 +431,11 @@ final class LegacyStopDetailsPageTests: XCTestCase {
 
         let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { _ in
             XCTAssertEqual(nearbyVM.navigationStack.lastStopDetailsFilter,
-                           StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId))
+                           StopDetailsFilter(
+                               routeId: route.id,
+                               directionId: routePattern.directionId,
+                               autoFilter: true
+                           ))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)
