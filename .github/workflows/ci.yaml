@@ -125,6 +125,9 @@ jobs:
           GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
+          SENTRY_ENVIRONMENT: "staging"
+
         run: |
           bundle exec fastlane android build flavor:Staging build_type:Debug
       - uses: actions/upload-artifact@v4

@@ -105,8 +105,29 @@ class NearbyViewModel: ObservableObject {
         navigationStack.lastSafe() == .nearby
     }
 
+    /*
+     Directly append the given entry to the stack without considering the previous entries.
+     This should be done with caution as it can result in multiple entries of the same type within the stack,
+     typically `pushNavEntry` should be used instead.
+     */
+    func appendNavEntry(_ entry: SheetNavigationStackEntry) {
+        if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
+            appendNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
+        } else {
+            if entry != navigationStack.lastSafe() {
+                navigationStack.append(entry)
+            }
+        }
+    }
+
     // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
     // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
+    /**
+     Updates the stack so that the given entry is the last entry.
+     Optionally pops the previous entry to prevent the stack from building too deep. For example, when pushing
+     a `stopDetails` entry for a new stop on top of a `stopDetails` entry for a different stop, the previous entry
+     would be popped to ensure there is only one `stopDetails` entry in the stack.
+     */
     func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection: Bool = false) {
         let currentEntry = navigationStack.lastSafe()
         if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
@@ -144,7 +165,9 @@ class NearbyViewModel: ObservableObject {
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
             // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
-            if lastFilter != nil { _ = navigationStack.popLast() }
+            if StopDetailsFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newFilter) {
+                _ = navigationStack.popLast()
+            }
             if navigationStack.shouldSkipStopFilterUpdate(newStop: targetStop, newFilter: newFilter) { return }
             navigationStack.append(entry)
         } else {
