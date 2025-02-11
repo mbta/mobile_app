@@ -51,8 +51,10 @@ jobs:
           KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
+          SENTRY_ENVIRONMENT: "prod"
         run: |
-          bundle exec fastlane android build flavor:Prod
+          bundle exec fastlane android build flavor:Prod build_type:Release
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
@@ -63,9 +65,6 @@ jobs:
           path: androidApp/build/outputs/bundle/prodRelease/androidApp-prod-release.aab
   deploy-android:
     name: Upload to Google Play
-    concurrency:
-      group: deploy-android
-      cancel-in-progress: false
     needs:
       - build-android
     runs-on: ubuntu-latest

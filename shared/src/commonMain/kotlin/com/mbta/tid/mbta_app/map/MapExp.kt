@@ -256,6 +256,8 @@ object MapExp {
             // At mid zoom, only display labels for terminal rail stops
             Exp(MapDefaults.midZoomThreshold) to
                 Exp.case(
+                    // selected label on selectedPinlayer
+                    selectedExp to Exp(""),
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)) to Exp(""),
                     Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
                         busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey)),
@@ -264,8 +266,11 @@ object MapExp {
             // At close zoom, display labels for all non-bus stops
             Exp(MapDefaults.closeZoomThreshold) to
                 Exp.case(
+                    // selected label on selectedPinlayer
+                    selectedExp to Exp(""),
                     Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(""),
-                    busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey))
+                    fallback =
+                        busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey))
                 )
         )
     }

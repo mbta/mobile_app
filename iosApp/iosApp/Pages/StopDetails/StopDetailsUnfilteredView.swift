@@ -66,7 +66,7 @@ struct StopDetailsUnfilteredView: View {
                 VStack(spacing: 16) {
                     SheetHeader(
                         title: stop?.name ?? "Invalid Stop",
-                        onClose: { nearbyVM.navigationStack.removeAll() }
+                        onClose: { nearbyVM.goBack() }
                     )
                     if nearbyVM.showDebugMessages {
                         DebugView {

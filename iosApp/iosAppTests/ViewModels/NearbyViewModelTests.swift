@@ -181,6 +181,22 @@ final class NearbyViewModelTests: XCTestCase {
         }
     }
 
+    func testAppendNavStopDetails() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let entry0: SheetNavigationStackEntry = .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let entry1: SheetNavigationStackEntry = .stopDetails(stopId: "other", stopFilter: nil, tripFilter: nil)
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [entry0])
+
+        nearbyVM.appendNavEntry(entry1)
+        XCTAssertEqual([entry0, entry1], nearbyVM.navigationStack)
+
+        nearbyVM.appendNavEntry(entry1)
+        XCTAssertEqual([entry0, entry1], nearbyVM.navigationStack)
+    }
+
     func testStopDetailsNav() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
@@ -206,6 +222,21 @@ final class NearbyViewModelTests: XCTestCase {
         nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
         XCTAssertEqual([
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ], nearbyVM.navigationStack)
+    }
+
+    func testStopDetailsNavPopsWhenAutoFilter() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ])
+
+        let filter1: StopDetailsFilter = .init(routeId: "1", directionId: 1, autoFilter: true)
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil))
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil),
         ], nearbyVM.navigationStack)
     }
 
