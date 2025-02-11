@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   pre-commit:
@@ -154,30 +155,30 @@ jobs:
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/stagingRelease/androidApp-staging-release.aab
-  deploy-android:
-    name: Upload to Google Play
-    concurrency:
-      group: deploy-android
-      cancel-in-progress: false
-    needs:
-      - build-android
-      - test-android
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: android-aab
-          path: androidApp/build/outputs/bundle/stagingRelease
-      - uses: ./.github/actions/setup
-        with:
-          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          ruby: true
-      - name: Upload to Google Play
-        run: |
-          bundle exec fastlane android internal flavor:Staging
+#  deploy-android:
+#    name: Upload to Google Play
+#    concurrency:
+#      group: deploy-android
+#      cancel-in-progress: false
+#    needs:
+#      - build-android
+#      - test-android
+#    runs-on: ubuntu-latest
+#    permissions:
+#      id-token: write
+#      contents: read
+#      pull-requests: write
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/download-artifact@v4
+#        with:
+#          name: android-aab
+#          path: androidApp/build/outputs/bundle/stagingRelease
+#      - uses: ./.github/actions/setup
+#        with:
+#          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+#          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+#          ruby: true
+#      - name: Upload to Google Play
+#        run: |
+#          bundle exec fastlane android internal flavor:Staging
