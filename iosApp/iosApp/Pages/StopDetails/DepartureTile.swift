@@ -66,7 +66,7 @@ struct DepartureTile: View {
         route.type = .lightRail
     }
 
-    HStack {
+    return HStack {
         DepartureTile(
             data: .init(
                 route: route1,
