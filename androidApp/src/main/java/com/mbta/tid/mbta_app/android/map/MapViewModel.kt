@@ -105,14 +105,15 @@ open class MapViewModel(
         _lastMapboxErrorTimestamp.value = Clock.System.now()
     }
 
-    override suspend fun loadConfig() = withContext(Dispatchers.IO) {
-        val latestConfig = configUseCase.getConfig()
-        if (latestConfig is ApiResult.Ok) {
-            configureMapboxToken(latestConfig.data.mapboxPublicToken)
+    override suspend fun loadConfig() =
+        withContext(Dispatchers.IO) {
+            val latestConfig = configUseCase.getConfig()
+            if (latestConfig is ApiResult.Ok) {
+                configureMapboxToken(latestConfig.data.mapboxPublicToken)
+            }
+            _config.value = latestConfig
+            _configLoadAttempted.value = true
         }
-        _config.value = latestConfig
-        _configLoadAttempted.value = true
-    }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
         withContext(Dispatchers.Default) {

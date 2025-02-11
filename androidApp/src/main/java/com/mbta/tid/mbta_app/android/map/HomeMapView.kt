@@ -236,6 +236,9 @@ fun HomeMapView(
         }
 
     Box(modifier, contentAlignment = Alignment.Center) {
+        /* Whether loading the config succeeds or not we show the Mapbox Map in case
+         * the user has cached tiles on their device.
+         */
         if (!configLoadAttempted) {
             Image(
                 painterResource(R.drawable.empty_map_grid),
