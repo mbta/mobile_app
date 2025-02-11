@@ -31,13 +31,17 @@ platform :android do
     )
     last_version_code = version_codes.max
     next_version_code = last_version_code + 1
-    properties = {
+    properties = if options[:build_type] == "Debug"
+        {"android.injected.version.code" => next_version_code}
+    else
+        {
       "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
       "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
       "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
       "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
       "android.injected.version.code" => next_version_code,
-    }
+        }
+    end
     gradle(
       task: 'assemble',
       flavor: options[:flavor],

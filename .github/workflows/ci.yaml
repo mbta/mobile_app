@@ -123,10 +123,6 @@ jobs:
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
           GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
-          KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
-          KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
-          KEY_ALIAS: "upload"
-          KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
