@@ -192,6 +192,7 @@
     <string name="switch_problem">Vấn đề chuyển đổi</string>
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="tie_replacement">Thay tà vẹt</string>
+    <string name="track_change">Theo dõi sự thay đổi</string>
     <string name="track_problem">Vấn đề về đường ray</string>
     <string name="track_work">Thi công đường ray</string>
     <string name="traffic">Giao thông</string>

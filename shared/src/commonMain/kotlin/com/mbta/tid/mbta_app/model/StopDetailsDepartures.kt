@@ -194,6 +194,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             showAllPatternsWhileLoading = true,
                             hideNonTypicalPatternsBeyondNext = null,
                             filterCancellations = false,
+                            includeMinorAlerts = true,
                             pinnedRoutes
                         )
                     } else {
@@ -207,6 +208,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             showAllPatternsWhileLoading = true,
                             hideNonTypicalPatternsBeyondNext = null,
                             filterCancellations = false,
+                            includeMinorAlerts = true,
                             pinnedRoutes
                         )
                     }

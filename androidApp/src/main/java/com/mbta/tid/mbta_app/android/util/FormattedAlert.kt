@@ -21,6 +21,7 @@ data class FormattedAlert(@StringRes val effect: Int) {
                     Alert.Effect.StopMove,
                     Alert.Effect.StopMoved -> R.string.station_moved
                     Alert.Effect.Suspension -> R.string.suspension
+                    Alert.Effect.TrackChange -> R.string.track_change
                     else -> return null
                 }
             return FormattedAlert(effect)

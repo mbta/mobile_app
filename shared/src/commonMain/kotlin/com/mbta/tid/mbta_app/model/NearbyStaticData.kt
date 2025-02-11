@@ -489,6 +489,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     showAllPatternsWhileLoading: Boolean,
     hideNonTypicalPatternsBeyondNext: Duration?,
     filterCancellations: Boolean,
+    includeMinorAlerts: Boolean,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated>? {
     // if predictions or alerts are still loading, this is the loading state
@@ -496,7 +497,10 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
 
     val activeRelevantAlerts =
         alerts.alerts.values.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Accessibility
+            it.isActive(filterAtTime) &&
+                it.significance >=
+                    if (includeMinorAlerts) AlertSignificance.Minor
+                    else AlertSignificance.Accessibility
         }
 
     val allDataLoaded = schedules != null
@@ -661,6 +665,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
     showAllPatternsWhileLoading: Boolean,
     hideNonTypicalPatternsBeyondNext: Duration?,
     filterCancellations: Boolean,
+    includeMinorAlerts: Boolean,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated>? {
     // if predictions or alerts are still loading, this is the loading state
@@ -671,7 +676,10 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
 
     val activeRelevantAlerts =
         alerts.alerts.values.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Accessibility
+            it.isActive(filterAtTime) &&
+                it.significance >=
+                    if (includeMinorAlerts) AlertSignificance.Minor
+                    else AlertSignificance.Accessibility
         }
 
     val allDataLoaded = schedules != null
@@ -782,6 +790,7 @@ fun NearbyStaticData.withRealtimeInfo(
             showAllPatternsWhileLoading = false,
             hideNonTypicalPatternsBeyondNext = 120.minutes,
             filterCancellations = true,
+            includeMinorAlerts = false,
             pinnedRoutes
         )
     } else {
@@ -795,6 +804,7 @@ fun NearbyStaticData.withRealtimeInfo(
             showAllPatternsWhileLoading = false,
             hideNonTypicalPatternsBeyondNext = 120.minutes,
             filterCancellations = true,
+            includeMinorAlerts = false,
             pinnedRoutes
         )
     }

@@ -1,20 +1,16 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.printToLog
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -35,7 +31,7 @@ class MorePageTests : KoinTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testSettings() = runTest {
+    fun testSettings() {
         var hideMapToggleCalled = false
 
         val koinApplication = koinApplication {
@@ -57,17 +53,12 @@ class MorePageTests : KoinTest {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
 
-        try {
-            composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
-        } catch (ex: ComposeTimeoutException) {
-            composeTestRule.onRoot().printToLog("ci-keep")
-            throw ex
-        }
+        composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
         composeTestRule.onNodeWithText("Settings").performScrollTo()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hide Maps").performClick()
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntil { hideMapToggleCalled }
 
         assertTrue { hideMapToggleCalled }
