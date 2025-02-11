@@ -69,8 +69,6 @@ struct PromoScreenView: View {
                     .scaledToFill()
                     .accessibilityHidden(true)
             }
-            Spacer()
-
             Text(
                 "Check out the new stop view",
                 comment: """
