@@ -163,6 +163,7 @@
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
     <string name="service_change">Service Change</string>
+    <string name="service_change_sentence_case">Service change</string>
     <string name="service_ended">Service ended</string>
     <string name="service_suspended">Service suspended</string>
     <string name="setting_elevator_accessibility">Show elevator accessibility</string>
@@ -174,7 +175,7 @@
     <string name="signal_problem">Signal Problem</string>
     <string name="slippery_rail">Slippery Rail</string>
     <string name="snow">Snow</string>
-    <string name="snow_route">Snow route</string>
+    <string name="snow_route_sentence_case">Snow route</string>
     <string name="southbound">Southbound</string>
     <string name="special_event">Special Event</string>
     <string name="speed_restriction">Speed Restriction</string>
@@ -184,6 +185,7 @@
     <string name="station_closure">Station Closure</string>
     <string name="station_moved">Station Moved</string>
     <string name="stop_closed">Stop Closed</string>
+    <string name="stop_closed_sentence_case">Stop closed</string>
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
