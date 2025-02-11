@@ -117,8 +117,6 @@ jobs:
           kotlin-cache: true
           rsvg: true
           ruby: true
-          gcp-provider: ""
-          gcp-service-account: ""
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
