@@ -550,7 +550,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now,
-                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
+                context = TripInstantDisplay.Context.StopDetailsFiltered
             )
         )
     }

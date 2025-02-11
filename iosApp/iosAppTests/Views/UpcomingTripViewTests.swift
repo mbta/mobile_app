@@ -83,7 +83,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .commuterRail
         )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
-        XCTAssertThrowsError(try sut.inspect().find(text: "All aboard"))
+        XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
     }
 
     func testFirstScheduledAccessibilityLabel() throws {

@@ -66,13 +66,21 @@ struct DepartureTile: View {
         route.type = .lightRail
     }
 
-    return HStack {
+    HStack {
         DepartureTile(
             data: .init(
                 route: route1,
-                headsign: "Nubian",
+                headsign: "Framingham",
                 formatted: RealtimePatterns.FormatSome(trips: [
-                    .init(id: "1", routeType: .bus, format: .Minutes(minutes: 5)),
+                    .init(
+                        id: "1",
+                        routeType: .commuterRail,
+                        format: .TimeWithStatus(
+                            predictionTime: Date.now.toKotlinInstant(),
+                            status: "Delay",
+                            headline: true
+                        )
+                    ),
                 ], secondaryAlert: nil)
             ),
             onTap: {},

@@ -140,7 +140,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving at $shortTime", substring = true)
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText("All aboard").assertDoesNotExist()
+        composeTestRule.onNodeWithText("All aboard").assertIsDisplayed()
     }
 
     @Test
