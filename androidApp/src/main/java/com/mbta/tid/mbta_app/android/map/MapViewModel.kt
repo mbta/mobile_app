@@ -50,6 +50,7 @@ interface IMapViewModel {
     var globalResponse: Flow<GlobalResponse?>
     var railRouteShapes: Flow<MapFriendlyRouteResponse?>
     val selectedVehicle: StateFlow<Vehicle?>
+    val configLoadAttempted: StateFlow<Boolean>
 
     suspend fun loadConfig()
 
@@ -75,6 +76,8 @@ open class MapViewModel(
         HttpServiceFactory.setHttpServiceInterceptor(interceptor)
     }
 ) : ViewModel(), IMapViewModel, KoinComponent {
+    private val _configLoadAttempted = MutableStateFlow(false)
+    override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
     private val _config = MutableStateFlow<ApiResult<ConfigResponse>?>(null)
     var config: StateFlow<ApiResult<ConfigResponse>?> = _config
     private val _lastMapboxErrorTimestamp = MutableStateFlow<Instant?>(null)
@@ -102,15 +105,15 @@ open class MapViewModel(
         _lastMapboxErrorTimestamp.value = Clock.System.now()
     }
 
-    override suspend fun loadConfig() {
+    override suspend fun loadConfig() =
         withContext(Dispatchers.IO) {
             val latestConfig = configUseCase.getConfig()
             if (latestConfig is ApiResult.Ok) {
                 configureMapboxToken(latestConfig.data.mapboxPublicToken)
             }
             _config.value = latestConfig
+            _configLoadAttempted.value = true
         }
-    }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
         withContext(Dispatchers.Default) {
