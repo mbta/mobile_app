@@ -87,7 +87,11 @@ fun StopDetailsFilteredDeparturesView(
 
     val alertsHere: List<Alert> =
         if (global != null) {
-            patternsByStop.alertsHereFor(directionId = expectedDirection, global = global)
+            patternsByStop.alertsHereFor(
+                directionId = expectedDirection,
+                tripId = tripFilter?.tripId,
+                global = global
+            )
         } else {
             emptyList()
         }

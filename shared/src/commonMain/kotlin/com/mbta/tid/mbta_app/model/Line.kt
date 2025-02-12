@@ -11,4 +11,11 @@ data class Line(
     @SerialName("short_name") val shortName: String,
     @SerialName("sort_order") val sortOrder: Int,
     @SerialName("text_color") val textColor: String,
-) : BackendObject
+) : BackendObject {
+    /** Grouped lines are displayed as though they are different branches of a single route. */
+    val isGrouped = this.id in groupedIds
+
+    companion object {
+        val groupedIds = setOf("line-Green")
+    }
+}

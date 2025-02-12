@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -180,6 +181,33 @@ fun UpcomingTripView(
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             fontWeight = FontWeight.Bold
+                        )
+                    }
+                is TripInstantDisplay.TimeWithStatus ->
+                    Column(modifier, horizontalAlignment = Alignment.End) {
+                        WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                            Text(
+                                formatTime(state.trip.predictionTime),
+                                Modifier.semantics {
+                                        contentDescription =
+                                            UpcomingTripAccessibilityFormatters.predictedTimeLabel(
+                                                context,
+                                                time = formatTime(state.trip.predictionTime),
+                                                isFirst,
+                                                vehicleType
+                                            )
+                                    }
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Text(
+                            state.trip.status,
+                            color = colorResource(R.color.text).copy(alpha = 0.6f),
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 is TripInstantDisplay.ScheduleTime ->

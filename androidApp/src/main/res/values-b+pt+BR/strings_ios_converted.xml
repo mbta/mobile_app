@@ -163,6 +163,7 @@
     <string name="selected_stop">%1$s, parada selecionada</string>
     <string name="selected_stop_first_stop">%1$s, parada selecionada, primeira parada</string>
     <string name="service_change">Troca de serviço</string>
+    <string name="service_change_sentence_case">Mudança de serviço</string>
     <string name="service_ended">Serviço encerrado</string>
     <string name="service_suspended">Serviço suspenso</string>
     <string name="setting_elevator_accessibility">Mostrar acessibilidade do elevador</string>
@@ -174,7 +175,7 @@
     <string name="signal_problem">Problema de sinal</string>
     <string name="slippery_rail">Trilho escorregadio</string>
     <string name="snow">Neve</string>
-    <string name="snow_route">Rota da neve</string>
+    <string name="snow_route_sentence_case">Rota da neve</string>
     <string name="southbound">Sentido sul</string>
     <string name="special_event">Evento especial</string>
     <string name="speed_restriction">Restrição de velocidade</string>
@@ -184,6 +185,7 @@
     <string name="station_closure">Fechamento de estação</string>
     <string name="station_moved">Mudança de estação</string>
     <string name="stop_closed">Parada fechada</string>
+    <string name="stop_closed_sentence_case">Parada fechada</string>
     <string name="stop_closure">Fechamento de parada</string>
     <string name="stop_filter_pills_filter_hint">Aplique um filtro para que apenas as chegadas desta rota sejam exibidas</string>
     <string name="stop_filter_pills_remove_hint">Remova o filtro e exiba todas as rotas</string>
@@ -198,6 +200,7 @@
     <string name="switch_problem">Problema de troca</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="tie_replacement">Troca de pneu</string>
+    <string name="track_change">Mudança de faixa</string>
     <string name="track_problem">Problema de trilho</string>
     <string name="track_work">Obras no trilho</string>
     <string name="traffic">Tráfego</string>

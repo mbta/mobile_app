@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -64,5 +65,46 @@ class DirectionPickerTest {
         composeTestRule.onNodeWithText("Southbound").performClick()
         assertTrue(filter?.routeId == route.id)
         assertTrue(filter?.directionId == 1)
+    }
+
+    @Test
+    fun testSingleDirection() {
+        val objects = ObjectCollectionBuilder()
+        val route =
+            objects.route {
+                color = "000000"
+                textColor = "ffffff"
+            }
+        val stop = objects.stop()
+        val aPattern =
+            objects.routePattern(route) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val patterns =
+            listOf(
+                RealtimePatterns.ByHeadsign(route, "A", null, listOf(aPattern), emptyList()),
+            )
+        val patternsByStop =
+            PatternsByStop(
+                listOf(route),
+                null,
+                stop,
+                patterns,
+                listOf(Direction("North", null, 0), Direction("South", "Destination", 1)),
+                emptyList()
+            )
+        var filter: StopDetailsFilter? = StopDetailsFilter(routeId = route.id, directionId = 1)
+        composeTestRule.setContent {
+            DirectionPicker(
+                patternsByStop = patternsByStop,
+                filter = filter,
+                updateStopFilter = { newFilter -> filter = newFilter }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Northbound").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Destination").assertIsDisplayed()
     }
 }

@@ -38,6 +38,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import kotlinx.datetime.Clock
 
 @Composable
 fun DepartureTile(
@@ -125,13 +126,17 @@ private fun DepartureTilePreview() {
                 TileData(
                     trip1.id,
                     route1,
-                    "Nubian",
+                    "Framingham",
                     RealtimePatterns.Format.Some(
                         listOf(
                             RealtimePatterns.Format.Some.FormatWithId(
                                 trip1.id,
-                                RouteType.BUS,
-                                TripInstantDisplay.Minutes(5)
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.TimeWithStatus(
+                                    Clock.System.now(),
+                                    "Delay",
+                                    headline = true
+                                )
                             )
                         ),
                         secondaryAlert = null
