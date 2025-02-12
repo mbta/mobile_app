@@ -26,6 +26,12 @@ constructor(
     val vehicle: Vehicle? = null
 ) : Comparable<UpcomingTrip> {
 
+    constructor(
+        trip: Trip,
+        prediction: Prediction?,
+        predictionStop: Stop? = null
+    ) : this(trip, null, prediction, predictionStop, null)
+
     val time =
         if (
             prediction != null &&

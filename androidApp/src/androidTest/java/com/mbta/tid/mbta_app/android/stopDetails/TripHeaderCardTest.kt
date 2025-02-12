@@ -39,7 +39,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 "",
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
                 TripRouteAccents(route),
                 now
@@ -68,7 +68,7 @@ class TripHeaderCardTest {
             val vehicle: Vehicle by vehicleState
             TripHeaderCard(
                 "",
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
                 TripRouteAccents(route),
                 now
@@ -154,7 +154,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 "",
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
                 TripRouteAccents(route),
                 now
@@ -197,9 +197,11 @@ class TripHeaderCardTest {
                         alert = null,
                         schedule = null,
                         prediction = prediction,
+                        predictionStop = stop,
                         vehicle = vehicle,
                         routes = listOf()
-                    )
+                    ),
+                    true
                 ),
                 stop.id,
                 TripRouteAccents(route),
@@ -241,6 +243,7 @@ class TripHeaderCardTest {
                         alert = null,
                         schedule = schedule,
                         prediction = null,
+                        predictionStop = null,
                         vehicle = null,
                         routes = listOf()
                     )
@@ -311,7 +314,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 "",
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
                 TripRouteAccents(route),
                 now
@@ -339,7 +342,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 "",
-                TripHeaderSpec.VehicleOnTrip(vehicle, otherStop, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, otherStop, null, false),
                 stop.id,
                 TripRouteAccents(route),
                 now
@@ -374,6 +377,7 @@ class TripHeaderCardTest {
                         alert = null,
                         schedule = schedule,
                         prediction = null,
+                        predictionStop = null,
                         vehicle = null,
                         routes = listOf()
                     )
@@ -414,6 +418,7 @@ class TripHeaderCardTest {
                         alert = null,
                         schedule = schedule,
                         prediction = null,
+                        predictionStop = null,
                         vehicle = null,
                         routes = listOf()
                     )

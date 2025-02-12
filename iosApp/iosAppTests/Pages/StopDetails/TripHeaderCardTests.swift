@@ -26,7 +26,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let sut = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -47,7 +47,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let inTransitSut = TripHeaderCard(
-            spec: .vehicle(inTransitVehicle, stop, nil),
+            spec: .vehicle(inTransitVehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -61,7 +61,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let incomingSut = TripHeaderCard(
-            spec: .vehicle(incomingVehicle, stop, nil),
+            spec: .vehicle(incomingVehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -75,7 +75,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let stoppedSut = TripHeaderCard(
-            spec: .vehicle(stoppedVehicle, stop, nil),
+            spec: .vehicle(stoppedVehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -130,7 +130,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.stopId = stop.id
         }
         let targeted = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
 
             tripId: "",
             targetId: stop.id,
@@ -144,7 +144,7 @@ final class TripHeaderCardTests: XCTestCase {
         }))
 
         let notTargeted = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
 
             tripId: "",
             targetId: "",
@@ -180,9 +180,10 @@ final class TripHeaderCardTests: XCTestCase {
                 alert: nil,
                 schedule: nil,
                 prediction: prediction,
+                predictionStop: nil,
                 vehicle: vehicle,
                 routes: []
-            )),
+            ), true),
             tripId: "",
             targetId: stop.id,
             routeAccents: .init(),
@@ -213,6 +214,7 @@ final class TripHeaderCardTests: XCTestCase {
                 alert: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -249,6 +251,7 @@ final class TripHeaderCardTests: XCTestCase {
                 alert: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -302,7 +305,7 @@ final class TripHeaderCardTests: XCTestCase {
         }
 
         let withVehicleAtStop = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
             tripId: "", targetId: stop.id,
             routeAccents: .init(type: .bus),
             onTap: {},
@@ -316,7 +319,7 @@ final class TripHeaderCardTests: XCTestCase {
             stop.name = "other stop"
         }
         let withVehicleAtOtherStop = TripHeaderCard(
-            spec: .vehicle(vehicle, otherStop, nil),
+            spec: .vehicle(vehicle, otherStop, nil, false),
             tripId: "", targetId: stop.id,
             routeAccents: .init(type: .bus),
             onTap: {},
@@ -336,6 +339,7 @@ final class TripHeaderCardTests: XCTestCase {
                 alert: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -356,6 +360,7 @@ final class TripHeaderCardTests: XCTestCase {
                 alert: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),

@@ -32,7 +32,7 @@ final class TripStopRowTests: XCTestCase {
         let sut = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -58,7 +58,7 @@ final class TripStopRowTests: XCTestCase {
         let sut = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -84,7 +84,7 @@ final class TripStopRowTests: XCTestCase {
         let targeted = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -100,7 +100,7 @@ final class TripStopRowTests: XCTestCase {
         let notTargeted = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -127,7 +127,7 @@ final class TripStopRowTests: XCTestCase {
 
         let stopEntry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, alert: nil,
-            schedule: schedule, prediction: prediction,
+            schedule: schedule, prediction: prediction, predictionStop: nil,
             vehicle: nil, routes: [route]
         )
 

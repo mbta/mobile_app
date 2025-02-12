@@ -58,7 +58,6 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.Vehicle
-import com.mbta.tid.mbta_app.model.isCRCore
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock

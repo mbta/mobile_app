@@ -33,7 +33,16 @@ class TripStopRowTest {
 
         composeTestRule.setContent {
             TripStopRow(
-                TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route)),
+                TripDetailsStopList.Entry(
+                    stop,
+                    0,
+                    null,
+                    schedule,
+                    prediction,
+                    stop,
+                    null,
+                    listOf(route)
+                ),
                 now,
                 onTapLink = {},
                 TripRouteAccents(route)
@@ -55,7 +64,16 @@ class TripStopRowTest {
 
         composeTestRule.setContent {
             TripStopRow(
-                TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route)),
+                TripDetailsStopList.Entry(
+                    stop,
+                    0,
+                    null,
+                    schedule,
+                    prediction,
+                    stop,
+                    null,
+                    listOf(route)
+                ),
                 now,
                 onTapLink = {},
                 TripRouteAccents(route)
@@ -75,7 +93,16 @@ class TripStopRowTest {
         val route = objects.route()
 
         val stopEntry =
-            TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route))
+            TripDetailsStopList.Entry(
+                stop,
+                0,
+                null,
+                schedule,
+                prediction,
+                stop,
+                null,
+                listOf(route)
+            )
 
         var selected by mutableStateOf(false)
         var first by mutableStateOf(false)
@@ -117,7 +144,16 @@ class TripStopRowTest {
         val route = objects.route()
 
         val entry =
-            TripDetailsStopList.Entry(stop, 0, null, schedule, prediction, null, listOf(route))
+            TripDetailsStopList.Entry(
+                stop,
+                0,
+                null,
+                schedule,
+                prediction,
+                stop,
+                null,
+                listOf(route)
+            )
         var linkTappedWith: TripDetailsStopList.Entry? = null
 
         composeTestRule.setContent {

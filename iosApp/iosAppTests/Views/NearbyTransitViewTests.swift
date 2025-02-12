@@ -571,6 +571,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     name: "Lechmere",
                     locationType: .station,
                     description: nil,
+                    platformCode: nil,
                     platformName: nil,
                     vehicleType: nil,
                     childStopIds: [],

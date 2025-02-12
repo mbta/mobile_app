@@ -298,9 +298,11 @@ final class TripDetailsViewTests: XCTestCase {
         )
 
         sut.onTapStop(entry: newNavEntry,
-                      stop: TripDetailsStopList.Entry(stop: targetStop, stopSequence: 0,
-                                                      alert: nil, schedule: nil, prediction: nil,
-                                                      vehicle: nil, routes: []),
+                      stop: TripDetailsStopList.Entry(
+                          stop: targetStop, stopSequence: 0,
+                          alert: nil, schedule: nil, prediction: nil, predictionStop: nil,
+                          vehicle: nil, routes: []
+                      ),
                       connectingRouteId: "route")
         XCTAssertEqual(nearbyVM.navigationStack, [oldNavEntry, newNavEntry])
     }

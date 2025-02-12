@@ -397,13 +397,16 @@ class ObjectCollectionBuilder {
             check(prediction.stopId == predictionStop.id)
         }
         return UpcomingTrip(
-            checkNotNull(trips[prediction?.tripId]),
+            checkNotNull(trips[prediction?.tripId ?: schedule?.tripId]),
             schedule,
             prediction,
-            predictionStop,
+            predictionStop ?: stops[prediction?.stopId],
             vehicle
         )
     }
+
+    fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
+        upcomingTrip(null, prediction, predictionStop, null)
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
         source: MutableMap<String, Built>,
