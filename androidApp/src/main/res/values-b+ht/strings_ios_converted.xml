@@ -168,6 +168,7 @@
     <string name="selected_stop">%1$s, chwazi sispann</string>
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
     <string name="service_change">Chanjman Sèvis</string>
+    <string name="service_change_sentence_case">Chanjman sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
     <string name="service_suspended">Sèvis ki kanpe</string>
     <string name="setting_elevator_accessibility">Montre aksè nan asansè</string>
@@ -179,7 +180,7 @@
     <string name="signal_problem">Pwoblèm Siyal</string>
     <string name="slippery_rail">Ray ki Glise</string>
     <string name="snow">Nèj</string>
-    <string name="snow_route">Wout nèj</string>
+    <string name="snow_route_sentence_case">Wout nèj</string>
     <string name="southbound">Nan direksyon sid</string>
     <string name="special_event">Evènman Espesyal</string>
     <string name="speed_restriction">Limit Vitès</string>
@@ -189,6 +190,7 @@
     <string name="station_closure">Estasyon Fèmen</string>
     <string name="station_moved">Estasyon Deplase</string>
     <string name="stop_closed">Arè Fèmen</string>
+    <string name="stop_closed_sentence_case">Sispann fèmen</string>
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
