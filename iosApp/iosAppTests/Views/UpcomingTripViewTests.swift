@@ -72,6 +72,20 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertEqual("and at 4:00 PM", foundText)
     }
 
+    func testTimeWithStatus() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date.toKotlinInstant(),
+                status: "All aboard",
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
+        XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
+    }
+
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
         let text: any View = UpcomingTripAccessibilityFormatters().scheduleTimeFirst(date: date, vehicleText: "buses")
