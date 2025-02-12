@@ -948,6 +948,163 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
+    fun `fromData shows minor alerts`() = parametricTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+        val routePattern =
+            objects.routePattern(route) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(stop.id)
+                }
+            }
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        objects.schedule {
+            this.trip = objects.trip(routePattern)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+            stopSequence = 4
+        }
+
+        val alert =
+            objects.alert {
+                activePeriod(
+                    Instant.parse("2024-03-18T04:30:00-04:00"),
+                    Instant.parse("2024-03-22T02:30:00-04:00")
+                )
+                effect = Alert.Effect.TrackChange
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+
+        val departures =
+            StopDetailsDepartures.fromData(
+                stop,
+                GlobalResponse(
+                    objects,
+                    mapOf(stop.id to listOf(routePattern.id))
+                ),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                emptySet(),
+                time,
+                useTripHeadsigns = anyBoolean(),
+            )
+
+        assertEquals(
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        route,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                route,
+                                "A",
+                                null,
+                                listOf(routePattern),
+                                emptyList(),
+                                listOf(alert),
+                                emptyList()
+                            )
+                        )
+                    )
+                )
+            ),
+            departures
+        )
+    }
+
+    @Test
+    fun `fromData hides track change at core station`() = parametricTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { id = "place-north" }
+        val route = objects.route { sortOrder = 1 }
+        val routePattern =
+            objects.routePattern(route) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(stop.id)
+                }
+            }
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        objects.schedule {
+            this.trip = objects.trip(routePattern)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+            stopSequence = 4
+        }
+
+        objects.alert {
+            activePeriod(
+                Instant.parse("2024-03-18T04:30:00-04:00"),
+                Instant.parse("2024-03-22T02:30:00-04:00")
+            )
+            effect = Alert.Effect.TrackChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id,
+                routeType = route.type,
+                stop = stop.id
+            )
+        }
+
+        val departures =
+            StopDetailsDepartures.fromData(
+                stop,
+                GlobalResponse(
+                    objects,
+                    mapOf(stop.id to listOf(routePattern.id))
+                ),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                emptySet(),
+                time,
+                useTripHeadsigns = anyBoolean(),
+            )
+
+        assertEquals(
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        route,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                route,
+                                "A",
+                                null,
+                                listOf(routePattern),
+                                emptyList(),
+                                emptyList(),
+                                emptyList()
+                            )
+                        )
+                    )
+                )
+            ),
+            departures
+        )
+    }
+
+    @Test
     fun `autoStopFilter provides a default StopDetailsFilter given a single route and direction`() =
         parametricTest {
             val objects = ObjectCollectionBuilder()

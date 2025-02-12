@@ -20,8 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -85,6 +88,18 @@ fun DirectionPicker(
                 }
             }
         }
+    } else if (availableDirections.size == 1) {
+        availableDirections.firstOrNull()?.let {
+            DirectionLabel(
+                direction = directions[it],
+                modifier.padding(horizontal = 8.dp).fillMaxWidth().semantics(
+                    mergeDescendants = true
+                ) {
+                    heading()
+                },
+                textColor = Color.fromHex(route.textColor)
+            )
+        }
     }
 }
 
@@ -100,37 +115,39 @@ private fun DirectionPickerPreview() {
         }
     val patternOutbound = objects.routePattern(route) { directionId = 0 }
     val patternInbound = objects.routePattern(route) { directionId = 1 }
-    DirectionPicker(
-        patternsByStop =
-            PatternsByStop(
-                routes = listOf(route),
-                line = null,
-                stop,
-                patterns =
-                    listOf(
-                        RealtimePatterns.ByHeadsign(
-                            route = route,
-                            headsign = "Out",
-                            line = null,
-                            patterns = listOf(patternOutbound),
-                            upcomingTrips = emptyList()
+    MyApplicationTheme {
+        DirectionPicker(
+            patternsByStop =
+                PatternsByStop(
+                    routes = listOf(route),
+                    line = null,
+                    stop,
+                    patterns =
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                route = route,
+                                headsign = "Out",
+                                line = null,
+                                patterns = listOf(patternOutbound),
+                                upcomingTrips = emptyList()
+                            ),
+                            RealtimePatterns.ByHeadsign(
+                                route = route,
+                                headsign = "In",
+                                line = null,
+                                patterns = listOf(patternInbound),
+                                upcomingTrips = emptyList()
+                            ),
                         ),
-                        RealtimePatterns.ByHeadsign(
-                            route = route,
-                            headsign = "In",
-                            line = null,
-                            patterns = listOf(patternInbound),
-                            upcomingTrips = emptyList()
+                    directions =
+                        listOf(
+                            Direction(name = "Outbound", destination = "Out", id = 0),
+                            Direction(name = "Inbound", destination = "In", id = 1),
                         ),
-                    ),
-                directions =
-                    listOf(
-                        Direction(name = "Outbound", destination = "Out", id = 0),
-                        Direction(name = "Inbound", destination = "In", id = 1),
-                    ),
-                elevatorAlerts = emptyList()
-            ),
-        filter = StopDetailsFilter(routeId = route.id, directionId = 0),
-        updateStopFilter = {}
-    )
+                    elevatorAlerts = emptyList()
+                ),
+            filter = StopDetailsFilter(routeId = route.id, directionId = 0),
+            updateStopFilter = {}
+        )
+    }
 }

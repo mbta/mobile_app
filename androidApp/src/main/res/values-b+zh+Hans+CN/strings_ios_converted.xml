@@ -194,6 +194,7 @@
     <string name="switch_problem">道岔故障</string>
     <string name="technical_problem">技术故障</string>
     <string name="tie_replacement">更换轨枕</string>
+    <string name="track_change">追踪修订</string>
     <string name="track_problem">轨道故障</string>
     <string name="track_work">轨道作业</string>
     <string name="traffic">交通</string>

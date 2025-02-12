@@ -52,7 +52,8 @@ data class PatternsByStop(
                                     alerts.toList(),
                                     null,
                                     listOf(it.route.id),
-                                    it.stopIds
+                                    it.stopIds,
+                                    null
                                 ),
                                 alertsDownstream(
                                     alerts.toList(),
@@ -114,7 +115,8 @@ data class PatternsByStop(
                                     alerts.toList(),
                                     null,
                                     listOf(directionOrHeadsign.route.id),
-                                    leaf.childStopIds
+                                    leaf.childStopIds,
+                                    null
                                 ),
                                 alertsDownstream(
                                     alerts.toList(),
@@ -163,7 +165,7 @@ data class PatternsByStop(
 
     fun allUpcomingTrips(): List<UpcomingTrip> = this.patterns.flatMap { it.upcomingTrips }.sorted()
 
-    fun alertsHereFor(directionId: Int, global: GlobalResponse): List<Alert> {
+    fun alertsHereFor(directionId: Int, tripId: String?, global: GlobalResponse): List<Alert> {
         val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
         val stopIds = arrayOf(this.stop.id) + this.stop.childStopIds
         val stopsInDirection =
@@ -180,7 +182,7 @@ data class PatternsByStop(
         return stopsInDirection
             .flatMap { stopId ->
                 patternsInDirection
-                    .flatMap { it.alertsHereFor(setOf(stopId), directionId) ?: emptyList() }
+                    .flatMap { it.alertsHereFor(setOf(stopId), directionId, tripId) ?: emptyList() }
                     .toSet()
             }
             .distinct()
@@ -251,7 +253,8 @@ data class PatternsByStop(
                             alerts.toList(),
                             null,
                             staticData.routeIds,
-                            staticData.stopIds
+                            staticData.stopIds,
+                            null
                         ),
                         alertsDownstream(
                             alerts.toList(),
@@ -300,7 +303,8 @@ data class PatternsByStop(
                             alerts.toList(),
                             null,
                             staticData.routeIds,
-                            staticData.stopIds
+                            staticData.stopIds,
+                            null
                         ),
                         alertsDownstream(
                             alerts.toList(),
@@ -323,7 +327,8 @@ data class PatternsByStop(
                         alerts.toList(),
                         null,
                         staticData.routeIds,
-                        staticData.stopIds
+                        staticData.stopIds,
+                        null
                     ),
                     alertsDownstream(
                         alerts.toList(),
@@ -349,7 +354,13 @@ data class PatternsByStop(
             val typicalPatternsByRoute = getTypicalPatternsByRoute(leaf)
 
             val alertsHere =
-                Alert.applicableAlerts(alerts, null, line.routes.map { it.id }, leaf.childStopIds)
+                Alert.applicableAlerts(
+                    alerts,
+                    null,
+                    line.routes.map { it.id },
+                    leaf.childStopIds,
+                    null
+                )
             val alertsDownstream =
                 alertsDownstream(
                     alerts.toList(),
