@@ -569,6 +569,17 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
         if (filterCancellations) this.filterCancellations(isSubway) else this
 
+    fun RealtimePatterns.isLastStopOnRoutePattern(stop: Stop): Boolean {
+        return this.patterns
+            .filter { it?.typicality == RoutePattern.Typicality.Typical }
+            .mapNotNull { it?.representativeTripId }
+            .any { representativeTripId ->
+                val representativeTrip = globalData?.trips?.get(representativeTripId)
+                val lastStopIdInPattern = representativeTrip?.stopIds?.last() ?: return@any false
+                lastStopIdInPattern == stop.id || stop.childStopIds.contains(lastStopIdInPattern)
+            }
+    }
+
     fun RealtimePatterns.shouldShow(stop: Stop): Boolean {
         if (!allDataLoaded && showAllPatternsWhileLoading) return true
         val isUpcoming =
@@ -576,18 +587,22 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                 null -> this.isUpcoming()
                 else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
             }
-        val isLastStopOnRoutePattern =
-            this.patterns
-                .filter { it?.typicality == RoutePattern.Typicality.Typical }
-                .mapNotNull { it?.representativeTripId }
-                .any { representativeTripId ->
-                    val representativeTrip = globalData?.trips?.get(representativeTripId)
-                    val lastStopIdInPattern =
-                        representativeTrip?.stopIds?.last() ?: return@any false
-                    lastStopIdInPattern == stop.id ||
-                        stop.childStopIds.contains(lastStopIdInPattern)
-                }
-        return (isTypical() || isUpcoming) && !(isLastStopOnRoutePattern && isArrivalOnly())
+
+        val isSubway =
+            this.patterns.all { globalData?.routes?.get(it?.routeId)?.type?.isSubway() ?: false }
+
+        val shouldBeFilteredAsArrivalOnly =
+            if (isSubway) {
+                // On subway, only filter out arrival only patterns at the typical last stop.
+                // This way, during a scheduled disruption we still show arrival-only headsign(s) at
+                // a temporary terminal to acknowledge the missing typical service.
+                this.isLastStopOnRoutePattern(stop) && isArrivalOnly()
+            } else {
+                if (this.patterns.any { it?.routeId == "Boat-F1" }) {}
+                isArrivalOnly()
+            }
+
+        return (isTypical() || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
     }
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
