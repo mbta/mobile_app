@@ -50,10 +50,10 @@ struct PromoScreenView: View {
 
     @ViewBuilder
     var combinedStopAndTrip: some View {
-        let promoDetailsKey = String(format: NSLocalizedString(
+        let promoDetailsKey = NSLocalizedString(
             "We now show **arrivals** and detailed **vehicle locations** all at once. Let us know what you think!",
             comment: "Promo text that displays when users first open the app after a redesign of the stop page"
-        ))
+        )
 
         var promoDetailsString: AttributedString {
             do {
