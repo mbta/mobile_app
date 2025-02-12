@@ -34,12 +34,18 @@ class SearchResultsViewModel(
     private var job: Job? = null
     val searchResults: StateFlow<SearchResults?> = _searchResults
 
+    // TODO: take globalResponse as a param, build VM with factory
+    // B/c recently visited empty on first open
     fun getSearchResults(query: String) {
+        Log.i("KB", "getSearchResultsCalled: ${query}")
+
         analytics.performedSearch(query)
         job?.cancel()
         job =
             CoroutineScope(Dispatchers.IO).launch {
                 if (query.isNotEmpty()) {
+                    Log.i("KB", "isNotEmpty")
+
                     delay(500)
                     when (val data = searchResultRepository.getSearchResults(query)) {
                         is ApiResult.Ok -> _searchResults.emit(data.data)
@@ -50,7 +56,11 @@ class SearchResultsViewModel(
                         null -> {}
                     }
                 } else {
+                    Log.i("KB", "getLatestVisits")
+
                     val latestVisits = visitHistoryUsecase.getLatestVisits()
+                    Log.i("KB", "latestVisits: ${latestVisits}")
+
                     _searchResults.emit(
                         SearchResults(
                             stops = latestVisits.mapIndexedNotNull(::mapLatestVisitsToResult),

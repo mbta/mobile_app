@@ -12,11 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
@@ -80,7 +81,10 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, visible) { searchResultsVm.getSearchResults(searchInputState) }
+    LaunchedEffect(searchInputState, visible) {
+        Log.i("KB", "Launching search with input: ${searchInputState}")
+        searchResultsVm.getSearchResults(searchInputState)
+    }
     LaunchedEffect(visible, expanded) {
         if (visible) {
             onExpandedChange(expanded)
@@ -209,7 +213,7 @@ fun SearchBarOverlay(
                         ) {
                             LazyColumn(
                                 modifier =
-                                    Modifier.fillMaxSize().background(colorResource(R.color.fill2)),
+                                    Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
                                 contentPadding = PaddingValues(16.dp)
                             ) {
                                 if (searchInputState.isEmpty()) {
@@ -222,7 +226,7 @@ fun SearchBarOverlay(
                                         )
                                     }
                                 }
-                                items(searchResults?.stops ?: emptyList()) { stop ->
+                                itemsIndexed(searchResults?.stops ?: emptyList()) { index, stop ->
                                     val shape =
                                         if (searchResults?.stops?.size == 1) {
                                             RoundedCornerShape(10.dp)
@@ -236,6 +240,9 @@ fun SearchBarOverlay(
                                         } else {
                                             RoundedCornerShape(0.dp)
                                         }
+                                    if (index != 0) {
+                                        HorizontalDivider(color = colorResource(R.color.fill1))
+                                    }
                                     StopResultsView(shape, stop, globalResponse, onStopNavigation)
                                 }
                             }
