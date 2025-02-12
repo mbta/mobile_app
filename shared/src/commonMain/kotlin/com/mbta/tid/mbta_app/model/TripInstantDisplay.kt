@@ -25,6 +25,12 @@ sealed class TripInstantDisplay {
     data class Time(val predictionTime: Instant, val headline: Boolean = false) :
         TripInstantDisplay()
 
+    data class TimeWithStatus(
+        val predictionTime: Instant,
+        val status: String,
+        val headline: Boolean = false
+    ) : TripInstantDisplay()
+
     data class Minutes(val minutes: Int) : TripInstantDisplay()
 
     data class ScheduleTime(val scheduledTime: Instant, val headline: Boolean = false) :
@@ -53,9 +59,13 @@ sealed class TripInstantDisplay {
             context: Context
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
-            val forceAsTime = context == Context.TripDetails
-            prediction?.status?.let {
-                return Overridden(it)
+            val scheduleBasedRouteType =
+                routeType == RouteType.COMMUTER_RAIL || routeType == RouteType.FERRY
+            val forceAsTime = context == Context.TripDetails || scheduleBasedRouteType
+            val allowTimeWithStatus =
+                context == Context.StopDetailsFiltered && routeType == RouteType.COMMUTER_RAIL
+            if (prediction?.status != null && routeType != RouteType.COMMUTER_RAIL) {
+                return Overridden(prediction.status)
             }
             if (prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Skipped) {
                 schedule?.scheduleTime?.let {
@@ -97,23 +107,15 @@ sealed class TripInstantDisplay {
                 return Hidden
             }
 
-            val scheduleBasedRouteType =
-                routeType == RouteType.COMMUTER_RAIL || routeType == RouteType.FERRY
+            val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
             if (prediction == null) {
                 val scheduleTime = schedule?.scheduleTime
                 return if (scheduleTime == null) {
                     Hidden
                 } else {
                     val scheduleTimeRemaining = scheduleTime.minus(now)
-                    if (
-                        scheduleTimeRemaining > SCHEDULE_CLOCK_CUTOFF ||
-                            scheduleBasedRouteType ||
-                            forceAsTime
-                    ) {
-                        ScheduleTime(
-                            scheduleTime,
-                            headline = scheduleBasedRouteType && !forceAsTime
-                        )
+                    if (scheduleTimeRemaining > SCHEDULE_CLOCK_CUTOFF || forceAsTime) {
+                        ScheduleTime(scheduleTime, headline = showTimeAsHeadline)
                     } else {
                         val scheduleMinutes =
                             scheduleTimeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
@@ -127,7 +129,15 @@ sealed class TripInstantDisplay {
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
 
             if (forceAsTime) {
-                return Time(prediction.predictionTime)
+                return if (allowTimeWithStatus && prediction.status != null) {
+                    TimeWithStatus(
+                        prediction.predictionTime,
+                        prediction.status,
+                        headline = showTimeAsHeadline
+                    )
+                } else {
+                    Time(prediction.predictionTime, headline = showTimeAsHeadline)
+                }
             }
 
             /**
@@ -152,9 +162,6 @@ sealed class TripInstantDisplay {
             }
             if (timeRemaining <= APPROACH_CUTOFF) {
                 return Approaching
-            }
-            if (scheduleBasedRouteType) {
-                return Time(prediction.predictionTime, headline = true)
             }
             return Minutes(minutes)
         }

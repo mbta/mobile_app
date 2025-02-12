@@ -30,7 +30,7 @@ class TripInstantDisplayTest {
                 prediction = ObjectCollectionBuilder.Single.prediction { status = "Custom Text" },
                 schedule = null,
                 vehicle = null,
-                routeType = null,
+                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL),
                 now = Clock.System.now(),
                 context = anyEnumValue()
             )
@@ -529,6 +529,28 @@ class TripInstantDisplayTest {
                 routeType = scheduleBased(),
                 now = now,
                 context = context
+            )
+        )
+    }
+
+    @Test
+    fun `time with status`() = parametricTest {
+        val now = Clock.System.now()
+        val predictionTime = now + 2.minutes
+        val prediction = ObjectCollectionBuilder.Single.prediction {
+            status = "All aboard"
+            departureTime = predictionTime
+        }
+
+        assertEquals(
+            TripInstantDisplay.TimeWithStatus(predictionTime, "All aboard", true),
+            TripInstantDisplay.from(
+                prediction,
+                schedule = null,
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered
             )
         )
     }
