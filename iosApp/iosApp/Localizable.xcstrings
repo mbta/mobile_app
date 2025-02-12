@@ -9509,6 +9509,47 @@
         }
       }
     },
+    "Track Change" : {
+      "comment" : "Possible alert effect",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cambio de pista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Track Chanjman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mudança de faixa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Theo dõi sự thay đổi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "追踪修订"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "追蹤修訂"
+          }
+        }
+      }
+    },
     "Track Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {

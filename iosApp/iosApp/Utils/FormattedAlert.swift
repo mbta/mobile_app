@@ -24,6 +24,7 @@ struct FormattedAlert {
         case .stopClosure: NSLocalizedString("Stop Closure", comment: "Possible alert effect")
         case .stopMove, .stopMoved: NSLocalizedString("Station Moved", comment: "Possible alert effect")
         case .suspension: NSLocalizedString("Suspension", comment: "Possible alert effect")
+        case .trackChange: NSLocalizedString("Track Change", comment: "Possible alert effect")
         default: nil
         } else { return nil }
         self.effect = effect

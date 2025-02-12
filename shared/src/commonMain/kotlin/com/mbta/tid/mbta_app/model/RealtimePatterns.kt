@@ -210,14 +210,14 @@ sealed class RealtimePatterns {
         )
     }
 
-    fun alertsHereFor(stopIds: Set<String>, directionId: Int): List<Alert>? {
+    fun alertsHereFor(stopIds: Set<String>, directionId: Int, tripId: String?): List<Alert>? {
         val routeIds =
             when (this) {
                 is ByHeadsign -> listOf(this.route.id)
                 is ByDirection -> this.routes.map { it.id }
             }
         return if (alertsHere != null) {
-            Alert.applicableAlerts(alertsHere as List, directionId, routeIds, stopIds)
+            Alert.applicableAlerts(alertsHere as List, directionId, routeIds, stopIds, tripId)
         } else {
             null
         }
