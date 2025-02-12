@@ -592,6 +592,9 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
         return (isTypical() || isUpcoming) && !(isLastStopOnRoutePattern && isArrivalOnly())
     }
 
+    fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+        if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
+
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
             .sortedWith(PatternSorting.comparePatternsByStop(pinnedRoutes, sortByDistanceFrom))
@@ -612,7 +615,9 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                         transit.route.type.isSubway()
                                     ),
                                     { it.shouldShow(stopPatterns.stop) },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(
+                                        stopPatterns.stop.isCRCore
+                                    ),
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -632,7 +637,9 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                         transit.routes.min().type.isSubway()
                                     ),
                                     { it.shouldShow(stopPatterns.stop) },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(
+                                        stopPatterns.stop.isCRCore
+                                    ),
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -700,6 +707,9 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
         return (isTypical() || isUpcoming) && !isArrivalOnly()
     }
 
+    fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+        if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
+
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
             .sortedWith(PatternSorting.comparePatternsByStop(pinnedRoutes, sortByDistanceFrom))
@@ -728,7 +738,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
                                         lineOrRoute.route.type.isSubway()
                                     ),
                                     { it.shouldShow() },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(stop.isCRCore),
                                     globalData.trips,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -752,7 +762,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
                                         lineOrRoute.routes.first().type.isSubway()
                                     ),
                                     { it.shouldShow() },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(stop.isCRCore),
                                     globalData.trips,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded

@@ -49,16 +49,12 @@ data class PatternsByStop(
                                 upcomingTripsMap,
                                 staticData.stop.id,
                                 Alert.applicableAlerts(
-                                        alerts.toList(),
-                                        null,
-                                        listOf(it.route.id),
-                                        it.stopIds,
-                                        null
-                                    )
-                                    .filterNot {
-                                        it.effect == Alert.Effect.TrackChange &&
-                                            staticData.stop.isCRCore
-                                    },
+                                    alerts.toList(),
+                                    null,
+                                    listOf(it.route.id),
+                                    it.stopIds,
+                                    null
+                                ),
                                 alertsDownstream(
                                     alerts.toList(),
                                     it.patterns,
@@ -74,9 +70,7 @@ data class PatternsByStop(
                             it,
                             upcomingTripsMap,
                             staticData.stop.id,
-                            alerts.filterNot {
-                                it.effect == Alert.Effect.TrackChange && staticData.stop.isCRCore
-                            },
+                            alerts,
                             tripsById,
                             hasSchedulesTodayByPattern,
                             allDataLoaded
@@ -118,15 +112,12 @@ data class PatternsByStop(
                                 directionOrHeadsign,
                                 leaf,
                                 Alert.applicableAlerts(
-                                        alerts.toList(),
-                                        null,
-                                        listOf(directionOrHeadsign.route.id),
-                                        leaf.childStopIds,
-                                        null
-                                    )
-                                    .filterNot {
-                                        it.effect == Alert.Effect.TrackChange && stop.isCRCore
-                                    },
+                                    alerts.toList(),
+                                    null,
+                                    listOf(directionOrHeadsign.route.id),
+                                    leaf.childStopIds,
+                                    null
+                                ),
                                 alertsDownstream(
                                     alerts.toList(),
                                     leaf.routePatterns.filterNotNull(),
@@ -142,9 +133,7 @@ data class PatternsByStop(
                             checkNotNull(lineOrRoute as? NearbyHierarchy.LineOrRoute.Line),
                             directionOrHeadsign,
                             leaf,
-                            alerts.filterNot {
-                                it.effect == Alert.Effect.TrackChange && stop.isCRCore
-                            },
+                            alerts,
                             tripsById,
                             hasSchedulesTodayByPattern,
                             allDataLoaded
