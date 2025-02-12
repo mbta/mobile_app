@@ -222,6 +222,57 @@ class TripHeaderCardTest {
     }
 
     @Test
+    fun testTrackNumber() {
+        val now = Instant.parse("2024-08-19T16:44:08-04:00")
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { id = "place-north" }
+        val platformStop = objects.stop { platformCode = "5" }
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+
+        val predictionDeparture = now.plus(5.minutes)
+
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+
+                tripId = ""
+                stopId = stop.id
+                currentStopSequence = 0
+            }
+        val prediction =
+            objects.prediction {
+                departureTime = predictionDeparture
+                stopId = platformStop.id
+            }
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                "",
+                TripHeaderSpec.VehicleOnTrip(
+                    vehicle,
+                    stop,
+                    TripDetailsStopList.Entry(
+                        stop = stop,
+                        stopSequence = 0,
+                        alert = null,
+                        schedule = null,
+                        prediction = prediction,
+                        predictionStop = platformStop,
+                        vehicle = vehicle,
+                        routes = listOf()
+                    ),
+                    false
+                ),
+                stop.id,
+                TripRouteAccents(route),
+                now
+            )
+        }
+
+        composeTestRule.onNodeWithText("Track 5").assertIsDisplayed()
+    }
+
+    @Test
     fun testScheduled() {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()

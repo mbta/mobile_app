@@ -26,7 +26,6 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
                 prediction,
-                predictionStop,
                 schedule,
                 vehicle,
                 routeType,

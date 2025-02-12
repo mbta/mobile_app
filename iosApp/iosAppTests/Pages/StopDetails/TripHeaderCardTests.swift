@@ -198,6 +198,45 @@ final class TripHeaderCardTests: XCTestCase {
         try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
     }
 
+    func testTrackNumber() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.id = "place-rugg" }
+        let platformStop = objects.stop { stop in stop.platformCode = "4" }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .stoppedAt
+            vehicle.tripId = ""
+            vehicle.stopId = stop.id
+            vehicle.currentStopSequence = 0
+        }
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.stopId = platformStop.id
+        }
+        let route = objects.route { route in route.type = .commuterRail }
+
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, .init(
+                stop: stop,
+                stopSequence: 0,
+                alert: nil,
+                schedule: nil,
+                prediction: prediction,
+                predictionStop: platformStop,
+                vehicle: vehicle,
+                routes: []
+            ), true),
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(text: "Track 4"))
+    }
+
     func testScheduled() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()

@@ -52,7 +52,6 @@ sealed class TripInstantDisplay {
     companion object {
         fun from(
             prediction: Prediction?,
-            predictionStop: Stop? = null,
             schedule: Schedule?,
             vehicle: Vehicle?,
             routeType: RouteType?,

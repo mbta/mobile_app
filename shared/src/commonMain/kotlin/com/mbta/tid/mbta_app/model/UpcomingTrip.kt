@@ -92,15 +92,7 @@ constructor(
     }
 
     fun format(now: Instant, routeType: RouteType?, context: TripInstantDisplay.Context) =
-        TripInstantDisplay.from(
-            prediction,
-            predictionStop,
-            schedule,
-            vehicle,
-            routeType,
-            now,
-            context = context
-        )
+        TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
 
     companion object {
         fun <Key> tripsMappedBy(

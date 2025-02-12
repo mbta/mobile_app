@@ -69,6 +69,34 @@ final class TripStopRowTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(UpcomingTripView.self))
     }
 
+    func testTrackNumber() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.id = "place-sstat" }
+        let platformStop = objects.stop { stop in stop.platformCode = "7" }
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+        }
+        let prediction = objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = now.addingTimeInterval(6).toKotlinInstant()
+            prediction.stopId = platformStop.id
+        }
+        let route = objects.route { route in route.type = .commuterRail }
+
+        let sut = TripStopRow(
+            stop: .init(
+                stop: stop, stopSequence: 0, alert: nil,
+                schedule: schedule, prediction: prediction, predictionStop: platformStop,
+                vehicle: nil, routes: [route]
+            ),
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeAccents: .init(route: route)
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Track 7"))
+    }
+
     func testTargetPin() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()

@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
@@ -81,6 +82,38 @@ class TripStopRowTest {
         }
 
         composeTestRule.onNodeWithText("3:37 PM").assertIsDisplayed()
+    }
+
+    @Test
+    fun testTrackNumber() {
+        val now =
+            LocalDateTime.parse("2025-01-24T15:37:39").toInstant(TimeZone.currentSystemDefault())
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { id = "place-bbsta" }
+        val platformStop = objects.stop { platformCode = "2" }
+        val schedule = objects.schedule { departureTime = now + 5.seconds }
+        val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+
+        composeTestRule.setContent {
+            TripStopRow(
+                TripDetailsStopList.Entry(
+                    stop,
+                    0,
+                    null,
+                    schedule,
+                    prediction,
+                    platformStop,
+                    null,
+                    listOf(route)
+                ),
+                now,
+                onTapLink = {},
+                TripRouteAccents(route)
+            )
+        }
+
+        composeTestRule.onNodeWithText("Track 2").assertIsDisplayed()
     }
 
     @Test
