@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -115,7 +116,7 @@ fun TripStopRow(
                                     stop.stop.isCRCore
                             ) {
                                 Text(
-                                    "Track $trackNumber",
+                                    stringResource(R.string.track_number, trackNumber),
                                     Modifier.placeholderIfLoading(),
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelLarge

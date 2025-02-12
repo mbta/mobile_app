@@ -262,7 +262,7 @@ private fun VehicleDescription(
                     spec.entry?.stop?.isCRCore == true
             ) {
                 Text(
-                    "Track $trackNumber",
+                    stringResource(R.string.track_number, trackNumber),
                     Modifier.placeholderIfLoading(),
                     style = MaterialTheme.typography.labelLarge
                 )

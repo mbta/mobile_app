@@ -137,8 +137,11 @@ struct TripHeaderCard: View {
                 if let trackNumber = stopEntry?.trackNumber,
                    routeAccents.type == .commuterRail,
                    stop.isCRCore {
-                    Text("Track \(trackNumber)")
-                        .font(Typography.footnote)
+                    Text(
+                        "Track \(trackNumber)",
+                        comment: "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc"
+                    )
+                    .font(Typography.footnote)
                 }
             }
             .accessibilityElement(children: .combine)

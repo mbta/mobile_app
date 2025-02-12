@@ -195,6 +195,7 @@
     <string name="technical_problem">技術故障</string>
     <string name="tie_replacement">更換軌枕</string>
     <string name="track_change">追蹤修訂</string>
+    <string name="track_number">軌道 %1$s</string>
     <string name="track_problem">軌道故障</string>
     <string name="track_work">軌道作業</string>
     <string name="traffic">交通</string>

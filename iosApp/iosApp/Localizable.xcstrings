@@ -9510,7 +9510,45 @@
       }
     },
     "Track %@" : {
-
+      "comment" : "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pista %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Track %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Faixa %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bài %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "轨道 %@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "軌道 %@"
+          }
+        }
+      }
     },
     "Track Change" : {
       "comment" : "Possible alert effect",
