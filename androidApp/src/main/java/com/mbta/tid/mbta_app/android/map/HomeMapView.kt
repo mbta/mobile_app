@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.map
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,8 +17,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -45,6 +49,7 @@ import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
@@ -89,6 +94,7 @@ fun HomeMapView(
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
+    val configLoadAttempted = viewModel.configLoadAttempted.collectAsState(initial = false).value
     val railRouteShapes = viewModel.railRouteShapes.collectAsState(initial = null).value
     val stopSourceData = viewModel.stopSourceData.collectAsState(initial = null).value
     val globalResponse = viewModel.globalResponse.collectAsState(initial = null).value
@@ -230,175 +236,200 @@ fun HomeMapView(
         }
 
     Box(modifier, contentAlignment = Alignment.Center) {
-        MapboxMap(
-            Modifier.fillMaxSize(),
-            mapEvents =
-                MapEvents(
-                    onStyleLoaded = {
-                        coroutineScope.launch {
-                            layerManager.run {
-                                addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
+        /* Whether loading the config succeeds or not we show the Mapbox Map in case
+         * the user has cached tiles on their device.
+         */
+        if (!configLoadAttempted) {
+            Image(
+                painterResource(R.drawable.empty_map_grid),
+                null,
+                Modifier.fillMaxSize().testTag("Empty map grid"),
+                contentScale = ContentScale.FillWidth
+            )
+        } else {
+            MapboxMap(
+                Modifier.fillMaxSize(),
+                mapEvents =
+                    MapEvents(
+                        onStyleLoaded = {
+                            coroutineScope.launch {
+                                layerManager.run {
+                                    addLayers(
+                                        if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                                    )
+                                }
                             }
-                        }
+                        },
+                        onCameraChanged = { viewportProvider.updateCameraState(it.cameraState) }
+                    ),
+                gesturesSettings =
+                    GesturesSettings {
+                        rotateEnabled = false
+                        pitchEnabled = false
                     },
-                    onCameraChanged = { viewportProvider.updateCameraState(it.cameraState) }
-                ),
-            gesturesSettings =
-                GesturesSettings {
-                    rotateEnabled = false
-                    pitchEnabled = false
-                },
-            locationComponentSettings =
-                LocationComponentSettings(locationPuck = createDefault2DPuck(withBearing = false)) {
-                    puckBearingEnabled = false
-                    enabled = true
-                    pulsingEnabled = false
-                },
-            compass = {},
-            scaleBar = {},
-            logo = { Logo(Modifier.clearAndSetSemantics {}) },
-            mapViewportState = viewportProvider.viewport,
-            style = {
-                MapStyle(
-                    style = if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle
-                )
-            }
-        ) {
-            LaunchedEffect(currentNavEntry) { handleNavChange() }
-            LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
-                viewModel.refreshRouteLineData(now)
-            }
-            LaunchedEffect(railRouteLineData) {
-                refreshRouteLineSource()
-                viewModel.refreshStopFeatures(now, selectedStop)
-            }
-            LaunchedEffect(selectedStop) {
-                positionViewportToStop()
-                viewModel.refreshStopFeatures(now, selectedStop)
-            }
-            LaunchedEffect(stopSourceData) { refreshStopSource() }
-            LaunchedEffect(selectedVehicle) {
-                if (selectedVehicle != null && selectedVehicle.id != previousSelectedVehicleId) {
-                    viewportProvider.vehicleOverview(selectedVehicle, selectedStop, density)
+                locationComponentSettings =
+                    LocationComponentSettings(
+                        locationPuck = createDefault2DPuck(withBearing = false)
+                    ) {
+                        puckBearingEnabled = false
+                        enabled = true
+                        pulsingEnabled = false
+                    },
+                compass = {},
+                scaleBar = {},
+                logo = { Logo(Modifier.clearAndSetSemantics {}) },
+                mapViewportState = viewportProvider.viewport,
+                style = {
+                    MapStyle(
+                        style =
+                            if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle
+                    )
                 }
-            }
+            ) {
+                LaunchedEffect(currentNavEntry) { handleNavChange() }
+                LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
+                    viewModel.refreshRouteLineData(now)
+                }
+                LaunchedEffect(railRouteLineData) {
+                    refreshRouteLineSource()
+                    viewModel.refreshStopFeatures(now, selectedStop)
+                }
+                LaunchedEffect(selectedStop) {
+                    positionViewportToStop()
+                    viewModel.refreshStopFeatures(now, selectedStop)
+                }
+                LaunchedEffect(stopSourceData) { refreshStopSource() }
+                LaunchedEffect(selectedVehicle) {
+                    if (
+                        selectedVehicle != null && selectedVehicle.id != previousSelectedVehicleId
+                    ) {
+                        viewportProvider.vehicleOverview(selectedVehicle, selectedStop, density)
+                    }
+                }
 
-            LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
-            LaunchedEffect(currentNavEntry) { updateDisplayedRoutesBasedOnStop() }
+                LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
+                LaunchedEffect(currentNavEntry) { updateDisplayedRoutesBasedOnStop() }
 
-            val locationProvider = remember { PassthroughLocationProvider() }
+                val locationProvider = remember { PassthroughLocationProvider() }
 
-            MapEffect(true) { map ->
-                map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
-                map.location.setLocationProvider(locationProvider)
-            }
+                MapEffect(true) { map ->
+                    map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+                    map.location.setLocationProvider(locationProvider)
+                }
 
-            LaunchedEffect(locationDataManager) {
-                locationDataManager.currentLocation.collect { location ->
-                    if (location != null) {
-                        locationProvider.sendLocation(
-                            Point.fromLngLat(location.longitude, location.latitude)
+                LaunchedEffect(locationDataManager) {
+                    locationDataManager.currentLocation.collect { location ->
+                        if (location != null) {
+                            locationProvider.sendLocation(
+                                Point.fromLngLat(location.longitude, location.latitude)
+                            )
+                        }
+                    }
+                }
+
+                MapEffect(locationDataManager.hasPermission) { map ->
+                    if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
+                        viewportProvider.follow(
+                            DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
                         )
+                        layerManager.run { resetPuckPosition() }
+                    }
+                }
+
+                LifecycleStartEffect(Unit) {
+                    onStopOrDispose { viewportProvider.saveCurrentViewport() }
+                }
+
+                DisposableMapEffect { map ->
+                    val listener = ManuallyCenteringListener(viewportProvider)
+                    map.gestures.addOnMoveListener(listener)
+                    map.gestures.addOnScaleListener(listener)
+                    map.gestures.addOnShoveListener(listener)
+                    onDispose {
+                        map.gestures.removeOnMoveListener(listener)
+                        map.gestures.removeOnScaleListener(listener)
+                        map.gestures.removeOnShoveListener(listener)
+                    }
+                }
+
+                MapEffect { map ->
+                    if (layerManager.`object` == null) {
+                        layerManager.setObject(MapLayerManager(map.mapboxMap, context))
+                    }
+                }
+
+                if (
+                    isNearbyNotFollowing &&
+                        lastNearbyTransitLocation != null &&
+                        !nearbyTransitSelectingLocation
+                ) {
+                    ViewAnnotation(
+                        options =
+                            ViewAnnotationOptions.Builder()
+                                .geometry(lastNearbyTransitLocation.toPoint())
+                                .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
+                                .build()
+                    ) {
+                        Crosshairs()
+                    }
+                }
+
+                for (vehicle in allVehicles) {
+                    val route = globalResponse?.routes?.get(vehicle.routeId) ?: continue
+                    val isSelected = vehicle.id == selectedVehicle?.id
+                    ViewAnnotation(
+                        options =
+                            viewAnnotationOptions {
+                                selected(isSelected)
+                                geometry(Point.fromLngLat(vehicle.longitude, vehicle.latitude))
+                                annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
+                                allowOverlap(true)
+                                allowOverlapWithPuck(true)
+                                visible(
+                                    zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected
+                                )
+                            }
+                    ) {
+                        VehiclePuck(vehicle = vehicle, route = route, selected = isSelected)
                     }
                 }
             }
 
-            MapEffect(locationDataManager.hasPermission) { map ->
-                if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
-                    viewportProvider.follow(
-                        DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
+            if (!viewportProvider.isFollowingPuck) {
+                val recenterModifier =
+                    if (isNearby) {
+                        Modifier.align(Alignment.TopEnd)
+                            .padding(top = 86.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    } else {
+                        Modifier.align(Alignment.TopEnd).padding(16.dp)
+                    }
+
+                if (locationDataManager.hasPermission) {
+                    RecenterButton(
+                        onClick = { viewportProvider.follow() },
+                        modifier = recenterModifier
                     )
-                    layerManager.run { resetPuckPosition() }
                 }
-            }
-
-            LifecycleStartEffect(Unit) {
-                onStopOrDispose { viewportProvider.saveCurrentViewport() }
-            }
-
-            DisposableMapEffect { map ->
-                val listener = ManuallyCenteringListener(viewportProvider)
-                map.gestures.addOnMoveListener(listener)
-                map.gestures.addOnScaleListener(listener)
-                map.gestures.addOnShoveListener(listener)
-                onDispose {
-                    map.gestures.removeOnMoveListener(listener)
-                    map.gestures.removeOnScaleListener(listener)
-                    map.gestures.removeOnShoveListener(listener)
-                }
-            }
-
-            MapEffect { map ->
-                if (layerManager.`object` == null) {
-                    layerManager.setObject(MapLayerManager(map.mapboxMap, context))
-                }
-            }
-
-            if (
-                isNearbyNotFollowing &&
-                    lastNearbyTransitLocation != null &&
-                    !nearbyTransitSelectingLocation
-            ) {
-                ViewAnnotation(
-                    options =
-                        ViewAnnotationOptions.Builder()
-                            .geometry(lastNearbyTransitLocation.toPoint())
-                            .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
-                            .build()
-                ) {
-                    Crosshairs()
-                }
-            }
-
-            for (vehicle in allVehicles) {
-                val route = globalResponse?.routes?.get(vehicle.routeId) ?: continue
-                val isSelected = vehicle.id == selectedVehicle?.id
-                ViewAnnotation(
-                    options =
-                        viewAnnotationOptions {
-                            selected(isSelected)
-                            geometry(Point.fromLngLat(vehicle.longitude, vehicle.latitude))
-                            annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
-                            allowOverlap(true)
-                            allowOverlapWithPuck(true)
-                            visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected)
-                        }
-                ) {
-                    VehiclePuck(vehicle = vehicle, route = route, selected = isSelected)
-                }
-            }
-        }
-
-        if (!viewportProvider.isFollowingPuck) {
-            val recenterModifier =
                 if (isNearby) {
-                    Modifier.align(Alignment.TopEnd)
-                        .padding(top = 86.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
-                } else {
-                    Modifier.align(Alignment.TopEnd).padding(16.dp)
+                    LocationAuthButton(
+                        locationDataManager,
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
+                    )
                 }
-
-            if (locationDataManager.hasPermission) {
-                RecenterButton(onClick = { viewportProvider.follow() }, modifier = recenterModifier)
             }
-            if (isNearby) {
-                LocationAuthButton(
-                    locationDataManager,
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
-                )
-            }
-        }
 
-        LaunchedEffect(viewportProvider.isManuallyCentering) {
-            if (
-                viewportProvider.isManuallyCentering && currentNavEntry is SheetRoutes.NearbyTransit
-            ) {
-                nearbyTransitSelectingLocation = true
+            LaunchedEffect(viewportProvider.isManuallyCentering) {
+                if (
+                    viewportProvider.isManuallyCentering &&
+                        currentNavEntry is SheetRoutes.NearbyTransit
+                ) {
+                    nearbyTransitSelectingLocation = true
+                }
             }
-        }
 
-        if (nearbyTransitSelectingLocation) {
-            Crosshairs()
+            if (nearbyTransitSelectingLocation) {
+                Crosshairs()
+            }
         }
     }
 }
