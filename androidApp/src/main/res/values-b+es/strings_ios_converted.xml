@@ -200,6 +200,7 @@
     <string name="switch_problem">Problema de cambio de carril</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
+    <string name="track_change">Cambio de pista</string>
     <string name="track_problem">Problema de vía</string>
     <string name="track_work">Trabajo en vía</string>
     <string name="traffic">Tráfico</string>

@@ -514,7 +514,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
-        try sut.inspect().find(AlertCard.self).button().tap()
+        try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
         XCTAssertEqual(
             nearbyVM.navigationStack.last,
             .alertDetails(alertId: alert.id, line: nil, routes: nil, stop: stop)
