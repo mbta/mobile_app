@@ -55,6 +55,10 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         return trips
     }
 
+    /**
+     * If the stop serves only 1 route in a single direction, returns a new filter for that route
+     * and direction.
+     */
     fun autoStopFilter(): StopDetailsFilter? {
         if (routes.size != 1) {
             return null
@@ -65,7 +69,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             return null
         }
         val direction = directions.first()
-        return StopDetailsFilter(route.routeIdentifier, direction)
+        return StopDetailsFilter(route.routeIdentifier, direction, autoFilter = true)
     }
 
     fun autoTripFilter(

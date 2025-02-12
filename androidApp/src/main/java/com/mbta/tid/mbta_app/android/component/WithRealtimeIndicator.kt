@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
@@ -19,7 +20,7 @@ import com.mbta.tid.mbta_app.android.R
 fun WithRealtimeIndicator(
     modifier: Modifier = Modifier,
     hideIndicator: Boolean = false,
-    prediction: @Composable () -> Unit
+    prediction: @Composable RowScope.() -> Unit
 ) {
     val subjectSpacing = 4.dp
     val iconSize = 20.dp

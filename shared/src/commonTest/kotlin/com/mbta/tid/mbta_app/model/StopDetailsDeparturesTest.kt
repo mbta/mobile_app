@@ -1130,7 +1130,7 @@ class StopDetailsDeparturesTest {
                 )
 
             assertEquals(
-                StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId),
+                StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId, autoFilter = true),
                 checkNotNull(departures).autoStopFilter()
             )
     }
