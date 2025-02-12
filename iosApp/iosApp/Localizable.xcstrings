@@ -2635,7 +2635,7 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Xem chế độ xem điểm dừng mới"
           }
         },
