@@ -163,6 +163,7 @@
     <string name="selected_stop">%1$s, parada seleccionada</string>
     <string name="selected_stop_first_stop">%1$s, parada seleccionada, primera parada</string>
     <string name="service_change">Cambio de servicio</string>
+    <string name="service_change_sentence_case">cambio de servicio</string>
     <string name="service_ended">Servicio finalizado</string>
     <string name="service_suspended">Servicio suspendido</string>
     <string name="setting_elevator_accessibility">Mostrar accesibilidad del ascensor</string>
@@ -174,7 +175,7 @@
     <string name="signal_problem">Problema de señal</string>
     <string name="slippery_rail">Riel resbaloso</string>
     <string name="snow">Nieve</string>
-    <string name="snow_route">Ruta de nieve</string>
+    <string name="snow_route_sentence_case">Ruta de nieve</string>
     <string name="southbound">En dirección sur</string>
     <string name="special_event">Evento especial</string>
     <string name="speed_restriction">Restricción de velocidad</string>
@@ -184,6 +185,7 @@
     <string name="station_closure">Cierre de estación</string>
     <string name="station_moved">Estación movida</string>
     <string name="stop_closed">Parada cerrada</string>
+    <string name="stop_closed_sentence_case">parada cerrada</string>
     <string name="stop_closure">Cierre de parada</string>
     <string name="stop_filter_pills_filter_hint">Aplicar un filtro para que sólo se muestren las llegadas de esta ruta</string>
     <string name="stop_filter_pills_remove_hint">Eliminar el filtro y mostrar todas las rutas</string>

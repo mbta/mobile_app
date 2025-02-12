@@ -159,6 +159,7 @@
     <string name="selected_stop">%1$s，选定站点</string>
     <string name="selected_stop_first_stop">%1$s，选定站点，第一站</string>
     <string name="service_change">服务变更</string>
+    <string name="service_change_sentence_case">服务变更</string>
     <string name="service_ended">服务已结束</string>
     <string name="service_suspended">服务暂停</string>
     <string name="setting_elevator_accessibility">显示电梯可达性</string>
@@ -170,7 +171,7 @@
     <string name="signal_problem">信号故障</string>
     <string name="slippery_rail">轨道湿滑</string>
     <string name="snow">降雪</string>
-    <string name="snow_route">雪道</string>
+    <string name="snow_route_sentence_case">雪道</string>
     <string name="southbound">南行</string>
     <string name="special_event">特殊事件</string>
     <string name="speed_restriction">速度限制</string>
@@ -180,6 +181,7 @@
     <string name="station_closure">车站关闭</string>
     <string name="station_moved">车站搬迁</string>
     <string name="stop_closed">站点已关闭</string>
+    <string name="stop_closed_sentence_case">停止关闭</string>
     <string name="stop_closure">站点关闭</string>
     <string name="stop_filter_pills_filter_hint">应用过滤器，以便仅显示来自该路线的到达</string>
     <string name="stop_filter_pills_remove_hint">删除过滤器并显示所有路线</string>

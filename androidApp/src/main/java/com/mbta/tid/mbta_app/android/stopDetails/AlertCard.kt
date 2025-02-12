@@ -28,7 +28,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.AlertIcon
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
-import com.mbta.tid.mbta_app.android.util.effectDescription
+import com.mbta.tid.mbta_app.android.util.downstreamEffectDescription
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
@@ -54,7 +54,7 @@ fun AlertCard(
         FormattedAlert.format(alert)?.effect?.let { stringResource(it) } ?: alert.effect.name
     val headerText: String =
         when (spec) {
-            AlertCardSpec.Downstream -> alert.effectDescription()
+            AlertCardSpec.Downstream -> alert.downstreamEffectDescription()
             AlertCardSpec.Elevator -> alert.header ?: effectName
             else -> effectName
         }

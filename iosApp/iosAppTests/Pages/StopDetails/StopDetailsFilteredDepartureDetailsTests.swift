@@ -462,7 +462,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "Suspension ahead"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Service suspended ahead"))
         XCTAssertThrowsError(try sut.inspect().find(text: alert.header!))
         try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
         XCTAssertEqual(
