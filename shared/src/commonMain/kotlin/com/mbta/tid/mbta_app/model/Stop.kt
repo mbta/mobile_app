@@ -20,6 +20,12 @@ data class Stop(
 ) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
 
+    /**
+     * Commuter Rail core stations have realtime track numbers displayed and track change alerts
+     * hidden.
+     */
+    val isCRCore = this.id in crCoreStations || this.parentStationId in crCoreStations
+
     fun resolveParent(stops: Map<String, Stop>): Stop {
         if (this.parentStationId == null) return this
         val parentStation = stops[parentStationId] ?: return this
@@ -39,5 +45,7 @@ data class Stop(
             val parent2 = stop2.resolveParent(stops)
             return parent1.id == parent2.id
         }
+
+        val crCoreStations = setOf("place-north", "place-sstat", "place-bbsta", "place-rugg")
     }
 }
