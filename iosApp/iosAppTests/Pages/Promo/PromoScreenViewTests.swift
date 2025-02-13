@@ -20,10 +20,10 @@ final class PromoScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() }
         )
         let exp = sut.inspection.inspect { view in
-            XCTAssertNotNil(try view.find(text: "See arrivals and track vehicles in one place"))
+            XCTAssertNotNil(try view.find(text: "Check out the new stop view"))
             XCTAssertNotNil(try view.find(
-                text: "We created a new view that allows you to see arrivals at your stop "
-                    + "and track vehicle locations all at once. Send us feedback to let us know what you think!"
+                text: "We now show arrivals and detailed vehicle locations all at once. "
+                    + "Let us know what you think!"
             ))
             try view.find(button: "Got it").tap()
             await self.fulfillment(of: [advanceExp], timeout: 1)
