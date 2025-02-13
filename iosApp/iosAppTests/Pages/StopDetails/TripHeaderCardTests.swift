@@ -202,7 +202,11 @@ final class TripHeaderCardTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.id = "place-rugg" }
-        let platformStop = objects.stop { stop in stop.platformCode = "4" }
+        let platformStop = objects.stop { platformStop in
+            platformStop.platformCode = "4"
+            platformStop.vehicleType = .commuterRail
+            platformStop.parentStationId = stop.id
+        }
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.currentStatus = .stoppedAt
@@ -411,6 +415,36 @@ final class TripHeaderCardTests: XCTestCase {
         )
         XCTAssertNotNil(try withScheduleAtOtherStop.inspect().find(
             viewWithAccessibilityLabel: "Selected bus scheduled to depart other stop"
+        ))
+
+        let boardingVehicle = objects.vehicle { boardingVehicle in
+            boardingVehicle.currentStatus = .stoppedAt
+        }
+        let coreCRStop = objects.stop { stop in
+            stop.name = "North Station"
+            stop.id = "place-north"
+        }
+        let platformStop = objects.stop { platformStop in
+            platformStop.platformCode = "4"
+            platformStop.vehicleType = .commuterRail
+            platformStop.parentStationId = coreCRStop.id
+        }
+        let withTrackNumber = TripHeaderCard(
+            spec: .vehicle(boardingVehicle, coreCRStop, .init(
+                stop: stop, stopSequence: 0, alert: nil, schedule: nil,
+                prediction: objects.prediction { prediction in
+                    prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+                    prediction.stopId = platformStop.id
+                }, predictionStop: platformStop, vehicle: boardingVehicle, routes: []
+            ), false),
+            tripId: "", targetId: coreCRStop.id,
+            routeAccents: .init(type: .commuterRail),
+            onTap: {},
+            now: now
+        )
+        XCTAssertNotNil(try withTrackNumber.inspect().find(viewWithAccessibilityLabel: "Boarding on track 4"))
+        XCTAssertNotNil(try withTrackNumber.inspect().find(
+            viewWithAccessibilityLabel: "Selected train Now at North Station, selected stop"
         ))
     }
 }

@@ -226,7 +226,12 @@ class TripHeaderCardTest {
         val now = Instant.parse("2024-08-19T16:44:08-04:00")
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-north" }
-        val platformStop = objects.stop { platformCode = "5" }
+        val platformStop =
+            objects.stop {
+                platformCode = "5"
+                vehicleType = RouteType.COMMUTER_RAIL
+                parentStationId = stop.id
+            }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
 
         val predictionDeparture = now.plus(5.minutes)
@@ -269,7 +274,7 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Track 5").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Track 5", useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test
@@ -377,6 +382,64 @@ class TripHeaderCardTest {
                 "Selected bus Approaching stop, selected stop",
                 useUnmergedTree = true
             )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testAccessibilityVehicleDescriptionTrackNumber() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val stop =
+            objects.stop {
+                id = "place-rugg"
+                name = "Ruggles"
+            }
+        val platformStop =
+            objects.stop {
+                platformCode = "3"
+                vehicleType = RouteType.COMMUTER_RAIL
+                parentStationId = stop.id
+            }
+        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val prediction =
+            objects.prediction {
+                departureTime = now.plus(5.minutes)
+                stopId = platformStop.id
+            }
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                "",
+                TripHeaderSpec.VehicleOnTrip(
+                    vehicle,
+                    stop,
+                    TripDetailsStopList.Entry(
+                        stop = stop,
+                        stopSequence = 0,
+                        alert = null,
+                        schedule = null,
+                        prediction = prediction,
+                        predictionStop = platformStop,
+                        vehicle = vehicle,
+                        routes = listOf()
+                    ),
+                    false
+                ),
+                stop.id,
+                TripRouteAccents(route),
+                now
+            )
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription(
+                "Selected train Now at Ruggles, selected stop",
+                useUnmergedTree = true
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Boarding on track 3", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 

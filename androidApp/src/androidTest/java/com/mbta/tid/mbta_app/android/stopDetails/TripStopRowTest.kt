@@ -90,7 +90,12 @@ class TripStopRowTest {
             LocalDateTime.parse("2025-01-24T15:37:39").toInstant(TimeZone.currentSystemDefault())
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-bbsta" }
-        val platformStop = objects.stop { platformCode = "2" }
+        val platformStop =
+            objects.stop {
+                platformCode = "2"
+                vehicleType = RouteType.COMMUTER_RAIL
+                parentStationId = stop.id
+            }
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
@@ -114,6 +119,7 @@ class TripStopRowTest {
         }
 
         composeTestRule.onNodeWithText("Track 2").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Boarding on track 2").assertIsDisplayed()
     }
 
     @Test

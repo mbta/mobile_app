@@ -22,6 +22,7 @@
     <string name="autos_impeding_service">Machin Ki Bloke Sèvis la</string>
     <string name="back_button_label">Retounen</string>
     <string name="boarding_abbr">BRD</string>
+    <string name="boarding_track">Monte sou track %1$s</string>
     <string name="bus">bis</string>
     <string name="buses">bis yo</string>
     <string name="cancelled">Anile</string>

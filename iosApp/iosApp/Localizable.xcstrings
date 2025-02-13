@@ -2365,6 +2365,47 @@
         }
       }
     },
+    "Boarding on track %@" : {
+      "comment" : "Screen reader text describing the platform the train is boarding at",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Embarque en la vía %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Monte sou track %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Embarque na pista %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lên tàu theo đường ray %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@号轨道登车"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@號軌道登車"
+          }
+        }
+      }
+    },
     "BRD" : {
       "comment" : "Shorthand for boarding",
       "localizations" : {

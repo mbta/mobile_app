@@ -73,7 +73,11 @@ final class TripStopRowTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.id = "place-sstat" }
-        let platformStop = objects.stop { stop in stop.platformCode = "7" }
+        let platformStop = objects.stop { platformStop in
+            platformStop.platformCode = "7"
+            platformStop.vehicleType = .commuterRail
+            platformStop.parentStationId = stop.id
+        }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -95,6 +99,7 @@ final class TripStopRowTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Track 7"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Boarding on track 7"))
     }
 
     func testTargetPin() throws {

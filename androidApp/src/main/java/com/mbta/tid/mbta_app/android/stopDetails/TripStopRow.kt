@@ -110,14 +110,17 @@ fun TripStopRow(
                                     ),
                             )
                             val trackNumber = stop.trackNumber
-                            if (
-                                trackNumber != null &&
-                                    routeAccents.type == RouteType.COMMUTER_RAIL &&
-                                    stop.stop.isCRCore
-                            ) {
+                            if (trackNumber != null) {
                                 Text(
                                     stringResource(R.string.track_number, trackNumber),
-                                    Modifier.placeholderIfLoading(),
+                                    Modifier.semantics {
+                                            contentDescription =
+                                                context.getString(
+                                                    R.string.boarding_track,
+                                                    trackNumber
+                                                )
+                                        }
+                                        .placeholderIfLoading(),
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelLarge
                                 )

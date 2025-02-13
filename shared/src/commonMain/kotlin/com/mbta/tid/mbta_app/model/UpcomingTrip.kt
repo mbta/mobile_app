@@ -22,6 +22,8 @@ constructor(
     val trip: Trip,
     val schedule: Schedule? = null,
     val prediction: Prediction? = null,
+    // The prediction stop is the stop associated with the stopId contained in the prediction,
+    // it can be a child stop with specific boarding information, like the track number
     val predictionStop: Stop? = null,
     val vehicle: Vehicle? = null
 ) : Comparable<UpcomingTrip> {
@@ -59,8 +61,8 @@ constructor(
             schedule?.scheduleTime != null &&
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled
 
-    val trackNumber: String?
-        get() = predictionStop?.platformCode
+    val trackNumber: String? =
+        if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 

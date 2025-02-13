@@ -19,6 +19,7 @@
     <string name="autos_impeding_service">Automóviles que obstaculizan el servicio</string>
     <string name="back_button_label">Atrás</string>
     <string name="boarding_abbr">ABORD.</string>
+    <string name="boarding_track">Embarque en la vía %1$s</string>
     <string name="bus">autobús</string>
     <string name="buses">autobuses</string>
     <string name="cancelled">Cancelado</string>

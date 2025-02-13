@@ -16,12 +16,14 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val alert: Alert?,
         val schedule: Schedule?,
         val prediction: Prediction?,
+        // The prediction stop can be the same as `stop`, but it can also be a child stop which
+        // contains more specific boarding information for a prediction, like the track number
         val predictionStop: Stop?,
         val vehicle: Vehicle?,
         val routes: List<Route>
     ) {
-        val trackNumber: String?
-            get() = predictionStop?.platformCode
+        val trackNumber: String? =
+            if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(

@@ -124,34 +124,36 @@ struct TripHeaderCard: View {
     }
 
     @ViewBuilder private func vehicleDescription(
-        _ vehicle: Vehicle, _ stop: Stop,
-        _ stopEntry: TripDetailsStopList.Entry?,
-        _ atTerminal: Bool
+        _ vehicle: Vehicle, _ stop: Stop, _ entry: TripDetailsStopList.Entry?, _ atTerminal: Bool
     ) -> some View {
         if vehicle.tripId == tripId {
             VStack(alignment: .leading, spacing: 2) {
-                vehicleStatusDescription(vehicle.currentStatus, atTerminal)
-                    .font(Typography.footnote)
-                Text(stop.name)
-                    .font(Typography.headlineBold)
-                if let trackNumber = stopEntry?.trackNumber,
-                   routeAccents.type == .commuterRail,
-                   stop.isCRCore {
+                VStack(alignment: .leading, spacing: 2) {
+                    vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                        .font(Typography.footnote)
+                    Text(stop.name)
+                        .font(Typography.headlineBold)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+                if let trackNumber = entry?.trackNumber {
                     Text(
                         "Track \(trackNumber)",
                         comment: "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc"
                     )
                     .font(Typography.footnote)
+                    .accessibilityLabel(Text(
+                        "Boarding on track \(trackNumber)",
+                        comment: "Screen reader text describing the platform the train is boarding at"
+                    ))
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
         }
     }
 
     private func vehicleDescriptionAccessibilityText(
-        _ vehicle: Vehicle, _ stop: Stop,
-        _ atTerminal: Bool
+        _ vehicle: Vehicle, _ stop: Stop, _ atTerminal: Bool
     ) -> Text {
         let typeLabel = routeAccents.type.typeText(isOnly: true)
         let statusLabel = vehicleStatusString(vehicle.currentStatus, atTerminal)
@@ -297,7 +299,7 @@ struct TripHeaderCard: View {
 
     var upcomingTripViewState: UpcomingTripView.State? {
         let entry: TripDetailsStopList.Entry? = switch spec {
-        case let .vehicle(_, _, stopEntry, _): stopEntry
+        case let .vehicle(_, _, stopEntry, atTerminal): atTerminal ? stopEntry : nil
         case let .scheduled(_, stopEntry): stopEntry
         default: nil
         }

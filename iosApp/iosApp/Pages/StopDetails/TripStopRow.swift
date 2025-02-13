@@ -51,13 +51,12 @@ struct TripStopRow: View {
                                         .foregroundStyle(Color.text)
                                         .multilineTextAlignment(.leading)
                                         .accessibilityLabel(stopAccessibilityLabel)
-                                    if let trackNumber = stop.trackNumber,
-                                       routeAccents.type == .commuterRail,
-                                       stop.stop.isCRCore {
+                                    if let trackNumber = stop.trackNumber {
                                         Text("Track \(trackNumber)")
                                             .font(Typography.footnote)
                                             .foregroundStyle(Color.text)
                                             .multilineTextAlignment(.leading)
+                                            .accessibilityLabel(Text("Boarding on track \(trackNumber)"))
                                     }
                                 }
                                 Spacer()

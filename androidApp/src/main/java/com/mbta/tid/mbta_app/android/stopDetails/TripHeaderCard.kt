@@ -236,34 +236,30 @@ private fun VehicleDescription(
     val context = LocalContext.current
     if (spec.vehicle.tripId == tripId) {
         Column(
-            Modifier.clearAndSetSemantics {
-                contentDescription =
-                    vehicleDescriptionAccessibilityText(
-                        spec.vehicle,
-                        spec.stop,
-                        spec.atTerminal,
-                        targetId,
-                        routeAccents,
-                        context
-                    )
-            },
+            Modifier.semantics(mergeDescendants = true) {},
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
-            Text(
-                spec.stop.name,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.placeholderIfLoading()
-            )
-            val trackNumber = spec.entry?.trackNumber
-            if (
-                trackNumber != null &&
-                    routeAccents.type == RouteType.COMMUTER_RAIL &&
-                    spec.entry?.stop?.isCRCore == true
+            Column(
+                Modifier.clearAndSetSemantics {
+                    contentDescription =
+                        vehicleDescriptionAccessibilityText(spec, targetId, routeAccents, context)
+                },
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
                 Text(
-                    stringResource(R.string.track_number, trackNumber),
-                    Modifier.placeholderIfLoading(),
+                    spec.stop.name,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.placeholderIfLoading()
+                )
+            }
+            spec.entry?.trackNumber?.let {
+                Text(
+                    context.getString(R.string.track_number, it),
+                    Modifier.semantics {
+                            contentDescription = context.getString(R.string.boarding_track, it)
+                        }
+                        .placeholderIfLoading(),
                     style = MaterialTheme.typography.labelLarge
                 )
             }
@@ -272,28 +268,19 @@ private fun VehicleDescription(
 }
 
 private fun vehicleDescriptionAccessibilityText(
-    vehicle: Vehicle,
-    stop: Stop,
-    atTerminal: Boolean,
+    spec: TripHeaderSpec.VehicleOnTrip,
     targetId: String,
     routeAccents: TripRouteAccents,
     context: Context
 ): String {
-    return if (targetId == stop.id) {
-        context.getString(
-            R.string.vehicle_desc_accessibility_desc_selected_stop,
-            routeAccents.type.typeText(context, isOnly = true),
-            vehicleStatusString(context, vehicle.currentStatus, atTerminal),
-            stop.name
-        )
-    } else {
-        context.getString(
-            R.string.vehicle_desc_accessibility_desc,
-            routeAccents.type.typeText(context, isOnly = true),
-            vehicleStatusString(context, vehicle.currentStatus, atTerminal),
-            stop.name
-        )
-    }
+    val stop = spec.stop
+    return context.getString(
+        if (targetId == stop.id) R.string.vehicle_desc_accessibility_desc_selected_stop
+        else R.string.vehicle_desc_accessibility_desc,
+        routeAccents.type.typeText(context, isOnly = true),
+        vehicleStatusString(context, spec.vehicle.currentStatus, spec.atTerminal),
+        stop.name
+    )
 }
 
 @Composable
@@ -453,7 +440,7 @@ private fun upcomingTripViewState(
 ): UpcomingTripViewState? {
     val entry =
         when (spec) {
-            is TripHeaderSpec.VehicleOnTrip -> spec.entry
+            is TripHeaderSpec.VehicleOnTrip -> if (spec.atTerminal) spec.entry else null
             is TripHeaderSpec.Scheduled -> spec.entry
             else -> null
         }

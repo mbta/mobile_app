@@ -19,6 +19,7 @@
     <string name="autos_impeding_service">Carros impedindo serviço</string>
     <string name="back_button_label">Voltar</string>
     <string name="boarding_abbr">TRA</string>
+    <string name="boarding_track">Embarque na pista %1$s</string>
     <string name="bus">ônibus</string>
     <string name="buses">ônibus</string>
     <string name="cancelled">Cancelado</string>
