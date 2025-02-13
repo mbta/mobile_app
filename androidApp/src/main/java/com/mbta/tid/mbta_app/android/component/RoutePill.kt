@@ -44,7 +44,17 @@ fun RoutePill(
     isActive: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val spec = RoutePillSpec(route, line, type)
+    RoutePill(route, line, isActive, RoutePillSpec(route, line, type), modifier)
+}
+
+@Composable
+fun RoutePill(
+    route: Route?,
+    line: Line? = null,
+    isActive: Boolean = true,
+    spec: RoutePillSpec,
+    modifier: Modifier = Modifier
+) {
     val textColor = Color.fromHex(spec.textColor)
     val routeColor = Color.fromHex(spec.routeColor)
 
@@ -78,7 +88,7 @@ fun RoutePill(
             RoutePillSpec.Size.FlexPill ->
                 height(24.dp).padding(horizontal = 12.dp).widthIn(min = (48 - 12 * 2).dp)
             RoutePillSpec.Size.FlexPillSmall ->
-                height(16.dp).padding(horizontal = 8.dp).widthIn(min = (36 - 8 * 2).dp)
+                padding(horizontal = 8.dp).height(16.dp).widthIn(min = (36 - 8 * 2).dp)
         }
 
     fun Modifier.withColor() =

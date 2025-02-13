@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.search.results
 
-import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -13,22 +12,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -43,7 +41,6 @@ fun StopResultsView(
     val scrollState = rememberScrollState()
 
     val routes = globalResponse?.getTypicalRoutesFor(stop.id) ?: emptyList()
-    val isLast = shape.bottomStart.toPx(Size.VisibilityThreshold, Density(1f)) == 0f
 
     Column {
         Row(
@@ -82,21 +79,37 @@ fun StopResultsView(
                         Modifier.horizontalScroll(scrollState)
                             .padding(start = 16.dp, bottom = 12.dp)
                 ) {
-                    routes.map {
-                        RoutePill(
-                            route = it,
-                            type = RoutePillSpec.Type.FlexCompact,
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
-                    }
+                    routes
+                        .sortedBy { it.sortOrder }
+                        .map<Route, Pair<Route, RoutePillSpec>> { route ->
+                            val line: Line? =
+                                if (route.lineId != null) {
+                                    globalResponse?.lines?.get(route.lineId)
+                                } else {
+                                    null
+                                }
+
+                            val context: RoutePillSpec.Context =
+                                if (stop.isStation) {
+                                    RoutePillSpec.Context.SearchStation
+                                } else {
+                                    RoutePillSpec.Context.Default
+                                }
+                            Pair(
+                                route,
+                                RoutePillSpec(route, line, RoutePillSpec.Type.FlexCompact, context)
+                            )
+                        }
+                        .distinctBy { (_, spec) -> spec }
+                        .map { (route, spec) ->
+                            RoutePill(
+                                route = route,
+                                spec = spec,
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                        }
                 }
             }
-        }
-        if (!isLast) {
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth().height(1.dp),
-                color = colorResource(id = R.color.fill1)
-            )
         }
     }
 }
