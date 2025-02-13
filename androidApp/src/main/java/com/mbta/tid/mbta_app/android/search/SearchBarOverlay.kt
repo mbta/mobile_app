@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.search
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,13 +44,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.min
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
@@ -69,7 +68,7 @@ fun SearchBarOverlay(
         }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
-    val searchResultsVm = getSearchResultsVm(globalResponse = globalResponse)
+    val searchResultsVm: SearchResultsViewModel = koinViewModel()
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 
     var searchBarHeight by rememberSaveable { mutableStateOf(0) }
@@ -81,9 +80,8 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, visible) {
-        Log.i("KB", "Launching search with input: ${searchInputState}")
-        searchResultsVm.getSearchResults(searchInputState)
+    LaunchedEffect(searchInputState, visible, globalResponse) {
+        searchResultsVm.getSearchResults(searchInputState, globalResponse)
     }
     LaunchedEffect(visible, expanded) {
         if (visible) {
@@ -128,6 +126,8 @@ fun SearchBarOverlay(
                                         with(LocalDensity.current) {
                                             androidx.compose.ui.unit.min(
                                                 (searchBarHeight).toDp() - 8.dp,
+                                                // Prevent giant box during animation when
+                                                // returning from results
                                                 64.dp
                                             )
                                         }
@@ -147,8 +147,6 @@ fun SearchBarOverlay(
                                 )
                                 .onSizeChanged {
                                     if (!expanded) {
-                                        Log.i("KB", "SIZE CHANGED ${it.height}")
-
                                         searchBarHeight = it.height
                                     }
                                 }
