@@ -246,13 +246,6 @@ fun NearbyTransitPage(
         searchFocusRequester.requestFocus()
     }
 
-    fun panToDefaultCenter() {
-        nearbyTransit.viewportProvider.animateTo(
-            ViewportProvider.Companion.Defaults.center,
-            zoom = 13.75
-        )
-    }
-
     LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
         mapViewModel.loadConfig()
     }
@@ -391,6 +384,14 @@ fun NearbyTransitPage(
                         nearbyViewModel.reset()
                         targetLocation = null
                     }
+                }
+
+                fun panToDefaultCenter() {
+                    nearbyTransit.viewportProvider.isManuallyCentering = true
+                    nearbyTransit.viewportProvider.animateTo(
+                        ViewportProvider.Companion.Defaults.center,
+                        zoom = 13.75
+                    )
                 }
 
                 NearbyTransitView(

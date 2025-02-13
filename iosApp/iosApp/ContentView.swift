@@ -125,10 +125,13 @@ struct ContentView: View {
                     noNearbyStops: { NoNearbyStopsView(
                         hideMaps: contentVM.hideMaps,
                         onOpenSearch: { searchObserver.isFocused = true },
-                        onPanToDefaultCenter: { viewportProvider.animateTo(
-                            coordinates: ViewportProvider.Defaults.center,
-                            zoom: 13.75
-                        ) }
+                        onPanToDefaultCenter: {
+                            viewportProvider.setIsManuallyCentering(true)
+                            viewportProvider.animateTo(
+                                coordinates: ViewportProvider.Defaults.center,
+                                zoom: 13.75
+                            )
+                        }
                     ) }
                 )
                 .tag(SelectedTab.nearby)

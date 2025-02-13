@@ -118,7 +118,11 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
         options: CameraOptions,
         animation: MapAnimationOptions = MapAnimationDefaults.options
     ) {
-        this.viewport.easeTo(options, animation)
+        this.viewport.easeTo(
+            options,
+            animation,
+            completionListener = { isManuallyCentering = false }
+        )
     }
 
     @OptIn(MapboxExperimental::class)
