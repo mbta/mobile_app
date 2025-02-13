@@ -28,6 +28,7 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
             alert: nil,
             schedule: nil,
             prediction: prediction,
+            predictionStop: stop,
             vehicle: nil,
             routes: []
         )

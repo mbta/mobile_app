@@ -78,6 +78,7 @@ class TripStopsTest {
                         alert = null,
                         schedule1,
                         prediction1,
+                        stop1,
                         vehicle,
                         listOf(route)
                     ),
@@ -87,6 +88,7 @@ class TripStopsTest {
                         alert = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
@@ -96,6 +98,7 @@ class TripStopsTest {
                         alert = null,
                         schedule3,
                         prediction3,
+                        stop3Target,
                         vehicle,
                         listOf(route)
                     ),
@@ -105,6 +108,7 @@ class TripStopsTest {
                         alert = null,
                         schedule4,
                         prediction4,
+                        stop4,
                         vehicle,
                         listOf(route)
                     ),
@@ -114,6 +118,7 @@ class TripStopsTest {
                         alert = null,
                         schedule5,
                         prediction5,
+                        stop5,
                         vehicle,
                         listOf(route)
                     ),
@@ -125,7 +130,7 @@ class TripStopsTest {
                 targetId = stop3Target.id,
                 stops,
                 stopSequence = 1,
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
                 now,
                 onTapLink = {},
                 routeAccents = TripRouteAccents(route),
@@ -192,6 +197,7 @@ class TripStopsTest {
                         alert = null,
                         schedule1,
                         prediction1,
+                        stop1,
                         vehicle,
                         listOf(route)
                     ),
@@ -201,6 +207,7 @@ class TripStopsTest {
                         alert = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
@@ -210,6 +217,7 @@ class TripStopsTest {
                         alert = null,
                         schedule3,
                         prediction3,
+                        stop3,
                         vehicle,
                         listOf(route)
                     ),
@@ -221,7 +229,7 @@ class TripStopsTest {
                 targetId = stopTarget.id,
                 stops,
                 stopSequence = 0,
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
                 now,
                 onTapLink = {},
                 routeAccents = TripRouteAccents(route),
@@ -281,6 +289,7 @@ class TripStopsTest {
                 alert = null,
                 schedule1,
                 prediction1,
+                stop1,
                 vehicle,
                 listOf(route)
             )
@@ -295,6 +304,7 @@ class TripStopsTest {
                         alert = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
@@ -368,6 +378,7 @@ class TripStopsTest {
                 alert = null,
                 schedule1,
                 prediction1,
+                stop1,
                 vehicle,
                 listOf(route)
             )
@@ -382,6 +393,7 @@ class TripStopsTest {
                         alert = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
@@ -391,6 +403,7 @@ class TripStopsTest {
                         alert = null,
                         schedule3,
                         prediction3,
+                        stop3,
                         vehicle,
                         listOf(route)
                     ),

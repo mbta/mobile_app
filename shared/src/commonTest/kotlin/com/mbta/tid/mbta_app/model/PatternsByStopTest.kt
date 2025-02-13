@@ -754,7 +754,7 @@ class PatternsByStopTest {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
             }
         val upcomingTripCCleveland1 =
-            objects.upcomingTrip(scheduleCCleveland1, predictionCCleveland1, vehicleCCleveland1)
+            objects.upcomingTrip(scheduleCCleveland1, predictionCCleveland1, vehicle = vehicleCCleveland1)
         val upcomingTripScheduledCCleveland1 = objects.upcomingTrip(scheduleCCleveland1)
 
         val tripEMedford1 = objects.trip(routePatternEMedford)
@@ -779,7 +779,7 @@ class PatternsByStopTest {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
             }
         val upcomingTripCMedford1 =
-            objects.upcomingTrip(scheduleCMedford1, predictionCMedford1, vehicleCMedford1)
+            objects.upcomingTrip(scheduleCMedford1, predictionCMedford1, vehicle = vehicleCMedford1)
         val upcomingTripScheduledCMedford1 = objects.upcomingTrip(scheduleCMedford1)
 
         val staticPatternsWest =
