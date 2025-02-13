@@ -2653,6 +2653,47 @@
         }
       }
     },
+    "Check out the new stop view" : {
+      "comment" : "Promo text header that displays when users first open the app after a redesign of the stop page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vea la nueva vista de parada"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tcheke nouvo View Stop la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Confira a nova visualização de parada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xem chế độ xem điểm dừng mới"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "查看新的停靠站視圖"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "查看新的停靠站視圖"
+          }
+        }
+      }
+    },
     "Clear" : {
       "comment" : "VoiceOver label for a generic clear button",
       "localizations" : {
@@ -7412,47 +7453,6 @@
         }
       }
     },
-    "See arrivals and track vehicles in one place" : {
-      "comment" : "Promo text header that displays when users first open the app after a redesign of the stop page",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vea las llegadas y rastree los vehículos en un solo lugar"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Gade arive epi swiv machin yo nan yon sèl kote"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Veja chegadas e rastreie veículos em um só lugar"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Xem thông tin về xe đến và theo dõi xe ở một nơi"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "在一个地方查看到达情况并跟踪车辆"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "在一個地方查看到達情況並追蹤車輛"
-          }
-        }
-      }
-    },
     "See transit near you" : {
       "localizations" : {
         "es" : {
@@ -10627,47 +10627,6 @@
         }
       }
     },
-    "We created a new view that allows you to see arrivals at your stop and track vehicle locations all at once. Send us feedback to let us know what you think!" : {
-      "comment" : "Promo text that displays when users first open the app after a redesign of the stop page",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Creamos una nueva vista que te permite ver las llegadas a tu parada y rastrear las ubicaciones de los vehículos al mismo tiempo. ¡Envíanos tus comentarios para que sepamos qué opinas!"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Nou kreye yon nouvo vi ki pèmèt ou wè arive yo nan arè ou epi swiv kote machin yo tout an menm tan. Voye nou fidbak pou fè nou konnen sa ou panse!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Criamos uma nova visualização que permite que você veja as chegadas em sua parada e rastreie os locais dos veículos de uma só vez. Envie-nos um feedback para que saibamos o que você acha!"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Chúng tôi đã tạo ra một chế độ xem mới cho phép bạn xem các điểm đến tại điểm dừng và vị trí xe theo dõi cùng một lúc. Hãy gửi phản hồi cho chúng tôi để cho chúng tôi biết suy nghĩ của bạn!"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "我们创建了一个新视图，让您可以同时查看站点的到达情况和车辆位置。向我们发送反馈，让我们知道您的想法！"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "我們建立了一個新視圖，讓您可以同時查看站點的到達情況並追蹤車輛位置。向我們發送回饋，讓我們知道您的想法！"
-          }
-        }
-      }
-    },
     "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
       "localizations" : {
         "es" : {
@@ -10704,6 +10663,47 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "我們還沒有這次旅行的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。"
+          }
+        }
+      }
+    },
+    "We now show **arrivals** and detailed **vehicle locations** all at once. Let us know what you think!" : {
+      "comment" : "Promo text that displays when users first open the app after a redesign of the stop page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ahora mostramos **llegadas** y **ubicaciones detalladas de los vehículos** a la vez. ¡Cuéntanos qué te parece!"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kounye a nou montre **arive** ak **kote machin yo** detaye tout an menm tan. Fè nou konnen sa ou panse!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Agora mostramos **chegadas** e **localizações de veículos** detalhadas de uma só vez. Diga-nos o que você acha!"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bây giờ chúng tôi hiển thị **lượt đến** và **vị trí xe** chi tiết cùng một lúc. Hãy cho chúng tôi biết suy nghĩ của bạn!"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们现在同时显示**到达**和详细的**车辆位置**。让我们知道您的想法！"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們現在同時顯示**到達**和詳細的**車輛位置**。讓我們知道您的想法！"
           }
         }
       }

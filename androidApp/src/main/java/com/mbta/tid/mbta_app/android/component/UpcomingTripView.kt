@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -204,7 +205,7 @@ fun UpcomingTripView(
                         }
                         Text(
                             state.trip.status,
-                            color = colorResource(R.color.text).copy(alpha = 0.6f),
+                            color = LocalContentColor.current.copy(alpha = 0.6f),
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.labelLarge
