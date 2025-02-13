@@ -17,6 +17,7 @@
     <string name="autos_impeding_service">交通事故</string>
     <string name="back_button_label">后退</string>
     <string name="boarding_abbr">上客</string>
+    <string name="boarding_track">%1$s号轨道登车</string>
     <string name="bus">巴士</string>
     <string name="buses">巴士</string>
     <string name="cancelled">已取消</string>
@@ -195,6 +196,7 @@
     <string name="technical_problem">技术故障</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="track_change">追踪修订</string>
+    <string name="track_number">轨道 %1$s</string>
     <string name="track_problem">轨道故障</string>
     <string name="track_work">轨道作业</string>
     <string name="traffic">交通</string>

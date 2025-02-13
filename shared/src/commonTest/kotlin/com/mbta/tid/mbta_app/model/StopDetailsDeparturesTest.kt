@@ -661,7 +661,7 @@ class StopDetailsDeparturesTest {
                 "Late",
                 null,
                 listOf(latePattern),
-                listOf(UpcomingTrip(lateTrip, latePrediction)),
+                listOf(UpcomingTrip(lateTrip, prediction = latePrediction, predictionStop = stop)),
                 allDataLoaded = false
             )
         val expectedLateAfterLoad =
@@ -670,7 +670,7 @@ class StopDetailsDeparturesTest {
                 "Late",
                 null,
                 listOf(latePattern),
-                listOf(UpcomingTrip(lateTrip, lateSchedule, latePrediction)),
+                listOf(UpcomingTrip(lateTrip, lateSchedule, latePrediction, predictionStop = stop)),
             )
 
         val expectedBeforeLoaded =
@@ -1923,7 +1923,7 @@ class StopDetailsDeparturesTest {
                 listOf(
                     TripAndFormat(
                         UpcomingTrip(
-                            trip2, schedule2, prediction2, vehicle1
+                            trip2, schedule2, prediction2, stop, vehicle1
                         ),
                         RealtimePatterns.Format.Some.FormatWithId(
                             trip2.id, route1.type, TripInstantDisplay.Minutes(minutes = 5))

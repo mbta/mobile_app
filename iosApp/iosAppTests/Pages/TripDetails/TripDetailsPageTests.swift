@@ -533,6 +533,7 @@ final class TripDetailsPageTests: XCTestCase {
                     alert: nil,
                     schedule: nil,
                     prediction: nil,
+                    predictionStop: nil,
                     vehicle: nil,
                     routes: []
                 ),

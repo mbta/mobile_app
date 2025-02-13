@@ -17,6 +17,7 @@
     <string name="autos_impeding_service">Xe hơi cản trở dịch vụ</string>
     <string name="back_button_label">Mặt sau</string>
     <string name="boarding_abbr">BRD</string>
+    <string name="boarding_track">Lên tàu theo đường ray %1$s</string>
     <string name="bus">xe buýt</string>
     <string name="buses">xe buýt</string>
     <string name="cancelled">Đã hủy</string>
@@ -195,6 +196,7 @@
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="track_change">Theo dõi sự thay đổi</string>
+    <string name="track_number">Bài %1$s</string>
     <string name="track_problem">Vấn đề về đường ray</string>
     <string name="track_work">Thi công đường ray</string>
     <string name="traffic">Giao thông</string>

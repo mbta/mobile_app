@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
@@ -15,27 +16,23 @@ import kotlinx.datetime.Instant
  * The trip might also neither arrive nor depart if the stop is skipped or the trip is dropped. For
  * this reason, a prediction that exists but has null times should overwrite scheduled times.
  */
-data class UpcomingTrip(
+data class UpcomingTrip
+@DefaultArgumentInterop.Enabled
+constructor(
     val trip: Trip,
-    val schedule: Schedule?,
-    val prediction: Prediction?,
-    val vehicle: Vehicle?
+    val schedule: Schedule? = null,
+    val prediction: Prediction? = null,
+    // The prediction stop is the stop associated with the stopId contained in the prediction,
+    // it can be a child stop with specific boarding information, like the track number
+    val predictionStop: Stop? = null,
+    val vehicle: Vehicle? = null
 ) : Comparable<UpcomingTrip> {
-    constructor(trip: Trip, schedule: Schedule) : this(trip, schedule, null, null)
 
     constructor(
         trip: Trip,
-        schedule: Schedule,
-        prediction: Prediction
-    ) : this(trip, schedule, prediction, null)
-
-    constructor(trip: Trip, prediction: Prediction) : this(trip, null, prediction, null)
-
-    constructor(
-        trip: Trip,
-        prediction: Prediction,
-        vehicle: Vehicle
-    ) : this(trip, null, prediction, vehicle)
+        prediction: Prediction?,
+        predictionStop: Stop? = null
+    ) : this(trip, null, prediction, predictionStop, null)
 
     val time =
         if (
@@ -63,6 +60,9 @@ data class UpcomingTrip(
         get() =
             schedule?.scheduleTime != null &&
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled
+
+    val trackNumber: String? =
+        if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
@@ -181,10 +181,12 @@ data class UpcomingTrip(
 
             return keys
                 .mapNotNull { key ->
+                    val prediction = predictionsMap[key]
                     UpcomingTrip(
                         trips[key.tripId] ?: return@mapNotNull null,
                         schedulesMap[key],
-                        predictionsMap[key],
+                        prediction,
+                        stops[prediction?.stopId],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] }
                     )
                 }

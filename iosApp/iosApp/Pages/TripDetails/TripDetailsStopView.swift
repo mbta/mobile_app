@@ -106,6 +106,7 @@ struct TripDetailsStopView: View {
             alert: nil,
             schedule: nil,
             prediction: nil,
+            predictionStop: nil,
             vehicle: nil,
             routes: [
                 objects.route {
