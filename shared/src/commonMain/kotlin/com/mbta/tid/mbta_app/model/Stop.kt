@@ -12,6 +12,7 @@ data class Stop(
     val name: String,
     @SerialName("location_type") val locationType: LocationType,
     val description: String? = null,
+    @SerialName("platform_code") val platformCode: String? = null,
     @SerialName("platform_name") val platformName: String? = null,
     @SerialName("vehicle_type") val vehicleType: RouteType? = null,
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList(),
@@ -25,6 +26,9 @@ data class Stop(
      * hidden.
      */
     val isCRCore = this.id in crCoreStations || this.parentStationId in crCoreStations
+
+    val shouldShowTrackNumber: Boolean =
+        this.vehicleType == RouteType.COMMUTER_RAIL && this.isCRCore
 
     fun resolveParent(stops: Map<String, Stop>): Stop {
         if (this.parentStationId == null) return this

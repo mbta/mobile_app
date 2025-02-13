@@ -312,6 +312,7 @@ class ObjectCollectionBuilder {
         var name = ""
         var locationType = LocationType.STOP
         var description: String? = null
+        var platformCode: String? = null
         var platformName: String? = null
         var vehicleType: RouteType? = null
         var childStopIds: List<String> = emptyList()
@@ -340,6 +341,7 @@ class ObjectCollectionBuilder {
                 name,
                 locationType,
                 description,
+                platformCode,
                 platformName,
                 vehicleType,
                 childStopIds,
@@ -381,24 +383,30 @@ class ObjectCollectionBuilder {
 
     fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(vehicles, VehicleBuilder(), block)
 
-    fun upcomingTrip(schedule: Schedule, prediction: Prediction, vehicle: Vehicle): UpcomingTrip {
-        check(schedule.tripId == prediction.tripId)
-        return UpcomingTrip(checkNotNull(trips[prediction.tripId]), schedule, prediction, vehicle)
+    @DefaultArgumentInterop.Enabled
+    fun upcomingTrip(
+        schedule: Schedule? = null,
+        prediction: Prediction? = null,
+        predictionStop: Stop? = null,
+        vehicle: Vehicle? = null
+    ): UpcomingTrip {
+        if (prediction != null && schedule != null) {
+            check(schedule.tripId == prediction.tripId)
+        }
+        if (prediction != null && predictionStop != null) {
+            check(prediction.stopId == predictionStop.id)
+        }
+        return UpcomingTrip(
+            checkNotNull(trips[prediction?.tripId ?: schedule?.tripId]),
+            schedule,
+            prediction,
+            predictionStop ?: stops[prediction?.stopId],
+            vehicle
+        )
     }
 
-    fun upcomingTrip(schedule: Schedule, prediction: Prediction): UpcomingTrip {
-        check(schedule.tripId == prediction.tripId)
-        return UpcomingTrip(checkNotNull(trips[prediction.tripId]), schedule, prediction, null)
-    }
-
-    fun upcomingTrip(prediction: Prediction, vehicle: Vehicle) =
-        UpcomingTrip(checkNotNull(trips[prediction.tripId]), null, prediction, vehicle)
-
-    fun upcomingTrip(schedule: Schedule) =
-        UpcomingTrip(checkNotNull(trips[schedule.tripId]), schedule, null, null)
-
-    fun upcomingTrip(prediction: Prediction) =
-        UpcomingTrip(checkNotNull(trips[prediction.tripId]), null, prediction, null)
+    fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
+        upcomingTrip(null, prediction, predictionStop, null)
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
         source: MutableMap<String, Built>,

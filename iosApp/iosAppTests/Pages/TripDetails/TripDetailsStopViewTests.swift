@@ -32,8 +32,11 @@ final class TripDetailsStopViewTests: XCTestCase {
             prediction.departureTime = Date.now.addingTimeInterval(60).toKotlinInstant()
         }
         let sut = TripDetailsStopView(
-            stop: .init(stop: stop, stopSequence: 1, alert: alert, schedule: nil, prediction: prediction, vehicle: nil,
-                        routes: []),
+            stop: .init(
+                stop: stop, stopSequence: 1, alert: alert,
+                schedule: nil, prediction: prediction, predictionStop: nil,
+                vehicle: nil, routes: []
+            ),
             now: Date.now.toKotlinInstant(),
             onTapLink: { _, _, _ in },
             routeType: nil
@@ -58,6 +61,7 @@ final class TripDetailsStopViewTests: XCTestCase {
             alert: nil,
             schedule: nil,
             prediction: prediction,
+            predictionStop: nil,
             vehicle: nil,
             routes: [connectingRoute]
         )

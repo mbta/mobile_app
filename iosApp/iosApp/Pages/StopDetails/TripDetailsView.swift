@@ -123,9 +123,11 @@ struct TripDetailsView: View {
             if let vehicle, let vehicleStop {
                 let atTerminal = terminalStop != nil && terminalStop?.id == vehicleStop.id
                     && vehicle.currentStatus == .stoppedAt
-                let terminalEntry = atTerminal ? stops.startTerminalEntry : nil
+                let entry = atTerminal ? stops.startTerminalEntry : stops.stops.first { entry in
+                    entry.stop.id == vehicleStop.id
+                }
                 return vehicle.tripId == tripId
-                    ? .vehicle(vehicle, vehicleStop, terminalEntry)
+                    ? .vehicle(vehicle, vehicleStop, entry, atTerminal)
                     : .finishingAnotherTrip
             } else if stops.stops.contains(where: { entry in entry.prediction != nil }) {
                 return .noVehicle

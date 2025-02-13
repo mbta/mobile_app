@@ -99,6 +99,7 @@ class TripDetailsStopListTest {
             alert: Alert? = null,
             schedule: Schedule? = null,
             prediction: Prediction? = null,
+            predictionStop: Stop? = null,
             vehicle: Vehicle? = null,
             routes: List<Route> = listOf()
         ) =
@@ -108,6 +109,7 @@ class TripDetailsStopListTest {
                 alert,
                 schedule,
                 prediction,
+                predictionStop ?: objects.stops[prediction?.stopId],
                 vehicle,
                 routes
             )
@@ -417,19 +419,20 @@ class TripDetailsStopListTest {
             TripDetailsStopList(
                 trip.id,
                 listOf(
-                    TripDetailsStopList.Entry(boylston, 590, null, null, null, null, listOf()),
-                    TripDetailsStopList.Entry(parkStreet, 600, null, null, p1, null, listOf()),
+                    TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf()),
+                    TripDetailsStopList.Entry(parkStreet, 600, null, null, p1, parkStreet, null, listOf()),
                     TripDetailsStopList.Entry(
                         governmentCenter,
                         610,
                         null,
                         null,
                         p3,
+                        governmentCenter,
                         null,
                         listOf()
                     ),
                 ),
-                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, listOf())
+                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf())
             ),
             list
         )
@@ -493,6 +496,7 @@ class TripDetailsStopListTest {
                         null,
                         schedule1,
                         prediction1,
+                        stop1,
                         vehicle,
                         listOf()
                     ),
@@ -502,6 +506,7 @@ class TripDetailsStopListTest {
                         null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf()
                     ),
@@ -511,6 +516,7 @@ class TripDetailsStopListTest {
                         null,
                         schedule3,
                         prediction3,
+                        stop3,
                         vehicle,
                         listOf()
                     )
@@ -521,6 +527,7 @@ class TripDetailsStopListTest {
                     null,
                     schedule1,
                     prediction1,
+                    stop1,
                     vehicle,
                     listOf()
                 )

@@ -68,27 +68,27 @@ final class TripStopsTests: XCTestCase {
         let stops = TripDetailsStopList(tripId: trip.id, stops: [
             .init(
                 stop: stop1, stopSequence: 1, alert: nil,
-                schedule: schedule1, prediction: prediction1,
+                schedule: schedule1, prediction: prediction1, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
                 stop: stop2, stopSequence: 2, alert: nil,
-                schedule: schedule2, prediction: prediction2,
+                schedule: schedule2, prediction: prediction2, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
                 stop: stop3Target, stopSequence: 3, alert: nil,
-                schedule: schedule3, prediction: prediction3,
+                schedule: schedule3, prediction: prediction3, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
                 stop: stop4, stopSequence: 4, alert: nil,
-                schedule: schedule4, prediction: prediction4,
+                schedule: schedule4, prediction: prediction4, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
                 stop: stop5, stopSequence: 5, alert: nil,
-                schedule: schedule5, prediction: prediction5,
+                schedule: schedule5, prediction: prediction5, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
         ])
@@ -97,7 +97,7 @@ final class TripStopsTests: XCTestCase {
             targetId: stop3Target.id,
             stops: stops,
             stopSequence: 1,
-            headerSpec: .vehicle(vehicle, stop1, nil),
+            headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
             onTapLink: { _, _, _ in },
             routeAccents: TripRouteAccents(route: route),
@@ -158,17 +158,17 @@ final class TripStopsTests: XCTestCase {
         let stops = TripDetailsStopList(tripId: trip.id, stops: [
             .init(
                 stop: stop1, stopSequence: 1, alert: nil,
-                schedule: schedule1, prediction: prediction1,
+                schedule: schedule1, prediction: prediction1, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
                 stop: stop2, stopSequence: 2, alert: nil,
-                schedule: schedule2, prediction: prediction2,
+                schedule: schedule2, prediction: prediction2, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
                 stop: stop3, stopSequence: 3, alert: nil,
-                schedule: schedule3, prediction: prediction3,
+                schedule: schedule3, prediction: prediction3, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
         ])
@@ -177,7 +177,7 @@ final class TripStopsTests: XCTestCase {
             targetId: stopTarget.id,
             stops: stops,
             stopSequence: 0,
-            headerSpec: TripHeaderSpec.vehicle(vehicle, stop1, nil),
+            headerSpec: TripHeaderSpec.vehicle(vehicle, stop1, nil, false),
             now: now,
             onTapLink: { _, _, _ in },
             routeAccents: TripRouteAccents(route: route),
@@ -233,7 +233,7 @@ final class TripStopsTests: XCTestCase {
 
         let firstStop: TripDetailsStopList.Entry = .init(
             stop: stop1, stopSequence: 1, alert: nil,
-            schedule: schedule1, prediction: prediction1,
+            schedule: schedule1, prediction: prediction1, predictionStop: nil,
             vehicle: vehicle, routes: [route]
         )
         let stops = TripDetailsStopList(
@@ -242,7 +242,7 @@ final class TripStopsTests: XCTestCase {
                 firstStop,
                 .init(
                     stop: stop2, stopSequence: 2, alert: nil,
-                    schedule: schedule2, prediction: prediction2,
+                    schedule: schedule2, prediction: prediction2, predictionStop: nil,
                     vehicle: vehicle, routes: [route]
                 ),
             ],
@@ -310,7 +310,7 @@ final class TripStopsTests: XCTestCase {
 
         let firstStop: TripDetailsStopList.Entry = .init(
             stop: stop1, stopSequence: 1, alert: nil,
-            schedule: schedule1, prediction: prediction1,
+            schedule: schedule1, prediction: prediction1, predictionStop: nil,
             vehicle: vehicle, routes: [route]
         )
         let stops = TripDetailsStopList(
@@ -319,12 +319,12 @@ final class TripStopsTests: XCTestCase {
                 firstStop,
                 .init(
                     stop: stop2, stopSequence: 2, alert: nil,
-                    schedule: schedule2, prediction: prediction2,
+                    schedule: schedule2, prediction: prediction2, predictionStop: nil,
                     vehicle: vehicle, routes: [route]
                 ),
                 .init(
                     stop: stop3, stopSequence: 3, alert: nil,
-                    schedule: schedule3, prediction: prediction3,
+                    schedule: schedule3, prediction: prediction3, predictionStop: nil,
                     vehicle: vehicle, routes: [route]
                 ),
             ],

@@ -43,13 +43,22 @@ struct TripStopRow: View {
                             onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
                         },
                         label: {
-                            HStack {
-                                Text(stop.stop.name)
-                                    .font(Typography.body)
-                                    .fontWeight(targeted ? Font.Weight.bold : Font.Weight.regular)
-                                    .foregroundStyle(Color.text)
-                                    .multilineTextAlignment(.leading)
-                                    .accessibilityLabel(stopAccessibilityLabel)
+                            HStack(alignment: .center, spacing: 0) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(stop.stop.name)
+                                        .font(Typography.body)
+                                        .fontWeight(targeted ? Font.Weight.bold : Font.Weight.regular)
+                                        .foregroundStyle(Color.text)
+                                        .multilineTextAlignment(.leading)
+                                        .accessibilityLabel(stopAccessibilityLabel)
+                                    if let trackNumber = stop.trackNumber {
+                                        Text("Track \(trackNumber)")
+                                            .font(Typography.footnote)
+                                            .foregroundStyle(Color.text)
+                                            .multilineTextAlignment(.leading)
+                                            .accessibilityLabel(Text("Boarding on track \(trackNumber)"))
+                                    }
+                                }
                                 Spacer()
                                 UpcomingTripView(
                                     prediction: upcomingTripViewState,
@@ -190,6 +199,7 @@ struct TripStopRow: View {
             alert: nil,
             schedule: nil,
             prediction: nil,
+            predictionStop: nil,
             vehicle: nil,
             routes: [
                 objects.route {
