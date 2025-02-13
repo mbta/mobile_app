@@ -3313,4 +3313,111 @@ class NearbyResponseTest {
             )
         )
     }
+
+    @Test
+    fun `withRealtimeInfo filters out any arrival only for non-subway routes`() {
+        val objects = ObjectCollectionBuilder()
+
+        val longWharf =
+            objects.stop {
+                id = "Boat-Long"
+            }
+
+        val ferryRoute = objects.route {
+            id = "Boat-F1"
+            type = RouteType.FERRY
+        }
+        val ferryInboundToLongWharf =
+            objects.routePattern(ferryRoute) {
+                id = "Boat-F1-3-1"
+                routeId = ferryRoute.id
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+                representativeTrip {
+                    id = "Boat-F1-0730-Hull-BF2H-01-Weekday-Fall-24"
+                    headsign = "Long Wharf"
+                    directionId = 1
+                    stopIds = listOf("Boat-Hull", "Boat-Long")
+                }
+            }
+
+        val ferryOutboundToHingham =
+            objects.routePattern(ferryRoute) {
+                id = "Boat-F1-0-0"
+                routeId = ferryRoute.id
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+                representativeTrip {
+                    id = "Boat-F1-1100-Long-BF2H-01-Weekday-Fall-24"
+                    headsign = "Hingham"
+                    directionId = 0
+                    stopIds = listOf("Boat-Long", "Boat-Logan", "Boat-Hull", "Boat-Hingham")
+                }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(ferryRoute) {
+                    stop(longWharf) {
+                        headsign("Hingham", listOf(ferryOutboundToHingham))
+                        headsign("Long Wharf", listOf(ferryInboundToLongWharf))
+                    }
+                }
+            }
+
+        val time = Instant.parse("2024-10-30T16:40:00-04:00")
+
+        val ferryInboundTrip = objects.trip(ferryInboundToLongWharf)
+        val ferryOutboundTrip = objects.trip(ferryOutboundToHingham)
+
+        val schedInbound =
+            objects.schedule {
+                trip = ferryInboundTrip
+                stopId = longWharf.id
+                stopSequence = 90
+                arrivalTime = time + 2.minutes
+                departureTime = null            }
+        val schedOutbound =
+            objects.schedule {
+                trip = ferryOutboundTrip
+                stopId = longWharf.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    ferryRoute,
+                    listOf(
+                        PatternsByStop(
+                            ferryRoute,
+                            longWharf,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    ferryRoute,
+                                    "Hingham",
+                                    null,
+                                    listOf(ferryOutboundToHingham),
+                                    listOf(objects.upcomingTrip(schedOutbound)),
+                                    hasSchedulesToday = true
+                                ),
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = longWharf.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(emptyMap()),
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+                useTripHeadsigns = false
+            )
+        )
+    }
 }
