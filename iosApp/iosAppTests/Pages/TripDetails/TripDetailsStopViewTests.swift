@@ -33,7 +33,8 @@ final class TripDetailsStopViewTests: XCTestCase {
         }
         let sut = TripDetailsStopView(
             stop: .init(
-                stop: stop, stopSequence: 1, alert: alert,
+                stop: stop, stopSequence: 1,
+                disruption: .init(alert: alert, mapStopRoute: nil),
                 schedule: nil, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: []
             ),
@@ -58,7 +59,7 @@ final class TripDetailsStopViewTests: XCTestCase {
         let stopListEntry = TripDetailsStopList.Entry(
             stop: stop,
             stopSequence: 1,
-            alert: nil,
+            disruption: nil,
             schedule: nil,
             prediction: prediction,
             predictionStop: nil,

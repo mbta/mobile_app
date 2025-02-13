@@ -29,12 +29,12 @@ class RealtimePatternsTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
-        val route = objects.route()
+        val route = objects.route { id = "Red" }
 
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            RealtimePatterns.Format.Disruption(alert),
+            RealtimePatterns.Format.Disruption(alert, "alert-large-red-suspension"),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
                 .format(now, anyNonScheduleBasedRouteType(), anyContext())
         )
@@ -89,7 +89,7 @@ class RealtimePatternsTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
-        val route = objects.route()
+        val route = objects.route { id = "743" }
 
         val trip = objects.trip()
         val prediction =
@@ -102,7 +102,7 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            RealtimePatterns.Format.Disruption(alert),
+            RealtimePatterns.Format.Disruption(alert, "alert-large-silver-suspension"),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",

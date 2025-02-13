@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
@@ -90,7 +91,8 @@ private fun DirectionRowViewPreview() {
                         alert =
                             ObjectCollectionBuilder.Single.alert {
                                 effect = Alert.Effect.Suspension
-                            }
+                            },
+                        mapStopRoute = MapStopRoute.GREEN
                     )
             )
         }

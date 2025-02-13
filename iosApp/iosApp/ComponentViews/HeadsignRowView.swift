@@ -125,7 +125,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
                     predictions: RealtimePatterns.FormatDisruption(
                         alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                             alert.effect = .suspension
-                        }
+                        }, mapStopRoute: .orange
                     )
                 )
             }

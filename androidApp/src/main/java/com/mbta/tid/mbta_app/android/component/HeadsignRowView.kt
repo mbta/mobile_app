@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.route
 import com.mbta.tid.mbta_app.model.RealtimePatterns
@@ -113,7 +114,10 @@ fun HeadsignRowViewPreview() {
             HeadsignRowView("Loading", RealtimePatterns.Format.Loading)
             HeadsignRowView(
                 "No Service",
-                RealtimePatterns.Format.Disruption(alert { effect = Alert.Effect.Suspension })
+                RealtimePatterns.Format.Disruption(
+                    alert { effect = Alert.Effect.Suspension },
+                    MapStopRoute.ORANGE
+                )
             )
         }
     }
