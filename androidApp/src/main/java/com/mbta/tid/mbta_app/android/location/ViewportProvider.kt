@@ -102,6 +102,7 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
         animation: MapAnimationOptions = MapAnimationDefaults.options,
         zoom: Double? = null
     ) {
+        isFollowingPuck = false
         animateToCamera(
             options =
                 CameraOptions.Builder()
