@@ -19,17 +19,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
+import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePillSpec
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.silverRoutes
 
 @Composable
 fun StopResultsView(
@@ -52,6 +60,63 @@ fun StopResultsView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val iconModifier = Modifier.height(32.dp).width(32.dp)
+
+            val routePillsData =
+                routes
+                    .sortedBy { it.sortOrder }
+                    .map<Route, Triple<Route, RoutePillSpec, String>> { route ->
+                        val line: Line? =
+                            if (route.lineId != null) {
+                                globalResponse?.lines?.get(route.lineId)
+                            } else {
+                                null
+                            }
+
+                        val context: RoutePillSpec.Context =
+                            if (stop.isStation) {
+                                RoutePillSpec.Context.SearchStation
+                            } else {
+                                RoutePillSpec.Context.Default
+                            }
+
+                        val contentDescription =
+                            if (silverRoutes.contains(route.id) && stop.isStation) {
+                                stringResource(
+                                    id = R.string.route_with_type,
+                                    "Silver Line",
+                                    route?.type?.typeText(LocalContext.current, isOnly = false)
+                                        ?: ""
+                                )
+                            } else if (route.type == RouteType.COMMUTER_RAIL && stop.isStation) {
+                                stringResource(
+                                    id = R.string.route_with_type,
+                                    "Commuter Rail",
+                                    route?.type?.typeText(LocalContext.current, isOnly = false)
+                                        ?: ""
+                                )
+                            } else {
+                                stringResource(
+                                    id = R.string.route_with_type,
+                                    route.label,
+                                    route?.type?.typeText(LocalContext.current, isOnly = true) ?: ""
+                                )
+                            }
+
+                        Triple(
+                            route,
+                            RoutePillSpec(route, line, RoutePillSpec.Type.FlexCompact, context),
+                            contentDescription
+                        )
+                    }
+                    .distinctBy { (_, spec, _) -> spec }
+
+            val routesContentDescription =
+                stringResource(
+                    R.string.serves_route_list,
+                    routePillsData.joinToString(",") { (_, _, contentDescription) ->
+                        contentDescription
+                    }
+                )
             if (stop.isStation) {
                 Icon(
                     painter = painterResource(R.drawable.mbta_logo),
@@ -78,36 +143,16 @@ fun StopResultsView(
                     modifier =
                         Modifier.horizontalScroll(scrollState)
                             .padding(start = 16.dp, bottom = 12.dp)
+                            .semantics(mergeDescendants = true) {}
+                            .clearAndSetSemantics { contentDescription = routesContentDescription }
                 ) {
-                    routes
-                        .sortedBy { it.sortOrder }
-                        .map<Route, Pair<Route, RoutePillSpec>> { route ->
-                            val line: Line? =
-                                if (route.lineId != null) {
-                                    globalResponse?.lines?.get(route.lineId)
-                                } else {
-                                    null
-                                }
-
-                            val context: RoutePillSpec.Context =
-                                if (stop.isStation) {
-                                    RoutePillSpec.Context.SearchStation
-                                } else {
-                                    RoutePillSpec.Context.Default
-                                }
-                            Pair(
-                                route,
-                                RoutePillSpec(route, line, RoutePillSpec.Type.FlexCompact, context)
-                            )
-                        }
-                        .distinctBy { (_, spec) -> spec }
-                        .map { (route, spec) ->
-                            RoutePill(
-                                route = route,
-                                spec = spec,
-                                modifier = Modifier.padding(end = 4.dp)
-                            )
-                        }
+                    routePillsData.map { (route, spec, _) ->
+                        RoutePill(
+                            route = route,
+                            spec = spec,
+                            modifier = Modifier.padding(end = 4.dp)
+                        )
+                    }
                 }
             }
         }

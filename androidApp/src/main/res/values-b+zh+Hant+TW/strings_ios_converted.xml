@@ -159,6 +159,7 @@
     <string name="search_by_stop">按站點搜尋</string>
     <string name="selected_stop">%1$s，選定站點</string>
     <string name="selected_stop_first_stop">%1$s，選定站點，第一站</string>
+    <string name="serves_route_list">服務 %1$s</string>
     <string name="service_change">服務變更</string>
     <string name="service_change_sentence_case">服務變更</string>
     <string name="service_ended">服務已結束</string>
