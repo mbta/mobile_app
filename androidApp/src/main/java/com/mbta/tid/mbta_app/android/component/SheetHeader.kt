@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +15,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 @Composable
@@ -29,7 +29,7 @@ fun SheetHeader(title: String? = null, onClose: (() -> Unit)? = null) {
             Text(
                 title,
                 modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                style = MaterialTheme.typography.titleSmall
+                style = Typography.title3Semibold
             )
         } else {
             Spacer(Modifier.weight(1f))

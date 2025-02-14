@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -30,6 +29,7 @@ import com.mbta.tid.mbta_app.android.component.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
@@ -126,7 +126,7 @@ fun NearbyTransitView(
         Text(
             text = stringResource(R.string.nearby_transit),
             modifier = Modifier.semantics { heading() }.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.titleSmall,
+            style = Typography.title3Semibold,
         )
         ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +31,7 @@ import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
@@ -116,7 +116,7 @@ fun AlertDetailsPage(
                 stringResource(R.string.alert_details),
                 color = headerTextColor,
                 fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.headlineMedium
+                style = Typography.headline
             )
             Spacer(Modifier.weight(1f))
             ActionButton(ActionButtonKind.Close) { goBack() }

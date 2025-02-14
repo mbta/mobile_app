@@ -1,13 +1,12 @@
 package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -29,12 +28,7 @@ fun HeadsignRowView(
         modifier = modifier,
         pillDecoration = pillDecoration
     ) {
-        Text(
-            headsign,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.placeholderIfLoading()
-        )
+        Text(headsign, style = Typography.bodySemibold, modifier = Modifier.placeholderIfLoading())
     }
 }
 

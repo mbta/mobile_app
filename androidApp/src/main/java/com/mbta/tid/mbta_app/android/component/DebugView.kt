@@ -16,10 +16,9 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import org.koin.compose.koinInject
@@ -53,6 +52,6 @@ fun DebugView(
             }
             .padding(4.dp)
     ) {
-        ProvideTextStyle(TextStyle(fontSize = 13.sp)) { content() }
+        ProvideTextStyle(Typography.footnote) { content() }
     }
 }

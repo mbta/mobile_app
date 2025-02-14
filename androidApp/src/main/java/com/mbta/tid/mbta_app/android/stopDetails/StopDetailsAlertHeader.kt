@@ -14,11 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.component.AlertIcon
 import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.StopAlertState
 
@@ -45,8 +44,7 @@ fun StopDetailsAlertHeader(
         Text(
             alert.header ?: "",
             Modifier.padding(vertical = 3.dp).weight(1f),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
+            style = Typography.callout
         )
         if (showInfoIcon) {
             Box(

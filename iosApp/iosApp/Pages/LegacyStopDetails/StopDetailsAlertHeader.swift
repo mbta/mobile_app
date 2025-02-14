@@ -22,7 +22,7 @@ struct StopDetailsAlertHeader: View {
                 .frame(width: 36, height: 36)
                 .padding(6)
             Text(alert.header ?? "")
-                .font(.callout)
+                .font(Typography.callout)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.vertical, 3)

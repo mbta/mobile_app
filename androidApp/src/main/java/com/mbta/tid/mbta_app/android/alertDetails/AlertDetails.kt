@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +39,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +48,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.toJavaDate
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
@@ -186,29 +185,21 @@ private fun AlertTitle(
             if (routeLabel != null) {
                 Text(
                     stringResource(R.string.route_effect, routeLabel, effectLabel),
-                    style = MaterialTheme.typography.titleSmall
+                    style = Typography.title2Bold
                 )
             } else if (stopLabel != null) {
                 Text(
                     stringResource(R.string.route_effect, stopLabel, effectLabel),
-                    style = MaterialTheme.typography.titleSmall
+                    style = Typography.title2Bold
                 )
             } else {
-                Text(effectLabel, style = MaterialTheme.typography.titleSmall)
+                Text(effectLabel, style = Typography.title2Bold)
             }
         }
         if (!isElevatorAlert && causeLabel != null) {
-            Text(
-                causeLabel,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(causeLabel, style = Typography.bodySemibold)
         } else if (isElevatorAlert && elevatorSubtitle != null) {
-            Text(
-                elevatorSubtitle,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(elevatorSubtitle, style = Typography.bodySemibold)
         }
     }
 }
@@ -224,12 +215,12 @@ private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
                 Modifier.widthIn(min = 48.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Text(stringResource(R.string.start), style = MaterialTheme.typography.bodySmall)
-                Text(stringResource(R.string.end), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.start), style = Typography.callout)
+                Text(stringResource(R.string.end), style = Typography.callout)
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                Text(currentPeriod.formatStart(), style = MaterialTheme.typography.bodySmall)
-                Text(currentPeriod.formatEnd(), style = MaterialTheme.typography.bodySmall)
+                Text(currentPeriod.formatStart(), style = Typography.callout)
+                Text(currentPeriod.formatEnd(), style = Typography.callout)
             }
         }
     } else {
@@ -259,7 +250,7 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
                     affectedStopsLabel,
                     color = colorResource(R.color.text),
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = Typography.callout
                 )
                 Spacer(Modifier.weight(1f))
                 val degrees by
@@ -282,8 +273,7 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
                         Text(
                             stop.name,
                             modifier = Modifier.padding(16.dp),
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodySmall
+                            style = Typography.bodySemibold
                         )
                     }
                 }
@@ -313,7 +303,7 @@ fun TripPlannerLink(onTappedTripPlanner: () -> Unit) {
             "Plan a route with Trip Planner",
             color = colorResource(R.color.text),
             textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.bodySmall
+            style = Typography.callout
         )
         Spacer(Modifier.weight(1f))
         Icon(
@@ -355,11 +345,10 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
             Text(
                 if (!isElevatorAlert) stringResource(R.string.full_description)
                 else stringResource(R.string.alternative_path),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodySmall
+                style = Typography.bodySemibold
             )
             for (section in alertDescriptionParagraphs) {
-                Text(section, style = MaterialTheme.typography.bodySmall)
+                Text(section, style = Typography.callout)
             }
         }
     }
@@ -375,7 +364,7 @@ private fun AlertFooter(updatedAt: Instant) {
         Text(
             stringResource(R.string.updated_at, formattedDate),
             color = colorResource(R.color.deemphasized),
-            style = MaterialTheme.typography.bodySmall
+            style = Typography.callout
         )
     }
 }

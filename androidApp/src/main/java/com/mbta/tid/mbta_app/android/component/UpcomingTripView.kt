@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -27,19 +25,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -94,7 +89,6 @@ fun UpcomingTripView(
                     WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
                         Text(
                             state.trip.text,
-                            fontSize = 13.sp,
                             modifier = Modifier.placeholderIfLoading(),
                             textAlign = TextAlign.End
                         )
@@ -115,7 +109,7 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            fontWeight = FontWeight.Bold
+                            style = Typography.headlineBold
                         )
                     }
                 is TripInstantDisplay.Arriving ->
@@ -132,7 +126,7 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            fontWeight = FontWeight.Bold
+                            style = Typography.headlineBold
                         )
                     }
                 is TripInstantDisplay.Now ->
@@ -149,7 +143,7 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            fontWeight = FontWeight.Bold
+                            style = Typography.headlineBold
                         )
                     }
                 is TripInstantDisplay.Approaching ->
@@ -186,7 +180,9 @@ fun UpcomingTripView(
                                 }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
-                            fontWeight = FontWeight.Bold
+                            style =
+                                if (state.trip.headline) Typography.headlineSemibold
+                                else Typography.footnoteSemibold
                         )
                     }
                 is TripInstantDisplay.TimeWithStatus ->
@@ -205,15 +201,16 @@ fun UpcomingTripView(
                                     }
                                     .placeholderIfLoading(),
                                 textAlign = TextAlign.End,
-                                fontWeight = FontWeight.Bold
+                                style =
+                                    if (state.trip.headline) Typography.headlineSemibold
+                                    else Typography.footnoteSemibold
                             )
                         }
                         Text(
                             state.trip.status,
                             color = LocalContentColor.current.copy(alpha = 0.6f),
-                            fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.labelLarge
+                            style = Typography.footnoteSemibold
                         )
                     }
                 is TripInstantDisplay.ScheduleTime ->
@@ -232,13 +229,9 @@ fun UpcomingTripView(
                             }
                             .placeholderIfLoading(),
                         textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Bold,
-                        fontSize =
-                            if (state.trip.headline) {
-                                TextUnit.Unspecified
-                            } else {
-                                13.sp
-                            }
+                        style =
+                            if (state.trip.headline) Typography.headlineSemibold
+                            else Typography.footnoteSemibold
                     )
                 is TripInstantDisplay.Minutes ->
                     WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
@@ -285,6 +278,7 @@ fun UpcomingTripView(
                 is TripInstantDisplay.Cancelled ->
                     Row(
                         modifier
+                            .alpha(0.6f)
                             .semantics {
                                 contentDescription =
                                     UpcomingTripAccessibilityFormatters.cancelledLabel(
@@ -301,18 +295,15 @@ fun UpcomingTripView(
                             stringResource(R.string.cancelled),
                             color = colorResource(R.color.deemphasized),
                             textAlign = TextAlign.End,
-                            fontSize = 13.sp
+                            style = Typography.footnote
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             formatTime(state.trip.scheduledTime),
                             color = colorResource(R.color.deemphasized),
+                            textDecoration = TextDecoration.LineThrough,
                             textAlign = TextAlign.End,
-                            style =
-                                TextStyle(textDecoration = TextDecoration.LineThrough)
-                                    .merge(LocalTextStyle.current),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
+                            style = Typography.footnoteSemibold,
                         )
                     }
             }
@@ -328,22 +319,22 @@ fun UpcomingTripView(
                     Text(
                         stringResource(R.string.no_predictions),
                         modifier,
-                        fontSize = 13.sp,
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        style = Typography.footnote
                     )
                 is RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
                     Text(
                         stringResource(R.string.service_ended),
                         modifier,
-                        fontSize = 13.sp,
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        style = Typography.footnote
                     )
                 is RealtimePatterns.NoTripsFormat.NoSchedulesToday ->
                     Text(
                         stringResource(R.string.no_service_today),
                         modifier,
-                        fontSize = 13.sp,
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        style = Typography.footnote
                     )
             }
         is UpcomingTripViewState.Loading ->
@@ -411,7 +402,7 @@ fun DisruptionView(effect: DisruptionViewEffect, iconName: String, modifier: Mod
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text.uppercase(), fontSize = 12.sp)
+        Text(text.uppercase(), style = Typography.footnote)
         Image(icon, null, Modifier.size(20.dp))
     }
 }

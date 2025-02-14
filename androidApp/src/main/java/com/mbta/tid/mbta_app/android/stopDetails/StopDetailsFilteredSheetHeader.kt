@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +25,7 @@ import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -65,7 +65,7 @@ fun StopDetailsFilteredHeader(
             Text(
                 AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
                 modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                style = MaterialTheme.typography.headlineMedium
+                style = Typography.headline
             )
         } else {
             Spacer(Modifier.weight(1f))

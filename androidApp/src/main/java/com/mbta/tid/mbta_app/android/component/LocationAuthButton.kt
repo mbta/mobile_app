@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,6 +33,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.util.Typography
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -111,7 +111,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                         ) {
                             Text(
                                 stringResource(R.string.location_settings_prompt_turn_on),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = Typography.body
                             )
                             //
                         }
@@ -120,14 +120,14 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                         TextButton(onClick = { showSettingsPrompt = false }) {
                             Text(
                                 stringResource(R.string.location_settings_prompt_keep_off),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = Typography.body
                             )
                         }
                     },
                     title = {
                         Text(
                             stringResource(R.string.location_settings_prompt_title),
-                            style = MaterialTheme.typography.headlineLarge
+                            style = Typography.headlineBold
                         )
                     },
                     text = { Text(stringResource(R.string.location_settings_prompt_body)) },

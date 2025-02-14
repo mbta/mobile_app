@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -136,7 +136,7 @@ fun StopDetailsFilterPills(
             ) {
                 Text(
                     stringResource(R.string.filterShowAll),
-                    style = MaterialTheme.typography.bodyMedium.merge(colorResource(R.color.fill1)),
+                    style = Typography.body.merge(colorResource(R.color.fill1)),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                 )
             }

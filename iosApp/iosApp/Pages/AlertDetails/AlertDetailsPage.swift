@@ -79,7 +79,7 @@ struct AlertDetailsPage: View {
                     .scaledToFit()
                     .frame(maxHeight: modeIconHeight, alignment: .topLeading)
             }
-            Text("Alert Details", comment: "Header on the alert details page").font(.headline)
+            Text("Alert Details", comment: "Header on the alert details page").font(Typography.headline)
             Spacer()
             ActionButton(kind: .close) {
                 nearbyVM.goBack()

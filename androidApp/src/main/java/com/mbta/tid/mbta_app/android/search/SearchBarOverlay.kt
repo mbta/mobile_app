@@ -13,7 +13,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
@@ -32,7 +31,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -41,6 +39,7 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
+import com.mbta.tid.mbta_app.android.util.Typography
 
 @ExperimentalMaterial3Api
 @Composable
@@ -107,7 +106,7 @@ fun SearchBarOverlay(
                                     stringResource(R.string.stops),
                                     // This will be drawn in bodyLarge if we don't re-override it
                                     // here
-                                    style = MaterialTheme.typography.bodySmall
+                                    style = Typography.callout
                                 )
                             },
                             expanded = expanded,
@@ -150,8 +149,7 @@ fun SearchBarOverlay(
                                 Text(
                                     modifier = Modifier.padding(bottom = 10.dp),
                                     text = stringResource(R.string.recently_viewed),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    fontWeight = FontWeight.Bold
+                                    style = Typography.subheadlineSemibold
                                 )
                             }
                         }

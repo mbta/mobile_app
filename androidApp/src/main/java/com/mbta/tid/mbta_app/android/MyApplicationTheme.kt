@@ -11,14 +11,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.util.Typography as AppTypography
 
 @Composable
 fun MyApplicationTheme(
@@ -103,35 +97,21 @@ fun MyApplicationTheme(
                 errorContainer = Color.Magenta,
             )
         }
-    val fontFamily =
-        FontFamily(
-            Font(R.font.inter_regular, FontWeight.Normal, FontStyle.Normal),
-            Font(R.font.inter_bold, FontWeight.Bold, FontStyle.Normal)
-        )
 
-    @Composable
-    fun textStyle(fontSize: TextUnit, fontWeight: FontWeight? = null): TextStyle =
-        TextStyle(
-            // setting to unspecified will inherit local color correctly
-            color = Color.Unspecified,
-            fontFamily = fontFamily,
-            fontSize = fontSize,
-            fontWeight = fontWeight
-        )
     val typography =
         Typography(
-            bodyLarge = textStyle(fontSize = 24.sp),
-            bodyMedium = textStyle(fontSize = 17.sp), // Body
-            bodySmall = textStyle(fontSize = 16.sp),
-            headlineLarge = textStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold), // Headline
-            headlineMedium = textStyle(fontSize = 16.sp), // Callout
-            headlineSmall = textStyle(fontSize = 15.sp), // Subheadline
-            titleLarge = textStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold), // Title 1
-            titleMedium = textStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold), // Title 2
-            titleSmall = textStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold), // Title 3
-            labelLarge = textStyle(fontSize = 13.sp, fontWeight = FontWeight.Normal), // Footnote
-            labelMedium = textStyle(fontSize = 12.sp, fontWeight = FontWeight.Normal), // Caption 1
-            labelSmall = textStyle(fontSize = 11.sp, fontWeight = FontWeight.Normal), // Caption 2
+            bodyLarge = AppTypography.title2,
+            bodyMedium = AppTypography.body,
+            bodySmall = AppTypography.callout,
+            headlineLarge = AppTypography.headlineBold,
+            headlineMedium = AppTypography.callout,
+            headlineSmall = AppTypography.subheadline,
+            titleLarge = AppTypography.title1Bold,
+            titleMedium = AppTypography.title2Bold,
+            titleSmall = AppTypography.title3Semibold,
+            labelLarge = AppTypography.footnote,
+            labelMedium = AppTypography.caption,
+            labelSmall = AppTypography.caption2,
         )
     val shapes =
         Shapes(
@@ -141,7 +121,6 @@ fun MyApplicationTheme(
         )
 
     MaterialTheme(colorScheme = colors, typography = typography, shapes = shapes) {
-        // default text style is bodyLarge
-        ProvideTextStyle(value = MaterialTheme.typography.bodySmall, content = content)
+        ProvideTextStyle(value = AppTypography.body, content = content)
     }
 }

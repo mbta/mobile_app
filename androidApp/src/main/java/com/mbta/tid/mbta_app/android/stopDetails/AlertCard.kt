@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,15 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.AlertIcon
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.downstreamEffectDescription
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
@@ -89,14 +86,20 @@ fun AlertCard(
                             else Alignment.CenterVertically
                         )
             )
-            Text(headerText, Modifier.weight(1f), style = alertHeaderTypography(spec))
+            Text(
+                headerText,
+                Modifier.weight(1f),
+                style =
+                    if (spec == AlertCardSpec.Major) Typography.title2Bold
+                    else Typography.bodySemibold
+            )
             if (spec != AlertCardSpec.Major) {
                 InfoCircle()
             }
         }
         if (spec == AlertCardSpec.Major) {
             HorizontalDivider(color = color.copy(alpha = 0.25f), thickness = 2.dp)
-            Text(alert.header ?: "", fontSize = 16.sp)
+            Text(alert.header ?: "", style = Typography.callout)
             onViewDetails?.let {
                 TextButton(
                     it,
@@ -107,30 +110,14 @@ fun AlertCard(
                     Text(
                         stringResource(R.string.view_details),
                         color = textColor,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(4.dp)
+                        modifier = Modifier.padding(4.dp),
+                        style = Typography.bodySemibold
                     )
                 }
             }
         }
     }
 }
-
-@Composable
-fun alertHeaderTypography(spec: AlertCardSpec): TextStyle =
-    (if (spec == AlertCardSpec.Elevator) MaterialTheme.typography.bodySmall
-        else TextStyle(fontSize = 24.sp))
-        .merge(
-            TextStyle(
-                fontWeight =
-                    when (spec) {
-                        AlertCardSpec.Major -> FontWeight.Bold
-                        AlertCardSpec.Elevator -> FontWeight.Normal
-                        else -> FontWeight.SemiBold
-                    }
-            )
-        )
 
 @Composable
 @Preview

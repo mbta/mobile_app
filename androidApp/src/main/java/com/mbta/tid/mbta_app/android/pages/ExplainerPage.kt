@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
@@ -31,6 +29,7 @@ import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
@@ -54,8 +53,7 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
             Text(
                 stringResource(R.string.details),
                 color = routeAccents.textColor,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.headlineMedium,
+                style = Typography.headline,
                 modifier = Modifier.weight(1f)
             )
             ActionButton(ActionButtonKind.Close) { goBack() }
@@ -91,8 +89,7 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
                     }
         },
         modifier,
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Bold
+        style = Typography.title2Bold
     )
 }
 
@@ -157,6 +154,6 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
                     }
         },
         modifier,
-        style = MaterialTheme.typography.bodySmall
+        style = Typography.body
     )
 }

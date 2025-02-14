@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,9 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 @Composable
@@ -43,14 +41,10 @@ fun TransitHeader(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = name,
+            color = textColor,
             maxLines = 1,
             modifier = Modifier.semantics { heading() }.weight(1.0f).placeholderIfLoading(),
-            style =
-                LocalTextStyle.current.copy(
-                    color = textColor,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold
-                )
+            style = Typography.bodySemibold
         )
         if (rightContent != null) {
             rightContent(textColor)

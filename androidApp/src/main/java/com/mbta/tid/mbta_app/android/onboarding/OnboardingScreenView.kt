@@ -42,14 +42,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -196,10 +196,12 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_feedback_header),
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold
+                            style = Typography.title1Bold
                         )
-                        Text(stringResource(R.string.onboarding_feedback_body), fontSize = 20.sp)
+                        Text(
+                            stringResource(R.string.onboarding_feedback_body),
+                            style = Typography.title3
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -209,7 +211,7 @@ fun OnboardingScreenView(
                             Text(
                                 stringResource(R.string.onboarding_feedback_advance),
                                 color = colorResource(R.color.fill3),
-                                fontSize = 17.sp
+                                style = Typography.bodySemibold
                             )
                         }
                     }
@@ -246,12 +248,11 @@ fun OnboardingScreenView(
                         Text(
                             stringResource(R.string.onboarding_hide_maps_header),
                             modifier = Modifier.padding(start = 32.dp, top = 32.dp, end = 32.dp),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
+                            style = Typography.title1Bold
                         )
                         Text(
                             stringResource(R.string.onboarding_hide_maps_body),
-                            fontSize = 20.sp,
+                            style = Typography.title3,
                             modifier = Modifier.padding(start = 32.dp, bottom = 32.dp, end = 32.dp)
                         )
                     }
@@ -266,7 +267,7 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_hide_maps_hide),
-                            fontSize = 17.sp,
+                            style = Typography.bodySemibold,
                             color = colorResource(R.color.fill3)
                         )
                     }
@@ -291,8 +292,7 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_hide_maps_show),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Normal
+                            style = Typography.body
                         )
                     }
                     Spacer(modifier = Modifier.height(56.dp))
@@ -360,10 +360,12 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_location_header),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
+                            style = Typography.title1Bold
                         )
-                        Text(stringResource(R.string.onboarding_location_body), fontSize = 20.sp)
+                        Text(
+                            stringResource(R.string.onboarding_location_body),
+                            style = Typography.title3
+                        )
                         Button(
                             modifier = buttonModifier,
                             shape = RoundedCornerShape(8.dp),
@@ -372,10 +374,13 @@ fun OnboardingScreenView(
                             Text(
                                 stringResource(R.string.onboarding_location_advance),
                                 color = colorResource(R.color.fill3),
-                                fontSize = 17.sp
+                                style = Typography.bodySemibold
                             )
                         }
-                        Text(stringResource(R.string.onboarding_location_footer), fontSize = 17.sp)
+                        Text(
+                            stringResource(R.string.onboarding_location_footer),
+                            style = Typography.body
+                        )
                     }
                 }
             }
@@ -418,12 +423,11 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_station_accessibility_header),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
+                            style = Typography.title1Bold
                         )
                         Text(
                             stringResource(R.string.onboarding_station_accessibility_body),
-                            fontSize = 20.sp
+                            style = Typography.title3
                         )
 
                         Button(
@@ -439,7 +443,7 @@ fun OnboardingScreenView(
                             Text(
                                 stringResource(R.string.onboarding_station_accessibility_show),
                                 Modifier.padding(start = 32.dp, end = 32.dp),
-                                fontSize = 17.sp,
+                                style = Typography.bodySemibold,
                                 color = colorResource(R.color.fill3)
                             )
                         }
@@ -463,8 +467,7 @@ fun OnboardingScreenView(
                             Text(
                                 stringResource(R.string.onboarding_station_accessibility_hide),
                                 Modifier.padding(start = 32.dp, end = 32.dp),
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Normal
+                                style = Typography.body
                             )
                         }
                     }
@@ -477,10 +480,12 @@ fun OnboardingScreenView(
 @Preview
 @Composable
 private fun OnboardingScreenViewPreview() {
-    OnboardingScreenView(
-        OnboardingScreen.StationAccessibility,
-        advance = {},
-        locationDataManager = LocationDataManager(),
-        settingsRepository = MockSettingsRepository()
-    )
+    MyApplicationTheme {
+        OnboardingScreenView(
+            OnboardingScreen.StationAccessibility,
+            advance = {},
+            locationDataManager = LocationDataManager(),
+            settingsRepository = MockSettingsRepository()
+        )
+    }
 }
