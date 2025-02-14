@@ -265,6 +265,6 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(downstreamStop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("SHUTTLE").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
     }
 }

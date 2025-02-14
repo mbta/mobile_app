@@ -140,19 +140,25 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testShuttleAccessibilityLabel() throws {
         let sut = UpcomingTripView(
-            prediction: .disruption(.shuttle, iconName: "alert-borderless-shuttle"),
+            prediction: .disruption(
+                .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .shuttle }),
+                iconName: "alert-borderless-shuttle"
+            ),
             isFirst: false
         )
         XCTAssertEqual(
             "Shuttle buses replace service",
-            try sut.inspect().find(text: "Shuttle")
+            try sut.inspect().find(text: "Shuttle Bus")
                 .accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
 
     func testSuspensionAccessibilityLabel() throws {
         let sut = UpcomingTripView(
-            prediction: .disruption(.suspension, iconName: "alert-borderless-suspension"),
+            prediction: .disruption(
+                .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .suspension }),
+                iconName: "alert-borderless-suspension"
+            ),
             isFirst: false
         )
         XCTAssertEqual(
@@ -192,7 +198,7 @@ final class UpcomingTripViewTests: XCTestCase {
     func testDisruptionIconName() throws {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .snowRoute }
         let disruption = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: .bus)
-        let sut = UpcomingTripView(prediction: .disruption(alert.effect, iconName: disruption.iconName))
+        let sut = UpcomingTripView(prediction: .disruption(.init(alert: alert), iconName: disruption.iconName))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "alert-large-bus-issue"
         }))

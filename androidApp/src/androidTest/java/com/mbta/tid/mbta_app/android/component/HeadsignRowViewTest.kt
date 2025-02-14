@@ -123,7 +123,7 @@ class HeadsignRowViewTest {
             )
         )
 
-        composeTestRule.onNodeWithText("Shuttle", ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
     }
 
     @Test

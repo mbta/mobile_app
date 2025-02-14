@@ -21,7 +21,7 @@ struct StopDetailsDownstreamAlert: View {
             AlertIcon(alertState: .issue, color: routeColor)
                 .frame(width: 24, height: 24)
                 .padding(6)
-            Text(alert.downstreamEffectDescription())
+            Text(FormattedAlert(alert: alert).downstreamLabel)
                 .font(.callout)
                 .frame(maxWidth: .infinity, alignment: .leading)
             InfoIcon(size: iconSize).padding(4)

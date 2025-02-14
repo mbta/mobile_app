@@ -40,6 +40,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
@@ -217,7 +218,10 @@ private fun upcomingTripViewState(
 ): UpcomingTripViewState {
     val disruption = stop.disruption
     return if (disruption != null) {
-        UpcomingTripViewState.Disruption(disruption.alert.effect, iconName = disruption.iconName)
+        UpcomingTripViewState.Disruption(
+            FormattedAlert(disruption.alert),
+            iconName = disruption.iconName
+        )
     } else {
         UpcomingTripViewState.Some(stop.format(now, routeAccents.type))
     }

@@ -32,7 +32,7 @@ struct UpcomingTripView: View {
     enum State: Equatable {
         case loading
         case noTrips(RealtimePatterns.NoTripsFormat)
-        case disruption(shared.Alert.Effect, iconName: String)
+        case disruption(FormattedAlert, iconName: String)
         case some(TripInstantDisplay)
     }
 
@@ -152,8 +152,8 @@ struct UpcomingTripView: View {
                     )
                     : accessibilityFormatters.cancelledOther(date: format.scheduledTime.toNSDate()))
             }
-        case let .disruption(alertEffect, iconName: iconName):
-            DisruptionView(effect: .from(alertEffect: alertEffect), iconName: iconName)
+        case let .disruption(formattedAlert, iconName: iconName):
+            DisruptionView(spec: formattedAlert.predictionReplacement, iconName: iconName)
         case let .noTrips(format):
             switch onEnum(of: format) {
             case .predictionsUnavailable:
@@ -186,28 +186,10 @@ func makeTimeFormatter() -> DateFormatter {
 }
 
 struct DisruptionView: View {
-    let effect: Effect
+    let spec: FormattedAlert.PredictionReplacement
     let iconName: String
 
     @ScaledMetric private var iconSize: CGFloat = 20
-
-    enum Effect {
-        case detour
-        case shuttle
-        case stopClosed
-        case suspension
-        case unknown
-
-        static func from(alertEffect: shared.Alert.Effect) -> Self {
-            switch alertEffect {
-            case .detour: .detour
-            case .shuttle: .shuttle
-            case .stationClosure, .stopClosure, .dockClosure: .stopClosed
-            case .suspension: .suspension
-            default: .unknown
-            }
-        }
-    }
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
@@ -229,21 +211,17 @@ struct DisruptionView: View {
     }
 
     var rawText: Text {
-        switch effect {
-        case .detour: Text("Detour", comment: "Possible alert effect")
-        case .shuttle: Text("Shuttle", comment: "Possible alert effect")
-            .accessibilityLabel(Text("Shuttle buses replace service", comment: "Shuttle alert VoiceOver text"))
-        case .stopClosed: Text("Stop Closed", comment: "Possible alert effect")
-        case .suspension: Text("Suspension", comment: "Possible alert effect")
-            .accessibilityLabel(Text("Service suspended", comment: "Suspension alert VoiceOver text"))
-        case .unknown: Text("No Service", comment: "Possible alert effect")
+        if let accessibilityLabel = spec.accessibilityLabel {
+            Text(spec.text).accessibilityLabel(accessibilityLabel)
+        } else {
+            Text(spec.text)
         }
     }
 
     var fullText: some View {
         rawText
-            .font(Typography.footnote)
-            .textCase(.uppercase)
+            .font(Typography.footnoteSemibold)
+            .opacity(0.6)
     }
 
     var fullImage: some View {
@@ -262,7 +240,7 @@ struct UpcomingTripView_Previews: PreviewProvider {
     static func disruption(_ effect: shared.Alert.Effect) -> UpcomingTripView.State {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = effect }
         let format = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: route)
-        return .disruption(effect, iconName: format.iconName)
+        return .disruption(.init(alert: alert), iconName: format.iconName)
     }
 
     static var previews: some View {

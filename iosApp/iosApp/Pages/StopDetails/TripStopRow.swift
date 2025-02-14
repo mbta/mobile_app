@@ -183,7 +183,7 @@ struct TripStopRow: View {
 
     var upcomingTripViewState: UpcomingTripView.State {
         if let disruption = stop.disruption {
-            .disruption(disruption.alert.effect, iconName: disruption.iconName)
+            .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
         } else {
             .some(stop.format(now: now, routeType: routeAccents.type))
         }
