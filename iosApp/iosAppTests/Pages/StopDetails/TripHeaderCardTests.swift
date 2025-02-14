@@ -177,7 +177,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(vehicle, stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: nil,
                 prediction: prediction,
                 predictionStop: nil,
@@ -224,7 +224,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(vehicle, stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: nil,
                 prediction: prediction,
                 predictionStop: platformStop,
@@ -254,7 +254,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
                 predictionStop: nil,
@@ -291,7 +291,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
                 predictionStop: nil,
@@ -379,7 +379,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
                 predictionStop: nil,
@@ -400,7 +400,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(otherStop, .init(
                 stop: otherStop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
                 predictionStop: nil,
@@ -431,7 +431,7 @@ final class TripHeaderCardTests: XCTestCase {
         }
         let withTrackNumber = TripHeaderCard(
             spec: .vehicle(boardingVehicle, coreCRStop, .init(
-                stop: stop, stopSequence: 0, alert: nil, schedule: nil,
+                stop: stop, stopSequence: 0, disruption: nil, schedule: nil,
                 prediction: objects.prediction { prediction in
                     prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
                     prediction.stopId = platformStop.id

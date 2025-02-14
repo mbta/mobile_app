@@ -530,7 +530,7 @@ final class TripDetailsPageTests: XCTestCase {
                 stop: .init(
                     stop: childStop,
                     stopSequence: 1,
-                    alert: nil,
+                    disruption: nil,
                     schedule: nil,
                     prediction: nil,
                     predictionStop: nil,
