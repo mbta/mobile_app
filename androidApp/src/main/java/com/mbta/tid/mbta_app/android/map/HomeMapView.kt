@@ -34,15 +34,14 @@ import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.compose.DisposableMapEffect
 import com.mapbox.maps.extension.compose.MapEffect
-import com.mapbox.maps.extension.compose.MapEvents
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
+import com.mapbox.maps.extension.compose.rememberMapState
 import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
-import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
@@ -70,7 +69,6 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @OptIn(MapboxExperimental::class)
@@ -235,6 +233,22 @@ fun HomeMapView(
             }
         }
 
+    val mapState = rememberMapState()
+    mapState.gesturesSettings = GesturesSettings {
+        rotateEnabled = false
+        pitchEnabled = false
+    }
+    LaunchedEffect(Unit) {
+        mapState.styleLoadedEvents.collect {
+            layerManager.run {
+                addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        mapState.cameraChangedEvents.collect { viewportProvider.updateCameraState(it.cameraState) }
+    }
+
     Box(modifier, contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
@@ -249,36 +263,11 @@ fun HomeMapView(
         } else {
             MapboxMap(
                 Modifier.fillMaxSize(),
-                mapEvents =
-                    MapEvents(
-                        onStyleLoaded = {
-                            coroutineScope.launch {
-                                layerManager.run {
-                                    addLayers(
-                                        if (isDarkMode) ColorPalette.dark else ColorPalette.light
-                                    )
-                                }
-                            }
-                        },
-                        onCameraChanged = { viewportProvider.updateCameraState(it.cameraState) }
-                    ),
-                gesturesSettings =
-                    GesturesSettings {
-                        rotateEnabled = false
-                        pitchEnabled = false
-                    },
-                locationComponentSettings =
-                    LocationComponentSettings(
-                        locationPuck = createDefault2DPuck(withBearing = false)
-                    ) {
-                        puckBearingEnabled = false
-                        enabled = true
-                        pulsingEnabled = false
-                    },
                 compass = {},
                 scaleBar = {},
                 logo = { Logo(Modifier.clearAndSetSemantics {}) },
                 mapViewportState = viewportProvider.viewport,
+                mapState = mapState,
                 style = {
                     MapStyle(
                         style =
@@ -315,6 +304,12 @@ fun HomeMapView(
                 MapEffect(true) { map ->
                     map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
                     map.location.setLocationProvider(locationProvider)
+                    map.location.updateSettings {
+                        locationPuck = createDefault2DPuck(withBearing = false)
+                        puckBearingEnabled = false
+                        enabled = true
+                        pulsingEnabled = false
+                    }
                 }
 
                 LaunchedEffect(locationDataManager) {
