@@ -22,7 +22,7 @@ struct StopDetailsDownstreamAlert: View {
                 .frame(width: 24, height: 24)
                 .padding(6)
             Text(alert.downstreamEffectDescription())
-                .font(.callout)
+                .font(Typography.callout)
                 .frame(maxWidth: .infinity, alignment: .leading)
             InfoIcon(size: iconSize).padding(4)
         }

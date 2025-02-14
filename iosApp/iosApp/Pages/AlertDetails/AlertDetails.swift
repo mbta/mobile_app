@@ -131,7 +131,7 @@ struct AlertDetails: View {
             effectTitle.font(Typography.title2Bold)
             if isElevatorClosure, let header = alert.header {
                 Text(header).font(Typography.bodySemibold)
-            } else if let causeLabel { Text(causeLabel).font(.body).bold() }
+            } else if let causeLabel { Text(causeLabel).font(Typography.bodySemibold) }
         }
     }
 

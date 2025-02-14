@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RealtimePatterns
@@ -70,7 +71,7 @@ fun PredictionRowView(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ProvideTextStyle(value = MaterialTheme.typography.headlineMedium) {
+            ProvideTextStyle(value = Typography.callout) {
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.End,
