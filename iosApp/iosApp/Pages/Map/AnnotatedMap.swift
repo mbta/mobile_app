@@ -50,6 +50,7 @@ struct AnnotatedMap: View {
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(
                 scaleBar: .init(visibility: .hidden),
+                compass: .init(visibility: .hidden),
                 attributionButton: .init(margins: .init(x: 0, y: 8))
             ))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
