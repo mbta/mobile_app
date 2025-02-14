@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -7,6 +8,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
@@ -27,13 +29,34 @@ class MainActivity : ComponentActivity() {
         initSentry()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         enableEdgeToEdge(
-            navigationBarStyle = SystemBarStyle.dark(scrim = Color(0x00000000).toArgb())
+            navigationBarStyle =
+                if (isDarkModeOn()) {
+                    SystemBarStyle.dark(
+                        scrim = Color(0xFF192026).toArgb(),
+                    )
+                } else {
+                    SystemBarStyle.light(
+                        scrim = Color(0xFFF5F4F2).toArgb(),
+                        darkScrim = Color(0xFF192026).toArgb()
+                    )
+                },
+            statusBarStyle =
+                if (isDarkModeOn()) {
+                    SystemBarStyle.dark(
+                        scrim = Color(0x00000000).toArgb(),
+                    )
+                } else {
+                    SystemBarStyle.light(
+                        scrim = Color(0x00000000).toArgb(),
+                        darkScrim = Color(0x00000000).toArgb(),
+                    )
+                },
         )
 
         setContent {
             MyApplicationTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().navigationBarsPadding(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     CompositionLocalProvider(
@@ -45,6 +68,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun isDarkModeOn(): Boolean {
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isDarkModeOn = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+        return isDarkModeOn
     }
 
     private fun initSentry() {
