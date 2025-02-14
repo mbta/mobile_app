@@ -214,6 +214,10 @@ struct StopDetailsFilteredRouteView: View {
                                 }
                                 ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                                     VStack(spacing: 0) {
+                                        let showChevron = switch onEnum(of: row.formatted) {
+                                        case .disruption: false
+                                        default: true
+                                        }
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             let noTrips: RealtimePatterns
                                                 .NoTripsFormat? = switch onEnum(of: row.formatted) {
@@ -229,7 +233,7 @@ struct StopDetailsFilteredRouteView: View {
                                                 routeType: patternsByStop.representativeRoute.type,
                                                 noTrips: noTrips
                                             )
-                                        }) {
+                                        }, showChevron: showChevron) {
                                             HeadsignRowView(
                                                 headsign: row.headsign,
                                                 predictions: row.formatted,
