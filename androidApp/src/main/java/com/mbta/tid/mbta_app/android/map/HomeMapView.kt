@@ -415,7 +415,7 @@ fun HomeMapView(
                             .padding(top = 85.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                             .statusBarsPadding()
                     } else {
-                        Modifier.align(Alignment.TopEnd).padding(16.dp)
+                        Modifier.align(Alignment.TopEnd).padding(16.dp).statusBarsPadding()
                     }
 
                 if (locationDataManager.hasPermission) {
