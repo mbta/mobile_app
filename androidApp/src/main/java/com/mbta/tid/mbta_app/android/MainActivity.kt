@@ -32,12 +32,12 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle =
                 if (isDarkModeOn()) {
                     SystemBarStyle.dark(
-                        scrim = Color(0xFF192026).toArgb(),
+                        scrim = getColor(R.color.fill2),
                     )
                 } else {
                     SystemBarStyle.light(
-                        scrim = Color(0xFFF5F4F2).toArgb(),
-                        darkScrim = Color(0xFF192026).toArgb()
+                        scrim = getColor(R.color.fill2),
+                        darkScrim = getColor(R.color.fill2)
                     )
                 },
             statusBarStyle =
