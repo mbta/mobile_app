@@ -54,6 +54,10 @@ struct DestinationRowView: View {
                 count: condenseHeadsignPredictions ? 1 : 2,
                 context: context
             )
+            let showChevron = switch onEnum(of: predictions) {
+            case .disruption: false
+            default: true
+            }
             SheetNavigationLink(
                 value: .legacyStopDetails(
                     stop,
@@ -65,7 +69,8 @@ struct DestinationRowView: View {
                 action: { entry in
                     pushNavEntry(entry)
                     analyticsTappedDeparture(predictions: predictions)
-                }
+                },
+                showChevron: showChevron
             ) {
                 HeadsignRowView(
                     headsign: patternsByHeadsign.headsign,
@@ -80,6 +85,10 @@ struct DestinationRowView: View {
                 routeType: patternsByDirection.representativeRoute.type,
                 context: context
             )
+            let showChevron = switch onEnum(of: predictions) {
+            case .disruption: false
+            default: true
+            }
             SheetNavigationLink(
                 value: .legacyStopDetails(
                     stop,
@@ -91,7 +100,8 @@ struct DestinationRowView: View {
                 action: { entry in
                     pushNavEntry(entry)
                     analyticsTappedDeparture(predictions: predictions)
-                }
+                },
+                showChevron: showChevron
             ) {
                 DirectionRowView(
                     direction: patternsByDirection.direction,

@@ -20,6 +20,7 @@ struct TripDetailsStopView: View {
             SheetNavigationLink(
                 value: .legacyStopDetails(stop.stop, nil),
                 action: { entry in onTapLink(entry, stop, nil) },
+                showChevron: stop.disruption == nil,
                 label: {
                     HStack {
                         Text(stop.stop.name).foregroundStyle(Color.text)

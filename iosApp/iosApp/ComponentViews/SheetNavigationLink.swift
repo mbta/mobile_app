@@ -12,6 +12,7 @@ import SwiftUI
 struct SheetNavigationLink<Label>: View where Label: View {
     let value: SheetNavigationStackEntry
     let action: (SheetNavigationStackEntry) -> Void
+    let showChevron: Bool
     let label: () -> Label
 
     @ScaledMetric private var chevronHeight: CGFloat = 14
@@ -21,12 +22,14 @@ struct SheetNavigationLink<Label>: View where Label: View {
         Button(action: { action(value) }) {
             HStack(spacing: 0) {
                 label()
-                Image(.faChevronRight)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: chevronWidth, height: chevronHeight)
-                    .padding(5)
-                    .foregroundStyle(Color.deemphasized)
+                if showChevron {
+                    Image(.faChevronRight)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: chevronWidth, height: chevronHeight)
+                        .padding(5)
+                        .foregroundStyle(Color.deemphasized)
+                }
             }
         }
     }
