@@ -168,6 +168,7 @@
     <string name="search_by_stop">Chèche pa kanpe</string>
     <string name="selected_stop">%1$s, chwazi sispann</string>
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
+    <string name="serves_route_list">sèvi %1$s</string>
     <string name="service_change">Chanjman Sèvis</string>
     <string name="service_change_sentence_case">Chanjman sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>

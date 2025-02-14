@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
@@ -42,9 +44,21 @@ fun RoutePill(
     line: Line? = null,
     type: RoutePillType,
     isActive: Boolean = true,
+    contentDescription: String? = null,
     modifier: Modifier = Modifier
 ) {
-    val spec = RoutePillSpec(route, line, type)
+    RoutePill(route, line, isActive, RoutePillSpec(route, line, type), contentDescription, modifier)
+}
+
+@Composable
+fun RoutePill(
+    route: Route?,
+    line: Line? = null,
+    isActive: Boolean = true,
+    spec: RoutePillSpec,
+    contentDescription: String? = null,
+    modifier: Modifier = Modifier
+) {
     val textColor = Color.fromHex(spec.textColor)
     val routeColor = Color.fromHex(spec.routeColor)
 
@@ -78,7 +92,7 @@ fun RoutePill(
             RoutePillSpec.Size.FlexPill ->
                 height(24.dp).padding(horizontal = 12.dp).widthIn(min = (48 - 12 * 2).dp)
             RoutePillSpec.Size.FlexPillSmall ->
-                height(16.dp).padding(horizontal = 8.dp).widthIn(min = (36 - 8 * 2).dp)
+                padding(horizontal = 8.dp).height(16.dp).widthIn(min = (36 - 8 * 2).dp)
         }
 
     fun Modifier.withColor() =
@@ -90,15 +104,21 @@ fun RoutePill(
 
     val typeText = route?.type?.typeText(LocalContext.current, true)
 
+    val contentDescription =
+        contentDescription
+            ?: stringResource(
+                id = R.string.route_with_type,
+                route?.label ?: line?.longName ?: "",
+                typeText ?: ""
+            )
+
     val finalModifier =
         modifier
             .placeholderIfLoading()
             .withColor()
             .withSizePadding()
             .wrapContentHeight(Alignment.CenterVertically)
-            .semantics {
-                contentDescription = "${route?.label ?: line?.longName ?: ""} ${typeText ?: ""}"
-            }
+            .semantics { this.contentDescription = contentDescription }
 
     when (pillContent) {
         RoutePillSpec.Content.Empty -> {}

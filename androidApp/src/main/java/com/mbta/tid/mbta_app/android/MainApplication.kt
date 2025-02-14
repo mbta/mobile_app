@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
@@ -50,6 +51,7 @@ class MainApplication : Application() {
         val koinViewModelModule = module {
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
+            viewModelOf(::SearchResultsViewModel)
             viewModel { StopDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
         }
     }
