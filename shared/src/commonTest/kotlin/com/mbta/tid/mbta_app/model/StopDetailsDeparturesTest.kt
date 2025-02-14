@@ -661,7 +661,7 @@ class StopDetailsDeparturesTest {
                 "Late",
                 null,
                 listOf(latePattern),
-                listOf(UpcomingTrip(lateTrip, latePrediction)),
+                listOf(UpcomingTrip(lateTrip, prediction = latePrediction, predictionStop = stop)),
                 allDataLoaded = false
             )
         val expectedLateAfterLoad =
@@ -670,7 +670,7 @@ class StopDetailsDeparturesTest {
                 "Late",
                 null,
                 listOf(latePattern),
-                listOf(UpcomingTrip(lateTrip, lateSchedule, latePrediction)),
+                listOf(UpcomingTrip(lateTrip, lateSchedule, latePrediction, predictionStop = stop)),
             )
 
         val expectedBeforeLoaded =
@@ -1414,6 +1414,63 @@ class StopDetailsDeparturesTest {
         }
 
     @Test
+    fun `autoTripFilter sets vehicle when vehicle is newly assigned`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route = objects.route()
+            val routePattern =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "B" }
+                }
+
+            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val trip = objects.trip(routePattern)
+            val vehicle = objects.vehicle {
+                tripId = trip.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                this.trip = trip
+                departureTime = time.plus(9.minutes)
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                this.trip = trip
+                departureTime = time.plus(9.minutes)
+                vehicleId = vehicle.id
+            }
+
+            val departures =
+                StopDetailsDepartures.fromData(
+                    stop,
+                    GlobalResponse(
+                        objects,
+                        mapOf(stop.id to listOf(routePattern.id))
+                    ),
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    emptySet(),
+                    time,
+                    useTripHeadsigns = anyBoolean(),
+                )
+
+            assertEquals(
+                TripDetailsFilter(trip.id, vehicle.id, 0, false),
+                checkNotNull(departures).autoTripFilter(
+                    StopDetailsFilter(route.id, routePattern.directionId),
+                    TripDetailsFilter(trip.id, vehicleId = null, 0, false),
+                    time
+                )
+            )
+        }
+
+    @Test
     fun `autoTripFilter provides next trip when current trip has passed the stop`() =
         parametricTest {
             val objects = ObjectCollectionBuilder()
@@ -1866,7 +1923,7 @@ class StopDetailsDeparturesTest {
                 listOf(
                     TripAndFormat(
                         UpcomingTrip(
-                            trip2, schedule2, prediction2, vehicle1
+                            trip2, schedule2, prediction2, stop, vehicle1
                         ),
                         RealtimePatterns.Format.Some.FormatWithId(
                             trip2.id, route1.type, TripInstantDisplay.Minutes(minutes = 5))

@@ -18,6 +18,7 @@
     <string name="autos_impeding_service">Autos Impeding Service</string>
     <string name="back_button_label">Back</string>
     <string name="boarding_abbr">BRD</string>
+    <string name="boarding_track">Boarding on track %1$s</string>
     <string name="bus">bus</string>
     <string name="buses">buses</string>
     <string name="cancelled">Cancelled</string>
@@ -200,6 +201,7 @@
     <string name="technical_problem">Technical Problem</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="track_change">Track Change</string>
+    <string name="track_number">Track %1$s</string>
     <string name="track_problem">Track Problem</string>
     <string name="track_work">Track Work</string>
     <string name="traffic">Traffic</string>

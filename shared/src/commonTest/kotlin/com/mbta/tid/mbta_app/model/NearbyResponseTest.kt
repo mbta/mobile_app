@@ -1230,8 +1230,8 @@ class NearbyResponseTest {
                                     listOf(predictionBrd),
                                     listOf(
                                         objects.upcomingTrip(
-                                            predictionBrdPrediction,
-                                            predictionBrdVehicle
+                                            prediction = predictionBrdPrediction,
+                                            vehicle = predictionBrdVehicle
                                         )
                                     ),
                                     hasSchedulesToday = false
@@ -3185,7 +3185,8 @@ class NearbyResponseTest {
                                     listOf(
                                         UpcomingTrip(
                                             trip = orangeNorthboundTypicalTrip,
-                                            prediction = northboundPrediction
+                                            prediction = northboundPrediction,
+                                            predictionStop = northStationNorthboundPlatform
                                         )
                                     ),
                                     alertsHere = listOf(alert),
