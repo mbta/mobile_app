@@ -105,7 +105,7 @@ struct ContentView: View {
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel(tab: SelectedTab.more) }
                     .onAppear { analytics.track(screen: .settings) }
-            }
+            }.accessibilityHidden(nearbyVM.navigationStack.lastSafe() != .nearby)
         }
     }
 
