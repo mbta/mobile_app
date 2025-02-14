@@ -240,10 +240,6 @@ struct DisruptionView: View {
         }
     }
 
-    var rawImage: Image {
-        Image(iconName)
-    }
-
     var fullText: some View {
         rawText
             .font(Typography.footnote)
@@ -251,7 +247,7 @@ struct DisruptionView: View {
     }
 
     var fullImage: some View {
-        rawImage
+        Image(iconName)
             .resizable()
             .scaledToFill()
             .foregroundStyle(Color.deemphasized)
