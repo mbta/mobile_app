@@ -50,13 +50,8 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         stringResource(R.string.error_loading_data),
                         style = MaterialTheme.typography.headlineSmall
                     )
-                    if (vm.showDebugMessages) {
-                        DebugView {
-                            Text(
-                                (state as? ErrorBannerState.DataError)?.messages?.joinToString()
-                                    ?: ""
-                            )
-                        }
+                    DebugView {
+                        Text((state as? ErrorBannerState.DataError)?.messages?.joinToString() ?: "")
                     }
                 },
                 button = {
