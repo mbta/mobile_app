@@ -162,6 +162,7 @@ struct ContentView: View {
             } else {
                 ZStack(alignment: .top) {
                     mapWithSheets
+                        .accessibilityHidden(searchObserver.isSearching)
                     VStack(alignment: .center, spacing: 0) {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
