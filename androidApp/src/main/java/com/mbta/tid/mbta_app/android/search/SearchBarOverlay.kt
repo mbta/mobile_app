@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -93,12 +94,14 @@ fun SearchBarOverlay(
     }
 
     Box(contentAlignment = Alignment.TopCenter) {
+        val baseModifier =
+            if (expanded) {
+                Modifier
+            } else {
+                Modifier.absoluteOffset { IntOffset(0, 12.dp.roundToPx()) }.statusBarsPadding()
+            }
         Box(
-            modifier =
-                Modifier.absoluteOffset {
-                        if (expanded) IntOffset(0, 0) else IntOffset(0, 12.dp.roundToPx())
-                    }
-                    .zIndex(1f),
+            modifier = baseModifier.zIndex(1f),
             contentAlignment = Alignment.Center,
         ) {
             if (visible) {
@@ -111,7 +114,6 @@ fun SearchBarOverlay(
                         }
                 ) {
                     if (!expanded) {
-
                         // Workaround for adding border
                         Box(
                             modifier =

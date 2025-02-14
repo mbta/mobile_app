@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -411,7 +412,8 @@ fun HomeMapView(
                 val recenterModifier =
                     if (isNearby) {
                         Modifier.align(Alignment.TopEnd)
-                            .padding(top = 86.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            .padding(top = 85.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            .statusBarsPadding()
                     } else {
                         Modifier.align(Alignment.TopEnd).padding(16.dp)
                     }
@@ -425,7 +427,10 @@ fun HomeMapView(
                 if (isNearby) {
                     LocationAuthButton(
                         locationDataManager,
-                        modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
+                        modifier =
+                            Modifier.align(Alignment.TopCenter)
+                                .padding(top = 86.dp)
+                                .statusBarsPadding()
                     )
                 }
             }
