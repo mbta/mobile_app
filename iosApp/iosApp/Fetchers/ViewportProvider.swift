@@ -108,6 +108,8 @@ class ViewportProvider: ObservableObject {
     func animateTo(viewport: Viewport, animation: ViewportAnimation = Defaults.animation) {
         withViewportAnimation(animation) {
             self.viewport = viewport
+        } completion: { _ in
+            self.isManuallyCentering = false
         }
     }
 

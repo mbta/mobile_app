@@ -16,7 +16,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
-import kotlinx.coroutines.test.runTest
+import kotlin.test.assertNotEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -24,11 +24,14 @@ class NearbyTransitViewModelTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testNearby() = runTest {
+    fun testNearby() {
         val objects = ObjectCollectionBuilder()
 
+        val route = objects.route()
         val stop1 = objects.stop()
+        objects.routePattern(route) { representativeTrip { stopIds = listOf(stop1.id) } }
         val stop2 = objects.stop()
+        objects.routePattern(route) { representativeTrip { stopIds = listOf(stop2.id) } }
 
         val globalResponse = GlobalResponse(objects)
 
@@ -37,6 +40,7 @@ class NearbyTransitViewModelTest {
 
         val response1 = NearbyStaticData(globalResponse, NearbyResponse(listOf(stop1.id)))
         val response2 = NearbyStaticData(globalResponse, NearbyResponse(listOf(stop2.id)))
+        assertNotEquals(response1, response2, "not actually testing anything")
 
         val nearbyRepository =
             object : INearbyRepository {
@@ -72,11 +76,11 @@ class NearbyTransitViewModelTest {
             }
         }
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { nearbyVM.nearby != null }
         assertEquals(response1, nearbyVM.nearby)
 
         position = position2
-        composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { nearbyVM.nearby != response1 }
         assertEquals(response2, nearbyVM.nearby)
     }
 }
