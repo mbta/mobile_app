@@ -202,7 +202,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                 return Entry(
                     stop,
                     working.stopSequence,
-                    getDisruption(working, alertsData, globalData, route, tripId, directionId),
+                    getDisruption(working, alertsData, route, tripId, directionId),
                     working.schedule,
                     working.prediction,
                     globalData.stops[working.prediction?.stopId],
@@ -403,15 +403,12 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         private fun getDisruption(
             entry: WorkingEntry,
             alertsData: AlertsStreamDataResponse?,
-            globalData: GlobalResponse,
             route: Route?,
             tripId: String,
             directionId: Int
         ): RealtimePatterns.Format.Disruption? {
             val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
-            val entryRoute = entry.prediction?.routeId ?: entry.schedule?.routeId
-            val entryRouteType =
-                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]?.type
+            val entryRouteType = route?.type
 
             if (entryTime == null) return null
             val alert =
@@ -420,7 +417,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                         alert.anyInformedEntity {
                             it.appliesTo(
                                 directionId = directionId,
-                                routeId = entryRoute,
+                                routeId = route?.id,
                                 routeType = entryRouteType,
                                 stopId = entry.stopId,
                                 tripId = tripId
