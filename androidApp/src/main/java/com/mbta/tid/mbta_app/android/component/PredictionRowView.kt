@@ -107,7 +107,10 @@ fun PredictionRowView(
                             }
                         is RealtimePatterns.Format.Disruption ->
                             UpcomingTripView(
-                                UpcomingTripViewState.Disruption(predictions.alert.effect)
+                                UpcomingTripViewState.Disruption(
+                                    predictions.alert.effect,
+                                    iconName = predictions.iconName
+                                )
                             )
                         is RealtimePatterns.Format.NoTrips ->
                             UpcomingTripView(

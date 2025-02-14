@@ -67,27 +67,27 @@ final class TripStopsTests: XCTestCase {
 
         let stops = TripDetailsStopList(tripId: trip.id, stops: [
             .init(
-                stop: stop1, stopSequence: 1, alert: nil,
+                stop: stop1, stopSequence: 1, disruption: nil,
                 schedule: schedule1, prediction: prediction1, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
-                stop: stop2, stopSequence: 2, alert: nil,
+                stop: stop2, stopSequence: 2, disruption: nil,
                 schedule: schedule2, prediction: prediction2, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
-                stop: stop3Target, stopSequence: 3, alert: nil,
+                stop: stop3Target, stopSequence: 3, disruption: nil,
                 schedule: schedule3, prediction: prediction3, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
-                stop: stop4, stopSequence: 4, alert: nil,
+                stop: stop4, stopSequence: 4, disruption: nil,
                 schedule: schedule4, prediction: prediction4, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
-                stop: stop5, stopSequence: 5, alert: nil,
+                stop: stop5, stopSequence: 5, disruption: nil,
                 schedule: schedule5, prediction: prediction5, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
@@ -157,17 +157,17 @@ final class TripStopsTests: XCTestCase {
 
         let stops = TripDetailsStopList(tripId: trip.id, stops: [
             .init(
-                stop: stop1, stopSequence: 1, alert: nil,
+                stop: stop1, stopSequence: 1, disruption: nil,
                 schedule: schedule1, prediction: prediction1, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
-                stop: stop2, stopSequence: 2, alert: nil,
+                stop: stop2, stopSequence: 2, disruption: nil,
                 schedule: schedule2, prediction: prediction2, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
             .init(
-                stop: stop3, stopSequence: 3, alert: nil,
+                stop: stop3, stopSequence: 3, disruption: nil,
                 schedule: schedule3, prediction: prediction3, predictionStop: nil,
                 vehicle: vehicle, routes: [route]
             ),
@@ -232,7 +232,7 @@ final class TripStopsTests: XCTestCase {
         let prediction2 = makePrediction(schedule: schedule2)
 
         let firstStop: TripDetailsStopList.Entry = .init(
-            stop: stop1, stopSequence: 1, alert: nil,
+            stop: stop1, stopSequence: 1, disruption: nil,
             schedule: schedule1, prediction: prediction1, predictionStop: nil,
             vehicle: vehicle, routes: [route]
         )
@@ -241,7 +241,7 @@ final class TripStopsTests: XCTestCase {
             stops: [
                 firstStop,
                 .init(
-                    stop: stop2, stopSequence: 2, alert: nil,
+                    stop: stop2, stopSequence: 2, disruption: nil,
                     schedule: schedule2, prediction: prediction2, predictionStop: nil,
                     vehicle: vehicle, routes: [route]
                 ),
@@ -309,7 +309,7 @@ final class TripStopsTests: XCTestCase {
         let prediction3 = makePrediction(schedule: schedule3)
 
         let firstStop: TripDetailsStopList.Entry = .init(
-            stop: stop1, stopSequence: 1, alert: nil,
+            stop: stop1, stopSequence: 1, disruption: nil,
             schedule: schedule1, prediction: prediction1, predictionStop: nil,
             vehicle: vehicle, routes: [route]
         )
@@ -318,12 +318,12 @@ final class TripStopsTests: XCTestCase {
             stops: [
                 firstStop,
                 .init(
-                    stop: stop2, stopSequence: 2, alert: nil,
+                    stop: stop2, stopSequence: 2, disruption: nil,
                     schedule: schedule2, prediction: prediction2, predictionStop: nil,
                     vehicle: vehicle, routes: [route]
                 ),
                 .init(
-                    stop: stop3, stopSequence: 3, alert: nil,
+                    stop: stop3, stopSequence: 3, disruption: nil,
                     schedule: schedule3, prediction: prediction3, predictionStop: nil,
                     vehicle: vehicle, routes: [route]
                 ),

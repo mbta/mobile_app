@@ -31,7 +31,7 @@ final class TripStopRowTests: XCTestCase {
 
         let sut = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
+                stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
@@ -57,7 +57,7 @@ final class TripStopRowTests: XCTestCase {
 
         let sut = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
+                stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
@@ -89,7 +89,7 @@ final class TripStopRowTests: XCTestCase {
 
         let sut = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
+                stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: platformStop,
                 vehicle: nil, routes: [route]
             ),
@@ -116,7 +116,7 @@ final class TripStopRowTests: XCTestCase {
 
         let targeted = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
+                stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
@@ -132,7 +132,7 @@ final class TripStopRowTests: XCTestCase {
 
         let notTargeted = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
+                stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
@@ -159,7 +159,7 @@ final class TripStopRowTests: XCTestCase {
         let route = objects.route()
 
         let stopEntry = TripDetailsStopList.Entry(
-            stop: stop, stopSequence: 0, alert: nil,
+            stop: stop, stopSequence: 0, disruption: nil,
             schedule: schedule, prediction: prediction, predictionStop: nil,
             vehicle: nil, routes: [route]
         )
