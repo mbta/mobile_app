@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -47,6 +48,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
@@ -97,6 +99,9 @@ class StopDetailsViewModel(
 
     private val _tripData = MutableStateFlow<TripData?>(null)
     val tripData: StateFlow<TripData?> = _tripData
+
+    private val _tripDetailsStopList = MutableStateFlow<TripDetailsStopList?>(null)
+    // not accessible via a property since it needs extra params to be kept up to date
 
     private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
@@ -261,6 +266,40 @@ class StopDetailsViewModel(
         errorBannerRepository.clearDataError("TripDetailsView.joinVehicle")
         errorBannerRepository.clearDataError("TripDetailsView.loadTripSchedules")
         errorBannerRepository.clearDataError("TripDetailsView.loadTrip")
+    }
+
+    @Composable
+    fun getTripDetailsStopList(
+        tripFilter: TripDetailsFilter?,
+        allAlerts: AlertsStreamDataResponse?,
+        globalResponse: GlobalResponse?
+    ): StateFlow<TripDetailsStopList?> {
+        val tripData = this.tripData.collectAsState().value
+        LaunchedEffect(tripFilter, tripData, allAlerts, globalResponse) {
+            withContext(Dispatchers.Default) {
+                _tripDetailsStopList.value =
+                    if (
+                        tripFilter != null &&
+                            tripData != null &&
+                            tripData.tripFilter == tripFilter &&
+                            tripData.tripPredictionsLoaded &&
+                            globalResponse != null
+                    ) {
+                        TripDetailsStopList.fromPieces(
+                            tripFilter.tripId,
+                            tripData.trip.directionId,
+                            tripData.tripSchedules,
+                            tripData.tripPredictions,
+                            tripData.vehicle,
+                            allAlerts,
+                            globalResponse
+                        )
+                    } else {
+                        null
+                    }
+            }
+        }
+        return this._tripDetailsStopList.asStateFlow()
     }
 
     private fun clearAndLoadTripDetails(tripFilter: TripDetailsFilter) {
