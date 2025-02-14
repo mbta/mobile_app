@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -61,7 +62,14 @@ fun NoNearbyStopsView(
         Button(
             onClick = onOpenSearch,
             modifier = Modifier.requiredHeightIn(min = 48.dp),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors =
+                ButtonColors(
+                    containerColor = colorResource(R.color.key),
+                    disabledContainerColor = colorResource(R.color.key),
+                    contentColor = colorResource(R.color.fill3),
+                    disabledContentColor = colorResource(R.color.fill3)
+                )
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
