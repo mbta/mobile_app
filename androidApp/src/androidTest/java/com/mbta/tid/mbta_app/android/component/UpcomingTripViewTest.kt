@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -7,6 +8,13 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
+import androidx.compose.ui.test.onRoot
+import com.mbta.tid.mbta_app.android.assertHasColor
+import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Clock
@@ -240,5 +248,16 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithLoading() {
         composeTestRule.setContent { UpcomingTripView(UpcomingTripViewState.Loading) }
         composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithDisruption() {
+        val alert = ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Suspension }
+        val disruption =
+            RealtimePatterns.Format.Disruption(alert, mapStopRoute = MapStopRoute.FERRY)
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Disruption(alert.effect, disruption.iconName))
+        }
+        composeTestRule.onRoot().assertHasColor(Color.fromHex("008eaa"))
     }
 }

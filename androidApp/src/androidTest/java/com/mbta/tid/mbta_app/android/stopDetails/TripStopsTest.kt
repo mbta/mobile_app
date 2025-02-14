@@ -75,7 +75,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop1,
                         stopSequence = 1,
-                        alert = null,
+                        disruption = null,
                         schedule1,
                         prediction1,
                         stop1,
@@ -85,7 +85,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
                         stop2,
@@ -95,7 +95,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop3Target,
                         stopSequence = 3,
-                        alert = null,
+                        disruption = null,
                         schedule3,
                         prediction3,
                         stop3Target,
@@ -105,7 +105,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop4,
                         stopSequence = 4,
-                        alert = null,
+                        disruption = null,
                         schedule4,
                         prediction4,
                         stop4,
@@ -115,7 +115,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop5,
                         stopSequence = 5,
-                        alert = null,
+                        disruption = null,
                         schedule5,
                         prediction5,
                         stop5,
@@ -194,7 +194,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop1,
                         stopSequence = 1,
-                        alert = null,
+                        disruption = null,
                         schedule1,
                         prediction1,
                         stop1,
@@ -204,7 +204,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
                         stop2,
@@ -214,7 +214,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop3,
                         stopSequence = 3,
-                        alert = null,
+                        disruption = null,
                         schedule3,
                         prediction3,
                         stop3,
@@ -286,7 +286,7 @@ class TripStopsTest {
             TripDetailsStopList.Entry(
                 stop1,
                 stopSequence = 1,
-                alert = null,
+                disruption = null,
                 schedule1,
                 prediction1,
                 stop1,
@@ -301,7 +301,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
                         stop2,
@@ -375,7 +375,7 @@ class TripStopsTest {
             TripDetailsStopList.Entry(
                 stop1,
                 stopSequence = 1,
-                alert = null,
+                disruption = null,
                 schedule1,
                 prediction1,
                 stop1,
@@ -390,7 +390,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
                         stop2,
@@ -400,7 +400,7 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop3,
                         stopSequence = 3,
-                        alert = null,
+                        disruption = null,
                         schedule3,
                         prediction3,
                         stop3,

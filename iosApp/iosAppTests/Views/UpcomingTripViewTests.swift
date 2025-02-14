@@ -139,7 +139,10 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testShuttleAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .disruption(.shuttle), isFirst: false)
+        let sut = UpcomingTripView(
+            prediction: .disruption(.shuttle, iconName: "alert-borderless-shuttle"),
+            isFirst: false
+        )
         XCTAssertEqual(
             "Shuttle buses replace service",
             try sut.inspect().find(text: "Shuttle")
@@ -148,7 +151,10 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testSuspensionAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .disruption(.suspension), isFirst: false)
+        let sut = UpcomingTripView(
+            prediction: .disruption(.suspension, iconName: "alert-borderless-suspension"),
+            isFirst: false
+        )
         XCTAssertEqual(
             "Service suspended",
             try sut.inspect().find(text: "Suspension")
@@ -181,5 +187,14 @@ final class UpcomingTripViewTests: XCTestCase {
             "and at 4:00 PM",
             foundText
         )
+    }
+
+    func testDisruptionIconName() throws {
+        let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .snowRoute }
+        let disruption = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: .bus)
+        let sut = UpcomingTripView(prediction: .disruption(alert.effect, iconName: disruption.iconName))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "alert-large-bus-issue"
+        }))
     }
 }

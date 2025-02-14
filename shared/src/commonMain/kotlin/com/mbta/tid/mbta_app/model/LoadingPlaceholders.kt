@@ -132,7 +132,7 @@ object LoadingPlaceholders {
                     TripDetailsStopList.Entry(
                         stop,
                         sequence,
-                        alert = null,
+                        disruption = null,
                         schedule = null,
                         prediction,
                         predictionStop = null,

@@ -1,14 +1,16 @@
 package com.mbta.tid.mbta_app.android.component
 
 import android.content.Context
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -36,12 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
@@ -59,7 +64,7 @@ sealed interface UpcomingTripViewState {
 
     data class NoTrips(val format: RealtimePatterns.NoTripsFormat) : UpcomingTripViewState
 
-    data class Disruption(val effect: Alert.Effect) : UpcomingTripViewState
+    data class Disruption(val effect: Alert.Effect, val iconName: String) : UpcomingTripViewState
 
     data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
 }
@@ -312,7 +317,11 @@ fun UpcomingTripView(
                     }
             }
         is UpcomingTripViewState.Disruption ->
-            DisruptionView(DisruptionViewEffect.from(state.effect), modifier)
+            DisruptionView(
+                DisruptionViewEffect.from(state.effect),
+                iconName = state.iconName,
+                modifier
+            )
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
                 is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
@@ -387,7 +396,7 @@ enum class DisruptionViewEffect {
 }
 
 @Composable
-fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) {
+fun DisruptionView(effect: DisruptionViewEffect, iconName: String, modifier: Modifier = Modifier) {
     val text =
         when (effect) {
             DisruptionViewEffect.Detour -> stringResource(R.string.detour)
@@ -396,22 +405,14 @@ fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) 
             DisruptionViewEffect.Suspension -> stringResource(R.string.suspension)
             DisruptionViewEffect.Unknown -> stringResource(R.string.no_service)
         }
-    val icon =
-        when (effect) {
-            DisruptionViewEffect.Detour -> painterResource(R.drawable.baseline_warning_24)
-            DisruptionViewEffect.Shuttle -> painterResource(R.drawable.baseline_directions_bus_24)
-            DisruptionViewEffect.StopClosed ->
-                painterResource(R.drawable.baseline_report_gmailerrorred_24)
-            DisruptionViewEffect.Suspension -> painterResource(R.drawable.baseline_warning_24)
-            DisruptionViewEffect.Unknown -> painterResource(R.drawable.baseline_question_mark_24)
-        }
+    val icon = painterResource(drawableByName(iconName))
     Row(
         modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text.uppercase(), fontSize = 12.sp)
-        Icon(icon, null)
+        Image(icon, null, Modifier.size(20.dp))
     }
 }
 
@@ -440,10 +441,26 @@ fun UpcomingTripViewPreview() {
 @Preview
 @Composable
 fun DisruptionViewPreview() {
-    Column(horizontalAlignment = Alignment.End) {
-        DisruptionView(DisruptionViewEffect.Detour)
-        DisruptionView(DisruptionViewEffect.Shuttle)
-        DisruptionView(DisruptionViewEffect.StopClosed)
-        DisruptionView(DisruptionViewEffect.Suspension)
+    val route = MapStopRoute.ORANGE
+
+    fun disruption(effect: Alert.Effect): UpcomingTripViewState {
+        val alert = Single.alert { this.effect = effect }
+        val format = RealtimePatterns.Format.Disruption(alert, mapStopRoute = route)
+        return UpcomingTripViewState.Disruption(effect, iconName = format.iconName)
+    }
+
+    MyApplicationTheme {
+        Column(
+            Modifier.background(colorResource(R.color.fill3)).padding(8.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            UpcomingTripView(disruption(Alert.Effect.Suspension))
+            UpcomingTripView(disruption(Alert.Effect.StopClosure))
+            UpcomingTripView(disruption(Alert.Effect.StationClosure))
+            UpcomingTripView(disruption(Alert.Effect.DockClosure))
+            UpcomingTripView(disruption(Alert.Effect.Detour))
+            UpcomingTripView(disruption(Alert.Effect.SnowRoute))
+            UpcomingTripView(disruption(Alert.Effect.Shuttle))
+        }
     }
 }

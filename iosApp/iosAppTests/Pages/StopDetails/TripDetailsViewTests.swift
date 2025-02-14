@@ -300,7 +300,7 @@ final class TripDetailsViewTests: XCTestCase {
         sut.onTapStop(entry: newNavEntry,
                       stop: TripDetailsStopList.Entry(
                           stop: targetStop, stopSequence: 0,
-                          alert: nil, schedule: nil, prediction: nil, predictionStop: nil,
+                          disruption: nil, schedule: nil, prediction: nil, predictionStop: nil,
                           vehicle: nil, routes: []
                       ),
                       connectingRouteId: "route")

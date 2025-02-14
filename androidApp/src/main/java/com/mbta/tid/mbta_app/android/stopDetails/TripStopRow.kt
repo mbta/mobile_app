@@ -215,9 +215,9 @@ private fun upcomingTripViewState(
     now: Instant,
     routeAccents: TripRouteAccents
 ): UpcomingTripViewState {
-    val alert = stop.alert
-    return if (alert != null) {
-        UpcomingTripViewState.Disruption(alert.effect)
+    val disruption = stop.disruption
+    return if (disruption != null) {
+        UpcomingTripViewState.Disruption(disruption.alert.effect, iconName = disruption.iconName)
     } else {
         UpcomingTripViewState.Some(stop.format(now, routeAccents.type))
     }
@@ -259,7 +259,7 @@ private fun TripStopRowPreview() {
                     TripDetailsStopList.Entry(
                         objects.stop { name = "Park Street" },
                         stopSequence = 10,
-                        alert = null,
+                        disruption = null,
                         schedule = null,
                         prediction =
                             objects.prediction {
@@ -293,7 +293,7 @@ private fun TripStopRowPreview() {
                     TripDetailsStopList.Entry(
                         objects.stop { name = "South Station" },
                         stopSequence = 10,
-                        alert = null,
+                        disruption = null,
                         schedule = null,
                         prediction =
                             objects.prediction {

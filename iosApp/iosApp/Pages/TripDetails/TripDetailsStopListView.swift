@@ -45,7 +45,7 @@ struct TripDetailsStopListView: View {
             .init(
                 stop: stop1,
                 stopSequence: 1,
-                alert: nil,
+                disruption: nil,
                 schedule: nil,
                 prediction: nil,
                 predictionStop: nil,
@@ -55,7 +55,7 @@ struct TripDetailsStopListView: View {
             .init(
                 stop: stop2,
                 stopSequence: 2,
-                alert: nil,
+                disruption: nil,
                 schedule: sched2,
                 prediction: pred2,
                 predictionStop: stop2,

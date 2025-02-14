@@ -194,7 +194,7 @@ class TripHeaderCardTest {
                     TripDetailsStopList.Entry(
                         stop = stop,
                         stopSequence = 0,
-                        alert = null,
+                        disruption = null,
                         schedule = null,
                         prediction = prediction,
                         predictionStop = stop,
@@ -259,7 +259,7 @@ class TripHeaderCardTest {
                     TripDetailsStopList.Entry(
                         stop = stop,
                         stopSequence = 0,
-                        alert = null,
+                        disruption = null,
                         schedule = null,
                         prediction = prediction,
                         predictionStop = platformStop,
@@ -296,7 +296,7 @@ class TripHeaderCardTest {
                     TripDetailsStopList.Entry(
                         stop = stop,
                         stopSequence = 0,
-                        alert = null,
+                        disruption = null,
                         schedule = schedule,
                         prediction = null,
                         predictionStop = null,
@@ -417,7 +417,7 @@ class TripHeaderCardTest {
                     TripDetailsStopList.Entry(
                         stop = stop,
                         stopSequence = 0,
-                        alert = null,
+                        disruption = null,
                         schedule = null,
                         prediction = prediction,
                         predictionStop = platformStop,
@@ -488,7 +488,7 @@ class TripHeaderCardTest {
                     TripDetailsStopList.Entry(
                         stop = stop,
                         stopSequence = 0,
-                        alert = null,
+                        disruption = null,
                         schedule = schedule,
                         prediction = null,
                         predictionStop = null,
@@ -529,7 +529,7 @@ class TripHeaderCardTest {
                     TripDetailsStopList.Entry(
                         stop = other,
                         stopSequence = 0,
-                        alert = null,
+                        disruption = null,
                         schedule = schedule,
                         prediction = null,
                         predictionStop = null,

@@ -14,7 +14,12 @@ fun TripStatus(predictions: RealtimePatterns.Format) {
                 else -> UpcomingTripView(UpcomingTripViewState.Some(trip.format))
             }
         is RealtimePatterns.Format.Disruption ->
-            UpcomingTripView(UpcomingTripViewState.Disruption(predictions.alert.effect))
+            UpcomingTripView(
+                UpcomingTripViewState.Disruption(
+                    predictions.alert.effect,
+                    iconName = predictions.iconName
+                )
+            )
         is RealtimePatterns.Format.NoTrips ->
             UpcomingTripView(UpcomingTripViewState.NoTrips(predictions.noTripsFormat))
         RealtimePatterns.Format.Loading -> UpcomingTripView(UpcomingTripViewState.Loading)

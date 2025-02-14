@@ -182,8 +182,8 @@ struct TripStopRow: View {
     }
 
     var upcomingTripViewState: UpcomingTripView.State {
-        if let alert = stop.alert {
-            .disruption(alert.effect)
+        if let disruption = stop.disruption {
+            .disruption(disruption.alert.effect, iconName: disruption.iconName)
         } else {
             .some(stop.format(now: now, routeType: routeAccents.type))
         }
@@ -196,7 +196,7 @@ struct TripStopRow: View {
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
-            alert: nil,
+            disruption: nil,
             schedule: nil,
             prediction: nil,
             predictionStop: nil,

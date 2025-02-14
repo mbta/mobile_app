@@ -32,7 +32,7 @@ struct UpcomingTripView: View {
     enum State: Equatable {
         case loading
         case noTrips(RealtimePatterns.NoTripsFormat)
-        case disruption(shared.Alert.Effect)
+        case disruption(shared.Alert.Effect, iconName: String)
         case some(TripInstantDisplay)
     }
 
@@ -152,8 +152,8 @@ struct UpcomingTripView: View {
                     )
                     : accessibilityFormatters.cancelledOther(date: format.scheduledTime.toNSDate()))
             }
-        case let .disruption(alertEffect):
-            DisruptionView(effect: .from(alertEffect: alertEffect))
+        case let .disruption(alertEffect, iconName: iconName):
+            DisruptionView(effect: .from(alertEffect: alertEffect), iconName: iconName)
         case let .noTrips(format):
             switch onEnum(of: format) {
             case .predictionsUnavailable:
@@ -187,6 +187,7 @@ func makeTimeFormatter() -> DateFormatter {
 
 struct DisruptionView: View {
     let effect: Effect
+    let iconName: String
 
     @ScaledMetric private var iconSize: CGFloat = 20
 
@@ -239,16 +240,6 @@ struct DisruptionView: View {
         }
     }
 
-    var rawImage: Image {
-        switch effect {
-        case .detour: Image(systemName: "exclamationmark.triangle.fill")
-        case .shuttle: Image(.modeBus)
-        case .stopClosed: Image(systemName: "xmark.octagon.fill")
-        case .suspension: Image(systemName: "exclamationmark.triangle.fill")
-        case .unknown: Image(systemName: "questionmark.circle.fill")
-        }
-    }
-
     var fullText: some View {
         rawText
             .font(Typography.footnote)
@@ -256,7 +247,7 @@ struct DisruptionView: View {
     }
 
     var fullImage: some View {
-        rawImage
+        Image(iconName)
             .resizable()
             .scaledToFill()
             .foregroundStyle(Color.deemphasized)
@@ -266,17 +257,27 @@ struct DisruptionView: View {
 }
 
 struct UpcomingTripView_Previews: PreviewProvider {
+    static let route = MapStopRoute.orange
+
+    static func disruption(_ effect: shared.Alert.Effect) -> UpcomingTripView.State {
+        let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = effect }
+        let format = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: route)
+        return .disruption(effect, iconName: format.iconName)
+    }
+
     static var previews: some View {
         VStack(alignment: .trailing) {
-            UpcomingTripView(prediction: .disruption(.suspension), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.shuttle), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.stopClosure), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.detour), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.detour), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.suspension), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.stopClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.stationClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.dockClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.detour), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.snowRoute), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.shuttle), routeType: .heavyRail)
         }
         .padding(8)
         .frame(maxWidth: 150)
-        .background(Color.fill1)
+        .background(Color.fill3)
         .previewDisplayName("No Service")
     }
 }
