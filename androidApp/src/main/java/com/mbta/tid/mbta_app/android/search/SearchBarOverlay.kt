@@ -183,7 +183,9 @@ fun SearchBarOverlay(
                                     expanded = expanded,
                                     onQueryChange = { searchInputState = it },
                                     onExpandedChange = onExpandedChange,
-                                    modifier = Modifier.focusRequester(inputFieldFocusRequester),
+                                    modifier =
+                                        Modifier.focusRequester(inputFieldFocusRequester)
+                                            .fillMaxWidth(),
                                     onSearch = {},
                                     leadingIcon = {
                                         Icon(
