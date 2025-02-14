@@ -1,14 +1,11 @@
 package com.mbta.tid.mbta_app.android.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -91,13 +88,6 @@ fun SearchBarOverlay(
             contentAlignment = Alignment.Center,
         ) {
             if (visible) {
-                Box(
-                    modifier =
-                        Modifier.absoluteOffset(y = 4.dp)
-                            .height(60.dp)
-                            .width(364.dp)
-                            .border(2.dp, colorResource(R.color.halo), RoundedCornerShape(12.dp))
-                )
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
                     colors =
