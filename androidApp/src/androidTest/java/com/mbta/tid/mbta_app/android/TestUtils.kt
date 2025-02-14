@@ -43,7 +43,9 @@ fun SemanticsNodeInteraction.assertHasColor(targetColor: Color) {
             pixelCounts[colorHere] = pixelCounts.getOrDefault(colorHere, 0) + 1
         }
     }
-    // never returned so did not find the target
+    // never returned so did not find the target. hopefully the color that is present instead of the
+    // target is either the most common non-grey color or among the most common grey colors (the
+    // most common grey will likely be a background, though)
     val legibleResult =
         pixelCounts.entries
             .groupBy(
@@ -51,7 +53,15 @@ fun SemanticsNodeInteraction.assertHasColor(targetColor: Color) {
                 { colorToHex(it.key) to it.value }
             )
             .mapValues { it.value.sortedByDescending { it.second } }
-            .toSortedMap(reverseOrder())
+            .toSortedMap(
+                compareBy {
+                    when (it) {
+                        "not grey" -> 1
+                        "grey" -> 2
+                        else -> 3
+                    }
+                }
+            )
 
     fail("Did not contain specified color, but did have $legibleResult")
 }
