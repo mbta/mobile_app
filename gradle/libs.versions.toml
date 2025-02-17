@@ -5,7 +5,7 @@ androidx-activityCompose = "1.9.1"
 androidx-navigationCompose = "2.8.5"
 androidx-test-monitor = "1.7.2"
 androidx-test-rules = "1.6.1"
-agp = "8.5.2"
+agp = "8.8.1"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
 compose-bom = "2025.01.01"
