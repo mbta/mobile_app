@@ -152,7 +152,7 @@ fun SearchBarOverlay(
                     onExpandedChange = {},
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill2)),
+                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
                         contentPadding = PaddingValues(16.dp)
                     ) {
                         if (searchInputState.isEmpty()) {
