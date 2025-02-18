@@ -26,11 +26,10 @@ class NearbyTransitTabViewModel : ViewModel() {
         pushNavEntry: (SheetRoutes) -> Unit
     ) {
 
-        if (
-            lastNavEntry is SheetRoutes.StopDetails &&
-                stopId == lastNavEntry.stopId &&
-                stopFilter != lastNavEntry.stopFilter
-        ) {
+        if (lastNavEntry is SheetRoutes.StopDetails && stopId == lastNavEntry.stopId) {
+            if (lastNavEntry.stopFilter == stopFilter) {
+                return
+            }
             if (shouldPopLastStopEntry(lastNavEntry.stopFilter, stopFilter)) {
                 popLastNavEntry()
             }
@@ -65,9 +64,8 @@ class NearbyTransitTabViewModel : ViewModel() {
         newStopId: String,
         newFilter: StopDetailsFilter?
     ): Boolean {
-        // If the new filter is nil and there is already a nil filter in the stack for the same stop
-        // ID,
-        // we don't want a duplicate unfiltered entry, so skip appending a new one
+        // If the new filter is null and there is already a null filter in the stack for the same
+        // stop ID, we don't want a duplicate unfiltered entry, so skip appending a new one
 
         return when (lastNavEntry) {
             is SheetRoutes.StopDetails -> {
