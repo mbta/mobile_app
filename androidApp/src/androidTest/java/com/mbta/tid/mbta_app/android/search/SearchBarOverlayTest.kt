@@ -116,6 +116,7 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = { navigated.value = true },
                     currentNavEntry = currentNavEntry.value,
                     inputFieldFocusRequester = focusRequester,
+                    searchResultsVm = koinApplication.koin.get(),
                 ) {
                     Text("Content")
                 }
