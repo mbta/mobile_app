@@ -42,7 +42,6 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
-import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
@@ -52,6 +51,7 @@ fun SearchBarOverlay(
     onStopNavigation: (stopId: String) -> Unit,
     currentNavEntry: SheetRoutes?,
     inputFieldFocusRequester: FocusRequester,
+    searchResultsVm: SearchResultsViewModel,
     content: @Composable () -> Unit
 ) {
     var visible =
@@ -60,7 +60,6 @@ fun SearchBarOverlay(
         }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
-    val searchResultsVm: SearchResultsViewModel = koinViewModel()
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 
     val buttonColors =
@@ -153,7 +152,7 @@ fun SearchBarOverlay(
                     onExpandedChange = {},
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
+                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill2)),
                         contentPadding = PaddingValues(16.dp)
                     ) {
                         if (searchInputState.isEmpty()) {
