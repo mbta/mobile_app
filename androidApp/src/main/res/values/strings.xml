@@ -281,4 +281,5 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
+    <string name="serves_route_list">serves %1$s</string>
 </resources>
