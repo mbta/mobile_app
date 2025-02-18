@@ -41,6 +41,7 @@ val MapViewportState.isOverview: Boolean
             ViewportStatus.Idle -> false
             is ViewportStatus.State -> status.state is OverviewViewportState
             is ViewportStatus.Transition -> status.toState is OverviewViewportState
+            null -> false
         }
 
 fun Double.roundedTo(places: Int): Double {
