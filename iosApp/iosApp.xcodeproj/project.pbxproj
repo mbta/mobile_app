@@ -43,7 +43,6 @@
 		6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */; };
 		6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */; };
 		6EA231752C21CF2100789173 /* LoadingCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231742C21CF2100789173 /* LoadingCardTests.swift */; };
-		6EC6F18D2CE661680022799F /* AlertExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6F18C2CE661680022799F /* AlertExtension.swift */; };
 		6EC6F18F2CE665DB0022799F /* StopDetailsDownstreamAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6F18E2CE665DB0022799F /* StopDetailsDownstreamAlert.swift */; };
 		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
@@ -345,7 +344,6 @@
 		6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageViewTests.swift; sourceTree = "<group>"; };
 		6EA231742C21CF2100789173 /* LoadingCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCardTests.swift; sourceTree = "<group>"; };
-		6EC6F18C2CE661680022799F /* AlertExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertExtension.swift; sourceTree = "<group>"; };
 		6EC6F18E2CE665DB0022799F /* StopDetailsDownstreamAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsDownstreamAlert.swift; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		6EE745832B965B9C0052227E /* SocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTests.swift; sourceTree = "<group>"; };
@@ -1126,7 +1124,6 @@
 		9AC10BD82B80060E00EA4605 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6EC6F18C2CE661680022799F /* AlertExtension.swift */,
 				8C1587032C76524600AB5036 /* AppVariantExtension.swift */,
 				EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */,
 				9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */,
@@ -1711,7 +1708,6 @@
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
 				9A7F12132CCB185D0042B0F1 /* TabLabel.swift in Sources */,
 				9A392C972CC0497C00DE1FBE /* ErrorBannerViewModel.swift in Sources */,
-				6EC6F18D2CE661680022799F /* AlertExtension.swift in Sources */,
 				6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9A7F12192CCFF2D20042B0F1 /* MorePhone.swift in Sources */,

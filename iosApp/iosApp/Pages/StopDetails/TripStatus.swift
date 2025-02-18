@@ -23,7 +23,7 @@ struct TripStatus: View {
                 EmptyView()
             }
         case let .disruption(alert):
-            UpcomingTripView(prediction: .disruption(alert.alert.effect, iconName: alert.iconName))
+            UpcomingTripView(prediction: .disruption(.init(alert: alert.alert), iconName: alert.iconName))
         case let .noTrips(format):
             UpcomingTripView(prediction: .noTrips(format.noTripsFormat))
         case .loading:

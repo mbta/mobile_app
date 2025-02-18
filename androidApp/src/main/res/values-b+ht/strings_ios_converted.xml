@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="access_issue">Aksè pwoblèm</string>
+    <string name="access_issue_sentence_case">Pwoblèm aksè</string>
     <string name="accident">Aksidan</string>
+    <string name="additional_service">Sèvis adisyonèl</string>
+    <string name="additional_service_sentence_case">Sèvis adisyonèl</string>
     <plurals name="affected_stops">
         <item quantity="zero">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
         <item quantity="one">&lt;b>%1$d&lt;/b> arè ki afekte</item>
@@ -13,6 +17,8 @@
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alternative_path">Chemen altènatif</string>
+    <string name="amber_alert">Amber Alèt</string>
+    <string name="amber_alert_sentence_case">Amber alèt</string>
     <string name="amtrak">Amtrak</string>
     <string name="an_earlier_mechanical_problem">Yon Pwoblèm Mekanik Ki Rive Pi Bonè</string>
     <string name="an_earlier_signal_problem">Yon Siyal Ki Rive Pi Bonè</string>
@@ -21,10 +27,13 @@
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Machin Ki Bloke Sèvis la</string>
     <string name="back_button_label">Retounen</string>
+    <string name="bike_issue">Pwoblèm bisiklèt</string>
+    <string name="bike_issue_sentence_case">Pwoblèm bisiklèt</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Monte sou track %1$s</string>
     <string name="bus">bis</string>
     <string name="buses">bis yo</string>
+    <string name="cancellation">Anilasyon</string>
     <string name="cancelled">Anile</string>
     <string name="close_button_label">Fèmen</string>
     <string name="coast_guard_restriction">Gad Kot Mete Restriksyon</string>
@@ -33,6 +42,7 @@
     <string name="connections_to_and">Koneksyon ak %1$s epi %2$s</string>
     <string name="construction">Konstriksyon</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
+    <string name="delay">Reta</string>
     <string name="demonstration">Demonstrasyon</string>
     <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
     <string name="details">Detay yo</string>
@@ -41,12 +51,17 @@
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
     <string name="displays_more_info">montre plis enfòmasyon</string>
+    <string name="dock_closed">Waf Fèmen</string>
+    <string name="dock_closed_sentence_case">Waf fèmen</string>
     <string name="dock_closure">Waf la Fèmen</string>
+    <string name="dock_issue">Pwoblèm waf</string>
+    <string name="dock_issue_sentence_case">Pwoblèm waf</string>
     <string name="drag_handle">Trennen manch</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="effect_ahead">%1$s devan</string>
     <string name="electrical_work">Travay Elektrik</string>
+    <string name="elevator_closed_sentence_case">Asansè fèmen</string>
     <string name="elevator_closure">Fèmti Asansè</string>
     <plurals name="elevator_closure_count">
         <item quantity="one">%1$d asansè fèmen</item>
@@ -57,6 +72,8 @@
     </plurals>
     <string name="end">Fen</string>
     <string name="error_loading_data">Erè nan chajman done</string>
+    <string name="escalator_closed_sentence_case">Escalator fèmen</string>
+    <string name="escalator_closure">Fèmti Eskalatè</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="explainer_headline_finishing_another">Fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon an poko disponib</string>
@@ -64,6 +81,10 @@
     <string name="explainer_text_finishing_another">%1$s ki asiyen nan wout sa a kounye a ap sèvi yon lòt vwayaj. Nou pral montre li sou wout la yon fwa li kòmanse vwayaj sa a.</string>
     <string name="explainer_text_no_prediction">Nou poko gen prediksyon an dirèk pou vwayaj sa a, men yo pral parèt pi pre lè pwograme a. Si vwayaj la an reta oswa anile, n ap fè w konnen isit la.</string>
     <string name="explainer_text_no_vehicle">Kote %1$s a ka pa disponib davans si yo poko plase yon machin. Yon fwa chofè a kòmanse vwayaj la, nou pral kòmanse montre kote a ap viv la.</string>
+    <string name="extra_service">Sèvis Siplemantè</string>
+    <string name="extra_service_sentence_case">Sèvis siplemantè</string>
+    <string name="facility_issue">Pwoblèm Etablisman</string>
+    <string name="facility_issue_sentence_case">Pwoblèm etablisman</string>
     <string name="feature_flag_debug_mode">Mòd Debug</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye kòmantè sou aplikasyon</string>
@@ -103,6 +124,8 @@
     <string name="mechanical_problem">Pwoblèm Mekanik</string>
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
+    <string name="modified_service">Sèvis modifye</string>
+    <string name="modified_service_sentence_case">Sèvis modifye</string>
     <string name="more_link">Plis</string>
     <string name="more_link_call">Chwazi rele</string>
     <string name="more_link_external">Lyen ekstèn</string>
@@ -118,6 +141,7 @@
     <string name="next_stop">Pwochen arè</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
     <string name="no_service">Pa gen Sèvis</string>
+    <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
     <string name="no_stops_nearby">Ou andeyò zòn sèvis MBTA a.</string>
     <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
@@ -147,8 +171,14 @@
     <string name="other_link_tos">Kondisyon itilizasyon</string>
     <string name="outbound">Soti</string>
     <string name="parade">Parad</string>
+    <string name="parking_closed">Espas pou fèmen</string>
+    <string name="parking_closure">Fèmti pakin</string>
+    <string name="parking_issue">Pwoblèm pakin</string>
+    <string name="parking_issue_sentence_case">Pwoblèm pakin</string>
     <string name="police_action">Aksyon Polis</string>
     <string name="police_activity">Aktivite Polis</string>
+    <string name="policy_change">Chanjman politik</string>
+    <string name="policy_change_sentence_case">Chanjman politik</string>
     <string name="power_problem">Pwoblèm Kouran</string>
     <string name="predictions_unavailable_details">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib. Kat la montre ki kote %1$s sou wout sa a ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis ap fonksyone, men lè yo prevwa arive pa disponib.</string>
@@ -164,10 +194,13 @@
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="schedule_change">Chanjman Orè</string>
+    <string name="schedule_change_sentence_case">Chanjman orè</string>
     <string name="scheduled_to_depart">Pwograme pou ale</string>
     <string name="search_by_stop">Chèche pa kanpe</string>
     <string name="selected_stop">%1$s, chwazi sispann</string>
     <string name="selected_stop_first_stop">%1$s, chwazi kanpe, premye kanpe</string>
+    <string name="serves_route_list">sèvi %1$s</string>
     <string name="service_change">Chanjman Sèvis</string>
     <string name="service_change_sentence_case">Chanjman sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
@@ -177,10 +210,13 @@
     <string name="settings_link">Paramèt</string>
     <string name="severe_weather">Move Tan</string>
     <string name="shuttle">Navèt</string>
+    <string name="shuttle_bus">Otobis navèt</string>
     <string name="shuttle_buses">Otobis navèt</string>
+    <string name="shuttle_buses_replace_service">Bis navèt ranplase sèvis</string>
     <string name="signal_problem">Pwoblèm Siyal</string>
     <string name="slippery_rail">Ray ki Glise</string>
     <string name="snow">Nèj</string>
+    <string name="snow_route">Wout nèj</string>
     <string name="snow_route_sentence_case">Wout nèj</string>
     <string name="southbound">Nan direksyon sid</string>
     <string name="special_event">Evènman Espesyal</string>
@@ -188,13 +224,20 @@
     <string name="star_route">Mete wout nan favori</string>
     <string name="star_route_hint">mete wout nan tèt lis la</string>
     <string name="start">Kòmanse</string>
+    <string name="station_closed">Estasyon fèmen</string>
+    <string name="station_closed_sentence_case">Estasyon fèmen</string>
     <string name="station_closure">Estasyon Fèmen</string>
-    <string name="station_moved">Estasyon Deplase</string>
+    <string name="station_issue">Pwoblèm Estasyon</string>
+    <string name="station_issue_sentence_case">Pwoblèm estasyon</string>
     <string name="stop_closed">Arè Fèmen</string>
     <string name="stop_closed_sentence_case">Sispann fèmen</string>
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
+    <string name="stop_moved">Sispann deplase</string>
+    <string name="stop_moved_sentence_case">Sispann deplase</string>
+    <string name="stop_shoveling">Sispann Pèl</string>
+    <string name="stop_shoveling_sentence_case">Sispann pèl</string>
     <string name="stops">Arè</string>
     <plurals name="stops_away">
         <item quantity="zero">%1$d kanpe lwen</item>
@@ -205,11 +248,13 @@
         <item quantity="other">%1$d kanpe lwen</item>
     </plurals>
     <string name="strike">Grèv</string>
+    <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_problem">Pwoblèm Bouton</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="track_change">Track Chanjman</string>
+    <string name="track_change_sentence_case">Track chanjman</string>
     <string name="track_number">Track %1$s</string>
     <string name="track_problem">Pwoblèm sou Ray</string>
     <string name="track_work">Travay sou Ray</string>

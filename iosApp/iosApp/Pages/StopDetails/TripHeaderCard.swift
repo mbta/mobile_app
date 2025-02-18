@@ -305,7 +305,7 @@ struct TripHeaderCard: View {
         }
         guard let entry else { return nil }
         if let disruption = entry.disruption {
-            return .disruption(disruption.alert.effect, iconName: disruption.iconName)
+            return .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
         } else {
             let formatted = entry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
             return switch onEnum(of: formatted) {
