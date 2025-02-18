@@ -44,7 +44,7 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
         MutableStateFlow(
             // For some reason, the initial state of the viewport doesn't apply immediately, so the
             // viewport may be completely uninitialized here; if it is, use the defaults.
-            viewport.cameraState.takeUnless { it.zoom == 0.0 }
+            viewport.cameraState.takeUnless { it?.zoom == 0.0 }
                 ?: CameraState(
                     Defaults.center,
                     EdgeInsets(0.0, 0.0, 0.0, 0.0),
@@ -94,8 +94,7 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
         }
     }
 
-    @OptIn(MapboxExperimental::class)
-    fun isDefault() = viewport.cameraState.center.isRoughlyEqualTo(Defaults.center)
+    fun isDefault() = viewport.cameraState?.center?.isRoughlyEqualTo(Defaults.center) == true
 
     fun animateTo(
         coordinates: Point,
