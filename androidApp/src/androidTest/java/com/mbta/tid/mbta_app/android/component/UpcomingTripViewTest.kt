@@ -1,8 +1,10 @@
 package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -10,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
 import com.mbta.tid.mbta_app.android.assertHasColor
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -256,8 +259,13 @@ class UpcomingTripViewTest {
         val disruption =
             RealtimePatterns.Format.Disruption(alert, mapStopRoute = MapStopRoute.FERRY)
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Disruption(alert.effect, disruption.iconName))
+            UpcomingTripView(
+                UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName)
+            )
         }
+        composeTestRule
+            .onNodeWithText("Suspension")
+            .assert(hasContentDescription("Service suspended"))
         composeTestRule.onRoot().assertHasColor(Color.fromHex("008eaa"))
     }
 }

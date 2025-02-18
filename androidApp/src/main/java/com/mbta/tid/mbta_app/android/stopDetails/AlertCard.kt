@@ -25,7 +25,6 @@ import com.mbta.tid.mbta_app.android.component.AlertIcon
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.downstreamEffectDescription
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
@@ -47,13 +46,12 @@ fun AlertCard(
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    val effectName: String =
-        FormattedAlert.format(alert)?.effect?.let { stringResource(it) } ?: alert.effect.name
+    val formattedAlert = FormattedAlert(alert)
     val headerText: String =
         when (spec) {
-            AlertCardSpec.Downstream -> alert.downstreamEffectDescription()
-            AlertCardSpec.Elevator -> alert.header ?: effectName
-            else -> effectName
+            AlertCardSpec.Downstream -> formattedAlert.downstreamEffect
+            AlertCardSpec.Elevator -> alert.header ?: formattedAlert.effect
+            else -> formattedAlert.effect
         }
     val iconSize =
         when (spec) {

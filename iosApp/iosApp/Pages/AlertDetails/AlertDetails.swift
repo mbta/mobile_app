@@ -37,8 +37,8 @@ struct AlertDetails: View {
         alert.effect == .elevatorClosure
     }
 
-    private var effectLabel: String? {
-        FormattedAlert(alert: alert)?.effect
+    private var effectLabel: String {
+        FormattedAlert(alert: alert).effect
     }
 
     private var causeLabel: String? {
@@ -110,18 +110,16 @@ struct AlertDetails: View {
     }
 
     @ViewBuilder var effectTitle: some View {
-        if let effectLabel {
-            if let routeLabel, !isElevatorClosure {
-                Text("\(routeLabel) \(effectLabel)",
-                     comment: """
-                     First value is the route label, second value is an alert effect, \
-                     resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'
-                     """)
-            } else if let stopLabel {
-                Text("\(stopLabel) \(effectLabel)")
-            } else {
-                Text(effectLabel)
-            }
+        if let routeLabel, !isElevatorClosure {
+            Text("\(routeLabel) \(effectLabel)",
+                 comment: """
+                 First value is the route label, second value is an alert effect, \
+                 resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'
+                 """)
+        } else if let stopLabel {
+            Text("\(stopLabel) \(effectLabel)")
+        } else {
+            Text(effectLabel)
         }
     }
 

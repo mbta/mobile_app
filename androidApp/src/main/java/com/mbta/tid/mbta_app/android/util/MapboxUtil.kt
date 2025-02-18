@@ -24,13 +24,13 @@ fun MapViewportState.followPuck(zoom: Double? = null) {
     )
 }
 
-@OptIn(MapboxExperimental::class)
 val MapViewportState.isFollowingPuck: Boolean
     get() =
         when (val status = this.mapViewportStatus) {
             ViewportStatus.Idle -> false
             is ViewportStatus.State -> status.state is FollowPuckViewportState
             is ViewportStatus.Transition -> status.toState is FollowPuckViewportState
+            null -> false
         }
 
 fun Double.roundedTo(places: Int): Double {

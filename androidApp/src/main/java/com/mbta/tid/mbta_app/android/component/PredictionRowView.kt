@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -109,7 +110,7 @@ fun PredictionRowView(
                         is RealtimePatterns.Format.Disruption ->
                             UpcomingTripView(
                                 UpcomingTripViewState.Disruption(
-                                    predictions.alert.effect,
+                                    FormattedAlert(predictions.alert),
                                     iconName = predictions.iconName
                                 )
                             )

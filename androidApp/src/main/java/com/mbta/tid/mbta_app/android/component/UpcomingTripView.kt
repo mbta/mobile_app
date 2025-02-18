@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
@@ -59,7 +60,8 @@ sealed interface UpcomingTripViewState {
 
     data class NoTrips(val format: RealtimePatterns.NoTripsFormat) : UpcomingTripViewState
 
-    data class Disruption(val effect: Alert.Effect, val iconName: String) : UpcomingTripViewState
+    data class Disruption(val formattedAlert: FormattedAlert, val iconName: String) :
+        UpcomingTripViewState
 
     data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
 }
@@ -309,7 +311,7 @@ fun UpcomingTripView(
             }
         is UpcomingTripViewState.Disruption ->
             DisruptionView(
-                DisruptionViewEffect.from(state.effect),
+                state.formattedAlert.predictionReplacement,
                 iconName = state.iconName,
                 modifier
             )
@@ -366,43 +368,25 @@ fun predictionTextMinutes(context: Context, minutes: Int): String {
     }
 }
 
-enum class DisruptionViewEffect {
-    Detour,
-    Shuttle,
-    StopClosed,
-    Suspension,
-    Unknown;
-
-    companion object {
-        fun from(effect: Alert.Effect) =
-            when (effect) {
-                Alert.Effect.Detour -> Detour
-                Alert.Effect.Shuttle -> Shuttle
-                Alert.Effect.StationClosure,
-                Alert.Effect.StopClosure -> StopClosed
-                Alert.Effect.Suspension -> Suspension
-                else -> Unknown
-            }
-    }
-}
-
 @Composable
-fun DisruptionView(effect: DisruptionViewEffect, iconName: String, modifier: Modifier = Modifier) {
-    val text =
-        when (effect) {
-            DisruptionViewEffect.Detour -> stringResource(R.string.detour)
-            DisruptionViewEffect.Shuttle -> stringResource(R.string.shuttle)
-            DisruptionViewEffect.StopClosed -> stringResource(R.string.stop_closed)
-            DisruptionViewEffect.Suspension -> stringResource(R.string.suspension)
-            DisruptionViewEffect.Unknown -> stringResource(R.string.no_service)
-        }
+fun DisruptionView(
+    spec: FormattedAlert.PredictionReplacement,
+    iconName: String,
+    modifier: Modifier = Modifier
+) {
     val icon = painterResource(drawableByName(iconName))
     Row(
         modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text.uppercase(), style = Typography.footnote)
+        Text(
+            spec.text,
+            modifier =
+                spec.contentDescription?.let { Modifier.semantics { contentDescription = it } }
+                    ?: Modifier,
+            style = Typography.footnote
+        )
         Image(icon, null, Modifier.size(20.dp))
     }
 }
@@ -437,7 +421,7 @@ fun DisruptionViewPreview() {
     fun disruption(effect: Alert.Effect): UpcomingTripViewState {
         val alert = Single.alert { this.effect = effect }
         val format = RealtimePatterns.Format.Disruption(alert, mapStopRoute = route)
-        return UpcomingTripViewState.Disruption(effect, iconName = format.iconName)
+        return UpcomingTripViewState.Disruption(FormattedAlert(alert), iconName = format.iconName)
     }
 
     MyApplicationTheme {
