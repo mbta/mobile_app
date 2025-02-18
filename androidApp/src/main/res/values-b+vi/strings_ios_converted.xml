@@ -159,6 +159,7 @@
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="selected_stop">%1$s, điểm dừng được chọn</string>
     <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
+    <string name="serves_route_list">phục vụ %1$s</string>
     <string name="service_change">Thay đổi dịch vụ</string>
     <string name="service_change_sentence_case">Thay đổi dịch vụ</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
