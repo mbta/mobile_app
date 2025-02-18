@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.ViewAnnotationAnchor
