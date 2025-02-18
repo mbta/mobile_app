@@ -163,6 +163,7 @@
     <string name="search_by_stop">Buscar por parada</string>
     <string name="selected_stop">%1$s, parada seleccionada</string>
     <string name="selected_stop_first_stop">%1$s, parada seleccionada, primera parada</string>
+    <string name="serves_route_list">sirve %1$s</string>
     <string name="service_change">Cambio de servicio</string>
     <string name="service_change_sentence_case">cambio de servicio</string>
     <string name="service_ended">Servicio finalizado</string>

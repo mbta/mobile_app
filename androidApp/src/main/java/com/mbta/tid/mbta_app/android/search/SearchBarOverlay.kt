@@ -3,15 +3,16 @@ package com.mbta.tid.mbta_app.android.search
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -28,18 +29,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
@@ -57,7 +60,7 @@ fun SearchBarOverlay(
         }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
-    val searchResultsVm = getSearchResultsVm(globalResponse = globalResponse)
+    val searchResultsVm: SearchResultsViewModel = koinViewModel()
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 
     val buttonColors =
@@ -67,7 +70,9 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, visible) { searchResultsVm.getSearchResults(searchInputState) }
+    LaunchedEffect(searchInputState, visible, globalResponse) {
+        searchResultsVm.getSearchResults(searchInputState, globalResponse)
+    }
     LaunchedEffect(visible, expanded) {
         if (visible) {
             onExpandedChange(expanded)
@@ -79,18 +84,17 @@ fun SearchBarOverlay(
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
-            modifier =
-                Modifier.absoluteOffset {
-                        if (expanded) IntOffset(0, 0) else IntOffset(0, 12.dp.roundToPx())
-                    }
-                    .zIndex(1f),
+            modifier = Modifier.zIndex(1f),
             contentAlignment = Alignment.Center,
         ) {
             if (visible) {
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
                     colors =
-                        SearchBarDefaults.colors(containerColor = colorResource(R.color.fill3)),
+                        SearchBarDefaults.colors(
+                            containerColor =
+                                if (expanded) colorResource(R.color.fill1) else Color.Transparent
+                        ),
                     inputField = {
                         SearchBarDefaults.InputField(
                             colors =
@@ -104,15 +108,23 @@ fun SearchBarOverlay(
                             placeholder = {
                                 Text(
                                     stringResource(R.string.stops),
-                                    // This will be drawn in bodyLarge if we don't re-override it
-                                    // here
+                                    // This will be drawn in bodyLarge if we don't
+                                    // re-override it here
                                     style = Typography.callout
                                 )
                             },
                             expanded = expanded,
                             onQueryChange = { searchInputState = it },
                             onExpandedChange = onExpandedChange,
-                            modifier = Modifier.focusRequester(inputFieldFocusRequester),
+                            modifier =
+                                Modifier.padding(horizontal = 14.dp)
+                                    .haloContainer(
+                                        2.dp,
+                                        borderRadius = 8.dp,
+                                        backgroundColor = colorResource(R.color.fill3)
+                                    )
+                                    .fillMaxWidth()
+                                    .focusRequester(inputFieldFocusRequester),
                             onSearch = {},
                             leadingIcon = {
                                 Icon(
@@ -141,7 +153,7 @@ fun SearchBarOverlay(
                     onExpandedChange = {},
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill2)),
+                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
                         contentPadding = PaddingValues(16.dp)
                     ) {
                         if (searchInputState.isEmpty()) {
@@ -153,7 +165,7 @@ fun SearchBarOverlay(
                                 )
                             }
                         }
-                        items(searchResults?.stops ?: emptyList()) { stop ->
+                        itemsIndexed(searchResults?.stops ?: emptyList()) { index, stop ->
                             val shape =
                                 if (searchResults?.stops?.size == 1) {
                                     RoundedCornerShape(10.dp)
@@ -164,6 +176,9 @@ fun SearchBarOverlay(
                                 } else {
                                     RoundedCornerShape(0.dp)
                                 }
+                            if (index != 0) {
+                                HorizontalDivider(color = colorResource(R.color.fill1))
+                            }
                             StopResultsView(shape, stop, globalResponse, onStopNavigation)
                         }
                     }
