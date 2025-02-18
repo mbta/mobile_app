@@ -472,6 +472,7 @@
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A6172D42D1395EB002AF6D2 /* ExplainerPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplainerPageTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
+		9A661A7C2D653EE8003C9AA8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActivePeriodFormattingExtension.swift; sourceTree = "<group>"; };
 		9A6ACA2A2CD0096A00299AF5 /* MoreSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSectionView.swift; sourceTree = "<group>"; };
 		9A6ACA2C2CD00F8200299AF5 /* MoreItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreItem.swift; sourceTree = "<group>"; };
@@ -1326,6 +1327,7 @@
 				ht,
 				"zh-Hans-CN",
 				"zh-Hant-TW",
+				fr,
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
@@ -1764,6 +1766,7 @@
 				6E6D45FA2CC6E8BF002A3663 /* pt-BR */,
 				6E6D45FB2CC6E8E0002A3663 /* ht */,
 				6E6D45FC2CC6E8EC002A3663 /* es */,
+				9A661A7C2D653EE8003C9AA8 /* fr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
