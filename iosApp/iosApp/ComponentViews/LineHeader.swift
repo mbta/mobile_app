@@ -32,9 +32,7 @@ struct LineHeader<Content: View>: View {
                 textColor: Color(hex: line.textColor),
                 rightContent: rightContent
             )
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityHeading(.h2)
+            .accessibilityElement(children: .contain)
         } else {
             EmptyView()
         }
