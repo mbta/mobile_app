@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -17,10 +18,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
@@ -235,6 +238,10 @@ fun HomeMapView(
             }
         }
 
+    val pulsingRingColor: Int = colorResource(R.color.key_inverse).toArgb()
+    val accuracyRingColor: Int = colorResource(R.color.deemphasized).copy(alpha = 0.1F).toArgb()
+    val accuracyRingBorderColor: Int = colorResource(R.color.halo).toArgb()
+
     Box(modifier, contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
@@ -269,15 +276,21 @@ fun HomeMapView(
                     },
                 locationComponentSettings =
                     LocationComponentSettings(
-                        locationPuck = createDefault2DPuck(withBearing = false)
+                        locationPuck = createDefault2DPuck(withBearing = false),
                     ) {
                         puckBearingEnabled = false
                         enabled = true
-                        pulsingEnabled = false
+                        pulsingEnabled = true
+                        pulsingColor = pulsingRingColor
+                        pulsingMaxRadius = 24F
+                        showAccuracyRing = true
+                        this.accuracyRingColor = accuracyRingColor
+                        this.accuracyRingBorderColor = accuracyRingBorderColor
                     },
                 compass = {},
                 scaleBar = {},
                 logo = { Logo(Modifier.clearAndSetSemantics {}) },
+                attribution = { Attribution(alignment = Alignment.BottomEnd) },
                 mapViewportState = viewportProvider.viewport,
                 style = {
                     MapStyle(
@@ -399,9 +412,10 @@ fun HomeMapView(
                 val recenterModifier =
                     if (isNearby) {
                         Modifier.align(Alignment.TopEnd)
-                            .padding(top = 86.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            .padding(top = 85.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            .statusBarsPadding()
                     } else {
-                        Modifier.align(Alignment.TopEnd).padding(16.dp)
+                        Modifier.align(Alignment.TopEnd).padding(16.dp).statusBarsPadding()
                     }
 
                 if (locationDataManager.hasPermission) {
@@ -413,7 +427,10 @@ fun HomeMapView(
                 if (isNearby) {
                     LocationAuthButton(
                         locationDataManager,
-                        modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
+                        modifier =
+                            Modifier.align(Alignment.TopCenter)
+                                .padding(top = 86.dp)
+                                .statusBarsPadding()
                     )
                 }
             }

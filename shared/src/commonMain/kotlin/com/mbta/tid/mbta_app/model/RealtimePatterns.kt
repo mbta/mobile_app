@@ -241,23 +241,22 @@ sealed class RealtimePatterns {
         count: Int,
         context: TripInstantDisplay.Context
     ): Format {
+        val mapStopRoute =
+            MapStopRoute.matching(
+                when (this) {
+                    is ByHeadsign -> route
+                    is ByDirection -> representativeRoute
+                }
+            )
         val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
-        if (majorAlert != null) return Format.Disruption(majorAlert)
+        if (majorAlert != null) return Format.Disruption(majorAlert, mapStopRoute)
         val secondaryAlertToDisplay =
             alertsHere?.firstOrNull { it.significance >= AlertSignificance.Secondary }
                 ?: alertsDownstream?.firstOrNull()
 
         val secondaryAlert =
             secondaryAlertToDisplay?.let {
-                Format.SecondaryAlert(
-                    StopAlertState.Issue,
-                    MapStopRoute.matching(
-                        when (this) {
-                            is ByHeadsign -> route
-                            is ByDirection -> representativeRoute
-                        }
-                    )
-                )
+                Format.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
             }
 
         val tripsToShow =
@@ -367,9 +366,7 @@ sealed class RealtimePatterns {
             constructor(
                 alertState: StopAlertState,
                 mapStopRoute: MapStopRoute?
-            ) : this(
-                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}"} ?: "borderless"}-${alertState.name.lowercase()}",
-            )
+            ) : this(iconName(alertState, mapStopRoute))
         }
 
         data object Loading : Format() {
@@ -401,8 +398,18 @@ sealed class RealtimePatterns {
             override val secondaryAlert: SecondaryAlert? = null
         ) : Format()
 
-        data class Disruption(val alert: Alert) : Format() {
+        data class Disruption(val alert: Alert, val iconName: String) : Format() {
             override val secondaryAlert = null
+
+            constructor(
+                alert: Alert,
+                mapStopRoute: MapStopRoute?
+            ) : this(alert, iconName(alert.alertState, mapStopRoute))
+        }
+
+        companion object {
+            private fun iconName(alertState: StopAlertState, mapStopRoute: MapStopRoute?) =
+                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}" } ?: "borderless"}-${alertState.name.lowercase()}"
         }
     }
 

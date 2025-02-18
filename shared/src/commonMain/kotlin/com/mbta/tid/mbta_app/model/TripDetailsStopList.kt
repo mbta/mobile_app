@@ -13,7 +13,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     data class Entry(
         val stop: Stop,
         val stopSequence: Int,
-        val alert: Alert?,
+        val disruption: RealtimePatterns.Format.Disruption?,
         val schedule: Schedule?,
         val prediction: Prediction?,
         // The prediction stop can be the same as `stop`, but it can also be a child stop which
@@ -158,13 +158,15 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         ): TripDetailsStopList? {
             if (alertsData == null) return null
             val entries = mutableMapOf<Int, WorkingEntry>()
+            val routeId =
+                tripPredictions?.trips?.values?.singleOrNull()?.routeId ?: tripSchedules?.routeId()
+            val route = globalData.routes[routeId]
 
             var predictions = emptyList<Prediction>()
             if (tripPredictions != null) {
-                val tripRoute = tripPredictions.trips.values.singleOrNull()?.routeId
                 val tripPredictionsWithCorrectRoute =
                     tripPredictions.predictions.values.filter {
-                        tripRoute == null || it.routeId == tripRoute
+                        routeId == null || it.routeId == routeId
                     }
                 predictions =
                     deduplicatePredictionsByStopSequence(
@@ -200,7 +202,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                 return Entry(
                     stop,
                     working.stopSequence,
-                    getAlert(working, alertsData, globalData, tripId, directionId),
+                    getDisruption(working, alertsData, route, tripId, directionId),
                     working.schedule,
                     working.prediction,
                     globalData.stops[working.prediction?.stopId],
@@ -398,33 +400,37 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             }
         }
 
-        private fun getAlert(
+        private fun getDisruption(
             entry: WorkingEntry,
             alertsData: AlertsStreamDataResponse?,
-            globalData: GlobalResponse,
+            route: Route?,
             tripId: String,
             directionId: Int
-        ): Alert? {
+        ): RealtimePatterns.Format.Disruption? {
             val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
-            val entryRoute = entry.prediction?.routeId ?: entry.schedule?.routeId
-            val entryRouteType =
-                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]?.type
+            val entryRouteType = route?.type
 
             if (entryTime == null) return null
-            return alertsData?.alerts?.values?.find { alert ->
-                alert.isActive(entryTime) &&
-                    alert.anyInformedEntity {
-                        it.appliesTo(
-                            directionId = directionId,
-                            routeId = entryRoute,
-                            routeType = entryRouteType,
-                            stopId = entry.stopId,
-                            tripId = tripId
-                        )
-                    } &&
-                    // there's no UI yet for secondary alerts in trip details
-                    alert.significance >= AlertSignificance.Major
-            }
+            val alert =
+                alertsData?.alerts?.values?.find { alert ->
+                    alert.isActive(entryTime) &&
+                        alert.anyInformedEntity {
+                            it.appliesTo(
+                                directionId = directionId,
+                                routeId = route?.id,
+                                routeType = entryRouteType,
+                                stopId = entry.stopId,
+                                tripId = tripId
+                            )
+                        } &&
+                        // there's no UI yet for secondary alerts in trip details
+                        alert.significance >= AlertSignificance.Major
+                }
+            if (alert == null) return null
+            return RealtimePatterns.Format.Disruption(
+                alert,
+                route?.let { MapStopRoute.matching(it) }
+            )
         }
     }
 }
