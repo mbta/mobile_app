@@ -249,7 +249,7 @@ class HomeMapViewTests {
         viewModel.loadConfig()
         composeTestRule
             .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsDisplayed()
+            .assertDoesNotExist()
     }
 
     @Test
