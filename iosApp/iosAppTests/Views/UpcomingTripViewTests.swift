@@ -125,6 +125,15 @@ final class UpcomingTripViewTests: XCTestCase {
         )
     }
 
+    func testPredictedHourAccessibilityLabel() throws {
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 67)), isFirst: false)
+        let predictionView = try sut.inspect().find(PredictionText.self)
+        XCTAssertEqual(
+            "and in 1 hr 7 min",
+            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
+    }
+
     func testCancelledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!.toKotlinInstant()
         let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
