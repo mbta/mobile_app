@@ -47,7 +47,13 @@ fun RoutePill(
     contentDescription: String? = null,
     modifier: Modifier = Modifier
 ) {
-    RoutePill(route, line, isActive, RoutePillSpec(route, line, type), contentDescription, modifier)
+    RoutePill(
+        route,
+        line,
+        isActive,
+        RoutePillSpec(route, line, type, contentDescription = contentDescription),
+        modifier
+    )
 }
 
 @Composable
@@ -56,7 +62,6 @@ fun RoutePill(
     line: Line? = null,
     isActive: Boolean = true,
     spec: RoutePillSpec,
-    contentDescription: String? = null,
     modifier: Modifier = Modifier
 ) {
     val textColor = Color.fromHex(spec.textColor)
@@ -105,7 +110,7 @@ fun RoutePill(
     val typeText = route?.type?.typeText(LocalContext.current, true)
 
     val contentDescription =
-        contentDescription
+        spec.contentDescription
             ?: stringResource(
                 id = R.string.route_with_type,
                 route?.label ?: line?.longName ?: "",

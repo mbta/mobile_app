@@ -167,7 +167,14 @@ class SearchViewModel: ObservableObject {
             .map { route -> RoutePillSpec in
                 let line: Line? = if let lineId = route.lineId { globalResponse.lines[lineId] } else { nil }
                 let context: RoutePillSpec.Context = isStation ? .searchStation : .default
-                return RoutePillSpec(route: route, line: line, type: .flexCompact, context: context)
+                return RoutePillSpec(route: route,
+                                     line: line,
+                                     type: .flexCompact,
+                                     context: context,
+                                     contentDescription: stopRouteContentDescription(
+                                         isStation: isStation,
+                                         route: route
+                                     ))
             }
 
         return Result(
@@ -176,5 +183,18 @@ class SearchViewModel: ObservableObject {
             name: stop.name,
             routePills: routePills.removingDuplicates()
         )
+    }
+
+    private func stopRouteContentDescription(isStation: Bool, route: Route) -> String {
+        if silverRoutes.contains(route.id), isStation {
+            let routeName = "Silver Line"
+            return "\(routeName) \(route.type.typeText(isOnly: false))"
+
+        } else if route.type == .commuterRail, isStation {
+            let routeName = "Commuter Rail"
+            return "\(routeName) \(route.type.typeText(isOnly: false))"
+        } else {
+            return "\(route.label) \(route.type.typeText(isOnly: true))"
+        }
     }
 }
