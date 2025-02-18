@@ -64,8 +64,7 @@ class GetSearchResultTest {
 
         composeTestRule.setContent {
             actualSearchResultsViewModel =
-                getSearchResultsVm(
-                    GlobalResponse(builder),
+                SearchResultsViewModel(
                     MockAnalytics(),
                     object : ISearchResultRepository {
                         override suspend fun getSearchResults(
@@ -81,13 +80,19 @@ class GetSearchResultTest {
         composeTestRule.waitUntil { actualSearchResultsViewModel != null }
         composeTestRule.awaitIdle()
 
-        actualSearchResultsViewModel?.getSearchResults("")
+        actualSearchResultsViewModel?.getSearchResults(
+            "",
+            GlobalResponse(builder),
+        )
         composeTestRule.waitUntil { actualSearchResultsViewModel?.searchResults?.value != null }
         assert(
             actualSearchResultsViewModel?.searchResults?.value?.stops?.first()?.id == visitedStop.id
         )
 
-        actualSearchResultsViewModel?.getSearchResults("query")
+        actualSearchResultsViewModel?.getSearchResults(
+            "query",
+            GlobalResponse(builder),
+        )
         composeTestRule.waitUntil {
             actualSearchResultsViewModel?.searchResults?.value == searchResults
         }

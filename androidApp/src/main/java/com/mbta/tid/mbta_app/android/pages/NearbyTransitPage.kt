@@ -6,9 +6,11 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -416,8 +418,10 @@ fun NearbyTransitPage(
             }
         }
     }
-
-    Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
+    // setting WindowInsets top to 0 to prevent the sheet from having extra padding on top even
+    // when not fully expanded https://stackoverflow.com/a/77361483
+    Scaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
+        outerSheetPadding ->
         if (nearbyTransit.hideMaps) {
             val isNearbyTransit = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
             SearchBarOverlay(
@@ -428,7 +432,9 @@ fun NearbyTransitPage(
                 searchFocusRequester
             ) {
                 SheetContent(
-                    Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp).fillMaxSize()
+                    Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp)
+                        .statusBarsPadding()
+                        .fillMaxSize()
                 )
             }
         } else {
@@ -447,7 +453,19 @@ fun NearbyTransitPage(
                                 }
                                 .fillMaxSize()
                     ) {
-                        SheetContent(Modifier.height(sheetHeight).padding(outerSheetPadding))
+                        val statusBarPadding =
+                            if (
+                                nearbyTransit.scaffoldState.bottomSheetState.currentValue !=
+                                    SheetValue.Large
+                            ) {
+                                Modifier
+                            } else {
+                                Modifier.statusBarsPadding()
+                            }
+
+                        SheetContent(
+                            statusBarPadding.height(sheetHeight).padding(outerSheetPadding)
+                        )
                     }
                 },
                 sheetContainerColor = MaterialTheme.colorScheme.surfaceContainer,
