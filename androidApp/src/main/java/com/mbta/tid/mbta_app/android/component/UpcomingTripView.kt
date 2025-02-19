@@ -386,15 +386,21 @@ fun DisruptionView(
     val icon = painterResource(drawableByName(iconName))
     Row(
         modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             spec.text,
             modifier =
-                spec.contentDescription?.let { Modifier.semantics { contentDescription = it } }
-                    ?: Modifier,
-            fontSize = 12.sp
+                Modifier.alpha(0.6f)
+                    .then(
+                        spec.contentDescription?.let {
+                            Modifier.semantics { contentDescription = it }
+                        }
+                            ?: Modifier
+                    ),
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.labelLarge
         )
         Image(icon, null, Modifier.size(20.dp))
     }

@@ -14,11 +14,12 @@ import SwiftUI
 struct OptionalNavigationLink<Label>: View where Label: View {
     let value: SheetNavigationStackEntry?
     let action: (SheetNavigationStackEntry) -> Void
+    let showChevron: Bool
     let label: () -> Label
 
     var body: some View {
         if let value {
-            SheetNavigationLink(value: value, action: action, label: label)
+            SheetNavigationLink(value: value, action: action, showChevron: showChevron, label: label)
         } else {
             label()
         }
