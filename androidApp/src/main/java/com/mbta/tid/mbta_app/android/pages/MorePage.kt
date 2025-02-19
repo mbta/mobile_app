@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.more.MoreSectionView
 import com.mbta.tid.mbta_app.android.more.MoreViewModel
+import com.mbta.tid.mbta_app.android.util.Typography
 import org.koin.compose.koinInject
 
 @Composable
@@ -45,13 +45,10 @@ fun MorePage(
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Text(
-                    text = stringResource(R.string.more_title),
-                    style = MaterialTheme.typography.titleSmall
-                )
+                Text(text = stringResource(R.string.more_title), style = Typography.title1Bold)
                 Text(
                     stringResource(R.string.app_version_number, BuildConfig.VERSION_NAME),
-                    style = MaterialTheme.typography.bodySmall
+                    style = Typography.footnote
                 )
             }
             HorizontalDivider()
@@ -78,10 +75,7 @@ fun MorePage(
                         tint = Color.Unspecified
                     )
 
-                    Text(
-                        stringResource(R.string.more_page_footer),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Text(stringResource(R.string.more_page_footer), style = Typography.callout)
                 }
             }
         }

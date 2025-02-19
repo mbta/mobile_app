@@ -46,8 +46,7 @@ struct TripStopRow: View {
                             HStack(alignment: .center, spacing: 0) {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(stop.stop.name)
-                                        .font(Typography.body)
-                                        .fontWeight(targeted ? Font.Weight.bold : Font.Weight.regular)
+                                        .font(targeted ? Typography.headlineBold : Typography.body)
                                         .foregroundStyle(Color.text)
                                         .multilineTextAlignment(.leading)
                                         .accessibilityLabel(stopAccessibilityLabel)
@@ -70,8 +69,8 @@ struct TripStopRow: View {
                     )
                     .accessibilityElement(children: .combine)
                     .accessibilityInputLabels([stop.stop.name])
-                    .accessibilityAddTraits(targeted ? [.isHeader] : [])
-                    .accessibilityHeading(targeted ? .h4 : .unspecified)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h4)
 
                     if !stop.routes.isEmpty {
                         scrollRoutes

@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -22,11 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
 fun StopDetailsIconCard(
@@ -51,16 +48,14 @@ fun StopDetailsIconCard(
             CompositionLocalProvider(LocalContentColor provides accentColor) {
                 icon(Modifier.requiredSize(35.dp))
             }
-            ProvideTextStyle(TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)) {
+            ProvideTextStyle(Typography.title2Bold) {
                 header(Modifier.semantics { heading() }.weight(1f))
             }
         }
 
         if (details != null) {
             HorizontalDivider(color = accentColor.copy(alpha = 0.25f))
-            CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium) {
-                details()
-            }
+            CompositionLocalProvider(LocalTextStyle provides Typography.callout) { details() }
         }
     }
 }

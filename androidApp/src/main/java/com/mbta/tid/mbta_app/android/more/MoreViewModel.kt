@@ -40,6 +40,7 @@ class MoreViewModel(
             val translation =
                 when {
                     primaryLocale.language == "es" -> "es"
+                    primaryLocale.language == "fr" -> "fr"
                     primaryLocale.language == "ht" -> "ht"
                     primaryLocale.language == "pt" -> "pt-BR"
                     primaryLocale.language == "vi" -> "vi"

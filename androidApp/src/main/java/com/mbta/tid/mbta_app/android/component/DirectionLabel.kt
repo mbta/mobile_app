@@ -8,9 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Direction
 
@@ -43,23 +42,21 @@ fun DirectionLabel(
                     stringResource(directionNameFormatted(direction))
                 ),
                 color = textColor,
-                fontSize = 13.sp,
-                modifier = Modifier.placeholderIfLoading()
+                modifier = Modifier.placeholderIfLoading(),
+                style = Typography.footnote
             )
             Text(
                 destination,
                 color = textColor,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.placeholderIfLoading()
+                modifier = Modifier.placeholderIfLoading(),
+                style = Typography.bodySemibold
             )
         } else {
             Text(
                 stringResource(directionNameFormatted(direction)),
                 color = textColor,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.placeholderIfLoading()
+                modifier = Modifier.placeholderIfLoading(),
+                style = Typography.bodySemibold
             )
         }
     }

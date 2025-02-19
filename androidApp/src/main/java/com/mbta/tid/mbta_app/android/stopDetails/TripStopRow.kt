@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
@@ -41,6 +40,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
@@ -104,11 +104,7 @@ fun TripStopRow(
                                     }
                                     .placeholderIfLoading(),
                                 color = colorResource(R.color.text),
-                                style =
-                                    MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight =
-                                            if (targeted) FontWeight.Bold else FontWeight.Normal
-                                    ),
+                                style = if (targeted) Typography.headlineBold else Typography.body,
                             )
                             val trackNumber = stop.trackNumber
                             if (trackNumber != null) {
@@ -123,7 +119,7 @@ fun TripStopRow(
                                         }
                                         .placeholderIfLoading(),
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelLarge
+                                    style = Typography.footnote
                                 )
                             }
                         }
