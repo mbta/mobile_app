@@ -32,6 +32,22 @@ struct ContentView: View {
     let inspection = Inspection<Self>()
 
     @State private var selectedTab = SelectedTab.nearby
+    @State private var sheetTabBarVisibility = Visibility.hidden
+    @State private var baseTabBarVisibility = Visibility.hidden
+
+    func updateTabBarVisibility(_ tab: SelectedTab) {
+        let shouldShowSheetTabBar = !contentVM.hideMaps
+            && tab == SelectedTab.nearby
+            && nearbyVM.navigationStack.lastSafe() == .nearby
+            && !searchObserver.isSearching
+
+        sheetTabBarVisibility = shouldShowSheetTabBar ? .visible : .hidden
+
+        let shouldShowBaseTabBar = tab == SelectedTab.more || (
+            contentVM.hideMaps && nearbyVM.navigationStack.lastSafe() == .nearby && !searchObserver.isSearching
+        )
+        baseTabBarVisibility = shouldShowBaseTabBar ? .visible : .hidden
+    }
 
     var body: some View {
         VStack {
@@ -45,6 +61,7 @@ struct ContentView: View {
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
             analytics.recordSession(hideMaps: contentVM.hideMaps)
+            updateTabBarVisibility(selectedTab)
         }
         .task {
             // We can't set stale caches in ResponseCache on init because of our Koin setup,
@@ -53,9 +70,13 @@ struct ContentView: View {
                 _ = try await RepositoryDI().global.getGlobalData()
             } catch {}
         }
-        .onChange(of: selectedTab) { _ in
+        .onChange(of: selectedTab) { nextTab in
             Task { await nearbyVM.loadSettings() }
+            updateTabBarVisibility(nextTab)
         }
+        .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in updateTabBarVisibility(selectedTab) }
+        .onChange(of: contentVM.hideMaps) { _ in updateTabBarVisibility(selectedTab) }
+        .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility(selectedTab) }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.attach()
@@ -99,13 +120,21 @@ struct ContentView: View {
         } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
+                    .toolbar(baseTabBarVisibility, for: .tabBar, .bottomBar)
                     .tag(SelectedTab.nearby)
                     .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel(tab: SelectedTab.more) }
                     .onAppear { analytics.track(screen: .settings) }
-            }
+            }.accessibilityHidden(
+                // We don't want the nav bar behind the sheet to show up in VoiceOver when the sheet is open,
+                // but setting accessibilityHidden to true on this TabView also results in all of the non-sheet
+                // content in nearbyTab to be hidden, including the search bar and recenter button. The extra check
+                // to make it visible to VO when nearby transit is open is to ensure that the search is not hidden,
+                // though it does result in a second tab bar in VoiceOver on the nearby page and search overlay.
+                baseTabBarVisibility == .hidden && !contentVM.hideMaps && nearbyVM.navigationStack.lastSafe() != .nearby
+            )
         }
     }
 
@@ -113,36 +142,47 @@ struct ContentView: View {
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
     @State private var showingLocationPermissionAlert = false
 
+    @ViewBuilder
     var nearbySheetContents: some View {
-        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
-        // when re-opening nearby transit
-        VStack {
-            TabView(selection: $selectedTab) {
-                NearbyTransitPageView(
-                    errorBannerVM: errorBannerVM,
-                    nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    noNearbyStops: { NoNearbyStopsView(
-                        hideMaps: contentVM.hideMaps,
-                        onOpenSearch: { searchObserver.isFocused = true },
-                        onPanToDefaultCenter: {
-                            viewportProvider.setIsManuallyCentering(true)
-                            viewportProvider.animateTo(
-                                coordinates: ViewportProvider.Defaults.center,
-                                zoom: 13.75
-                            )
-                        }
-                    ) }
-                )
-                .tag(SelectedTab.nearby)
-                .tabItem { TabLabel(tab: SelectedTab.nearby) }
-                // we want to show nothing in the sheet when the settings tab is open,
-                // but an EmptyView here causes the tab to not be listed
-                VStack {}
-                    .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tab: SelectedTab.more) }
+        if contentVM.hideMaps {
+            nearbyPage
+        } else {
+            // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
+            // when re-opening nearby transit
+            VStack {
+                TabView(selection: $selectedTab) {
+                    nearbyPage
+                        .toolbar(sheetTabBarVisibility, for: .tabBar)
+                        .tag(SelectedTab.nearby)
+                        .tabItem { TabLabel(tab: SelectedTab.nearby) }
+                    // we want to show nothing in the sheet when the settings tab is open,
+                    // but an EmptyView here causes the tab to not be listed
+                    VStack {}
+                        .tag(SelectedTab.more)
+                        .tabItem { TabLabel(tab: SelectedTab.more) }
+                }
             }
         }
+    }
+
+    @ViewBuilder
+    var nearbyPage: some View {
+        NearbyTransitPageView(
+            errorBannerVM: errorBannerVM,
+            nearbyVM: nearbyVM,
+            viewportProvider: viewportProvider,
+            noNearbyStops: { NoNearbyStopsView(
+                hideMaps: contentVM.hideMaps,
+                onOpenSearch: { searchObserver.isFocused = true },
+                onPanToDefaultCenter: {
+                    viewportProvider.setIsManuallyCentering(true)
+                    viewportProvider.animateTo(
+                        coordinates: ViewportProvider.Defaults.center,
+                        zoom: 13.75
+                    )
+                }
+            ) }
+        )
     }
 
     @ViewBuilder
@@ -207,7 +247,7 @@ struct ContentView: View {
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
             sheetHeight: $sheetHeight
-        )
+        ).accessibilityHidden(searchObserver.isSearching)
     }
 
     @ViewBuilder var mapWithSheets: some View {
