@@ -193,6 +193,8 @@ class SearchViewModel: ObservableObject {
         } else if route.type == .commuterRail, isStation {
             let routeName = "Commuter Rail"
             return "\(routeName) \(route.type.typeText(isOnly: false))"
+        } else if route.type == .bus, isStation {
+            return route.type.typeText(isOnly: false)
         } else {
             return "\(route.label) \(route.type.typeText(isOnly: true))"
         }

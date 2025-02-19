@@ -97,16 +97,16 @@ fun StopResultsView(
                                 stringResource(
                                     id = R.string.route_with_type,
                                     "Silver Line",
-                                    route?.type?.typeText(LocalContext.current, isOnly = false)
-                                        ?: ""
+                                    route.type.typeText(LocalContext.current, isOnly = false)
                                 )
                             } else if (route.type == RouteType.COMMUTER_RAIL && stop.isStation) {
                                 stringResource(
                                     id = R.string.route_with_type,
                                     "Commuter Rail",
-                                    route?.type?.typeText(LocalContext.current, isOnly = false)
-                                        ?: ""
+                                    route.type.typeText(LocalContext.current, isOnly = false)
                                 )
+                            } else if (route.type == RouteType.BUS && stop.isStation) {
+                                route.type.typeText(LocalContext.current, isOnly = false)
                             } else {
                                 stringResource(
                                     id = R.string.route_with_type,
