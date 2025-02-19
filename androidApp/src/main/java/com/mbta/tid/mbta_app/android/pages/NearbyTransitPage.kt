@@ -239,6 +239,7 @@ fun NearbyTransitPage(
 
     fun handleStopNavigation(stopId: String) {
         updateVisitHistory(stopId)
+        mapViewModel.setSelectedVehicle(null)
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
