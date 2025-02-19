@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
 fun NoNearbyStopsView(
@@ -53,12 +53,9 @@ fun NoNearbyStopsView(
                 modifier = Modifier.size(48.dp),
                 tint = Color.Unspecified
             )
-            Text(
-                stringResource(R.string.no_stops_nearby_title),
-                style = MaterialTheme.typography.titleSmall
-            )
+            Text(stringResource(R.string.no_stops_nearby_title), style = Typography.title2Bold)
         }
-        Text(stringResource(R.string.no_stops_nearby), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.no_stops_nearby), style = Typography.body)
         Button(
             onClick = onOpenSearch,
             modifier = Modifier.requiredHeightIn(min = 48.dp),
@@ -76,10 +73,7 @@ fun NoNearbyStopsView(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    stringResource(R.string.no_stops_nearby_search),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Text(stringResource(R.string.no_stops_nearby_search), style = Typography.body)
                 Icon(
                     painterResource(R.drawable.fa_magnifying_glass_solid),
                     contentDescription = null,
@@ -100,10 +94,7 @@ fun NoNearbyStopsView(
                         Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        stringResource(R.string.no_stops_nearby_pan),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Text(stringResource(R.string.no_stops_nearby_pan), style = Typography.body)
                     Icon(
                         painterResource(R.drawable.fa_map),
                         contentDescription = null,

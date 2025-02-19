@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import com.mbta.tid.mbta_app.android.util.Typography
 
 // From https://www.magentaa11y.com/checklist-native/toggle-switch/
 @Composable
@@ -34,7 +34,7 @@ fun LabeledSwitch(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
+            style = Typography.body,
         )
 
         Switch(checked = value, onCheckedChange = null)
