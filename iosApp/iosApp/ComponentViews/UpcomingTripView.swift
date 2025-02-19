@@ -193,17 +193,17 @@ struct DisruptionView: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            HStack {
+            HStack(spacing: 4) {
                 fullText
                     .lineLimit(1)
                 fullImage
             }
-            VStack(alignment: .trailing) {
+            VStack(alignment: .trailing, spacing: 4) {
                 fullText
                     .lineLimit(1)
                 fullImage
             }
-            HStack {
+            HStack(spacing: 4) {
                 fullText
                 fullImage
             }
@@ -230,7 +230,6 @@ struct DisruptionView: View {
             .scaledToFill()
             .foregroundStyle(Color.deemphasized)
             .frame(width: iconSize, height: iconSize)
-            .padding(2)
     }
 }
 
