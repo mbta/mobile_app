@@ -30,6 +30,7 @@ struct VehicleMarkerView: View {
         }
         .padding(10)
         .modifier(PulsingHaloModifier(isSelected: isSelected, routeColor: route.uiColor))
+        .accessibilityHidden(true)
         .onTapGesture { onTap() }
     }
 

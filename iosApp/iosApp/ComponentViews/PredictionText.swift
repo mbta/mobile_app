@@ -11,34 +11,28 @@ import SwiftUI
 struct PredictionText: View {
     var minutes: Int32
 
-    var hours: Int32 {
-        Int32(
-            (Float(minutes) / 60).rounded(FloatingPointRoundingRule.down)
-        )
-    }
-
-    var remainingMinutes: Int32 {
-        minutes - (hours * 60)
+    var countdown: Minutes {
+        Minutes(minutes)
     }
 
     var predictionKey: String {
-        if hours >= 1 {
-            if remainingMinutes == 0 {
+        if countdown.hours >= 1 {
+            if countdown.remainingMinutes == 0 {
                 String(format: NSLocalizedString(
                     "**%ld** hr",
                     comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr\""
-                ), hours)
+                ), countdown.hours)
             } else {
                 String(format: NSLocalizedString(
                     "**%ld** hr **%ld** min",
                     comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
-                ), hours, remainingMinutes)
+                ), countdown.hours, countdown.remainingMinutes)
             }
         } else {
             String(format: NSLocalizedString(
                 "**%ld** min",
                 comment: "Shorthand displayed number of minutes until arrival, ex \"12 min\""
-            ), minutes)
+            ), countdown.minutes)
         }
     }
 
@@ -51,15 +45,14 @@ struct PredictionText: View {
     }
 
     var accessibilityString: String {
-        if hours >= 1 {
-            if remainingMinutes == 0 {
+        if countdown.hours >= 1 {
+            if countdown.remainingMinutes == 0 {
                 String(format: NSLocalizedString(
                     "in %ld hr",
                     comment: """
-                                        "Shorthand displayed number of hours  until arrival for VoiceOver,
-                                        ex 'in 1 hr'
+                    Shorthand displayed number of hours  until arrival for VoiceOver, ex 'in 1 hr'
                     """
-                ), hours)
+                ), countdown.hours)
             } else {
                 String(format: NSLocalizedString(
                     "in %ld hr %ld min",
@@ -68,14 +61,14 @@ struct PredictionText: View {
                     ex 'in 1 hr 32 min'
                     """
                 ),
-                hours,
-                remainingMinutes)
+                countdown.hours,
+                countdown.remainingMinutes)
             }
         } else {
             String(format: NSLocalizedString(
                 "in %ld min",
                 comment: "Shorthand displayed number of minutes until arrival for VoiceOver, ex 'in 7 min'"
-            ), minutes)
+            ), countdown.minutes)
         }
     }
 
