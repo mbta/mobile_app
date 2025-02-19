@@ -26,12 +26,12 @@ We use mapbox for custom interactive maps.
 
 ##### ios - [guide](https://docs.mapbox.com/ios/maps/guides/) - [docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/)
 
-Mapbox requires 1 key - a public key for rendering map tiles.
+Mapbox requires a public key for rendering map tiles.
 The public key is fetched dynamically from the backend. Be sure to follow the Firebase App Check instructions for access to the protected endpoint while developing locally.
 
 ##### android - [guide](https://docs.mapbox.com/android/maps/guides/) - [docs](https://docs.mapbox.com/android/maps/api/11.3.0/)
 
-Like on iOS, Mapbox for Android requires one key, fetched dynamically from the backend.
+Like on iOS, Mapbox for Android requires a public key, fetched dynamically from the backend.
 
 #### Sentry - [docs](https://docs.sentry.io/platforms/kotlin-multiplatform/) - [keys](https://mbtace.sentry.io/settings/projects/mobile_app_ios/keys/)
 
