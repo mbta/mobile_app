@@ -28,7 +28,7 @@ final class OptionalNavigationLinkTests: XCTestCase {
                 tappedExp.fulfill()
             }
         }
-        let sut = OptionalNavigationLink(value: target, action: action) {
+        let sut = OptionalNavigationLink(value: target, action: action, showChevron: true) {
             Text("This is a link")
         }
 
@@ -38,7 +38,8 @@ final class OptionalNavigationLinkTests: XCTestCase {
     }
 
     func testIsNotLink() throws {
-        let sut = OptionalNavigationLink(value: nil, action: { _ in }) { Text("Ceci n'est pas un lien") }
+        let sut = OptionalNavigationLink(value: nil, action: { _ in
+        }, showChevron: true) { Text("Ceci n'est pas un lien") }
 
         XCTAssertNotNil(try sut.inspect().find(text: "Ceci n'est pas un lien"))
         XCTAssertThrowsError(try sut.inspect().find(button: "Ceci n'est pas un lien"))

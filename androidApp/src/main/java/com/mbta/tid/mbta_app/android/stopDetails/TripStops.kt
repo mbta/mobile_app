@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
@@ -160,7 +161,7 @@ fun TripStops(
                     }
                     Text(
                         pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = Typography.body,
                         modifier = Modifier.weight(1f)
                     )
                 }
