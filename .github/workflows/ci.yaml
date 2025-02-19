@@ -41,8 +41,6 @@ jobs:
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -50,8 +48,6 @@ jobs:
           path: shared/build/reports
       - name: android checks & unit tests
         run: ./gradlew androidApp:check
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -95,8 +91,6 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           script: ./bin/android-instrumented-test-ci.sh
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -121,7 +115,6 @@ jobs:
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
           GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
           SENTRY_ENVIRONMENT: "debug"
