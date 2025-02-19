@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -75,7 +77,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun HomeMapView(
-    modifier: Modifier = Modifier,
+    sheetPadding: PaddingValues,
     lastNearbyTransitLocation: Position?,
     nearbyTransitSelectingLocationState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
@@ -115,6 +117,7 @@ fun HomeMapView(
     val analytics: Analytics = koinInject()
     val context = LocalContext.current
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -253,7 +256,11 @@ fun HomeMapView(
         mapState.cameraChangedEvents.collect { viewportProvider.updateCameraState(it.cameraState) }
     }
 
-    Box(modifier, contentAlignment = Alignment.Center) {
+    LaunchedEffect(viewportProvider, sheetPadding) {
+        viewportProvider.setSheetPadding(sheetPadding, density, layoutDirection)
+    }
+
+    Box(contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
          */
@@ -269,8 +276,10 @@ fun HomeMapView(
                 Modifier.fillMaxSize(),
                 compass = {},
                 scaleBar = {},
-                logo = { Logo(Modifier.clearAndSetSemantics {}) },
-                attribution = { Attribution(alignment = Alignment.BottomEnd) },
+                logo = { Logo(Modifier.clearAndSetSemantics {}, sheetPadding) },
+                attribution = {
+                    Attribution(contentPadding = sheetPadding, alignment = Alignment.BottomEnd)
+                },
                 mapViewportState = viewportProvider.viewport,
                 mapState = mapState,
                 style = {

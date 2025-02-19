@@ -479,7 +479,7 @@ fun NearbyTransitPage(
                     searchFocusRequester
                 ) {
                     HomeMapView(
-                        Modifier.padding(sheetPadding),
+                        sheetPadding = sheetPadding,
                         lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                         nearbyTransitSelectingLocationState =
                             nearbyTransit.nearbyTransitSelectingLocationState,
