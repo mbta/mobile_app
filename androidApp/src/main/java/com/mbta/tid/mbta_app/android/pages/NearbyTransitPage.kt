@@ -180,6 +180,7 @@ fun NearbyTransitPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
+            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
             now = now
         )
 
@@ -353,7 +354,6 @@ fun NearbyTransitPage(
                     tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
-                    setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
             }
