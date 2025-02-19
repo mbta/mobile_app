@@ -48,6 +48,7 @@ import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -153,18 +154,12 @@ private fun Description(
 
 @Composable
 private fun FinishingAnotherTripDescription() {
-    Text(
-        stringResource(R.string.finishing_another_trip),
-        style = MaterialTheme.typography.labelLarge
-    )
+    Text(stringResource(R.string.finishing_another_trip), style = Typography.footnote)
 }
 
 @Composable
 private fun NoVehicleDescription() {
-    Text(
-        stringResource(R.string.location_not_available_yet),
-        style = MaterialTheme.typography.labelLarge
-    )
+    Text(stringResource(R.string.location_not_available_yet), style = Typography.footnote)
 }
 
 @Composable
@@ -192,15 +187,12 @@ private fun ScheduleDescription(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    stringResource(R.string.scheduled_to_depart),
-                    style = MaterialTheme.typography.labelLarge
-                )
+                Text(stringResource(R.string.scheduled_to_depart), style = Typography.footnote)
                 if (clickable) {
                     InfoCircle(Modifier.aspectRatio(1f).size(16.dp))
                 }
             }
-            Text(startTerminalEntry.stop.name, style = MaterialTheme.typography.headlineLarge)
+            Text(startTerminalEntry.stop.name, style = Typography.headlineBold)
         }
     }
 }
@@ -249,7 +241,7 @@ private fun VehicleDescription(
                 VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
                 Text(
                     spec.stop.name,
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = Typography.headlineBold,
                     modifier = Modifier.placeholderIfLoading()
                 )
             }
@@ -260,7 +252,7 @@ private fun VehicleDescription(
                             contentDescription = context.getString(R.string.boarding_track, it)
                         }
                         .placeholderIfLoading(),
-                    style = MaterialTheme.typography.labelLarge
+                    style = Typography.footnote
                 )
             }
         }
@@ -288,7 +280,7 @@ private fun VehicleStatusDescription(vehicleStatus: Vehicle.CurrentStatus, atTer
     val context = LocalContext.current
     Text(
         vehicleStatusString(context, vehicleStatus, atTerminal),
-        style = MaterialTheme.typography.labelLarge,
+        style = Typography.footnote,
         modifier = Modifier.placeholderIfLoading(),
     )
 }
@@ -427,7 +419,7 @@ private fun LiveIndicator() {
         )
         Text(
             stringResource(R.string.live),
-            style = MaterialTheme.typography.labelLarge,
+            style = Typography.footnote,
             modifier = Modifier.placeholderIfLoading()
         )
     }

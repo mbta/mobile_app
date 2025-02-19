@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
 fun BottomNavIconButton(
@@ -45,7 +45,7 @@ fun BottomNavIconButton(
         ) {
             Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.height(4.dp))
-            Text(label, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+            Text(label, style = if (active) Typography.caption2Semibold else Typography.caption2)
         }
     }
 }
