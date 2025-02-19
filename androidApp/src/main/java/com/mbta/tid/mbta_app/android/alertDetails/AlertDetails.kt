@@ -75,7 +75,7 @@ fun AlertDetails(
     val routeId = line?.id ?: routes?.firstOrNull()?.id ?: ""
     val routeLabel = line?.longName ?: routes?.firstOrNull()?.label
     val stopLabel = stop?.name
-    val effectLabel = FormattedAlert.format(alert)?.effect?.let { stringResource(it) }
+    val effectLabel = FormattedAlert(alert).effect
     val causeLabel =
         when (alert.cause) {
             Alert.Cause.Accident -> stringResource(R.string.accident)
