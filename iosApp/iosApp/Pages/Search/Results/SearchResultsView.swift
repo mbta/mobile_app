@@ -62,12 +62,11 @@ struct SearchResultsView: View {
             }
             .onChange(of: state) { state in
                 if case let .results(stopResults, _, _) = state {
-                    let announcementString = NSLocalizedString(
-                        "\(stopResults.count) results found",
-                        comment: """
-                        Screen reader text that is announced when search results are returned
-                        """
-                    )
+                    let announcementString = String(format: NSLocalizedString(
+                        "%ld results found",
+                        comment: "Screen reader text that is announced when search results are returned"
+                    ), stopResults.count)
+
                     if #available(iOS 17, *) {
                         var resultsFoundAnnouncement = AttributedString(announcementString)
                         resultsFoundAnnouncement.accessibilitySpeechAnnouncementPriority = .high
