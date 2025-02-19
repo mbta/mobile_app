@@ -24,16 +24,14 @@ For iOS development, `brew install swiftlint`.
 
 We use mapbox for custom interactive maps.
 
-##### ios - [guide](https://docs.mapbox.com/ios/maps/guides/) - [docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/) - [keys](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token)
+##### ios - [guide](https://docs.mapbox.com/ios/maps/guides/) - [docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/)
 
-Mapbox requires 2 keys - a private key for installing the library and a public key for rendering map tiles. Follow the above keys link for instructions on how to configure the secret key.
+Mapbox requires 1 key - a public key for rendering map tiles.
 The public key is fetched dynamically from the backend. Be sure to follow the Firebase App Check instructions for access to the protected endpoint while developing locally.
 
-##### android - [guide](https://docs.mapbox.com/android/maps/guides/) - [docs](https://docs.mapbox.com/android/maps/api/11.3.0/) - [keys](https://docs.mapbox.com/android/maps/guides/install/#configure-your-secret-token)
+##### android - [guide](https://docs.mapbox.com/android/maps/guides/) - [docs](https://docs.mapbox.com/android/maps/api/11.3.0/)
 
-Like on iOS, Mapbox for Android requires two keys. Follow the above keys link for instructions on how to configure the secret and public key.
-
-**Note**: The property name in `~/.gradle/gradle.properties` is `MAPBOX_SECRET_TOKEN`, not `MAPBOX_DOWNLOADS_TOKEN` as used in the Mapbox documentation.
+Like on iOS, Mapbox for Android requires one key, fetched dynamically from the backend.
 
 #### Sentry - [docs](https://docs.sentry.io/platforms/kotlin-multiplatform/) - [keys](https://mbtace.sentry.io/settings/projects/mobile_app_ios/keys/)
 
