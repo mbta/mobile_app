@@ -7,6 +7,7 @@ fun localizedFeedbackFormUrl(
 ): String {
     return when (translation) {
         "es" -> "${baseUrl}?lang=es-US"
+        "fr" -> "${baseUrl}?lang=fr"
         "ht" -> if (separateHTForm) "${baseUrl}-ht" else baseUrl
         "pt-BR" -> "${baseUrl}?lang=pt-BR"
         "vi" -> "${baseUrl}?lang=vi"
