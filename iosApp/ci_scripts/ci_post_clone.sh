@@ -68,14 +68,6 @@ retry bundle exec ./gradlew :shared:podInstallSyntheticIos
 # Install Node.js and GitHub CLI for codegen
 retry brew install node gh
 
-# Configure Mapbox token for installation
-cd $CI_PRIMARY_REPOSITORY_PATH
-touch ~/.netrc
-echo "machine api.mapbox.com" > ~/.netrc
-echo "login mapbox" >> ~/.netrc
-echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
-
-
 # Run tests from shared directory
 if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   echo "Running shared tests"
