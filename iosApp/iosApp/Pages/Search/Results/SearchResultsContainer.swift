@@ -75,7 +75,8 @@ struct SearchResultView_Previews: PreviewProvider {
                                 routeColor: "#ED8B00",
                                 content: RoutePillSpecContentText(text: "OL"),
                                 size: RoutePillSpec.Size.flexPillSmall,
-                                shape: RoutePillSpec.Shape.capsule
+                                shape: RoutePillSpec.Shape.capsule,
+                                contentDescription: "Orange Line"
                             ),
                         ]
                     ),
