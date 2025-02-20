@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import MockRepositories
 import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +21,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
-import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MainApplication
@@ -65,7 +66,6 @@ import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.core.module.dsl.*
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import org.koin.test.KoinTest
@@ -288,7 +288,7 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                            viewportProvider = remember { ViewportProvider(MapViewportState()) },
                         ),
                         false,
                         {},
@@ -381,7 +381,7 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                            viewportProvider = remember { ViewportProvider(MapViewportState()) },
                         ),
                         false,
                         {},
@@ -421,7 +421,7 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                            viewportProvider = remember { ViewportProvider(MapViewportState()) },
                         ),
                         false,
                         {},
