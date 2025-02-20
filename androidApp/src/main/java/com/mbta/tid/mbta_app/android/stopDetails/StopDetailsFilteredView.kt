@@ -17,7 +17,6 @@ import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
-import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlinx.datetime.Instant
 
@@ -38,7 +37,6 @@ fun StopDetailsFilteredView(
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    setMapSelectedVehicle: (Vehicle?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
@@ -94,7 +92,6 @@ fun StopDetailsFilteredView(
             pinnedRoutes = pinnedRoutes,
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
-            setMapSelectedVehicle = setMapSelectedVehicle,
             openModal = openModal,
             openSheetRoute = openSheetRoute
         )
@@ -134,7 +131,6 @@ fun StopDetailsFilteredView(
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = onClose,
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
