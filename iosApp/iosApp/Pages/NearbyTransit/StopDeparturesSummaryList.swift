@@ -38,18 +38,18 @@ struct StopDeparturesSummaryList: View {
                     condenseHeadsignPredictions: condenseHeadsignPredictions,
                     pushNavEntry: pushNavEntry,
                     analytics: analytics, pinned: pinned, routeType: patternsByStop.representativeRoute.type
-                )
-                .accessibilityInputLabels([inputLabel])
-                .padding(8)
-                .frame(minHeight: 44)
-                .padding(.leading, 8)
+                ).accessibilityAddTraits(.updatesFrequently)
+                    .accessibilityInputLabels([inputLabel])
+                    .padding(8)
+                    .frame(minHeight: 44)
+                    .padding(.leading, 8)
 
                 if index < patternsByStop.patterns.count - 1 {
                     Divider().background(Color.halo)
                 }
             }
+            .accessibilityHint(Text("Open for more arrivals"))
         }
         .accessibilityElement(children: .contain)
-        .accessibilityHint(Text("Open for more arrivals"))
     }
 }

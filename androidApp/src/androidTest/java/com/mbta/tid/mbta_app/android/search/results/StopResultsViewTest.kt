@@ -95,7 +95,7 @@ class StopResultsViewTest {
         assertTrue(handleSearchCalled)
         composeTestRule
             .onNodeWithContentDescription(
-                "serves Red Line train,Commuter Rail trains,Silver Line buses,4 bus"
+                "serves Red Line train,Commuter Rail trains,Silver Line buses,buses"
             )
             .assertIsDisplayed()
     }

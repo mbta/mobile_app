@@ -20,6 +20,8 @@ struct MorePage: View {
                 HStack(alignment: .bottom) {
                     Text("MBTA Go")
                         .font(Typography.title1Bold)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityHeading(.h1)
                     Spacer()
                     let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
                     if let version {
