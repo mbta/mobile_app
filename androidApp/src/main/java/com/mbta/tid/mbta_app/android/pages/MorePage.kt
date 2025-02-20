@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
@@ -45,7 +47,11 @@ fun MorePage(
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Text(text = stringResource(R.string.more_title), style = Typography.title1Bold)
+                Text(
+                    text = stringResource(R.string.more_title),
+                    style = Typography.title1Bold,
+                    modifier = Modifier.semantics { heading() }
+                )
                 Text(
                     stringResource(R.string.app_version_number, BuildConfig.VERSION_NAME),
                     style = Typography.footnote
