@@ -60,6 +60,25 @@ struct SearchResultsView: View {
                     EmptyView()
                 }
             }
+            .onChange(of: state) { state in
+                if case let .results(stopResults, _, _) = state {
+                    let announcementString = String(format: NSLocalizedString(
+                        "%ld results found",
+                        comment: "Screen reader text that is announced when search results are returned"
+                    ), stopResults.count)
+
+                    if #available(iOS 17, *) {
+                        var resultsFoundAnnouncement = AttributedString(announcementString)
+                        resultsFoundAnnouncement.accessibilitySpeechAnnouncementPriority = .high
+                        AccessibilityNotification.Announcement(resultsFoundAnnouncement).post()
+                    } else {
+                        UIAccessibility.post(
+                            notification: .layoutChanged,
+                            argument: announcementString
+                        )
+                    }
+                }
+            }
             .animation(.easeInOut(duration: 0.25), value: state)
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.top, 8)

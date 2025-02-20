@@ -76,7 +76,7 @@ fun StopResultsView(
             val routePillsData =
                 routes
                     .sortedBy { it.sortOrder }
-                    .map<Route, Triple<Route, RoutePillSpec, String>> { route ->
+                    .map<Route, Pair<Route, RoutePillSpec>> { route ->
                         val line: Line? =
                             if (route.lineId != null) {
                                 lines[route.lineId]
@@ -95,17 +95,19 @@ fun StopResultsView(
                             if (silverRoutes.contains(route.id) && stop.isStation) {
                                 stringResource(
                                     id = R.string.route_with_type,
-                                    "Silver Line",
+                                    stringResource(R.string.silver_line),
                                     route?.type?.typeText(LocalContext.current, isOnly = false)
                                         ?: ""
                                 )
                             } else if (route.type == RouteType.COMMUTER_RAIL && stop.isStation) {
                                 stringResource(
                                     id = R.string.route_with_type,
-                                    "Commuter Rail",
+                                    stringResource(R.string.commuter_rail),
                                     route?.type?.typeText(LocalContext.current, isOnly = false)
                                         ?: ""
                                 )
+                            } else if (route.type == RouteType.BUS && stop.isStation) {
+                                route.type.typeText(LocalContext.current, isOnly = false)
                             } else {
                                 stringResource(
                                     id = R.string.route_with_type,
@@ -114,20 +116,23 @@ fun StopResultsView(
                                 )
                             }
 
-                        Triple(
+                        Pair(
                             route,
-                            RoutePillSpec(route, line, RoutePillSpec.Type.FlexCompact, context),
-                            contentDescription
+                            RoutePillSpec(
+                                route,
+                                line,
+                                RoutePillSpec.Type.FlexCompact,
+                                context,
+                                contentDescription
+                            ),
                         )
                     }
-                    .distinctBy { (_, spec, _) -> spec }
+                    .distinctBy { (_, spec) -> spec }
 
             val routesContentDescription =
                 stringResource(
                     R.string.serves_route_list,
-                    routePillsData.joinToString(",") { (_, _, contentDescription) ->
-                        contentDescription
-                    }
+                    routePillsData.joinToString(",") { (_, spec) -> spec.contentDescription ?: "" }
                 )
             if (stop.isStation) {
                 Icon(
@@ -157,7 +162,7 @@ fun StopResultsView(
                             .semantics(mergeDescendants = true) {}
                             .clearAndSetSemantics { contentDescription = routesContentDescription }
                 ) {
-                    routePillsData.map { (route, spec, _) ->
+                    routePillsData.map { (route, spec) ->
                         RoutePill(
                             route = route,
                             spec = spec,
