@@ -62,6 +62,7 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.isOverview
+import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -280,9 +281,14 @@ fun HomeMapView(
                 Modifier.fillMaxSize(),
                 compass = {},
                 scaleBar = {},
-                logo = { Logo(Modifier.clearAndSetSemantics {}, sheetPadding) },
+                logo = {
+                    Logo(Modifier.clearAndSetSemantics {}, sheetPadding + PaddingValues(8.dp))
+                },
                 attribution = {
-                    Attribution(contentPadding = sheetPadding, alignment = Alignment.BottomEnd)
+                    Attribution(
+                        contentPadding = sheetPadding + PaddingValues(8.dp),
+                        alignment = Alignment.BottomEnd
+                    )
                 },
                 mapViewportState = viewportProvider.viewport,
                 mapState = mapState,
