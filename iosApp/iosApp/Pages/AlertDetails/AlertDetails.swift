@@ -249,9 +249,11 @@ struct AlertDetails: View {
         if !alertDescriptionParagraphs.isEmpty {
             VStack(alignment: .leading, spacing: 16) {
                 if isElevatorClosure {
-                    Text("Alternative path", comment: "Header for the details of an elevator closure").bold()
+                    Text("Alternative path", comment: "Header for the details of an elevator closure")
+                        .font(Typography.bodySemibold)
                 } else {
-                    Text("Full Description", comment: "Header for the details of a disruption").bold()
+                    Text("Full Description", comment: "Header for the details of a disruption")
+                        .font(Typography.bodySemibold)
                 }
                 ForEach(alertDescriptionParagraphs, id: \.hashValue) { section in
                     Text(section).fixedSize(horizontal: false, vertical: true)
@@ -297,6 +299,7 @@ struct AlertDetails: View {
 
     var body: some View {
         scrollContent
+            .font(Typography.body)
     }
 }
 

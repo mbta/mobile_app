@@ -29,7 +29,7 @@ struct OnboardingScreenView: View {
 
     // Use less padding on smaller screens
     private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 52 }
-    private var sidePadding: CGFloat { screenWidth < 393 ? 16 : 32 }
+    private var sidePadding: CGFloat { 32 }
 
     private var locationHaloSize: CGFloat { screenWidth * 0.8 }
     private var moreHaloSize: CGFloat { screenWidth * 0.55 }
@@ -237,6 +237,7 @@ struct OnboardingScreenView: View {
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
                 .padding(.horizontal, sidePadding)
                 .padding(.bottom, bottomPadding)
+                .foregroundStyle(Color.text)
                 .background {
                     ZStack(alignment: .center) {
                         Image(.onboardingBackgroundMap)
