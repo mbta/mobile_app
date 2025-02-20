@@ -4,6 +4,7 @@
     <plurals name="affected_stops">
         <item quantity="one">&lt;b>%1$d&lt;/b> arrêt concerné</item>
         <item quantity="many">&lt;b>%1$d&lt;/b> arrêts concernés</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b> arrêts concernés</item>
     </plurals>
     <string name="alert">Alerte</string>
     <string name="alert_details">Détails de l’alerte</string>
@@ -46,6 +47,7 @@
     <plurals name="elevator_closure_count">
         <item quantity="one">Ascenseur %1$d fermé</item>
         <item quantity="many">Ascenseurs %1$d fermés</item>
+        <item quantity="other">Ascenseurs %1$d fermés</item>
     </plurals>
     <string name="end">Fin</string>
     <string name="error_loading_data">Erreur dans le chargement des données</string>
@@ -193,6 +195,7 @@
     <plurals name="stops_away">
         <item quantity="one">%1$d arrêt restant</item>
         <item quantity="many">%1$d arrêts restants</item>
+        <item quantity="other">%1$d arrêts restants</item>
     </plurals>
     <string name="strike">Grève</string>
     <string name="suspension">Interruption</string>
@@ -213,6 +216,7 @@
     <plurals name="updated_mins_ago">
         <item quantity="one">Mis à jour il y a %1$d minute</item>
         <item quantity="many">Mis à jour il y a %1$d minutes</item>
+        <item quantity="other">Mis à jour il y a %1$d minutes</item>
     </plurals>
     <string name="vehicle_arriving_first">%1$s arrive maintenant</string>
     <string name="vehicle_arriving_other">et arrive maintenant</string>
