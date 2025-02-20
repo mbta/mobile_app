@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -138,7 +139,7 @@ fun TripStopRow(
                     if (stop.routes.isNotEmpty()) {
                         ScrollRoutes(
                             stop,
-                            Modifier.semantics {
+                            Modifier.clearAndSetSemantics {
                                     contentDescription =
                                         scrollRoutesAccessibilityLabel(stop, context)
                                 }
