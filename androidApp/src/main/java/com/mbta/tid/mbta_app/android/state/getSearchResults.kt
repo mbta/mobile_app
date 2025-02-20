@@ -29,6 +29,7 @@ class SearchResultsViewModel(
     private var _searchResults: MutableStateFlow<SearchResults?> = MutableStateFlow(null)
     private var job: Job? = null
     val searchResults: StateFlow<SearchResults?> = _searchResults
+    var expanded = false
 
     fun getSearchResults(query: String, globalResponse: GlobalResponse?) {
         analytics.performedSearch(query)

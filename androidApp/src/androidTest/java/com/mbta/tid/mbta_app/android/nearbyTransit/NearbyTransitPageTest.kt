@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
@@ -55,6 +56,9 @@ import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
@@ -293,7 +297,13 @@ class NearbyTransitPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        bottomBar = {}
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
+                        bottomBar = {},
                     )
                 }
             }
@@ -386,6 +396,12 @@ class NearbyTransitPageTest : KoinTest {
                         false,
                         {},
                         {},
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
                         bottomBar = {},
                         mapViewModel = mockMapVM
                     )
@@ -426,6 +442,12 @@ class NearbyTransitPageTest : KoinTest {
                         false,
                         {},
                         {},
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
                         bottomBar = {}
                     )
                 }
