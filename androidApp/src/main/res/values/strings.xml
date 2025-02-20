@@ -33,6 +33,7 @@
     <string name="cancelled">Cancelled</string>
     <string name="close_button_label">Close</string>
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
+    <string name="commuter_rail" translatable="false"  >Commuter Rail</string>
     <string name="congestion">Congestion</string>
     <string name="connection_to">Connection to %1$s</string>
     <string name="connections_to_and">Connections to %1$s and %2$s</string>
@@ -195,6 +196,7 @@
     <string name="search_by_stop">Search by stop</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
+    <string name="serves_route_list" tools:ignore="MissingTranslation">serves %1$s</string>
     <string name="service_change">Service Change</string>
     <string name="service_change_sentence_case">Service change</string>
     <string name="service_ended">Service ended</string>
@@ -208,6 +210,7 @@
     <string name="shuttle_buses">Shuttle buses</string>
     <string name="shuttle_buses_replace_service">Shuttle buses replace service</string>
     <string name="signal_problem">Signal Problem</string>
+    <string name="silver_line" translatable="false">Silver Line</string>
     <string name="slippery_rail">Slippery Rail</string>
     <string name="snow">Snow</string>
     <string name="snow_route" tools:ignore="MissingTranslation">Snow Route</string>
@@ -281,5 +284,4 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
-    <string name="serves_route_list" tools:ignore="MissingTranslation">serves %1$s</string>
 </resources>
