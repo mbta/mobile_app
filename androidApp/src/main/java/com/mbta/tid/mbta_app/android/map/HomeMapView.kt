@@ -58,8 +58,10 @@ import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
+import com.mbta.tid.mbta_app.android.util.isOverview
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -86,7 +88,8 @@ fun HomeMapView(
     handleStopNavigation: (String) -> Unit,
     vehiclesData: List<Vehicle>,
     stopDetailsDepartures: StopDetailsDepartures?,
-    viewModel: IMapViewModel
+    viewModel: IMapViewModel,
+    searchResultsViewModel: SearchResultsViewModel,
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -105,6 +108,7 @@ fun HomeMapView(
             currentNavEntry is SheetRoutes.StopDetails
         }
     val previousSelectedVehicleId = rememberPrevious(current = selectedVehicle?.id)
+    val currentLocation = locationDataManager.currentLocation.collectAsState(initial = null).value
 
     val now = timer(updateInterval = 300.seconds)
     val globalMapData = viewModel.rememberGlobalMapData(now)
@@ -408,31 +412,47 @@ fun HomeMapView(
                     }
                 }
             }
+            val recenterModifier =
+                if (isNearby)
+                    Modifier.align(Alignment.TopEnd)
+                        .padding(top = 85.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .statusBarsPadding()
+                else Modifier.align(Alignment.TopEnd).padding(16.dp).statusBarsPadding()
 
-            if (!viewportProvider.isFollowingPuck) {
-                val recenterModifier =
-                    if (isNearby) {
-                        Modifier.align(Alignment.TopEnd)
-                            .padding(top = 85.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
-                            .statusBarsPadding()
-                    } else {
-                        Modifier.align(Alignment.TopEnd).padding(16.dp).statusBarsPadding()
-                    }
-
-                if (locationDataManager.hasPermission) {
+            if (!viewportProvider.isFollowingPuck && isNearby) {
+                if (locationDataManager.hasPermission && currentLocation != null) {
                     RecenterButton(
                         onClick = { viewportProvider.follow() },
                         modifier = recenterModifier
                     )
-                }
-                if (isNearby) {
+                } else if (!locationDataManager.hasPermission) {
                     LocationAuthButton(
                         locationDataManager,
                         modifier =
                             Modifier.align(Alignment.TopCenter)
-                                .padding(top = 86.dp)
+                                .padding(top = 85.dp)
                                 .statusBarsPadding()
                     )
+                }
+            }
+
+            if (!viewportProvider.viewport.isOverview && !searchResultsViewModel.expanded) {
+                if (selectedVehicle != null) {
+                    val routeType =
+                        (globalResponse?.routes ?: emptyMap())[selectedVehicle.routeId]?.type
+                    if (routeType != null) {
+                        TripCenterButton(
+                            routeType = routeType,
+                            onClick = {
+                                viewportProvider.vehicleOverview(
+                                    selectedVehicle,
+                                    selectedStop,
+                                    density
+                                )
+                            },
+                            modifier = recenterModifier
+                        )
+                    }
                 }
             }
 
