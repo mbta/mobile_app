@@ -17,6 +17,7 @@ fun RouteHeader(route: Route, rightContent: (@Composable (textColor: Color) -> U
     val (modeIcon, modeDescription) = routeIcon(route)
     TransitHeader(
         routeName,
+        routeType = route.type,
         backgroundColor = Color.fromHex(route.color),
         textColor = Color.fromHex(route.textColor),
         modeIcon = modeIcon,
