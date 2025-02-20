@@ -1502,6 +1502,47 @@
         }
       }
     },
+    "%ld results found" : {
+      "comment" : "Screen reader text that is announced when search results are returned",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld resultados encontrados"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld rezilta yo jwenn"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld resultados encontrados"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld đã tìm thấy kết quả"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "找到 %ld 条结果"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "找到 %ld 個結果"
+          }
+        }
+      }
+    },
     "%ld stops away" : {
       "comment" : "How many stops away the vehicle is from the target stop",
       "localizations" : {

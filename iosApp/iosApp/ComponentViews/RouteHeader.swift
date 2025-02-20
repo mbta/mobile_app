@@ -28,8 +28,6 @@ struct RouteHeader<Content: View>: View {
             textColor: route.uiTextColor,
             rightContent: rightContent
         )
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isHeader)
-        .accessibilityHeading(.h2)
+        .accessibilityElement(children: .contain)
     }
 }
