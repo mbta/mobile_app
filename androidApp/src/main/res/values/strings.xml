@@ -41,7 +41,7 @@
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="delay">Delay</string>
     <string name="demonstration">Demonstration</string>
-    <string name="departure_tile_on_click_label">displays more information about this trip</string>
+    <string name="departure_tile_on_click_label">display more information about this trip</string>
     <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
@@ -97,7 +97,7 @@
     <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
-    <string name="hides_remaining_stops">Hides remaining stops</string>
+    <string name="collapse_remaining_stops">collapse remaining stops</string>
     <string name="high_winds">High Winds</string>
     <string name="holiday">Holiday</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
@@ -105,7 +105,7 @@
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
-    <string name="lists_remaining_stops">Lists remaining stops</string>
+    <string name="expand_remaining_stops">expand remaining stops</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -284,4 +284,6 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
+    <string name="serves_route_list" tools:ignore="MissingTranslation">serves %1$s</string>
+    <string name="display_more_information">display more information</string>
 </resources>

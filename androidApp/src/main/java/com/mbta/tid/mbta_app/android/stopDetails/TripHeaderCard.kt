@@ -77,12 +77,26 @@ fun TripHeaderCard(
     onTap: (() -> Unit)? = null,
 ) {
     val clickable = onTap != null
+
+    val modifier =
+        if (clickable) {
+            modifier.clickable(
+                onClickLabel = stringResource(R.string.display_more_information)
+            ) {
+                onTap?.let { it() }
+            }
+        } else {
+            // clickable(false) is announced to TalkBack as "disabled", which we don't want
+            modifier
+        }
+
+
     CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
         Box(
             Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
             contentAlignment = Alignment.BottomStart
         ) {
-            Row(modifier.haloContainer(2.dp).clickable(clickable) { onTap?.let { it() } }) {
+            Row(modifier.haloContainer(2.dp).semantics(mergeDescendants = true) {}) {
                 Box(Modifier.height(IntrinsicSize.Min)) {
                     Row(
                         Modifier.padding(start = 30.dp, end = 16.dp)
@@ -176,7 +190,7 @@ private fun ScheduleDescription(
     val context = LocalContext.current
     if (startTerminalEntry != null) {
         Column(
-            Modifier.semantics(mergeDescendants = true) {
+            Modifier.semantics {
                 contentDescription =
                     scheduleDescriptionAccessibilityText(
                         startTerminalEntry,
@@ -231,10 +245,7 @@ private fun VehicleDescription(
 ) {
     val context = LocalContext.current
     if (spec.vehicle.tripId == tripId) {
-        Column(
-            Modifier.semantics(mergeDescendants = true) {},
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Column(
                 Modifier.clearAndSetSemantics {
                     contentDescription =
