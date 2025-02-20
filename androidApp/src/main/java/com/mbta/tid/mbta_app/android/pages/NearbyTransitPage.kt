@@ -180,6 +180,7 @@ fun NearbyTransitPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
+            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
             now = now
         )
 
@@ -239,6 +240,7 @@ fun NearbyTransitPage(
 
     fun handleStopNavigation(stopId: String) {
         updateVisitHistory(stopId)
+        mapViewModel.setSelectedVehicle(null)
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -352,7 +354,6 @@ fun NearbyTransitPage(
                     tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
-                    setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
             }
