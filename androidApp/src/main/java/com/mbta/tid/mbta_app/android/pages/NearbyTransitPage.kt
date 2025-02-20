@@ -62,6 +62,7 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
@@ -117,6 +118,7 @@ fun NearbyTransitPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    searchResultsViewModel: SearchResultsViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(
             factory =
@@ -180,6 +182,7 @@ fun NearbyTransitPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
+            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
             now = now
         )
 
@@ -220,6 +223,7 @@ fun NearbyTransitPage(
 
     fun handleSearchExpandedChange(expanded: Boolean) {
         searchExpanded = expanded
+        searchResultsViewModel.expanded = expanded
         if (expanded) {
             hideNavBar()
             if (!nearbyTransit.hideMaps) {
@@ -239,6 +243,7 @@ fun NearbyTransitPage(
 
     fun handleStopNavigation(stopId: String) {
         updateVisitHistory(stopId)
+        mapViewModel.setSelectedVehicle(null)
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -352,7 +357,6 @@ fun NearbyTransitPage(
                     tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
-                    setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
             }
@@ -429,7 +433,8 @@ fun NearbyTransitPage(
                 ::handleSearchExpandedChange,
                 ::handleStopNavigation,
                 currentNavEntry,
-                searchFocusRequester
+                searchFocusRequester,
+                searchResultsViewModel
             ) {
                 SheetContent(
                     Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp)
@@ -476,7 +481,8 @@ fun NearbyTransitPage(
                     ::handleSearchExpandedChange,
                     ::handleStopNavigation,
                     currentNavEntry,
-                    searchFocusRequester
+                    searchFocusRequester,
+                    searchResultsViewModel
                 ) {
                     HomeMapView(
                         Modifier.padding(sheetPadding),
@@ -489,7 +495,8 @@ fun NearbyTransitPage(
                         handleStopNavigation = ::handleStopNavigation,
                         vehiclesData = vehiclesData,
                         stopDetailsDepartures = stopDetailsDepartures,
-                        viewModel = mapViewModel
+                        viewModel = mapViewModel,
+                        searchResultsViewModel = searchResultsViewModel,
                     )
                 }
             }

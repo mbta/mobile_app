@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
 import com.mbta.tid.mbta_app.android.util.followPuck
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
+import com.mbta.tid.mbta_app.android.util.isOverview
 import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.model.Stop
@@ -36,6 +37,7 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
     var isManuallyCentering by mutableStateOf(isManuallyCentering)
     @OptIn(MapboxExperimental::class)
     var isFollowingPuck by mutableStateOf(viewport.isFollowingPuck)
+    @OptIn(MapboxExperimental::class) var isVehicleOverview by mutableStateOf(viewport.isOverview)
 
     private var savedNearbyTransitViewport: ViewportSnapshot? = null
 
@@ -63,6 +65,7 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
         defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition
     ) {
         isFollowingPuck = true
+        isVehicleOverview = false
         this.viewport.transitionToFollowPuckState(
             followPuckViewportStateOptions =
                 FollowPuckViewportStateOptions.Builder()
@@ -77,6 +80,7 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
     }
 
     fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density) {
+        isVehicleOverview = true
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
         } else {

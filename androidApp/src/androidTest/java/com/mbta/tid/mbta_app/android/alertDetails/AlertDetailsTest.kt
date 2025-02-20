@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -72,7 +73,11 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText("Full Description").assertIsDisplayed()
         composeTestRule.onNodeWithText(alert.description!!).assertIsDisplayed()
         composeTestRule.onNodeWithText(alert.header!!).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Updated: 1/22/25, 10:36 AM").assertIsDisplayed()
+        // as of probably API 34, this has a U+202F Narrow No-Break Space instead of U+0020 Space,
+        // so to make the test work either way we need a regex
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Updated: 1/22/25, 10:36\\sAM")))
+            .assertIsDisplayed()
     }
 
     @Test

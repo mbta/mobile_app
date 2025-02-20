@@ -13,7 +13,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
-import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
@@ -32,7 +31,6 @@ fun StopDetailsView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
-    setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
@@ -72,7 +70,6 @@ fun StopDetailsView(
             tileScrollState,
             ::openModalAndRecord,
             openSheetRoute,
-            setMapSelectedVehicle,
             errorBannerViewModel,
         )
     } else {

@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.android
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
@@ -13,6 +15,18 @@ fun hasClickActionLabel(expected: String?) =
     SemanticsMatcher("has click action label $expected") { node ->
         node.config[SemanticsActions.OnClick].label == expected
     }
+
+fun hasTextMatching(regex: Regex): SemanticsMatcher {
+    val propertyName = "${SemanticsProperties.Text.name} + ${SemanticsProperties.EditableText.name}"
+    return SemanticsMatcher("$propertyName matches $regex") {
+        val isInEditableTextValue =
+            it.config.getOrNull(SemanticsProperties.EditableText)?.text?.matches(regex) ?: false
+        val isInTextValue =
+            it.config.getOrNull(SemanticsProperties.Text)?.any { item -> item.text.matches(regex) }
+                ?: false
+        isInEditableTextValue || isInTextValue
+    }
+}
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun colorToHex(color: Color): String {

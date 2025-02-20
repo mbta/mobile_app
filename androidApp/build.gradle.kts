@@ -117,6 +117,21 @@ task<ConvertIosLocalizationTask>("convertIosLocalization") {
     resources = layout.projectDirectory.dir("src/main/res")
 }
 
+// https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle
+// set a temporary token so that the map can still load with cached tiles if for some reason
+// dynamically fetching a real token fails.
+task("mapboxTempToken") {
+    val tokenFile = File("${projectDir}/src/main/res/values/secrets.xml")
+    if (!tokenFile.exists()) {
+        val tokenFileContents =
+            """<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mapbox_access_token" translatable="false">"temporary_mapbox_token"</string>
+</resources>"""
+        tokenFile.writeText(tokenFileContents)
+    }
+}
+
 task("envVars") {
     val envFile = File(".envrc")
     val props = Properties()
@@ -189,7 +204,9 @@ task("envVars") {
 }
 
 gradle.projectsEvaluated {
-    tasks.getByPath("preBuild").dependsOn("convertIosIconsToAssets", "convertIosLocalization")
+    tasks
+        .getByPath("preBuild")
+        .dependsOn("mapboxTempToken", "convertIosIconsToAssets", "convertIosLocalization")
     tasks.getByPath("spotlessKotlin").mustRunAfter("convertIosLocalization")
     tasks.getByPath("check").dependsOn("checkMapboxBridge")
 }

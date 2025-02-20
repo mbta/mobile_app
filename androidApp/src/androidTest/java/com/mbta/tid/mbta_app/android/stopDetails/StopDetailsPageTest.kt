@@ -65,7 +65,6 @@ class StopDetailsPageTest : KoinTest {
                     tileScrollState = rememberScrollState(),
                     openModal = {},
                     openSheetRoute = {},
-                    setMapSelectedVehicle = {},
                     errorBannerViewModel = errorBannerVM
                 )
             }

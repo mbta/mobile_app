@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -484,6 +485,7 @@ fun stopDetailsManagedVM(
     pinnedRoutes: Set<String>,
     updateStopFilter: (String, StopDetailsFilter?) -> Unit,
     updateTripFilter: (String, TripDetailsFilter?) -> Unit,
+    setMapSelectedVehicle: (Vehicle?) -> Unit,
     now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
@@ -567,6 +569,17 @@ fun stopDetailsManagedVM(
                     updateTripFilter(filters.stopId, autoTripFilter)
                 }
             }
+        }
+    }
+
+    val tripData by viewModel.tripData.collectAsState()
+    val vehicle = tripData?.vehicle
+
+    LaunchedEffect(filters?.tripFilter, vehicle) {
+        if (vehicle?.id == filters?.tripFilter?.vehicleId) {
+            setMapSelectedVehicle(vehicle)
+        } else {
+            setMapSelectedVehicle(null)
         }
     }
 

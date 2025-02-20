@@ -174,7 +174,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {}
             )
@@ -235,7 +234,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {}
             )
@@ -345,7 +343,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {}
             )
@@ -395,7 +392,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {}
             )
@@ -471,7 +467,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {},
                 noPredictionsStatus = null,
@@ -549,7 +544,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {},
                 noPredictionsStatus = null,
@@ -615,7 +609,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 pinnedRoutes = emptySet(),
                 togglePinnedRoute = {},
                 onClose = {},
-                setMapSelectedVehicle = {},
                 openModal = {},
                 openSheetRoute = {},
                 noPredictionsStatus = null,

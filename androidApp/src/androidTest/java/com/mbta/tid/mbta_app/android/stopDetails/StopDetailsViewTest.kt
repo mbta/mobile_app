@@ -258,7 +258,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -338,7 +337,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -428,7 +426,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -508,7 +505,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )

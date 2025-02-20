@@ -118,11 +118,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                 Plural(items.mapValues { convertIosTemplate(it.value) })
 
             fun itemsPotentiallyExtended(languageTag: String): Map<Quantity, String> {
-                // For Spanish and Portuguese, decimals are formatted under the `many` case rather
-                // than `other` (in Spanish, "2 days" is "2 días" but "0.5 days" is "0.5 de días"),
-                // and so Android complains that we have not given "many" even if it's not actually
-                // going to happen.
-                return if (languageTag in setOf("es", "pt-BR")) {
+                // For Spanish, French, and Portuguese, decimals are formatted under the `many` case
+                // rather than `other` (in Spanish, "2 days" is "2 días" but "0.5 days" is "0.5 de
+                // días"), and so Android complains that we have not given "many" even if it's not
+                // actually going to happen.
+                return if (languageTag in setOf("es", "fr", "pt-BR")) {
                     val otherTranslation = items.getValue(Quantity.other)
                     // only patch this if the quantity is actually formatted as an integer
                     if (otherTranslation.contains("%1\$d")) {
