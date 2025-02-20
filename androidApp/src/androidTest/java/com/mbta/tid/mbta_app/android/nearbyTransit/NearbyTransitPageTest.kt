@@ -262,6 +262,8 @@ class NearbyTransitPageTest : KoinTest {
         )
     }
 
+    val viewportProvider = ViewportProvider(MapViewportState())
+
     @get:Rule
     val runtimePermissionRule =
         GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -288,7 +290,7 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = remember { ViewportProvider(MapViewportState()) },
+                            viewportProvider = viewportProvider,
                         ),
                         false,
                         {},
@@ -381,7 +383,7 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = remember { ViewportProvider(MapViewportState()) },
+                            viewportProvider = viewportProvider,
                         ),
                         false,
                         {},
@@ -421,7 +423,7 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = remember { ViewportProvider(MapViewportState()) },
+                            viewportProvider = viewportProvider,
                         ),
                         false,
                         {},
