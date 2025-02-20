@@ -466,7 +466,7 @@ fun OnboardingScreenView(
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_station_accessibility_hide),
-                                Modifier.padding(start = 32.dp, end = 32.dp),
+                                Modifier.align(Alignment.CenterVertically),
                                 style = Typography.body
                             )
                         }
