@@ -485,7 +485,7 @@ fun NearbyTransitPage(
                     searchResultsViewModel
                 ) {
                     HomeMapView(
-                        Modifier.padding(sheetPadding),
+                        sheetPadding = sheetPadding,
                         lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                         nearbyTransitSelectingLocationState =
                             nearbyTransit.nearbyTransitSelectingLocationState,
