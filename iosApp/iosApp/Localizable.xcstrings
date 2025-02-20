@@ -5149,8 +5149,8 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "afficher plus d'informations"
+            "state" : "translated",
+            "value" : "afficher plus d’informations"
           }
         },
         "ht" : {
@@ -5197,8 +5197,8 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "afficher plus d'informations sur ce trajet"
+            "state" : "translated",
+            "value" : "afficher plus d’informations sur ce trajet"
           }
         },
         "ht" : {
@@ -5227,8 +5227,8 @@
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "顯示有​​關此行程的更多信息"
+            "state" : "translated",
+            "value" : "顯示有關此行程的更多信息"
           }
         }
       }

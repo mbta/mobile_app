@@ -119,8 +119,8 @@ fun TripStops(
                         }
                         .clickable(
                             onClickLabel =
-                                if (stopsExpanded) stringResource(R.string.hides_remaining_stops)
-                                else stringResource(R.string.lists_remaining_stops)
+                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
+                                else stringResource(R.string.expand_remaining_stops)
                         ) {
                             stopsExpanded = !stopsExpanded
                         }

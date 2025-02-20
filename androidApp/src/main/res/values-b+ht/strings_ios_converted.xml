@@ -37,6 +37,7 @@
     <string name="cancelled">Anile</string>
     <string name="close_button_label">Fèmen</string>
     <string name="coast_guard_restriction">Gad Kot Mete Restriksyon</string>
+    <string name="collapse_remaining_stops">tonbe arè ki rete yo</string>
     <string name="congestion">Blokis</string>
     <string name="connection_to">Koneksyon ak %1$s</string>
     <string name="connections_to_and">Koneksyon ak %1$s epi %2$s</string>
@@ -50,6 +51,7 @@
     <string name="directionTo">%1$s pou</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
+    <string name="display_more_information">montre plis enfòmasyon</string>
     <string name="displays_more_info">montre plis enfòmasyon</string>
     <string name="dock_closed">Waf Fèmen</string>
     <string name="dock_closed_sentence_case">Waf fèmen</string>
@@ -76,6 +78,7 @@
     <string name="escalator_closed_sentence_case">Fèmti eskalye</string>
     <string name="escalator_closure">Fèmti Eskalye</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> èdtan</string>
+    <string name="expand_remaining_stops">elaji arè ki rete yo</string>
     <string name="explainer_headline_finishing_another">Ap fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon poko disponib</string>
     <string name="explainer_headline_no_vehicle">Pozisyon %1$s poko disponib</string>
@@ -104,7 +107,6 @@
     <string name="header_at_stop">nan &lt;b>%1$s&lt;/b></string>
     <string name="heading">Prale nan direksyon</string>
     <string name="heavy_ridership">Anpil Moun Ap Pase la</string>
-    <string name="hides_remaining_stops">Kache arè ki rete yo</string>
     <string name="high_winds">Gwo Van</string>
     <string name="holiday">Vakans</string>
     <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> lè &lt;b>%2$d&lt;/b> minit</string>
@@ -112,7 +114,6 @@
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="inbound">Antran</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
-    <string name="lists_remaining_stops">Bay lis arè ki rete yo</string>
     <string name="live">An dirèk</string>
     <string name="loading">Chajman...</string>
     <string name="location_not_available_yet">Pozisyon poko disponib</string>
