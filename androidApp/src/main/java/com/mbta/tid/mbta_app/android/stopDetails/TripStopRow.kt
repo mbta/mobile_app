@@ -129,7 +129,7 @@ fun TripStopRow(
                         ) {
                             UpcomingTripView(
                                 upcomingTripViewState(stop, now, routeAccents),
-                                Modifier.alpha(0.6f).padding(end = 12.dp),
+                                Modifier.alpha(0.6f).padding(end = 12.dp).width(IntrinsicSize.Min),
                                 routeType = routeAccents.type,
                                 hideRealtimeIndicators = true
                             )
@@ -255,6 +255,37 @@ private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder()
     MyApplicationTheme {
         Column(Modifier.background(colorResource(R.color.fill3))) {
+            TripStopRow(
+                stop =
+                    TripDetailsStopList.Entry(
+                        objects.stop { name = "Charles/MGH" },
+                        stopSequence = 10,
+                        disruption = null,
+                        schedule = null,
+                        prediction = objects.prediction { status = "Stopped 5 stops away" },
+                        predictionStop = null,
+                        vehicle = null,
+                        routes =
+                            listOf(
+                                objects.route {
+                                    longName = "Red Line"
+                                    color = "DA291C"
+                                    textColor = "FFFFFF"
+                                },
+                                objects.route {
+                                    longName = "Green Line"
+                                    color = "00843D"
+                                    textColor = "FFFFFF"
+                                }
+                            )
+                    ),
+                Clock.System.now(),
+                onTapLink = {},
+                TripRouteAccents.default.copy(
+                    type = RouteType.HEAVY_RAIL,
+                    color = Color.fromHex("DA291C")
+                )
+            )
             TripStopRow(
                 stop =
                     TripDetailsStopList.Entry(
