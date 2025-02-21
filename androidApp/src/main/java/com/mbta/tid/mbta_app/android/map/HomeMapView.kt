@@ -395,7 +395,7 @@ fun HomeMapView(
                                 .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                                 .build()
                     ) {
-                        Crosshairs()
+                        Crosshairs(PaddingValues(0.dp))
                     }
                 }
 
@@ -483,7 +483,7 @@ fun HomeMapView(
             }
 
             if (nearbyTransitSelectingLocation) {
-                Crosshairs()
+                Crosshairs(sheetPadding = sheetPadding)
             }
         }
     }
