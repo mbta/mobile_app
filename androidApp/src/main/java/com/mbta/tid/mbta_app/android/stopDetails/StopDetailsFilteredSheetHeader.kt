@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -93,12 +94,12 @@ private fun StopDetailsFilteredHeaderPreview() {
         objects.route {
             color = "ED8B00"
             type = RouteType.HEAVY_RAIL
-            shortName = "Orange Line"
+            longName = "Orange Line"
         }
     val stop = objects.stop { name = "Back Bay" }
 
     MyApplicationTheme {
-        Column {
+        Column(Modifier.background(colorResource(R.color.fill2))) {
             StopDetailsFilteredHeader(
                 route = route,
                 line = null,

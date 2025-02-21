@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -32,6 +31,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,6 +43,7 @@ import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.StopFilterParameterType
 import com.mbta.tid.mbta_app.android.TripFilterParameterType
@@ -473,7 +474,12 @@ fun NearbyTransitPage(
                         )
                     }
                 },
-                sheetContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                sheetContainerColor =
+                    when (currentNavEntry) {
+                        SheetRoutes.NearbyTransit -> colorResource(R.color.fill1)
+                        is SheetRoutes.StopDetails -> colorResource(R.color.fill2)
+                        else -> colorResource(R.color.fill1)
+                    },
                 scaffoldState = nearbyTransit.scaffoldState
             ) { sheetPadding ->
                 SearchBarOverlay(
