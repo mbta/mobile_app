@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -66,14 +67,16 @@ fun StopDetailsUnfilteredRoutesView(
         Modifier.background(colorResource(R.color.fill2)),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        SheetHeader(onClose = onClose, title = stop.name)
-        if (servedRoutes.size > 1) {
-            Box(Modifier.height(56.dp).fillMaxWidth()) {
-                StopDetailsFilterPills(
-                    servedRoutes = servedRoutes,
-                    onTapRoutePill = onTapRoutePill,
-                    onClearFilter = { updateStopFilter(null) }
-                )
+        Column(Modifier.heightIn(min = 48.dp)) {
+            SheetHeader(onClose = onClose, title = stop.name)
+            if (servedRoutes.size > 1) {
+                Box(Modifier.height(56.dp).fillMaxWidth()) {
+                    StopDetailsFilterPills(
+                        servedRoutes = servedRoutes,
+                        onTapRoutePill = onTapRoutePill,
+                        onClearFilter = { updateStopFilter(null) }
+                    )
+                }
             }
         }
 
