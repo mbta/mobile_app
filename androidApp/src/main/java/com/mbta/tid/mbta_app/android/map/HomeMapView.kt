@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -60,6 +62,7 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.isOverview
+import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -77,7 +80,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun HomeMapView(
-    modifier: Modifier = Modifier,
+    sheetPadding: PaddingValues,
     lastNearbyTransitLocation: Position?,
     nearbyTransitSelectingLocationState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
@@ -119,6 +122,7 @@ fun HomeMapView(
     val analytics: Analytics = koinInject()
     val context = LocalContext.current
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -257,7 +261,11 @@ fun HomeMapView(
         mapState.cameraChangedEvents.collect { viewportProvider.updateCameraState(it.cameraState) }
     }
 
-    Box(modifier, contentAlignment = Alignment.Center) {
+    LaunchedEffect(viewportProvider, sheetPadding) {
+        viewportProvider.setSheetPadding(sheetPadding, density, layoutDirection)
+    }
+
+    Box(contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
          */
@@ -273,7 +281,15 @@ fun HomeMapView(
                 Modifier.fillMaxSize(),
                 compass = {},
                 scaleBar = {},
-                logo = { Logo(Modifier.clearAndSetSemantics {}) },
+                logo = {
+                    Logo(Modifier.clearAndSetSemantics {}, sheetPadding + PaddingValues(8.dp))
+                },
+                attribution = {
+                    Attribution(
+                        contentPadding = sheetPadding + PaddingValues(8.dp),
+                        alignment = Alignment.BottomEnd
+                    )
+                },
                 mapViewportState = viewportProvider.viewport,
                 mapState = mapState,
                 style = {
