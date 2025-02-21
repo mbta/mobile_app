@@ -48,28 +48,34 @@ fun StopDetailsFilteredHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (line != null) {
-            RoutePill(
-                route = null,
-                line = line,
-                type = RoutePillType.Fixed,
-                modifier = Modifier.placeholderIfLoading()
-            )
-        } else if (route != null) {
-            RoutePill(
-                route = route,
-                type = RoutePillType.Fixed,
-                modifier = Modifier.placeholderIfLoading()
-            )
-        }
-        if (stop != null) {
-            Text(
-                AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
-                modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                style = Typography.headline
-            )
-        } else {
-            Spacer(Modifier.weight(1f))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1F).semantics(mergeDescendants = true) { heading() }
+        ) {
+            if (line != null) {
+                RoutePill(
+                    route = null,
+                    line = line,
+                    type = RoutePillType.Fixed,
+                    modifier = Modifier.placeholderIfLoading()
+                )
+            } else if (route != null) {
+                RoutePill(
+                    route = route,
+                    type = RoutePillType.Fixed,
+                    modifier = Modifier.placeholderIfLoading()
+                )
+            }
+            if (stop != null) {
+                Text(
+                    AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
+                    modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
+                    style = Typography.headline
+                )
+            } else {
+                Spacer(Modifier.weight(1f))
+            }
         }
 
         Row(

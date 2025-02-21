@@ -32,6 +32,7 @@
     <string name="cancelled">已取消</string>
     <string name="close_button_label">關閉</string>
     <string name="coast_guard_restriction">海岸警衛隊警戒</string>
+    <string name="collapse_remaining_stops">折疊剩餘停靠點</string>
     <string name="congestion">交通擁堵</string>
     <string name="connection_to">連接到%1$s</string>
     <string name="connections_to_and">連接到%1$s和%2$s</string>
@@ -39,12 +40,13 @@
     <string name="crossing_malfunction">交通信號燈故障</string>
     <string name="delay">延誤</string>
     <string name="demonstration">示威</string>
-    <string name="departure_tile_on_click_label">顯示有關此行程的更多資訊</string>
+    <string name="departure_tile_on_click_label">顯示有關此行程的更多信息</string>
     <string name="details">詳情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
     <string name="disabled_bus">巴士拋錨</string>
     <string name="disabled_train">列車停運</string>
+    <string name="display_more_information">顯示更多信息</string>
     <string name="displays_more_info">顯示更多資訊</string>
     <string name="dock_closed">停靠區域已關閉</string>
     <string name="dock_closed_sentence_case">停靠區域已關閉</string>
@@ -66,6 +68,7 @@
     <string name="escalator_closed_sentence_case">自動扶梯已關閉</string>
     <string name="escalator_closure">自動扶梯關閉</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小時</string>
+    <string name="expand_remaining_stops">擴大剩餘站點</string>
     <string name="explainer_headline_finishing_another">結束另一趟行程</string>
     <string name="explainer_headline_no_prediction">預測尚不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s位置尚未確定</string>
@@ -94,7 +97,6 @@
     <string name="header_at_stop">在&lt;b>%1$s&lt;/b></string>
     <string name="heading">方向</string>
     <string name="heavy_ridership">客流過大</string>
-    <string name="hides_remaining_stops">隱藏剩餘站點</string>
     <string name="high_winds">強風</string>
     <string name="holiday">節假日</string>
     <string name="hr_min_abbr">&lt;b>%1$d&lt;/b>小時&lt;b>%2$d&lt;/b>分鐘</string>
@@ -102,7 +104,6 @@
     <string name="ice_in_harbor">港口結冰</string>
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
-    <string name="lists_remaining_stops">列出剩餘站點</string>
     <string name="live">即時</string>
     <string name="loading">正在載入……</string>
     <string name="location_not_available_yet">位置尚未確定</string>

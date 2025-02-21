@@ -96,18 +96,21 @@ fun PredictionRowView(
                                         isOnly = index == 0 && predictions.trips.count() == 1
                                     )
                                     if (pillDecoration is PillDecoration.OnPrediction) {
-                                        val route =
-                                            pillDecoration.routesByTrip.getValue(prediction.id)
-                                        RoutePill(
-                                            route,
-                                            null,
-                                            RoutePillType.Flex,
-                                            modifier =
-                                                Modifier.wrapContentHeight(
-                                                        Alignment.CenterVertically
-                                                    )
-                                                    .scale(0.75f)
-                                        )
+                                        val route: Route? =
+                                            pillDecoration.routesByTrip[prediction.id]
+
+                                        if (route != null) {
+                                            RoutePill(
+                                                route,
+                                                null,
+                                                RoutePillType.Flex,
+                                                modifier =
+                                                    Modifier.wrapContentHeight(
+                                                            Alignment.CenterVertically
+                                                        )
+                                                        .scale(0.75f)
+                                            )
+                                        }
                                     }
                                 }
                             }

@@ -57,7 +57,6 @@ object StopFeaturesBuilder {
         linesToSnap: List<RouteLineData>
     ): List<StopFeatureData> {
         val touchedStopIds: MutableSet<String> = mutableSetOf()
-
         val routeStops = generateRouteAssociatedStops(stopData, stops, linesToSnap, touchedStopIds)
         val otherStops = generateRemainingStops(stopData, stops, touchedStopIds)
         return otherStops + routeStops

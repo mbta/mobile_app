@@ -162,7 +162,7 @@ class DepartureTileTest {
         composeTestRule.waitForIdle()
         composeTestRule
             .onNode(hasClickAction())
-            .assert(hasClickActionLabel("displays more information about this trip"))
+            .assert(hasClickActionLabel("display more information about this trip"))
 
         selected = true
         composeTestRule.waitForIdle()

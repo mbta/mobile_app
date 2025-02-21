@@ -138,7 +138,7 @@ class TripStopsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("2 stops away").assertIsDisplayed()
+        composeTestRule.onNodeWithText("2 stops away", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop3Target.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop5.name).assertIsDisplayed()
     }
@@ -425,6 +425,6 @@ class TripStopsTest {
         }
 
         composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 stop away").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 stop away", useUnmergedTree = true).assertIsDisplayed()
     }
 }

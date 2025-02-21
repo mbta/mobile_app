@@ -34,6 +34,7 @@
     <string name="cancelled">Cancelado</string>
     <string name="close_button_label">Cerrar</string>
     <string name="coast_guard_restriction">Restricción de la Guardia Costera</string>
+    <string name="collapse_remaining_stops">colapsar paradas restantes</string>
     <string name="congestion">Congestión</string>
     <string name="connection_to">Conexión a %1$s</string>
     <string name="connections_to_and">Conexiones a %1$s y %2$s</string>
@@ -41,12 +42,13 @@
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="delay">Demora</string>
     <string name="demonstration">Demostración</string>
-    <string name="departure_tile_on_click_label">muestra más información sobre este viaje</string>
+    <string name="departure_tile_on_click_label">mostrar más información sobre este viaje</string>
     <string name="details">Detalles</string>
     <string name="detour">Desvío</string>
     <string name="directionTo">%1$s a</string>
     <string name="disabled_bus">Autobús averiado</string>
     <string name="disabled_train">Tren averiado</string>
+    <string name="display_more_information">mostrar más información</string>
     <string name="displays_more_info">muestra más información</string>
     <string name="dock_closed">Dársena cerrada</string>
     <string name="dock_closed_sentence_case">Dársena cerrada</string>
@@ -70,6 +72,7 @@
     <string name="escalator_closed_sentence_case">Escalera mecánica cerrada</string>
     <string name="escalator_closure">Escalera mecánica fuera de servicio</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
+    <string name="expand_remaining_stops">ampliar las paradas restantes</string>
     <string name="explainer_headline_finishing_another">Terminando otro viaje</string>
     <string name="explainer_headline_no_prediction">Predicción aún no disponible</string>
     <string name="explainer_headline_no_vehicle">La ubicación de %1$s aún no está disponible</string>
@@ -98,7 +101,6 @@
     <string name="header_at_stop">en &lt;b>%1$s&lt;/b></string>
     <string name="heading">Rumbo</string>
     <string name="heavy_ridership">Gran cantidad de pasajeros</string>
-    <string name="hides_remaining_stops">Oculta las paradas restantes</string>
     <string name="high_winds">Vientos fuertes</string>
     <string name="holiday">Día festivo</string>
     <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> h &lt;b>%2$d&lt;/b> min</string>
@@ -106,7 +108,6 @@
     <string name="ice_in_harbor">Hielo en el puerto</string>
     <string name="inbound">Entrante</string>
     <string name="is_stops_away_from">%1$s está a %2$d parada(s) antes de %3$s</string>
-    <string name="lists_remaining_stops">Enumera las paradas restantes</string>
     <string name="live">En vivo</string>
     <string name="loading">Cargando…</string>
     <string name="location_not_available_yet">Ubicación no disponible aún</string>

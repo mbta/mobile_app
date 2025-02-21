@@ -43,6 +43,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -203,7 +205,8 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_feedback_header),
-                            style = Typography.title1Bold
+                            style = Typography.title1Bold,
+                            modifier = Modifier.semantics { heading() }
                         )
                         Text(
                             stringResource(R.string.onboarding_feedback_body),
@@ -254,7 +257,9 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_hide_maps_header),
-                            modifier = Modifier.padding(start = 32.dp, top = 32.dp, end = 32.dp),
+                            modifier =
+                                Modifier.padding(start = 32.dp, top = 32.dp, end = 32.dp)
+                                    .semantics { heading() },
                             style = Typography.title1Bold
                         )
                         Text(
@@ -365,7 +370,8 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_location_header),
-                            style = Typography.title1Bold
+                            style = Typography.title1Bold,
+                            modifier = Modifier.semantics { heading() }
                         )
                         Text(
                             stringResource(R.string.onboarding_location_body),
@@ -431,7 +437,8 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_station_accessibility_header),
-                            style = Typography.title1Bold
+                            style = Typography.title1Bold,
+                            modifier = Modifier.semantics { heading() }
                         )
                         Text(
                             stringResource(R.string.onboarding_station_accessibility_body),
