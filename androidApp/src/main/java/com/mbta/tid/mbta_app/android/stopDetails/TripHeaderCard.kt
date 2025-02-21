@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -75,58 +77,60 @@ fun TripHeaderCard(
     onTap: (() -> Unit)? = null,
 ) {
     val clickable = onTap != null
-    Box(
-        Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
-        contentAlignment = Alignment.BottomStart
-    ) {
-        Row(modifier.haloContainer(2.dp).clickable(clickable) { onTap?.let { it() } }) {
-            Box(Modifier.height(IntrinsicSize.Min)) {
-                Row(
-                    Modifier.padding(start = 30.dp, end = 16.dp).heightIn(min = 56.dp).semantics(
-                        mergeDescendants = true
+    CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
+        Box(
+            Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Row(modifier.haloContainer(2.dp).clickable(clickable) { onTap?.let { it() } }) {
+                Box(Modifier.height(IntrinsicSize.Min)) {
+                    Row(
+                        Modifier.padding(start = 30.dp, end = 16.dp)
+                            .heightIn(min = 56.dp)
+                            .semantics(mergeDescendants = true) {
+                                heading()
+                                liveRegion = LiveRegionMode.Polite
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        heading()
-                        liveRegion = LiveRegionMode.Polite
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (spec != null) {
-                        TripMarker(spec, targetId, routeAccents)
-                        Description(
-                            spec,
-                            tripId,
-                            targetId,
-                            routeAccents,
-                            clickable,
-                            Modifier.weight(1f)
-                        )
-                        TripIndicator(spec, routeAccents, now, clickable)
+                        if (spec != null) {
+                            TripMarker(spec, targetId, routeAccents)
+                            Description(
+                                spec,
+                                tripId,
+                                targetId,
+                                routeAccents,
+                                clickable,
+                                Modifier.weight(1f)
+                            )
+                            TripIndicator(spec, routeAccents, now, clickable)
+                        }
+                    }
+                    when (spec) {
+                        is TripHeaderSpec.Scheduled,
+                        is TripHeaderSpec.VehicleOnTrip ->
+                            Column(
+                                Modifier.zIndex(-1f).padding(start = 46.dp).fillMaxHeight(),
+                                verticalArrangement = Arrangement.spacedBy(0.dp)
+                            ) {
+                                ColoredRouteLine(Color.Unspecified, Modifier.weight(1f))
+                                ColoredRouteLine(routeAccents.color, Modifier.weight(1f))
+                            }
+                        else -> {}
                     }
                 }
-                when (spec) {
-                    is TripHeaderSpec.Scheduled,
-                    is TripHeaderSpec.VehicleOnTrip ->
-                        Column(
-                            Modifier.zIndex(-1f).padding(start = 46.dp).fillMaxHeight(),
-                            verticalArrangement = Arrangement.spacedBy(0.dp)
-                        ) {
-                            ColoredRouteLine(Color.Unspecified, Modifier.weight(1f))
-                            ColoredRouteLine(routeAccents.color, Modifier.weight(1f))
-                        }
-                    else -> {}
-                }
             }
-        }
-        when (spec) {
-            is TripHeaderSpec.Scheduled,
-            is TripHeaderSpec.VehicleOnTrip ->
-                // Small 2x4 dp portion of route line over the outer card border
-                ColoredRouteLine(
-                    routeAccents.color,
-                    Modifier.zIndex(1f).padding(start = 48.dp).height(2.dp)
-                )
-            else -> {}
+            when (spec) {
+                is TripHeaderSpec.Scheduled,
+                is TripHeaderSpec.VehicleOnTrip ->
+                    // Small 2x4 dp portion of route line over the outer card border
+                    ColoredRouteLine(
+                        routeAccents.color,
+                        Modifier.zIndex(1f).padding(start = 48.dp).height(2.dp)
+                    )
+                else -> {}
+            }
         }
     }
 }
@@ -415,7 +419,8 @@ private fun LiveIndicator() {
         Image(
             painterResource(R.drawable.live_data),
             null,
-            Modifier.placeholderIfLoading().size(16.dp)
+            Modifier.placeholderIfLoading().size(16.dp),
+            colorFilter = ColorFilter.tint(LocalContentColor.current)
         )
         Text(
             stringResource(R.string.live),

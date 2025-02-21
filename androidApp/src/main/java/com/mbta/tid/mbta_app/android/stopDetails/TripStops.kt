@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,15 +36,21 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Composable
@@ -88,7 +93,7 @@ fun TripStops(
     val lastStopSequence = stops.stops.lastOrNull()?.stopSequence
 
     Column(
-        Modifier.haloContainer(2.dp, backgroundColor = MaterialTheme.colorScheme.surfaceContainer)
+        Modifier.haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
             .padding(top = 14.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.Start
@@ -161,6 +166,7 @@ fun TripStops(
                     }
                     Text(
                         pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
+                        color = colorResource(R.color.text),
                         style = Typography.body,
                         modifier = Modifier.weight(1f)
                     )
@@ -237,6 +243,50 @@ private fun StopList(
             onTapLink,
             routeAccents,
             lastStop = stop.stopSequence == lastStopSequence
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TripStopsPreview() {
+    val objects = ObjectCollectionBuilder()
+    val route =
+        objects.route {
+            color = "FFC72C"
+            shortName = "109"
+            textColor = "000000"
+            type = RouteType.BUS
+        }
+    val stops = (1..10).map { objects.stop { name = "Stop $it" } }
+    val trip = objects.trip()
+    val now = Clock.System.now()
+    val stopList =
+        TripDetailsStopList(
+            trip.id,
+            stops.mapIndexed { index, stop ->
+                TripDetailsStopList.Entry(
+                    stop,
+                    stopSequence = index,
+                    disruption = null,
+                    schedule = null,
+                    prediction = objects.prediction { departureTime = now + (2 * index).minutes },
+                    predictionStop = null,
+                    vehicle = null,
+                    routes = emptyList()
+                )
+            }
+        )
+    MyApplicationTheme {
+        TripStops(
+            targetId = stops[4].id,
+            stopList,
+            4,
+            TripHeaderSpec.NoVehicle,
+            Clock.System.now(),
+            GlobalResponse(objects),
+            onTapLink = {},
+            TripRouteAccents(route)
         )
     }
 }
