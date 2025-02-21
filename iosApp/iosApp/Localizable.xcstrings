@@ -11317,7 +11317,7 @@
       }
     },
     "Service suspended" : {
-      "comment" : "Possible alert effect\n   Suspension alert VoiceOver text",
+      "comment" : "Possible alert effect\nSuspension alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {
