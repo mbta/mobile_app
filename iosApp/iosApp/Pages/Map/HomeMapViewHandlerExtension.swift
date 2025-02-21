@@ -321,12 +321,12 @@ extension HomeMapView {
         }
 
         if previousVehicle == nil || previousVehicle?.id != nextVehicle.id {
-            if nearbyVM.combinedStopAndTrip, let stop = nearbyVM.getTargetStop(global: globalData) {
+            if true, let stop = nearbyVM.getTargetStop(global: globalData) {
                 viewportProvider.vehicleOverview(vehicle: nextVehicle, stop: stop)
             } else {
                 viewportProvider.followVehicle(vehicle: nextVehicle, target: nearbyVM.getTargetStop(global: globalData))
             }
-        } else if !nearbyVM.combinedStopAndTrip {
+        } else if false {
             viewportProvider.updateFollowedVehicle(vehicle: nextVehicle)
         }
     }

@@ -75,7 +75,7 @@ final class StopDetailsViewTests: XCTestCase {
             ]),
             now: Date.now,
             errorBannerVM: .init(),
-            nearbyVM: .init(combinedStopAndTrip: true),
+            nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
         )
@@ -107,7 +107,7 @@ final class StopDetailsViewTests: XCTestCase {
             ]),
             now: Date.now,
             errorBannerVM: .init(),
-            nearbyVM: .init(combinedStopAndTrip: true),
+            nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
         )
@@ -141,7 +141,7 @@ final class StopDetailsViewTests: XCTestCase {
             ]),
             now: Date.now,
             errorBannerVM: .init(),
-            nearbyVM: .init(combinedStopAndTrip: true),
+            nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
         )
@@ -157,8 +157,7 @@ final class StopDetailsViewTests: XCTestCase {
         let oldEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
 
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [oldEntry, .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            combinedStopAndTrip: true
+            navigationStack: [oldEntry, .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         let sut = StopDetailsView(
             stopId: stop.id,
