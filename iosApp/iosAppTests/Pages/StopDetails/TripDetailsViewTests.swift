@@ -246,7 +246,7 @@ final class TripDetailsViewTests: XCTestCase {
         }
         let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
 
-        let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry], combinedStopAndTrip: true)
+        let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry])
         nearbyVM.alerts = .init(objects: objects)
 
         let stopDetailsVM = StopDetailsViewModel(

@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.util
 
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mapbox.maps.toCameraOptions
 
 @OptIn(MapboxExperimental::class)
 class ViewportSnapshot(val isFollowingPuck: Boolean?, val camera: CameraState?) {
@@ -19,7 +19,7 @@ class ViewportSnapshot(val isFollowingPuck: Boolean?, val camera: CameraState?) 
             mapViewportState.followPuck(zoom = camera?.zoom)
         } else if (camera != null) {
             mapViewportState.easeTo(
-                camera.toCameraOptions(),
+                CameraOptions.Builder().zoom(camera.zoom).center(camera.center).build(),
                 animationOptions = MapAnimationDefaults.options
             )
         }

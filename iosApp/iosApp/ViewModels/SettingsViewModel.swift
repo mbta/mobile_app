@@ -105,7 +105,7 @@ class SettingsViewModel: ObservableObject {
                             comment: "A setting on the More page to display a new stop details page layout (only visible for developers)"
                         ),
                         setting: .combinedStopAndTrip,
-                        value: settings[.combinedStopAndTrip] ?? false
+                        value: true
                     ),
                     .toggle(
                         label: NSLocalizedString(
