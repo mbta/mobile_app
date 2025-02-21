@@ -546,7 +546,6 @@ fun stopDetailsManagedVM(
                 departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
 
             if (autoTripFilter != filters.tripFilter) {
-
                 updateTripFilter(filters.stopId, autoTripFilter)
             }
         }

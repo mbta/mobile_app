@@ -11,14 +11,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -38,9 +39,16 @@ fun VehiclePuck(
     vehicle: Vehicle,
     route: Route,
     selected: Boolean,
+    onClick: (() -> Unit)?,
 ) {
     val routeColor = Color.fromHex(route.color)
-    Box(modifier = Modifier.padding(all = 6.dp), contentAlignment = Alignment.Center) {
+    Box(
+        modifier =
+            Modifier.size(56.dp)
+                .clip(CircleShape)
+                .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
+        contentAlignment = Alignment.Center
+    ) {
         if (selected) {
             val haloPulseAnimation = rememberInfiniteTransition(label = "haloPulseAnimation")
             Box(Modifier.background(routeColor.copy(alpha = 0.33f), CircleShape).size(56.dp))
@@ -99,5 +107,5 @@ private fun VehiclePuckPreview() {
             currentStatus = Vehicle.CurrentStatus.InTransitTo
             bearing = 225.0
         }
-    VehiclePuck(vehicle, route, selected = true)
+    VehiclePuck(vehicle, route, selected = true) {}
 }
