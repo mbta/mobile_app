@@ -42,12 +42,12 @@
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="delay">Delay</string>
     <string name="demonstration">Demonstration</string>
-     <string name="departure_tile_on_click_label">display more information about this trip</string>
-      <string name="details">Details</string>
-      <string name="detour">Detour</string>
-      <string name="directionTo">%1$s to</string>
-      <string name="disabled_bus">Disabled Bus</string>
-      <string name="disabled_train">Disabled Train</string>
+    <string name="departure_tile_on_click_label">display more information about this trip</string>
+    <string name="details">Details</string>
+    <string name="detour">Detour</string>
+    <string name="directionTo">%1$s to</string>
+    <string name="disabled_bus">Disabled Bus</string>
+    <string name="disabled_train">Disabled Train</string>
     <string name="display_more_information">display more information</string>
     <string name="displays_more_info">displays more information</string>
     <string name="dock_closed">Dock Closed</string>
@@ -71,6 +71,7 @@
     <string name="escalator_closed_sentence_case">Escalator closed</string>
     <string name="escalator_closure">Escalator Closure</string>
     <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
+    <string name="expand_remaining_stops">expand remaining stops</string>
     <string name="explainer_headline_finishing_another">Finishing another trip</string>
     <string name="explainer_headline_no_prediction">Prediction not available yet</string>
     <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
@@ -99,7 +100,6 @@
     <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
-    <string name="collapse_remaining_stops">collapse remaining stops</string>
     <string name="high_winds">High Winds</string>
     <string name="holiday">Holiday</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
@@ -107,42 +107,6 @@
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
-    <string name="expand_remaining_stops">expand remaining stops</string>
-    <string name="explainer_headline_finishing_another">Finishing another trip</string>
-      <string name="explainer_headline_no_prediction">Prediction not available yet</string>
-      <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
-      <string name="explainer_text_finishing_another">The %1$s assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip.</string>
-      <string name="explainer_text_no_prediction">We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here.</string>
-      <string name="explainer_text_no_vehicle">The %1$s location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.</string>
-      <string name="extra_service" tools:ignore="MissingTranslation">Extra Service</string>
-      <string name="extra_service_sentence_case" tools:ignore="MissingTranslation">Extra service</string>
-      <string name="facility_issue" tools:ignore="MissingTranslation">Facility Issue</string>
-      <string name="facility_issue_sentence_case" tools:ignore="MissingTranslation">Facility issue</string>
-      <string name="feature_flag_debug_mode">Debug Mode</string>
-      <string name="feature_flag_route_search">Route Search</string>
-      <string name="feedback_link_form">Send app feedback</string>
-      <string name="ferries">ferries</string>
-      <string name="ferry">ferry</string>
-      <string name="filterShowAll">All</string>
-      <string name="finishing_another_trip">Finishing another trip</string>
-      <string name="fire">Fire</string>
-      <string name="fire_department_activity">Fire Department Activity</string>
-      <string name="first_stop">%1$s, first stop</string>
-      <string name="flooding">Flooding</string>
-      <string name="fog">Fog</string>
-      <string name="freight_train_interference">Freight Train Interference</string>
-      <string name="full_description">Full Description</string>
-      <string name="hazmat_condition">Hazmat Condition</string>
-      <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
-      <string name="heading">Heading</string>
-      <string name="heavy_ridership">Heavy Ridership</string>
-       <string name="high_winds">High Winds</string>
-       <string name="holiday">Holiday</string>
-       <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
-       <string name="hurricane">Hurricane</string>
-       <string name="ice_in_harbor">Ice In Harbor</string>
-       <string name="inbound">Inbound</string>
-       <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -233,7 +197,7 @@
     <string name="search_by_stop">Search by stop</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
-    <string name="serves_route_list" tools:ignore="MissingTranslation">serves %1$s</string>
+    <string name="serves_route_list">serves %1$s</string>
     <string name="service_change">Service Change</string>
     <string name="service_change_sentence_case">Service change</string>
     <string name="service_ended">Service ended</string>
@@ -321,4 +285,4 @@
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
     <string name="westbound">Westbound</string>
-  </resources>
+</resources>
