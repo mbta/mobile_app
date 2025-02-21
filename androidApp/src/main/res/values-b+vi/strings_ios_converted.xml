@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="access_issue">Vấn đề truy cập</string>
-    <string name="access_issue_sentence_case">Vấn đề truy cập</string>
+    <string name="access_issue">Vấn đề về tiếp cận</string>
+    <string name="access_issue_sentence_case">Vấn đề về tiếp cận</string>
     <string name="accident">Tai nạn</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
@@ -22,8 +22,8 @@
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Xe hơi cản trở dịch vụ</string>
     <string name="back_button_label">Mặt sau</string>
-    <string name="bike_issue">Vấn đề xe đạp</string>
-    <string name="bike_issue_sentence_case">Vấn đề xe đạp</string>
+    <string name="bike_issue">Vấn đề về xe đạp</string>
+    <string name="bike_issue_sentence_case">Vấn đề về xe đạp</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Lên tàu theo đường ray %1$s</string>
     <string name="bus">xe buýt</string>
@@ -37,7 +37,7 @@
     <string name="connections_to_and">Kết nối với %1$s và %2$s</string>
     <string name="construction">Thi công</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
-    <string name="delay">Trì hoãn</string>
+    <string name="delay">Trễ</string>
     <string name="demonstration">Biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>
     <string name="details">Thông tin chi tiết</string>
@@ -46,8 +46,8 @@
     <string name="disabled_bus">Xe buýt bị sự cố</string>
     <string name="disabled_train">Tàu bị sự cố</string>
     <string name="displays_more_info">hiển thị thêm thông tin</string>
-    <string name="dock_closed">Bến tàu đóng</string>
-    <string name="dock_closed_sentence_case">Bến tàu đóng</string>
+    <string name="dock_closed">Bến tàu đóng cửa</string>
+    <string name="dock_closed_sentence_case">Bến tàu đóng cửa</string>
     <string name="dock_closure">Đóng bến tàu</string>
     <string name="dock_issue">Vấn đề về bến tàu</string>
     <string name="dock_issue_sentence_case">Vấn đề về bến tàu</string>
@@ -56,15 +56,15 @@
     <string name="eastbound">Về hướng đông</string>
     <string name="effect_ahead">%1$s phía trước</string>
     <string name="electrical_work">Thi công điện</string>
-    <string name="elevator_closed_sentence_case">Thang máy đóng</string>
+    <string name="elevator_closed_sentence_case">Thang máy đóng cửa</string>
     <string name="elevator_closure">Đóng thang máy</string>
     <plurals name="elevator_closure_count">
         <item quantity="other">%1$d thang máy đã đóng cửa</item>
     </plurals>
     <string name="end">Kết thúc</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
-    <string name="escalator_closed_sentence_case">Thang cuốn đóng</string>
-    <string name="escalator_closure">Đóng thang cuốn</string>
+    <string name="escalator_closed_sentence_case">Thang cuốn đóng cửa</string>
+    <string name="escalator_closure">Thang cuốn đóng cửa</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
@@ -74,8 +74,8 @@
     <string name="explainer_text_no_vehicle">Vị trí %1$s có thể không khả dụng trước nếu xe chưa được chỉ định. Khi tài xế bắt đầu chuyến đi, chúng tôi sẽ bắt đầu hiển thị vị trí trực tiếp.</string>
     <string name="extra_service">Dịch vụ bổ sung</string>
     <string name="extra_service_sentence_case">Dịch vụ bổ sung</string>
-    <string name="facility_issue">Vấn đề về cơ sở</string>
-    <string name="facility_issue_sentence_case">Vấn đề về cơ sở</string>
+    <string name="facility_issue">Vấn đề về cơ sở vật chất</string>
+    <string name="facility_issue_sentence_case">Vấn đề về cơ sở vật chất</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi ý phản hồi về ứng dụng</string>
@@ -162,10 +162,10 @@
     <string name="other_link_tos">Điều khoản sử dụng</string>
     <string name="outbound">Đi</string>
     <string name="parade">Cuộc diễu hành</string>
-    <string name="parking_closed">Bãi đậu xe đóng cửa</string>
+    <string name="parking_closed">Bãi đậu xe đóng</string>
     <string name="parking_closure">Bãi đậu xe đóng cửa</string>
-    <string name="parking_issue">Vấn đề đỗ xe</string>
-    <string name="parking_issue_sentence_case">Vấn đề đỗ xe</string>
+    <string name="parking_issue">Vấn đề về đậu xe</string>
+    <string name="parking_issue_sentence_case">Vấn đề về đậu xe</string>
     <string name="police_action">Hành động của cảnh sát</string>
     <string name="police_activity">Hoạt động của cảnh sát</string>
     <string name="policy_change">Thay đổi chính sách</string>
@@ -209,7 +209,7 @@
     <string name="signal_problem">Vấn đề đèn tín hiệu</string>
     <string name="slippery_rail">Đường ray trơn trượt</string>
     <string name="snow">Tuyết</string>
-    <string name="snow_route">Tuyến đường tuyết</string>
+    <string name="snow_route">Tuyến đường có tuyết</string>
     <string name="snow_route_sentence_case">Tuyến đường tuyết</string>
     <string name="southbound">Về hướng nam</string>
     <string name="special_event">Sự kiện đặc biệt</string>
@@ -217,20 +217,20 @@
     <string name="star_route">Tuyến đường sao</string>
     <string name="star_route_hint">ghim đường dẫn ở đầu danh sách</string>
     <string name="start">Bắt đầu</string>
-    <string name="station_closed">Trạm đóng cửa</string>
-    <string name="station_closed_sentence_case">Trạm đóng cửa</string>
+    <string name="station_closed">Nhà ga/trạm dừng đóng cửa</string>
+    <string name="station_closed_sentence_case">Nhà ga/trạm dừng đóng cửa</string>
     <string name="station_closure">Đóng ga</string>
-    <string name="station_issue">Vấn đề về trạm</string>
-    <string name="station_issue_sentence_case">Vấn đề về trạm</string>
+    <string name="station_issue">Vấn đề về nhà ga/trạm dừng</string>
+    <string name="station_issue_sentence_case">Vấn đề về nhà ga/trạm dừng</string>
     <string name="stop_closed">Điểm dừng bị đóng</string>
     <string name="stop_closed_sentence_case">Điểm dừng bị đóng</string>
     <string name="stop_closure">Đóng điểm dừng</string>
     <string name="stop_filter_pills_filter_hint">Áp dụng bộ lọc để chỉ hiển thị các chuyến đến từ tuyến đường này</string>
     <string name="stop_filter_pills_remove_hint">Xóa bộ lọc và hiển thị tất cả các tuyến đường</string>
-    <string name="stop_moved">Dừng di chuyển</string>
-    <string name="stop_moved_sentence_case">Dừng di chuyển</string>
-    <string name="stop_shoveling">Dừng lại việc xúc tuyết</string>
-    <string name="stop_shoveling_sentence_case">Dừng lại việc xúc tuyết</string>
+    <string name="stop_moved">Điểm dừng đã di chuyển</string>
+    <string name="stop_moved_sentence_case">Điểm dừng đã di chuyển</string>
+    <string name="stop_shoveling">Dừng việc xúc tuyết</string>
+    <string name="stop_shoveling_sentence_case">Dừng việc xúc tuyết</string>
     <string name="stops">Điểm dừng</string>
     <plurals name="stops_away">
         <item quantity="other">%1$d điểm dừng nữa</item>
@@ -241,8 +241,8 @@
     <string name="switch_problem">Vấn đề chuyển đổi</string>
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="tie_replacement">Thay tà vẹt</string>
-    <string name="track_change">Theo dõi sự thay đổi</string>
-    <string name="track_change_sentence_case">Theo dõi sự thay đổi</string>
+    <string name="track_change">Thay đổi đường ray</string>
+    <string name="track_change_sentence_case">Thay đổi đường ray</string>
     <string name="track_number">Bài %1$s</string>
     <string name="track_problem">Vấn đề về đường ray</string>
     <string name="track_work">Thi công đường ray</string>
