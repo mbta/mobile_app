@@ -104,8 +104,7 @@ class HomeMapViewTests {
 
     @Test
     fun testLocationAuthShownWhenNoPermissions(): Unit = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
-
+        val locationManager = MockLocationDataManager(null)
         locationManager.hasPermission = false
         val viewModel =
             MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
@@ -243,7 +242,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testOverviewNotShownStopDetails(): Unit = runBlocking {
+    fun testOverviewShownOnStopDetails(): Unit = runBlocking {
         val locationManager = MockLocationDataManager(Location("mock"))
 
         locationManager.hasPermission = true
@@ -272,9 +271,7 @@ class HomeMapViewTests {
                     )
             )
         }
-        composeTestRule
-            .onNodeWithContentDescription("Recenter map on my location")
-            .assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Recenter map on my location").assertExists()
     }
 
     @Test

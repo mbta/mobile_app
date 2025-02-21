@@ -3,7 +3,9 @@ package com.mbta.tid.mbta_app.android.map
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -428,46 +430,54 @@ fun HomeMapView(
                     }
                 }
             }
-            val recenterModifier =
-                if (isNearby)
-                    Modifier.align(Alignment.TopEnd)
-                        .padding(top = 85.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        .statusBarsPadding()
-                else Modifier.align(Alignment.TopEnd).padding(16.dp).statusBarsPadding()
 
-            if (!viewportProvider.isFollowingPuck && isNearby) {
-                if (locationDataManager.hasPermission && currentLocation != null) {
-                    RecenterButton(
-                        onClick = { viewportProvider.follow() },
-                        modifier = recenterModifier
-                    )
-                } else if (!locationDataManager.hasPermission) {
-                    LocationAuthButton(
-                        locationDataManager,
-                        modifier =
-                            Modifier.align(Alignment.TopCenter)
-                                .padding(top = 85.dp)
-                                .statusBarsPadding()
-                    )
-                }
+            if (
+                !locationDataManager.hasPermission &&
+                    isNearby &&
+                    currentLocation == null &&
+                    !viewportProvider.isFollowingPuck
+            ) {
+                LocationAuthButton(
+                    locationDataManager,
+                    modifier =
+                        Modifier.align(Alignment.TopCenter).padding(top = 85.dp).statusBarsPadding()
+                )
             }
 
-            if (!viewportProvider.viewport.isOverview && !searchResultsViewModel.expanded) {
-                if (selectedVehicle != null) {
-                    val routeType =
-                        (globalResponse?.routes ?: emptyMap())[selectedVehicle.routeId]?.type
-                    if (routeType != null) {
-                        TripCenterButton(
-                            routeType = routeType,
-                            onClick = {
-                                viewportProvider.vehicleOverview(
-                                    selectedVehicle,
-                                    selectedStop,
-                                    density
-                                )
-                            },
-                            modifier = recenterModifier
-                        )
+            val recenterContainerModifier =
+                if (isNearby)
+                    Modifier.align(Alignment.TopEnd).padding(top = 85.dp).statusBarsPadding()
+                else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
+
+            Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
+                if (
+                    !viewportProvider.isFollowingPuck &&
+                        locationDataManager.hasPermission &&
+                        currentLocation != null
+                ) {
+                    RecenterButton(
+                        onClick = { viewportProvider.follow() },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+
+                if (!viewportProvider.viewport.isOverview && !searchResultsViewModel.expanded) {
+                    if (selectedVehicle != null) {
+                        val routeType =
+                            (globalResponse?.routes ?: emptyMap())[selectedVehicle.routeId]?.type
+                        if (routeType != null) {
+                            TripCenterButton(
+                                routeType = routeType,
+                                onClick = {
+                                    viewportProvider.vehicleOverview(
+                                        selectedVehicle,
+                                        selectedStop,
+                                        density
+                                    )
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
             }
