@@ -86,6 +86,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -248,6 +249,35 @@ fun NearbyTransitPage(
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
+    }
+
+    fun handleVehicleTap(vehicle: Vehicle) {
+        val tripId = vehicle.tripId ?: return
+        val (stopId, stopFilter, tripFilter) =
+            when (currentNavEntry) {
+                is SheetRoutes.StopDetails ->
+                    Triple(
+                        currentNavEntry.stopId,
+                        currentNavEntry.stopFilter,
+                        currentNavEntry.tripFilter
+                    )
+                else -> null
+            }
+                ?: return
+        if (stopFilter == null || tripFilter?.tripId == tripId) return
+
+        val patterns =
+            viewModel.stopDetailsDepartures.value?.routes?.firstOrNull {
+                it.routes.firstOrNull { route -> route.id == vehicle.routeId } != null
+            }
+
+        val upcoming =
+            patterns?.allUpcomingTrips()?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
+        val stopSequence = upcoming?.stopSequence
+        val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: patterns?.routeIdentifier
+
+        if (routeId != null) analytics.tappedVehicle(routeId)
+        updateTripFilter(stopId, TripDetailsFilter(tripId, vehicle.id, stopSequence, true))
     }
 
     fun openSearch() {
@@ -499,6 +529,7 @@ fun NearbyTransitPage(
                         viewportProvider = nearbyTransit.viewportProvider,
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
+                        handleVehicleTap = ::handleVehicleTap,
                         vehiclesData = vehiclesData,
                         stopDetailsDepartures = stopDetailsDepartures,
                         viewModel = mapViewModel,
