@@ -57,12 +57,13 @@ class NearbyRepository : KoinComponent, INearbyRepository {
         }
 }
 
-class MockNearbyRepository : INearbyRepository {
+class MockNearbyRepository(val result: NearbyStaticData = NearbyStaticData(data = emptyList())) :
+    INearbyRepository {
     override suspend fun getNearby(
         global: GlobalResponse,
         location: Position
     ): ApiResult<NearbyStaticData> {
-        return ApiResult.Ok(NearbyStaticData(data = emptyList()))
+        return ApiResult.Ok(result)
     }
 }
 

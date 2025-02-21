@@ -46,6 +46,7 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.component.TightWrapText
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
@@ -202,7 +203,11 @@ private fun ScheduleDescription(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.scheduled_to_depart), style = Typography.footnote)
+                TightWrapText(
+                    stringResource(R.string.scheduled_to_depart),
+                    Modifier.weight(1f, fill = false),
+                    style = Typography.footnote
+                )
                 if (clickable) {
                     InfoCircle(Modifier.aspectRatio(1f).size(16.dp))
                 }
