@@ -129,7 +129,7 @@ fun TripStopRow(
                         ) {
                             UpcomingTripView(
                                 upcomingTripViewState(stop, now, routeAccents),
-                                Modifier.alpha(0.6f).padding(end = 12.dp).weight(0.6F),
+                                Modifier.alpha(0.6f).padding(end = 12.dp).width(IntrinsicSize.Min),
                                 routeType = routeAccents.type,
                                 hideRealtimeIndicators = true
                             )
