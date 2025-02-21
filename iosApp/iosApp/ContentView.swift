@@ -33,6 +33,7 @@ struct ContentView: View {
 
     @State private var selectedTab = SelectedTab.nearby
     @State private var sheetTabBarVisibility = Visibility.hidden
+    @State private var baseTabBarVisibility = Visibility.hidden
 
     func updateTabBarVisibility(_ tab: SelectedTab) {
         let shouldShowSheetTabBar = !contentVM.hideMaps
@@ -41,6 +42,11 @@ struct ContentView: View {
             && !searchObserver.isSearching
 
         sheetTabBarVisibility = shouldShowSheetTabBar ? .visible : .hidden
+
+        let shouldShowBaseTabBar = !searchObserver.isSearching && (
+            !contentVM.hideMaps || nearbyVM.navigationStack.lastSafe() == .nearby
+        )
+        baseTabBarVisibility = shouldShowBaseTabBar ? .visible : .hidden
     }
 
     var body: some View {
@@ -114,6 +120,7 @@ struct ContentView: View {
         } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
+                    .toolbar(baseTabBarVisibility, for: .tabBar)
                     .tag(SelectedTab.nearby)
                     .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 MorePage(viewModel: settingsVM)
