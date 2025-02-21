@@ -571,13 +571,14 @@ final class HomeMapViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { sut in
             XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
             try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
-            XCTAssertEqual(nearbyVM.navigationStack.last, .tripDetails(
-                tripId: trip.id,
-                vehicleId: vehicle.id,
-                target: .init(stopId: stop.id, stopSequence: Int(prediction.stopSequence)),
-                routeId: trip.routeId,
-                directionId: trip.directionId
-            ))
+            XCTAssertEqual(
+                nearbyVM.navigationStack.last,
+                .stopDetails(
+                    stopId: stop.id,
+                    stopFilter: .init(routeId: trip.routeId, directionId: trip.directionId),
+                    tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 100, selectionLock: true)
+                )
+            )
         }
 
         ViewHosting.host(view: sut)
