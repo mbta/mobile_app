@@ -15,6 +15,7 @@ struct PromoScreenView: View {
     let advance: () -> Void
 
     @AccessibilityFocusState private var focusHeader: FeaturePromo?
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dynamicTypeSize) var typeSize
 
     private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
@@ -22,7 +23,7 @@ struct PromoScreenView: View {
 
     // Use less padding on smaller screens
     private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 52 }
-    private var sidePadding: CGFloat { screenWidth < 393 ? 16 : 32 }
+    private var sidePadding: CGFloat { 32 }
 
     let inspection = Inspection<Self>()
 
@@ -95,11 +96,13 @@ struct PromoScreenView: View {
                 ).fullWidthKeyButton()
             }
         }
+        .foregroundStyle(Color.text)
         .padding(.horizontal, sidePadding)
         .padding(.bottom, bottomPadding)
+        .frame(maxWidth: .infinity)
         .background {
             ZStack(alignment: .center) {
-                Color.fill2.edgesIgnoringSafeArea(.all)
+                (colorScheme == .dark ? Color.fill1 : Color.fill2).edgesIgnoringSafeArea(.all)
             }
         }
     }
