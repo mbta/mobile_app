@@ -120,7 +120,7 @@ struct ContentView: View {
         } else {
             TabView(selection: $selectedTab) {
                 nearbyTab
-                    .toolbar(baseTabBarVisibility, for: .tabBar, .bottomBar)
+                    .toolbar(baseTabBarVisibility, for: .tabBar)
                     .tag(SelectedTab.nearby)
                     .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 MorePage(viewModel: settingsVM)
