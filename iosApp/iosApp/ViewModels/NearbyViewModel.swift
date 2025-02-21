@@ -38,6 +38,7 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
+    var combinedStopAndTrip: Bool { true }
     @Published var showDebugMessages: Bool = false
     @Published var showElevatorAccessibility: Bool = false
 
@@ -107,7 +108,7 @@ class NearbyViewModel: ObservableObject {
      typically `pushNavEntry` should be used instead.
      */
     func appendNavEntry(_ entry: SheetNavigationStackEntry) {
-        if case let .legacyStopDetails(stop, filter) = entry, true {
+        if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
             appendNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
         } else {
             if entry != navigationStack.lastSafe() {
@@ -126,10 +127,10 @@ class NearbyViewModel: ObservableObject {
      */
     func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection: Bool = false) {
         let currentEntry = navigationStack.lastSafe()
-        if case let .legacyStopDetails(stop, filter) = entry, true {
+        if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
             pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
         } else if case let .tripDetails(tripId, vehicleId, target, _, _) = entry,
-                  true,
+                  combinedStopAndTrip,
                   let stopId = navigationStack.lastStopId,
                   let stopFilter = navigationStack.lastStopDetailsFilter {
             let stopSequence: KotlinInt? = if let sequence = target?.stopSequence { KotlinInt(int: Int32(sequence)) }
