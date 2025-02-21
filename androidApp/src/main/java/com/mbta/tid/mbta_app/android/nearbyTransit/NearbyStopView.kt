@@ -61,7 +61,7 @@ fun NearbyStopView(
                             start =
                                 if (showElevatorAccessibility && hasElevatorAlerts) 0.dp else 8.dp
                         )
-                        .weight(1f),
+                        .weight(.6f),
                 style = Typography.callout
             )
             if (showElevatorAccessibility && hasElevatorAlerts) {
@@ -72,7 +72,7 @@ fun NearbyStopView(
                             patternsAtStop.elevatorAlerts.size,
                             patternsAtStop.elevatorAlerts.size
                         ),
-                    modifier = Modifier.placeholderIfLoading().alpha(0.6f),
+                    modifier = Modifier.placeholderIfLoading().alpha(0.6f).weight(.4f),
                     style = Typography.footnote
                 )
             }
