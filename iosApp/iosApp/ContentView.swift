@@ -43,8 +43,8 @@ struct ContentView: View {
 
         sheetTabBarVisibility = shouldShowSheetTabBar ? .visible : .hidden
 
-        let shouldShowBaseTabBar = tab == SelectedTab.more || (
-            contentVM.hideMaps && nearbyVM.navigationStack.lastSafe() == .nearby && !searchObserver.isSearching
+        let shouldShowBaseTabBar = !searchObserver.isSearching && (
+            !contentVM.hideMaps || nearbyVM.navigationStack.lastSafe() == .nearby
         )
         baseTabBarVisibility = shouldShowBaseTabBar ? .visible : .hidden
     }
@@ -127,14 +127,7 @@ struct ContentView: View {
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel(tab: SelectedTab.more) }
                     .onAppear { analytics.track(screen: .settings) }
-            }.accessibilityHidden(
-                // We don't want the nav bar behind the sheet to show up in VoiceOver when the sheet is open,
-                // but setting accessibilityHidden to true on this TabView also results in all of the non-sheet
-                // content in nearbyTab to be hidden, including the search bar and recenter button. The extra check
-                // to make it visible to VO when nearby transit is open is to ensure that the search is not hidden,
-                // though it does result in a second tab bar in VoiceOver on the nearby page and search overlay.
-                baseTabBarVisibility == .hidden && !contentVM.hideMaps && nearbyVM.navigationStack.lastSafe() != .nearby
-            )
+            }
         }
     }
 
