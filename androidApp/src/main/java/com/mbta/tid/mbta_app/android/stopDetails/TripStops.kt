@@ -34,8 +34,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
@@ -110,12 +110,12 @@ fun TripStops(
                     Modifier.height(IntrinsicSize.Min)
                         .clickable(
                             onClickLabel =
-                                if (stopsExpanded) stringResource(R.string.hides_remaining_stops)
-                                else stringResource(R.string.lists_remaining_stops)
+                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
+                                else stringResource(R.string.expand_remaining_stops)
                         ) {
                             stopsExpanded = !stopsExpanded
                         }
-                        .semantics {
+                        .clearAndSetSemantics {
                             contentDescription =
                                 context.getString(
                                     R.string.is_stops_away_from,

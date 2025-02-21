@@ -4283,6 +4283,54 @@
         }
       }
     },
+    "collapse remaining stops" : {
+      "comment" : "Android TalkBack hint explaining what happens when 'x stops away'\nis selected when it is already open (closes the accordion listing those stops)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "colapsar paradas restantes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "réduire les arrêts restants"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tonbe arè ki rete yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "recolher paradas restantes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "thu gọn các điểm dừng còn lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "折叠剩余停靠点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "折疊剩餘停靠點"
+          }
+        }
+      }
+    },
     "Combined Stop & Trip Details" : {
       "comment" : "A setting on the More page to display a new stop details page layout (only visible for developers)",
       "localizations" : {
@@ -5089,6 +5137,102 @@
         }
       }
     },
+    "display more information" : {
+      "comment" : "Android talk back hint for tapping on the trip details header on the stop page",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mostrar más información"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "afficher plus d’informations"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "montre plis enfòmasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "exibir mais informações"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hiển thị thêm thông tin"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "显示更多信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "顯示更多信息"
+          }
+        }
+      }
+    },
+    "display more information about this trip" : {
+      "comment" : "Android TalkBack hint for tapping a departure card in stop details",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mostrar más información sobre este viaje"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "afficher plus d’informations sur ce trajet"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "montre plis enfòmasyon sou vwayaj sa a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "exibir mais informações sobre esta viagem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hiển thị thêm thông tin về chuyến đi này"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "显示有关此行程的更多信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示有關此行程的更多信息"
+          }
+        }
+      }
+    },
     "displays more information" : {
       "comment" : "Screen reader hint for tapping on the trip details header on the stop page",
       "localizations" : {
@@ -5885,6 +6029,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自動扶梯關閉"
+          }
+        }
+      }
+    },
+    "expand remaining stops" : {
+      "comment" : "Android TalkBack hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ampliar las paradas restantes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "étendre les arrêts restants"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "elaji arè ki rete yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "expandir as paradas restantes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mở rộng các điểm dừng còn lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "扩大剩余站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "擴大剩餘站點"
           }
         }
       }

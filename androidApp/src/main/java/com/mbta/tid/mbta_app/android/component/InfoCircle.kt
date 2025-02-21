@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.android.R
 fun InfoCircle(modifier: Modifier = Modifier) {
     Icon(
         painterResource(R.drawable.fa_circle_info),
-        contentDescription = "More Info",
+        contentDescription = null,
         Modifier.size(16.dp).then(modifier),
         tint = colorResource(R.color.deemphasized)
     )

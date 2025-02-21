@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -116,7 +118,8 @@ fun AlertDetailsPage(
                 stringResource(R.string.alert_details),
                 color = headerTextColor,
                 fontWeight = FontWeight.Bold,
-                style = Typography.headline
+                style = Typography.headline,
+                modifier = Modifier.semantics { heading() }
             )
             Spacer(Modifier.weight(1f))
             ActionButton(ActionButtonKind.Close) { goBack() }
