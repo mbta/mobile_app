@@ -108,6 +108,13 @@ fun TripStops(
             if (splitStops.collapsedStops.isNotEmpty() && stopsAway != null) {
                 Row(
                     Modifier.height(IntrinsicSize.Min)
+                        .clickable(
+                            onClickLabel =
+                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
+                                else stringResource(R.string.expand_remaining_stops)
+                        ) {
+                            stopsExpanded = !stopsExpanded
+                        }
                         .clearAndSetSemantics {
                             contentDescription =
                                 context.getString(
@@ -116,13 +123,6 @@ fun TripStops(
                                     stopsAway,
                                     target.stop.name
                                 )
-                        }
-                        .clickable(
-                            onClickLabel =
-                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
-                                else stringResource(R.string.expand_remaining_stops)
-                        ) {
-                            stopsExpanded = !stopsExpanded
                         }
                         .padding(horizontal = 8.dp)
                         .defaultMinSize(minHeight = 48.dp),
