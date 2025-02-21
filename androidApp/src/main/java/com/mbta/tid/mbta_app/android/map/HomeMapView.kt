@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -69,7 +68,6 @@ import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
-import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -97,13 +95,13 @@ fun HomeMapView(
 
     val coroutineScope = rememberCoroutineScope()
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
-    var selectedStop by remember { mutableStateOf<Stop?>(null) }
+    val selectedStop by viewModel.selectedStop.collectAsState(null)
 
-    val configLoadAttempted = viewModel.configLoadAttempted.collectAsState(initial = false).value
-    val railRouteShapes = viewModel.railRouteShapes.collectAsState(initial = null).value
-    val stopSourceData = viewModel.stopSourceData.collectAsState(initial = null).value
-    val globalResponse = viewModel.globalResponse.collectAsState(initial = null).value
-    val railRouteLineData = viewModel.railRouteLineData.collectAsState(initial = null).value
+    val configLoadAttempted by viewModel.configLoadAttempted.collectAsState(initial = false)
+    val railRouteShapes by viewModel.railRouteShapes.collectAsState(initial = null)
+    val stopSourceData by viewModel.stopSourceData.collectAsState(initial = null)
+    val globalResponse by viewModel.globalResponse.collectAsState(initial = null)
+    val railRouteLineData by viewModel.railRouteLineData.collectAsState(initial = null)
     val selectedVehicle =
         viewModel.selectedVehicle.collectAsState().value.takeIf {
             currentNavEntry is SheetRoutes.StopDetails
@@ -112,7 +110,7 @@ fun HomeMapView(
     val currentLocation = locationDataManager.currentLocation.collectAsState(initial = null).value
 
     val now = timer(updateInterval = 300.seconds)
-    val globalMapData = viewModel.rememberGlobalMapData(now)
+    val globalMapData by viewModel.globalMapData.collectAsState(null)
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
 
@@ -155,9 +153,9 @@ fun HomeMapView(
     }
 
     suspend fun updateDisplayedRoutesBasedOnStop() {
-        if (globalResponse == null) return
-        if (railRouteShapes == null) return
-        if (stopMapData == null) return
+        val globalResponse = globalResponse ?: return
+        val railRouteShapes = railRouteShapes ?: return
+        val stopMapData = stopMapData ?: return
 
         val filteredRoutes =
             if (currentNavEntry is SheetRoutes.StopDetails && currentNavEntry.stopFilter != null) {
@@ -220,10 +218,10 @@ fun HomeMapView(
                 else -> null
             }
         if (stopId == null) {
-            selectedStop = null
+            viewModel.setSelectedStop(null)
             return
         }
-        selectedStop = globalResponse?.stops?.get(stopId)
+        viewModel.setSelectedStop(globalResponse?.stops?.get(stopId))
     }
 
     val cameraZoomFlow =
@@ -299,17 +297,18 @@ fun HomeMapView(
                     )
                 }
             ) {
+                LaunchedEffect(now) { viewModel.refreshGlobalMapData(now) }
                 LaunchedEffect(currentNavEntry) { handleNavChange() }
                 LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
-                    viewModel.refreshRouteLineData(now)
+                    viewModel.refreshRouteLineData(globalMapData)
                 }
                 LaunchedEffect(railRouteLineData) {
                     refreshRouteLineSource()
-                    viewModel.refreshStopFeatures(now, selectedStop)
+                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
                 }
                 LaunchedEffect(selectedStop) {
                     positionViewportToStop()
-                    viewModel.refreshStopFeatures(now, selectedStop)
+                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
                 }
                 LaunchedEffect(stopSourceData) { refreshStopSource() }
                 LaunchedEffect(selectedVehicle) {
