@@ -4,7 +4,6 @@ import MockRepositories
 import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -346,6 +345,8 @@ class NearbyTransitPageTest : KoinTest {
                 MutableStateFlow(value = null)
             override val selectedVehicle: StateFlow<Vehicle?> = MutableStateFlow(value = null)
             override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
+            override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
+            override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
 
             var loadConfigCalledCount = 0
 
@@ -357,20 +358,24 @@ class NearbyTransitPageTest : KoinTest {
                 return null
             }
 
-            @Composable
-            override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
-                return null
-            }
+            override suspend fun refreshGlobalMapData(now: Instant) {}
 
-            override suspend fun refreshRouteLineData(now: Instant) {}
+            override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {}
 
-            override suspend fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {}
+            override suspend fun refreshStopFeatures(
+                selectedStop: Stop?,
+                globalMapData: GlobalMapData?
+            ) {}
 
             override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
 
             override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {}
 
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
+
+            override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
         }
 
         val mockMapVM = MockMapVM()
