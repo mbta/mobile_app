@@ -34,6 +34,7 @@
     <string name="close_button_label">Close</string>
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="commuter_rail" translatable="false"  >Commuter Rail</string>
+    <string name="collapse_remaining_stops">collapse remaining stops</string>
     <string name="congestion">Congestion</string>
     <string name="connection_to">Connection to %1$s</string>
     <string name="connections_to_and">Connections to %1$s and %2$s</string>
@@ -41,12 +42,13 @@
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="delay">Delay</string>
     <string name="demonstration">Demonstration</string>
-    <string name="departure_tile_on_click_label">displays more information about this trip</string>
+    <string name="departure_tile_on_click_label">display more information about this trip</string>
     <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
     <string name="disabled_bus">Disabled Bus</string>
     <string name="disabled_train">Disabled Train</string>
+    <string name="display_more_information">display more information</string>
     <string name="displays_more_info">displays more information</string>
     <string name="dock_closed">Dock Closed</string>
     <string name="dock_closed_sentence_case">Dock closed</string>
@@ -69,6 +71,7 @@
     <string name="escalator_closed_sentence_case">Escalator closed</string>
     <string name="escalator_closure">Escalator Closure</string>
     <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
+    <string name="expand_remaining_stops">expand remaining stops</string>
     <string name="explainer_headline_finishing_another">Finishing another trip</string>
     <string name="explainer_headline_no_prediction">Prediction not available yet</string>
     <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
@@ -97,7 +100,6 @@
     <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
-    <string name="hides_remaining_stops">Hides remaining stops</string>
     <string name="high_winds">High Winds</string>
     <string name="holiday">Holiday</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
@@ -105,7 +107,6 @@
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
-    <string name="lists_remaining_stops">Lists remaining stops</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>

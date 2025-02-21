@@ -32,6 +32,7 @@
     <string name="cancelled">已取消</string>
     <string name="close_button_label">关闭</string>
     <string name="coast_guard_restriction">海岸警卫队警戒</string>
+    <string name="collapse_remaining_stops">折叠剩余停靠点</string>
     <string name="congestion">交通拥堵</string>
     <string name="connection_to">连接到%1$s</string>
     <string name="connections_to_and">连接到%1$s和%2$s</string>
@@ -45,6 +46,7 @@
     <string name="directionTo">%1$s至</string>
     <string name="disabled_bus">巴士抛锚</string>
     <string name="disabled_train">列车停运</string>
+    <string name="display_more_information">显示更多信息</string>
     <string name="displays_more_info">显示更多信息</string>
     <string name="dock_closed">停靠区域已关闭</string>
     <string name="dock_closed_sentence_case">停靠区域已关闭</string>
@@ -66,6 +68,7 @@
     <string name="escalator_closed_sentence_case">自动扶梯已关闭</string>
     <string name="escalator_closure">自动扶梯关闭</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小时</string>
+    <string name="expand_remaining_stops">扩大剩余站点</string>
     <string name="explainer_headline_finishing_another">完成其他行程</string>
     <string name="explainer_headline_no_prediction">预测功能暂不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s定位服务暂不可用</string>
@@ -94,7 +97,6 @@
     <string name="header_at_stop">于&lt;b>%1$s&lt;/b>到站</string>
     <string name="heading">方向</string>
     <string name="heavy_ridership">客流过大</string>
-    <string name="hides_remaining_stops">隐藏剩余站点</string>
     <string name="high_winds">强风</string>
     <string name="holiday">节假日</string>
     <string name="hr_min_abbr">&lt;b>%1$d&lt;/b>小时&lt;b>%2$d&lt;/b>分钟</string>
@@ -102,7 +104,6 @@
     <string name="ice_in_harbor">港口结冰</string>
     <string name="inbound">进站</string>
     <string name="is_stops_away_from">%1$s距离%3$s还有%2$d站</string>
-    <string name="lists_remaining_stops">列出剩余站点</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>

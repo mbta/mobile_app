@@ -38,6 +38,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
@@ -185,15 +187,21 @@ private fun AlertTitle(
             if (routeLabel != null) {
                 Text(
                     stringResource(R.string.route_effect, routeLabel, effectLabel),
-                    style = Typography.title2Bold
+                    style = Typography.title2Bold,
+                    modifier = Modifier.semantics { heading() }
                 )
             } else if (stopLabel != null) {
                 Text(
                     stringResource(R.string.route_effect, stopLabel, effectLabel),
-                    style = Typography.title2Bold
+                    style = Typography.title2Bold,
+                    modifier = Modifier.semantics { heading() }
                 )
             } else {
-                Text(effectLabel, style = Typography.title2Bold)
+                Text(
+                    effectLabel,
+                    style = Typography.title2Bold,
+                    modifier = Modifier.semantics { heading() }
+                )
             }
         }
         if (!isElevatorAlert && causeLabel != null) {
@@ -345,7 +353,8 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
             Text(
                 if (!isElevatorAlert) stringResource(R.string.full_description)
                 else stringResource(R.string.alternative_path),
-                style = Typography.bodySemibold
+                style = Typography.bodySemibold,
+                modifier = Modifier.semantics { heading() }
             )
             for (section in alertDescriptionParagraphs) {
                 Text(section, style = Typography.callout)

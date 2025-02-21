@@ -149,7 +149,10 @@ fun StopResultsView(
                     tint = Color.Unspecified
                 )
             }
-            Column(verticalArrangement = Arrangement.Center) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.semantics(mergeDescendants = true) {}
+            ) {
                 Text(
                     text = stop.name,
                     modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 16.dp),
@@ -159,7 +162,6 @@ fun StopResultsView(
                     modifier =
                         Modifier.horizontalScroll(scrollState)
                             .padding(start = 16.dp, bottom = 12.dp)
-                            .semantics(mergeDescendants = true) {}
                             .clearAndSetSemantics { contentDescription = routesContentDescription }
                 ) {
                     routePillsData.map { (route, spec) ->

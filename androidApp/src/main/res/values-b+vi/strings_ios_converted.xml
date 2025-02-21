@@ -32,6 +32,7 @@
     <string name="cancelled">Đã hủy</string>
     <string name="close_button_label">Đóng</string>
     <string name="coast_guard_restriction">Hạn chế của cảnh sát biển</string>
+    <string name="collapse_remaining_stops">thu gọn các điểm dừng còn lại</string>
     <string name="congestion">Tắc nghẽn</string>
     <string name="connection_to">Kết nối với %1$s</string>
     <string name="connections_to_and">Kết nối với %1$s và %2$s</string>
@@ -45,6 +46,7 @@
     <string name="directionTo">%1$s đến</string>
     <string name="disabled_bus">Xe buýt bị sự cố</string>
     <string name="disabled_train">Tàu bị sự cố</string>
+    <string name="display_more_information">hiển thị thêm thông tin</string>
     <string name="displays_more_info">hiển thị thêm thông tin</string>
     <string name="dock_closed">Bến tàu đóng cửa</string>
     <string name="dock_closed_sentence_case">Bến tàu đóng cửa</string>
@@ -66,6 +68,7 @@
     <string name="escalator_closed_sentence_case">Thang cuốn đóng cửa</string>
     <string name="escalator_closure">Thang cuốn đóng cửa</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
+    <string name="expand_remaining_stops">mở rộng các điểm dừng còn lại</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
     <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
@@ -94,7 +97,6 @@
     <string name="header_at_stop">tại &lt;b>%1$s&lt;/b></string>
     <string name="heading">Tiêu đề</string>
     <string name="heavy_ridership">Có đông người đi xe</string>
-    <string name="hides_remaining_stops">Ẩn các điểm dừng còn lại</string>
     <string name="high_winds">Gió mạnh</string>
     <string name="holiday">Ngày lễ</string>
     <string name="hr_min_abbr">&lt;b>%1$d&lt;/b> giờ &lt;b>%2$d&lt;/b> phút</string>
@@ -102,7 +104,6 @@
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="inbound">Đến</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
-    <string name="lists_remaining_stops">Liệt kê các điểm dừng còn lại</string>
     <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="location_not_available_yet">Vị trí chưa có sẵn</string>
