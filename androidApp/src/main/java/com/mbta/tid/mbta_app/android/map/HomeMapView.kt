@@ -87,6 +87,7 @@ fun HomeMapView(
     viewportProvider: ViewportProvider,
     currentNavEntry: SheetRoutes?,
     handleStopNavigation: (String) -> Unit,
+    handleVehicleTap: (Vehicle) -> Unit,
     vehiclesData: List<Vehicle>,
     stopDetailsDepartures: StopDetailsDepartures?,
     viewModel: IMapViewModel,
@@ -414,7 +415,17 @@ fun HomeMapView(
                                 )
                             }
                     ) {
-                        VehiclePuck(vehicle = vehicle, route = route, selected = isSelected)
+                        VehiclePuck(
+                            vehicle = vehicle,
+                            route = route,
+                            selected = isSelected,
+                            onClick =
+                                if (vehicle.tripId != null) {
+                                    { handleVehicleTap(vehicle) }
+                                } else {
+                                    null
+                                }
+                        )
                     }
                 }
             }
