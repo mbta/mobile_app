@@ -729,6 +729,48 @@
             "state" : "new",
             "value" : "%1$@ arriving in %2$d hr"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ llegando en %2$d hr"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arrive dans %2$d h"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ap rive nan %2$d èdtan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ chegando em %2$d hr"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ sẽ đến trong %2$d giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 将于 %2$d 小时后抵达"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 將於 %2$d 小時後抵達"
+          }
         }
       }
     },
@@ -739,6 +781,48 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ arriving in %2$d hr %3$d min"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ llegando en %2$d hr %3$d min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arrivée dans %2$d h %3$d min"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ rive nan %2$d è %3$d min"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arriving in %2$d hr %3$d min"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ đến trong %2$d giờ %3$d phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 将于 %2$d 小时 %3$d 分钟后抵达"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 將於 %2$d 小時 %3$d 分鐘後抵達"
           }
         }
       }
@@ -751,6 +835,48 @@
             "state" : "new",
             "value" : "%1$@ arriving in %2$d hr %3$d min scheduled"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ llegando en %2$d hr %3$d min programado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arrivée dans %2$d h %3$d min prévue"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ rive nan %2$d è %3$d min pwograme"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ chegando em %2$d hr %3$d min programado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ đến trong %2$d giờ %3$d phút theo lịch trình"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 预计在 %2$d 小时 %3$d 分钟后抵达"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 預計在 %2$d 小時 %3$d 分鐘後抵達"
+          }
         }
       }
     },
@@ -761,6 +887,48 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ arriving in %2$d hr scheduled"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ llegando en %2$d hr programado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arrivée dans %2$d heure prévue"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ap rive nan %2$d èdtan pwograme"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ chegando em %2$d hr programado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ sẽ đến vào %2$d giờ theo lịch trình"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 预计在 %2$d 小时内到达"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 預計在 %2$d 小時內到達"
           }
         }
       }
@@ -1511,6 +1679,12 @@
             "value" : "%ld resultados encontrados"
           }
         },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%ld résultats trouvés"
+          }
+        },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -1703,38 +1877,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de acceso"
+            "state" : "translated",
+            "value" : "Problema de accesibilidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème d’accès"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pwoblèm aksè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Problema de acesso"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề truy cập"
+            "state" : "translated",
+            "value" : "Vấn đề về tiếp cận"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "访问问题"
+            "state" : "translated",
+            "value" : "无障碍问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "訪問問題"
+            "state" : "translated",
+            "value" : "無障礙問題"
           }
         }
       }
@@ -1744,38 +1924,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de acceso"
+            "state" : "translated",
+            "value" : "Problema de accesibilidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème d’accès"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Aksè pwoblèm"
+            "state" : "translated",
+            "value" : "Pwoblèm Aksè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Problema de acesso"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề truy cập"
+            "state" : "translated",
+            "value" : "Vấn đề về tiếp cận"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "访问问题"
+            "state" : "translated",
+            "value" : "无障碍问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "訪問問題"
+            "state" : "translated",
+            "value" : "無障礙問題"
           }
         }
       }
@@ -1832,37 +2018,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Servicio adicional"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service supplémentaire"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sèvis adisyonèl"
+            "state" : "translated",
+            "value" : "Plis sèvis"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Serviço adicional"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dịch vụ bổ sung"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "附加服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "附加服務"
           }
         }
@@ -1873,37 +2065,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Servicio adicional"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service supplémentaire"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sèvis adisyonèl"
+            "state" : "translated",
+            "value" : "Plis Sèvis"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Serviço adicional"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dịch vụ bổ sung"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "附加服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "附加服務"
           }
         }
@@ -2243,37 +2441,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Alerta Amber"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerte Amber"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Amber alèt"
+            "state" : "translated",
+            "value" : "Avètisman amber"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Alerta âmbar"
+            "state" : "translated",
+            "value" : "Alerta amarelo"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cảnh báo Amber"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "安珀警报"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "安珀警報"
           }
         }
@@ -2284,37 +2488,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Alerta Amber"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerte Amber"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Amber Alèt"
+            "state" : "translated",
+            "value" : "Avètisman Amber"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Alerta âmbar"
+            "state" : "translated",
+            "value" : "Alerta amarelo"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cảnh báo Amber"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "安珀警报"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "安珀警報"
           }
         }
@@ -2697,7 +2907,51 @@
       }
     },
     "and in %d hr" : {
-      "comment" : "  The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n  For example, '[bus arriving in 38 min], and in [1] hr'"
+      "comment" : "  The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n  For example, '[bus arriving in 38 min], and in [1] hr'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y en %1$d hr"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et dans %d h"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi nan %d èdtan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e em %d hr"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và trong %d giờ đã lên lịch"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟车将在%d小时钟后进行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一班巴士將在 %d 小時後到達"
+          }
+        }
+      }
     },
     "and in %d hr %d min" : {
       "comment" : " The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n For example, '[bus arriving in 1 hr 5 min], and in [1] hr [45] min'",
@@ -2706,6 +2960,48 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "and in %1$d hr %2$d min"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y en %1$d hr %2$d min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et dans %1$d h %2$d min"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi nan %1$d è %2$d min"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e em %1$d hr %2$d min"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và trong %1$d giờ %2$d phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟车将在%d小时%d分钟后进行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟車將在 %d 小%d 分時候到達"
           }
         }
       }
@@ -2718,11 +3014,97 @@
             "state" : "new",
             "value" : "and in %1$d hr %2$d min scheduled"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y en %1$d hr %2$d min programado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et dans %1$d h %2$d min est prévu"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi nan %1$d è %2$d min pwograme"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e em %1$d hr %2$d min programado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và trong %1$d giờ %2$d phút đã lên lịch"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟车预定将在%d小时%d分钟后进行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一班列車將於%d小時%d分鐘後出發"
+          }
         }
       }
     },
     "and in %d hr scheduled" : {
-      "comment" : "The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 38 min], and in [1] hr scheduled'"
+      "comment" : "The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 38 min], and in [1] hr scheduled'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y en %d hr programado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et dans %d  h est prévu"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi nan %d èdtan pwograme"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e em %d hr programado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và trong %d giờ đã lên lịch"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一班巴士将于 %d 小时后出发"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一班巴士預計在%d小時後到達"
+          }
+        }
+      }
     },
     "and in %d min" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in [10] min'",
@@ -2742,7 +3124,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %d minit"
+            "value" : "epi nan %d min"
           }
         },
         "pt-BR" : {
@@ -3153,37 +3535,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Problema con la bicicleta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de vélo"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pwoblèm bisiklèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema com a bicicleta"
+            "state" : "translated",
+            "value" : "Problema com bicicleta"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề xe đạp"
+            "state" : "translated",
+            "value" : "Vấn đề về xe đạp"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "自行车问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "自行車問題"
           }
         }
@@ -3194,37 +3582,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Problema con la bicicleta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de vélo"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pwoblèm bisiklèt"
+            "state" : "translated",
+            "value" : "Pwoblèm Bisiklèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema com a bicicleta"
+            "state" : "translated",
+            "value" : "Problema com bicicleta"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề xe đạp"
+            "state" : "translated",
+            "value" : "Vấn đề về xe đạp"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "自行车问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "自行車問題"
           }
         }
@@ -3239,16 +3633,22 @@
             "value" : "Embarque en la vía %@"
           }
         },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Embarquement sur la voie %@"
+          }
+        },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Monte sou track %@"
+            "value" : "Monte sou vwa a %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Embarque na pista %@"
+            "value" : "Embarque no trilho %@"
           }
         },
         "vi" : {
@@ -3260,13 +3660,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%@号轨道登车"
+            "value" : "%@前往相应的轨道登车"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%@號軌道登車"
+            "value" : "%@前往相應的軌道登車"
           }
         }
       }
@@ -3283,7 +3683,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Embarquement"
+            "value" : "DEP"
           }
         },
         "ht" : {
@@ -3512,38 +3912,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cancelación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulation"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Anilasyon"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cancelamento"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Hủy"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "消除"
+            "state" : "translated",
+            "value" : "取消"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "消除"
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -3600,38 +4006,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vea la nueva vista de parada"
+            "state" : "translated",
+            "value" : "Vea la vista de parada nueva"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Découvrez la nouvelle vue des arrêts"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tcheke nouvo View Stop la"
+            "state" : "translated",
+            "value" : "Gade nouvo aparans arè a"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Confira a nova visualização de parada"
+            "state" : "translated",
+            "value" : "Confira a nova visualização das paradas"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Xem chế độ xem điểm dừng mới"
+            "state" : "translated",
+            "value" : "Kiểm tra chế độ xem điểm dừng mới"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "查看新的停靠站視圖"
+            "state" : "translated",
+            "value" : "查看新站点视图"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "查看新的停靠站視圖"
+            "state" : "translated",
+            "value" : "查看新網站視圖"
           }
         }
       }
@@ -4304,38 +4716,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Retraso"
+            "state" : "translated",
+            "value" : "Demora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retard"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Reta"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Atraso"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Trì hoãn"
+            "state" : "translated",
+            "value" : "Trễ"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "延迟"
+            "state" : "translated",
+            "value" : "延误"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "延遲"
+            "state" : "translated",
+            "value" : "延誤"
           }
         }
       }
@@ -4770,38 +5188,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Muelle cerrado"
+            "state" : "translated",
+            "value" : "Dársena cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quai fermé"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Waf fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Doca fechada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Bến tàu đóng"
+            "state" : "translated",
+            "value" : "Bến tàu đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "码头关闭"
+            "state" : "translated",
+            "value" : "停靠区域已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "碼頭關閉"
+            "state" : "translated",
+            "value" : "停靠區域已關閉"
           }
         }
       }
@@ -4811,38 +5235,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Muelle cerrado"
+            "state" : "translated",
+            "value" : "Dársena cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quai fermé"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Waf Fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Doca fechada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Bến tàu đóng"
+            "state" : "translated",
+            "value" : "Bến tàu đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "码头关闭"
+            "state" : "translated",
+            "value" : "停靠区域已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "碼頭關閉"
+            "state" : "translated",
+            "value" : "停靠區域已關閉"
           }
         }
       }
@@ -4899,38 +5329,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema con el muelle"
+            "state" : "translated",
+            "value" : "Problema con dársena"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de quai"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pwoblèm waf"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de Dock"
+            "state" : "translated",
+            "value" : "Problema na doca"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Vấn đề về bến tàu"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "码头问题"
+            "state" : "translated",
+            "value" : "停靠区域问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "碼頭問題"
+            "state" : "translated",
+            "value" : "停靠區域問題"
           }
         }
       }
@@ -4940,38 +5376,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema con el muelle"
+            "state" : "translated",
+            "value" : "Problema con dársena"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de quai"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pwoblèm waf"
+            "state" : "translated",
+            "value" : "Pwoblèm Waf"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de Dock"
+            "state" : "translated",
+            "value" : "Problema na doca"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Vấn đề về bến tàu"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "码头问题"
+            "state" : "translated",
+            "value" : "停靠区域问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "碼頭問題"
+            "state" : "translated",
+            "value" : "停靠區域問題"
           }
         }
       }
@@ -5170,38 +5612,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ascensor cerrado"
+            "state" : "translated",
+            "value" : "Ascensor fuera de servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascenseur fermé"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Asansè fèmen"
+            "state" : "translated",
+            "value" : "Asansè a fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Elevador fechado"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Thang máy đóng"
+            "state" : "translated",
+            "value" : "Thang máy đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "电梯关闭"
+            "state" : "translated",
+            "value" : "直梯已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "電梯關閉"
+            "state" : "translated",
+            "value" : "直梯已關閉"
           }
         }
       }
@@ -5352,38 +5800,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Escalera mecánica cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escalator hors service"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Escalator fèmen"
+            "state" : "translated",
+            "value" : "Fèmti eskalye"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Escada rolante fechada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Thang cuốn đóng"
+            "state" : "translated",
+            "value" : "Thang cuốn đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "自动扶梯关闭"
+            "state" : "translated",
+            "value" : "自动扶梯已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "電扶梯已關閉"
+            "state" : "translated",
+            "value" : "自動扶梯已關閉"
           }
         }
       }
@@ -5393,38 +5847,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Cierre de escalera mecánica"
+            "state" : "translated",
+            "value" : "Escalera mecánica fuera de servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escalator hors service"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Fèmti Eskalatè"
+            "state" : "translated",
+            "value" : "Fèmti Eskalye"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Fechamento da escada rolante"
+            "state" : "translated",
+            "value" : "Fechamento de escada rolante"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Đóng thang cuốn"
+            "state" : "translated",
+            "value" : "Thang cuốn đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "自动扶梯关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "電扶梯關閉"
+            "state" : "translated",
+            "value" : "自動扶梯關閉"
           }
         }
       }
@@ -5482,37 +5942,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Servicio extra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service supplémentaire"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sèvis siplemantè"
+            "state" : "translated",
+            "value" : "Sèvis anplis"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Serviço extra"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dịch vụ bổ sung"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "额外服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "額外服務"
           }
         }
@@ -5523,37 +5989,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Servicio extra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service supplémentaire"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sèvis Siplemantè"
+            "state" : "translated",
+            "value" : "Sèvis Anplis"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Serviço extra"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dịch vụ bổ sung"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "额外服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "額外服務"
           }
         }
@@ -5564,37 +6036,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de instalaciones"
+            "state" : "translated",
+            "value" : "Problema en las instalaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème d’infrastructure"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pwoblèm etablisman"
+            "state" : "translated",
+            "value" : "Pwoblèm lokal"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de instalação"
+            "state" : "translated",
+            "value" : "Problema nas instalações"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề về cơ sở"
+            "state" : "translated",
+            "value" : "Vấn đề về cơ sở vật chất"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "设施问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "設施問題"
           }
         }
@@ -5605,37 +6083,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de instalaciones"
+            "state" : "translated",
+            "value" : "Problema en las instalaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème d’infrastructure"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pwoblèm Etablisman"
+            "state" : "translated",
+            "value" : "Pwoblèm Lokal"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de instalação"
+            "state" : "translated",
+            "value" : "Problema nas instalações"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề về cơ sở"
+            "state" : "translated",
+            "value" : "Vấn đề về cơ sở vật chất"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "设施问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "設施問題"
           }
         }
@@ -6685,7 +7169,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vacances"
+            "value" : "Fêtes"
           }
         },
         "ht" : {
@@ -6972,8 +7456,8 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "À l’arrivée"
+            "state" : "needs_review",
+            "value" : "Entrant"
           }
         },
         "ht" : {
@@ -7804,38 +8288,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Servicio modificado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service modifié"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Sèvis modifye"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Serviço modificado"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dịch vụ đã sửa đổi"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "修改服务"
+            "state" : "translated",
+            "value" : "调整后的服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "修改服務"
+            "state" : "translated",
+            "value" : "調整後的服務"
           }
         }
       }
@@ -7845,38 +8335,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Servicio modificado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service modifié"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sèvis modifye"
+            "state" : "translated",
+            "value" : "Sèvis Modifye"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Serviço modificado"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dịch vụ đã sửa đổi"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "修改服务"
+            "state" : "translated",
+            "value" : "调整后的服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "修改服務"
+            "state" : "translated",
+            "value" : "調整後的服務"
           }
         }
       }
@@ -8214,37 +8710,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Sin servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun service"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pa gen sèvis"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Nenhum serviço"
+            "state" : "translated",
+            "value" : "Sem serviço"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Không có dịch vụ"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "无服务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "無服務"
           }
         }
@@ -8638,8 +9140,8 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "En partance"
+            "state" : "needs_review",
+            "value" : "Sortant"
           }
         },
         "ht" : {
@@ -8726,38 +9228,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estacionamiento cerrado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parking fermé"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Espas pou fèmen"
+            "state" : "translated",
+            "value" : "Pakin fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estacionamento fechado"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Bãi đậu xe đóng cửa"
+            "state" : "translated",
+            "value" : "Bãi đậu xe đóng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停车场关闭"
+            "state" : "translated",
+            "value" : "停车已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停車場已關閉"
+            "state" : "translated",
+            "value" : "停車已關閉"
           }
         }
       }
@@ -8767,38 +9275,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cierre de estacionamiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermeture du parking"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Fèmti pakin"
+            "state" : "translated",
+            "value" : "Fèmti Pakin"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Fechamento de estacionamento"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Bãi đậu xe đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停车场关闭"
+            "state" : "translated",
+            "value" : "停车关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "關閉停車場"
+            "state" : "translated",
+            "value" : "停車關閉"
           }
         }
       }
@@ -8808,37 +9322,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Problema de estacionamiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de parking"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pwoblèm pakin"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de estacionamento"
+            "state" : "translated",
+            "value" : "Problema no estacionamento"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề đỗ xe"
+            "state" : "translated",
+            "value" : "Vấn đề về đậu xe"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "停车问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "停車問題"
           }
         }
@@ -8849,37 +9369,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Problema de estacionamiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de parking"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pwoblèm pakin"
+            "state" : "translated",
+            "value" : "Pwoblèm Pakin"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de estacionamento"
+            "state" : "translated",
+            "value" : "Problema no estacionamento"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề đỗ xe"
+            "state" : "translated",
+            "value" : "Vấn đề về đậu xe"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "停车问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "停車問題"
           }
         }
@@ -9124,37 +9650,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cambio de política"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changement de politique"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Chanjman politik"
+            "state" : "translated",
+            "value" : "Chanjman règleman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mudança de política"
+            "state" : "translated",
+            "value" : "Alteração de política"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thay đổi chính sách"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "政策变更"
+            "state" : "translated",
+            "value" : "政策变化"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "政策變化"
           }
         }
@@ -9165,37 +9697,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cambio de política"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changement de politique"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Chanjman politik"
+            "state" : "translated",
+            "value" : "Chanjman Règleman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mudança de política"
+            "state" : "translated",
+            "value" : "Alteração de política"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thay đổi chính sách"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "政策变更"
+            "state" : "translated",
+            "value" : "政策变化"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "政策變化"
           }
         }
@@ -9909,38 +10447,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cambio de horario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changement d’horaire"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Chanjman orè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mudança de cronograma"
+            "state" : "translated",
+            "value" : "Alteração de horário"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thay đổi lịch trình"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "航班时刻表变更"
+            "state" : "translated",
+            "value" : "时刻表变更"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "行程變更"
+            "state" : "translated",
+            "value" : "時刻表變更"
           }
         }
       }
@@ -9950,38 +10494,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cambio de horario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changement d’horaire"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Chanjman Orè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mudança de cronograma"
+            "state" : "translated",
+            "value" : "Alteração de horário"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thay đổi lịch trình"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "航班时刻表变更"
+            "state" : "translated",
+            "value" : "时刻表变更"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "行程變更"
+            "state" : "translated",
+            "value" : "時刻表變更"
           }
         }
       }
@@ -10491,6 +11041,12 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "sirve %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sert %@"
           }
         },
         "ht" : {
@@ -11141,37 +11697,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Autobús lanzadera"
+            "state" : "translated",
+            "value" : "Autobús de enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navette"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Otobis navèt"
+            "state" : "translated",
+            "value" : "Otobis Navèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ônibus de transporte"
+            "state" : "translated",
+            "value" : "Ônibus vai-e-vem"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Xe buýt đưa đón"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "穿梭巴士"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "穿梭巴士"
           }
         }
@@ -11511,38 +12073,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ruta de la nieve"
+            "state" : "translated",
+            "value" : "Ruta con nieve"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route enneigée"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Wout nèj"
+            "state" : "translated",
+            "value" : "Wout denèjman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Rota da Neve"
+            "state" : "translated",
+            "value" : "Rota de neve"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tuyến đường tuyết"
+            "state" : "translated",
+            "value" : "Tuyến đường có tuyết"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "雪路"
+            "state" : "translated",
+            "value" : "雪地线路"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "雪路"
+            "state" : "translated",
+            "value" : "雪地線路"
           }
         }
       }
@@ -11834,38 +12402,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estación cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Station fermée"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estasyon fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estação fechada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Trạm đóng cửa"
+            "state" : "translated",
+            "value" : "Nhà ga/trạm dừng đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "车站关闭"
+            "state" : "translated",
+            "value" : "车站已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "車站關閉"
+            "state" : "translated",
+            "value" : "車站已關閉"
           }
         }
       }
@@ -11875,38 +12449,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estación cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Station fermée"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Estasyon fèmen"
+            "state" : "translated",
+            "value" : "Estasyon Fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estação fechada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Trạm đóng cửa"
+            "state" : "translated",
+            "value" : "Nhà ga/trạm dừng đóng cửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "车站关闭"
+            "state" : "translated",
+            "value" : "车站已关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "車站關閉"
+            "state" : "translated",
+            "value" : "車站已關閉"
           }
         }
       }
@@ -11963,37 +12543,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema con la estación"
+            "state" : "translated",
+            "value" : "Problema en la estación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de station"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pwoblèm estasyon"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema da estação"
+            "state" : "translated",
+            "value" : "Problema na estação"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề về trạm"
+            "state" : "translated",
+            "value" : "Vấn đề về nhà ga/trạm dừng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "车站问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "車站問題"
           }
         }
@@ -12004,38 +12590,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema con la estación"
+            "state" : "translated",
+            "value" : "Problema en la estación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problème de station"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pwoblèm Estasyon"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema da estação"
+            "state" : "translated",
+            "value" : "Problema na estação"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề về trạm"
+            "state" : "translated",
+            "value" : "Vấn đề về nhà ga/trạm dừng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "车站问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "站內問題"
+            "state" : "translated",
+            "value" : "車站問題"
           }
         }
       }
@@ -12233,38 +12825,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Detener movido"
+            "state" : "translated",
+            "value" : "Parada modificada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt reporté"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sispann deplase"
+            "state" : "translated",
+            "value" : "Arè Fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Parar movido"
+            "state" : "translated",
+            "value" : "Parada movimentada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dừng di chuyển"
+            "state" : "translated",
+            "value" : "Điểm dừng đã di chuyển"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止移动"
+            "state" : "translated",
+            "value" : "站点已移动"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止移動"
+            "state" : "translated",
+            "value" : "網站已移動"
           }
         }
       }
@@ -12274,38 +12872,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Detener movido"
+            "state" : "translated",
+            "value" : "Parada modificada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt reporté"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sispann deplase"
+            "state" : "translated",
+            "value" : "Arè Fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Parar movido"
+            "state" : "translated",
+            "value" : "Parada movimentada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dừng di chuyển"
+            "state" : "translated",
+            "value" : "Điểm dừng đã di chuyển"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止移动"
+            "state" : "translated",
+            "value" : "站点已移动"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止移動"
+            "state" : "translated",
+            "value" : "網站已移動"
           }
         }
       }
@@ -12315,38 +12919,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Deja de palear"
+            "state" : "translated",
+            "value" : "Trabajo de paleo en la parada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déneigement de l’arrêt"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sispann pèl"
+            "state" : "translated",
+            "value" : "Arè denèjman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pare de cavar"
+            "state" : "translated",
+            "value" : "Remoção de neve na parada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dừng lại việc xúc tuyết"
+            "state" : "translated",
+            "value" : "Dừng việc xúc tuyết"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止铲雪"
+            "state" : "translated",
+            "value" : "站点铲雪中"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止鏟雪"
+            "state" : "translated",
+            "value" : "網站鏟雪中"
           }
         }
       }
@@ -12356,38 +12966,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Deja de palear"
+            "state" : "translated",
+            "value" : "Trabajo de paleo en la parada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déneigement de l’arrêt"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sispann Pèl"
+            "state" : "translated",
+            "value" : "Arè Denèjman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pare de cavar"
+            "state" : "translated",
+            "value" : "Remoção de neve na parada"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dừng lại việc xúc tuyết"
+            "state" : "translated",
+            "value" : "Dừng việc xúc tuyết"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止铲雪"
+            "state" : "translated",
+            "value" : "站点铲雪中"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "停止鏟雪"
+            "state" : "translated",
+            "value" : "網站鏟雪中"
           }
         }
       }
@@ -12587,38 +13203,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Resumen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résumé"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Rezime"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Resumo"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Bản tóm tắt"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "概括"
+            "state" : "translated",
+            "value" : "概要"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "概括"
+            "state" : "translated",
+            "value" : "概觀"
           }
         }
       }
@@ -13148,16 +13770,22 @@
             "value" : "Pista %@"
           }
         },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Voie %@"
+          }
+        },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Track %@"
+            "value" : "Suiv %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Faixa %@"
+            "value" : "Trilho %@"
           }
         },
         "vi" : {
@@ -13169,13 +13797,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "轨道 %@"
+            "value" : "追踪 %@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "軌道 %@"
+            "value" : "追蹤 %@"
           }
         }
       }
@@ -13185,38 +13813,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cambio de pista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changement de voie"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Track chanjman"
+            "state" : "translated",
+            "value" : "Suiv chanjman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mudança de faixa"
+            "state" : "translated",
+            "value" : "Alteração de trilho"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Theo dõi sự thay đổi"
+            "state" : "translated",
+            "value" : "Thay đổi đường ray"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "跟踪变更"
+            "state" : "translated",
+            "value" : "轨道变更"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "追蹤變更"
+            "state" : "translated",
+            "value" : "軌道變更"
           }
         }
       }
@@ -13226,38 +13860,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cambio de pista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changement de voie"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Track Chanjman"
+            "state" : "translated",
+            "value" : "Suiv Chanjman"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mudança de faixa"
+            "state" : "translated",
+            "value" : "Alteração de trilho"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Theo dõi sự thay đổi"
+            "state" : "translated",
+            "value" : "Thay đổi đường ray"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "追踪修订"
+            "state" : "translated",
+            "value" : "轨道变更"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "追蹤修訂"
+            "state" : "translated",
+            "value" : "軌道變更"
           }
         }
       }
@@ -14453,37 +15093,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Ahora mostramos **llegadas** y **ubicaciones detalladas de los vehículos** a la vez. ¡Cuéntanos qué te parece!"
+            "value" : "Ahora mostramos las **llegadas** y las **ubicaciones detalladas de los vehículos** al mismo tiempo. Díganos lo que piensa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nous affichons maintenant les **arrivées** et les **emplacements détaillés des véhicules** en un seul coup d’œil. Dites-nous ce que vous en pensez!"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Kounye a nou montre **arive** ak **kote machin yo** detaye tout an menm tan. Fè nou konnen sa ou panse!"
+            "value" : "Kounye a nou montre **arive** ak **pozisyo detaye machin** yo yon sèl kou. Di nou sa w panse!"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Agora mostramos **chegadas** e **localizações de veículos** detalhadas de uma só vez. Diga-nos o que você acha!"
+            "value" : "Agora mostramos as **chegadas** e **localizações detalhadas dos veículos** todas juntas. Conte-nos sua opinião!"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Bây giờ chúng tôi hiển thị **lượt đến** và **vị trí xe** chi tiết cùng một lúc. Hãy cho chúng tôi biết suy nghĩ của bạn!"
+            "value" : "Giờ đây chúng tôi hiển thị **thông tin về giờ đến** và **vị trí chi tiết của phương tiện** cùng một lúc. Hãy cho chúng tôi biết suy nghĩ của bạn!"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "我们现在同时显示**到达**和详细的**车辆位置**。让我们知道您的想法！"
+            "value" : "我们现在同时显示**车辆的到站时间**和详细的**车辆位置**信息。欢迎告诉我们您的想法！"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "我們現在同時顯示**到達**和詳細的**車輛位置**。讓我們知道您的想法！"
+            "value" : "我們現在同時顯示車**輛的到站時間**和詳細**的車輛位置**資訊。歡迎告訴我們您的想法！"
           }
         }
       }
