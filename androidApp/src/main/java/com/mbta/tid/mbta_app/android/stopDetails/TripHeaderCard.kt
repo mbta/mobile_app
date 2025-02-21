@@ -80,16 +80,13 @@ fun TripHeaderCard(
 
     val modifier =
         if (clickable) {
-            modifier.clickable(
-                onClickLabel = stringResource(R.string.display_more_information)
-            ) {
+            modifier.clickable(onClickLabel = stringResource(R.string.display_more_information)) {
                 onTap?.let { it() }
             }
         } else {
             // clickable(false) is announced to TalkBack as "disabled", which we don't want
             modifier
         }
-
 
     CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
         Box(
@@ -101,7 +98,7 @@ fun TripHeaderCard(
                     Row(
                         Modifier.padding(start = 30.dp, end = 16.dp)
                             .heightIn(min = 56.dp)
-                            .semantics(mergeDescendants = true) {
+                            .semantics {
                                 heading()
                                 liveRegion = LiveRegionMode.Polite
                             },
