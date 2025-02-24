@@ -40,6 +40,7 @@ fun BottomNavBar(
                 LocalDensity.current.density,
                 // Override the system font scale so that the tab size doesn't scale up at larger
                 // display sizes
+                // https://stackoverflow.com/a/74290870
                 1f
             )
     ) {
