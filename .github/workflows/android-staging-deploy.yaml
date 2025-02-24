@@ -105,22 +105,9 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           for: android-build
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
-      - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            mobile-app-android-upload-key-passphrase
-      - name: Load code signing key
-        run: |
-          cd androidApp
-          aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
