@@ -243,14 +243,17 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 }
             }
 
-            val byLine = patternsByRouteAndStop.entries.groupBy { it.key.lineId }
+            val byLine =
+                patternsByRouteAndStop.entries.groupBy { (route, _) ->
+                    route.lineId?.takeUnless { route.isShuttle }
+                }
 
             val touchedLines = mutableSetOf<Line>()
 
             patternsByRouteAndStop
                 .mapNotNull { (route, patternsByStop) ->
                     val line = global.lines[route.lineId]
-                    val isGrouped = line?.isGrouped == true
+                    val isGrouped = line?.isGrouped == true && !route.isShuttle
                     val lineRoutes = byLine[line?.id]?.map { (route, _) -> route } ?: emptyList()
 
                     if (isGrouped && touchedLines.contains(line)) {

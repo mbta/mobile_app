@@ -511,6 +511,64 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `Green Line shuttles are not grouped together`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop = objects.stop()
+
+        val line =
+            objects.line {
+                id = "line-Green"
+                sortOrder = 0
+            }
+
+        val railRoute =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Government Center")
+            }
+        val shuttleRoute =
+            objects.route {
+                id = "Shuttle-$id"
+                lineId = line.id
+            }
+
+        val railPattern = objects.routePattern(railRoute) {
+            representativeTrip { headsign = "Boston College" }
+        }
+        val shuttlePattern = objects.routePattern(shuttleRoute) {
+            representativeTrip { headsign = "Boston College" }
+        }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop = mapOf(stop.id to listOf(railPattern.id, shuttlePattern.id)),
+            )
+        val nearby = NearbyResponse(objects)
+
+        val westDir = Direction("West", "Boston College", 0)
+        val eastDir = Direction("East", "Government Center", 1)
+
+        assertEquals(
+            NearbyStaticData.build {
+                line(line, listOf(railRoute)) {
+                    stop(stop, routes = listOf(railRoute), directions = listOf(westDir, eastDir)) {
+                        headsign(railRoute, "Boston College", listOf(railPattern), direction = westDir)
+                    }
+                }
+                route(shuttleRoute) {
+                    stop(stop) {
+                        headsign("Boston College", listOf(shuttlePattern))
+                    }
+                }
+            },
+            NearbyStaticData(global, nearby)
+        )
+    }
+
+    @Test
     fun `Green Line routes are grouped together without Government Center direction`() {
         val objects = ObjectCollectionBuilder()
 
