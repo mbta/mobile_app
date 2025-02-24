@@ -212,6 +212,7 @@
     <string name="snow">降雪</string>
     <string name="snow_route">雪地线路</string>
     <string name="snow_route_sentence_case">路线积雪</string>
+    <string name="software_licenses">软件许可</string>
     <string name="southbound">南行</string>
     <string name="special_event">特殊事件</string>
     <string name="speed_restriction">速度限制</string>
