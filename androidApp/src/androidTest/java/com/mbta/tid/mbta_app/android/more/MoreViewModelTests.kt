@@ -32,7 +32,9 @@ class MoreViewModelTests {
             )
 
         var vm: MoreViewModel? = null
-        composeTestRule.setContent { vm = MoreViewModel(LocalContext.current, settingsRepository) }
+        composeTestRule.setContent {
+            vm = MoreViewModel(LocalContext.current, {}, settingsRepository)
+        }
 
         composeTestRule.awaitIdle()
         vm!!.toggleSetting(Settings.HideMaps)
@@ -54,7 +56,7 @@ class MoreViewModelTests {
             config.setLocale(Locale.forLanguageTag("es-MX"))
             val subContext = context.createConfigurationContext(config)
 
-            vm = MoreViewModel(subContext, MockSettingsRepository())
+            vm = MoreViewModel(subContext, {}, MockSettingsRepository())
         }
 
         composeTestRule.waitUntil {
