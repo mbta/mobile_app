@@ -16,21 +16,20 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
 @Composable
-fun LinkIcon(isKey: Boolean) {
-    Icon(
-        painterResource(R.drawable.arrow_up_right),
-        contentDescription = stringResource(id = R.string.more_link_external),
-        modifier = Modifier.size(12.dp),
-        tint =
-            if (isKey) {
-                colorResource(R.color.fill3)
-            } else colorResource(R.color.deemphasized),
-    )
-}
-
-@Composable
 fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = false) {
     val context = LocalContext.current
+    @Composable
+    fun LinkIcon() {
+        Icon(
+            painterResource(R.drawable.arrow_up_right),
+            contentDescription = stringResource(id = R.string.more_link_external),
+            modifier = Modifier.size(12.dp),
+            tint =
+                if (isKey) {
+                    colorResource(R.color.fill3)
+                } else colorResource(R.color.deemphasized),
+        )
+    }
 
     MoreButton(
         label,
@@ -44,18 +43,30 @@ fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = 
             }
         },
         note,
-        { LinkIcon(isKey) },
+        { LinkIcon() },
         isKey,
     )
 }
 
 @Composable
 fun MoreLink(label: String, callback: () -> Unit, note: String? = null, isKey: Boolean = false) {
+    @Composable
+    fun LinkIcon() {
+        Icon(
+            painterResource(R.drawable.fa_chevron_right),
+            contentDescription = stringResource(id = R.string.more_link_external),
+            modifier = Modifier.size(12.dp),
+            tint =
+                if (isKey) {
+                    colorResource(R.color.fill3)
+                } else colorResource(R.color.deemphasized),
+        )
+    }
     MoreButton(
         label,
         callback,
         note,
-        { LinkIcon(isKey) },
+        { LinkIcon() },
         isKey,
     )
 }
