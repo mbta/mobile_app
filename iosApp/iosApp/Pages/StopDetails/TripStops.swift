@@ -15,7 +15,7 @@ struct TripStops: View {
     let stopSequence: Int?
     let headerSpec: TripHeaderSpec?
     let now: Date
-    let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
+    let onTapLink: (TripDetailsStopList.Entry) -> Void
     let routeAccents: TripRouteAccents
 
     let splitStops: TripDetailsStopList.TargetSplit?
@@ -35,7 +35,7 @@ struct TripStops: View {
         stopSequence: Int?,
         headerSpec: TripHeaderSpec?,
         now: Date,
-        onTapLink: @escaping (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void,
+        onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         routeAccents: TripRouteAccents,
         global: GlobalResponse?
     ) {
@@ -51,8 +51,7 @@ struct TripStops: View {
             stops.splitForTarget(
                 targetStopId: targetId,
                 targetStopSequence: Int32(stopSequence),
-                globalData: global,
-                combinedStopDetails: true
+                globalData: global
             )
         } else { nil }
     }

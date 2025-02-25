@@ -332,54 +332,11 @@ struct ContentView: View {
                     // Set id per stop so that transitioning from one stop to another is handled by removing
                     // the existing stop view & creating a new one
                     .id(stopId)
+                    .transition(transition)
+                    .animation(.easeOut(duration: 0.5), value: stopId)
                     .onChange(of: stopId) { nextStopId in stopDetailsVM.handleStopChange(nextStopId) }
                     .onAppear { stopDetailsVM.handleStopAppear(stopId) }
                     .onDisappear { stopDetailsVM.leaveStopPredictions() }
-                    .transition(transition)
-
-                case let .legacyStopDetails(stop, filter):
-                    // Wrapping in a TabView helps the page to animate in as a single unit
-                    // Otherwise only the header animates
-                    TabView {
-                        LegacyStopDetailsPage(
-                            viewportProvider: viewportProvider,
-                            stop: stop, filter: filter,
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM
-                        )
-                        .toolbar(.hidden, for: .tabBar)
-                        .onAppear {
-                            let filtered = filter != nil
-                            analytics.track(
-                                screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                            )
-                        }
-                    }
-                    // Set id per stop so that transitioning from one stop to another is handled by removing
-                    // the existing stop view & creating a new one
-                    .id(stop.id)
-                    .transition(transition)
-
-                case let .tripDetails(
-                    tripId: tripId,
-                    vehicleId: vehicleId,
-                    target: target,
-                    routeId: routeId,
-                    directionId: _
-                ):
-                    TabView {
-                        TripDetailsPage(
-                            tripId: tripId,
-                            vehicleId: vehicleId,
-                            routeId: routeId,
-                            target: target,
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM
-                        ).toolbar(.hidden, for: .tabBar)
-                            .onAppear { analytics.track(screen: .tripDetails) }
-                    }
-                    .transition(transition)
 
                 case .nearby:
                     nearbySheetContents
@@ -389,6 +346,7 @@ struct ContentView: View {
                 default: EmptyView()
                 }
             }
+            .background { Color.fill2.ignoresSafeArea(edges: .all) }
             .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
         }
     }

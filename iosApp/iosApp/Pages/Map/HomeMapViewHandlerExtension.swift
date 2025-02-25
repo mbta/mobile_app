@@ -57,11 +57,6 @@ extension HomeMapView {
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
         if let filter = navigationStack.lastStopDetailsFilter {
             joinVehiclesChannel(routeId: filter.routeId, directionId: filter.directionId)
-        } else if case let .tripDetails(
-            tripId: _, vehicleId: _, target: _,
-            routeId: routeId, directionId: directionId
-        ) = navigationStack.last {
-            joinVehiclesChannel(routeId: routeId, directionId: directionId)
         } else {
             leaveVehiclesChannel()
             vehiclesData = []
@@ -133,15 +128,6 @@ extension HomeMapView {
                 directionId: stopFilter.directionId
             )
         }
-        if case let .legacyStopDetails(_, filter) = entry, let filter {
-            joinVehiclesChannel(routeId: filter.routeId,
-                                directionId: filter.directionId)
-        }
-        if case let .tripDetails(tripId: _, vehicleId: _, target: _, routeId: routeId,
-                                 directionId: directionId) = entry {
-            joinVehiclesChannel(routeId: routeId,
-                                directionId: directionId)
-        }
     }
 
     func joinVehiclesChannel(routeId: String, directionId: Int32) {
@@ -163,7 +149,7 @@ extension HomeMapView {
         if oldNavEntry == nil {
             viewportProvider.saveNearbyTransitViewport()
         }
-        if case let .stopDetails(stopId, stopFilter, tripFilter) = nextNavEntry {
+        if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
             if oldNavEntry?.stopId() != stopId {
                 if let stop = mapVM.globalData?.stops[stopId] {
                     handleStopDetailsChange(stop, stopFilter)
@@ -172,60 +158,10 @@ extension HomeMapView {
 
             handleRouteFilterChange(stopFilter)
         }
-        if case let .legacyStopDetails(stop, filter) = nextNavEntry {
-            if oldNavEntry?.stop()?.id == stop.id {
-                handleRouteFilterChange(filter)
-            } else {
-                handleStopDetailsChange(stop, filter)
-            }
-        }
 
-        if case let .tripDetails(tripId: tripId,
-                                 vehicleId: _,
-                                 target: target,
-                                 routeId: _,
-                                 directionId: _) = nextNavEntry {
-            handleTripDetailsChange(tripId, target?.stopId)
-        }
         if nextNavEntry == nil {
             clearSelectedStop()
             viewportProvider.restoreNearbyTransitViewport()
-        }
-    }
-
-    func handleTripDetailsChange(_ tripId: String, _ targetStopId: String?) {
-        Task {
-            let dataErrorKey = "HomeMapView.handleTripDetailsChange"
-            do {
-                let response: ApiResult<TripShape> = try await RepositoryDI().trip.getTripShape(tripId: tripId)
-                let getTripShapeErrorKey = "\(dataErrorKey)/getTripShape"
-                var shapesWithStops: [ShapeWithStops] = []
-                switch onEnum(of: response) {
-                case let .ok(okResponse):
-                    errorBannerRepository.clearDataError(key: getTripShapeErrorKey)
-                    shapesWithStops = [okResponse.data.shapeWithStops]
-                case .error:
-                    errorBannerRepository.setDataError(key: getTripShapeErrorKey) {
-                        handleTripDetailsChange(tripId, targetStopId)
-                    }
-                }
-                mapVM.routeSourceData = RouteFeaturesBuilder.shared.shapesWithStopsToMapFriendly(
-                    shapesWithStops: shapesWithStops,
-                    stopsById: mapVM.globalData?.stops
-                )
-
-                let filteredStopIds = shapesWithStops.flatMap(\.stopIds).map { stopId in
-                    mapVM.globalData?.stops[stopId]?.resolveParent(stops: mapVM.globalData?.stops ?? [:]).id ?? stopId
-                }
-
-                mapVM.stopSourceData = .init(filteredStopIds: filteredStopIds, selectedStopId: targetStopId)
-
-                errorBannerRepository.clearDataError(key: dataErrorKey)
-            } catch {
-                errorBannerRepository.setDataError(key: dataErrorKey) {
-                    handleTripDetailsChange(tripId, targetStopId)
-                }
-            }
         }
     }
 
@@ -271,17 +207,13 @@ extension HomeMapView {
         }
         analytics.tappedOnStop(stopId: stop.id)
         nearbyVM.navigationStack.removeAll()
-        nearbyVM.pushNavEntry(.legacyStopDetails(stop, nil))
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
         return true
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
         guard let tripId = vehicle.tripId else { return }
-
-        if case .tripDetails = nearbyVM.navigationStack.last {
-            // If a trip details page is already on the stack, replace it with this one
-            _ = nearbyVM.navigationStack.popLast()
-        }
+        guard case .stopDetails = nearbyVM.navigationStack.lastSafe() else { return }
 
         let departures = nearbyVM.departures
         let patterns = departures?.routes.first(where: { patterns in
@@ -290,44 +222,28 @@ extension HomeMapView {
         let trip = patterns?.allUpcomingTrips().first(where: { upcoming in
             upcoming.trip.id == tripId
         })
-        let stopSequence = trip?.stopSequence?.intValue
+        let stopSequence = trip?.stopSequence
+        let routeId = trip?.trip.routeId ?? vehicle.routeId ?? patterns?.routeIdentifier
 
-        guard let routeId = trip?.trip.routeId ?? vehicle.routeId else {
-            // TODO: figure out something to do if this is nil
-            return
-        }
+        if let routeId { analytics.tappedVehicle(routeId: routeId) }
 
-        analytics.tappedVehicle(routeId: routeId)
-
-        // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
-        // page, but we won't be able to tell what the target stop was.
-        nearbyVM.pushNavEntry(.tripDetails(
+        nearbyVM.navigationStack.lastTripDetailsFilter = .init(
             tripId: tripId,
             vehicleId: vehicle.id,
-            target: patterns != nil ? .init(
-                stopId: patterns!.stop.id,
-                stopSequence: stopSequence
-            ) : nil,
-            routeId: routeId,
-            directionId: vehicle.directionId
-        ), mapSelection: true)
+            stopSequence: stopSequence,
+            selectionLock: true
+        )
     }
 
     func handleSelectedVehicleChange(_ previousVehicle: Vehicle?, _ nextVehicle: Vehicle?) {
         guard let globalData = mapVM.globalData else { return }
+        guard let stop = nearbyVM.getTargetStop(global: globalData) else { return }
         guard let nextVehicle else {
-            viewportProvider.updateFollowedVehicle(vehicle: nil)
+            viewportProvider.animateTo(coordinates: stop.coordinate)
             return
         }
-
         if previousVehicle == nil || previousVehicle?.id != nextVehicle.id {
-            if nearbyVM.combinedStopAndTrip, let stop = nearbyVM.getTargetStop(global: globalData) {
-                viewportProvider.vehicleOverview(vehicle: nextVehicle, stop: stop)
-            } else {
-                viewportProvider.followVehicle(vehicle: nextVehicle, target: nearbyVM.getTargetStop(global: globalData))
-            }
-        } else if !nearbyVM.combinedStopAndTrip {
-            viewportProvider.updateFollowedVehicle(vehicle: nextVehicle)
+            viewportProvider.vehicleOverview(vehicle: nextVehicle, stop: stop)
         }
     }
 }

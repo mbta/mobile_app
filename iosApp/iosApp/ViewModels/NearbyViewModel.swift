@@ -25,8 +25,6 @@ class NearbyViewModel: ObservableObject {
             let navEntry = navigationStack.lastSafe()
             do {
                 switch navEntry {
-                case let .legacyStopDetails(stop, _):
-                    try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stop.id))
                 case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _):
                     try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stopId))
                 default: break
@@ -38,7 +36,6 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    var combinedStopAndTrip: Bool { true }
     @Published var showDebugMessages: Bool = false
     @Published var showElevatorAccessibility: Bool = false
 
@@ -108,12 +105,8 @@ class NearbyViewModel: ObservableObject {
      typically `pushNavEntry` should be used instead.
      */
     func appendNavEntry(_ entry: SheetNavigationStackEntry) {
-        if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
-            appendNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
-        } else {
-            if entry != navigationStack.lastSafe() {
-                navigationStack.append(entry)
-            }
+        if entry != navigationStack.lastSafe() {
+            navigationStack.append(entry)
         }
     }
 
@@ -125,39 +118,18 @@ class NearbyViewModel: ObservableObject {
      a `stopDetails` entry for a new stop on top of a `stopDetails` entry for a different stop, the previous entry
      would be popped to ensure there is only one `stopDetails` entry in the stack.
      */
-    func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection: Bool = false) {
+    func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection _: Bool = false) {
         let currentEntry = navigationStack.lastSafe()
-        if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
-            pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
-        } else if case let .tripDetails(tripId, vehicleId, target, _, _) = entry,
-                  combinedStopAndTrip,
-                  let stopId = navigationStack.lastStopId,
-                  let stopFilter = navigationStack.lastStopDetailsFilter {
-            let stopSequence: KotlinInt? = if let sequence = target?.stopSequence { KotlinInt(int: Int32(sequence)) }
-            else { nil }
-            let tripFilter: TripDetailsFilter = .init(
-                tripId: tripId,
-                vehicleId: vehicleId,
-                stopSequence: stopSequence,
-                selectionLock: mapSelection
-            )
-            pushNavEntry(.stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter))
-        } else if case let .legacyStopDetails(targetStop, _) = entry,
-                  case let .legacyStopDetails(lastStop, _) = navigationStack.last,
-                  targetStop == lastStop {
-            _ = navigationStack.popLast()
-            navigationStack.append(entry)
-        } else if
-            case let .stopDetails(
-                stopId: targetStop,
-                stopFilter: newFilter,
-                tripFilter: _
-            ) = entry,
+        if case let .stopDetails(
+            stopId: targetStop,
+            stopFilter: newFilter,
+            tripFilter: _
+        ) = entry,
             case let .stopDetails(
                 stopId: lastStop,
                 stopFilter: lastFilter,
                 tripFilter: _
-            ) = navigationStack.last,
+            ) = currentEntry,
             targetStop == lastStop {
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
             // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
@@ -237,16 +209,9 @@ class NearbyViewModel: ObservableObject {
 
     func getTargetStop(global: GlobalResponse) -> Stop? {
         switch navigationStack.last {
-        case .nearby:
-            nil
-        case let .stopDetails(stopId: stopId, _, _):
-            global.stops[stopId]
-        case let .legacyStopDetails(stop, _):
-            stop
-        case let .tripDetails(tripId: _, vehicleId: _, target: target, routeId: _, directionId: _):
-            target != nil ? global.stops[target!.stopId] : nil
-        default:
-            nil
+        case .nearby: nil
+        case let .stopDetails(stopId: stopId, _, _): global.stops[stopId]
+        default: nil
         }
     }
 

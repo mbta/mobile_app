@@ -199,25 +199,14 @@ struct TripDetailsView: View {
         }
     }
 
-    func onTapStop(
-        entry: SheetNavigationStackEntry,
-        stop: TripDetailsStopList.Entry,
-        connectingRouteId: String?
-    ) {
-        // resolve parent stop before following link
-        let realEntry = switch entry {
-        case let .legacyStopDetails(stop, filter): SheetNavigationStackEntry.legacyStopDetails(
-                stop.resolveParent(stops: stopDetailsVM.global?.stops ?? [:]),
-                filter
-            )
-        default: entry
-        }
-        nearbyVM.appendNavEntry(realEntry)
+    func onTapStop(stop: TripDetailsStopList.Entry) {
+        let parentStop = stop.stop.resolveParent(stops: stopDetailsVM.global?.stops ?? [:])
+        nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(
             routeId: stopDetailsVM.tripData?.trip.routeId ?? "",
             stopId: stop.stop.id,
             tripId: tripFilter?.tripId ?? "",
-            connectingRouteId: connectingRouteId
+            connectingRouteId: nil
         )
     }
 }

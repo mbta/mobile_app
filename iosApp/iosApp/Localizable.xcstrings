@@ -358,6 +358,7 @@
     },
     "%@ %@ %@" : {
       "comment" : "VoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -464,6 +465,7 @@
     },
     "%@ %@ to %@" : {
       "comment" : "VoiceOver text for the trip details page header,\ndescribes the route and destination of the vehicle,\nex 'Red Line train to Alewife'",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4333,6 +4335,7 @@
     },
     "Combined Stop & Trip Details" : {
       "comment" : "A setting on the More page to display a new stop details page layout (only visible for developers)",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -7779,6 +7782,7 @@
     },
     "List remaining stops" : {
       "comment" : "VoiceOver hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -11509,7 +11513,7 @@
       }
     },
     "Service suspended" : {
-      "comment" : "Possible alert effect\nSuspension alert VoiceOver text",
+      "comment" : "Possible alert effect\n   Suspension alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13814,6 +13818,7 @@
       }
     },
     "This vehicle is completing another trip" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13908,6 +13913,7 @@
     },
     "to %@" : {
       "comment" : "Label for the destination of a vehicle.\nFor example \"[Red Line] to Alewife\"",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
