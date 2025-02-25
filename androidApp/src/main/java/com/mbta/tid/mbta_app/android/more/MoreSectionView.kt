@@ -11,11 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -39,9 +42,14 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
         Column {
             if (name != null) {
                 Column(modifier = Modifier.padding(2.dp)) {
-                    Text(name, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        name,
+                        style = Typography.subheadlineSemibold,
+                        modifier = Modifier.semantics { heading() }
+                    )
+
                     if (note != null) {
-                        Text(note, style = MaterialTheme.typography.bodySmall)
+                        Text(note, style = Typography.footnote)
                     }
                 }
             }

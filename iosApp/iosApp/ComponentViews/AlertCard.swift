@@ -37,18 +37,11 @@ struct AlertCard: View {
     }
 
     var headerString: String {
-        let effectName = FormattedAlert(alert: alert)?.effect ?? alert.effect.name
+        let formattedAlert = FormattedAlert(alert: alert)
         return switch spec {
-        case .downstream: String(format: NSLocalizedString(
-                "%@ ahead",
-                comment: """
-                Label for an alert that exists on a future stop along the selected route,
-                the interpolated value can be any alert effect,
-                ex. "[Detour] ahead", "[Shuttle buses] ahead"
-                """
-            ), effectName)
-        case .elevator: alert.header ?? effectName
-        default: effectName
+        case .downstream: formattedAlert.downstreamLabel
+        case .elevator: alert.header ?? formattedAlert.effect
+        default: formattedAlert.effect
         }
     }
 

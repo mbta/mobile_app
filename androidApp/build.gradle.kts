@@ -35,7 +35,7 @@ android {
         targetSdk = 34
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "0.3.0"
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -118,6 +118,8 @@ task<ConvertIosLocalizationTask>("convertIosLocalization") {
 }
 
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle
+// set a temporary token so that the map can still load with cached tiles if for some reason
+// dynamically fetching a real token fails.
 task("mapboxTempToken") {
     val tokenFile = File("${projectDir}/src/main/res/values/secrets.xml")
     if (!tokenFile.exists()) {

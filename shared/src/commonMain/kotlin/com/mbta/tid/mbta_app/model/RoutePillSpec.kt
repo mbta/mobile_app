@@ -7,7 +7,8 @@ data class RoutePillSpec(
     val routeColor: String,
     val content: Content,
     val size: Size,
-    val shape: Shape
+    val shape: Shape,
+    val contentDescription: String? = null
 ) {
     enum class Type {
         Fixed,
@@ -46,7 +47,8 @@ data class RoutePillSpec(
         route: Route?,
         line: Line?,
         type: Type,
-        context: Context = Context.Default
+        context: Context = Context.Default,
+        contentDescription: String? = null,
     ) : this(
         route?.textColor ?: line?.textColor ?: "FFFFFF",
         route?.color ?: line?.color ?: "000000",
@@ -72,7 +74,8 @@ data class RoutePillSpec(
         when {
             route?.type == RouteType.BUS && !route.isShuttle -> Shape.Rectangle
             else -> Shape.Capsule
-        }
+        },
+        contentDescription = contentDescription,
     )
 
     companion object {

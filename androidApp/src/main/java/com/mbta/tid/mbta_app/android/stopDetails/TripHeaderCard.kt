@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -44,10 +46,12 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.component.TightWrapText
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -74,58 +78,71 @@ fun TripHeaderCard(
     onTap: (() -> Unit)? = null,
 ) {
     val clickable = onTap != null
-    Box(
-        Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
-        contentAlignment = Alignment.BottomStart
-    ) {
-        Row(modifier.haloContainer(2.dp).clickable(clickable) { onTap?.let { it() } }) {
-            Box(Modifier.height(IntrinsicSize.Min)) {
-                Row(
-                    Modifier.padding(start = 30.dp, end = 16.dp).heightIn(min = 56.dp).semantics(
-                        mergeDescendants = true
+
+    val modifier =
+        if (clickable) {
+            modifier.clickable(onClickLabel = stringResource(R.string.display_more_information)) {
+                onTap?.let { it() }
+            }
+        } else {
+            // clickable(false) is announced to TalkBack as "disabled", which we don't want
+            modifier
+        }
+
+    CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
+        Box(
+            Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Row(modifier.haloContainer(2.dp).semantics(mergeDescendants = true) {}) {
+                Box(Modifier.height(IntrinsicSize.Min)) {
+                    Row(
+                        Modifier.padding(start = 30.dp, end = 16.dp)
+                            .heightIn(min = 56.dp)
+                            .semantics {
+                                heading()
+                                liveRegion = LiveRegionMode.Polite
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        heading()
-                        liveRegion = LiveRegionMode.Polite
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (spec != null) {
-                        TripMarker(spec, targetId, routeAccents)
-                        Description(
-                            spec,
-                            tripId,
-                            targetId,
-                            routeAccents,
-                            clickable,
-                            Modifier.weight(1f)
-                        )
-                        TripIndicator(spec, routeAccents, now, clickable)
+                        if (spec != null) {
+                            TripMarker(spec, targetId, routeAccents)
+                            Description(
+                                spec,
+                                tripId,
+                                targetId,
+                                routeAccents,
+                                clickable,
+                                Modifier.weight(1f)
+                            )
+                            TripIndicator(spec, routeAccents, now, clickable)
+                        }
+                    }
+                    when (spec) {
+                        is TripHeaderSpec.Scheduled,
+                        is TripHeaderSpec.VehicleOnTrip ->
+                            Column(
+                                Modifier.zIndex(-1f).padding(start = 46.dp).fillMaxHeight(),
+                                verticalArrangement = Arrangement.spacedBy(0.dp)
+                            ) {
+                                ColoredRouteLine(Color.Unspecified, Modifier.weight(1f))
+                                ColoredRouteLine(routeAccents.color, Modifier.weight(1f))
+                            }
+                        else -> {}
                     }
                 }
-                when (spec) {
-                    is TripHeaderSpec.Scheduled,
-                    is TripHeaderSpec.VehicleOnTrip ->
-                        Column(
-                            Modifier.zIndex(-1f).padding(start = 46.dp).fillMaxHeight(),
-                            verticalArrangement = Arrangement.spacedBy(0.dp)
-                        ) {
-                            ColoredRouteLine(Color.Unspecified, Modifier.weight(1f))
-                            ColoredRouteLine(routeAccents.color, Modifier.weight(1f))
-                        }
-                    else -> {}
-                }
             }
-        }
-        when (spec) {
-            is TripHeaderSpec.Scheduled,
-            is TripHeaderSpec.VehicleOnTrip ->
-                // Small 2x4 dp portion of route line over the outer card border
-                ColoredRouteLine(
-                    routeAccents.color,
-                    Modifier.zIndex(1f).padding(start = 48.dp).height(2.dp)
-                )
-            else -> {}
+            when (spec) {
+                is TripHeaderSpec.Scheduled,
+                is TripHeaderSpec.VehicleOnTrip ->
+                    // Small 2x4 dp portion of route line over the outer card border
+                    ColoredRouteLine(
+                        routeAccents.color,
+                        Modifier.zIndex(1f).padding(start = 48.dp).height(2.dp)
+                    )
+                else -> {}
+            }
         }
     }
 }
@@ -146,32 +163,19 @@ private fun Description(
             is TripHeaderSpec.Scheduled ->
                 ScheduleDescription(spec.entry, targetId, routeAccents, clickable)
             is TripHeaderSpec.VehicleOnTrip ->
-                VehicleDescription(
-                    spec.vehicle,
-                    spec.stop,
-                    spec.entry,
-                    tripId,
-                    targetId,
-                    routeAccents
-                )
+                VehicleDescription(spec, tripId, targetId, routeAccents)
         }
     }
 }
 
 @Composable
 private fun FinishingAnotherTripDescription() {
-    Text(
-        stringResource(R.string.finishing_another_trip),
-        style = MaterialTheme.typography.labelLarge
-    )
+    Text(stringResource(R.string.finishing_another_trip), style = Typography.footnote)
 }
 
 @Composable
 private fun NoVehicleDescription() {
-    Text(
-        stringResource(R.string.location_not_available_yet),
-        style = MaterialTheme.typography.labelLarge
-    )
+    Text(stringResource(R.string.location_not_available_yet), style = Typography.footnote)
 }
 
 @Composable
@@ -184,7 +188,7 @@ private fun ScheduleDescription(
     val context = LocalContext.current
     if (startTerminalEntry != null) {
         Column(
-            Modifier.semantics(mergeDescendants = true) {
+            Modifier.semantics {
                 contentDescription =
                     scheduleDescriptionAccessibilityText(
                         startTerminalEntry,
@@ -199,15 +203,16 @@ private fun ScheduleDescription(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
+                TightWrapText(
                     stringResource(R.string.scheduled_to_depart),
-                    style = MaterialTheme.typography.labelLarge
+                    Modifier.weight(1f, fill = false),
+                    style = Typography.footnote
                 )
                 if (clickable) {
                     InfoCircle(Modifier.aspectRatio(1f).size(16.dp))
                 }
             }
-            Text(startTerminalEntry.stop.name, style = MaterialTheme.typography.headlineLarge)
+            Text(startTerminalEntry.stop.name, style = Typography.headlineBold)
         }
     }
 }
@@ -235,73 +240,64 @@ private fun scheduleDescriptionAccessibilityText(
 
 @Composable
 private fun VehicleDescription(
-    vehicle: Vehicle,
-    stop: Stop,
-    stopEntry: TripDetailsStopList.Entry?,
+    spec: TripHeaderSpec.VehicleOnTrip,
     tripId: String,
     targetId: String,
     routeAccents: TripRouteAccents
 ) {
     val context = LocalContext.current
-    if (vehicle.tripId == tripId) {
-        Column(
-            Modifier.clearAndSetSemantics {
-                contentDescription =
-                    vehicleDescriptionAccessibilityText(
-                        vehicle,
-                        stop,
-                        stopEntry,
-                        targetId,
-                        routeAccents,
-                        context
-                    )
-            },
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            VehicleStatusDescription(vehicle.currentStatus, stopEntry)
-            Text(
-                stop.name,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.placeholderIfLoading()
-            )
+    if (spec.vehicle.tripId == tripId) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(
+                Modifier.clearAndSetSemantics {
+                    contentDescription =
+                        vehicleDescriptionAccessibilityText(spec, targetId, routeAccents, context)
+                },
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                Text(
+                    spec.stop.name,
+                    style = Typography.headlineBold,
+                    modifier = Modifier.placeholderIfLoading()
+                )
+            }
+            spec.entry?.trackNumber?.let {
+                Text(
+                    context.getString(R.string.track_number, it),
+                    Modifier.semantics {
+                            contentDescription = context.getString(R.string.boarding_track, it)
+                        }
+                        .placeholderIfLoading(),
+                    style = Typography.footnote
+                )
+            }
         }
     }
 }
 
 private fun vehicleDescriptionAccessibilityText(
-    vehicle: Vehicle,
-    stop: Stop,
-    stopEntry: TripDetailsStopList.Entry?,
+    spec: TripHeaderSpec.VehicleOnTrip,
     targetId: String,
     routeAccents: TripRouteAccents,
     context: Context
 ): String {
-    return if (targetId == stop.id) {
-        context.getString(
-            R.string.vehicle_desc_accessibility_desc_selected_stop,
-            routeAccents.type.typeText(context, isOnly = true),
-            vehicleStatusString(context, vehicle.currentStatus, stopEntry),
-            stop.name
-        )
-    } else {
-        context.getString(
-            R.string.vehicle_desc_accessibility_desc,
-            routeAccents.type.typeText(context, isOnly = true),
-            vehicleStatusString(context, vehicle.currentStatus, stopEntry),
-            stop.name
-        )
-    }
+    val stop = spec.stop
+    return context.getString(
+        if (targetId == stop.id) R.string.vehicle_desc_accessibility_desc_selected_stop
+        else R.string.vehicle_desc_accessibility_desc,
+        routeAccents.type.typeText(context, isOnly = true),
+        vehicleStatusString(context, spec.vehicle.currentStatus, spec.atTerminal),
+        stop.name
+    )
 }
 
 @Composable
-private fun VehicleStatusDescription(
-    vehicleStatus: Vehicle.CurrentStatus,
-    stopEntry: TripDetailsStopList.Entry?
-) {
+private fun VehicleStatusDescription(vehicleStatus: Vehicle.CurrentStatus, atTerminal: Boolean) {
     val context = LocalContext.current
     Text(
-        vehicleStatusString(context, vehicleStatus, stopEntry),
-        style = MaterialTheme.typography.labelLarge,
+        vehicleStatusString(context, vehicleStatus, atTerminal),
+        style = Typography.footnote,
         modifier = Modifier.placeholderIfLoading(),
     )
 }
@@ -309,17 +305,14 @@ private fun VehicleStatusDescription(
 private fun vehicleStatusString(
     context: Context,
     vehicleStatus: Vehicle.CurrentStatus,
-    stopEntry: TripDetailsStopList.Entry?
+    atTerminal: Boolean
 ): String {
     return when (vehicleStatus) {
         Vehicle.CurrentStatus.IncomingAt -> context.getString(R.string.approaching)
         Vehicle.CurrentStatus.InTransitTo -> context.getString(R.string.next_stop)
         Vehicle.CurrentStatus.StoppedAt ->
-            if (stopEntry != null) {
-                context.getString(R.string.waiting_to_depart)
-            } else {
-                context.getString(R.string.now_at)
-            }
+            if (atTerminal) context.getString(R.string.waiting_to_depart)
+            else context.getString(R.string.now_at)
     }
 }
 
@@ -439,11 +432,12 @@ private fun LiveIndicator() {
         Image(
             painterResource(R.drawable.live_data),
             null,
-            Modifier.placeholderIfLoading().size(16.dp)
+            Modifier.placeholderIfLoading().size(16.dp),
+            colorFilter = ColorFilter.tint(LocalContentColor.current)
         )
         Text(
             stringResource(R.string.live),
-            style = MaterialTheme.typography.labelLarge,
+            style = Typography.footnote,
             modifier = Modifier.placeholderIfLoading()
         )
     }
@@ -456,7 +450,7 @@ private fun upcomingTripViewState(
 ): UpcomingTripViewState? {
     val entry =
         when (spec) {
-            is TripHeaderSpec.VehicleOnTrip -> spec.entry
+            is TripHeaderSpec.VehicleOnTrip -> if (spec.atTerminal) spec.entry else null
             is TripHeaderSpec.Scheduled -> spec.entry
             else -> null
         }
@@ -530,6 +524,7 @@ private fun TripHeaderCardPreview() {
             null,
             objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
             null,
+            null,
             listOf(red)
         )
     val busEntry =
@@ -540,6 +535,7 @@ private fun TripHeaderCardPreview() {
             objects.schedule { departureTime = Clock.System.now().plus(5.minutes) },
             null,
             null,
+            null,
             listOf(bus)
         )
 
@@ -547,7 +543,7 @@ private fun TripHeaderCardPreview() {
         MyApplicationTheme {
             TripHeaderCard(
                 tripId = trip.id,
-                spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
+                spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
                 targetId = davis.id,
                 routeAccents = TripRouteAccents(red),
                 now = Clock.System.now(),
@@ -584,7 +580,7 @@ private fun TripHeaderCardPreview() {
                 Column(modifier = Modifier.loadingShimmer()) {
                     TripHeaderCard(
                         tripId = trip.id,
-                        spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry),
+                        spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, false),
                         targetId = "",
                         routeAccents = TripRouteAccents.default,
                         now = Clock.System.now(),

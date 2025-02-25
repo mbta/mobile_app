@@ -1,8 +1,6 @@
 package com.mbta.tid.mbta_app.android.state
 
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.history.Visit
@@ -21,11 +19,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 @OptIn(kotlinx.coroutines.FlowPreview::class)
 class SearchResultsViewModel(
-    private val globalResponse: GlobalResponse?,
     private val analytics: Analytics,
     private val searchResultRepository: ISearchResultRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
@@ -33,8 +29,9 @@ class SearchResultsViewModel(
     private var _searchResults: MutableStateFlow<SearchResults?> = MutableStateFlow(null)
     private var job: Job? = null
     val searchResults: StateFlow<SearchResults?> = _searchResults
+    var expanded = false
 
-    fun getSearchResults(query: String) {
+    fun getSearchResults(query: String, globalResponse: GlobalResponse?) {
         analytics.performedSearch(query)
         job?.cancel()
         job =
@@ -51,9 +48,13 @@ class SearchResultsViewModel(
                     }
                 } else {
                     val latestVisits = visitHistoryUsecase.getLatestVisits()
+
                     _searchResults.emit(
                         SearchResults(
-                            stops = latestVisits.mapIndexedNotNull(::mapLatestVisitsToResult),
+                            stops =
+                                latestVisits.mapIndexedNotNull { index, visit ->
+                                    mapLatestVisitsToResult(index, visit, globalResponse)
+                                },
                             routes = emptyList(),
                         )
                     )
@@ -61,7 +62,11 @@ class SearchResultsViewModel(
             }
     }
 
-    private fun mapLatestVisitsToResult(index: Int, visit: Visit): StopResult? {
+    private fun mapLatestVisitsToResult(
+        index: Int,
+        visit: Visit,
+        globalResponse: GlobalResponse?
+    ): StopResult? {
         if (visit is Visit.StopVisit && globalResponse != null) {
             val stop = globalResponse.stops[visit.stopId]
             if (stop == null) {
@@ -82,23 +87,4 @@ class SearchResultsViewModel(
             return null
         }
     }
-}
-
-@Composable
-fun getSearchResultsVm(
-    globalResponse: GlobalResponse?,
-    analytics: Analytics = koinInject(),
-    searchResultRepository: ISearchResultRepository = koinInject(),
-    visitHistoryUsecase: VisitHistoryUsecase = koinInject()
-): SearchResultsViewModel {
-    val viewModel =
-        remember(globalResponse) {
-            SearchResultsViewModel(
-                globalResponse,
-                analytics,
-                searchResultRepository,
-                visitHistoryUsecase
-            )
-        }
-    return viewModel
 }

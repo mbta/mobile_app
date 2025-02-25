@@ -102,47 +102,6 @@ class TripDetailsViewTest {
     }
 
     @Test
-    fun testSetsMapSelectedVehicle() {
-        val mapSelectedVehicleValues = mutableListOf<Vehicle?>()
-
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                val viewModel =
-                    stopDetailsManagedVM(
-                        filters =
-                            StopDetailsPageFilters(
-                                stop.id,
-                                StopDetailsFilter(route.id, routePattern.directionId),
-                                tripFilter
-                            ),
-                        globalResponse,
-                        alertData,
-                        pinnedRoutes = emptySet(),
-                        updateStopFilter = { _, _ -> },
-                        updateTripFilter = { _, _ -> },
-                        now
-                    )
-
-                TripDetailsView(
-                    tripFilter,
-                    stopId = stop.id,
-                    allAlerts = alertData,
-                    stopDetailsVM = viewModel,
-                    setMapSelectedVehicle = mapSelectedVehicleValues::add,
-                    openSheetRoute = {},
-                    openModal = {},
-                    now,
-                    analytics = MockAnalytics()
-                )
-            }
-        }
-
-        composeTestRule.waitForIdle()
-
-        assertEquals(mapSelectedVehicleValues, listOf(null, vehicle))
-    }
-
-    @Test
     fun testOpensDownstreamStop() {
         val openedSheetRoutes = mutableListOf<SheetRoutes>()
         val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
@@ -166,6 +125,7 @@ class TripDetailsViewTest {
                         pinnedRoutes = emptySet(),
                         updateStopFilter = { _, _ -> },
                         updateTripFilter = { _, _ -> },
+                        setMapSelectedVehicle = {},
                         now
                     )
 
@@ -174,7 +134,6 @@ class TripDetailsViewTest {
                     stopId = stop.id,
                     allAlerts = alertData,
                     stopDetailsVM = viewModel,
-                    setMapSelectedVehicle = {},
                     openSheetRoute = openedSheetRoutes::add,
                     openModal = {},
                     now,
@@ -246,6 +205,7 @@ class TripDetailsViewTest {
                         pinnedRoutes = emptySet(),
                         updateStopFilter = { _, _ -> },
                         updateTripFilter = { _, _ -> },
+                        setMapSelectedVehicle = {},
                         now
                     )
 
@@ -254,7 +214,6 @@ class TripDetailsViewTest {
                     stopId = stop.id,
                     allAlerts = AlertsStreamDataResponse(objects),
                     stopDetailsVM = viewModel,
-                    setMapSelectedVehicle = {},
                     openSheetRoute = openedSheetRoutes::add,
                     openModal = {},
                     now,
@@ -265,6 +224,6 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(downstreamStop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("SHUTTLE").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
     }
 }

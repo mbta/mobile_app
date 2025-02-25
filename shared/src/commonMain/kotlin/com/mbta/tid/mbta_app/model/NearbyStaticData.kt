@@ -243,14 +243,17 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 }
             }
 
-            val byLine = patternsByRouteAndStop.entries.groupBy { it.key.lineId }
+            val byLine =
+                patternsByRouteAndStop.entries.groupBy { (route, _) ->
+                    route.lineId?.takeUnless { route.isShuttle }
+                }
 
             val touchedLines = mutableSetOf<Line>()
 
             patternsByRouteAndStop
                 .mapNotNull { (route, patternsByStop) ->
                     val line = global.lines[route.lineId]
-                    val isGrouped = groupedLines.contains(route.lineId) && line != null
+                    val isGrouped = line?.isGrouped == true && !route.isShuttle
                     val lineRoutes = byLine[line?.id]?.map { (route, _) -> route } ?: emptyList()
 
                     if (isGrouped && touchedLines.contains(line)) {
@@ -289,8 +292,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     )
 
     companion object {
-        val groupedLines = listOf("line-Green")
-
         fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
             schedules?.let { scheduleResponse ->
                 val scheduledTrips = scheduleResponse.trips
@@ -489,6 +490,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     showAllPatternsWhileLoading: Boolean,
     hideNonTypicalPatternsBeyondNext: Duration?,
     filterCancellations: Boolean,
+    includeMinorAlerts: Boolean,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated>? {
     // if predictions or alerts are still loading, this is the loading state
@@ -496,7 +498,10 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
 
     val activeRelevantAlerts =
         alerts.alerts.values.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Accessibility
+            it.isActive(filterAtTime) &&
+                it.significance >=
+                    if (includeMinorAlerts) AlertSignificance.Minor
+                    else AlertSignificance.Accessibility
         }
 
     val allDataLoaded = schedules != null
@@ -569,6 +574,17 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
         if (filterCancellations) this.filterCancellations(isSubway) else this
 
+    fun RealtimePatterns.isLastStopOnRoutePattern(stop: Stop): Boolean {
+        return this.patterns
+            .filter { it?.typicality == RoutePattern.Typicality.Typical }
+            .mapNotNull { it?.representativeTripId }
+            .any { representativeTripId ->
+                val representativeTrip = globalData?.trips?.get(representativeTripId)
+                val lastStopIdInPattern = representativeTrip?.stopIds?.last() ?: return@any false
+                lastStopIdInPattern == stop.id || stop.childStopIds.contains(lastStopIdInPattern)
+            }
+    }
+
     fun RealtimePatterns.shouldShow(stop: Stop): Boolean {
         if (!allDataLoaded && showAllPatternsWhileLoading) return true
         val isUpcoming =
@@ -576,19 +592,26 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                 null -> this.isUpcoming()
                 else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
             }
-        val isLastStopOnRoutePattern =
-            this.patterns
-                .filter { it?.typicality == RoutePattern.Typicality.Typical }
-                .mapNotNull { it?.representativeTripId }
-                .any { representativeTripId ->
-                    val representativeTrip = globalData?.trips?.get(representativeTripId)
-                    val lastStopIdInPattern =
-                        representativeTrip?.stopIds?.last() ?: return@any false
-                    lastStopIdInPattern == stop.id ||
-                        stop.childStopIds.contains(lastStopIdInPattern)
-                }
-        return (isTypical() || isUpcoming) && !(isLastStopOnRoutePattern && isArrivalOnly())
+
+        val isSubway =
+            this.patterns.all { globalData?.routes?.get(it?.routeId)?.type?.isSubway() ?: false }
+
+        val shouldBeFilteredAsArrivalOnly =
+            if (isSubway) {
+                // On subway, only filter out arrival only patterns at the typical last stop.
+                // This way, during a scheduled disruption we still show arrival-only headsign(s) at
+                // a temporary terminal to acknowledge the missing typical service.
+                this.isLastStopOnRoutePattern(stop) && isArrivalOnly()
+            } else {
+                if (this.patterns.any { it?.routeId == "Boat-F1" }) {}
+                isArrivalOnly()
+            }
+
+        return (isTypical() || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
     }
+
+    fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+        if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
@@ -610,7 +633,9 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                         transit.route.type.isSubway()
                                     ),
                                     { it.shouldShow(stopPatterns.stop) },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(
+                                        stopPatterns.stop.isCRCore
+                                    ),
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -630,7 +655,9 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                         transit.routes.min().type.isSubway()
                                     ),
                                     { it.shouldShow(stopPatterns.stop) },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(
+                                        stopPatterns.stop.isCRCore
+                                    ),
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -661,6 +688,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
     showAllPatternsWhileLoading: Boolean,
     hideNonTypicalPatternsBeyondNext: Duration?,
     filterCancellations: Boolean,
+    includeMinorAlerts: Boolean,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated>? {
     // if predictions or alerts are still loading, this is the loading state
@@ -671,7 +699,10 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
 
     val activeRelevantAlerts =
         alerts.alerts.values.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Accessibility
+            it.isActive(filterAtTime) &&
+                it.significance >=
+                    if (includeMinorAlerts) AlertSignificance.Minor
+                    else AlertSignificance.Accessibility
         }
 
     val allDataLoaded = schedules != null
@@ -693,6 +724,9 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
             }
         return (isTypical() || isUpcoming) && !isArrivalOnly()
     }
+
+    fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+        if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
@@ -722,7 +756,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
                                         lineOrRoute.route.type.isSubway()
                                     ),
                                     { it.shouldShow() },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(stop.isCRCore),
                                     globalData.trips,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -746,7 +780,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
                                         lineOrRoute.routes.first().type.isSubway()
                                     ),
                                     { it.shouldShow() },
-                                    activeRelevantAlerts,
+                                    activeRelevantAlerts.discardTrackChangesAtCRCore(stop.isCRCore),
                                     globalData.trips,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -782,6 +816,7 @@ fun NearbyStaticData.withRealtimeInfo(
             showAllPatternsWhileLoading = false,
             hideNonTypicalPatternsBeyondNext = 120.minutes,
             filterCancellations = true,
+            includeMinorAlerts = false,
             pinnedRoutes
         )
     } else {
@@ -795,6 +830,7 @@ fun NearbyStaticData.withRealtimeInfo(
             showAllPatternsWhileLoading = false,
             hideNonTypicalPatternsBeyondNext = 120.minutes,
             filterCancellations = true,
+            includeMinorAlerts = false,
             pinnedRoutes
         )
     }

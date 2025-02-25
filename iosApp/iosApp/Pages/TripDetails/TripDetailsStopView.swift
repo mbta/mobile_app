@@ -20,6 +20,7 @@ struct TripDetailsStopView: View {
             SheetNavigationLink(
                 value: .legacyStopDetails(stop.stop, nil),
                 action: { entry in onTapLink(entry, stop, nil) },
+                showChevron: stop.disruption == nil,
                 label: {
                     HStack {
                         Text(stop.stop.name).foregroundStyle(Color.text)
@@ -76,8 +77,8 @@ struct TripDetailsStopView: View {
     }
 
     var upcomingTripViewState: UpcomingTripView.State {
-        if let alert = stop.alert {
-            .disruption(alert.effect)
+        if let disruption = stop.disruption {
+            .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
         } else {
             .some(stop.format(now: now, routeType: routeType))
         }
@@ -103,9 +104,10 @@ struct TripDetailsStopView: View {
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
-            alert: nil,
+            disruption: nil,
             schedule: nil,
             prediction: nil,
+            predictionStop: nil,
             vehicle: nil,
             routes: [
                 objects.route {

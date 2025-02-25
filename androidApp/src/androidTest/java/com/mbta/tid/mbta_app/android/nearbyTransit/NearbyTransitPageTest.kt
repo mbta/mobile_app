@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import MockRepositories
 import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +20,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
-import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MainApplication
@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
@@ -55,6 +56,9 @@ import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
@@ -65,7 +69,6 @@ import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.core.module.dsl.*
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import org.koin.test.KoinTest
@@ -262,6 +265,8 @@ class NearbyTransitPageTest : KoinTest {
         )
     }
 
+    val viewportProvider = ViewportProvider(MapViewportState())
+
     @get:Rule
     val runtimePermissionRule =
         GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -288,12 +293,18 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                            viewportProvider = viewportProvider,
                         ),
                         false,
                         {},
                         {},
-                        bottomBar = {}
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
+                        bottomBar = {},
                     )
                 }
             }
@@ -333,6 +344,9 @@ class NearbyTransitPageTest : KoinTest {
             override var railRouteShapes: Flow<MapFriendlyRouteResponse?> =
                 MutableStateFlow(value = null)
             override val selectedVehicle: StateFlow<Vehicle?> = MutableStateFlow(value = null)
+            override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
+            override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
+            override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
 
             var loadConfigCalledCount = 0
 
@@ -344,20 +358,24 @@ class NearbyTransitPageTest : KoinTest {
                 return null
             }
 
-            @Composable
-            override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
-                return null
-            }
+            override suspend fun refreshGlobalMapData(now: Instant) {}
 
-            override suspend fun refreshRouteLineData(now: Instant) {}
+            override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {}
 
-            override suspend fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {}
+            override suspend fun refreshStopFeatures(
+                selectedStop: Stop?,
+                globalMapData: GlobalMapData?
+            ) {}
 
             override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
 
             override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {}
 
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
+
+            override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
         }
 
         val mockMapVM = MockMapVM()
@@ -380,11 +398,17 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                            viewportProvider = viewportProvider,
                         ),
                         false,
                         {},
                         {},
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
                         bottomBar = {},
                         mapViewModel = mockMapVM
                     )
@@ -420,11 +444,17 @@ class NearbyTransitPageTest : KoinTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
-                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                            viewportProvider = viewportProvider,
                         ),
                         false,
                         {},
                         {},
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
                         bottomBar = {}
                     )
                 }

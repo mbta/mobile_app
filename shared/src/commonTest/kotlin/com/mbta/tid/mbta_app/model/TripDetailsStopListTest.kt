@@ -96,18 +96,20 @@ class TripDetailsStopListTest {
         fun entry(
             stopId: String,
             stopSequence: Int,
-            alert: Alert? = null,
+            disruption: RealtimePatterns.Format.Disruption? = null,
             schedule: Schedule? = null,
             prediction: Prediction? = null,
+            predictionStop: Stop? = null,
             vehicle: Vehicle? = null,
             routes: List<Route> = listOf()
         ) =
             TripDetailsStopList.Entry(
                 stop(stopId),
                 stopSequence,
-                alert,
+                disruption,
                 schedule,
                 prediction,
+                predictionStop ?: objects.stops[prediction?.stopId],
                 vehicle,
                 routes
             )
@@ -417,19 +419,20 @@ class TripDetailsStopListTest {
             TripDetailsStopList(
                 trip.id,
                 listOf(
-                    TripDetailsStopList.Entry(boylston, 590, null, null, null, null, listOf()),
-                    TripDetailsStopList.Entry(parkStreet, 600, null, null, p1, null, listOf()),
+                    TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf()),
+                    TripDetailsStopList.Entry(parkStreet, 600, null, null, p1, parkStreet, null, listOf()),
                     TripDetailsStopList.Entry(
                         governmentCenter,
                         610,
                         null,
                         null,
                         p3,
+                        governmentCenter,
                         null,
                         listOf()
                     ),
                 ),
-                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, listOf())
+                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf())
             ),
             list
         )
@@ -493,6 +496,7 @@ class TripDetailsStopListTest {
                         null,
                         schedule1,
                         prediction1,
+                        stop1,
                         vehicle,
                         listOf()
                     ),
@@ -502,6 +506,7 @@ class TripDetailsStopListTest {
                         null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf()
                     ),
@@ -511,6 +516,7 @@ class TripDetailsStopListTest {
                         null,
                         schedule3,
                         prediction3,
+                        stop3,
                         vehicle,
                         listOf()
                     )
@@ -521,6 +527,7 @@ class TripDetailsStopListTest {
                     null,
                     schedule1,
                     prediction1,
+                    stop1,
                     vehicle,
                     listOf()
                 )
@@ -748,12 +755,13 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces keeps alerts`() = test {
-        trip {}
+    fun `fromPieces keeps alerts and picks icon based on route`() = test {
+        objects.route { id = "Red" }
+        trip { routeId = "Red" }
         val now = Clock.System.now()
-        val pred1 = prediction("A", 10, time = now + 1.minutes)
-        val pred2 = prediction("B", 20, time = now + 2.minutes)
-        val pred3 = prediction("C", 30, time = now + 3.minutes)
+        val pred1 = prediction("A", 10, routeId = "Red", time = now + 1.minutes)
+        val pred2 = prediction("B", 20, routeId = "Red", time = now + 2.minutes)
+        val pred3 = prediction("C", 30, routeId = "Red", time = now + 3.minutes)
         val alert =
             alert(Alert.Effect.Detour) {
                 informedEntity(listOf(Alert.InformedEntity.Activity.Board), stop = "B")
@@ -761,7 +769,7 @@ class TripDetailsStopListTest {
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
-                entry("B", 20, alert = alert, prediction = pred2),
+                entry("B", 20, disruption = RealtimePatterns.Format.Disruption(alert, iconName = "alert-large-red-issue"), prediction = pred2),
                 entry("C", 30, prediction = pred3)
             ),
             fromPieces(null, predictions())

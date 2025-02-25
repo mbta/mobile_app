@@ -6,7 +6,6 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -193,9 +192,82 @@ class PatternsByStopTest {
         val alerts =
             patternsByStop.alertsHereFor(
                 directionId = routePatternAshmont.directionId,
+                tripId = null,
                 global = global
             )
         assertEquals(listOf(alert2), alerts)
+    }
+
+    @Test
+    fun `alertsHereFor filters by trip`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val stop = objects.stop()
+        val pattern = objects.routePattern(route) { representativeTrip { stopIds = listOf(stop.id) }}
+
+        val time = Clock.System.now()
+
+        val trip1 = objects.trip(pattern)
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                departureTime = time + 1.minutes
+            }
+        val upcomingTrip1 = objects.upcomingTrip(schedule1)
+
+        val trip2 = objects.trip(pattern)
+        val schedule2 =
+            objects.schedule {
+                trip = trip2
+                departureTime = time + 2.minutes
+            }
+        val upcomingTripBraintree = objects.upcomingTrip(schedule2)
+
+        val alert1 =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = stop.id,
+                    trip = trip1.id
+                )
+            }
+        val alert2 =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = stop.id,
+                    trip = trip2.id
+                )
+            }
+
+        val patternsByStop =
+            PatternsByStop(
+                route,
+                stop,
+                listOf(
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Headsign",
+                        null,
+                        listOf(pattern),
+                        listOf(upcomingTrip1, upcomingTripBraintree),
+                        listOf(alert1, alert2)
+                    )
+                )
+            )
+
+        val global = GlobalResponse(objects, mapOf(stop.id to listOf(pattern.id)))
+
+        assertEquals(listOf(alert1, alert2), patternsByStop.alertsHereFor(0, tripId = null, global))
+        assertEquals(listOf(alert1), patternsByStop.alertsHereFor(0, trip1.id, global))
+        assertEquals(listOf(alert2), patternsByStop.alertsHereFor(0, trip2.id, global))
     }
 
     @Test
@@ -302,8 +374,8 @@ class PatternsByStopTest {
                     platform2.id to listOf(pattern2.id, pattern4.id)
                 )
             )
-        assertEquals(listOf(alert), patternsByStop.alertsHereFor(0, global))
-        assertEquals(listOf(alert), patternsByStop.alertsHereFor(1, global))
+        assertEquals(listOf(alert), patternsByStop.alertsHereFor(0, null, global))
+        assertEquals(listOf(alert), patternsByStop.alertsHereFor(1, null, global))
     }
 
     @Test
@@ -377,7 +449,7 @@ class PatternsByStopTest {
                 effect = Alert.Effect.Shuttle
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = shawmut.id
                 )
@@ -388,7 +460,7 @@ class PatternsByStopTest {
                 effect = Alert.Effect.Shuttle
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = ashmont.id
                 )
@@ -399,7 +471,7 @@ class PatternsByStopTest {
                 effect = Alert.Effect.Shuttle
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = alewife.id
                 )
@@ -411,7 +483,7 @@ class PatternsByStopTest {
                 effect = Alert.Effect.Shuttle
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = park.id
                 )
@@ -682,7 +754,7 @@ class PatternsByStopTest {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
             }
         val upcomingTripCCleveland1 =
-            objects.upcomingTrip(scheduleCCleveland1, predictionCCleveland1, vehicleCCleveland1)
+            objects.upcomingTrip(scheduleCCleveland1, predictionCCleveland1, vehicle = vehicleCCleveland1)
         val upcomingTripScheduledCCleveland1 = objects.upcomingTrip(scheduleCCleveland1)
 
         val tripEMedford1 = objects.trip(routePatternEMedford)
@@ -707,7 +779,7 @@ class PatternsByStopTest {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
             }
         val upcomingTripCMedford1 =
-            objects.upcomingTrip(scheduleCMedford1, predictionCMedford1, vehicleCMedford1)
+            objects.upcomingTrip(scheduleCMedford1, predictionCMedford1, vehicle = vehicleCMedford1)
         val upcomingTripScheduledCMedford1 = objects.upcomingTrip(scheduleCMedford1)
 
         val staticPatternsWest =

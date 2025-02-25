@@ -69,7 +69,7 @@ struct PredictionRowView: View {
 
         case let .disruption(alert):
             UpcomingTripView(
-                prediction: .disruption(alert.alert.effect),
+                prediction: .disruption(.init(alert: alert.alert), iconName: alert.iconName),
                 isFirst: true,
                 isOnly: true
             )

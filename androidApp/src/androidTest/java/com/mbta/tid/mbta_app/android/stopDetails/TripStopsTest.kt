@@ -75,45 +75,50 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop1,
                         stopSequence = 1,
-                        alert = null,
+                        disruption = null,
                         schedule1,
                         prediction1,
+                        stop1,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop3Target,
                         stopSequence = 3,
-                        alert = null,
+                        disruption = null,
                         schedule3,
                         prediction3,
+                        stop3Target,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop4,
                         stopSequence = 4,
-                        alert = null,
+                        disruption = null,
                         schedule4,
                         prediction4,
+                        stop4,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop5,
                         stopSequence = 5,
-                        alert = null,
+                        disruption = null,
                         schedule5,
                         prediction5,
+                        stop5,
                         vehicle,
                         listOf(route)
                     ),
@@ -125,7 +130,7 @@ class TripStopsTest {
                 targetId = stop3Target.id,
                 stops,
                 stopSequence = 1,
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
                 now,
                 onTapLink = {},
                 routeAccents = TripRouteAccents(route),
@@ -133,7 +138,7 @@ class TripStopsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("2 stops away").assertIsDisplayed()
+        composeTestRule.onNodeWithText("2 stops away", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop3Target.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop5.name).assertIsDisplayed()
     }
@@ -189,27 +194,30 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop1,
                         stopSequence = 1,
-                        alert = null,
+                        disruption = null,
                         schedule1,
                         prediction1,
+                        stop1,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
                         stopSequence = 3,
-                        alert = null,
+                        disruption = null,
                         schedule3,
                         prediction3,
+                        stop3,
                         vehicle,
                         listOf(route)
                     ),
@@ -221,7 +229,7 @@ class TripStopsTest {
                 targetId = stopTarget.id,
                 stops,
                 stopSequence = 0,
-                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null),
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
                 now,
                 onTapLink = {},
                 routeAccents = TripRouteAccents(route),
@@ -278,9 +286,10 @@ class TripStopsTest {
             TripDetailsStopList.Entry(
                 stop1,
                 stopSequence = 1,
-                alert = null,
+                disruption = null,
                 schedule1,
                 prediction1,
+                stop1,
                 vehicle,
                 listOf(route)
             )
@@ -292,9 +301,10 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
@@ -365,9 +375,10 @@ class TripStopsTest {
             TripDetailsStopList.Entry(
                 stop1,
                 stopSequence = 1,
-                alert = null,
+                disruption = null,
                 schedule1,
                 prediction1,
+                stop1,
                 vehicle,
                 listOf(route)
             )
@@ -379,18 +390,20 @@ class TripStopsTest {
                     TripDetailsStopList.Entry(
                         stop2,
                         stopSequence = 2,
-                        alert = null,
+                        disruption = null,
                         schedule2,
                         prediction2,
+                        stop2,
                         vehicle,
                         listOf(route)
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
                         stopSequence = 3,
-                        alert = null,
+                        disruption = null,
                         schedule3,
                         prediction3,
+                        stop3,
                         vehicle,
                         listOf(route)
                     ),
@@ -412,6 +425,6 @@ class TripStopsTest {
         }
 
         composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 stop away").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 stop away", useUnmergedTree = true).assertIsDisplayed()
     }
 }

@@ -27,6 +27,8 @@ struct TransitHeader<Content: View>: View {
                 .foregroundStyle(textColor)
                 .textCase(.none)
                 .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h2)
                 .accessibilityLabel(Text("\(name) \(routeType.typeText(isOnly: true))"))
             rightContent()
                 .foregroundStyle(textColor)

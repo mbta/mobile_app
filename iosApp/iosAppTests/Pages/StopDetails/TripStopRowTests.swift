@@ -31,8 +31,8 @@ final class TripStopRowTests: XCTestCase {
 
         let sut = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                stop: stop, stopSequence: 0, disruption: nil,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -57,8 +57,8 @@ final class TripStopRowTests: XCTestCase {
 
         let sut = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                stop: stop, stopSequence: 0, disruption: nil,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -67,6 +67,39 @@ final class TripStopRowTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect().find(UpcomingTripView.self))
+    }
+
+    func testTrackNumber() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.id = "place-sstat" }
+        let platformStop = objects.stop { platformStop in
+            platformStop.platformCode = "7"
+            platformStop.vehicleType = .commuterRail
+            platformStop.parentStationId = stop.id
+        }
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+        }
+        let prediction = objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = now.addingTimeInterval(6).toKotlinInstant()
+            prediction.stopId = platformStop.id
+        }
+        let route = objects.route { route in route.type = .commuterRail }
+
+        let sut = TripStopRow(
+            stop: .init(
+                stop: stop, stopSequence: 0, disruption: nil,
+                schedule: schedule, prediction: prediction, predictionStop: platformStop,
+                vehicle: nil, routes: [route]
+            ),
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeAccents: .init(route: route)
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Track 7"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Boarding on track 7"))
     }
 
     func testTargetPin() throws {
@@ -83,8 +116,8 @@ final class TripStopRowTests: XCTestCase {
 
         let targeted = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                stop: stop, stopSequence: 0, disruption: nil,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -99,8 +132,8 @@ final class TripStopRowTests: XCTestCase {
 
         let notTargeted = TripStopRow(
             stop: .init(
-                stop: stop, stopSequence: 0, alert: nil,
-                schedule: schedule, prediction: prediction,
+                stop: stop, stopSequence: 0, disruption: nil,
+                schedule: schedule, prediction: prediction, predictionStop: nil,
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
@@ -126,8 +159,8 @@ final class TripStopRowTests: XCTestCase {
         let route = objects.route()
 
         let stopEntry = TripDetailsStopList.Entry(
-            stop: stop, stopSequence: 0, alert: nil,
-            schedule: schedule, prediction: prediction,
+            stop: stop, stopSequence: 0, disruption: nil,
+            schedule: schedule, prediction: prediction, predictionStop: nil,
             vehicle: nil, routes: [route]
         )
 

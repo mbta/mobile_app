@@ -72,6 +72,20 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertEqual("and at 4:00 PM", foundText)
     }
 
+    func testTimeWithStatus() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date.toKotlinInstant(),
+                status: "All aboard",
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
+        XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
+    }
+
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
         let text: any View = UpcomingTripAccessibilityFormatters().scheduleTimeFirst(date: date, vehicleText: "buses")
@@ -111,6 +125,15 @@ final class UpcomingTripViewTests: XCTestCase {
         )
     }
 
+    func testPredictedHourAccessibilityLabel() throws {
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 67)), isFirst: false)
+        let predictionView = try sut.inspect().find(PredictionText.self)
+        XCTAssertEqual(
+            "and in 1 hr 7 min",
+            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
+    }
+
     func testCancelledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!.toKotlinInstant()
         let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
@@ -125,16 +148,28 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testShuttleAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .disruption(.shuttle), isFirst: false)
+        let sut = UpcomingTripView(
+            prediction: .disruption(
+                .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .shuttle }),
+                iconName: "alert-borderless-shuttle"
+            ),
+            isFirst: false
+        )
         XCTAssertEqual(
             "Shuttle buses replace service",
-            try sut.inspect().find(text: "Shuttle")
+            try sut.inspect().find(text: "Shuttle Bus")
                 .accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
 
     func testSuspensionAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .disruption(.suspension), isFirst: false)
+        let sut = UpcomingTripView(
+            prediction: .disruption(
+                .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .suspension }),
+                iconName: "alert-borderless-suspension"
+            ),
+            isFirst: false
+        )
         XCTAssertEqual(
             "Service suspended",
             try sut.inspect().find(text: "Suspension")
@@ -167,5 +202,14 @@ final class UpcomingTripViewTests: XCTestCase {
             "and at 4:00 PM",
             foundText
         )
+    }
+
+    func testDisruptionIconName() throws {
+        let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .snowRoute }
+        let disruption = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: .bus)
+        let sut = UpcomingTripView(prediction: .disruption(.init(alert: alert), iconName: disruption.iconName))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "alert-large-bus-issue"
+        }))
     }
 }

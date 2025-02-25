@@ -37,8 +37,8 @@ struct AlertDetails: View {
         alert.effect == .elevatorClosure
     }
 
-    private var effectLabel: String? {
-        FormattedAlert(alert: alert)?.effect
+    private var effectLabel: String {
+        FormattedAlert(alert: alert).effect
     }
 
     private var causeLabel: String? {
@@ -110,18 +110,16 @@ struct AlertDetails: View {
     }
 
     @ViewBuilder var effectTitle: some View {
-        if let effectLabel {
-            if let routeLabel, !isElevatorClosure {
-                Text("\(routeLabel) \(effectLabel)",
-                     comment: """
-                     First value is the route label, second value is an alert effect, \
-                     resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'
-                     """)
-            } else if let stopLabel {
-                Text("\(stopLabel) \(effectLabel)")
-            } else {
-                Text(effectLabel)
-            }
+        if let routeLabel, !isElevatorClosure {
+            Text("\(routeLabel) \(effectLabel)",
+                 comment: """
+                 First value is the route label, second value is an alert effect, \
+                 resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'
+                 """)
+        } else if let stopLabel {
+            Text("\(stopLabel) \(effectLabel)")
+        } else {
+            Text(effectLabel)
         }
     }
 
@@ -131,7 +129,7 @@ struct AlertDetails: View {
             effectTitle.font(Typography.title2Bold)
             if isElevatorClosure, let header = alert.header {
                 Text(header).font(Typography.bodySemibold)
-            } else if let causeLabel { Text(causeLabel).font(.body).bold() }
+            } else if let causeLabel { Text(causeLabel).font(Typography.bodySemibold) }
         }
     }
 
@@ -251,9 +249,11 @@ struct AlertDetails: View {
         if !alertDescriptionParagraphs.isEmpty {
             VStack(alignment: .leading, spacing: 16) {
                 if isElevatorClosure {
-                    Text("Alternative path", comment: "Header for the details of an elevator closure").bold()
+                    Text("Alternative path", comment: "Header for the details of an elevator closure")
+                        .font(Typography.bodySemibold)
                 } else {
-                    Text("Full Description", comment: "Header for the details of a disruption").bold()
+                    Text("Full Description", comment: "Header for the details of a disruption")
+                        .font(Typography.bodySemibold)
                 }
                 ForEach(alertDescriptionParagraphs, id: \.hashValue) { section in
                     Text(section).fixedSize(horizontal: false, vertical: true)
@@ -299,6 +299,7 @@ struct AlertDetails: View {
 
     var body: some View {
         scrollContent
+            .font(Typography.body)
     }
 }
 

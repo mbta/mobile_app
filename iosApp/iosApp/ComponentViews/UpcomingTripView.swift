@@ -32,7 +32,7 @@ struct UpcomingTripView: View {
     enum State: Equatable {
         case loading
         case noTrips(RealtimePatterns.NoTripsFormat)
-        case disruption(shared.Alert.Effect)
+        case disruption(FormattedAlert, iconName: String)
         case some(TripInstantDisplay)
     }
 
@@ -89,6 +89,23 @@ struct UpcomingTripView: View {
                         )
                         : accessibilityFormatters
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
+            case let .timeWithStatus(format):
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text(Date(instant: format.predictionTime), style: .time)
+                        .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                        .realtime(hideIndicator: hideRealtimeIndicators)
+                        .accessibilityLabel(isFirst
+                            ? accessibilityFormatters.distantFutureFirst(
+                                date: format.predictionTime.toNSDate(),
+                                vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                            )
+                            : accessibilityFormatters
+                            .distantFutureOther(date: format.predictionTime.toNSDate()))
+                    Text(format.status)
+                        .font(Typography.footnoteSemibold)
+                        .opacity(0.6)
+                        .multilineTextAlignment(.trailing)
+                }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
                     .realtime(hideIndicator: hideRealtimeIndicators)
@@ -135,8 +152,8 @@ struct UpcomingTripView: View {
                     )
                     : accessibilityFormatters.cancelledOther(date: format.scheduledTime.toNSDate()))
             }
-        case let .disruption(alertEffect):
-            DisruptionView(effect: .from(alertEffect: alertEffect))
+        case let .disruption(formattedAlert, iconName: iconName):
+            DisruptionView(spec: formattedAlert.predictionReplacement, iconName: iconName)
         case let .noTrips(format):
             switch onEnum(of: format) {
             case .predictionsUnavailable:
@@ -169,41 +186,24 @@ func makeTimeFormatter() -> DateFormatter {
 }
 
 struct DisruptionView: View {
-    let effect: Effect
+    let spec: FormattedAlert.PredictionReplacement
+    let iconName: String
 
     @ScaledMetric private var iconSize: CGFloat = 20
 
-    enum Effect {
-        case detour
-        case shuttle
-        case stopClosed
-        case suspension
-        case unknown
-
-        static func from(alertEffect: shared.Alert.Effect) -> Self {
-            switch alertEffect {
-            case .detour: .detour
-            case .shuttle: .shuttle
-            case .stationClosure, .stopClosure, .dockClosure: .stopClosed
-            case .suspension: .suspension
-            default: .unknown
-            }
-        }
-    }
-
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            HStack {
+            HStack(spacing: 4) {
                 fullText
                     .lineLimit(1)
                 fullImage
             }
-            VStack(alignment: .trailing) {
+            VStack(alignment: .trailing, spacing: 4) {
                 fullText
                     .lineLimit(1)
                 fullImage
             }
-            HStack {
+            HStack(spacing: 4) {
                 fullText
                 fullImage
             }
@@ -211,55 +211,50 @@ struct DisruptionView: View {
     }
 
     var rawText: Text {
-        switch effect {
-        case .detour: Text("Detour", comment: "Possible alert effect")
-        case .shuttle: Text("Shuttle", comment: "Possible alert effect")
-            .accessibilityLabel(Text("Shuttle buses replace service", comment: "Shuttle alert VoiceOver text"))
-        case .stopClosed: Text("Stop Closed", comment: "Possible alert effect")
-        case .suspension: Text("Suspension", comment: "Possible alert effect")
-            .accessibilityLabel(Text("Service suspended", comment: "Suspension alert VoiceOver text"))
-        case .unknown: Text("No Service", comment: "Possible alert effect")
-        }
-    }
-
-    var rawImage: Image {
-        switch effect {
-        case .detour: Image(systemName: "exclamationmark.triangle.fill")
-        case .shuttle: Image(.modeBus)
-        case .stopClosed: Image(systemName: "xmark.octagon.fill")
-        case .suspension: Image(systemName: "exclamationmark.triangle.fill")
-        case .unknown: Image(systemName: "questionmark.circle.fill")
+        if let accessibilityLabel = spec.accessibilityLabel {
+            Text(spec.text).accessibilityLabel(accessibilityLabel)
+        } else {
+            Text(spec.text)
         }
     }
 
     var fullText: some View {
         rawText
-            .font(Typography.footnote)
-            .textCase(.uppercase)
+            .font(Typography.footnoteSemibold)
+            .opacity(0.6)
     }
 
     var fullImage: some View {
-        rawImage
+        Image(iconName)
             .resizable()
             .scaledToFill()
             .foregroundStyle(Color.deemphasized)
             .frame(width: iconSize, height: iconSize)
-            .padding(2)
     }
 }
 
 struct UpcomingTripView_Previews: PreviewProvider {
+    static let route = MapStopRoute.orange
+
+    static func disruption(_ effect: shared.Alert.Effect) -> UpcomingTripView.State {
+        let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = effect }
+        let format = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: route)
+        return .disruption(.init(alert: alert), iconName: format.iconName)
+    }
+
     static var previews: some View {
         VStack(alignment: .trailing) {
-            UpcomingTripView(prediction: .disruption(.suspension), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.shuttle), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.stopClosure), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.detour), routeType: .heavyRail)
-            UpcomingTripView(prediction: .disruption(.detour), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.suspension), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.stopClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.stationClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.dockClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.detour), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.snowRoute), routeType: .heavyRail)
+            UpcomingTripView(prediction: disruption(.shuttle), routeType: .heavyRail)
         }
         .padding(8)
         .frame(maxWidth: 150)
-        .background(Color.fill1)
+        .background(Color.fill3)
         .previewDisplayName("No Service")
     }
 }

@@ -741,6 +741,7 @@ class StopDetailsViewModelTest {
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
+                    setMapSelectedVehicle = {},
                     coroutineDispatcher = dispatcher
                 )
             }
@@ -827,6 +828,7 @@ class StopDetailsViewModelTest {
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
+                    setMapSelectedVehicle = {},
                     coroutineDispatcher = dispatcher
                 )
             }
@@ -940,6 +942,7 @@ class StopDetailsViewModelTest {
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
+                    setMapSelectedVehicle = {},
                     coroutineDispatcher = dispatcher
                 )
             }
@@ -1033,6 +1036,7 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
         }
@@ -1078,6 +1082,7 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
         }
@@ -1121,6 +1126,7 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
         }
@@ -1165,6 +1171,7 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
         }
@@ -1214,6 +1221,7 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
         }
@@ -1282,6 +1290,7 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, filter -> newStopFilter = filter },
                 updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
 
@@ -1359,6 +1368,7 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
 
@@ -1434,6 +1444,7 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
+                setMapSelectedVehicle = {},
                 coroutineDispatcher = dispatcher
             )
 
@@ -1462,5 +1473,54 @@ class StopDetailsViewModelTest {
 
         composeTestRule.waitUntil(2_000) { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
+    }
+
+    @Test
+    fun testSetsMapSelectedVehicle() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val routePattern = objects.routePattern(route)
+        val stop = objects.stop()
+        val trip = objects.trip(routePattern)
+        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
+        val stopSequence = 10
+        val now = Clock.System.now()
+
+        val globalResponse = GlobalResponse(objects)
+        val alertData = AlertsStreamDataResponse(objects)
+
+        val tripFilter = TripDetailsFilter(trip.id, vehicle.id, stopSequence)
+
+        val mapSelectedVehicleValues = mutableListOf<Vehicle?>()
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                vehicleRepo =
+                    MockVehicleRepository(
+                        outcome = ApiResult.Ok(VehicleStreamDataResponse(vehicle))
+                    )
+            )
+
+        composeTestRule.setContent {
+            stopDetailsManagedVM(
+                filters =
+                    StopDetailsPageFilters(
+                        stop.id,
+                        StopDetailsFilter(route.id, routePattern.directionId),
+                        tripFilter
+                    ),
+                globalResponse,
+                alertData,
+                pinnedRoutes = emptySet(),
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = mapSelectedVehicleValues::add,
+                now,
+                viewModel = viewModel
+            )
+        }
+
+        composeTestRule.waitUntil { mapSelectedVehicleValues.size == 2 }
+        assertEquals(listOf(null, vehicle), mapSelectedVehicleValues)
     }
 }

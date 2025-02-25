@@ -88,7 +88,7 @@ final class AlertCardTests: XCTestCase {
                 exp.fulfill()
             }
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "Service Change ahead"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Service change ahead"))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "alert-borderless-issue"
         }))

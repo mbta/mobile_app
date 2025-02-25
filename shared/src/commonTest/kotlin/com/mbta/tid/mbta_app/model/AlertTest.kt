@@ -19,6 +19,41 @@ class AlertTest {
     }
 
     @Test
+    fun `alert significance is set properly`() {
+        for (effect in Alert.Effect.entries) {
+            val inherentlyStopSpecific = when (effect) {
+                Alert.Effect.DockClosure, Alert.Effect.DockIssue -> true
+                Alert.Effect.StationClosure, Alert.Effect.StationIssue -> true
+                Alert.Effect.StopClosure -> true
+                else -> false
+            }
+            for (specifiedStops in listOfNotNull(false.takeUnless { inherentlyStopSpecific }, true)) {
+                val alert = ObjectCollectionBuilder.Single.alert {
+                    this.effect = effect
+                    informedEntity(emptyList(), stop = "stop".takeIf { specifiedStops })
+                }
+                val expectedSignificance = when (effect) {
+                    Alert.Effect.Detour, Alert.Effect.SnowRoute -> if (specifiedStops) AlertSignificance.Major else AlertSignificance.Secondary
+                    Alert.Effect.DockClosure -> AlertSignificance.Major
+                    Alert.Effect.ElevatorClosure -> AlertSignificance.Accessibility
+                    Alert.Effect.ServiceChange -> AlertSignificance.Secondary
+                    Alert.Effect.Shuttle -> AlertSignificance.Major
+                    Alert.Effect.StationClosure -> AlertSignificance.Major
+                    Alert.Effect.StopClosure -> AlertSignificance.Major
+                    Alert.Effect.Suspension -> AlertSignificance.Major
+                    Alert.Effect.TrackChange -> AlertSignificance.Minor
+                    else -> AlertSignificance.None
+                }
+                assertEquals(
+                    expectedSignificance,
+                    alert.significance,
+                    "significance for effect $effect with${if (specifiedStops) "" else "out"} specified stops"
+                )
+            }
+        }
+    }
+
+    @Test
     fun `filter filters alerts to matching stops routes and directions`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
@@ -80,7 +115,8 @@ class AlertTest {
                 ),
                 0,
                 listOf(route.id),
-                setOf(stop.id)
+                setOf(stop.id),
+                tripId = null
             )
 
         assertEquals(listOf(alertMatch, alertMatchNoDirection), filteredList)
@@ -123,6 +159,7 @@ class AlertTest {
                 null,
                 listOf(route.id),
                 setOf(stop.id),
+                tripId = null,
             ),
             listOf(validAlert)
         )
@@ -150,6 +187,7 @@ class AlertTest {
                 null,
                         listOf(route.id),
                 setOf(stop.id),
+                tripId = null,
             ),
             emptyList()
         )
@@ -177,6 +215,7 @@ class AlertTest {
                 null,
                 listOf(route.id),
                 setOf(stop.id),
+                tripId = null,
             ),
             emptyList()
         )
@@ -204,6 +243,7 @@ class AlertTest {
                 null,
                 listOf(route.id),
                 setOf(stop.id),
+                tripId = null,
             ),
             emptyList()
         )
@@ -239,10 +279,10 @@ class AlertTest {
         assertEquals(
             listOf(alert),
             Alert.applicableAlerts(   listOf(alert, otherAlert),
-                null,
+                directionId = null,
                 listOf(route.id),
-                null
-
+                stopIds = null,
+                tripId = null
             ),
         )
     }
@@ -252,45 +292,49 @@ class AlertTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val targetStop = objects.stop()
-        val stopWithRideAlert = objects.stop()
-        val firstStopWithBoardAlert = objects.stop()
-        val secondStopWithBoardAlert = objects.stop()
+        val stopWithBoardAlert = objects.stop()
+        val firstStopWithRideAlert = objects.stop()
+        val secondStopWithRideAlert = objects.stop()
 
-        val alertBoardTargetStop =
+        val alertRideTargetStop =
             objects.alert {
+                effect = Alert.Effect.ServiceChange
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = targetStop.id,
                     directionId = 0
                 )
             }
 
-        val alertRide =
+        val alertBoard =
             objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
-                    stop = stopWithRideAlert.id,
-                    directionId = 0
-                )
-            }
-        val firstBoardAlert =
-            objects.alert {
+                effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
-                    stop = firstStopWithBoardAlert.id,
+                    stop = stopWithBoardAlert.id,
+                    directionId = 0
+                )
+            }
+        val firstRideAlert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    route = route.id,
+                    stop = firstStopWithRideAlert.id,
                     directionId = null
                 )
             }
 
-        val secondBoardAlert =
+        val secondRideAlert =
             objects.alert {
+                effect = Alert.Effect.ServiceChange
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
-                    stop = secondStopWithBoardAlert.id,
+                    stop = secondStopWithRideAlert.id,
                     directionId = null
                 )
             }
@@ -302,20 +346,20 @@ class AlertTest {
                 stopIds =
                     listOf(
                         targetStop.id,
-                        stopWithRideAlert.id,
-                        firstStopWithBoardAlert.id,
-                        secondStopWithBoardAlert.id
+                        stopWithBoardAlert.id,
+                        firstStopWithRideAlert.id,
+                        secondStopWithRideAlert.id
                     )
             }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(
-                listOf(alertBoardTargetStop, alertRide, firstBoardAlert, secondBoardAlert),
+                listOf(alertRideTargetStop, alertBoard, firstRideAlert, secondRideAlert),
                 trip,
                 setOf(targetStop.id)
             )
 
-        assertEquals(listOf(firstBoardAlert), downstreamAlerts)
+        assertEquals(listOf(firstRideAlert), downstreamAlerts)
     }
 
 
@@ -329,20 +373,21 @@ class AlertTest {
 
         val alertAllStops =
             objects.alert {
+                effect = Alert.Effect.ServiceChange
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = targetStop.id,
                     directionId = 0
                 )
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = downstreamStop1.id,
                     directionId = 0
                 )
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = downstreamStop2.id,
                     directionId = 0
@@ -351,8 +396,9 @@ class AlertTest {
 
         val alertDownstream2Only =
             objects.alert {
+                effect = Alert.Effect.ServiceChange
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
+                    listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = downstreamStop2.id,
                     directionId = 0
@@ -392,6 +438,7 @@ class AlertTest {
 
         val alert =
             objects.alert {
+                effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,

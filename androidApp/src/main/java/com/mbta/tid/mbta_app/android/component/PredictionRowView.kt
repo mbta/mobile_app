@@ -22,10 +22,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
@@ -70,7 +76,7 @@ fun PredictionRowView(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ProvideTextStyle(value = MaterialTheme.typography.headlineMedium) {
+            ProvideTextStyle(value = Typography.callout) {
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.End,
@@ -90,24 +96,30 @@ fun PredictionRowView(
                                         isOnly = index == 0 && predictions.trips.count() == 1
                                     )
                                     if (pillDecoration is PillDecoration.OnPrediction) {
-                                        val route =
-                                            pillDecoration.routesByTrip.getValue(prediction.id)
-                                        RoutePill(
-                                            route,
-                                            null,
-                                            RoutePillType.Flex,
-                                            modifier =
-                                                Modifier.wrapContentHeight(
-                                                        Alignment.CenterVertically
-                                                    )
-                                                    .scale(0.75f)
-                                        )
+                                        val route: Route? =
+                                            pillDecoration.routesByTrip[prediction.id]
+
+                                        if (route != null) {
+                                            RoutePill(
+                                                route,
+                                                null,
+                                                RoutePillType.Flex,
+                                                modifier =
+                                                    Modifier.wrapContentHeight(
+                                                            Alignment.CenterVertically
+                                                        )
+                                                        .scale(0.75f)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         is RealtimePatterns.Format.Disruption ->
                             UpcomingTripView(
-                                UpcomingTripViewState.Disruption(predictions.alert.effect)
+                                UpcomingTripViewState.Disruption(
+                                    FormattedAlert(predictions.alert),
+                                    iconName = predictions.iconName
+                                )
                             )
                         is RealtimePatterns.Format.NoTrips ->
                             UpcomingTripView(
@@ -120,14 +132,16 @@ fun PredictionRowView(
                 //
             }
 
-            Column(
-                modifier = Modifier.padding(8.dp).widthIn(max = 8.dp),
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.baseline_chevron_right_24),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary
-                )
+            if (predictions !is RealtimePatterns.Format.Disruption) {
+                Column(
+                    modifier = Modifier.padding(8.dp).widthIn(max = 8.dp),
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.baseline_chevron_right_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
+                }
             }
         }
     }
@@ -149,74 +163,85 @@ private fun PredictionRowViewPreview() {
         }
     val trip = objects.trip()
 
-    Column {
-        PredictionRowView(
-            predictions =
+    MyApplicationTheme {
+        Column {
+            PredictionRowView(
+                predictions =
+                    RealtimePatterns.Format.Some(
+                        listOf(
+                            RealtimePatterns.Format.Some.FormatWithId(
+                                trip.id,
+                                RouteType.LIGHT_RAIL,
+                                TripInstantDisplay.Boarding
+                            )
+                        ),
+                        null
+                    ),
+                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+            ) {
+                Text("Destination")
+            }
+
+            PredictionRowView(
                 RealtimePatterns.Format.Some(
                     listOf(
                         RealtimePatterns.Format.Some.FormatWithId(
                             trip.id,
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Boarding
+                            TripInstantDisplay.Overridden("Stopped 10 stops away")
                         )
                     ),
                     null
                 ),
-            pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
-        ) {
-            Text("Destination")
-        }
+                pillDecoration = PillDecoration.OnRow(greenB)
+            ) {
+                Text("Destination")
+            }
 
-        PredictionRowView(
-            RealtimePatterns.Format.Some(
-                listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip.id,
-                        RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Overridden("Stopped 10 stops away")
-                    )
-                ),
-                null
-            ),
-            pillDecoration = PillDecoration.OnRow(greenB)
-        ) {
-            Text("Destination")
-        }
-
-        PredictionRowView(
-            RealtimePatterns.Format.Some(
-                listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip.id,
-                        RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Overridden("Stopped 10 stops away")
-                    )
-                ),
-                null
-            ),
-            pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
-        ) {
-            Text("Destination")
-        }
-
-        PredictionRowView(
-            RealtimePatterns.Format.Some(
-                listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        "a",
-                        RouteType.BUS,
-                        TripInstantDisplay.ScheduleMinutes(6)
+            PredictionRowView(
+                RealtimePatterns.Format.Some(
+                    listOf(
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            trip.id,
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Overridden("Stopped 10 stops away")
+                        )
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        "b",
-                        RouteType.BUS,
-                        TripInstantDisplay.ScheduleMinutes(15)
-                    ),
+                    null
                 ),
-                null
-            )
-        ) {
-            Text("Destination")
+                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+            ) {
+                Text("Destination")
+            }
+
+            PredictionRowView(
+                RealtimePatterns.Format.Some(
+                    listOf(
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            "a",
+                            RouteType.BUS,
+                            TripInstantDisplay.ScheduleMinutes(6)
+                        ),
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            "b",
+                            RouteType.BUS,
+                            TripInstantDisplay.ScheduleMinutes(15)
+                        ),
+                    ),
+                    null
+                )
+            ) {
+                Text("Destination")
+            }
+
+            PredictionRowView(
+                RealtimePatterns.Format.Disruption(
+                    alert { effect = Alert.Effect.Detour },
+                    MapStopRoute.GREEN
+                )
+            ) {
+                Text("Destination")
+            }
         }
     }
 }

@@ -48,7 +48,6 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
-import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.coroutines.launch
@@ -76,7 +75,6 @@ fun StopDetailsFilteredDeparturesView(
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
-    setMapSelectedVehicle: (Vehicle?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject()
@@ -87,7 +85,11 @@ fun StopDetailsFilteredDeparturesView(
 
     val alertsHere: List<Alert> =
         if (global != null) {
-            patternsByStop.alertsHereFor(directionId = expectedDirection, global = global)
+            patternsByStop.alertsHereFor(
+                directionId = expectedDirection,
+                tripId = tripFilter?.tripId,
+                global = global
+            )
         } else {
             emptyList()
         }
@@ -239,7 +241,6 @@ fun StopDetailsFilteredDeparturesView(
                         stopId = stopId,
                         allAlerts = allAlerts,
                         stopDetailsVM = viewModel,
-                        setMapSelectedVehicle = setMapSelectedVehicle,
                         openSheetRoute = openSheetRoute,
                         openModal = openModal,
                         now = now,

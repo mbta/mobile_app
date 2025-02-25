@@ -117,10 +117,13 @@ class HeadsignRowViewTest {
     fun showsAlert() {
         init(
             "Headsign",
-            RealtimePatterns.Format.Disruption(alert { effect = Alert.Effect.Shuttle })
+            RealtimePatterns.Format.Disruption(
+                alert { effect = Alert.Effect.Shuttle },
+                mapStopRoute = null
+            )
         )
 
-        composeTestRule.onNodeWithText("Shuttle", ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
     }
 
     @Test

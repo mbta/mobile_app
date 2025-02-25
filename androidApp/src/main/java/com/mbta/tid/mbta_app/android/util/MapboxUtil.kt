@@ -6,6 +6,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.plugin.viewport.ViewportStatus
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
+import com.mapbox.maps.plugin.viewport.state.OverviewViewportState
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.math.pow
 import kotlin.math.round
@@ -24,13 +25,23 @@ fun MapViewportState.followPuck(zoom: Double? = null) {
     )
 }
 
-@OptIn(MapboxExperimental::class)
 val MapViewportState.isFollowingPuck: Boolean
     get() =
         when (val status = this.mapViewportStatus) {
             ViewportStatus.Idle -> false
             is ViewportStatus.State -> status.state is FollowPuckViewportState
             is ViewportStatus.Transition -> status.toState is FollowPuckViewportState
+            null -> false
+        }
+
+@OptIn(MapboxExperimental::class)
+val MapViewportState.isOverview: Boolean
+    get() =
+        when (val status = this.mapViewportStatus) {
+            ViewportStatus.Idle -> false
+            is ViewportStatus.State -> status.state is OverviewViewportState
+            is ViewportStatus.Transition -> status.toState is OverviewViewportState
+            null -> false
         }
 
 fun Double.roundedTo(places: Int): Double {

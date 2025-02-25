@@ -6,12 +6,13 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -30,6 +31,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,6 +43,7 @@ import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.StopFilterParameterType
 import com.mbta.tid.mbta_app.android.TripFilterParameterType
@@ -60,6 +63,7 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
@@ -82,6 +86,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -115,6 +120,7 @@ fun NearbyTransitPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    searchResultsViewModel: SearchResultsViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(
             factory =
@@ -178,6 +184,7 @@ fun NearbyTransitPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
+            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
             now = now
         )
 
@@ -218,6 +225,7 @@ fun NearbyTransitPage(
 
     fun handleSearchExpandedChange(expanded: Boolean) {
         searchExpanded = expanded
+        searchResultsViewModel.expanded = expanded
         if (expanded) {
             hideNavBar()
             if (!nearbyTransit.hideMaps) {
@@ -237,20 +245,43 @@ fun NearbyTransitPage(
 
     fun handleStopNavigation(stopId: String) {
         updateVisitHistory(stopId)
+        mapViewModel.setSelectedVehicle(null)
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
     }
 
-    fun openSearch() {
-        searchFocusRequester.requestFocus()
+    fun handleVehicleTap(vehicle: Vehicle) {
+        val tripId = vehicle.tripId ?: return
+        val (stopId, stopFilter, tripFilter) =
+            when (currentNavEntry) {
+                is SheetRoutes.StopDetails ->
+                    Triple(
+                        currentNavEntry.stopId,
+                        currentNavEntry.stopFilter,
+                        currentNavEntry.tripFilter
+                    )
+                else -> null
+            }
+                ?: return
+        if (stopFilter == null || tripFilter?.tripId == tripId) return
+
+        val patterns =
+            viewModel.stopDetailsDepartures.value?.routes?.firstOrNull {
+                it.routes.firstOrNull { route -> route.id == vehicle.routeId } != null
+            }
+
+        val upcoming =
+            patterns?.allUpcomingTrips()?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
+        val stopSequence = upcoming?.stopSequence
+        val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: patterns?.routeIdentifier
+
+        if (routeId != null) analytics.tappedVehicle(routeId)
+        updateTripFilter(stopId, TripDetailsFilter(tripId, vehicle.id, stopSequence, true))
     }
 
-    fun panToDefaultCenter() {
-        nearbyTransit.viewportProvider.animateTo(
-            ViewportProvider.Companion.Defaults.center,
-            zoom = 13.75
-        )
+    fun openSearch() {
+        searchFocusRequester.requestFocus()
     }
 
     LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
@@ -357,7 +388,6 @@ fun NearbyTransitPage(
                     tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
-                    setMapSelectedVehicle = { mapViewModel.setSelectedVehicle(it) },
                     errorBannerViewModel = errorBannerViewModel
                 )
             }
@@ -393,6 +423,14 @@ fun NearbyTransitPage(
                     }
                 }
 
+                fun panToDefaultCenter() {
+                    nearbyTransit.viewportProvider.isManuallyCentering = true
+                    nearbyTransit.viewportProvider.animateTo(
+                        ViewportProvider.Companion.Defaults.center,
+                        zoom = 13.75
+                    )
+                }
+
                 NearbyTransitView(
                     alertData = nearbyTransit.alertData,
                     globalResponse = nearbyTransit.globalResponse,
@@ -415,8 +453,10 @@ fun NearbyTransitPage(
             }
         }
     }
-
-    Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
+    // setting WindowInsets top to 0 to prevent the sheet from having extra padding on top even
+    // when not fully expanded https://stackoverflow.com/a/77361483
+    Scaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
+        outerSheetPadding ->
         if (nearbyTransit.hideMaps) {
             val isNearbyTransit = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
             SearchBarOverlay(
@@ -424,10 +464,13 @@ fun NearbyTransitPage(
                 ::handleSearchExpandedChange,
                 ::handleStopNavigation,
                 currentNavEntry,
-                searchFocusRequester
+                searchFocusRequester,
+                searchResultsViewModel
             ) {
                 SheetContent(
-                    Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp).fillMaxSize()
+                    Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp)
+                        .statusBarsPadding()
+                        .fillMaxSize()
                 )
             }
         } else {
@@ -446,10 +489,27 @@ fun NearbyTransitPage(
                                 }
                                 .fillMaxSize()
                     ) {
-                        SheetContent(Modifier.height(sheetHeight).padding(outerSheetPadding))
+                        val statusBarPadding =
+                            if (
+                                nearbyTransit.scaffoldState.bottomSheetState.currentValue !=
+                                    SheetValue.Large
+                            ) {
+                                Modifier
+                            } else {
+                                Modifier.statusBarsPadding()
+                            }
+
+                        SheetContent(
+                            statusBarPadding.height(sheetHeight).padding(outerSheetPadding)
+                        )
                     }
                 },
-                sheetContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                sheetContainerColor =
+                    when (currentNavEntry) {
+                        SheetRoutes.NearbyTransit -> colorResource(R.color.fill1)
+                        is SheetRoutes.StopDetails -> colorResource(R.color.fill2)
+                        else -> colorResource(R.color.fill1)
+                    },
                 scaffoldState = nearbyTransit.scaffoldState
             ) { sheetPadding ->
                 SearchBarOverlay(
@@ -457,10 +517,11 @@ fun NearbyTransitPage(
                     ::handleSearchExpandedChange,
                     ::handleStopNavigation,
                     currentNavEntry,
-                    searchFocusRequester
+                    searchFocusRequester,
+                    searchResultsViewModel
                 ) {
                     HomeMapView(
-                        Modifier.padding(sheetPadding),
+                        sheetPadding = sheetPadding,
                         lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                         nearbyTransitSelectingLocationState =
                             nearbyTransit.nearbyTransitSelectingLocationState,
@@ -468,9 +529,11 @@ fun NearbyTransitPage(
                         viewportProvider = nearbyTransit.viewportProvider,
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
+                        handleVehicleTap = ::handleVehicleTap,
                         vehiclesData = vehiclesData,
                         stopDetailsDepartures = stopDetailsDepartures,
-                        viewModel = mapViewModel
+                        viewModel = mapViewModel,
+                        searchResultsViewModel = searchResultsViewModel,
                     )
                 }
             }

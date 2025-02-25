@@ -14,7 +14,7 @@ enum TripHeaderSpec {
     case finishingAnotherTrip
     case noVehicle
     case scheduled(Stop, TripDetailsStopList.Entry)
-    case vehicle(Vehicle, Stop, TripDetailsStopList.Entry?)
+    case vehicle(Vehicle, Stop, TripDetailsStopList.Entry?, Bool)
 }
 
 // swiftlint:disable:next type_body_length
@@ -71,7 +71,12 @@ struct TripHeaderCard: View {
         case .finishingAnotherTrip: finishingAnotherTripDescription
         case .noVehicle: noVehicleDescription
         case let .scheduled(_, stopEntry): scheduleDescription(stopEntry)
-        case let .vehicle(vehicle, stop, stopEntry): vehicleDescription(vehicle, stop, stopEntry)
+        case let .vehicle(vehicle, stop, stopEntry, atTerminal): vehicleDescription(
+                vehicle,
+                stop,
+                stopEntry,
+                atTerminal
+            )
         }
     }
 
@@ -119,34 +124,48 @@ struct TripHeaderCard: View {
     }
 
     @ViewBuilder private func vehicleDescription(
-        _ vehicle: Vehicle, _ stop: Stop,
-        _ stopEntry: TripDetailsStopList.Entry?
+        _ vehicle: Vehicle, _ stop: Stop, _ entry: TripDetailsStopList.Entry?, _ atTerminal: Bool
     ) -> some View {
         if vehicle.tripId == tripId {
             VStack(alignment: .leading, spacing: 2) {
-                vehicleStatusDescription(vehicle.currentStatus, stopEntry)
+                VStack(alignment: .leading, spacing: 2) {
+                    vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                        .font(Typography.footnote)
+                    Text(stop.name)
+                        .font(Typography.headlineBold)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+                if let trackNumber = entry?.trackNumber {
+                    Text(
+                        "Track \(trackNumber)",
+                        comment: "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc"
+                    )
                     .font(Typography.footnote)
-                Text(stop.name)
-                    .font(Typography.headlineBold)
+                    .accessibilityLabel(Text(
+                        "Boarding on track \(trackNumber)",
+                        comment: "Screen reader text describing the platform the train is boarding at"
+                    ))
+                }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, stopEntry))
         }
     }
 
     private func vehicleDescriptionAccessibilityText(
-        _ vehicle: Vehicle, _ stop: Stop,
-        _ stopEntry: TripDetailsStopList.Entry?
+        _ vehicle: Vehicle, _ stop: Stop, _ atTerminal: Bool
     ) -> Text {
-        targetId == stop.id ? Text(
-            "Selected \(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name), selected stop",
+        let typeLabel = routeAccents.type.typeText(isOnly: true)
+        let statusLabel = vehicleStatusString(vehicle.currentStatus, atTerminal)
+        return targetId == stop.id ? Text(
+            "Selected \(typeLabel) \(statusLabel) \(stop.name), selected stop",
             comment: """
             Screen reader text for the vehicle status on the trip details page when the stop is selected,
             ex 'Selected [train] [approaching] [Alewife], selected stop' or 'Selected [bus] [now at] [Harvard], selected stop'
             Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
             """
         ) : Text(
-            "Selected \(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name)",
+            "Selected \(typeLabel) \(statusLabel) \(stop.name)",
             comment: """
             Screen reader text for the vehicle status on the trip details page,
             ex 'Selected [train] [approaching] [Alewife]' or 'Selected [bus] [now at] [Harvard]'
@@ -157,14 +176,14 @@ struct TripHeaderCard: View {
 
     @ViewBuilder private func vehicleStatusDescription(
         _ vehicleStatus: Vehicle.CurrentStatus,
-        _ stopEntry: TripDetailsStopList.Entry?
+        _ atTerminal: Bool
     ) -> some View {
-        Text(vehicleStatusString(vehicleStatus, stopEntry))
+        Text(vehicleStatusString(vehicleStatus, atTerminal))
     }
 
     private func vehicleStatusString(
         _ vehicleStatus: Vehicle.CurrentStatus,
-        _ stopEntry: TripDetailsStopList.Entry?
+        _ atTerminal: Bool
     ) -> String {
         switch vehicleStatus {
         case .incomingAt: NSLocalizedString(
@@ -175,7 +194,7 @@ struct TripHeaderCard: View {
                 "Next stop",
                 comment: "Label for a vehicle's next stop. For example: Next stop Alewife"
             )
-        case .stoppedAt: stopEntry != nil ? NSLocalizedString(
+        case .stoppedAt: atTerminal ? NSLocalizedString(
                 "Waiting to depart",
                 comment: """
                 Label for a vehicle stopped at a terminal station waiting to start a trip.
@@ -194,7 +213,7 @@ struct TripHeaderCard: View {
         case let .scheduled(stop, _):
             StopDot(routeAccents: routeAccents, targeted: targetId == stop.id)
                 .frame(width: 36, height: 36)
-        case let .vehicle(vehicle, stop, _): vehiclePuck(vehicle, stop)
+        case let .vehicle(vehicle, stop, _, _): vehiclePuck(vehicle, stop)
         }
     }
 
@@ -280,13 +299,13 @@ struct TripHeaderCard: View {
 
     var upcomingTripViewState: UpcomingTripView.State? {
         let entry: TripDetailsStopList.Entry? = switch spec {
-        case let .vehicle(_, _, stopEntry): stopEntry
+        case let .vehicle(_, _, stopEntry, atTerminal): atTerminal ? stopEntry : nil
         case let .scheduled(_, stopEntry): stopEntry
         default: nil
         }
         guard let entry else { return nil }
-        if let alert = entry.alert {
-            return .disruption(alert.effect)
+        if let disruption = entry.disruption {
+            return .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
         } else {
             let formatted = entry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
             return switch onEnum(of: formatted) {
@@ -330,7 +349,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
 
         List {
             TripHeaderCard(
-                spec: .vehicle(vehicle, stop, nil),
+                spec: .vehicle(vehicle, stop, nil, false),
                 tripId: trip.id,
                 targetId: "",
                 routeAccents: TripRouteAccents(route: red),

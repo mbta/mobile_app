@@ -1,10 +1,7 @@
 package com.mbta.tid.mbta_app.android.map
 
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -12,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.mapbox.common.HttpServiceFactory
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.FeatureCollection
-import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLineData
@@ -34,8 +30,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -50,22 +48,27 @@ interface IMapViewModel {
     var globalResponse: Flow<GlobalResponse?>
     var railRouteShapes: Flow<MapFriendlyRouteResponse?>
     val selectedVehicle: StateFlow<Vehicle?>
+    val configLoadAttempted: StateFlow<Boolean>
+    val globalMapData: Flow<GlobalMapData?>
+    val selectedStop: StateFlow<Stop?>
 
     suspend fun loadConfig()
 
     suspend fun globalMapData(now: Instant): GlobalMapData?
 
-    @Composable fun rememberGlobalMapData(now: Instant): GlobalMapData?
+    suspend fun refreshGlobalMapData(now: Instant)
 
-    suspend fun refreshRouteLineData(now: Instant)
+    suspend fun refreshRouteLineData(globalMapData: GlobalMapData?)
 
-    suspend fun refreshStopFeatures(now: Instant, selectedStop: Stop?)
+    suspend fun refreshStopFeatures(selectedStop: Stop?, globalMapData: GlobalMapData?)
 
     suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?)
 
     suspend fun setGlobalResponse(globalResponse: GlobalResponse?)
 
     fun setSelectedVehicle(selectedVehicle: Vehicle?)
+
+    fun setSelectedStop(stop: Stop?)
 }
 
 open class MapViewModel(
@@ -75,6 +78,8 @@ open class MapViewModel(
         HttpServiceFactory.setHttpServiceInterceptor(interceptor)
     }
 ) : ViewModel(), IMapViewModel, KoinComponent {
+    private val _configLoadAttempted = MutableStateFlow(false)
+    override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
     private val _config = MutableStateFlow<ApiResult<ConfigResponse>?>(null)
     var config: StateFlow<ApiResult<ConfigResponse>?> = _config
     private val _lastMapboxErrorTimestamp = MutableStateFlow<Instant?>(null)
@@ -83,49 +88,60 @@ open class MapViewModel(
     override var railRouteLineData: Flow<List<RouteLineData>?> = _railRouteLineData
     private val _stopSourceData = MutableStateFlow<FeatureCollection?>(null)
     override var stopSourceData: Flow<FeatureCollection?> = _stopSourceData
+    private val _globalMapData = MutableStateFlow<GlobalMapData?>(null)
+    override var globalMapData: Flow<GlobalMapData?> = _globalMapData
     private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
     override var globalResponse: Flow<GlobalResponse?> = _globalResponse
     private val _railRouteShapes = MutableStateFlow<MapFriendlyRouteResponse?>(null)
     override var railRouteShapes: Flow<MapFriendlyRouteResponse?> = _railRouteShapes
     private val _selectedVehicle = MutableStateFlow<Vehicle?>(null)
     override val selectedVehicle = _selectedVehicle.asStateFlow()
+    private val _selectedStop = MutableStateFlow<Stop?>(null)
+    override val selectedStop = _selectedStop.asStateFlow()
 
-    private var alertsData: AlertsStreamDataResponse? by mutableStateOf(null)
+    private val alertsData = MutableStateFlow<AlertsStreamDataResponse?>(null)
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
 
     init {
         setHttpInterceptor(MapHttpInterceptor { updateLastErrorTimestamp() })
         viewModelScope.launch { _railRouteShapes.value = fetchRailRouteShapes() }
+        viewModelScope.launch { setUpSubscriptions() }
+    }
+
+    private suspend fun setUpSubscriptions() {
+        merge(_globalResponse, alertsData).collectLatest {
+            refreshGlobalMapData(Clock.System.now())
+            refreshRouteLineData(_globalMapData.value)
+            refreshStopFeatures(_selectedStop.value, _globalMapData.value)
+        }
     }
 
     private fun updateLastErrorTimestamp() {
         _lastMapboxErrorTimestamp.value = Clock.System.now()
     }
 
-    override suspend fun loadConfig() {
+    override suspend fun loadConfig() =
         withContext(Dispatchers.IO) {
             val latestConfig = configUseCase.getConfig()
             if (latestConfig is ApiResult.Ok) {
                 configureMapboxToken(latestConfig.data.mapboxPublicToken)
             }
             _config.value = latestConfig
+            _configLoadAttempted.value = true
         }
-    }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
         withContext(Dispatchers.Default) {
             globalResponse.first()?.let {
-                GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData, now))
+                GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData.value, now))
             }
         }
 
-    @Composable
-    override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
-        val globalResponse by this.globalResponse.collectAsState(initial = null)
-        return rememberSuspend(this.alertsData, globalResponse, now) { globalMapData(now) }
+    override suspend fun refreshGlobalMapData(now: Instant) {
+        _globalMapData.value = globalMapData(now)
     }
 
-    override suspend fun refreshRouteLineData(now: Instant) {
+    override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {
         withContext(Dispatchers.Default) {
             val globalResponse = globalResponse.first() ?: return@withContext
             val railRouteShapes = railRouteShapes.first() ?: return@withContext
@@ -134,18 +150,18 @@ open class MapViewModel(
                     railRouteShapes.routesWithSegmentedShapes,
                     globalResponse.routes,
                     globalResponse.stops,
-                    globalMapData(now)?.alertsByStop
+                    globalMapData?.alertsByStop
                 )
         }
     }
 
-    override suspend fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {
+    override suspend fun refreshStopFeatures(selectedStop: Stop?, globalMapData: GlobalMapData?) {
         withContext(Dispatchers.Default) {
             val routeLineData = railRouteLineData.first() ?: return@withContext
             _stopSourceData.value =
                 StopFeaturesBuilder.buildCollection(
                         StopSourceData(selectedStopId = selectedStop?.id),
-                        globalMapData(now)?.mapStops.orEmpty(),
+                        globalMapData?.mapStops.orEmpty(),
                         routeLineData
                     )
                     .toMapbox()
@@ -153,7 +169,7 @@ open class MapViewModel(
     }
 
     override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {
-        this.alertsData = alertsData
+        this.alertsData.value = alertsData
     }
 
     override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {
@@ -162,6 +178,10 @@ open class MapViewModel(
 
     override fun setSelectedVehicle(selectedVehicle: Vehicle?) {
         _selectedVehicle.value = selectedVehicle
+    }
+
+    override fun setSelectedStop(stop: Stop?) {
+        _selectedStop.value = stop
     }
 
     private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? {

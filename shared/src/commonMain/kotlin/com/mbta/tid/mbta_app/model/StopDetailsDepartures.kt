@@ -80,16 +80,17 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         if (stopFilter == null) {
             return null
         }
+
+        if (currentTripFilter?.selectionLock == true) return currentTripFilter
+
         val relevantTrips =
             stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, filterAtTime)
                 .map { it.upcoming }
 
-        if (
-            currentTripFilter != null &&
-                (relevantTrips.any { it.trip.id == currentTripFilter.tripId } ||
-                    currentTripFilter.selectionLock)
-        ) {
-            return currentTripFilter
+        val alreadySelectedTrip = relevantTrips.find { it.trip.id == currentTripFilter?.tripId }
+
+        if (currentTripFilter != null && alreadySelectedTrip != null) {
+            return currentTripFilter.copy(vehicleId = alreadySelectedTrip.vehicle?.id)
         }
 
         var filterTrip: UpcomingTrip = relevantTrips.firstOrNull() ?: return null
@@ -198,6 +199,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             showAllPatternsWhileLoading = true,
                             hideNonTypicalPatternsBeyondNext = null,
                             filterCancellations = false,
+                            includeMinorAlerts = true,
                             pinnedRoutes
                         )
                     } else {
@@ -211,6 +213,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             showAllPatternsWhileLoading = true,
                             hideNonTypicalPatternsBeyondNext = null,
                             filterCancellations = false,
+                            includeMinorAlerts = true,
                             pinnedRoutes
                         )
                     }

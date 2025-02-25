@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,14 +43,18 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -131,7 +136,7 @@ fun OnboardingScreenView(
             -((screenHeight / 2f) - (screenHeight / 3f))
         }
     val haloOffsetDp = with(LocalDensity.current) { haloOffset.roundToInt().toDp() }
-    val buttonModifier = Modifier.fillMaxWidth().height(52.dp)
+    val buttonModifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
     val haloTransition = rememberInfiniteTransition(label = "infinite")
     val haloSizeMultiplier =
         haloTransition.animateFloat(
@@ -151,38 +156,42 @@ fun OnboardingScreenView(
             locationHaloSize.roundToInt().toDp() * haloSizeMultiplier.value
         }
 
+    val textScale = with(LocalDensity.current) { 1.sp.toPx() / 1.dp.toPx() }
+
     Column {
         when (screen) {
             OnboardingScreen.Feedback -> {
 
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        painterResource(
-                            if (isDarkTheme) {
-                                R.drawable.onboarding_more_button_dark
-                            } else {
-                                R.drawable.onboarding_more_button
-                            }
-                        ),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().align(Alignment.Center)
-                    )
-                    Image(
-                        painterResource(
-                            if (isDarkTheme) {
-                                R.drawable.onboarding_halo_dark
-                            } else {
-                                R.drawable.onboarding_halo
-                            }
-                        ),
-                        contentDescription = null,
-                        modifier =
-                            Modifier.width(moreHaloSizeDp)
-                                .height(moreHaloSizeDp)
-                                .absoluteOffset(y = haloOffsetDp)
-                                .align(Alignment.Center)
-                    )
+                Box(modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill2))) {
+                    if (textScale < 1.9f) {
+                        Image(
+                            painterResource(
+                                if (isDarkTheme) {
+                                    R.drawable.onboarding_more_button_dark
+                                } else {
+                                    R.drawable.onboarding_more_button
+                                }
+                            ),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize().align(Alignment.Center)
+                        )
+                        Image(
+                            painterResource(
+                                if (isDarkTheme) {
+                                    R.drawable.onboarding_halo_dark
+                                } else {
+                                    R.drawable.onboarding_halo
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier =
+                                Modifier.width(moreHaloSizeDp)
+                                    .height(moreHaloSizeDp)
+                                    .absoluteOffset(y = haloOffsetDp)
+                                    .align(Alignment.Center)
+                        )
+                    }
                     Column(
                         modifier =
                             Modifier.align(Alignment.BottomCenter)
@@ -196,20 +205,23 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_feedback_header),
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold
+                            style = Typography.title1Bold,
+                            modifier = Modifier.semantics { heading() }
                         )
-                        Text(stringResource(R.string.onboarding_feedback_body), fontSize = 20.sp)
+                        Text(
+                            stringResource(R.string.onboarding_feedback_body),
+                            style = Typography.title3
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
-                            modifier = Modifier.fillMaxWidth().height(52.dp),
+                            modifier = buttonModifier,
                             onClick = advance,
                             shape = RoundedCornerShape(8.dp),
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_feedback_advance),
                                 color = colorResource(R.color.fill3),
-                                fontSize = 17.sp
+                                style = Typography.bodySemibold
                             )
                         }
                     }
@@ -245,36 +257,33 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_hide_maps_header),
-                            modifier = Modifier.padding(start = 32.dp, top = 32.dp, end = 32.dp),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
+                            modifier =
+                                Modifier.padding(start = 32.dp, top = 32.dp, end = 32.dp)
+                                    .semantics { heading() },
+                            style = Typography.title1Bold
                         )
                         Text(
                             stringResource(R.string.onboarding_hide_maps_body),
-                            fontSize = 20.sp,
+                            style = Typography.title3,
                             modifier = Modifier.padding(start = 32.dp, bottom = 32.dp, end = 32.dp)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                                .height(52.dp)
-                                .padding(start = 32.dp, end = 32.dp),
+                        modifier = buttonModifier.padding(start = 32.dp, end = 32.dp),
                         shape = RoundedCornerShape(8.dp),
                         onClick = { hideMaps(true) },
                     ) {
                         Text(
                             stringResource(R.string.onboarding_hide_maps_hide),
-                            fontSize = 17.sp,
+                            style = Typography.bodySemibold,
                             color = colorResource(R.color.fill3)
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         modifier =
-                            Modifier.fillMaxWidth()
-                                .height(52.dp)
+                            buttonModifier
                                 .padding(start = 32.dp, end = 32.dp)
                                 .border(
                                     1.dp,
@@ -291,8 +300,7 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_hide_maps_show),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Normal
+                            style = Typography.body
                         )
                     }
                     Spacer(modifier = Modifier.height(56.dp))
@@ -316,37 +324,39 @@ fun OnboardingScreenView(
                                 contentScale = ContentScale.Crop
                             ),
                 ) {
-                    Image(
-                        painter =
-                            painterResource(
-                                id =
-                                    if (isDarkTheme) {
-                                        R.drawable.onboarding_transit_lines_dark
-                                    } else {
-                                        R.drawable.onboarding_transit_lines
-                                    }
-                            ),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.align(Alignment.Center).fillMaxSize()
-                    )
-                    Image(
-                        painter =
-                            painterResource(
-                                id =
-                                    if (isDarkTheme) {
-                                        R.drawable.onboarding_halo_dark
-                                    } else {
-                                        R.drawable.onboarding_halo
-                                    }
-                            ),
-                        contentDescription = null,
-                        modifier =
-                            Modifier.align(Alignment.Center)
-                                .width(locationHaloSizeDp)
-                                .height(locationHaloSizeDp)
-                                .absoluteOffset(y = haloOffsetDp)
-                    )
+                    if (textScale < 1.5f) {
+                        Image(
+                            painter =
+                                painterResource(
+                                    id =
+                                        if (isDarkTheme) {
+                                            R.drawable.onboarding_transit_lines_dark
+                                        } else {
+                                            R.drawable.onboarding_transit_lines
+                                        }
+                                ),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.align(Alignment.Center).fillMaxSize()
+                        )
+                        Image(
+                            painter =
+                                painterResource(
+                                    id =
+                                        if (isDarkTheme) {
+                                            R.drawable.onboarding_halo_dark
+                                        } else {
+                                            R.drawable.onboarding_halo
+                                        }
+                                ),
+                            contentDescription = null,
+                            modifier =
+                                Modifier.align(Alignment.Center)
+                                    .width(locationHaloSizeDp)
+                                    .height(locationHaloSizeDp)
+                                    .absoluteOffset(y = haloOffsetDp)
+                        )
+                    }
                     Column(
                         modifier =
                             Modifier.align(Alignment.BottomCenter)
@@ -360,10 +370,13 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_location_header),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
+                            style = Typography.title1Bold,
+                            modifier = Modifier.semantics { heading() }
                         )
-                        Text(stringResource(R.string.onboarding_location_body), fontSize = 20.sp)
+                        Text(
+                            stringResource(R.string.onboarding_location_body),
+                            style = Typography.title3
+                        )
                         Button(
                             modifier = buttonModifier,
                             shape = RoundedCornerShape(8.dp),
@@ -372,10 +385,13 @@ fun OnboardingScreenView(
                             Text(
                                 stringResource(R.string.onboarding_location_advance),
                                 color = colorResource(R.color.fill3),
-                                fontSize = 17.sp
+                                style = Typography.bodySemibold
                             )
                         }
-                        Text(stringResource(R.string.onboarding_location_footer), fontSize = 17.sp)
+                        Text(
+                            stringResource(R.string.onboarding_location_footer),
+                            style = Typography.body
+                        )
                     }
                 }
             }
@@ -397,14 +413,17 @@ fun OnboardingScreenView(
                                 contentScale = ContentScale.Crop
                             ),
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.accessibility_icon_accessible),
-                        contentDescription = null,
-                        modifier =
-                            Modifier.align(Alignment.Center)
-                                .size(192.dp)
-                                .absoluteOffset(y = haloOffsetDp)
-                    )
+                    if (textScale < 2f) {
+                        Image(
+                            painter =
+                                painterResource(id = R.drawable.accessibility_icon_accessible),
+                            contentDescription = null,
+                            modifier =
+                                Modifier.align(Alignment.Center)
+                                    .size(192.dp)
+                                    .absoluteOffset(y = haloOffsetDp)
+                        )
+                    }
                     Column(
                         modifier =
                             Modifier.align(Alignment.BottomCenter)
@@ -418,16 +437,16 @@ fun OnboardingScreenView(
                     ) {
                         Text(
                             stringResource(R.string.onboarding_station_accessibility_header),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
+                            style = Typography.title1Bold,
+                            modifier = Modifier.semantics { heading() }
                         )
                         Text(
                             stringResource(R.string.onboarding_station_accessibility_body),
-                            fontSize = 20.sp
+                            style = Typography.title3
                         )
 
                         Button(
-                            modifier = Modifier.fillMaxWidth().height(52.dp),
+                            modifier = buttonModifier,
                             shape = RoundedCornerShape(8.dp),
                             onClick = { showStationAccessibility(true) },
                             colors =
@@ -438,20 +457,19 @@ fun OnboardingScreenView(
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_station_accessibility_show),
-                                Modifier.padding(start = 32.dp, end = 32.dp),
-                                fontSize = 17.sp,
+                                Modifier.align(Alignment.CenterVertically),
+                                textAlign = TextAlign.Center,
+                                style = Typography.bodySemibold,
                                 color = colorResource(R.color.fill3)
                             )
                         }
                         Button(
                             modifier =
-                                Modifier.fillMaxWidth()
-                                    .height(52.dp)
-                                    .border(
-                                        1.dp,
-                                        color = colorResource(R.color.key),
-                                        shape = RoundedCornerShape(8.dp)
-                                    ),
+                                buttonModifier.border(
+                                    1.dp,
+                                    color = colorResource(R.color.key),
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
                             shape = RoundedCornerShape(8.dp),
                             onClick = { showStationAccessibility(false) },
                             colors =
@@ -462,9 +480,9 @@ fun OnboardingScreenView(
                         ) {
                             Text(
                                 stringResource(R.string.onboarding_station_accessibility_hide),
-                                Modifier.padding(start = 32.dp, end = 32.dp),
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Normal
+                                Modifier.align(Alignment.CenterVertically),
+                                textAlign = TextAlign.Center,
+                                style = Typography.body
                             )
                         }
                     }
@@ -477,10 +495,12 @@ fun OnboardingScreenView(
 @Preview
 @Composable
 private fun OnboardingScreenViewPreview() {
-    OnboardingScreenView(
-        OnboardingScreen.StationAccessibility,
-        advance = {},
-        locationDataManager = LocationDataManager(),
-        settingsRepository = MockSettingsRepository()
-    )
+    MyApplicationTheme {
+        OnboardingScreenView(
+            OnboardingScreen.StationAccessibility,
+            advance = {},
+            locationDataManager = LocationDataManager(),
+            settingsRepository = MockSettingsRepository()
+        )
+    }
 }

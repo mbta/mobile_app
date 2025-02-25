@@ -30,7 +30,9 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -48,15 +50,10 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                 details = {
                     Text(
                         stringResource(R.string.error_loading_data),
-                        style = MaterialTheme.typography.headlineSmall
+                        style = Typography.subheadline
                     )
-                    if (vm.showDebugMessages) {
-                        DebugView {
-                            Text(
-                                (state as? ErrorBannerState.DataError)?.messages?.joinToString()
-                                    ?: ""
-                            )
-                        }
+                    DebugView {
+                        Text((state as? ErrorBannerState.DataError)?.messages?.joinToString() ?: "")
                     }
                 },
                 button = {
@@ -76,7 +73,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         Text(
                             stringResource(R.string.unable_to_connect),
                             modifier = Modifier.padding(start = 12.dp),
-                            style = MaterialTheme.typography.headlineSmall
+                            style = Typography.subheadline
                         )
                         Spacer(Modifier.weight(1f))
                     }
@@ -104,7 +101,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                                 minutes.toInt(),
                                 minutes
                             ),
-                            style = MaterialTheme.typography.headlineSmall
+                            style = Typography.subheadline
                         )
                     },
                     button = {
@@ -199,15 +196,17 @@ private fun ErrorBannerPreviews() {
     LaunchedEffect(null) { dataErrorDebugVM.activate() }
     LaunchedEffect(null) { staleVM.activate() }
     LaunchedEffect(null) { staleLoadingVM.activate() }
-    Column(
-        modifier =
-            Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        ErrorBanner(networkErrorVM)
-        ErrorBanner(dataErrorVM)
-        ErrorBanner(dataErrorDebugVM)
-        ErrorBanner(staleVM)
-        ErrorBanner(staleLoadingVM)
+    MyApplicationTheme {
+        Column(
+            modifier =
+                Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ErrorBanner(networkErrorVM)
+            ErrorBanner(dataErrorVM)
+            ErrorBanner(dataErrorDebugVM)
+            ErrorBanner(staleVM)
+            ErrorBanner(staleLoadingVM)
+        }
     }
 }

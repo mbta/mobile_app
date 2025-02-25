@@ -22,6 +22,8 @@ struct MoreSectionView: View {
                             .foregroundStyle(Color.text)
                             .font(Typography.subheadlineSemibold)
                             .listRowInsets(EdgeInsets())
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h2)
                         if let note = section.note {
                             Text(note)
                                 .foregroundStyle(Color.text)
@@ -45,6 +47,8 @@ struct MoreSectionView: View {
                                     .frame(minHeight: 44)
                             case let .link(label: label, url: url, note: note):
                                 MoreLink(label: label, url: url, note: note, isKey: section.id == .feedback)
+                                    .accessibilityAddTraits(section.id == .feedback ? [.isHeader] : [])
+                                    .accessibilityHeading(section.id == .feedback ? .h2 : .unspecified)
                             case let .phone(label: label, phoneNumber: phoneNumber):
                                 MorePhone(label: label, phoneNumber: phoneNumber)
                             case let .navLink(label: label, destination: destination):

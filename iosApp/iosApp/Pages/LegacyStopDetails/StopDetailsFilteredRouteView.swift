@@ -97,7 +97,7 @@ struct StopDetailsFilteredRouteView: View {
 
         if let patternsByStop, let expectedDirection {
             if let global {
-                alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, global: global)
+                alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, tripId: nil, global: global)
                 downstreamAlerts = patternsByStop.alertsDownstream(directionId: expectedDirection)
             } else {
                 alerts = []
@@ -214,6 +214,10 @@ struct StopDetailsFilteredRouteView: View {
                                 }
                                 ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                                     VStack(spacing: 0) {
+                                        let showChevron = switch onEnum(of: row.formatted) {
+                                        case .disruption: false
+                                        default: true
+                                        }
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             let noTrips: RealtimePatterns
                                                 .NoTripsFormat? = switch onEnum(of: row.formatted) {
@@ -229,7 +233,7 @@ struct StopDetailsFilteredRouteView: View {
                                                 routeType: patternsByStop.representativeRoute.type,
                                                 noTrips: noTrips
                                             )
-                                        }) {
+                                        }, showChevron: showChevron) {
                                             HeadsignRowView(
                                                 headsign: row.headsign,
                                                 predictions: row.formatted,

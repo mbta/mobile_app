@@ -14,7 +14,9 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -53,6 +55,7 @@ class SearchBarOverlayTest : KoinTest {
         }
     val koinApplication = koinApplication {
         modules(
+            MainApplication.koinViewModelModule,
             module {
                 single<Analytics> { MockAnalytics() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
@@ -92,6 +95,7 @@ class SearchBarOverlayTest : KoinTest {
                         }
                     }
                 }
+                single<SearchResultsViewModel> { SearchResultsViewModel(get(), get(), get()) }
             }
         )
     }
@@ -114,6 +118,7 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = { navigated.value = true },
                     currentNavEntry = currentNavEntry.value,
                     inputFieldFocusRequester = focusRequester,
+                    searchResultsVm = koinApplication.koin.get(),
                 ) {
                     Text("Content")
                 }

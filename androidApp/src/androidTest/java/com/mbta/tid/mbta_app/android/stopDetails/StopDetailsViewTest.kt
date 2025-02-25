@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
@@ -126,12 +127,16 @@ class StopDetailsViewTest {
             )
         )
 
+    val settingsRepository =
+        MockSettingsRepository(settings = mapOf(Pair(Settings.ElevatorAccessibility, true)))
+
     val koinApplication = koinApplication {
         modules(
             module {
                 single<Analytics> { MockAnalytics() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<ISchedulesRepository> { MockScheduleRepository() }
+                single<ISettingsRepository> { settingsRepository }
                 single<IPredictionsRepository> {
                     object : IPredictionsRepository {
                         override fun connect(
@@ -253,7 +258,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -333,7 +337,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -423,7 +426,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -441,13 +443,7 @@ class StopDetailsViewTest {
                 header = "Elevator alert header"
             }
 
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(
-                        settings = mapOf(Pair(Settings.ElevatorAccessibility, true))
-                    )
-            )
+        val viewModel = StopDetailsViewModel.mocked(settingsRepository = settingsRepository)
 
         viewModel.setDepartures(
             StopDetailsDepartures(
@@ -509,7 +505,6 @@ class StopDetailsViewTest {
                             MockErrorBannerStateRepository(),
                             MockSettingsRepository()
                         ),
-                    setMapSelectedVehicle = {},
                     openModal = {},
                     openSheetRoute = {}
                 )

@@ -26,7 +26,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let sut = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -47,7 +47,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let inTransitSut = TripHeaderCard(
-            spec: .vehicle(inTransitVehicle, stop, nil),
+            spec: .vehicle(inTransitVehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -61,7 +61,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let incomingSut = TripHeaderCard(
-            spec: .vehicle(incomingVehicle, stop, nil),
+            spec: .vehicle(incomingVehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -75,7 +75,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let stoppedSut = TripHeaderCard(
-            spec: .vehicle(stoppedVehicle, stop, nil),
+            spec: .vehicle(stoppedVehicle, stop, nil, false),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -130,7 +130,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.stopId = stop.id
         }
         let targeted = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
 
             tripId: "",
             targetId: stop.id,
@@ -144,7 +144,7 @@ final class TripHeaderCardTests: XCTestCase {
         }))
 
         let notTargeted = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
 
             tripId: "",
             targetId: "",
@@ -177,12 +177,13 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(vehicle, stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: nil,
                 prediction: prediction,
+                predictionStop: nil,
                 vehicle: vehicle,
                 routes: []
-            )),
+            ), true),
             tripId: "",
             targetId: stop.id,
             routeAccents: .init(),
@@ -195,6 +196,49 @@ final class TripHeaderCardTests: XCTestCase {
             try image.actualImage().name() == "stop-pin-indicator"
         }))
         try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
+    }
+
+    func testTrackNumber() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.id = "place-rugg" }
+        let platformStop = objects.stop { platformStop in
+            platformStop.platformCode = "4"
+            platformStop.vehicleType = .commuterRail
+            platformStop.parentStationId = stop.id
+        }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .stoppedAt
+            vehicle.tripId = ""
+            vehicle.stopId = stop.id
+            vehicle.currentStopSequence = 0
+        }
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.stopId = platformStop.id
+        }
+        let route = objects.route { route in route.type = .commuterRail }
+
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, .init(
+                stop: stop,
+                stopSequence: 0,
+                disruption: nil,
+                schedule: nil,
+                prediction: prediction,
+                predictionStop: platformStop,
+                vehicle: vehicle,
+                routes: []
+            ), true),
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(text: "Track 4"))
     }
 
     func testScheduled() throws {
@@ -210,9 +254,10 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -246,9 +291,10 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -302,7 +348,7 @@ final class TripHeaderCardTests: XCTestCase {
         }
 
         let withVehicleAtStop = TripHeaderCard(
-            spec: .vehicle(vehicle, stop, nil),
+            spec: .vehicle(vehicle, stop, nil, false),
             tripId: "", targetId: stop.id,
             routeAccents: .init(type: .bus),
             onTap: {},
@@ -316,7 +362,7 @@ final class TripHeaderCardTests: XCTestCase {
             stop.name = "other stop"
         }
         let withVehicleAtOtherStop = TripHeaderCard(
-            spec: .vehicle(vehicle, otherStop, nil),
+            spec: .vehicle(vehicle, otherStop, nil, false),
             tripId: "", targetId: stop.id,
             routeAccents: .init(type: .bus),
             onTap: {},
@@ -333,9 +379,10 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -353,9 +400,10 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .scheduled(otherStop, .init(
                 stop: otherStop,
                 stopSequence: 0,
-                alert: nil,
+                disruption: nil,
                 schedule: schedule,
                 prediction: nil,
+                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )),
@@ -367,6 +415,36 @@ final class TripHeaderCardTests: XCTestCase {
         )
         XCTAssertNotNil(try withScheduleAtOtherStop.inspect().find(
             viewWithAccessibilityLabel: "Selected bus scheduled to depart other stop"
+        ))
+
+        let boardingVehicle = objects.vehicle { boardingVehicle in
+            boardingVehicle.currentStatus = .stoppedAt
+        }
+        let coreCRStop = objects.stop { stop in
+            stop.name = "North Station"
+            stop.id = "place-north"
+        }
+        let platformStop = objects.stop { platformStop in
+            platformStop.platformCode = "4"
+            platformStop.vehicleType = .commuterRail
+            platformStop.parentStationId = coreCRStop.id
+        }
+        let withTrackNumber = TripHeaderCard(
+            spec: .vehicle(boardingVehicle, coreCRStop, .init(
+                stop: stop, stopSequence: 0, disruption: nil, schedule: nil,
+                prediction: objects.prediction { prediction in
+                    prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+                    prediction.stopId = platformStop.id
+                }, predictionStop: platformStop, vehicle: boardingVehicle, routes: []
+            ), false),
+            tripId: "", targetId: coreCRStop.id,
+            routeAccents: .init(type: .commuterRail),
+            onTap: {},
+            now: now
+        )
+        XCTAssertNotNil(try withTrackNumber.inspect().find(viewWithAccessibilityLabel: "Boarding on track 4"))
+        XCTAssertNotNil(try withTrackNumber.inspect().find(
+            viewWithAccessibilityLabel: "Selected train Now at North Station, selected stop"
         ))
     }
 }

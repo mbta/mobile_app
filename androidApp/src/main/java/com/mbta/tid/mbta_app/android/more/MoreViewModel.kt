@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.model.morePage.localizedFeedbackFormUrl
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +39,7 @@ class MoreViewModel(
             val translation =
                 when {
                     primaryLocale.language == "es" -> "es"
+                    primaryLocale.language == "fr" -> "fr"
                     primaryLocale.language == "ht" -> "ht"
                     primaryLocale.language == "pt" -> "pt-BR"
                     primaryLocale.language == "vi" -> "vi"
@@ -111,13 +111,6 @@ class MoreViewModel(
                             label = context.getString(R.string.feature_flag_route_search),
                             settings = Settings.SearchRouteResults,
                             value = settings[Settings.SearchRouteResults] ?: false
-                        ),
-                        MoreItem.Action(
-                            label = "Crash App",
-                            action = {
-                                Sentry.captureMessage("Debug test sentry message")
-                                throw RuntimeException("Debug test crash")
-                            }
                         )
                     )
             ),

@@ -246,7 +246,7 @@ final class TripDetailsViewTests: XCTestCase {
         }
         let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
 
-        let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry], combinedStopAndTrip: true)
+        let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry])
         nearbyVM.alerts = .init(objects: objects)
 
         let stopDetailsVM = StopDetailsViewModel(
@@ -298,9 +298,11 @@ final class TripDetailsViewTests: XCTestCase {
         )
 
         sut.onTapStop(entry: newNavEntry,
-                      stop: TripDetailsStopList.Entry(stop: targetStop, stopSequence: 0,
-                                                      alert: nil, schedule: nil, prediction: nil,
-                                                      vehicle: nil, routes: []),
+                      stop: TripDetailsStopList.Entry(
+                          stop: targetStop, stopSequence: 0,
+                          disruption: nil, schedule: nil, prediction: nil, predictionStop: nil,
+                          vehicle: nil, routes: []
+                      ),
                       connectingRouteId: "route")
         XCTAssertEqual(nearbyVM.navigationStack, [oldNavEntry, newNavEntry])
     }

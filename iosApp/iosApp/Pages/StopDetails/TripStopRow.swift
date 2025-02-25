@@ -43,13 +43,21 @@ struct TripStopRow: View {
                             onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
                         },
                         label: {
-                            HStack {
-                                Text(stop.stop.name)
-                                    .font(Typography.body)
-                                    .fontWeight(targeted ? Font.Weight.bold : Font.Weight.regular)
-                                    .foregroundStyle(Color.text)
-                                    .multilineTextAlignment(.leading)
-                                    .accessibilityLabel(stopAccessibilityLabel)
+                            HStack(alignment: .center, spacing: 0) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(stop.stop.name)
+                                        .font(targeted ? Typography.headlineBold : Typography.body)
+                                        .foregroundStyle(Color.text)
+                                        .multilineTextAlignment(.leading)
+                                        .accessibilityLabel(stopAccessibilityLabel)
+                                    if let trackNumber = stop.trackNumber {
+                                        Text("Track \(trackNumber)")
+                                            .font(Typography.footnote)
+                                            .foregroundStyle(Color.text)
+                                            .multilineTextAlignment(.leading)
+                                            .accessibilityLabel(Text("Boarding on track \(trackNumber)"))
+                                    }
+                                }
                                 Spacer()
                                 UpcomingTripView(
                                     prediction: upcomingTripViewState,
@@ -61,8 +69,8 @@ struct TripStopRow: View {
                     )
                     .accessibilityElement(children: .combine)
                     .accessibilityInputLabels([stop.stop.name])
-                    .accessibilityAddTraits(targeted ? [.isHeader] : [])
-                    .accessibilityHeading(targeted ? .h4 : .unspecified)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h4)
 
                     if !stop.routes.isEmpty {
                         scrollRoutes
@@ -173,8 +181,8 @@ struct TripStopRow: View {
     }
 
     var upcomingTripViewState: UpcomingTripView.State {
-        if let alert = stop.alert {
-            .disruption(alert.effect)
+        if let disruption = stop.disruption {
+            .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
         } else {
             .some(stop.format(now: now, routeType: routeAccents.type))
         }
@@ -187,9 +195,10 @@ struct TripStopRow: View {
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
-            alert: nil,
+            disruption: nil,
             schedule: nil,
             prediction: nil,
+            predictionStop: nil,
             vehicle: nil,
             routes: [
                 objects.route {

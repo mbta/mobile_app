@@ -3,35 +3,33 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
-import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
-import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.resolveParentId
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -41,7 +39,6 @@ fun TripDetailsView(
     stopId: String,
     allAlerts: AlertsStreamDataResponse?,
     stopDetailsVM: StopDetailsViewModel,
-    setMapSelectedVehicle: (Vehicle?) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     now: Instant,
@@ -68,38 +65,11 @@ fun TripDetailsView(
         )
     }
 
-    LaunchedEffect(vehicle) {
-        if (vehicle?.id == tripFilter?.vehicleId) {
-            setMapSelectedVehicle(vehicle)
-        } else {
-            setMapSelectedVehicle(null)
-        }
-    }
-
     val stops =
-        rememberSuspend(tripFilter, tripData, allAlerts, globalResponse) {
-            withContext(Dispatchers.Default) {
-                if (
-                    tripFilter != null &&
-                        tripData != null &&
-                        tripData.tripFilter == tripFilter &&
-                        tripData.tripPredictionsLoaded &&
-                        globalResponse != null
-                ) {
-                    TripDetailsStopList.fromPieces(
-                        tripFilter.tripId,
-                        tripData.trip.directionId,
-                        tripData.tripSchedules,
-                        tripData.tripPredictions,
-                        vehicle,
-                        allAlerts,
-                        globalResponse
-                    )
-                } else {
-                    null
-                }
-            }
-        }
+        stopDetailsVM
+            .getTripDetailsStopList(tripFilter, allAlerts, globalResponse)
+            .collectAsState()
+            .value
 
     if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
         val route = globalResponse.routes[tripData.trip.routeId]
@@ -192,6 +162,15 @@ private fun TripDetailsView(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
+        DebugView {
+            Column(
+                Modifier.align(Alignment.CenterHorizontally),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("trip id: ${tripFilter?.tripId ?: "null"}")
+                Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
+            }
+        }
         Column(Modifier.zIndex(1F)) {
             TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         }

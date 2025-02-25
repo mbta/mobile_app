@@ -15,6 +15,7 @@ struct PromoScreenView: View {
     let advance: () -> Void
 
     @AccessibilityFocusState private var focusHeader: FeaturePromo?
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dynamicTypeSize) var typeSize
 
     private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
@@ -22,7 +23,7 @@ struct PromoScreenView: View {
 
     // Use less padding on smaller screens
     private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 52 }
-    private var sidePadding: CGFloat { screenWidth < 393 ? 16 : 32 }
+    private var sidePadding: CGFloat { 32 }
 
     let inspection = Inspection<Self>()
 
@@ -50,10 +51,27 @@ struct PromoScreenView: View {
 
     @ViewBuilder
     var combinedStopAndTrip: some View {
+        let promoDetailsKey = NSLocalizedString(
+            "We now show **arrivals** and detailed **vehicle locations** all at once. Let us know what you think!",
+            comment: "Promo text that displays when users first open the app after a redesign of the stop page"
+        )
+
+        var promoDetailsString: AttributedString {
+            do {
+                return try AttributedString(markdown: promoDetailsKey)
+            } catch {
+                return AttributedString(promoDetailsKey.filter { $0 != "*" })
+            }
+        }
         VStack(alignment: .leading, spacing: 16) {
-            Spacer()
+            if typeSize < .accessibility2 {
+                Image(.featPromoComboStopTrip)
+                    .resizable()
+                    .scaledToFill()
+                    .accessibilityHidden(true)
+            }
             Text(
-                "See arrivals and track vehicles in one place",
+                "Check out the new stop view",
                 comment: """
                 Promo text header that displays when users first open the app after a redesign of the stop page
                 """
@@ -62,16 +80,15 @@ struct PromoScreenView: View {
             .accessibilityHeading(.h1)
             .accessibilityAddTraits(.isHeader)
             .accessibilityFocused($focusHeader, equals: .combinedStopAndTrip)
-            Text(
-                "We created a new view that allows you to see arrivals at your stop and track vehicle locations all at once. Send us feedback to let us know what you think!",
-                comment: "Promo text that displays when users first open the app after a redesign of the stop page"
-            )
-            .font(Typography.title3)
-            .padding(.bottom, 16)
-            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+
+            Text(promoDetailsString)
+                .font(Typography.title3)
+                .padding(.bottom, 16)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
             if typeSize >= .accessibility2, typeSize < .accessibility5 {
                 Spacer()
             }
+
             Button(action: advance) {
                 Text(
                     "Got it",
@@ -79,17 +96,13 @@ struct PromoScreenView: View {
                 ).fullWidthKeyButton()
             }
         }
+        .foregroundStyle(Color.text)
         .padding(.horizontal, sidePadding)
         .padding(.bottom, bottomPadding)
+        .frame(maxWidth: .infinity)
         .background {
             ZStack(alignment: .center) {
-                Color.fill2.edgesIgnoringSafeArea(.all)
-                if typeSize < .accessibility2 {
-                    // TODO: Add finalized graphic
-//                    Image(.promoCombinedStop)
-//                        .resizable()
-//                        .accessibilityHidden(true)
-                }
+                (colorScheme == .dark ? Color.fill1 : Color.fill2).edgesIgnoringSafeArea(.all)
             }
         }
     }

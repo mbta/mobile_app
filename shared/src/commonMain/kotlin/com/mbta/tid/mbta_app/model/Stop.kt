@@ -12,6 +12,7 @@ data class Stop(
     val name: String,
     @SerialName("location_type") val locationType: LocationType,
     val description: String? = null,
+    @SerialName("platform_code") val platformCode: String? = null,
     @SerialName("platform_name") val platformName: String? = null,
     @SerialName("vehicle_type") val vehicleType: RouteType? = null,
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList(),
@@ -19,6 +20,15 @@ data class Stop(
     @SerialName("parent_station_id") val parentStationId: String? = null
 ) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
+
+    /**
+     * Commuter Rail core stations have realtime track numbers displayed and track change alerts
+     * hidden.
+     */
+    val isCRCore = this.id in crCoreStations || this.parentStationId in crCoreStations
+
+    val shouldShowTrackNumber: Boolean =
+        this.vehicleType == RouteType.COMMUTER_RAIL && this.isCRCore
 
     fun resolveParent(stops: Map<String, Stop>): Stop {
         if (this.parentStationId == null) return this
@@ -39,5 +49,7 @@ data class Stop(
             val parent2 = stop2.resolveParent(stops)
             return parent1.id == parent2.id
         }
+
+        val crCoreStations = setOf("place-north", "place-sstat", "place-bbsta", "place-rugg")
     }
 }

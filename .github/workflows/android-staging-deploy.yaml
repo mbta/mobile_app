@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
+          for: pre-commit
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -36,14 +36,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          rsvg: true
+          for: android-test
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -51,8 +47,6 @@ jobs:
           path: shared/build/reports
       - name: android checks & unit tests
         run: ./gradlew androidApp:check
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -77,9 +71,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          rsvg: true
+          for: android-test
       # full setup including AVD snapshot caching from https://github.com/ReactiveCircus/android-emulator-runner/blob/a3dcdb348bb02349cd939d168a74e31a9094b7f0/README.md
       - name: Enable KVM
         run: |
@@ -96,8 +88,6 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           script: ./bin/android-instrumented-test-ci.sh
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -114,26 +104,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          rsvg: true
-          ruby: true
+          for: android-build
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
-      - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            mobile-app-android-upload-key-passphrase
-      - name: Load code signing key
-        run: |
-          cd androidApp
-          aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
@@ -142,7 +116,6 @@ jobs:
           KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           KEY_ALIAS: "upload"
           KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
           SENTRY_ENVIRONMENT: "staging"
@@ -177,9 +150,9 @@ jobs:
           path: androidApp/build/outputs/bundle/stagingRelease
       - uses: ./.github/actions/setup
         with:
+          for: android-deploy
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          ruby: true
       - name: Upload to Google Play
         run: |
           bundle exec fastlane android internal flavor:Staging

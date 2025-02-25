@@ -16,6 +16,7 @@ fun LineHeader(
     val (modeIcon, modeDescription) = routeIcon(route = route)
     TransitHeader(
         name = line.longName,
+        routeType = route.type,
         backgroundColor = Color.fromHex(line.color),
         textColor = Color.fromHex(line.textColor),
         modeIcon = modeIcon,

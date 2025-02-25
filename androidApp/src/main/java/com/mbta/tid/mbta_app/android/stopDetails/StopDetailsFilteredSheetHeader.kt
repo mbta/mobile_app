@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -47,28 +48,34 @@ fun StopDetailsFilteredHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (line != null) {
-            RoutePill(
-                route = null,
-                line = line,
-                type = RoutePillType.Fixed,
-                modifier = Modifier.placeholderIfLoading()
-            )
-        } else if (route != null) {
-            RoutePill(
-                route = route,
-                type = RoutePillType.Fixed,
-                modifier = Modifier.placeholderIfLoading()
-            )
-        }
-        if (stop != null) {
-            Text(
-                AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
-                modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                style = MaterialTheme.typography.headlineMedium
-            )
-        } else {
-            Spacer(Modifier.weight(1f))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1F).semantics(mergeDescendants = true) { heading() }
+        ) {
+            if (line != null) {
+                RoutePill(
+                    route = null,
+                    line = line,
+                    type = RoutePillType.Fixed,
+                    modifier = Modifier.placeholderIfLoading()
+                )
+            } else if (route != null) {
+                RoutePill(
+                    route = route,
+                    type = RoutePillType.Fixed,
+                    modifier = Modifier.placeholderIfLoading()
+                )
+            }
+            if (stop != null) {
+                Text(
+                    AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
+                    modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
+                    style = Typography.headline
+                )
+            } else {
+                Spacer(Modifier.weight(1f))
+            }
         }
 
         Row(
@@ -93,12 +100,12 @@ private fun StopDetailsFilteredHeaderPreview() {
         objects.route {
             color = "ED8B00"
             type = RouteType.HEAVY_RAIL
-            shortName = "Orange Line"
+            longName = "Orange Line"
         }
     val stop = objects.stop { name = "Back Bay" }
 
     MyApplicationTheme {
-        Column {
+        Column(Modifier.background(colorResource(R.color.fill2))) {
             StopDetailsFilteredHeader(
                 route = route,
                 line = null,

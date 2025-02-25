@@ -511,6 +511,64 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `Green Line shuttles are not grouped together`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop = objects.stop()
+
+        val line =
+            objects.line {
+                id = "line-Green"
+                sortOrder = 0
+            }
+
+        val railRoute =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Government Center")
+            }
+        val shuttleRoute =
+            objects.route {
+                id = "Shuttle-$id"
+                lineId = line.id
+            }
+
+        val railPattern = objects.routePattern(railRoute) {
+            representativeTrip { headsign = "Boston College" }
+        }
+        val shuttlePattern = objects.routePattern(shuttleRoute) {
+            representativeTrip { headsign = "Boston College" }
+        }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop = mapOf(stop.id to listOf(railPattern.id, shuttlePattern.id)),
+            )
+        val nearby = NearbyResponse(objects)
+
+        val westDir = Direction("West", "Boston College", 0)
+        val eastDir = Direction("East", "Government Center", 1)
+
+        assertEquals(
+            NearbyStaticData.build {
+                line(line, listOf(railRoute)) {
+                    stop(stop, routes = listOf(railRoute), directions = listOf(westDir, eastDir)) {
+                        headsign(railRoute, "Boston College", listOf(railPattern), direction = westDir)
+                    }
+                }
+                route(shuttleRoute) {
+                    stop(stop) {
+                        headsign("Boston College", listOf(shuttlePattern))
+                    }
+                }
+            },
+            NearbyStaticData(global, nearby)
+        )
+    }
+
+    @Test
     fun `Green Line routes are grouped together without Government Center direction`() {
         val objects = ObjectCollectionBuilder()
 
@@ -1230,8 +1288,8 @@ class NearbyResponseTest {
                                     listOf(predictionBrd),
                                     listOf(
                                         objects.upcomingTrip(
-                                            predictionBrdPrediction,
-                                            predictionBrdVehicle
+                                            prediction = predictionBrdPrediction,
+                                            vehicle = predictionBrdVehicle
                                         )
                                     ),
                                     hasSchedulesToday = false
@@ -1472,6 +1530,7 @@ class NearbyResponseTest {
                 showAllPatternsWhileLoading = false,
                 hideNonTypicalPatternsBeyondNext = null,
                 filterCancellations = false,
+                includeMinorAlerts = false,
                 pinnedRoutes = setOf(),
             )
         )
@@ -1554,6 +1613,7 @@ class NearbyResponseTest {
                 showAllPatternsWhileLoading = false,
                 hideNonTypicalPatternsBeyondNext = null,
                 filterCancellations = false,
+                includeMinorAlerts = false,
                 pinnedRoutes = setOf(),
             )
         )
@@ -2522,6 +2582,84 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `withRealtimeInfo ignores minor alerts`() = parametricTest {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+        val routePattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        objects.schedule {
+            this.trip = objects.trip(routePattern)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+        }
+
+        val alert =
+            objects.alert {
+                activePeriod(
+                    Instant.parse("2024-03-18T04:30:00-04:00"),
+                    Instant.parse("2024-03-22T02:30:00-04:00")
+                )
+                effect = Alert.Effect.TrackChange
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            route,
+                            stop,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    "A",
+                                    null,
+                                    listOf(routePattern),
+                                    emptyList(),
+                                    alertsHere = listOf(),
+                                    alertsDownstream = listOf()
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+                useTripHeadsigns = anyBoolean(),
+            )
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo groups lines by direction`() = parametricTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
@@ -3105,7 +3243,8 @@ class NearbyResponseTest {
                                     listOf(
                                         UpcomingTrip(
                                             trip = orangeNorthboundTypicalTrip,
-                                            prediction = northboundPrediction
+                                            prediction = northboundPrediction,
+                                            predictionStop = northStationNorthboundPlatform
                                         )
                                     ),
                                     alertsHere = listOf(alert),
@@ -3224,6 +3363,113 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 globalData = GlobalResponse(objects),
                 sortByDistanceFrom = oakGrove.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(emptyMap()),
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+                useTripHeadsigns = false
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo filters out any arrival only for non-subway routes`() {
+        val objects = ObjectCollectionBuilder()
+
+        val longWharf =
+            objects.stop {
+                id = "Boat-Long"
+            }
+
+        val ferryRoute = objects.route {
+            id = "Boat-F1"
+            type = RouteType.FERRY
+        }
+        val ferryInboundToLongWharf =
+            objects.routePattern(ferryRoute) {
+                id = "Boat-F1-3-1"
+                routeId = ferryRoute.id
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+                representativeTrip {
+                    id = "Boat-F1-0730-Hull-BF2H-01-Weekday-Fall-24"
+                    headsign = "Long Wharf"
+                    directionId = 1
+                    stopIds = listOf("Boat-Hull", "Boat-Long")
+                }
+            }
+
+        val ferryOutboundToHingham =
+            objects.routePattern(ferryRoute) {
+                id = "Boat-F1-0-0"
+                routeId = ferryRoute.id
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+                representativeTrip {
+                    id = "Boat-F1-1100-Long-BF2H-01-Weekday-Fall-24"
+                    headsign = "Hingham"
+                    directionId = 0
+                    stopIds = listOf("Boat-Long", "Boat-Logan", "Boat-Hull", "Boat-Hingham")
+                }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(ferryRoute) {
+                    stop(longWharf) {
+                        headsign("Hingham", listOf(ferryOutboundToHingham))
+                        headsign("Long Wharf", listOf(ferryInboundToLongWharf))
+                    }
+                }
+            }
+
+        val time = Instant.parse("2024-10-30T16:40:00-04:00")
+
+        val ferryInboundTrip = objects.trip(ferryInboundToLongWharf)
+        val ferryOutboundTrip = objects.trip(ferryOutboundToHingham)
+
+        val schedInbound =
+            objects.schedule {
+                trip = ferryInboundTrip
+                stopId = longWharf.id
+                stopSequence = 90
+                arrivalTime = time + 2.minutes
+                departureTime = null            }
+        val schedOutbound =
+            objects.schedule {
+                trip = ferryOutboundTrip
+                stopId = longWharf.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    ferryRoute,
+                    listOf(
+                        PatternsByStop(
+                            ferryRoute,
+                            longWharf,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    ferryRoute,
+                                    "Hingham",
+                                    null,
+                                    listOf(ferryOutboundToHingham),
+                                    listOf(objects.upcomingTrip(schedOutbound)),
+                                    hasSchedulesToday = true
+                                ),
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = longWharf.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),

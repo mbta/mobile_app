@@ -39,7 +39,7 @@ final class StopDetailsPageTests: XCTestCase {
             directionId: routePattern.directionId
         )
 
-        let nearbyVM = NearbyViewModel(combinedStopAndTrip: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
 
         let stopDetailsVM = StopDetailsViewModel(
@@ -83,8 +83,7 @@ final class StopDetailsPageTests: XCTestCase {
                 .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
                 .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
                 .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-            ],
-            combinedStopAndTrip: true
+            ]
         )
 
         let stopDetailsVM = StopDetailsViewModel(
@@ -141,7 +140,7 @@ final class StopDetailsPageTests: XCTestCase {
                 tripFilter: nil
             ),
             errorBannerVM: .init(),
-            nearbyVM: .init(combinedStopAndTrip: true),
+            nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
@@ -174,8 +173,7 @@ final class StopDetailsPageTests: XCTestCase {
         let stopFilter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
 
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            combinedStopAndTrip: true
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
 
@@ -246,8 +244,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            combinedStopAndTrip: true
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
 
@@ -322,8 +319,7 @@ final class StopDetailsPageTests: XCTestCase {
         let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: stopFilter, tripFilter: nil)],
-            combinedStopAndTrip: true
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: stopFilter, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
 

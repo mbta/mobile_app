@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +19,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StopDeparturesSummaryList
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -62,8 +61,8 @@ fun NearbyStopView(
                             start =
                                 if (showElevatorAccessibility && hasElevatorAlerts) 0.dp else 8.dp
                         )
-                        .weight(1f),
-                style = MaterialTheme.typography.headlineSmall
+                        .weight(.6f),
+                style = Typography.callout
             )
             if (showElevatorAccessibility && hasElevatorAlerts) {
                 Text(
@@ -73,8 +72,8 @@ fun NearbyStopView(
                             patternsAtStop.elevatorAlerts.size,
                             patternsAtStop.elevatorAlerts.size
                         ),
-                    modifier = Modifier.placeholderIfLoading().alpha(0.6f),
-                    style = MaterialTheme.typography.labelLarge
+                    modifier = Modifier.placeholderIfLoading().alpha(0.6f).weight(.4f),
+                    style = Typography.footnote
                 )
             }
         }

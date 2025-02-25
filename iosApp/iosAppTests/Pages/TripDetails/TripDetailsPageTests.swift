@@ -530,15 +530,19 @@ final class TripDetailsPageTests: XCTestCase {
                 stop: .init(
                     stop: childStop,
                     stopSequence: 1,
-                    alert: nil,
+                    disruption: nil,
                     schedule: nil,
                     prediction: nil,
+                    predictionStop: nil,
                     vehicle: nil,
                     routes: []
                 ),
                 connectingRouteId: "connectingRoute"
             )
-            XCTAssertEqual(nearbyVM.navigationStack, [.legacyStopDetails(parentStop, nil)])
+            XCTAssertEqual(
+                nearbyVM.navigationStack,
+                [.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil)]
+            )
         }
 
         wait(for: [analyticsExp], timeout: 5)

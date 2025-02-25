@@ -42,13 +42,23 @@ struct TripDetailsStopListView: View {
 
     return TripDetailsStopListView(
         stops: .init(tripId: "", stops: [
-            .init(stop: stop1, stopSequence: 1, alert: nil, schedule: nil, prediction: nil, vehicle: nil, routes: []),
+            .init(
+                stop: stop1,
+                stopSequence: 1,
+                disruption: nil,
+                schedule: nil,
+                prediction: nil,
+                predictionStop: nil,
+                vehicle: nil,
+                routes: []
+            ),
             .init(
                 stop: stop2,
                 stopSequence: 2,
-                alert: nil,
+                disruption: nil,
                 schedule: sched2,
                 prediction: pred2,
+                predictionStop: stop2,
                 vehicle: nil,
                 routes: []
             ),

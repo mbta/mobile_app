@@ -9,19 +9,21 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
@@ -42,6 +44,9 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.koin.compose.KoinContext
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 @Composable
 fun StopDetailsUnfilteredRoutesView(
@@ -58,15 +63,20 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        SheetHeader(onClose = onClose, title = stop.name)
-        if (servedRoutes.size > 1) {
-            Box(Modifier.height(56.dp).fillMaxWidth()) {
-                StopDetailsFilterPills(
-                    servedRoutes = servedRoutes,
-                    onTapRoutePill = onTapRoutePill,
-                    onClearFilter = { updateStopFilter(null) }
-                )
+    Column(
+        Modifier.background(colorResource(R.color.fill2)),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        Column(Modifier.heightIn(min = 48.dp)) {
+            SheetHeader(onClose = onClose, title = stop.name)
+            if (servedRoutes.size > 1) {
+                Box(Modifier.height(56.dp).fillMaxWidth()) {
+                    StopDetailsFilterPills(
+                        servedRoutes = servedRoutes,
+                        onTapRoutePill = onTapRoutePill,
+                        onClearFilter = { updateStopFilter(null) }
+                    )
+                }
             }
         }
 
@@ -125,6 +135,7 @@ private fun StopDetailsRoutesViewPreview() {
         objects.route {
             color = "00843D"
             longName = "Green Line B"
+            shortName = "B"
             textColor = "FFFFFF"
             type = RouteType.LIGHT_RAIL
         }
@@ -135,7 +146,7 @@ private fun StopDetailsRoutesViewPreview() {
             textColor = "000000"
             type = RouteType.BUS
         }
-    val stop = objects.stop()
+    val stop = objects.stop { name = "Boylston" }
     val trip1 = objects.trip()
     val prediction1 =
         objects.prediction {
@@ -180,7 +191,7 @@ private fun StopDetailsRoutesViewPreview() {
                             "A",
                             null,
                             emptyList(),
-                            listOf(UpcomingTrip(trip1, prediction1))
+                            listOf(UpcomingTrip(trip1, prediction = prediction1))
                         )
                     )
                 ),
@@ -193,7 +204,7 @@ private fun StopDetailsRoutesViewPreview() {
                             "B",
                             null,
                             emptyList(),
-                            listOf(UpcomingTrip(trip3, prediction2))
+                            listOf(UpcomingTrip(trip3, prediction = prediction2))
                         ),
                         RealtimePatterns.ByHeadsign(
                             route2,
@@ -214,20 +225,28 @@ private fun StopDetailsRoutesViewPreview() {
             )
         )
 
+    val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
+
     MyApplicationTheme {
-        StopDetailsUnfilteredRoutesView(
-            stop,
-            departures,
-            listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
-            ErrorBannerViewModel(false, MockErrorBannerStateRepository(), MockSettingsRepository()),
-            showElevatorAccessibility = true,
-            now = Clock.System.now(),
-            pinRoute = {},
-            pinnedRoutes = emptySet(),
-            onClose = {},
-            onTapRoutePill = {},
-            updateStopFilter = {},
-            openModal = {}
-        )
+        KoinContext(koin.koin) {
+            StopDetailsUnfilteredRoutesView(
+                stop,
+                departures,
+                listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
+                ErrorBannerViewModel(
+                    false,
+                    MockErrorBannerStateRepository(),
+                    MockSettingsRepository()
+                ),
+                showElevatorAccessibility = true,
+                now = Clock.System.now(),
+                pinRoute = {},
+                pinnedRoutes = emptySet(),
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = {},
+                openModal = {}
+            )
+        }
     }
 }

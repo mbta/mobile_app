@@ -47,6 +47,10 @@ struct StopResultsView: View {
                         }
                     }
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    Text("serves \(stop.routePills.map { $0.contentDescription ?? "" }.joined(separator: ","))")
+                )
                 .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -24,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,12 +30,14 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import kotlinx.datetime.Clock
 
 @Composable
 fun DepartureTile(
@@ -83,9 +83,8 @@ fun DepartureTile(
             if (showHeadsign) {
                 Text(
                     data.headsign,
-                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.labelLarge
+                    style = Typography.footnoteSemibold
                 )
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -125,13 +124,17 @@ private fun DepartureTilePreview() {
                 TileData(
                     trip1.id,
                     route1,
-                    "Nubian",
+                    "Framingham",
                     RealtimePatterns.Format.Some(
                         listOf(
                             RealtimePatterns.Format.Some.FormatWithId(
                                 trip1.id,
-                                RouteType.BUS,
-                                TripInstantDisplay.Minutes(5)
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.TimeWithStatus(
+                                    Clock.System.now(),
+                                    "Delay",
+                                    headline = true
+                                )
                             )
                         ),
                         secondaryAlert = null

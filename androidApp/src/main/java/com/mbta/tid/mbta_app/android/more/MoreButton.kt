@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +16,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
 fun MoreButton(
@@ -47,7 +47,7 @@ fun MoreButton(
             Column {
                 Text(
                     label,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = Typography.body,
                     color =
                         if (isKey) {
                             colorResource(R.color.fill3)
@@ -61,7 +61,7 @@ fun MoreButton(
                             if (isKey) {
                                 colorResource(R.color.fill3)
                             } else colorResource(R.color.text),
-                        style = MaterialTheme.typography.bodySmall
+                        style = Typography.footnote
                     )
                 }
             }

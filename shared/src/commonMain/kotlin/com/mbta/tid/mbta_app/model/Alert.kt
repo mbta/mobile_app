@@ -47,6 +47,7 @@ data class Alert(
             // service changes are always secondary
             Effect.ServiceChange -> AlertSignificance.Secondary
             Effect.ElevatorClosure -> AlertSignificance.Accessibility
+            Effect.TrackChange -> AlertSignificance.Minor
             else -> AlertSignificance.None
         }
 
@@ -190,6 +191,85 @@ data class Alert(
                 matches(stopId, this.stop) &&
                 matches(tripId, this.trip)
         }
+
+        /** A more expressive way to represent a set of constraints than [appliesTo]. */
+        inner class PredicateBuilder {
+            var isSatisfied = true
+
+            fun checkActivity(activity: Activity) {
+                if (!isSatisfied) return
+                if (activity !in this@InformedEntity.activities) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkActivityIn(vararg activities: Activity) = checkActivityIn(activities.toList())
+
+            fun checkActivityIn(activities: Collection<Activity>) {
+                if (!isSatisfied) return
+                if (!this@InformedEntity.activities.any { it in activities }) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkDirection(directionId: Int?) {
+                if (!isSatisfied) return
+                if (directionId == null) return
+                if (this@InformedEntity.directionId == null) return
+                if (this@InformedEntity.directionId != directionId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkRoute(routeId: String?) {
+                if (!isSatisfied) return
+                if (routeId == null) return
+                if (this@InformedEntity.route == null) return
+                if (this@InformedEntity.route != routeId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkRouteIn(routeIds: Collection<String>) {
+                if (!isSatisfied) return
+                if (this@InformedEntity.route == null) return
+                if (this@InformedEntity.route !in routeIds) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkStop(stopId: String?) {
+                if (!isSatisfied) return
+                if (stopId == null) return
+                if (this@InformedEntity.stop == null) return
+                if (this@InformedEntity.stop != stopId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkStopIn(stopIds: Collection<String>) {
+                if (!isSatisfied) return
+                if (this@InformedEntity.stop == null) return
+                if (this@InformedEntity.stop !in stopIds) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkTrip(tripId: String?) {
+                if (!isSatisfied) return
+                if (tripId == null) return
+                if (this@InformedEntity.trip == null) return
+                if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+        }
+
+        fun satisfies(block: PredicateBuilder.() -> Unit): Boolean {
+            val builder = PredicateBuilder()
+            builder.block()
+            return builder.isSatisfied
+        }
     }
 
     @Serializable
@@ -205,36 +285,38 @@ data class Alert(
 
     fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
 
+    fun anyInformedEntitySatisfies(predicateBuilder: InformedEntity.PredicateBuilder.() -> Unit) =
+        informedEntity.any { it.satisfies(predicateBuilder) }
+
     fun matchingEntities(predicate: (InformedEntity) -> Boolean) = informedEntity.filter(predicate)
 
     companion object {
         /**
-         * Returns alerts that are applicable to the passed in routes and stops
+         * Returns alerts that are applicable to the passed in routes, stops, and trips
          *
          * Criteria:
          * - Route ID matches an alert [Alert.InformedEntity]
          * - Stop ID matches an alert [Alert.InformedEntity]
          * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
+         * - Trip ID matches an alert [Alert.InformedEntity]
          */
         fun applicableAlerts(
             alerts: Collection<Alert>,
             directionId: Int?,
             routeIds: List<String>,
-            stopIds: Set<String>?
+            stopIds: Set<String>?,
+            tripId: String?
         ): List<Alert> {
             return alerts
                 .filter { alert ->
-                    alert.anyInformedEntity {
-                        routeIds.any { routeId ->
-                            stopIds?.any { stopId ->
-                                it.appliesTo(
-                                    directionId = directionId,
-                                    routeId = routeId,
-                                    stopId = stopId
-                                )
-                            }
-                                ?: it.appliesTo(directionId = directionId, routeId = routeId)
-                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+                    alert.anyInformedEntitySatisfies {
+                        checkActivity(InformedEntity.Activity.Board)
+                        checkDirection(directionId)
+                        checkRouteIn(routeIds)
+                        if (stopIds != null) {
+                            checkStopIn(stopIds)
+                        }
+                        checkTrip(tripId)
                     }
                 }
                 .distinct()
@@ -278,15 +360,24 @@ data class Alert(
         ): List<Alert> {
             val stopIds = trip.stopIds ?: emptyList()
 
-            val alerts = alerts.filter { it.hasStopsSpecified }
+            val alerts =
+                alerts.filter {
+                    it.hasStopsSpecified && it.significance >= AlertSignificance.Accessibility
+                }
 
             val targetStopAlertIds =
-                applicableAlerts(
-                        alerts.toList(),
-                        trip.directionId,
-                        listOf(trip.routeId),
-                        targetStopWithChildren
-                    )
+                alerts
+                    .filter {
+                        it.anyInformedEntitySatisfies {
+                            checkActivityIn(
+                                InformedEntity.Activity.Exit,
+                                InformedEntity.Activity.Ride
+                            )
+                            checkDirection(trip.directionId)
+                            checkRoute(trip.routeId)
+                            checkStopIn(targetStopWithChildren)
+                        }
+                    }
                     .map { it.id }
                     .toSet()
 
@@ -297,17 +388,19 @@ data class Alert(
                 val firstStopAlerts =
                     downstreamStops
                         .map { stop ->
-                            val alerts =
-                                applicableAlerts(
-                                        alerts.toList(),
-                                        trip.directionId,
-                                        listOf(trip.routeId),
-                                        setOf(stop)
+                            alerts.filter {
+                                it.anyInformedEntitySatisfies {
+                                    checkActivityIn(
+                                        InformedEntity.Activity.Exit,
+                                        InformedEntity.Activity.Ride
                                     )
-                                    .filter { !targetStopAlertIds.contains(it.id) }
-                            alerts
+                                    checkDirection(trip.directionId)
+                                    checkRoute(trip.routeId)
+                                    checkStop(stop)
+                                } && !targetStopAlertIds.contains(it.id)
+                            }
                         }
-                        .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
+                        .firstOrNull { it.isNotEmpty() }
                         ?: listOf()
                 return firstStopAlerts
             } else {
