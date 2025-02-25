@@ -83,13 +83,13 @@ jobs:
             echo "export SENTRY_DSN=${SENTRY_DSN}"
             echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"
             echo "export FIREBASE_KEY=${FIREBASE_KEY}"
-            echo "export GOOGLE_APP_ID=${GOOGLE_APP_ID}"
+            echo "export GOOGLE_APP_ID_IOS=${GOOGLE_APP_ID_IOS}"
           } >> .envrc
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: staging
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
+          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
       - name: Run emulator tests
         run: |
           bundle exec fastlane ios test \
