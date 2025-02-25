@@ -93,13 +93,12 @@ jobs:
       - name: Run emulator tests
         run: |
           bundle exec fastlane ios test \
-            output_directory:~/xctest \
             xcodebuild_formatter:"xcbeautify --renderer github-actions"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: ios-ios-results
-          path: ~/xctest/resultbundle-*.xcresult
+          path: fastlane/test_output/*
   emulator-test-android:
     name: Run Android instrumented tests in emulator
     runs-on: mobile_app_runner
