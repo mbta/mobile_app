@@ -241,7 +241,7 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
         private fun lineOrRoute(global: GlobalResponse, routeId: String): LineOrRoute? {
             val route = global.routes[routeId] ?: return null
             val line = global.lines[route.lineId]
-            return if (line?.isGrouped == true) {
+            return if (line?.isGrouped == true && !route.isShuttle) {
                 val routes =
                     global.routes.values.filter { it.lineId == line.id && !it.isShuttle }.toSet()
                 LineOrRoute.Line(line, routes)
