@@ -75,7 +75,7 @@ private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, 
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(vertical = 16.dp)
         ) {
-            Icon(icon, contentDescription = null)
+            Icon(icon, contentDescription = null, modifier = Modifier.padding(4.dp))
             Text(
                 text,
                 style =
