@@ -27,6 +27,9 @@ runs:
           android-test)
             tools="java kotlin-cache rsvg"
             ;;
+          ios-test)
+            tools="java kotlin-cache ruby xcode"
+            ;;
           android-build)
             tools="java kotlin-cache rsvg ruby aws-secrets-android"
             ;;
@@ -67,8 +70,8 @@ runs:
       if: steps.settings.outputs.kotlin-cache == 'true'
       with:
         path: ~/.konan
-        key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
-        restore-keys: konan-${{ runner.os }}
+        key: konan-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('build.gradle.kts') }}
+        restore-keys: konan-${{ runner.os }}-${{ runner.arch }}
     - run: sudo apt-get install librsvg2-bin
       if: steps.settings.outputs.rsvg == 'true'
       shell: bash
@@ -106,3 +109,19 @@ runs:
       if: steps.settings.outputs.ruby == 'true'
       run: bin/patch-fastlane.sh
       shell: bash
+    - name: Configure Xcode version
+      if: steps.settings.outputs.xcode == 'true'
+      shell: bash
+      run: |
+        sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+    - name: Cache CocoaPods dependencies
+      if: steps.settings.outputs.xcode == 'true'
+      uses: actions/cache@v4
+      with:
+        path: iosApp/Pods
+        key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}
+        restore-keys: cocoapods-
+    - name: Install SwiftLint and xcbeautify
+      if: steps.settings.outputs.xcode == 'true'
+      shell: bash
+      run: brew install swiftlint xcbeautify
