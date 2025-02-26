@@ -273,6 +273,34 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `still boarding if prediction in past`() = parametricTest {
+        val now = Clock.System.now()
+        val vehicle =
+            ObjectCollectionBuilder.Single.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                stopId = "12345"
+                tripId = "trip1"
+            }
+        assertEquals(
+            TripInstantDisplay.Boarding,
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.minus(10.seconds)
+                        stopId = "12345"
+                        tripId = "trip1"
+                        vehicleId = vehicle.id
+                    },
+                schedule = null,
+                vehicle = vehicle,
+                now = now,
+                routeType = null,
+                context = nonTripDetails()
+            )
+        )
+    }
+
+    @Test
     fun `not boarding when stopped at stop but more than 90 seconds until departure`() =
         parametricTest {
             val now = Clock.System.now()
