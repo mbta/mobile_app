@@ -68,49 +68,30 @@ sealed class TripInstantDisplay {
                 return Overridden(prediction.status)
             }
             if (prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Skipped) {
-                schedule?.scheduleTime?.let {
+                schedule?.stopTime?.let {
                     return Skipped(it)
                 }
                 return Hidden
             }
 
-            val isScheduleUpcoming = schedule?.scheduleTime?.let { it >= now } ?: false
+            val scheduleStopTime = schedule?.stopTime
+            val isScheduleUpcoming = scheduleStopTime?.let { it >= now } ?: false
             if (
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
-                    schedule?.scheduleTime != null &&
+                    scheduleStopTime != null &&
                     isScheduleUpcoming &&
                     routeType?.isSubway() == false &&
                     context == Context.StopDetailsFiltered
             ) {
-                return Cancelled(schedule.scheduleTime)
-            }
-            val departureTime =
-                if (prediction != null) {
-                    prediction.departureTime
-                } else {
-                    schedule?.departureTime
-                }
-            val arrivalTime =
-                if (allowArrivalOnly) {
-                    if (prediction != null) {
-                        prediction.arrivalTime
-                    } else {
-                        schedule?.arrivalTime
-                    }
-                } else {
-                    null
-                }
-            val hasDepartureToDisplay = !(departureTime == null || departureTime < now)
-            val hasArrivalToDisplay =
-                allowArrivalOnly && !(arrivalTime == null || arrivalTime < now)
-            if (!(hasDepartureToDisplay || hasArrivalToDisplay)) {
-                return Hidden
+                return Cancelled(scheduleStopTime)
             }
 
             val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
             if (prediction == null) {
-                val scheduleTime = schedule?.scheduleTime
-                return if (scheduleTime == null) {
+                val scheduleTime = schedule?.stopTimeAfter(now)
+                return if (
+                    scheduleTime == null || (schedule.departureTime == null && !allowArrivalOnly)
+                ) {
                     Hidden
                 } else {
                     val scheduleTimeRemaining = scheduleTime.minus(now)
@@ -123,20 +104,20 @@ sealed class TripInstantDisplay {
                     }
                 }
             }
-            // since we checked departureTime or arrivalTime as non-null, we don't have to also
-            // check  predictionTime
-            val timeRemaining = prediction.predictionTime!!.minus(now)
+            val predictionTime = prediction.stopTimeAfter(now)
+            if (predictionTime == null || (prediction.departureTime == null && !allowArrivalOnly)) {
+                return Hidden
+            }
+            val timeRemaining = predictionTime.minus(now)
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
 
             if (forceAsTime) {
-                return if (allowTimeWithStatus && prediction.status != null) {
-                    TimeWithStatus(
-                        prediction.predictionTime,
-                        prediction.status,
-                        headline = showTimeAsHeadline
-                    )
+                return if (timeRemaining.isNegative()) {
+                    Hidden
+                } else if (allowTimeWithStatus && prediction.status != null) {
+                    TimeWithStatus(predictionTime, prediction.status, headline = showTimeAsHeadline)
                 } else {
-                    Time(prediction.predictionTime, headline = showTimeAsHeadline)
+                    Time(predictionTime, headline = showTimeAsHeadline)
                 }
             }
 
@@ -144,10 +125,14 @@ sealed class TripInstantDisplay {
              * Because the gap between boarding and arriving is much smaller for bus, having
              * different states doesn’t provide much rider value so we return Now instead
              */
-            if (routeType == RouteType.BUS && timeRemaining <= ARRIVAL_CUTOFF) {
-                return Now
-            } else if (routeType == RouteType.BUS) {
-                return Minutes(minutes)
+            if (routeType == RouteType.BUS) {
+                return if (timeRemaining.isNegative()) {
+                    Hidden
+                } else if (timeRemaining <= ARRIVAL_CUTOFF) {
+                    Now
+                } else {
+                    Minutes(minutes)
+                }
             }
             if (
                 vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
@@ -156,6 +141,9 @@ sealed class TripInstantDisplay {
                     timeRemaining <= BOARDING_CUTOFF
             ) {
                 return Boarding
+            }
+            if (timeRemaining.isNegative()) {
+                return Hidden
             }
             if (timeRemaining <= ARRIVAL_CUTOFF) {
                 return Arriving
