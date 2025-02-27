@@ -407,7 +407,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             tripId: String,
             directionId: Int
         ): RealtimePatterns.Format.Disruption? {
-            val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
+            val entryTime = (entry.prediction ?: entry.schedule)?.stopTime
             val entryRouteType = route?.type
 
             if (entryTime == null) return null

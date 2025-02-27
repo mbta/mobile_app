@@ -7,20 +7,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Schedule(
     override val id: String,
-    @SerialName("arrival_time") val arrivalTime: Instant?,
-    @SerialName("departure_time") val departureTime: Instant?,
+    @SerialName("arrival_time") override val arrivalTime: Instant?,
+    @SerialName("departure_time") override val departureTime: Instant?,
     @SerialName("drop_off_type") val dropOffType: StopEdgeType,
     @SerialName("pick_up_type") val pickUpType: StopEdgeType,
     @SerialName("stop_sequence") val stopSequence: Int,
     @SerialName("route_id") val routeId: String,
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,
-) : Comparable<Schedule>, BackendObject {
-    val scheduleTime = arrivalTime ?: departureTime
-
-    override fun compareTo(other: Schedule): Int =
-        nullsLast<Instant>().compare(scheduleTime, other.scheduleTime)
-
+) : BackendObject, TripStopTime {
     @Serializable
     enum class StopEdgeType {
         /** Regularly scheduled drop off / pickup */

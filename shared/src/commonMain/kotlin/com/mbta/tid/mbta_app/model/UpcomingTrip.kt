@@ -39,9 +39,9 @@ constructor(
             prediction != null &&
                 prediction.scheduleRelationship != Prediction.ScheduleRelationship.Cancelled
         ) {
-            prediction.predictionTime
+            prediction.stopTime
         } else {
-            schedule?.scheduleTime
+            schedule?.stopTime
         }
 
     val stopId: String? = run {
@@ -58,7 +58,7 @@ constructor(
 
     val isCancelled: Boolean
         get() =
-            schedule?.scheduleTime != null &&
+            schedule?.stopTime != null &&
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled
 
     val trackNumber: String? =
@@ -193,7 +193,7 @@ constructor(
                 .sorted()
                 .filter { upcomingTrip ->
                     if (upcomingTrip.prediction != null) return@filter true
-                    val scheduleTime = upcomingTrip.schedule?.scheduleTime ?: return@filter true
+                    val scheduleTime = upcomingTrip.schedule?.stopTime ?: return@filter true
                     scheduleTime >= filterAtTime
                 }
         }
