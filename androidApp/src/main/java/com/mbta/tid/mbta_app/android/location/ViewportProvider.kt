@@ -125,9 +125,8 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
     fun animateTo(
         coordinates: Point,
         animation: MapAnimationOptions = MapAnimationDefaults.options,
-        zoom: Double? = null
+        zoom: Double? = null,
     ) {
-        isFollowingPuck = false
         animateToCamera(
             options =
                 CameraOptions.Builder()
