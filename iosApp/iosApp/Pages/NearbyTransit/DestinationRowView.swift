@@ -59,12 +59,13 @@ struct DestinationRowView: View {
             default: true
             }
             SheetNavigationLink(
-                value: .legacyStopDetails(
-                    stop,
-                    .init(
+                value: .stopDetails(
+                    stopId: stop.id,
+                    stopFilter: .init(
                         routeId: routeId,
                         directionId: patternsByHeadsign.directionId()
-                    )
+                    ),
+                    tripFilter: nil
                 ),
                 action: { entry in
                     pushNavEntry(entry)
@@ -90,12 +91,13 @@ struct DestinationRowView: View {
             default: true
             }
             SheetNavigationLink(
-                value: .legacyStopDetails(
-                    stop,
-                    .init(
+                value: .stopDetails(
+                    stopId: stop.id,
+                    stopFilter: .init(
                         routeId: routeId,
                         directionId: patternsByDirection.directionId()
-                    )
+                    ),
+                    tripFilter: nil
                 ),
                 action: { entry in
                     pushNavEntry(entry)

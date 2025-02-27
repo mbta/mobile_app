@@ -50,20 +50,30 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let pushExpSouth = XCTestExpectation(description: "Push Nav Entry called for south")
 
         func pushExpFullfill(entry: SheetNavigationStackEntry) {
-            if entry == .legacyStopDetails(stop, .init(routeId: route.id, directionId: 0)) {
+            if entry == .stopDetails(
+                stopId: stop.id,
+                stopFilter: .init(routeId: route.id, directionId: 0),
+                tripFilter: nil
+            ) {
                 pushExpNorth.fulfill()
             }
 
-            if entry == .legacyStopDetails(stop, .init(routeId: route.id, directionId: 1)) {
+            if entry == .stopDetails(
+                stopId: stop.id,
+                stopFilter: .init(routeId: route.id, directionId: 1),
+                tripFilter: nil
+            ) {
                 pushExpSouth.fulfill()
             }
         }
 
-        let sut = StopDetailsRouteView(patternsByStop: patternsByStop,
-                                       now: now,
-                                       pushNavEntry: pushExpFullfill,
-                                       pinned: false,
-                                       onPin: { _ in })
+        let sut = StopDetailsRouteView(
+            patternsByStop: patternsByStop,
+            now: now,
+            pushNavEntry: pushExpFullfill,
+            pinned: false,
+            onPin: { _ in }
+        )
 
         XCTAssertNil(filter.wrappedValue)
         try sut.inspect().find(button: "North").tap()
@@ -114,11 +124,13 @@ final class StopDetailsRouteViewTests: XCTestCase {
             }
         }
 
-        let sut = StopDetailsRouteView(patternsByStop: patternsByStop,
-                                       now: now,
-                                       pushNavEntry: { _ in },
-                                       pinned: false,
-                                       onPin: pinExpFulfill)
+        let sut = StopDetailsRouteView(
+            patternsByStop: patternsByStop,
+            now: now,
+            pushNavEntry: { _ in },
+            pinned: false,
+            onPin: pinExpFulfill
+        )
 
         XCTAssertNil(filter.wrappedValue)
         try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton").button().tap()

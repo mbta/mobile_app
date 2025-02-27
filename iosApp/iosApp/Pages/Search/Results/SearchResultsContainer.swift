@@ -36,7 +36,7 @@ struct SearchResultsContainer: View {
 
     func handleStopTap(stopId: String) {
         guard let stop = searchVM.getStopFor(id: stopId) else { return }
-        nearbyVM.pushNavEntry(.legacyStopDetails(stop, nil))
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
     }
 
     var body: some View {

@@ -29,13 +29,17 @@ class MapViewModel: ObservableObject {
 
     private var subscriptions = Set<AnyCancellable>()
 
-    init(allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = [],
-         layerManager: IMapLayerManager? = nil,
-         setHttpInterceptor: @escaping (_ interceptor: MapHttpInterceptor?) -> Void = { interceptor in
-             HttpServiceFactory.setHttpServiceInterceptorForInterceptor(interceptor)
-         }) {
+    init(
+        allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = [],
+        layerManager: IMapLayerManager? = nil,
+        setHttpInterceptor: @escaping (_ interceptor: MapHttpInterceptor?) -> Void = { interceptor in
+            HttpServiceFactory.setHttpServiceInterceptorForInterceptor(interceptor)
+        },
+        globalData: GlobalResponse? = nil
+    ) {
         self.allRailSourceData = allRailSourceData
         self.layerManager = layerManager
+        self.globalData = globalData
         lastMapboxErrorSubject = .init()
 
         mapboxHttpInterceptor = MapHttpInterceptor(updateLastErrorTimestamp: {
