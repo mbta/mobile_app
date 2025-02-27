@@ -101,6 +101,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
 
     fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density) {
         isVehicleOverview = true
+        isFollowingPuck = false
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
         } else {
@@ -124,9 +125,8 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
     fun animateTo(
         coordinates: Point,
         animation: MapAnimationOptions = MapAnimationDefaults.options,
-        zoom: Double? = null
+        zoom: Double? = null,
     ) {
-        isFollowingPuck = false
         animateToCamera(
             options =
                 CameraOptions.Builder()
