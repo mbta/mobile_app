@@ -216,6 +216,7 @@
     <string name="snow">Neige</string>
     <string name="snow_route">Route enneigée</string>
     <string name="snow_route_sentence_case">Route enneigée</string>
+    <string name="software_licenses">Licences produits</string>
     <string name="southbound">En direction du sud</string>
     <string name="special_event">Événement spécial</string>
     <string name="speed_restriction">Restriction de vitesse</string>
