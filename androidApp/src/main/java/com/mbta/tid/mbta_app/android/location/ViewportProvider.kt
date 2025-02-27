@@ -193,6 +193,9 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
         // TODO preserve zoom
         savedNearbyTransitViewport?.restoreOn(viewport)
         savedNearbyTransitViewport = null
+        if (isFollowingPuck) {
+            follow()
+        }
     }
 
     fun setIsManuallyCentering(isManuallyCentering: Boolean) {
