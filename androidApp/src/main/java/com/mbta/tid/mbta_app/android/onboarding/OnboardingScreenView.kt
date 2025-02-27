@@ -492,9 +492,48 @@ fun OnboardingScreenView(
     }
 }
 
-@Preview
+@Preview(name = "Feedback")
 @Composable
-private fun OnboardingScreenViewPreview() {
+private fun OnboardingScreenViewFeedbackPreview() {
+    MyApplicationTheme {
+        OnboardingScreenView(
+            OnboardingScreen.Feedback,
+            advance = {},
+            locationDataManager = LocationDataManager(),
+            settingsRepository = MockSettingsRepository()
+        )
+    }
+}
+
+@Preview(name = "HideMaps")
+@Composable
+private fun OnboardingScreenViewHideMapsPreview() {
+    MyApplicationTheme {
+        OnboardingScreenView(
+            OnboardingScreen.HideMaps,
+            advance = {},
+            locationDataManager = LocationDataManager(),
+            settingsRepository = MockSettingsRepository()
+        )
+    }
+}
+
+@Preview(name = "Location")
+@Composable
+private fun OnboardingScreenViewLocationPreview() {
+    MyApplicationTheme {
+        OnboardingScreenView(
+            OnboardingScreen.Location,
+            advance = {},
+            locationDataManager = LocationDataManager(),
+            settingsRepository = MockSettingsRepository()
+        )
+    }
+}
+
+@Preview(name = "StationAccessibility")
+@Composable
+private fun OnboardingScreenViewStationAccessibilityPreview() {
     MyApplicationTheme {
         OnboardingScreenView(
             OnboardingScreen.StationAccessibility,

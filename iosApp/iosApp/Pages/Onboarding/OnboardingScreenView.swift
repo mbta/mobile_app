@@ -322,7 +322,22 @@ struct OnboardingScreenView: View {
     }
 }
 
-#Preview {
+#Preview("Feedback") {
+    OnboardingScreenView(screen: .feedback, advance: {},
+                         settingsRepository: MockSettingsRepository())
+}
+
+#Preview("Hide Maps") {
+    OnboardingScreenView(screen: .hideMaps, advance: {},
+                         settingsRepository: MockSettingsRepository())
+}
+
+#Preview("Location") {
+    OnboardingScreenView(screen: .location, advance: {},
+                         settingsRepository: MockSettingsRepository())
+}
+
+#Preview("Station Accessibility") {
     OnboardingScreenView(screen: .stationAccessibility, advance: {},
                          settingsRepository: MockSettingsRepository())
 }
