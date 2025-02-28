@@ -12,7 +12,7 @@ import SwiftUI
 struct TripStopRow: View {
     var stop: TripDetailsStopList.Entry
     var now: Instant
-    var onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
+    var onTapLink: (TripDetailsStopList.Entry) -> Void
     var routeAccents: TripRouteAccents
     var targeted: Bool = false
     var firstStop: Bool = false
@@ -39,9 +39,7 @@ struct TripStopRow: View {
                 routeLine
                 VStack(alignment: .leading, spacing: 8) {
                     Button(
-                        action: {
-                            onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
-                        },
+                        action: { onTapLink(stop) },
                         label: {
                             HStack(alignment: .center, spacing: 0) {
                                 VStack(alignment: .leading, spacing: 4) {
@@ -126,9 +124,7 @@ struct TripStopRow: View {
                     RoutePill(route: route, line: nil, type: .flex)
                 }
             }.padding(.trailing, 20)
-        }.onTapGesture {
-            onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
-        }
+        }.onTapGesture { onTapLink(stop) }
         return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
     }
 
@@ -214,7 +210,7 @@ struct TripStopRow: View {
             ]
         ),
         now: Date.now.toKotlinInstant(),
-        onTapLink: { _, _, _ in },
+        onTapLink: { _ in },
         routeAccents: TripRouteAccents(type: .lightRail)
     ).font(Typography.body)
 }

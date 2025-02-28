@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class MoreViewModel(
     private val context: Context,
+    private val licensesCallback: () -> Unit,
     private val settingsRepository: ISettingsRepository
 ) : ViewModel() {
 
@@ -129,6 +130,10 @@ class MoreViewModel(
                         MoreItem.Link(
                             label = context.resources.getString(R.string.other_link_source_code),
                             url = "https://github.com/mbta/mobile_app"
+                        ),
+                        MoreItem.NavLink(
+                            label = context.resources.getString(R.string.software_licenses),
+                            callback = licensesCallback
                         )
                     )
             ),

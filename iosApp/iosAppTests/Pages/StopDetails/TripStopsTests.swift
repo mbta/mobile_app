@@ -99,7 +99,7 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         )
@@ -179,7 +179,7 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 0,
             headerSpec: TripHeaderSpec.vehicle(vehicle, stop1, nil, false),
             now: now,
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         )
@@ -255,7 +255,7 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .scheduled(stop1, firstStop),
             now: now,
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         )
@@ -337,7 +337,7 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 3,
             headerSpec: .finishingAnotherTrip,
             now: now,
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         )

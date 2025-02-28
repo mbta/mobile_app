@@ -101,6 +101,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
 
     fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density) {
         isVehicleOverview = true
+        isFollowingPuck = false
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
         } else {
@@ -214,7 +215,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
             fun overviewPadding(density: Density) =
                 with(density) {
                     EdgeInsets(
-                        75.dp.toPx().toDouble(),
+                        95.dp.toPx().toDouble(),
                         50.dp.toPx().toDouble(),
                         75.dp.toPx().toDouble(),
                         50.dp.toPx().toDouble()

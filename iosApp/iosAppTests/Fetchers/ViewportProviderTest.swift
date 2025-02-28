@@ -135,63 +135,6 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertTrue(provider.isManuallyCentering)
     }
 
-    func testFollowVehicle() throws {
-        let objects = ObjectCollectionBuilder()
-        let provider = ViewportProvider()
-
-        let stop = objects.stop { stop in
-            stop.latitude = 3.0
-            stop.longitude = 3.0
-        }
-
-        let vehicle1 = objects.vehicle { vehicle in
-            vehicle.currentStatus = .incomingAt
-            vehicle.latitude = 1.0
-            vehicle.longitude = 1.0
-        }
-
-        let vehicle2 = objects.vehicle { vehicle in
-            vehicle.currentStatus = .incomingAt
-            vehicle.latitude = 2.0
-            vehicle.longitude = 2.0
-        }
-
-        XCTAssertFalse(provider.isFollowingVehicle)
-
-        provider.followVehicle(vehicle: vehicle1, target: nil)
-
-        XCTAssertTrue(provider.isFollowingVehicle)
-
-        XCTAssertEqual(provider.viewport.camera?.center?.latitude, 1.0)
-        XCTAssertEqual(provider.viewport.camera?.center?.longitude, 1.0)
-
-        provider.followVehicle(vehicle: vehicle1, target: stop)
-
-        if case let .multiPoint(points) = provider.viewport.overview!.geometry.geometry {
-            XCTAssertEqual(
-                points,
-                MultiPoint([
-                    vehicle1.coordinate,
-                    stop.coordinate,
-                    LocationCoordinate2D(latitude: -1.0, longitude: -1.0),
-                ])
-            )
-        } else {
-            XCTFail("Viewport wasn't set to an overview containing a multipoint geometry")
-        }
-
-        provider.updateFollowedVehicle(vehicle: vehicle2)
-
-        XCTAssertEqual(provider.viewport.camera?.center?.latitude, 2.0)
-        XCTAssertEqual(provider.viewport.camera?.center?.longitude, 2.0)
-
-        XCTAssertTrue(provider.isFollowingVehicle)
-
-        provider.updateFollowedVehicle(vehicle: nil)
-
-        XCTAssertFalse(provider.isFollowingVehicle)
-    }
-
     func testViewportAround() throws {
         let center = CLLocationCoordinate2D(latitude: 5.0, longitude: 5.0)
         let point1 = CLLocationCoordinate2D(latitude: 2.0, longitude: -2.0)

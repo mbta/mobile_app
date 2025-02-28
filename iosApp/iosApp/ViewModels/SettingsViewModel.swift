@@ -101,14 +101,6 @@ class SettingsViewModel: ObservableObject {
                     ),
                     .toggle(
                         label: NSLocalizedString(
-                            "Combined Stop & Trip Details",
-                            comment: "A setting on the More page to display a new stop details page layout (only visible for developers)"
-                        ),
-                        setting: .combinedStopAndTrip,
-                        value: true
-                    ),
-                    .toggle(
-                        label: NSLocalizedString(
                             "Route Search",
                             comment: "A setting on the More page to display routes in search (only visible for developers)"
                         ),

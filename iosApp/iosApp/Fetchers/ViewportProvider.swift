@@ -21,8 +21,6 @@ class ViewportProvider: ObservableObject {
 
     @Published private(set) var isManuallyCentering: Bool
     @Published private(set) var isFollowingPuck: Bool = false
-    @Published private(set) var isFollowingVehicle: Bool = false
-    @Published private(set) var followedVehicle: Vehicle?
 
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
@@ -65,28 +63,6 @@ class ViewportProvider: ObservableObject {
         ))
     }
 
-    func followVehicle(vehicle: Vehicle, target: Stop?) {
-        followedVehicle = vehicle
-        isFollowingVehicle = true
-        guard let target else {
-            animateTo(coordinates: vehicle.coordinate)
-            return
-        }
-        animateTo(viewport: Self.viewportAround(center: vehicle.coordinate, inView: [target.coordinate]))
-    }
-
-    func updateFollowedVehicle(vehicle: Vehicle?) {
-        guard let vehicle else {
-            isFollowingVehicle = false
-            followedVehicle = nil
-            return
-        }
-        followedVehicle = vehicle
-        if isFollowingVehicle {
-            animateTo(coordinates: vehicle.coordinate)
-        }
-    }
-
     func isDefault() -> Bool {
         viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
     }
@@ -109,7 +85,7 @@ class ViewportProvider: ObservableObject {
         withViewportAnimation(animation) {
             self.viewport = viewport
         } completion: { _ in
-            self.isManuallyCentering = false
+            Task { @MainActor in self.isManuallyCentering = false }
         }
     }
 
@@ -163,7 +139,6 @@ class ViewportProvider: ObservableObject {
         self.isManuallyCentering = isManuallyCentering
         if isManuallyCentering {
             isFollowingPuck = false
-            isFollowingVehicle = false
         }
     }
 

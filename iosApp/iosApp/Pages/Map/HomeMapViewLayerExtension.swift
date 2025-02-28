@@ -51,7 +51,7 @@ extension HomeMapView {
             alertsByStop: globalMapData?.alertsByStop
         )
         mapVM.snappedStopRouteLines = snappedStopRouteLines
-        mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stop()?.id)
+        mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
     }
 
     func initializeLayers(_ layerManager: IMapLayerManager) {

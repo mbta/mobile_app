@@ -36,7 +36,7 @@ final class TripStopRowTests: XCTestCase {
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route)
         )
 
@@ -62,7 +62,7 @@ final class TripStopRowTests: XCTestCase {
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route)
         )
 
@@ -94,7 +94,7 @@ final class TripStopRowTests: XCTestCase {
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: .init(route: route)
         )
 
@@ -121,7 +121,7 @@ final class TripStopRowTests: XCTestCase {
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             targeted: true
         )
@@ -137,7 +137,7 @@ final class TripStopRowTests: XCTestCase {
                 vehicle: nil, routes: [route]
             ),
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route)
         )
 
@@ -167,7 +167,7 @@ final class TripStopRowTests: XCTestCase {
         let basicRow = TripStopRow(
             stop: stopEntry,
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route)
         )
         XCTAssertNotNil(try basicRow.inspect().find(viewWithAccessibilityLabel: "stop"))
@@ -175,7 +175,7 @@ final class TripStopRowTests: XCTestCase {
         let selectedRow = TripStopRow(
             stop: stopEntry,
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             targeted: true
         )
@@ -184,7 +184,7 @@ final class TripStopRowTests: XCTestCase {
         let firstRow = TripStopRow(
             stop: stopEntry,
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             firstStop: true
         )
@@ -193,7 +193,7 @@ final class TripStopRowTests: XCTestCase {
         let selectedFirstRow = TripStopRow(
             stop: stopEntry,
             now: now.toKotlinInstant(),
-            onTapLink: { _, _, _ in },
+            onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
             targeted: true,
             firstStop: true

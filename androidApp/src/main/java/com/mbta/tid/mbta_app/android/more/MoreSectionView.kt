@@ -76,6 +76,13 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
                                 item.note,
                                 isKey = section.id == MoreSection.Category.Feedback
                             )
+                        is MoreItem.NavLink ->
+                            MoreLink(
+                                item.label,
+                                item.callback,
+                                item.note,
+                                isKey = section.id == MoreSection.Category.Feedback
+                            )
                         is MoreItem.Phone ->
                             MorePhone(label = item.label, phoneNumber = item.phoneNumber)
                         is MoreItem.Action -> MoreButton(label = item.label, action = item.action)

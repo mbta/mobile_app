@@ -45,9 +45,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int,
-        globalData: GlobalResponse,
-        // TODO: Remove this once the feature flag is removed
-        combinedStopDetails: Boolean = false
+        globalData: GlobalResponse
     ): TargetSplit? {
         var targetStopIndex =
             stops.indexOfFirst {
@@ -66,8 +64,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         var collapsedStops = stops.subList(fromIndex = 0, toIndex = targetStopIndex)
         val firstCollapsed = collapsedStops.firstOrNull()
         if (
-            combinedStopDetails &&
-                firstCollapsed == startTerminalEntry &&
+            firstCollapsed == startTerminalEntry &&
                 (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.tripId)
         ) {
             collapsedStops = collapsedStops.drop(1)
