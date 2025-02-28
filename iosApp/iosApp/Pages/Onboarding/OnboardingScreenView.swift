@@ -22,14 +22,9 @@ struct OnboardingScreenView: View {
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.dynamicTypeSize) var typeSize
-    @State private var pulse: CGFloat = 1
 
     private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
     private var screenWidth: CGFloat { UIScreen.current?.bounds.width ?? 393.0 }
-
-    // Use less padding on smaller screens
-    private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 52 }
-    private var sidePadding: CGFloat { 32 }
 
     private var locationHaloSize: CGFloat { screenWidth * 0.8 }
     private var moreHaloSize: CGFloat { screenWidth * 0.55 }
@@ -89,7 +84,7 @@ struct OnboardingScreenView: View {
                     OnboardingPieces.KeyButton(text: Text("Get started"), action: advance)
                 }, background: {
                     Color.fill2.edgesIgnoringSafeArea(.all)
-                    if typeSize < .accessibility2 {
+                    if typeSize < .accessibility1 {
                         OnboardingPieces.BackgroundImage(.onboardingMoreButton)
                         OnboardingPieces.Halo(size: moreHaloSize, offsetY: haloOffset, pulseSize: 1.22)
                     }
@@ -142,7 +137,6 @@ struct OnboardingScreenView: View {
                     }
                     OnboardingPieces.KeyButton(text: Text("Continue"), action: shareLocation)
                     Text("You can always change location settings later in the Settings app.")
-                        .padding(.bottom, 8)
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
                     if typeSize < .xxxLarge {
