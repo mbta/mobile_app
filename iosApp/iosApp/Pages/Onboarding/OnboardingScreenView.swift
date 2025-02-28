@@ -123,6 +123,7 @@ struct OnboardingScreenView: View {
                 })
 
             case .location:
+                let illustrationCutoff: DynamicTypeSize = if screenHeight < 812 { .xxLarge } else { .xxxLarge }
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
                     OnboardingPieces.PageDescription(
@@ -132,14 +133,14 @@ struct OnboardingScreenView: View {
                         focusValue: .location
                     )
                     .padding(.bottom, 8)
-                    if typeSize >= .xxxLarge, typeSize < .accessibility3 {
+                    if typeSize >= illustrationCutoff, typeSize < .accessibility3 {
                         Spacer()
                     }
                     OnboardingPieces.KeyButton(text: Text("Continue"), action: shareLocation)
                     Text("You can always change location settings later in the Settings app.")
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
-                    if typeSize < .xxxLarge {
+                    if typeSize < illustrationCutoff {
                         OnboardingPieces.Halo(size: locationHaloSize, offsetY: haloOffset, pulseSize: 1.15)
                         OnboardingPieces.BackgroundImage(.onboardingTransitLines)
                     }
