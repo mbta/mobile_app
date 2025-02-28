@@ -368,4 +368,59 @@ class GlobalResponseTest {
         assertNotNull(boundaryParent)
         assertEquals(StopAlertState.Suspension, boundaryParent.stateByRoute[routeType])
     }
+
+    @Test
+    fun `getAlertAffectedStops resolves parents`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        lateinit var childStop: Stop
+        val parentStation = objects.stop {
+            childStop = childStop()
+        }
+        val alert = objects.alert {
+            informedEntity(listOf(), stop = childStop.id)
+        }
+
+        val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route))
+        assertEquals(affectedStops, listOf(parentStation))
+    }
+
+    @Test
+    fun `getAlertAffectedStops filters to selected route`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route1 = objects.route()
+        val route2 = objects.route()
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+        val stop3 = objects.stop()
+        val alert = objects.alert {
+            informedEntity(listOf(), stop = stop1.id)
+            informedEntity(listOf(), route = route1.id, stop = stop2.id)
+            informedEntity(listOf(), route = route2.id, stop = stop3.id)
+        }
+
+        val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1))
+        assertEquals(affectedStops, listOf(stop1, stop2))
+    }
+
+    @Test
+    fun `getAlertAffectedStops avoids duplicates`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route1 = objects.route()
+        val route2 = objects.route()
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+        val alert = objects.alert {
+            informedEntity(listOf(), route = route1.id, stop = stop1.id)
+            informedEntity(listOf(), route = route1.id, stop = stop2.id)
+            informedEntity(listOf(), route = route2.id, stop = stop1.id)
+            informedEntity(listOf(), route = route2.id, stop = stop2.id)
+        }
+
+        val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1, route2))
+        assertEquals(affectedStops, listOf(stop1, stop2))
+    }
 }
