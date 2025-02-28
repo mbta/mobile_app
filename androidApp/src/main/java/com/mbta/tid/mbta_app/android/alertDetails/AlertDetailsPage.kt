@@ -60,19 +60,7 @@ fun AlertDetailsPage(
 
     val firstRoute = routes?.firstOrNull()
 
-    val affectedStops =
-        if (globalResponse == null || alert == null || routes == null) emptyList()
-        else {
-            val routeEntities =
-                alert.matchingEntities { entity ->
-                    routes.any { route -> entity.route == null || entity.route == route.id }
-                }
-            val parentStops =
-                routeEntities.mapNotNull {
-                    globalResponse.stops[it.stop]?.resolveParent(globalResponse.stops)
-                }
-            parentStops.distinct()
-        }
+    val affectedStops = globalResponse?.getAlertAffectedStops(alert, routes) ?: emptyList()
 
     val headerColor =
         listOfNotNull(

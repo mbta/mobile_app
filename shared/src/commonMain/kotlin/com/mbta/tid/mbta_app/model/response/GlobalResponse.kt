@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.kdTree.KdTree
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -82,5 +83,16 @@ data class GlobalResponse(
                 routes[routePattern.routeId]
             }
             .distinct()
+    }
+
+    fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
+        if (alert == null || routes == null) return null
+        val routeEntities =
+            alert.matchingEntities { entity ->
+                routes.any { route -> entity.route == null || entity.route == route.id }
+            }
+        val parentStops =
+            routeEntities.mapNotNull { this.stops[it.stop]?.resolveParent(this.stops) }
+        return parentStops.distinct()
     }
 }
