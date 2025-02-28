@@ -22,14 +22,9 @@ struct OnboardingScreenView: View {
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.dynamicTypeSize) var typeSize
-    @State private var pulse: CGFloat = 1
 
     private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
     private var screenWidth: CGFloat { UIScreen.current?.bounds.width ?? 393.0 }
-
-    // Use less padding on smaller screens
-    private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 52 }
-    private var sidePadding: CGFloat { 32 }
 
     private var locationHaloSize: CGFloat { screenWidth * 0.8 }
     private var moreHaloSize: CGFloat { screenWidth * 0.55 }
@@ -70,189 +65,119 @@ struct OnboardingScreenView: View {
         VStack(spacing: 0) {
             switch screen {
             case .feedback:
-                VStack(alignment: .leading, spacing: 16) {
+                OnboardingPieces.PageColumn(content: {
                     Spacer()
-                    Text("Help us improve")
-                        .font(Typography.title1Bold)
-                        .accessibilityHeading(.h1)
-                        .accessibilityAddTraits(.isHeader)
-                        .accessibilityFocused($focusHeader, equals: .feedback)
-                    Text(
-                        "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features."
+                    OnboardingPieces.PageDescription(
+                        headerText: Text("Help us improve"),
+                        bodyText: Text(
+                            "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features."
+                        ),
+                        focusBinding: $focusHeader,
+                        focusValue: .feedback,
+                        bodyAccessibilityHint: Text("Use the \"More\" navigation tab to send app feedback"),
+                        bodyDynamicTypeSize: .accessibility3
                     )
-                    .font(Typography.title3)
                     .padding(.bottom, 16)
-                    .accessibilityHint(Text("Use the \"More\" navigation tab to send app feedback"))
-                    .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                     if typeSize >= .accessibility2, typeSize < .accessibility5 {
                         Spacer()
                     }
-                    Button(action: advance) {
-                        Text("Get started").fullWidthKeyButton()
+                    OnboardingPieces.KeyButton(text: Text("Get started"), action: advance)
+                }, background: {
+                    Color.fill2.edgesIgnoringSafeArea(.all)
+                    if typeSize < .accessibility1 {
+                        OnboardingPieces.BackgroundImage(.onboardingMoreButton)
+                        OnboardingPieces.Halo(size: moreHaloSize, offsetY: haloOffset, pulseSize: 1.22)
                     }
-                }
-                .padding(.horizontal, sidePadding)
-                .padding(.bottom, bottomPadding)
-                .background {
-                    ZStack(alignment: .center) {
-                        Color.fill2.edgesIgnoringSafeArea(.all)
-                        if typeSize < .accessibility2 {
-                            Image(.onboardingMoreButton)
-                                .resizable()
-                                .scaledToFill()
-                                .edgesIgnoringSafeArea(.all)
-                                .accessibilityHidden(true)
-                            Image(.onboardingHalo)
-                                .resizable()
-                                .frame(width: moreHaloSize, height: moreHaloSize)
-                                .scaleEffect(pulse)
-                                .offset(x: 0, y: haloOffset)
-                                .onAppear {
-                                    pulse = 1
-                                    withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
-                                        pulse = 1.22 * pulse
-                                    }
-                                }
-                                .accessibilityHidden(true)
-                        }
-                    }
-                }
+                })
 
             case .hideMaps:
-                VStack(alignment: .leading, spacing: 16) {
+                OnboardingPieces.PageColumn(content: {
                     Spacer()
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(
+                    OnboardingPieces.PageDescription(
+                        headerText: Text(
                             "Set map preference",
                             comment: "Onboarding screen header for asking VoiceOver users if they want to hide maps"
-                        )
-                        .font(Typography.title1Bold)
-                        .accessibilityHeading(.h1)
-                        .accessibilityAddTraits(.isHeader)
-                        .accessibilityFocused($focusHeader, equals: .hideMaps)
-                        Text(
+                        ),
+                        bodyText: Text(
                             "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
-                        )
-                        .font(Typography.title3)
-                    }
+                        ),
+                        focusBinding: $focusHeader,
+                        focusValue: .hideMaps
+                    )
                     .padding(32)
                     .background(Color.fill2)
                     .clipShape(.rect(cornerRadius: 32.0))
                     .shadow(radius: 16)
                     .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                     Spacer()
-                    Button(action: { hideMaps(true) }) {
-                        Text("Hide maps", comment: "Onboarding button text for setting maps to hidden")
-                            .fullWidthKeyButton()
-                    }
-                    Button(action: { hideMaps(false) }) {
-                        Text("Show maps", comment: "Onboarding button text for setting maps to shown")
-                            .fullWidthSecondaryButton()
-                    }
-                }
-                .padding(.horizontal, sidePadding)
-                .padding(.bottom, bottomPadding)
-                .background {
-                    Image(.onboardingBackgroundMap)
-                        .resizable()
-                        .scaledToFill()
-                        .edgesIgnoringSafeArea(.all)
-                        .accessibilityHidden(true)
-                }
+                    OnboardingPieces.KeyButton(
+                        text: Text("Hide maps", comment: "Onboarding button text for setting maps to hidden"),
+                        action: { hideMaps(true) }
+                    )
+                    OnboardingPieces.SecondaryButton(
+                        text: Text("Show maps", comment: "Onboarding button text for setting maps to shown"),
+                        action: { hideMaps(false) }
+                    )
+                }, background: {
+                    OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
+                })
 
             case .location:
-                VStack(alignment: .leading, spacing: 16) {
+                let illustrationCutoff: DynamicTypeSize = if screenHeight < 812 { .xxLarge } else { .xxxLarge }
+                OnboardingPieces.PageColumn(content: {
                     Spacer()
-                    Text("See transit near you")
-                        .font(Typography.title1Bold)
-                        .accessibilityHeading(.h1)
-                        .accessibilityAddTraits(.isHeader)
-                        .accessibilityFocused($focusHeader, equals: .location)
-
-                    Text("We use your location to show you nearby transit options.")
-                        .font(Typography.title3)
-                        .padding(.bottom, 8)
-                    if typeSize >= .xxxLarge, typeSize < .accessibility3 {
+                    OnboardingPieces.PageDescription(
+                        headerText: Text("See transit near you"),
+                        bodyText: Text("We use your location to show you nearby transit options."),
+                        focusBinding: $focusHeader,
+                        focusValue: .location
+                    )
+                    .padding(.bottom, 8)
+                    if typeSize >= illustrationCutoff, typeSize < .accessibility3 {
                         Spacer()
                     }
-                    Button(action: shareLocation) {
-                        Text("Continue").fullWidthKeyButton()
-                    }
+                    OnboardingPieces.KeyButton(text: Text("Continue"), action: shareLocation)
                     Text("You can always change location settings later in the Settings app.")
-                        .padding(.bottom, 8)
-                }
-                .dynamicTypeSize(...DynamicTypeSize.accessibility4)
-                .padding(.horizontal, sidePadding)
-                .padding(.bottom, bottomPadding)
-                .background {
-                    ZStack(alignment: .center) {
-                        Image(.onboardingBackgroundMap)
-                            .resizable()
-                            .scaledToFill()
-                            .accessibilityHidden(true)
-                        if typeSize < .xxxLarge {
-                            Image(.onboardingHalo)
-                                .resizable()
-                                .frame(width: locationHaloSize, height: locationHaloSize)
-                                .scaleEffect(pulse)
-                                .offset(x: 0, y: haloOffset)
-                                .onAppear {
-                                    pulse = 1
-                                    withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
-                                        pulse = 1.15 * pulse
-                                    }
-                                }
-                                .accessibilityHidden(true)
-                            Image(.onboardingTransitLines)
-                                .resizable()
-                                .scaledToFill()
-                                .accessibilityHidden(true)
-                        }
+                }, background: {
+                    OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
+                    if typeSize < illustrationCutoff {
+                        OnboardingPieces.Halo(size: locationHaloSize, offsetY: haloOffset, pulseSize: 1.15)
+                        OnboardingPieces.BackgroundImage(.onboardingTransitLines)
                     }
-                }.edgesIgnoringSafeArea(.all)
+                })
+                .dynamicTypeSize(...DynamicTypeSize.accessibility4)
 
             case .stationAccessibility:
-                VStack(alignment: .leading, spacing: 16) {
+                OnboardingPieces.PageColumn(content: {
                     Spacer()
-                    Text("Know about elevator closures")
-                        .font(Typography.title1Bold)
-                        .accessibilityHeading(.h1)
-                        .accessibilityAddTraits(.isHeader)
-                        .accessibilityFocused($focusHeader, equals: .stationAccessibility)
-                    Text("We can tell you when elevators are closed at a station.")
-                        .font(Typography.title3)
-                        .padding(.bottom, 8)
-                    Button(action: { showStationAccessibility(true) }) {
-                        Text(
-                            "Show elevator closures",
-                            comment: "Onboarding button text for setting station accessibility to shown"
-                        )
-                        .fullWidthKeyButton()
-                    }
-                    Button(action: { showStationAccessibility(false) }) {
-                        Text("Skip", comment: "Onboarding button text for setting station accessibility to hidden")
-                            .fullWidthSecondaryButton()
-                    }
-                }
-                .dynamicTypeSize(...DynamicTypeSize.accessibility4)
-                .padding(.horizontal, sidePadding)
-                .padding(.bottom, bottomPadding)
-                .foregroundStyle(Color.text)
-                .background {
-                    ZStack(alignment: .center) {
-                        Image(.onboardingBackgroundMap)
+                    OnboardingPieces.PageDescription(
+                        headerText: Text("Know about elevator closures"),
+                        bodyText: Text("We can tell you when elevators are closed at a station."),
+                        focusBinding: $focusHeader,
+                        focusValue: .stationAccessibility
+                    )
+                    .padding(.bottom, 8)
+                    OnboardingPieces.KeyButton(text: Text(
+                        "Show elevator closures",
+                        comment: "Onboarding button text for setting station accessibility to shown"
+                    ), action: { showStationAccessibility(true) })
+                    OnboardingPieces.SecondaryButton(
+                        text: Text("Skip",
+                                   comment: "Onboarding button text for setting station accessibility to hidden"),
+                        action: { showStationAccessibility(false) }
+                    )
+                }, background: {
+                    OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
+                    if typeSize < .xxxLarge {
+                        Image(.accessibilityIconAccessibleLarge)
                             .resizable()
-                            .scaledToFill()
+                            .frame(width: 196, height: 196)
+                            .offset(x: 0, y: haloOffset)
                             .accessibilityHidden(true)
-                        if typeSize < .xxxLarge {
-                            Image(.accessibilityIconAccessibleLarge)
-                                .resizable()
-                                .frame(width: 196, height: 196)
-                                .offset(x: 0, y: haloOffset)
-                                .accessibilityHidden(true)
-                        }
                     }
-                }.edgesIgnoringSafeArea(.all)
+                })
+                .foregroundStyle(Color.text)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility4)
             }
         }
         .onChange(of: screen) { nextScreen in
@@ -322,7 +247,22 @@ struct OnboardingScreenView: View {
     }
 }
 
-#Preview {
+#Preview("Feedback") {
+    OnboardingScreenView(screen: .feedback, advance: {},
+                         settingsRepository: MockSettingsRepository())
+}
+
+#Preview("Hide Maps") {
+    OnboardingScreenView(screen: .hideMaps, advance: {},
+                         settingsRepository: MockSettingsRepository())
+}
+
+#Preview("Location") {
+    OnboardingScreenView(screen: .location, advance: {},
+                         settingsRepository: MockSettingsRepository())
+}
+
+#Preview("Station Accessibility") {
     OnboardingScreenView(screen: .stationAccessibility, advance: {},
                          settingsRepository: MockSettingsRepository())
 }
