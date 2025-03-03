@@ -63,48 +63,42 @@ struct PromoScreenView: View {
                 return AttributedString(promoDetailsKey.filter { $0 != "*" })
             }
         }
-        VStack(alignment: .leading, spacing: 16) {
+        OnboardingPieces.PageColumn(content: {
             if typeSize < .accessibility2 {
                 Image(.featPromoComboStopTrip)
                     .resizable()
                     .scaledToFill()
                     .accessibilityHidden(true)
             }
-            Text(
-                "Check out the new stop view",
-                comment: """
-                Promo text header that displays when users first open the app after a redesign of the stop page
-                """
+            OnboardingPieces.PageDescription(
+                headerText: Text(
+                    "Check out the new stop view",
+                    comment: """
+                    Promo text header that displays when users first open the app after a redesign of the stop page
+                    """
+                ),
+                bodyText: Text(promoDetailsString),
+                focusBinding: $focusHeader,
+                focusValue: .combinedStopAndTrip,
+                bodyDynamicTypeSize: .accessibility3
             )
-            .font(Typography.title1Bold)
-            .accessibilityHeading(.h1)
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityFocused($focusHeader, equals: .combinedStopAndTrip)
-
-            Text(promoDetailsString)
-                .font(Typography.title3)
-                .padding(.bottom, 16)
-                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+            .padding(.bottom, 16)
             if typeSize >= .accessibility2, typeSize < .accessibility5 {
                 Spacer()
             }
 
-            Button(action: advance) {
-                Text(
+            OnboardingPieces.KeyButton(
+                text: Text(
                     "Got it",
                     comment: "The continue button text on a page displaying new features since last update"
-                ).fullWidthKeyButton()
-            }
-        }
+                ),
+                action: advance
+            )
+        }, background: {
+            colorScheme == .dark ? Color.fill1 : Color.fill2
+        })
         .foregroundStyle(Color.text)
-        .padding(.horizontal, sidePadding)
-        .padding(.bottom, bottomPadding)
         .frame(maxWidth: .infinity)
-        .background {
-            ZStack(alignment: .center) {
-                (colorScheme == .dark ? Color.fill1 : Color.fill2).edgesIgnoringSafeArea(.all)
-            }
-        }
     }
 }
 

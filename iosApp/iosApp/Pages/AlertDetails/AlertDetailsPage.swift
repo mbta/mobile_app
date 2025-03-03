@@ -28,21 +28,7 @@ struct AlertDetailsPage: View {
     let inspection = Inspection<Self>()
 
     private var affectedStops: [Stop] {
-        guard let globalResponse, let alert, let routes else { return [] }
-        let routeEntities = alert.matchingEntities { entity in
-            KotlinBoolean(bool: routes.contains { route in
-                entity.route == nil || entity.route == route.id
-            })
-        }
-        let parentStops: [Stop] = routeEntities
-            .map { entity in entity.stop }
-            .compactMap { stopId in
-                guard let stopId else { return nil }
-                let stop = globalResponse.stops[stopId]
-                return stop?.resolveParent(stops: globalResponse.stops)
-            }
-
-        return NSOrderedSet(array: parentStops as [Any]).compactMap { $0 as? Stop }
+        globalResponse?.getAlertAffectedStops(alert: alert, routes: routes) ?? []
     }
 
     private var headerColor: Color {

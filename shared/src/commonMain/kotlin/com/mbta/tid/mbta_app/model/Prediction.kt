@@ -14,8 +14,8 @@ val SCHEDULE_CLOCK_CUTOFF = 60.minutes
 @Serializable
 data class Prediction(
     override val id: String,
-    @SerialName("arrival_time") val arrivalTime: Instant?,
-    @SerialName("departure_time") val departureTime: Instant?,
+    @SerialName("arrival_time") override val arrivalTime: Instant?,
+    @SerialName("departure_time") override val departureTime: Instant?,
     @SerialName("direction_id") val directionId: Int,
     val revenue: Boolean,
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,
@@ -25,9 +25,7 @@ data class Prediction(
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,
     @SerialName("vehicle_id") val vehicleId: String?,
-) : Comparable<Prediction>, BackendObject {
-    val predictionTime = arrivalTime ?: departureTime
-
+) : BackendObject, TripStopTime {
     @Serializable
     enum class ScheduleRelationship {
         @SerialName("added") Added,
@@ -37,7 +35,4 @@ data class Prediction(
         @SerialName("unscheduled") Unscheduled,
         @SerialName("scheduled") Scheduled
     }
-
-    override fun compareTo(other: Prediction): Int =
-        nullsLast<Instant>().compare(predictionTime, other.predictionTime)
 }

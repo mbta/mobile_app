@@ -802,7 +802,8 @@ class TripDetailsStopListTest {
         )
         assertEquals(
             TripDetailsStopList.TargetSplit(
-                collapsedStops = listOf(entry("A", 10), entry("B", 20), entry("C", 30)),
+                firstStop = entry("A", 10),
+                collapsedStops = listOf( entry("B", 20), entry("C", 30)),
                 targetStop = entry("A", 40),
                 followingStops = emptyList()
             ),
@@ -816,7 +817,8 @@ class TripDetailsStopListTest {
 
         assertEquals(
             TripDetailsStopList.TargetSplit(
-                collapsedStops = listOf(entry("A", 996), entry("C", 997)),
+                firstStop = entry("A", 996),
+                collapsedStops = listOf(entry("C", 997)),
                 targetStop = entry("A", 998),
                 followingStops = listOf(entry("B", 999))
             ),
@@ -831,7 +833,8 @@ class TripDetailsStopListTest {
 
         assertEquals(
             TripDetailsStopList.TargetSplit(
-                collapsedStops = listOf(entry("A1", 10)),
+                firstStop = entry("A1", 10),
+                collapsedStops = listOf(),
                 targetStop = entry("B1", 20),
                 followingStops = listOf(entry("C1", 30)),
             ),
@@ -855,7 +858,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30),
                 followingStops = listOf(entry("D", 40)),
             ),
-            list.splitForTarget("C", 30, globalData(), true)
+            list.splitForTarget("C", 30, globalData())
         )
     }
 
@@ -882,7 +885,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30, vehicle = vehicle),
                 followingStops = listOf(entry("D", 40, vehicle = vehicle)),
             ),
-            list.splitForTarget("C", 30, globalData(), true)
+            list.splitForTarget("C", 30, globalData())
         )
     }
 

@@ -85,12 +85,11 @@ struct StopDetailsUnfilteredView: View {
                 }
                 .padding(.bottom, 16)
                 .border(Color.halo.opacity(0.15), width: 2)
-
-                if let departures {
-                    ZStack {
-                        Color.fill1.ignoresSafeArea(.all)
-                        ScrollView {
-                            LazyVStack(spacing: 0) {
+                ZStack {
+                    Color.fill1.ignoresSafeArea(.all)
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            if let departures {
                                 if stopDetailsVM.showElevatorAccessibility {
                                     ForEach(departures.elevatorAlerts, id: \.id) { alert in
                                         AlertCard(
@@ -127,28 +126,29 @@ struct StopDetailsUnfilteredView: View {
                                         onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } }
                                     )
                                 }
-                            }.padding(.top, 16)
+                            } else {
+                                loadingBody()
+                            }
                         }
-                    }
-                } else {
-                    loadingBody()
+                    }.padding(.top, 16)
                 }
             }
         }
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        StopDetailsRoutesView(
-            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: nil),
-            global: stopDetailsVM.global,
-            now: now.toKotlinInstant(),
-            filter: nil,
-            setFilter: { _ in },
-            pushNavEntry: { _ in },
-            pinRoute: { _ in },
-            pinnedRoutes: stopDetailsVM.pinnedRoutes
-        )
-        .loadingPlaceholder()
+        let placeholderDepartures = LoadingPlaceholders.shared.stopDetailsDepartures(filter: nil)
+        VStack(spacing: 0) {
+            ForEach(placeholderDepartures.routes, id: \.routeIdentifier) { patternsByStop in
+                StopDetailsRouteView(
+                    patternsByStop: patternsByStop,
+                    now: now.toKotlinInstant(),
+                    pushNavEntry: { _ in },
+                    pinned: false,
+                    onPin: { _ in }
+                )
+            }
+        }.loadingPlaceholder()
     }
 
     func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {

@@ -18,7 +18,6 @@ import com.mbta.tid.mbta_app.android.R
 @Composable
 fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = false) {
     val context = LocalContext.current
-
     @Composable
     fun LinkIcon() {
         Icon(
@@ -43,6 +42,29 @@ fun MoreLink(label: String, url: String, note: String? = null, isKey: Boolean = 
                 Log.i("More", "Failed to navigate to link on MoreLink click")
             }
         },
+        note,
+        { LinkIcon() },
+        isKey,
+    )
+}
+
+@Composable
+fun MoreLink(label: String, callback: () -> Unit, note: String? = null, isKey: Boolean = false) {
+    @Composable
+    fun LinkIcon() {
+        Icon(
+            painterResource(R.drawable.fa_chevron_right),
+            contentDescription = stringResource(id = R.string.more_link_external),
+            modifier = Modifier.size(12.dp),
+            tint =
+                if (isKey) {
+                    colorResource(R.color.fill3)
+                } else colorResource(R.color.deemphasized),
+        )
+    }
+    MoreButton(
+        label,
+        callback,
         note,
         { LinkIcon() },
         isKey,

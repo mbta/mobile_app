@@ -7,6 +7,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.mbta.tid.mbta_app.model.Dependency
+import com.mbta.tid.mbta_app.model.getAllDependencies
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -90,7 +92,36 @@ class MorePageTests : KoinTest {
         composeTestRule.onNodeWithText("Privacy Policy").assertIsDisplayed()
         composeTestRule.onNode(hasText("View source on GitHub")).performScrollTo()
         composeTestRule.onNodeWithText("View source on GitHub").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Software Licenses").performScrollTo()
+        composeTestRule.onNodeWithText("Software Licenses").assertIsDisplayed()
         composeTestRule.onNode(hasText("617-222-3200")).performScrollTo()
         composeTestRule.onNodeWithText("617-222-3200").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testSoftwareLicenses() {
+        val koinApplication = koinApplication {
+            modules(
+                module {
+                    single<ISettingsRepository> { MockSettingsRepository(onSaveSettings = {}) }
+                }
+            )
+        }
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
+        }
+
+        val dependencies = Dependency.getAllDependencies()
+        val dependency = dependencies.first()
+        composeTestRule.waitUntilExactlyOneExists(hasText("Send app feedback"))
+        composeTestRule.onNodeWithText("Software Licenses").performScrollTo()
+        composeTestRule.onNodeWithText("Software Licenses").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasText(dependency.name))
+        composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(dependency.name).performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasText(dependency.licenseText))
+        composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(dependency.licenseText).assertIsDisplayed()
     }
 }

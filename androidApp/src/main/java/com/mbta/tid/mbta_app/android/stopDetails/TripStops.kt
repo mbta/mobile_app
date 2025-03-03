@@ -69,7 +69,7 @@ fun TripStops(
     val splitStops: TripDetailsStopList.TargetSplit? =
         remember(targetId, stops, stopSequence, global) {
             if (stopSequence != null && global != null) {
-                stops.splitForTarget(targetId, stopSequence, global, combinedStopDetails = true)
+                stops.splitForTarget(targetId, stopSequence, global)
             } else null
         }
 
