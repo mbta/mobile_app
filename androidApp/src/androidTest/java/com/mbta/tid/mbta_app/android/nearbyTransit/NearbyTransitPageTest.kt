@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import MockRepositories
 import android.app.Activity
-import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -292,7 +291,7 @@ class NearbyTransitPageTest : KoinTest {
                             nearbyTransitSelectingLocationState =
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(Location("mock")),
+                            locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
                         ),
                         false,
@@ -310,6 +309,7 @@ class NearbyTransitPageTest : KoinTest {
             }
         }
 
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Mapbox Attribution"))
         composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
         composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading..."))
         composeTestRule
@@ -397,7 +397,7 @@ class NearbyTransitPageTest : KoinTest {
                             nearbyTransitSelectingLocationState =
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(Location("mock")),
+                            locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
                         ),
                         false,
@@ -443,7 +443,7 @@ class NearbyTransitPageTest : KoinTest {
                             nearbyTransitSelectingLocationState =
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(Location("mock")),
+                            locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
                         ),
                         false,

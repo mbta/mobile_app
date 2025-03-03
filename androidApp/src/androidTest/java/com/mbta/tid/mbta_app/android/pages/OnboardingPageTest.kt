@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import android.location.Location
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,7 +27,7 @@ class OnboardingPageTest {
         composeTestRule.setContent {
             OnboardingPage(
                 screens = OnboardingScreen.entries,
-                locationDataManager = MockLocationDataManager(Location("mock")),
+                locationDataManager = MockLocationDataManager(),
                 onFinish = { finished = true },
                 onboardingRepository = onboardingRepository,
                 skipLocationDialogue = true,
