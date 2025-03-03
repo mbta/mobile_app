@@ -9,7 +9,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MainApplication
@@ -96,14 +96,10 @@ class NearbyTransitPageTest {
         }
 
         val locationDataManager = MockLocationDataManager(stop1.position)
-
-        lateinit var viewportProvider: ViewportProvider
+        val viewportProvider = ViewportProvider(MapViewportState())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
-                val mapViewportState = rememberMapViewportState()
-                viewportProvider = remember { ViewportProvider(mapViewportState) }
-
                 NearbyTransitPage(
                     nearbyTransit =
                         NearbyTransit(
