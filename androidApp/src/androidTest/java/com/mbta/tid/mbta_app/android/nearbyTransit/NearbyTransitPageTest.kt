@@ -309,6 +309,7 @@ class NearbyTransitPageTest : KoinTest {
             }
         }
 
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Mapbox Attribution"))
         composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
         composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading..."))
         composeTestRule
