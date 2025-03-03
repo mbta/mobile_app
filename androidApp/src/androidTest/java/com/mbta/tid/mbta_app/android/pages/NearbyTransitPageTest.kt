@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import MockRepositories
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
@@ -22,40 +24,19 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ITripRepository
-import com.mbta.tid.mbta_app.repositories.IVehicleRepository
-import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
-import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripRepository
-import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
-import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.NearbyRepository
-import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import org.junit.Rule
 import org.junit.Test
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -92,31 +73,23 @@ class NearbyTransitPageTest {
 
         val koin = koinApplication {
             modules(
+                repositoriesModule(
+                    MockRepositories.buildWithDefaults(
+                        global = MockGlobalRepository(globalResponse),
+                        schedules = MockScheduleRepository(ScheduleResponse(objects))
+                    )
+                ),
                 module {
                     single<Analytics> { MockAnalytics() }
-                    single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
-                    single<IGlobalRepository> { MockGlobalRepository(globalResponse) }
                     single<INearbyRepository> { NearbyRepository() }
-                    single<IPinnedRoutesRepository> { PinnedRoutesRepository() }
                     single<IPredictionsRepository> {
                         MockPredictionsRepository(
                             connectV2Response = PredictionsByStopJoinResponse(objects)
                         )
                     }
-                    single<ISchedulesRepository> {
-                        MockScheduleRepository(ScheduleResponse(objects))
-                    }
-                    single<ISearchResultRepository> { MockSearchResultRepository() }
                     single<ISettingsRepository> {
                         MockSettingsRepository(mapOf(Settings.HideMaps to true))
                     }
-                    single<ITripRepository> { MockTripRepository() }
-                    single<ITripPredictionsRepository> { MockTripPredictionsRepository() }
-                    single<IVehicleRepository> { MockVehicleRepository() }
-                    single<IVehiclesRepository> { MockVehiclesRepository() }
-                    single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
-                    singleOf(::TogglePinnedRouteUsecase)
-                    singleOf(::VisitHistoryUsecase)
                 },
                 MainApplication.koinViewModelModule
             )
