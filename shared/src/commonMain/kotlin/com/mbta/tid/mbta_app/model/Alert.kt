@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 data class Alert(
     override val id: String,
     @SerialName("active_period") val activePeriod: List<ActivePeriod>,
-    val cause: Cause?,
+    val cause: Cause = Cause.UnknownCause,
     val description: String?,
-    val effect: Effect,
+    val effect: Effect = Effect.UnknownEffect,
     @SerialName("effect_name") val effectName: String?,
     val header: String?,
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
