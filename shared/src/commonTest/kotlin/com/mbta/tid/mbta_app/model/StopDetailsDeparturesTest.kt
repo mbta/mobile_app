@@ -96,7 +96,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time1,
-                useTripHeadsigns = anyBoolean(),
             )
         )
     }
@@ -254,7 +253,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
-                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(
@@ -426,7 +424,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
-                useTripHeadsigns = anyBoolean(),
             )
         val vehicleB =
             objects.vehicle {
@@ -565,7 +562,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
-                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(null, actual(includeSchedules = false, includePredictions = false))
@@ -695,7 +691,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 emptySet(),
                 now,
-                useTripHeadsigns = anyBoolean(),
             )
         assertEquals(expectedBeforeLoaded, actualBeforeLoaded)
 
@@ -721,7 +716,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 now,
-                useTripHeadsigns = anyBoolean(),
             )
         assertEquals(expectedAfterLoaded, actualAfterLoaded)
     }
@@ -827,7 +821,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(routePinned.id),
                 filterAtTime = time,
-                useTripHeadsigns = anyBoolean(),
             )
         )
     }
@@ -911,7 +904,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 emptySet(),
                 time,
-                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(
@@ -1000,7 +992,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 emptySet(),
                 time,
-                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(
@@ -1077,7 +1068,6 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 emptySet(),
                 time,
-                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(
@@ -1126,7 +1116,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1166,7 +1155,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(null, checkNotNull(departures).autoStopFilter())
@@ -1236,7 +1224,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1277,7 +1264,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(null, checkNotNull(departures).autoTripFilter(null, null, time))
@@ -1314,7 +1300,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(null, checkNotNull(departures)
@@ -1400,7 +1385,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1457,7 +1441,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1554,7 +1537,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1651,7 +1633,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1745,7 +1726,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1823,7 +1803,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(
@@ -1916,7 +1895,6 @@ class StopDetailsDeparturesTest {
                     AlertsStreamDataResponse(objects),
                     emptySet(),
                     time,
-                    useTripHeadsigns = anyBoolean(),
                 )
 
             assertEquals(

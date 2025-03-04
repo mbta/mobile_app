@@ -42,7 +42,6 @@ class NearbyViewModel: ObservableObject {
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
     @Published var selectingLocation = false
-    @Published var tripHeadsignsEnabled = false
 
     private let alertsRepository: IAlertsRepository
     private let errorBannerRepository: IErrorBannerStateRepository
@@ -227,13 +226,6 @@ class NearbyViewModel: ObservableObject {
 
     func leaveAlertsChannel() {
         alertsRepository.disconnect()
-    }
-
-    func loadTripHeadsigns() {
-        Task {
-            let result = try await settingsRepository.getSettings()[.tripHeadsigns]?.boolValue ?? false
-            DispatchQueue.main.async { self.tripHeadsignsEnabled = result }
-        }
     }
 }
 

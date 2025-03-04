@@ -107,12 +107,6 @@ class SettingsViewModel: ObservableObject {
                         setting: .searchRouteResults,
                         value: settings[.searchRouteResults] ?? false
                     ),
-                    .toggle(
-                        // not localized since it's a feature flag
-                        label: "Trip Headsigns",
-                        setting: .tripHeadsigns,
-                        value: settings[.tripHeadsigns] ?? false
-                    ),
                 ]),
                 MoreSection(id: .other, items: [
                     .link(

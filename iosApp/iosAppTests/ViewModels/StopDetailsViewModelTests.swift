@@ -162,7 +162,6 @@ final class StopDetailsViewModelTests: XCTestCase {
         let departures = stopDetailsVM.getDepartures(
             stopId: stop.id,
             alerts: .init(objects: objects),
-            useTripHeadsigns: false,
             now: now
         )
 

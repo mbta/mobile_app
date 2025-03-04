@@ -652,7 +652,6 @@ class RealtimePatternsTest {
                 AlertsStreamDataResponse(objects),
                 Clock.System.now(),
                 emptySet(),
-                useTripHeadsigns = false,
             )
 
         assertEquals(
@@ -750,7 +749,6 @@ class RealtimePatternsTest {
                 AlertsStreamDataResponse(objects),
                 now,
                 emptySet(),
-                useTripHeadsigns = false,
             )
 
         assertEquals(

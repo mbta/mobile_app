@@ -979,7 +979,7 @@ class NearbyResponseTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     filterAtTime = time,
                     pinnedRoutes = setOf(),
-                    useTripHeadsigns = anyBoolean(),
+
                 )
             )
         }
@@ -1140,9 +1140,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -1314,9 +1312,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -1430,9 +1426,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -1732,9 +1726,7 @@ class NearbyResponseTest {
                 schedules = ScheduleResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
             checkNotNull(realtimeRoutesSorted).flatMap {
@@ -1855,9 +1847,7 @@ class NearbyResponseTest {
                 schedules = ScheduleResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(farBusRoute.id, farSubwayRoute.id),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(farBusRoute.id, farSubwayRoute.id),)
         assertEquals(
             listOf(farSubwayRoute, farBusRoute, closeSubwayRoute, closeBusRoute),
             checkNotNull(realtimeRoutesSorted).flatMap {
@@ -2038,9 +2028,7 @@ class NearbyResponseTest {
                 schedules = ScheduleResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),)
 
         // Routes with no service today should sort below all routes with any service today,
         // unless they are a pinned route, in which case we want them to sort beneath all other
@@ -2166,7 +2154,7 @@ class NearbyResponseTest {
                     alerts = AlertsStreamDataResponse(objects),
                     filterAtTime = time,
                     pinnedRoutes = setOf(),
-                    useTripHeadsigns = anyBoolean(),
+
                 )
 
             // If a route has major disruptions and doesn't have any scheduled trips, it should
@@ -2241,9 +2229,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -2312,9 +2298,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -2396,9 +2380,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -2497,9 +2479,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -2575,9 +2555,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -2653,9 +2631,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -2862,93 +2838,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = anyBoolean(),
-            )
-        )
-    }
-
-    @Test
-    fun `withRealtimeInfo uses trip headsigns`() {
-        val objects = ObjectCollectionBuilder()
-
-        val stop = objects.stop()
-
-        val route = objects.route()
-
-        val pattern =
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Static Headsign" }
-            }
-
-        val staticData =
-            NearbyStaticData.build {
-                route(route) { stop(stop) { headsign("Static Headsign", listOf(pattern)) } }
-            }
-
-        val time = Instant.parse("2024-11-15T16:12:19-05:00")
-
-        val schedule =
-            objects.schedule {
-                trip = objects.trip(pattern)
-                stopId = stop.id
-                arrivalTime = time
-                departureTime = time
-            }
-
-        objects.prediction(schedule) {
-            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-        }
-
-        val prediction =
-            objects.prediction {
-                trip = objects.trip(pattern) { headsign = "Realtime Headsign" }
-                stopId = stop.id
-                arrivalTime = time
-                departureTime = time
-            }
-
-        assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    route,
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "Realtime Headsign",
-                                    null,
-                                    listOf(pattern),
-                                    listOf(
-                                        objects.upcomingTrip(prediction),
-                                    ),
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "Static Headsign",
-                                    null,
-                                    listOf(pattern),
-                                    emptyList(),
-                                )
-                            )
-                        )
-                    )
-                ),
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
-                sortByDistanceFrom = stop.position,
-                schedules = ScheduleResponse(objects),
-                predictions = PredictionsStreamDataResponse(objects),
-                alerts = AlertsStreamDataResponse(emptyMap()),
-                filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = true,
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 
@@ -3264,7 +3154,6 @@ class NearbyResponseTest {
                 alerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
-                useTripHeadsigns = false
             )
         )
     }
@@ -3368,7 +3257,6 @@ class NearbyResponseTest {
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
-                useTripHeadsigns = false
             )
         )
     }
@@ -3474,9 +3362,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),
-                useTripHeadsigns = false
-            )
+                pinnedRoutes = setOf(),)
         )
     }
 }

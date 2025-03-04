@@ -1303,8 +1303,7 @@ class StopDetailsViewModelTest {
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
                         setOf(),
-                        now,
-                        false
+                        now
                     )
                 )
             }
@@ -1381,8 +1380,7 @@ class StopDetailsViewModelTest {
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
                         setOf(),
-                        now,
-                        false
+                        now
                     )
                 )
             }
@@ -1457,8 +1455,7 @@ class StopDetailsViewModelTest {
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
                         setOf(),
-                        now,
-                        false
+                        now
                     )
                 )
 
