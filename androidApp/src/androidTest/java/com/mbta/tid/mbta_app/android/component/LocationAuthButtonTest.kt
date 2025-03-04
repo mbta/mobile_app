@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.component
 
-import android.location.Location
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -18,7 +17,7 @@ class LocationAuthButtonTest {
     @Test
     fun testShowsWhenPermissionsNotGranted() {
 
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
         locationManager.hasPermission = false
 
         composeTestRule.setContent { LocationAuthButton(locationDataManager = locationManager) }
@@ -29,7 +28,7 @@ class LocationAuthButtonTest {
     @Test
     fun testHiddenWhenHasPermissions() {
 
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
         locationManager.hasPermission = true
 
         composeTestRule.setContent { LocationAuthButton(locationDataManager = locationManager) }

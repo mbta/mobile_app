@@ -459,6 +459,13 @@ fun NearbyTransitPage(
         outerSheetPadding ->
         if (nearbyTransit.hideMaps) {
             val isNearbyTransit = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
+
+            LaunchedEffect(null) {
+                nearbyTransit.locationDataManager.currentLocation.collect { location ->
+                    nearbyTransit.viewportProvider.updateCameraState(location)
+                }
+            }
+
             SearchBarOverlay(
                 searchExpanded,
                 ::handleSearchExpandedChange,

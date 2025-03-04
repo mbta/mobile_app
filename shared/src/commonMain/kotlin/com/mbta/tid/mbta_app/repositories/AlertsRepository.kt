@@ -61,22 +61,11 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
                     println("${e.message}")
                     return
                 }
-            val splitNewAlerts =
-                if (splitAlert566172) {
-                    newAlerts.splitAlert566172()
-                } else {
-                    newAlerts
-                }
             println("Received ${newAlerts.alerts.size} alerts")
-            onReceive(ApiResult.Ok(splitNewAlerts))
+            onReceive(ApiResult.Ok(newAlerts))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
-    }
-
-    companion object {
-        // TODO: remove after debugging mixed shuttle/suspension alerts
-        const val splitAlert566172 = true
     }
 }
 

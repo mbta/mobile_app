@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.map
 
-import android.location.Location
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
@@ -32,7 +31,7 @@ class HomeMapViewTests {
 
     @Test
     fun testRecenterNotShownWhenNoPermissions() = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = false
 
@@ -69,7 +68,7 @@ class HomeMapViewTests {
 
     @Test
     fun testRecenterNotShownWhenPermissions(): Unit = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = true
         val viewModel =
@@ -136,7 +135,7 @@ class HomeMapViewTests {
 
     @Test
     fun testLocationAuthNotShownWhenPermissions() = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = true
 
@@ -171,7 +170,7 @@ class HomeMapViewTests {
 
     @Test
     fun testLocationAuthNotShownStopDetails() = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = false
 
@@ -206,7 +205,7 @@ class HomeMapViewTests {
 
     @Test
     fun testOverviewNotShownWhenNoPermissionsStopDetails() = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = false
 
@@ -243,7 +242,7 @@ class HomeMapViewTests {
 
     @Test
     fun testOverviewShownOnStopDetails(): Unit = runBlocking {
-        val locationManager = MockLocationDataManager(Location("mock"))
+        val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = true
         val viewModel =
@@ -284,7 +283,7 @@ class HomeMapViewTests {
                 sheetPadding = PaddingValues(0.dp),
                 lastNearbyTransitLocation = null,
                 nearbyTransitSelectingLocationState = mutableStateOf(false),
-                locationDataManager = MockLocationDataManager(Location("mock")),
+                locationDataManager = MockLocationDataManager(),
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
                 handleStopNavigation = {},
