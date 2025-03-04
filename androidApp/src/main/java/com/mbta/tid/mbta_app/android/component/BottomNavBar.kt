@@ -1,44 +1,88 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.Routes
+import com.mbta.tid.mbta_app.android.util.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavBar(
-    currentDestination: NavDestination?,
+    currentDestination: Routes,
     navigateToNearby: () -> Unit,
     navigateToMore: () -> Unit
 ) {
-    BottomAppBar(
-        modifier = Modifier.height(83.dp),
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        actions = {
-            BottomNavIconButton(
-                modifier = Modifier.fillMaxSize().weight(1f),
-                onClick = navigateToNearby,
-                icon = R.drawable.map_pin,
-                label = stringResource(R.string.nearby_transit_link),
-                // currentDestination?.hiearchy?.any { it.hasRoute(Routes.NearbyTransit::class)
-                // Doesn't work due to dependency issue
-                // https://issuetracker.google.com/issues/360354551
-                active = currentDestination?.route?.contains("NearbyTransit") ?: true
+
+    val selectedTabIndex = if (currentDestination == Routes.NearbyTransit) 0 else 1
+
+    CompositionLocalProvider(
+        LocalDensity provides
+            Density(
+                LocalDensity.current.density,
+                // Override the system font scale so that the tab size doesn't scale up at larger
+                // display sizes
+                // https://stackoverflow.com/a/74290870
+                1f
+            )
+    ) {
+        TabRow(selectedTabIndex = selectedTabIndex, indicator = {}) {
+            BottomNavTab(
+                selected = currentDestination == Routes.NearbyTransit,
+                onClick = { navigateToNearby() },
+                icon = painterResource(R.drawable.map_pin),
+                text = stringResource(R.string.nearby_transit_link)
             )
 
-            BottomNavIconButton(
-                modifier = Modifier.fillMaxSize().weight(1f),
-                onClick = navigateToMore,
-                icon = R.drawable.more,
-                label = stringResource(R.string.more_link),
-                active = currentDestination?.route?.contains("More") ?: true
+            BottomNavTab(
+                selected = currentDestination == Routes.More,
+                onClick = { navigateToMore() },
+                icon = painterResource(R.drawable.more),
+                text = stringResource(R.string.more_link)
             )
         }
-    )
+    }
+}
+
+@Composable
+private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, text: String) {
+    Tab(
+        selected = selected,
+        onClick = onClick,
+        selectedContentColor = colorResource(R.color.key),
+        unselectedContentColor = colorResource(R.color.text),
+        modifier = Modifier.background(colorResource(R.color.fill2))
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(vertical = 16.dp)
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.padding(4.dp))
+            Text(
+                text,
+                style =
+                    Typography.caption2.copy(
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                    )
+            )
+        }
+    }
 }
