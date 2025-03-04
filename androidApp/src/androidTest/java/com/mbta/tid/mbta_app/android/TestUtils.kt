@@ -8,8 +8,17 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
+import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.network.MockPhoenixSocket
+import com.mbta.tid.mbta_app.network.PhoenixSocket
 import kotlin.math.abs
 import org.junit.Assert.fail
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 fun hasClickActionLabel(expected: String?) =
     SemanticsMatcher("has click action label $expected") { node ->
@@ -78,4 +87,29 @@ fun SemanticsNodeInteraction.assertHasColor(targetColor: Color) {
             )
 
     fail("Did not contain specified color, but did have $legibleResult")
+}
+
+/**
+ * Builds a KoinApplication for use in tests, based on the given [objects] by default but with
+ * whatever overridden repositories are provided.
+ */
+fun testKoinApplication(
+    objects: ObjectCollectionBuilder = ObjectCollectionBuilder(),
+    analytics: Analytics = MockAnalytics(),
+    socket: PhoenixSocket = MockPhoenixSocket(),
+    repositoryOverrides: MockRepositories.() -> Unit = {},
+) = koinApplication {
+    modules(
+        module {
+            single<Analytics> { analytics }
+            single<PhoenixSocket> { socket }
+        },
+        repositoriesModule(
+            MockRepositories().apply {
+                useObjects(objects)
+                repositoryOverrides()
+            }
+        ),
+        MainApplication.koinViewModelModule
+    )
 }

@@ -11,21 +11,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
-import com.mbta.tid.mbta_app.analytics.Analytics
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
-import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
-import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 class ContentViewTests : KoinTest {
@@ -35,17 +27,7 @@ class ContentViewTests : KoinTest {
         GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
     @get:Rule val composeTestRule = createComposeRule()
 
-    val koinApplication = koinApplication {
-        modules(
-            repositoriesModule(MockRepositories.buildWithDefaults()),
-            MainApplication.koinViewModelModule,
-            module {
-                single<Analytics> { MockAnalytics() }
-                single<IAccessibilityStatusRepository> { MockAccessibilityStatusRepository(false) }
-                single<PhoenixSocket> { MockPhoenixSocket() }
-            },
-        )
-    }
+    val koinApplication = testKoinApplication()
 
     @Test
     fun testSwitchingTabs() {
@@ -73,21 +55,10 @@ class ContentViewTests : KoinTest {
         var onAttachCount = 0
         var onDetatchCount = 0
 
-        val koinApplication = koinApplication {
-            modules(
-                repositoriesModule(MockRepositories.buildWithDefaults()),
-                MainApplication.koinViewModelModule,
-                module {
-                    single<Analytics> { MockAnalytics() }
-                    single<IAccessibilityStatusRepository> {
-                        MockAccessibilityStatusRepository(false)
-                    }
-                    single<PhoenixSocket> {
-                        MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 })
-                    }
-                }
+        val koinApplication =
+            testKoinApplication(
+                socket = MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 })
             )
-        }
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {

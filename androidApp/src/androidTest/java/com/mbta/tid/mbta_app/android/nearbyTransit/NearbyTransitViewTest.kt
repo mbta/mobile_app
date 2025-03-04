@@ -6,46 +6,21 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.analytics.Analytics
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.LocationType
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
-import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.core.module.dsl.viewModelOf
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 class NearbyTransitViewTest : KoinTest {
@@ -182,73 +157,7 @@ class NearbyTransitViewTest : KoinTest {
             )
         )
 
-    val analytics = MockAnalytics()
-
-    val koinApplication = koinApplication {
-        modules(
-            module {
-                single<Analytics> { analytics }
-                single<ISettingsRepository> { MockSettingsRepository() }
-                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
-                single<ISchedulesRepository> { MockScheduleRepository() }
-                single<IPredictionsRepository> {
-                    object : IPredictionsRepository {
-                        override fun connect(
-                            stopIds: List<String>,
-                            onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
-                        ) {
-                            onReceive(ApiResult.Ok(PredictionsStreamDataResponse(builder)))
-                        }
-
-                        override fun connectV2(
-                            stopIds: List<String>,
-                            onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
-                            onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
-                        ) {
-                            onJoin(ApiResult.Ok(PredictionsByStopJoinResponse(builder)))
-                        }
-
-                        override var lastUpdated: Instant? = null
-
-                        override fun shouldForgetPredictions(predictionCount: Int) = false
-
-                        override fun disconnect() {
-                            /* no-op */
-                        }
-                    }
-                }
-                single<IPinnedRoutesRepository> {
-                    object : IPinnedRoutesRepository {
-                        private var pinnedRoutes: Set<String> = emptySet()
-
-                        override suspend fun getPinnedRoutes(): Set<String> {
-                            return pinnedRoutes
-                        }
-
-                        override suspend fun setPinnedRoutes(routes: Set<String>) {
-                            pinnedRoutes = routes
-                        }
-                    }
-                }
-                single<INearbyRepository> {
-                    object : INearbyRepository {
-                        override suspend fun getNearby(
-                            global: GlobalResponse,
-                            location: Position
-                        ): ApiResult<NearbyStaticData> {
-                            val data = NearbyStaticData(global, NearbyResponse(builder))
-                            return ApiResult.Ok(data)
-                        }
-                    }
-                }
-                single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
-                single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
-                viewModelOf(::NearbyTransitViewModel)
-                single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
-                single<VisitHistoryUsecase> { VisitHistoryUsecase(get()) }
-            }
-        )
-    }
+    val koinApplication = testKoinApplication(builder)
 
     @get:Rule val composeTestRule = createComposeRule()
 
@@ -290,34 +199,7 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewNoNearbyStops() {
-        val emptyNearbyKoinApplication = koinApplication {
-            modules(
-                module {
-                    single<Analytics> { analytics }
-                    single<ISettingsRepository> { MockSettingsRepository() }
-                    single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
-                    single<INearbyRepository> { MockNearbyRepository() }
-                    single<ISchedulesRepository> { MockScheduleRepository() }
-                    single<IPredictionsRepository> {
-                        MockPredictionsRepository(
-                            connectV2Response =
-                                PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
-                        )
-                    }
-                    single<IPinnedRoutesRepository> {
-                        object : IPinnedRoutesRepository {
-                            override suspend fun getPinnedRoutes(): Set<String> {
-                                return emptySet()
-                            }
-
-                            override suspend fun setPinnedRoutes(routes: Set<String>) {}
-                        }
-                    }
-                    single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
-                    viewModelOf(::NearbyTransitViewModel)
-                }
-            )
-        }
+        val emptyNearbyKoinApplication = testKoinApplication()
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
                 NearbyTransitView(

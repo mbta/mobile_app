@@ -165,11 +165,9 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testUpdatesStopSourceWhenStopSelected() throws {
-        HelpersKt.loadKoinMocks(
-            repositories: MockRepositories.companion.buildWithDefaults(
-                stop: FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
-            )
-        )
+        let repositories = MockRepositories()
+        repositories.stop = FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
+        HelpersKt.loadKoinMocks(repositories: repositories)
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -218,16 +216,16 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
-        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
-            global: MockGlobalRepository(
-                response: .init(objects: objects),
-                onGet: { globalLoadSubject.send() }
-            ),
-            stop: FilteredStopRepository(
-                filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
-                onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
-            )
-        ))
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: .init(objects: objects),
+            onGet: { globalLoadSubject.send() }
+        )
+        repositories.stop = FilteredStopRepository(
+            filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
+            onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
+        )
+        HelpersKt.loadKoinMocks(repositories: repositories)
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
@@ -274,17 +272,16 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
-                global: MockGlobalRepository(
-                    response: .init(objects: objects),
-                    onGet: { globalLoadSubject.send() }
-                ),
-                stop: FilteredStopRepository(
-                    filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
-                    onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
-                )
-            ))
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: .init(objects: objects),
+            onGet: { globalLoadSubject.send() }
+        )
+        repositories.stop = FilteredStopRepository(
+            filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
+            onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
+        )
+        HelpersKt.loadKoinMocks(repositories: repositories)
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
@@ -345,14 +342,13 @@ final class HomeMapViewTests: XCTestCase {
             prediction.trip = trip
         }
 
-        HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
-                global: MockGlobalRepository(
-                    response: .init(objects: objects),
-                    onGet: { globalLoadSubject.send() }
-                ),
-                stop: FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() })
-            ))
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: .init(objects: objects),
+            onGet: { globalLoadSubject.send() }
+        )
+        repositories.stop = FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() })
+        HelpersKt.loadKoinMocks(repositories: repositories)
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
@@ -421,7 +417,9 @@ final class HomeMapViewTests: XCTestCase {
                 ))
             }
         }
-        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
+        let repositories = MockRepositories()
+        repositories.stop = FakeStopRepository()
+        HelpersKt.loadKoinMocks(repositories: repositories)
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -502,11 +500,9 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testShowsAllRailShapesWhenSelectedStopCleared() throws {
-        HelpersKt.loadKoinMocks(
-            repositories: MockRepositories.companion.buildWithDefaults(
-                stop: FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
-            )
-        )
+        let repositories = MockRepositories()
+        repositories.stop = FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
+        HelpersKt.loadKoinMocks(repositories: repositories)
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in

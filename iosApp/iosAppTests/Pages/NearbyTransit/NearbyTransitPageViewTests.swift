@@ -76,8 +76,9 @@ final class NearbyTransitPageViewTests: XCTestCase {
 
         let globalDataLoaded = PassthroughSubject<Void, Never>()
 
-        loadKoinMocks(repositories: MockRepositories.companion
-            .buildWithDefaults(global: MockGlobalRepository(onGet: { globalDataLoaded.send() })))
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(onGet: { globalDataLoaded.send() })
+        loadKoinMocks(repositories: repositories)
 
         let getNearbyExpectation = expectation(description: "getNearby")
         getNearbyExpectation.assertForOverFulfill = false

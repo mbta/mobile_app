@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import MockRepositories
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -10,26 +9,15 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.analytics.Analytics
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
-import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -37,8 +25,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 
 class NearbyTransitPageTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -71,29 +57,11 @@ class NearbyTransitPageTest {
         val alertData = AlertsStreamDataResponse(objects)
         val globalResponse = GlobalResponse(objects)
 
-        val koin = koinApplication {
-            modules(
-                repositoriesModule(
-                    MockRepositories.buildWithDefaults(
-                        global = MockGlobalRepository(globalResponse),
-                        schedules = MockScheduleRepository(ScheduleResponse(objects))
-                    )
-                ),
-                module {
-                    single<Analytics> { MockAnalytics() }
-                    single<INearbyRepository> { NearbyRepository() }
-                    single<IPredictionsRepository> {
-                        MockPredictionsRepository(
-                            connectV2Response = PredictionsByStopJoinResponse(objects)
-                        )
-                    }
-                    single<ISettingsRepository> {
-                        MockSettingsRepository(mapOf(Settings.HideMaps to true))
-                    }
-                },
-                MainApplication.koinViewModelModule
-            )
-        }
+        val koin =
+            testKoinApplication(objects) {
+                nearby = NearbyRepository()
+                settings = MockSettingsRepository(mapOf(Settings.HideMaps to true))
+            }
 
         val locationDataManager = MockLocationDataManager(stop1.position)
         val viewportProvider = ViewportProvider(MapViewportState())
