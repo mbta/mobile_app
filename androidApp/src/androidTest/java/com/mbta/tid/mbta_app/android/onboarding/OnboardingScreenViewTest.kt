@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.onboarding
 
-import android.location.Location
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -26,7 +25,7 @@ class OnboardingScreenViewTest {
     @Test
     fun testLocationFlow() {
         var advanced = false
-        val locationDataManager = MockLocationDataManager(Location("mock"))
+        val locationDataManager = MockLocationDataManager()
         composeTestRule.setContent {
             OnboardingScreenView(
                 screen = OnboardingScreen.Location,
@@ -63,7 +62,7 @@ class OnboardingScreenViewTest {
             OnboardingScreenView(
                 screen = OnboardingScreen.StationAccessibility,
                 advance = { advanced = true },
-                locationDataManager = MockLocationDataManager(Location("mock")),
+                locationDataManager = MockLocationDataManager(),
                 settingsRepository = settingsRepo
             )
         }
@@ -96,7 +95,7 @@ class OnboardingScreenViewTest {
             OnboardingScreenView(
                 screen = OnboardingScreen.HideMaps,
                 advance = { advanced = true },
-                locationDataManager = MockLocationDataManager(Location("mock")),
+                locationDataManager = MockLocationDataManager(),
                 settingsRepository = settingsRepo
             )
         }
@@ -120,7 +119,7 @@ class OnboardingScreenViewTest {
             OnboardingScreenView(
                 screen = OnboardingScreen.Feedback,
                 advance = { advanced = true },
-                locationDataManager = MockLocationDataManager(Location("mock")),
+                locationDataManager = MockLocationDataManager(),
             )
         }
         composeTestRule
