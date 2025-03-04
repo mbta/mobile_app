@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.map
 
+import android.location.Location
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -9,6 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.mapbox.common.HttpServiceFactory
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.FeatureCollection
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLineData
@@ -51,6 +55,8 @@ interface IMapViewModel {
     val configLoadAttempted: StateFlow<Boolean>
     val globalMapData: Flow<GlobalMapData?>
     val selectedStop: StateFlow<Stop?>
+    val showRecenterButton: StateFlow<Boolean>
+    val showTripCenterButton: StateFlow<Boolean>
 
     suspend fun loadConfig()
 
@@ -69,6 +75,15 @@ interface IMapViewModel {
     fun setSelectedVehicle(selectedVehicle: Vehicle?)
 
     fun setSelectedStop(stop: Stop?)
+
+    fun updateCenterButtonVisibility(
+        locationDataManager: LocationDataManager,
+        currentLocation: Location?,
+        viewportProvider: ViewportProvider,
+        searchResultsViewModel: SearchResultsViewModel
+    )
+
+    fun hideCenterButtons()
 }
 
 open class MapViewModel(
@@ -98,7 +113,10 @@ open class MapViewModel(
     override val selectedVehicle = _selectedVehicle.asStateFlow()
     private val _selectedStop = MutableStateFlow<Stop?>(null)
     override val selectedStop = _selectedStop.asStateFlow()
-
+    private val _showRecenterButton = MutableStateFlow(false)
+    override val showRecenterButton = _showRecenterButton.asStateFlow()
+    private val _showTripCenterButton = MutableStateFlow(false)
+    override val showTripCenterButton = _showTripCenterButton.asStateFlow()
     private val alertsData = MutableStateFlow<AlertsStreamDataResponse?>(null)
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
 
@@ -182,6 +200,37 @@ open class MapViewModel(
 
     override fun setSelectedStop(stop: Stop?) {
         _selectedStop.value = stop
+    }
+
+    fun setShowRecenterButton(show: Boolean) {
+        _showRecenterButton.value = show
+    }
+
+    fun setShowTripCenterButton(show: Boolean) {
+        _showTripCenterButton.value = show
+    }
+
+    override fun updateCenterButtonVisibility(
+        locationDataManager: LocationDataManager,
+        currentLocation: Location?,
+        viewportProvider: ViewportProvider,
+        searchResultsViewModel: SearchResultsViewModel
+    ) {
+        setShowRecenterButton(
+            locationDataManager.hasPermission &&
+                currentLocation != null &&
+                !viewportProvider.isFollowingPuck
+        )
+        setShowTripCenterButton(
+            selectedVehicle.value != null &&
+                !searchResultsViewModel.expanded &&
+                !viewportProvider.isVehicleOverview
+        )
+    }
+
+    override fun hideCenterButtons() {
+        setShowRecenterButton(false)
+        setShowTripCenterButton(false)
     }
 
     private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? {

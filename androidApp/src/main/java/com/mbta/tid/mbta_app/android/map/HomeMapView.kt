@@ -62,7 +62,6 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
-import com.mbta.tid.mbta_app.android.util.isOverview
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
@@ -105,13 +104,14 @@ fun HomeMapView(
     val stopSourceData by viewModel.stopSourceData.collectAsState(initial = null)
     val globalResponse by viewModel.globalResponse.collectAsState(initial = null)
     val railRouteLineData by viewModel.railRouteLineData.collectAsState(initial = null)
+    val showRecenterButton by viewModel.showRecenterButton.collectAsState(initial = false)
+    val showTripCenterButton by viewModel.showTripCenterButton.collectAsState(initial = false)
     val selectedVehicle =
         viewModel.selectedVehicle.collectAsState().value.takeIf {
             currentNavEntry is SheetRoutes.StopDetails
         }
     val previousSelectedVehicleId = rememberPrevious(current = selectedVehicle?.id)
     val currentLocation = locationDataManager.currentLocation.collectAsState(initial = null).value
-
     val now = timer(updateInterval = 300.seconds)
     val globalMapData by viewModel.globalMapData.collectAsState(null)
     val isDarkMode = isSystemInDarkTheme()
@@ -151,8 +151,15 @@ fun HomeMapView(
     }
 
     fun positionViewportToStop() {
-        val stop = selectedStop ?: return
-        viewportProvider.animateTo(stop.position.toMapbox())
+        if (selectedStop != null) {
+            viewportProvider.stopOverview(selectedStop!!)
+            viewModel.updateCenterButtonVisibility(
+                locationDataManager,
+                currentLocation,
+                viewportProvider,
+                searchResultsViewModel
+            )
+        }
     }
 
     suspend fun updateDisplayedRoutesBasedOnStop() {
@@ -324,7 +331,26 @@ fun HomeMapView(
 
                 LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
                 LaunchedEffect(currentNavEntry) { updateDisplayedRoutesBasedOnStop() }
-
+                LaunchedEffect(
+                    locationDataManager.hasPermission,
+                    currentLocation,
+                    viewportProvider.isAnimating,
+                    viewportProvider.isFollowingPuck,
+                    selectedVehicle,
+                    searchResultsViewModel.expanded,
+                    viewportProvider.isVehicleOverview
+                ) {
+                    if (viewportProvider.isAnimating) {
+                        viewModel.hideCenterButtons()
+                    } else {
+                        viewModel.updateCenterButtonVisibility(
+                            locationDataManager,
+                            currentLocation,
+                            viewportProvider,
+                            searchResultsViewModel
+                        )
+                    }
+                }
                 val locationProvider = remember { PassthroughLocationProvider() }
 
                 MapEffect(true) { map ->
@@ -450,18 +476,14 @@ fun HomeMapView(
                 else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
 
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
-                if (
-                    !viewportProvider.isFollowingPuck &&
-                        locationDataManager.hasPermission &&
-                        currentLocation != null
-                ) {
+                if (showRecenterButton) {
                     RecenterButton(
                         onClick = { viewportProvider.follow() },
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
 
-                if (!viewportProvider.viewport.isOverview && !searchResultsViewModel.expanded) {
+                if (showTripCenterButton) {
                     if (selectedVehicle != null) {
                         val routeType =
                             (globalResponse?.routes ?: emptyMap())[selectedVehicle.routeId]?.type

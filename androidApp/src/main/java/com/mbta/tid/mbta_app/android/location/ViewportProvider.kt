@@ -14,6 +14,7 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.style.expressions.dsl.generated.zoom
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
@@ -38,6 +39,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
     var isManuallyCentering by mutableStateOf(isManuallyCentering)
     var isFollowingPuck by mutableStateOf(viewport.isFollowingPuck)
     var isVehicleOverview by mutableStateOf(viewport.isOverview)
+    var isAnimating by mutableStateOf(false)
 
     private var savedNearbyTransitViewport: ViewportSnapshot? = null
 
@@ -86,6 +88,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
     ) {
         isFollowingPuck = true
         isVehicleOverview = false
+        isAnimating = true
         this.viewport.transitionToFollowPuckState(
             followPuckViewportStateOptions =
                 FollowPuckViewportStateOptions.Builder()
@@ -97,6 +100,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                     .build(),
             defaultTransitionOptions = defaultTransitionOptions
         )
+        isAnimating = false
     }
 
     fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density) {
@@ -120,6 +124,12 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
         }
     }
 
+    fun stopOverview(stop: Stop) {
+        isFollowingPuck = false
+        isVehicleOverview = false
+        animateTo(stop.position.toMapbox())
+    }
+
     fun isDefault() = viewport.cameraState?.center?.isRoughlyEqualTo(Defaults.center) == true
 
     fun animateTo(
@@ -127,6 +137,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
         animation: MapAnimationOptions = MapAnimationDefaults.options,
         zoom: Double? = null,
     ) {
+        isAnimating = true
         animateToCamera(
             options =
                 CameraOptions.Builder()
@@ -135,6 +146,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                     .build(),
             animation = animation
         )
+        isAnimating = false
     }
 
     fun animateToCamera(
@@ -152,7 +164,9 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
         options: OverviewViewportStateOptions,
         defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition
     ) {
+        isAnimating = true
         this.viewport.transitionToOverviewState(options, defaultTransitionOptions)
+        isAnimating = false
     }
 
     fun updateCameraState(location: Location?) {
@@ -191,17 +205,19 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
 
     fun restoreNearbyTransitViewport() {
         // TODO preserve zoom
+        isFollowingPuck = savedNearbyTransitViewport?.isFollowingPuck ?: false
+        isVehicleOverview = false
+        isAnimating = true
         savedNearbyTransitViewport?.restoreOn(viewport)
+        isAnimating = false
         savedNearbyTransitViewport = null
-        if (isFollowingPuck) {
-            follow()
-        }
     }
 
     fun setIsManuallyCentering(isManuallyCentering: Boolean) {
         this.isManuallyCentering = isManuallyCentering
         if (isManuallyCentering) {
             isFollowingPuck = false
+            isVehicleOverview = false
         }
     }
 
