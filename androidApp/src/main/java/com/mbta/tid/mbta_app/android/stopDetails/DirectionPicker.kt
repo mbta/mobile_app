@@ -2,23 +2,19 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -50,16 +46,22 @@ fun DirectionPicker(
     val line = patternsByStop.line
 
     if (availableDirections.size > 1) {
-        val deselectedBackgroundColor = colorResource(deselectedBackgroundColor(route))
-        Row(
-            modifier
-                .padding(horizontal = 2.dp)
-                .background(deselectedBackgroundColor.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
-                .padding(2.dp)
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        val deselectedBackgroundColor =
+            colorResource(deselectedBackgroundColor(route)).copy(alpha = 0.6f)
+        TabRow(
+            modifier =
+                modifier
+                    .padding(horizontal = 2.dp)
+                    .background(
+                        deselectedBackgroundColor.copy(alpha = 0.6f),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(2.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(6.dp)),
+            selectedTabIndex = filter?.directionId ?: 0,
+            indicator = {},
+            divider = {}
         ) {
             for (direction in availableDirections) {
                 val isSelected = filter?.directionId == direction
@@ -69,22 +71,24 @@ fun DirectionPicker(
                     )
                 }
 
-                Button(
-                    modifier = Modifier.weight(1f).fillMaxHeight().alpha(1f),
+                Tab(
+                    selected = isSelected,
                     onClick = action,
-                    shape = RoundedCornerShape(6.dp),
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor =
+                    modifier =
+                        Modifier.fillMaxHeight()
+                            .background(Color.fromHex(route.color))
+                            .background(deselectedBackgroundColor)
+                            .background(
                                 if (isSelected) Color.fromHex(route.color) else Color.Transparent,
-                            contentColor =
-                                if (isSelected) Color.fromHex(route.textColor)
-                                else colorResource(R.color.deselected_toggle_text)
-                        ),
-                    contentPadding = PaddingValues(8.dp)
+                                shape = if (isSelected) RoundedCornerShape(6.dp) else RectangleShape
+                            )
+                            .clip(RoundedCornerShape(6.dp)),
+                    selectedContentColor = Color.fromHex(route.textColor),
+                    unselectedContentColor = colorResource(R.color.deselected_toggle_text)
                 ) {
-                    DirectionLabel(direction = directions[(direction)])
-                    Spacer(Modifier.weight(1f))
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        DirectionLabel(direction = directions[(direction)])
+                    }
                 }
             }
         }
