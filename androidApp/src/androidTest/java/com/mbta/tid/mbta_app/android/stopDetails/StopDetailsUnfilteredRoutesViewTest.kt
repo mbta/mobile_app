@@ -113,7 +113,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )
             )
 

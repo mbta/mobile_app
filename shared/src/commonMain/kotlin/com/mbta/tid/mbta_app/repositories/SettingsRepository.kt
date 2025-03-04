@@ -39,7 +39,6 @@ enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     CombinedStopAndTrip(booleanPreferencesKey("combined_stop_and_trip")),
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
-    TripHeadsigns(booleanPreferencesKey("tripHeadsigns_featureFlag")),
     ElevatorAccessibility(booleanPreferencesKey("elevator_accessibility")),
     HideMaps(booleanPreferencesKey("hide_maps")),
 }

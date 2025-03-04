@@ -142,7 +142,6 @@ class StopDetailsViewModel: ObservableObject {
     func getDepartures(
         stopId: String,
         alerts: AlertsStreamDataResponse?,
-        useTripHeadsigns: Bool,
         now: Date
     ) -> StopDetailsDepartures? {
         if let global, let schedules = stopData?.schedules {
@@ -153,8 +152,7 @@ class StopDetailsViewModel: ObservableObject {
                 predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 pinnedRoutes: pinnedRoutes,
-                filterAtTime: now.toKotlinInstant(),
-                useTripHeadsigns: useTripHeadsigns
+                filterAtTime: now.toKotlinInstant()
             )
         } else {
             nil

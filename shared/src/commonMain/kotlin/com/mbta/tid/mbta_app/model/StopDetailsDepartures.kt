@@ -152,22 +152,12 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
             filterAtTime: Instant,
-            useTripHeadsigns: Boolean,
         ): StopDetailsDepartures? {
             val stop = global.stops[stopId]
             return if (stop == null) {
                 null
             } else {
-                fromData(
-                    stop,
-                    global,
-                    schedules,
-                    predictions,
-                    alerts,
-                    pinnedRoutes,
-                    filterAtTime,
-                    useTripHeadsigns
-                )
+                fromData(stop, global, schedules, predictions, alerts, pinnedRoutes, filterAtTime)
             }
         }
 
@@ -178,8 +168,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
-            filterAtTime: Instant,
-            useTripHeadsigns: Boolean,
+            filterAtTime: Instant
         ): StopDetailsDepartures? {
             val allStopIds =
                 if (global.patternIdsByStop.containsKey(stop.id)) {
@@ -190,35 +179,20 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
 
             val staticData = NearbyStaticData(global, NearbyResponse(allStopIds))
             val routes =
-                if (useTripHeadsigns) {
-                        staticData.withRealtimeInfoViaTripHeadsigns(
-                            global,
-                            null,
-                            schedules,
-                            predictions,
-                            alerts,
-                            filterAtTime,
-                            showAllPatternsWhileLoading = true,
-                            hideNonTypicalPatternsBeyondNext = null,
-                            filterCancellations = false,
-                            includeMinorAlerts = true,
-                            pinnedRoutes
-                        )
-                    } else {
-                        staticData.withRealtimeInfoWithoutTripHeadsigns(
-                            global,
-                            null,
-                            schedules,
-                            predictions,
-                            alerts,
-                            filterAtTime,
-                            showAllPatternsWhileLoading = true,
-                            hideNonTypicalPatternsBeyondNext = null,
-                            filterCancellations = false,
-                            includeMinorAlerts = true,
-                            pinnedRoutes
-                        )
-                    }
+                staticData
+                    .withRealtimeInfoWithoutTripHeadsigns(
+                        global,
+                        null,
+                        schedules,
+                        predictions,
+                        alerts,
+                        filterAtTime,
+                        showAllPatternsWhileLoading = true,
+                        hideNonTypicalPatternsBeyondNext = null,
+                        filterCancellations = false,
+                        includeMinorAlerts = true,
+                        pinnedRoutes
+                    )
                     ?.flatMap { it.patternsByStop }
 
             return routes?.let { StopDetailsDepartures(it) }
