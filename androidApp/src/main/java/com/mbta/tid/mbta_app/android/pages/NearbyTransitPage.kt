@@ -425,6 +425,7 @@ fun NearbyTransitPage(
 
                 fun panToDefaultCenter() {
                     nearbyTransit.viewportProvider.isManuallyCentering = true
+                    nearbyTransit.viewportProvider.isFollowingPuck = false
                     nearbyTransit.viewportProvider.animateTo(
                         ViewportProvider.Companion.Defaults.center,
                         zoom = 13.75
