@@ -105,7 +105,10 @@ platform :ios do
   desc "Load downloaded code signing certificates"
   lane :cert_load do |options|
     app_store_connect
-    keychain_path = lane_context[SharedValues::KEYCHAIN_PATH] || FastlaneCore::Helper.keychain_path("login")
+    # For reasons, KEYCHAIN_PATH is not the actual keychain path created by setup_ci,
+    # it's missing a "-db" suffix that macOS adds for some reason,
+    # and this helper will both add that suffix to a path and turn `"login"` into a full path of its own
+    keychain_path = FastlaneCore::Helper.keychain_path(lane_context[SharedValues::KEYCHAIN_PATH] || "login")
     import_certificate(
       certificate_path: "iosApp/secrets/#{options[:cert_id]}.cer",
       keychain_path: keychain_path
