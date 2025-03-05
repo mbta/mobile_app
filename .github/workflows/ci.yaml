@@ -18,7 +18,9 @@ jobs:
   test-ios:
     name: Test for iOS
     permissions:
+      id-token: write
       contents: read
+      pull-requests: write
     uses: ./.github/workflows/test-ios.yaml
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
