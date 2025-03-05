@@ -96,10 +96,38 @@ platform :ios do
     )
   end
 
-  desc "Set up code signing"
-  lane :certs do |options|
+  desc "Create a new code signing certificate"
+  lane :cert_create do
     app_store_connect
-    get_certificates(output_path: "iosApp/secrets", force: options[:force])
+    get_certificates(output_path: "iosApp/secrets", force: true)
+  end
+
+  desc "Load downloaded code signing certificates"
+  lane :cert_load do |options|
+    app_store_connect
+    keychain_path = lane_context[SharedValues::KEYCHAIN_PATH] || FastlaneCore::Helper.keychain_path("login")
+    import_certificate(
+      certificate_path: "iosApp/secrets/#{options[:cert_id]}.cer",
+      keychain_path: keychain_path
+    )
+    import_certificate(
+      certificate_path: "iosApp/secrets/#{options[:cert_id]}.p12",
+      keychain_path: keychain_path
+    )
+    get_certificates(
+      output_path: "iosApp/secrets",
+      force: false,
+      keychain_path: keychain_path
+    )
+  end
+
+  private_lane :cert_check do |options|
+    app_store_connect
+    get_certificates(
+      output_path: "iosApp/secrets",
+      force: false,
+      keychain_path: lane_context[SharedValues::KEYCHAIN_PATH]
+    )
     get_provisioning_profile(app_identifier: app_identifier(options[:scheme]), output_path: "iosApp/secrets")
   end
 
@@ -119,7 +147,7 @@ platform :ios do
   desc "Build the app"
   lane :build do |options|
     app_store_connect
-    certs(scheme: options[:scheme])
+    cert_check(scheme: options[:scheme])
     increment_build_number(
       build_number: latest_testflight_build_number(app_identifier: app_identifier(options[:scheme])) + 1,
       xcodeproj: "iosApp/iosApp.xcodeproj"

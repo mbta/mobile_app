@@ -139,7 +139,7 @@ aws secretsmanager get-secret-value --secret-id mobile-app-ios-app-store-connect
 To upload the iOS code signing key if it needs to be updated (which is unlikely):
 
 ```
-bundle exec fastlane ios certs scheme:Staging force:true # the scheme doesn't matter for this step but it is required
+bundle exec fastlane ios cert_create
 CERTID=$(basename iosApp/secrets/*.cer .cer)
 echo $CERTID > iosApp/secrets/certid.txt
 aws secretsmanager put-secret-value --secret-id mobile-app-ios-codesigning-id --secret-string file://iosApp/secrets/certid.txt
@@ -154,8 +154,7 @@ To download the iOS code signing key if you need it locally (which may happen):
 CERTID=$(aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-id --output json | jq -r '.SecretString')
 aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-cer --output json | jq -r '.SecretBinary' | base64 --decode > iosApp/secrets/${CERTID}.cer
 aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-p12 --output json | jq -r '.SecretBinary' | base64 --decode > iosApp/secrets/${CERTID}.p12
-bundle exec fastlane ios certs scheme:Staging
-bundle exec fastlane ios certs scheme:Prod
+bundle exec fastlane ios cert_load cert_id:$CERTID
 ```
 
 To upload the Android code signing key if it needs to be updated (which is unlikely):
