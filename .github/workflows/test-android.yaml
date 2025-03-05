@@ -1,0 +1,72 @@
+name: Android tests
+
+on:
+  workflow_call:
+
+jobs:
+  test-android:
+    name: Test for Android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: android-test
+      - run: ./gradlew spotlessCheck
+      - name: shared checks & unit tests
+        run: ./gradlew shared:check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-shared-reports
+          path: shared/build/reports
+      - name: android checks & unit tests
+        run: ./gradlew androidApp:check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-android-reports
+          path: androidApp/build/reports
+  emulator-test-android:
+    name: Run Android instrumented tests in emulator
+    runs-on: mobile_app_runner
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api-level: 28
+            target: default
+            arch: x86
+          # - api-level: 33
+          #   target: default
+          #   arch: x86_64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: android-test
+      # full setup including AVD snapshot caching from https://github.com/ReactiveCircus/android-emulator-runner/blob/a3dcdb348bb02349cd939d168a74e31a9094b7f0/README.md
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 30
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          force-avd-creation: false
+          disable-animations: true
+          script: ./bin/android-instrumented-test-ci.sh
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-connected-reports-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
+          path: androidApp/build/reports

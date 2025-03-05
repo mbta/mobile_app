@@ -1,0 +1,44 @@
+name: Deploy on Android
+
+on:
+  workflow_call:
+    inputs:
+      flavor:
+        description: "Android build flavor, 'Staging' or 'Prod'"
+        required: true
+        type: string
+    secrets:
+      GCP_WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      GCP_SERVICE_ACCOUNT:
+        required: true
+
+jobs:
+  deploy-android:
+    name: Upload to Google Play
+    concurrency:
+      group: deploy-android-${{ inputs.flavor }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lowercase build parameters
+        id: lowercase
+        run: |
+          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
+      - uses: ./.github/actions/setup
+        with:
+          for: android-deploy
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Upload to Google Play
+        run: |
+          bundle exec fastlane android internal flavor:${{ inputs.flavor }}
