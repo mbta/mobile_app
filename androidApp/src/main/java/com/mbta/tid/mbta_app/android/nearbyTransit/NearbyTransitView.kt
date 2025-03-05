@@ -114,7 +114,6 @@ fun NearbyTransitView(
                         alertData,
                         now,
                         pinnedRoutes.orEmpty(),
-                        useTripHeadsigns = false,
                     )
                 } else {
                     null

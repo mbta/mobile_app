@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import android.app.Activity
+import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
@@ -267,7 +269,8 @@ class NearbyTransitPageTest : KoinTest {
             override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
             override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
-
+            override val showRecenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
+            override val showTripCenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             var loadConfigCalledCount = 0
 
             override suspend fun loadConfig() {
@@ -294,6 +297,19 @@ class NearbyTransitPageTest : KoinTest {
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
 
             override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun hideCenterButtons() {
+                TODO("Not yet implemented")
+            }
+
+            override fun updateCenterButtonVisibility(
+                currentLocation: Location?,
+                locationDataManager: LocationDataManager,
+                searchResultsViewModel: SearchResultsViewModel,
+                viewportProvider: ViewportProvider
+            ) {
                 TODO("Not yet implemented")
             }
         }

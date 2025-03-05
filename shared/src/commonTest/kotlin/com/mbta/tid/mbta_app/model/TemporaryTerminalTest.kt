@@ -372,7 +372,6 @@ class TemporaryTerminalTest {
                     alerts,
                     now,
                     emptySet(),
-                    useTripHeadsigns = false,
                 )!!
                 .condensed()
         )
@@ -386,7 +385,6 @@ class TemporaryTerminalTest {
                     alerts,
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )!!
                 .asNearby()
                 .condensed()
@@ -434,7 +432,6 @@ class TemporaryTerminalTest {
                     alerts,
                     now,
                     emptySet(),
-                    useTripHeadsigns = false,
                 )!!
                 .condensed()
         )
@@ -448,7 +445,6 @@ class TemporaryTerminalTest {
                     alerts,
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )!!
                 .asNearby()
                 .condensed()
@@ -500,7 +496,6 @@ class TemporaryTerminalTest {
                     alerts,
                     now,
                     emptySet(),
-                    useTripHeadsigns = false,
                 )!!
                 .condensed()
         )
@@ -514,7 +509,6 @@ class TemporaryTerminalTest {
                     alerts,
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )!!
                 .asNearby()
                 .condensed()

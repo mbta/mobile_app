@@ -96,6 +96,7 @@
     <string name="fog">Fog</string>
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="full_description">Full Description</string>
+    <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">Hazmat Condition</string>
     <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
     <string name="heading">Heading</string>

@@ -275,14 +275,11 @@ sealed class RealtimePatterns {
         return when {
             tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
             !allDataLoaded -> Format.Loading
-            !hasSchedulesToday -> Format.NoTrips(NoTripsFormat.NoSchedulesToday, secondaryAlert)
-            upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
-                // there are trips in the future but we're not showing them (maybe because we're on
-                // the subway and we have schedules but can't get predictions)
-                Format.NoTrips(NoTripsFormat.PredictionsUnavailable, secondaryAlert)
             else ->
-                // if there were schedules but there are no trips in the future, service is over
-                Format.NoTrips(NoTripsFormat.ServiceEndedToday, secondaryAlert)
+                Format.NoTrips(
+                    NoTripsFormat.fromUpcomingTrips(upcomingTrips, hasSchedulesToday, now),
+                    secondaryAlert
+                )
         }
     }
 
@@ -352,6 +349,35 @@ sealed class RealtimePatterns {
         data object ServiceEndedToday : NoTripsFormat()
 
         data object PredictionsUnavailable : NoTripsFormat()
+
+        companion object {
+            /**
+             * Determine the appropriate NoTripsFormat to show. Only for use in situations where it
+             * is already determined that there are no trips to show and we only need to determine
+             * why.
+             */
+            fun fromUpcomingTrips(
+                upcomingTrips: List<UpcomingTrip>,
+                hasSchedulesToday: Boolean,
+                now: Instant
+            ): NoTripsFormat {
+                val hasUpcomingTrips =
+                    upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+
+                return when {
+                    !hasSchedulesToday -> NoSchedulesToday
+                    hasUpcomingTrips ->
+                        // there are trips in the future but we're not showing them (maybe because
+                        // we're
+                        // on the subway and we have schedules but can't get predictions)
+                        PredictionsUnavailable
+                    else ->
+                        // if there were schedules but there are no trips in the future, service is
+                        // over
+                        ServiceEndedToday
+                }
+            }
+        }
     }
 
     sealed class Format {

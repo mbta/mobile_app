@@ -182,7 +182,6 @@ struct StopDetailsPage: View {
             let nextDepartures = stopDetailsVM.getDepartures(
                 stopId: stopId,
                 alerts: nearbyVM.alerts,
-                useTripHeadsigns: nearbyVM.tripHeadsignsEnabled,
                 now: now
             )
             Task { @MainActor in
