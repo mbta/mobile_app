@@ -29,7 +29,7 @@ jobs:
       - name: Lowercase build parameters
         id: lowercase
         run: |
-          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           name: android-aab

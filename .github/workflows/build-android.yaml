@@ -53,8 +53,8 @@ jobs:
       - name: Lowercase build parameters
         id: lowercase
         run: |
-          echo "build-type=$(echo ${{ inputs.build-type }} | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
-          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "build-type=$(echo ${{ inputs.build-type }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
