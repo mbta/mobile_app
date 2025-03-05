@@ -15,12 +15,7 @@ jobs:
     name: Test for Android
     permissions:
       contents: read
-    uses: ./.github/workflows/test-android-unit.yaml
-  emulator-test-android:
-    name: Run Android instrumented tests in emulator
-    permissions:
-      contents: read
-    uses: ./.github/workflows/test-android-instrumented.yaml
+    uses: ./.github/workflows/test-android.yaml
   build-android:
     name: Build for Android
     permissions:

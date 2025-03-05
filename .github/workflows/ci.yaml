@@ -14,7 +14,7 @@ jobs:
     name: Test for Android
     permissions:
       contents: read
-    uses: ./.github/workflows/test-android-unit.yaml
+    uses: ./.github/workflows/test-android.yaml
   test-ios:
     name: Test for iOS
     permissions:
@@ -24,11 +24,6 @@ jobs:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
       GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
-  emulator-test-android:
-    name: Run Android instrumented tests in emulator
-    permissions:
-      contents: read
-    uses: ./.github/workflows/test-android-instrumented.yaml
   build-android:
     name: Build for Android
     permissions:

@@ -1,9 +1,34 @@
-name: Android instrumented tests
+name: Android tests
 
 on:
   workflow_call:
 
 jobs:
+  test-android:
+    name: Test for Android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: android-test
+      - run: ./gradlew spotlessCheck
+      - name: shared checks & unit tests
+        run: ./gradlew shared:check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-shared-reports
+          path: shared/build/reports
+      - name: android checks & unit tests
+        run: ./gradlew androidApp:check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-android-reports
+          path: androidApp/build/reports
   emulator-test-android:
     name: Run Android instrumented tests in emulator
     runs-on: mobile_app_runner
