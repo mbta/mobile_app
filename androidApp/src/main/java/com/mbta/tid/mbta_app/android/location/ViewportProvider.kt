@@ -14,7 +14,6 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mapbox.maps.extension.style.expressions.dsl.generated.zoom
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
@@ -124,7 +123,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
         }
     }
 
-    fun stopOverview(stop: Stop) {
+    fun stopCenter(stop: Stop) {
         isFollowingPuck = false
         isVehicleOverview = false
         animateTo(stop.position.toMapbox())
@@ -204,7 +203,6 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
     }
 
     fun restoreNearbyTransitViewport() {
-        // TODO preserve zoom
         isFollowingPuck = savedNearbyTransitViewport?.isFollowingPuck ?: false
         isVehicleOverview = false
         isAnimating = true

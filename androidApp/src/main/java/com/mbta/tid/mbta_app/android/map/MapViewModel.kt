@@ -2,8 +2,6 @@ package com.mbta.tid.mbta_app.android.map
 
 import android.location.Location
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -77,10 +75,10 @@ interface IMapViewModel {
     fun setSelectedStop(stop: Stop?)
 
     fun updateCenterButtonVisibility(
-        locationDataManager: LocationDataManager,
         currentLocation: Location?,
-        viewportProvider: ViewportProvider,
-        searchResultsViewModel: SearchResultsViewModel
+        locationDataManager: LocationDataManager,
+        searchResultsViewModel: SearchResultsViewModel,
+        viewportProvider: ViewportProvider
     )
 
     fun hideCenterButtons()
@@ -211,10 +209,10 @@ open class MapViewModel(
     }
 
     override fun updateCenterButtonVisibility(
-        locationDataManager: LocationDataManager,
         currentLocation: Location?,
-        viewportProvider: ViewportProvider,
-        searchResultsViewModel: SearchResultsViewModel
+        locationDataManager: LocationDataManager,
+        searchResultsViewModel: SearchResultsViewModel,
+        viewportProvider: ViewportProvider
     ) {
         setShowRecenterButton(
             locationDataManager.hasPermission &&
