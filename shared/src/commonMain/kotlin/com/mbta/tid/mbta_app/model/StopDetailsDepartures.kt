@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
+import com.mbta.tid.mbta_app.model.RealtimePatterns.Format
+import com.mbta.tid.mbta_app.model.RealtimePatterns.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -150,22 +152,12 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
             filterAtTime: Instant,
-            useTripHeadsigns: Boolean,
         ): StopDetailsDepartures? {
             val stop = global.stops[stopId]
             return if (stop == null) {
                 null
             } else {
-                fromData(
-                    stop,
-                    global,
-                    schedules,
-                    predictions,
-                    alerts,
-                    pinnedRoutes,
-                    filterAtTime,
-                    useTripHeadsigns
-                )
+                fromData(stop, global, schedules, predictions, alerts, pinnedRoutes, filterAtTime)
             }
         }
 
@@ -176,8 +168,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
-            filterAtTime: Instant,
-            useTripHeadsigns: Boolean,
+            filterAtTime: Instant
         ): StopDetailsDepartures? {
             val allStopIds =
                 if (global.patternIdsByStop.containsKey(stop.id)) {
@@ -188,35 +179,20 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
 
             val staticData = NearbyStaticData(global, NearbyResponse(allStopIds))
             val routes =
-                if (useTripHeadsigns) {
-                        staticData.withRealtimeInfoViaTripHeadsigns(
-                            global,
-                            null,
-                            schedules,
-                            predictions,
-                            alerts,
-                            filterAtTime,
-                            showAllPatternsWhileLoading = true,
-                            hideNonTypicalPatternsBeyondNext = null,
-                            filterCancellations = false,
-                            includeMinorAlerts = true,
-                            pinnedRoutes
-                        )
-                    } else {
-                        staticData.withRealtimeInfoWithoutTripHeadsigns(
-                            global,
-                            null,
-                            schedules,
-                            predictions,
-                            alerts,
-                            filterAtTime,
-                            showAllPatternsWhileLoading = true,
-                            hideNonTypicalPatternsBeyondNext = null,
-                            filterCancellations = false,
-                            includeMinorAlerts = true,
-                            pinnedRoutes
-                        )
-                    }
+                staticData
+                    .withRealtimeInfoWithoutTripHeadsigns(
+                        global,
+                        null,
+                        schedules,
+                        predictions,
+                        alerts,
+                        filterAtTime,
+                        showAllPatternsWhileLoading = true,
+                        hideNonTypicalPatternsBeyondNext = null,
+                        filterCancellations = false,
+                        includeMinorAlerts = true,
+                        pinnedRoutes
+                    )
                     ?.flatMap { it.patternsByStop }
 
             return routes?.let { StopDetailsDepartures(it) }
@@ -270,12 +246,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             }
         }
 
-        private fun getStatusFormat(
-            pattern: RealtimePatterns,
-            now: Instant
-        ): RealtimePatterns.NoTripsFormat? {
-            val noPredictions =
-                pattern.upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+        private fun getStatusFormat(pattern: RealtimePatterns, now: Instant): NoTripsFormat? {
             val routeType =
                 when (pattern) {
                     is RealtimePatterns.ByDirection -> pattern.representativeRoute.type
@@ -290,11 +261,14 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         TripInstantDisplay.Context.StopDetailsFiltered
                     ) != null
                 }
-            return when {
-                hasTripsToShow || !pattern.allDataLoaded -> null
-                noPredictions -> RealtimePatterns.NoTripsFormat.PredictionsUnavailable
-                !pattern.hasSchedulesToday -> RealtimePatterns.NoTripsFormat.NoSchedulesToday
-                else -> RealtimePatterns.NoTripsFormat.ServiceEndedToday
+            return if (hasTripsToShow || !pattern.allDataLoaded) {
+                null
+            } else {
+                NoTripsFormat.fromUpcomingTrips(
+                    pattern.upcomingTrips,
+                    pattern.hasSchedulesToday,
+                    now
+                )
             }
         }
     }

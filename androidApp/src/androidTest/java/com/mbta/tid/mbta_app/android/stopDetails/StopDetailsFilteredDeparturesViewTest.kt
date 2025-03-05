@@ -137,7 +137,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )
             )
         val viewModel = StopDetailsViewModel.mocked()
@@ -197,7 +196,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )
             )
         val viewModel = StopDetailsViewModel.mocked()
@@ -431,7 +429,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )
             )
         val viewModel = StopDetailsViewModel.mocked()
@@ -508,7 +505,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )
             )
         val viewModel = StopDetailsViewModel.mocked()
@@ -570,7 +566,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     emptySet(),
                     now,
-                    useTripHeadsigns = false,
                 )
             )
         val settings =

@@ -117,7 +117,8 @@ fun ContentView(
                 bottomBar = {
                     if (navBarVisible) {
                         BottomNavBar(
-                            currentDestination = navController.currentBackStackEntry?.destination,
+                            currentDestination =
+                                Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
                             navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
                             navigateToMore = { navController.navigate(Routes.More) }
                         )
@@ -131,7 +132,8 @@ fun ContentView(
             MorePage(
                 bottomBar = {
                     BottomNavBar(
-                        currentDestination = navController.currentBackStackEntry?.destination,
+                        currentDestination =
+                            Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
                         navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
                         navigateToMore = { navController.navigate(Routes.More) }
                     )

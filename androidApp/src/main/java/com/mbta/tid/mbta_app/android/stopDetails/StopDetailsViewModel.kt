@@ -531,7 +531,6 @@ fun stopDetailsManagedVM(
                         alertData,
                         pinnedRoutes,
                         now,
-                        useTripHeadsigns = false,
                     )
                 } else null
             )

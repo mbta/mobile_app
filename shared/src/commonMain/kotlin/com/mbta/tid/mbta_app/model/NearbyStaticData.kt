@@ -803,37 +803,20 @@ fun NearbyStaticData.withRealtimeInfo(
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
     pinnedRoutes: Set<String>,
-    useTripHeadsigns: Boolean,
 ): List<StopsAssociated>? {
-    if (useTripHeadsigns) {
-        return this.withRealtimeInfoViaTripHeadsigns(
-            globalData,
-            sortByDistanceFrom,
-            schedules,
-            predictions,
-            alerts,
-            filterAtTime,
-            showAllPatternsWhileLoading = false,
-            hideNonTypicalPatternsBeyondNext = 120.minutes,
-            filterCancellations = true,
-            includeMinorAlerts = false,
-            pinnedRoutes
-        )
-    } else {
-        return this.withRealtimeInfoWithoutTripHeadsigns(
-            globalData,
-            sortByDistanceFrom,
-            schedules,
-            predictions,
-            alerts,
-            filterAtTime,
-            showAllPatternsWhileLoading = false,
-            hideNonTypicalPatternsBeyondNext = 120.minutes,
-            filterCancellations = true,
-            includeMinorAlerts = false,
-            pinnedRoutes
-        )
-    }
+    return this.withRealtimeInfoWithoutTripHeadsigns(
+        globalData,
+        sortByDistanceFrom,
+        schedules,
+        predictions,
+        alerts,
+        filterAtTime,
+        showAllPatternsWhileLoading = false,
+        hideNonTypicalPatternsBeyondNext = 120.minutes,
+        filterCancellations = true,
+        includeMinorAlerts = false,
+        pinnedRoutes
+    )
 }
 
 class NearbyStaticDataBuilder {
