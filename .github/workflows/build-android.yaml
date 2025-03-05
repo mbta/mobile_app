@@ -72,9 +72,9 @@ jobs:
         if: ${{ inputs.upload-artifacts }}
         with:
           name: android-apk
-          path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ inputs.build-type }}.apk
+          path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
       - uses: actions/upload-artifact@v4
         if: ${{ inputs.upload-artifacts }}
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}{{ inputs.build-type-caps }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ inputs.build-type }}.aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}{{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
