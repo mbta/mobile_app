@@ -10,9 +10,8 @@ import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.analytics.Analytics
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -23,35 +22,14 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
-import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
-import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 
 class StopDetailsViewTest {
     val builder = ObjectCollectionBuilder()
@@ -105,6 +83,7 @@ class StopDetailsViewTest {
             routeId = "route_1"
             directionId = 0
             headsign = "Sample Headsign"
+            stopIds = listOf(stop.id)
         }
     val prediction =
         builder.prediction {
@@ -119,80 +98,10 @@ class StopDetailsViewTest {
             departureTime = now.plus(1.5.minutes)
         }
 
-    val globalResponse =
-        GlobalResponse(
-            builder,
-            mutableMapOf(
-                stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-            )
-        )
-
     val settingsRepository =
         MockSettingsRepository(settings = mapOf(Pair(Settings.ElevatorAccessibility, true)))
 
-    val koinApplication = koinApplication {
-        modules(
-            module {
-                single<Analytics> { MockAnalytics() }
-                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
-                single<ISchedulesRepository> { MockScheduleRepository() }
-                single<ISettingsRepository> { settingsRepository }
-                single<IPredictionsRepository> {
-                    object : IPredictionsRepository {
-                        override fun connect(
-                            stopIds: List<String>,
-                            onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
-                        ) {
-                            onReceive(ApiResult.Ok(PredictionsStreamDataResponse(builder)))
-                        }
-
-                        override fun connectV2(
-                            stopIds: List<String>,
-                            onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
-                            onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
-                        ) {
-                            /* no-op */
-                        }
-
-                        override var lastUpdated: Instant? = null
-
-                        override fun shouldForgetPredictions(predictionCount: Int) = false
-
-                        override fun disconnect() {
-                            /* no-op */
-                        }
-                    }
-                }
-                single<IPinnedRoutesRepository> {
-                    object : IPinnedRoutesRepository {
-                        private var pinnedRoutes: Set<String> = emptySet()
-
-                        override suspend fun getPinnedRoutes(): Set<String> {
-                            return pinnedRoutes
-                        }
-
-                        override suspend fun setPinnedRoutes(routes: Set<String>) {
-                            pinnedRoutes = routes
-                        }
-                    }
-                }
-                single<INearbyRepository> {
-                    object : INearbyRepository {
-                        override suspend fun getNearby(
-                            global: GlobalResponse,
-                            location: Position
-                        ): ApiResult<NearbyStaticData> {
-                            val data = NearbyStaticData(global, NearbyResponse(builder))
-                            return ApiResult.Ok(data)
-                        }
-                    }
-                }
-                single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
-                single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
-                single<IGlobalRepository> { MockGlobalRepository(globalResponse) }
-            }
-        )
-    }
+    val koinApplication = testKoinApplication(builder) { settings = settingsRepository }
 
     @get:Rule val composeTestRule = createComposeRule()
 

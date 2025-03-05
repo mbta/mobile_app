@@ -5,8 +5,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Stop
@@ -15,36 +15,13 @@ import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.TripResponse
-import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
-import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
-import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ITripRepository
-import com.mbta.tid.mbta_app.repositories.IVehicleRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockTripRepository
-import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 
 class TripDetailsViewTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -73,33 +50,10 @@ class TripDetailsViewTest {
 
     val globalResponse = GlobalResponse(objects)
     val alertData = AlertsStreamDataResponse(objects)
-    val predictionsResponse = PredictionsStreamDataResponse(objects)
-    val tripSchedulesResponse = TripSchedulesResponse.Schedules(listOf(schedule))
 
     val tripFilter = TripDetailsFilter(trip.id, vehicle.id, stopSequence)
 
-    val koinModule = module {
-        single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
-        single<IGlobalRepository> { MockGlobalRepository(globalResponse) }
-        single<IPredictionsRepository> { MockPredictionsRepository() }
-        single<ISchedulesRepository> { MockScheduleRepository() }
-        single<ISettingsRepository> { MockSettingsRepository() }
-        single<ITripPredictionsRepository> {
-            MockTripPredictionsRepository(response = predictionsResponse)
-        }
-        single<ITripRepository> {
-            MockTripRepository(
-                tripSchedulesResponse = tripSchedulesResponse,
-                tripResponse = TripResponse(trip)
-            )
-        }
-        single<IVehicleRepository> {
-            MockVehicleRepository(outcome = ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
-        }
-    }
-    val koinApplication = koinApplication {
-        modules(koinModule, MainApplication.koinViewModelModule)
-    }
+    val koinApplication = testKoinApplication(objects)
 
     @Test
     fun testOpensDownstreamStop() {

@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
-import MockRepositories
 import android.app.Activity
+import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -18,12 +18,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.MainApplication
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
@@ -31,30 +29,19 @@ import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.map.RouteLineData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
-import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
-import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
@@ -68,11 +55,9 @@ import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 
-@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
+@OptIn(ExperimentalMaterial3Api::class)
 class NearbyTransitPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
@@ -199,70 +184,7 @@ class NearbyTransitPageTest : KoinTest {
             )
         )
 
-    val analytics = MockAnalytics()
-
-    val koinApplication = koinApplication {
-        modules(
-            repositoriesModule(MockRepositories.buildWithDefaults()),
-            module {
-                single<Analytics> { analytics }
-                single<IGlobalRepository> {
-                    MockGlobalRepository(response = GlobalResponse(builder))
-                }
-                single<IPredictionsRepository> {
-                    object : IPredictionsRepository {
-                        override fun connect(
-                            stopIds: List<String>,
-                            onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
-                        ) {
-                            onReceive(ApiResult.Ok(PredictionsStreamDataResponse(builder)))
-                        }
-
-                        override fun connectV2(
-                            stopIds: List<String>,
-                            onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
-                            onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
-                        ) {
-                            onJoin(ApiResult.Ok(PredictionsByStopJoinResponse(builder)))
-                        }
-
-                        override var lastUpdated: Instant? = null
-
-                        override fun shouldForgetPredictions(predictionCount: Int) = false
-
-                        override fun disconnect() {
-                            /* no-op */
-                        }
-                    }
-                }
-                single<IPinnedRoutesRepository> {
-                    object : IPinnedRoutesRepository {
-                        private var pinnedRoutes: Set<String> = emptySet()
-
-                        override suspend fun getPinnedRoutes(): Set<String> {
-                            return pinnedRoutes
-                        }
-
-                        override suspend fun setPinnedRoutes(routes: Set<String>) {
-                            pinnedRoutes = routes
-                        }
-                    }
-                }
-                single<INearbyRepository> {
-                    object : INearbyRepository {
-                        override suspend fun getNearby(
-                            global: GlobalResponse,
-                            location: Position
-                        ): ApiResult<NearbyStaticData> {
-                            val data = NearbyStaticData(global, NearbyResponse(builder))
-                            return ApiResult.Ok(data)
-                        }
-                    }
-                }
-            },
-            MainApplication.koinViewModelModule,
-        )
-    }
+    val koinApplication = testKoinApplication(builder)
 
     val viewportProvider = ViewportProvider(MapViewportState())
 
@@ -347,7 +269,8 @@ class NearbyTransitPageTest : KoinTest {
             override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
             override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
-
+            override val showRecenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
+            override val showTripCenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             var loadConfigCalledCount = 0
 
             override suspend fun loadConfig() {
@@ -374,6 +297,19 @@ class NearbyTransitPageTest : KoinTest {
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
 
             override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun hideCenterButtons() {
+                TODO("Not yet implemented")
+            }
+
+            override fun updateCenterButtonVisibility(
+                currentLocation: Location?,
+                locationDataManager: LocationDataManager,
+                searchResultsViewModel: SearchResultsViewModel,
+                viewportProvider: ViewportProvider
+            ) {
                 TODO("Not yet implemented")
             }
         }

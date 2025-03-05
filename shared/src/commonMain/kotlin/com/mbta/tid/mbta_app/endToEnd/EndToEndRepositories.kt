@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.endToEnd
 
 import com.mbta.tid.mbta_app.model.AppVersion
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
@@ -114,9 +113,7 @@ fun endToEndModule(): Module {
         single<IGlobalRepository> { MockGlobalRepository(globalData) }
         single<ILastLaunchedAppVersionRepository> { MockLastLaunchedAppVersionRepository(null) }
         single<INearbyRepository> {
-            MockNearbyRepository(
-                NearbyStaticData(globalData, NearbyResponse(listOf(stopParkStreet.id)))
-            )
+            MockNearbyRepository(NearbyResponse(listOf(stopParkStreet.id)))
         }
         single<IOnboardingRepository> { MockOnboardingRepository() }
         single<IPinnedRoutesRepository> {

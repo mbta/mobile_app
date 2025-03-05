@@ -4,23 +4,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.analytics.Analytics
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 
 class AlertDetailsPageTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -124,17 +116,7 @@ class AlertDetailsPageTest {
                 )
             }
 
-        val koin = koinApplication {
-            modules(
-                module {
-                    single<Analytics> { MockAnalytics() }
-                    single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
-                    single<IGlobalRepository> {
-                        MockGlobalRepository(response = GlobalResponse(objects))
-                    }
-                }
-            )
-        }
+        val koin = testKoinApplication(objects)
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {

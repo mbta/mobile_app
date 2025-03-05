@@ -1,9 +1,8 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
-import IRepositories
-import RealRepositories
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
@@ -59,6 +58,9 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<ISettingsRepository> { repositories.settings }
         single<IStopRepository> { repositories.stop }
         single<ITripRepository> { repositories.trip }
+        repositories.accessibilityStatus?.let { accessibilityStatusRepo ->
+            single<IAccessibilityStatusRepository> { accessibilityStatusRepo }
+        }
         repositories.alerts?.let { alertsRepo -> factory<IAlertsRepository> { alertsRepo } }
         repositories.currentAppVersion?.let { currentAppVersionRepo ->
             factory<ICurrentAppVersionRepository> { currentAppVersionRepo }
