@@ -16,6 +16,7 @@
     <string name="amber_alert">Amber Alert</string>
     <string name="amber_alert_sentence_case">Amber alert</string>
     <string name="amtrak">Amtrak</string>
+    <string name="amtrak_train_traffic">Amtrak Train Traffic</string>
     <string name="an_earlier_mechanical_problem">An Earlier Mechanical Problem</string>
     <string name="an_earlier_signal_problem">An Earlier Signal Problem</string>
     <string name="approaching">Approaching</string>
@@ -39,6 +40,7 @@
     <string name="connection_to">Connection to %1$s</string>
     <string name="connections_to_and">Connections to %1$s and %2$s</string>
     <string name="construction">Construction</string>
+    <string name="crossing_issue">Crossing Issue</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="delay">Delay</string>
     <string name="demonstration">Demonstration</string>
@@ -117,6 +119,7 @@
     <string name="location_settings_prompt_title">MBTA Go works best with Location Services turned on</string>
     <string name="location_settings_prompt_turn_on">Turn On in Settings</string>
     <string name="maintenance">Maintenance</string>
+    <string name="mechanical_issue">Mechanical Issue</string>
     <string name="mechanical_problem">Mechanical Problem</string>
     <string name="medical_emergency">Medical Emergency</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
@@ -178,6 +181,7 @@
     <string name="power_problem">Power Problem</string>
     <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
+    <string name="rail_defect">Rail Defect</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter">Recenter map on my location</string>
     <string name="recently_viewed">Recently Viewed</string>
@@ -211,8 +215,10 @@
     <string name="shuttle_bus">Shuttle Bus</string>
     <string name="shuttle_buses">Shuttle buses</string>
     <string name="shuttle_buses_replace_service">Shuttle buses replace service</string>
+    <string name="signal_issue">Signal Issue</string>
     <string name="signal_problem">Signal Problem</string>
     <string name="silver_line" translatable="false">Silver Line</string>
+    <string name="single_tracking">Single Tracking</string>
     <string name="slippery_rail">Slippery Rail</string>
     <string name="snow">Snow</string>
     <string name="snow_route">Snow Route</string>
@@ -246,6 +252,7 @@
     <string name="strike">Strike</string>
     <string name="summary" tools:ignore="MissingTranslation">Summary</string>
     <string name="suspension">Suspension</string>
+    <string name="switch_issue">Switch Issue</string>
     <string name="switch_problem">Switch Problem</string>
     <string name="technical_problem">Technical Problem</string>
     <string name="tie_replacement">Tie Replacement</string>
@@ -256,6 +263,7 @@
     <string name="track_work">Track Work</string>
     <string name="traffic">Traffic</string>
     <string name="train">train</string>
+    <string name="train_traffic">Train Traffic</string>9
     <string name="trains">trains</string>
     <string name="trip_cancelled">Trip cancelled</string>
     <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
