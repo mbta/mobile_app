@@ -385,10 +385,10 @@ class NearbyTransitPageTest : KoinTest {
             }
 
             override fun updateCenterButtonVisibility(
-                locationDataManager: LocationDataManager,
                 currentLocation: Location?,
-                viewportProvider: ViewportProvider,
-                searchRexsultsViewModel: SearchResultsViewModel
+                locationDataManager: LocationDataManager,
+                searchResultsViewModel: SearchResultsViewModel,
+                viewportProvider: ViewportProvider
             ) {
                 TODO("Not yet implemented")
             }
