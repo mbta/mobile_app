@@ -154,10 +154,10 @@ fun HomeMapView(
         if (selectedStop != null) {
             viewportProvider.stopCenter(selectedStop!!)
             viewModel.updateCenterButtonVisibility(
-                locationDataManager,
                 currentLocation,
-                viewportProvider,
-                searchResultsViewModel
+                locationDataManager,
+                searchResultsViewModel,
+                viewportProvider
             )
         }
     }
