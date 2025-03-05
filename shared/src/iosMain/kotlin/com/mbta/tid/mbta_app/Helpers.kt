@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app
 
-import IRepositories
-import MockRepositories
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.mbta.tid.mbta_app.dependencyInjection.IRepositories
+import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndModule
@@ -47,7 +47,7 @@ fun loadKoinMocks(repositories: IRepositories) {
 Load the default Koin mock repositories and use cases, overriding their existing definitions
  */
 fun loadDefaultRepoModules() {
-    loadKoinModules(repositoriesModule(MockRepositories.buildWithDefaults()))
+    loadKoinModules(repositoriesModule(MockRepositories()))
 }
 
 /*
