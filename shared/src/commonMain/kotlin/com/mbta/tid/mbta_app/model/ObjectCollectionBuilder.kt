@@ -39,7 +39,7 @@ class ObjectCollectionBuilder {
     class AlertBuilder : ObjectBuilder<Alert> {
         var id = uuid()
         var activePeriod = mutableListOf<Alert.ActivePeriod>()
-        var cause: Alert.Cause? = null
+        var cause = Alert.Cause.UnknownCause
         var description: String? = null
         var effect = Alert.Effect.UnknownEffect
         var effectName: String? = null

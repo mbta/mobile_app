@@ -20,6 +20,7 @@
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>
     <string name="amtrak">Amtrak</string>
+    <string name="amtrak_train_traffic">Trafik tren Amtrak</string>
     <string name="an_earlier_mechanical_problem">Yon Pwoblèm Mekanik Ki Rive Pi Bonè</string>
     <string name="an_earlier_signal_problem">Yon Siyal Ki Rive Pi Bonè</string>
     <string name="app_version_number">vèsyon %1$s</string>
@@ -42,6 +43,7 @@
     <string name="connection_to">Koneksyon ak %1$s</string>
     <string name="connections_to_and">Koneksyon ak %1$s epi %2$s</string>
     <string name="construction">Konstriksyon</string>
+    <string name="crossing_issue">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="delay">Reta</string>
     <string name="demonstration">Demonstrasyon</string>
@@ -123,6 +125,7 @@
     <string name="location_settings_prompt_title">MBTA Go mache pi byen lè Sèvis Pozisyon w yo aktive</string>
     <string name="location_settings_prompt_turn_on">Ouvri nan pa Paramèt</string>
     <string name="maintenance">Antretyen</string>
+    <string name="mechanical_issue">Pwoblèm Mekanik</string>
     <string name="mechanical_problem">Pwoblèm Mekanik</string>
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
@@ -184,6 +187,7 @@
     <string name="power_problem">Pwoblèm Kouran</string>
     <string name="predictions_unavailable_details">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib. Verifye kat la pou wè ki kote %1$s yo ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib.</string>
+    <string name="rail_defect">Rail Defo</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
     <string name="recenter">Resantre kat jeyografik la sou pozisyon mwen</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
@@ -217,7 +221,9 @@
     <string name="shuttle_bus">Otobis Navèt</string>
     <string name="shuttle_buses">Otobis k ap fè lanavèt</string>
     <string name="shuttle_buses_replace_service">Bis navèt ranplase sèvis</string>
+    <string name="signal_issue">Pwoblèm Siyal</string>
     <string name="signal_problem">Pwoblèm Siyal</string>
+    <string name="single_tracking">Single Tracking</string>
     <string name="slippery_rail">Ray ki Glise</string>
     <string name="snow">Nèj</string>
     <string name="snow_route">Wout denèjman</string>
@@ -255,7 +261,8 @@
     <string name="strike">Grèv</string>
     <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
-    <string name="switch_problem">Pwoblèm Bouton</string>
+    <string name="switch_issue">Railroad Switch Pwoblèm</string>
+    <string name="switch_problem">Railroad Switch Pwoblèm</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="track_change">Suiv Chanjman</string>
@@ -265,6 +272,7 @@
     <string name="track_work">Travay sou Ray</string>
     <string name="traffic">Sikilasyon</string>
     <string name="train">tren</string>
+    <string name="train_traffic">Trafik tren</string>
     <string name="trains">tren yo</string>
     <string name="trip_cancelled">Vwayaj la anile</string>
     <string name="trip_cancelled_details">Vwayaj sa a anile. Nou regrèt deranjman an.</string>

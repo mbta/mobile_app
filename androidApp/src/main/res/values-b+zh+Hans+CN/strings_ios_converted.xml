@@ -15,6 +15,7 @@
     <string name="amber_alert">安珀警报</string>
     <string name="amber_alert_sentence_case">安珀警报</string>
     <string name="amtrak">Amtrak</string>
+    <string name="amtrak_train_traffic">Amtrak 火车拥堵</string>
     <string name="an_earlier_mechanical_problem">早前的机械故障</string>
     <string name="an_earlier_signal_problem">早前的信号问题</string>
     <string name="app_version_number">版本%1$s</string>
@@ -37,6 +38,7 @@
     <string name="connection_to">连接到%1$s</string>
     <string name="connections_to_and">连接到%1$s和%2$s</string>
     <string name="construction">建筑施工</string>
+    <string name="crossing_issue">穿越问题</string>
     <string name="crossing_malfunction">交通信号灯故障</string>
     <string name="delay">延误</string>
     <string name="demonstration">示威</string>
@@ -113,6 +115,7 @@
     <string name="location_settings_prompt_title">MBTA Go在定位服务开启时效果最佳</string>
     <string name="location_settings_prompt_turn_on">在设置中打开</string>
     <string name="maintenance">维护</string>
+    <string name="mechanical_issue">机械问题</string>
     <string name="mechanical_problem">机械故障</string>
     <string name="medical_emergency">医疗急救</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b>分钟</string>
@@ -174,6 +177,7 @@
     <string name="power_problem">电力故障</string>
     <string name="predictions_unavailable_details">服务运行中，暂无预计到达时间。请查看地图获取%1$s当前的位置信息。</string>
     <string name="predictions_unavailable_details_hide_maps">服务运行中，暂无预计到达时间。</string>
+    <string name="rail_defect">钢轨缺陷</string>
     <string name="real_time_arrivals_updating_live">实时到达实时更新</string>
     <string name="recenter">在地图上重新定位到我所在位置</string>
     <string name="recently_viewed">近期查看过</string>
@@ -207,7 +211,9 @@
     <string name="shuttle_bus">穿梭巴士</string>
     <string name="shuttle_buses">摆渡巴士</string>
     <string name="shuttle_buses_replace_service">摆渡巴士取代原服务</string>
+    <string name="signal_issue">信号问题</string>
     <string name="signal_problem">信号故障</string>
+    <string name="single_tracking">单次追踪</string>
     <string name="slippery_rail">轨道湿滑</string>
     <string name="snow">降雪</string>
     <string name="snow_route">雪地线路</string>
@@ -240,6 +246,7 @@
     <string name="strike">罢工</string>
     <string name="summary">概要</string>
     <string name="suspension">暂停</string>
+    <string name="switch_issue">道岔故障</string>
     <string name="switch_problem">道岔故障</string>
     <string name="technical_problem">技术故障</string>
     <string name="tie_replacement">更换轨枕</string>
@@ -248,8 +255,9 @@
     <string name="track_number">追踪 %1$s</string>
     <string name="track_problem">轨道故障</string>
     <string name="track_work">轨道作业</string>
-    <string name="traffic">交通</string>
+    <string name="traffic">拥堵</string>
     <string name="train">列车</string>
+    <string name="train_traffic">火车拥堵</string>
     <string name="trains">列车</string>
     <string name="trip_cancelled">行程已取消</string>
     <string name="trip_cancelled_details">此行程已取消。我们对此造成的不便深表歉意。</string>
