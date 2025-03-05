@@ -1,0 +1,27 @@
+name: pre-commit
+
+on:
+  workflow_call:
+
+jobs:
+  pre-commit:
+    name: Run pre-commit to check formatting and linting
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: pre-commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # pre-commit/action@v3.0.1
+      - run: python -m pip install pre-commit
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+      - name: Run pre-commit
+        run: pre-commit run --show-diff-on-failure --color=always --all-files
