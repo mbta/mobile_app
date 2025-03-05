@@ -11,6 +11,7 @@ concurrency:
 
 jobs:
   build-android:
+    name: Build for Android
     permissions:
       id-token: write
       contents: read
@@ -30,6 +31,7 @@ jobs:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
   deploy-android:
+    name: Upload to Google Play
     needs:
       - build-android
     permissions:

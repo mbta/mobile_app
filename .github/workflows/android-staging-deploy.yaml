@@ -7,18 +7,22 @@ on:
 
 jobs:
   pre-commit:
+    name: Run pre-commit to check formatting and linting
     permissions:
       contents: read
     uses: ./.github/workflows/pre-commit.yaml
   test-android:
+    name: Test for Android
     permissions:
       contents: read
     uses: ./.github/workflows/test-android-unit.yaml
   emulator-test-android:
+    name: Run Android instrumented tests in emulator
     permissions:
       contents: read
     uses: ./.github/workflows/test-android-instrumented.yaml
   build-android:
+    name: Build for Android
     permissions:
       id-token: write
       contents: read
@@ -38,6 +42,7 @@ jobs:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
   deploy-android:
+    name: Upload to Google Play
     needs:
       - build-android
       - test-android
