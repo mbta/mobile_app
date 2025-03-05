@@ -1,23 +1,15 @@
-name: Android staging deploy
+name: Android Prod Deploy
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - android-*
+  workflow_dispatch:
+
+concurrency:
+  group: android-prod
 
 jobs:
-  pre-commit:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/pre-commit.yaml
-  test-android:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/test-android-unit.yaml
-  emulator-test-android:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/test-android-instrumented.yaml
   build-android:
     permissions:
       id-token: write
@@ -26,28 +18,27 @@ jobs:
     uses: ./.github/workflows/build-android.yaml
     with:
       build-type: "Release"
-      flavor: "Staging"
-      sentry-environment: "staging"
+      flavor: "Prod"
+      sentry-environment: "prod"
       upload-artifacts: true
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
       GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
       GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
+      GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_PROD }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
   deploy-android:
     needs:
       - build-android
-      - test-android
     permissions:
       id-token: write
       contents: read
       pull-requests: write
     uses: ./.github/workflows/deploy-android.yaml
     with:
-      flavor: "Staging"
+      flavor: "Prod"
     secrets:
       GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
       GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}

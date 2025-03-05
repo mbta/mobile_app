@@ -6,158 +6,38 @@ on:
 
 jobs:
   pre-commit:
-    name: Run pre-commit to check formatting and linting
-    runs-on: ubuntu-latest
     permissions:
       contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          for: pre-commit
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      # pre-commit/action@v3.0.1
-      - run: python -m pip install pre-commit
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      - name: Run pre-commit
-        run: pre-commit run --show-diff-on-failure --color=always --all-files
+    uses: ./.github/workflows/pre-commit.yaml
   test-android:
-    name: Test for Android
-    runs-on: ubuntu-latest
     permissions:
       contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          for: android-test
-      - run: ./gradlew spotlessCheck
-      - name: shared checks & unit tests
-        run: ./gradlew shared:check
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: android-shared-reports
-          path: shared/build/reports
-      - name: android checks & unit tests
-        run: ./gradlew androidApp:check
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: android-android-reports
-          path: androidApp/build/reports
+    uses: ./.github/workflows/test-android-unit.yaml
   test-ios:
-    name: Test for iOS
-    runs-on: macos-14-xlarge
     permissions:
       contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          for: ios-test
-      - name: Install CocoaPods dependencies
-        run: |
-          ./gradlew :shared:generateDummyFramework
-          pushd iosApp
-          bundle exec pod install
-          popd
-          bundle exec ./gradlew :shared:podInstallSyntheticIos
-      - name: shared checks & unit tests
-        run: ./gradlew shared:iosSimulatorArm64Test shared:iosX64Test
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: ios-shared-reports
-          path: shared/build/reports
-      - name: Add build environment variables
-        run: |
-          {
-            echo "export SENTRY_DSN=${SENTRY_DSN}"
-            echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"
-            echo "export FIREBASE_KEY=${FIREBASE_KEY}"
-            echo "export GOOGLE_APP_ID_IOS=${GOOGLE_APP_ID_IOS}"
-          } >> .envrc
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: staging
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
-      - name: Run emulator tests
-        run: |
-          bundle exec fastlane ios test \
-            xcodebuild_formatter:"xcbeautify --renderer github-actions"
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: ios-ios-results
-          path: fastlane/test_output/*
+    uses: ./.github/workflows/test-ios.yaml
+    secrets:
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+      GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
   emulator-test-android:
-    name: Run Android instrumented tests in emulator
-    runs-on: mobile_app_runner
     permissions:
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - api-level: 28
-            target: default
-            arch: x86
-          # - api-level: 33
-          #   target: default
-          #   arch: x86_64
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          for: android-test
-      # full setup including AVD snapshot caching from https://github.com/ReactiveCircus/android-emulator-runner/blob/a3dcdb348bb02349cd939d168a74e31a9094b7f0/README.md
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-      - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
-        timeout-minutes: 30
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: ${{ matrix.arch }}
-          force-avd-creation: false
-          disable-animations: true
-          script: ./bin/android-instrumented-test-ci.sh
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: android-connected-reports-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
-          path: androidApp/build/reports
+    uses: ./.github/workflows/test-android-instrumented.yaml
   build-android:
-    name: Build for Android
-    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
       pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-        with:
-          for: android-build
-      - name: Build Android app
-        env:
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
-          SENTRY_ENVIRONMENT: "debug"
-        run: |
-          bundle exec fastlane android build flavor:Staging build_type:Debug
+    uses: ./.github/workflows/build-android.yaml
+    with:
+      build-type: "Debug"
+      flavor: "Staging"
+      sentry-environment: "debug"
+      upload-artifacts: false
+    secrets:
+      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+      GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
