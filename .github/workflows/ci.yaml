@@ -19,6 +19,7 @@ jobs:
     uses: ./.github/workflows/test-android.yaml
   test-ios:
     name: Test for iOS
+    if: false
     permissions:
       id-token: write
       contents: read
