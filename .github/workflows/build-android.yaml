@@ -77,7 +77,7 @@ jobs:
         if: ${{ inputs.deploy }}
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}{{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}${{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
   deploy-android:
     name: Upload to Google Play
     if: ${{ inputs.deploy }}
