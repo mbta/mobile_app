@@ -90,7 +90,7 @@ object RouteLayerGenerator {
             ) to Exp(0),
             Exp.`in`(
                 Exp.get(RouteFeaturesBuilder.propRouteId),
-                Exp.Bare.arrayOf("CR-Greenbush", "CR-Kingston", "CR-Middleborough")
+                Exp.Bare.arrayOf("CR-Greenbush", "CR-Kingston", "CR-Middleborough", "CR-NewBedford")
             ) to Exp(maxLineWidth * 1.5),
             Exp.eq(Exp.get(RouteFeaturesBuilder.propRouteType), Exp("COMMUTER_RAIL")) to
                 Exp(-maxLineWidth),
