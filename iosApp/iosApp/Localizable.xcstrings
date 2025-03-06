@@ -2471,6 +2471,53 @@
         }
       }
     },
+    "Amtrak Train Traffic" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tráfico de trenes de Amtrak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trafic ferroviaire d’Amtrak"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trafik tren Amtrak"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tráfego de trem da Amtrak"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kẹt tàu Amtrak"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Amtrak 火车拥堵"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Amtrak 火車擁堵"
+          }
+        }
+      }
+    },
     "An Earlier Mechanical Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4508,6 +4555,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "繼續"
+          }
+        }
+      }
+    },
+    "Crossing Issue" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fallo en el cruce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problème de croisement"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pasaj a Nivo ki p ap Fonksyone"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema de travessia"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sự cố giao lộ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "穿越问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "交通交叉問題"
           }
         }
       }
@@ -8181,6 +8275,53 @@
         }
       }
     },
+    "Mechanical Issue" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema mecánico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problème mécanique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwoblèm Mekanik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema mecânico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vấn đề cơ khí"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "機械問題"
+          }
+        }
+      }
+    },
     "Mechanical Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -9919,6 +10060,53 @@
         }
       }
     },
+    "Rail Defect" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Defecto del riel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Défaut de rail"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rail Defo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Defeito no trilho"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Khiếm khuyết đường sắt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "钢轨缺陷"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鋼軌缺陷"
+          }
+        }
+      }
+    },
     "Real-time arrivals updating live" : {
       "comment" : "VoiceOver label for real-time indicator icon",
       "localizations" : {
@@ -11309,7 +11497,7 @@
       }
     },
     "Service suspended" : {
-      "comment" : "Possible alert effect\nSuspension alert VoiceOver text",
+      "comment" : "Possible alert effect\n   Suspension alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -11825,6 +12013,53 @@
         }
       }
     },
+    "Signal Issue" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema de señal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problème de signal"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwoblèm Siyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema de sinal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vấn đề đèn tín hiệu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "交通號誌問題"
+          }
+        }
+      }
+    },
     "Signal Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -11868,6 +12103,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "信號故障"
+          }
+        }
+      }
+    },
+    "Single Tracking" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguimiento único"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Suivi unique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Single Tracking"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rastreamento Único"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Theo dõi đơn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "单次追踪"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "單次追蹤"
           }
         }
       }
@@ -13284,6 +13566,53 @@
         }
       }
     },
+    "Switch Issue" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema de cambio de carril"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problème d’aiguillage"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Railroad Switch Pwoblèm"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema de troca"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vấn đề chuyển mạch đường sắt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "道岔故障"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "道岔故障"
+          }
+        }
+      }
+    },
     "Switch Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -13301,8 +13630,8 @@
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pwoblèm Bouton"
+            "state" : "needs_review",
+            "value" : "Railroad Switch Pwoblèm"
           }
         },
         "pt-BR" : {
@@ -13313,8 +13642,8 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vấn đề chuyển đổi"
+            "state" : "needs_review",
+            "value" : "Vấn đề chuyển mạch đường sắt"
           }
         },
         "zh-Hans-CN" : {
@@ -13924,20 +14253,20 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Giao thông"
+            "state" : "needs_review",
+            "value" : "Kẹt xe lửa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "交通"
+            "state" : "needs_review",
+            "value" : "拥堵"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "交通"
+            "state" : "needs_review",
+            "value" : "壅塞"
           }
         }
       }
@@ -13985,6 +14314,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "列車"
+          }
+        }
+      }
+    },
+    "Train Traffic" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tráfico ferroviario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trafic ferroviaire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trafik tren"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tráfego de trem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kẹt xe lửa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火车拥堵"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火車擁堵"
           }
         }
       }

@@ -15,6 +15,7 @@
     <string name="amber_alert">Cảnh báo Amber</string>
     <string name="amber_alert_sentence_case">Cảnh báo Amber</string>
     <string name="amtrak">Amtrak</string>
+    <string name="amtrak_train_traffic">Kẹt tàu Amtrak</string>
     <string name="an_earlier_mechanical_problem">Một vấn đề về cơ khí trước đó</string>
     <string name="an_earlier_signal_problem">Một vấn đề về đèn tín hiệu trước đó</string>
     <string name="app_version_number">phiên bản %1$s</string>
@@ -37,6 +38,7 @@
     <string name="connection_to">Kết nối với %1$s</string>
     <string name="connections_to_and">Kết nối với %1$s và %2$s</string>
     <string name="construction">Thi công</string>
+    <string name="crossing_issue">Sự cố giao lộ</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
     <string name="delay">Trễ</string>
     <string name="demonstration">Biểu tình</string>
@@ -113,6 +115,7 @@
     <string name="location_settings_prompt_title">MBTA Go hoạt động tốt nhất khi bật dịch vụ định vị</string>
     <string name="location_settings_prompt_turn_on">Bật trong Cài đặt</string>
     <string name="maintenance">Bảo trì</string>
+    <string name="mechanical_issue">Vấn đề cơ khí</string>
     <string name="mechanical_problem">Vấn đề cơ khí</string>
     <string name="medical_emergency">Cấp cứu y tế</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> phút</string>
@@ -174,6 +177,7 @@
     <string name="power_problem">Vấn đề về điện</string>
     <string name="predictions_unavailable_details">Dịch vụ đang hoạt động, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang hoạt động nhưng không có thời gian đến dự kiến.</string>
+    <string name="rail_defect">Khiếm khuyết đường sắt</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
     <string name="recenter">Định vị lại bản đồ ở vị trí của tôi</string>
     <string name="recently_viewed">Đã xem gần đây</string>
@@ -207,7 +211,9 @@
     <string name="shuttle_bus">Xe buýt đưa đón</string>
     <string name="shuttle_buses">Xe buýt đưa đón</string>
     <string name="shuttle_buses_replace_service">Xe buýt đưa đón thay thế dịch vụ</string>
+    <string name="signal_issue">Vấn đề đèn tín hiệu</string>
     <string name="signal_problem">Vấn đề đèn tín hiệu</string>
+    <string name="single_tracking">Theo dõi đơn</string>
     <string name="slippery_rail">Đường ray trơn trượt</string>
     <string name="snow">Tuyết</string>
     <string name="snow_route">Tuyến đường có tuyết</string>
@@ -240,7 +246,8 @@
     <string name="strike">Biểu tình</string>
     <string name="summary">Bản tóm tắt</string>
     <string name="suspension">Đình chỉ</string>
-    <string name="switch_problem">Vấn đề chuyển đổi</string>
+    <string name="switch_issue">Vấn đề chuyển mạch đường sắt</string>
+    <string name="switch_problem">Vấn đề chuyển mạch đường sắt</string>
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="track_change">Thay đổi đường ray</string>
@@ -248,8 +255,9 @@
     <string name="track_number">Bài %1$s</string>
     <string name="track_problem">Vấn đề về đường ray</string>
     <string name="track_work">Thi công đường ray</string>
-    <string name="traffic">Giao thông</string>
+    <string name="traffic">Kẹt xe lửa</string>
     <string name="train">tàu</string>
+    <string name="train_traffic">Kẹt xe lửa</string>
     <string name="trains">tàu</string>
     <string name="trip_cancelled">Chuyến đi đã bị hủy</string>
     <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>

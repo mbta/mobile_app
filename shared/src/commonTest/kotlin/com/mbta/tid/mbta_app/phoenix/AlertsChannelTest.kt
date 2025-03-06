@@ -96,4 +96,71 @@ class AlertsChannelTest {
             parsed
         )
     }
+
+    @Test
+    fun testParseUnknownCauseAndEffect() {
+        val payload =
+            json.encodeToString(
+                buildJsonObject {
+                    putJsonObject("alerts") {
+                        putJsonObject("501047") {
+                            put("id", "501047")
+                            putJsonArray("active_period") {
+                                addJsonObject {
+                                    put("start", "2023-05-26T16:46:13-04:00")
+                                    put("end", JsonNull)
+                                }
+                            }
+                            put("cause", "gravitational_anomalies")
+                            put("description", "Description")
+                            put("effect", "hover_trains")
+                            put("effect_name", JsonNull)
+                            put("header", "Header")
+                            putJsonArray("informed_entity") {
+                                addJsonObject {
+                                    putJsonArray("activities") { add("board") }
+                                    put("route", "Red")
+                                    put("route_type", "heavy_rail")
+                                    put("stop", "place-pktrm")
+                                }
+                            }
+                            put("lifecycle", "ongoing")
+                            put("updated_at", "2023-05-26T16:46:13-04:00")
+                        }
+                    }
+                }
+            )
+
+        val parsed = AlertsChannel.parseMessage(payload)
+
+        assertEquals(
+            AlertsStreamDataResponse(
+                mapOf(
+                    "501047" to
+                            Alert(
+                                "501047",
+                                listOf(
+                                    Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
+                                ),
+                                Alert.Cause.UnknownCause,
+                                "Description",
+                                Alert.Effect.UnknownEffect,
+                                null,
+                                "Header",
+                                listOf(
+                                    Alert.InformedEntity(
+                                        listOf(Alert.InformedEntity.Activity.Board),
+                                        route = "Red",
+                                        routeType = RouteType.HEAVY_RAIL,
+                                        stop = "place-pktrm"
+                                    ),
+                                ),
+                                Alert.Lifecycle.Ongoing,
+                                Instant.parse("2023-05-26T16:46:13-04:00")
+                            )
+                )
+            ),
+            parsed
+        )
+    }
 }
