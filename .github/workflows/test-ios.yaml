@@ -3,6 +3,8 @@ name: iOS tests
 on:
   workflow_call:
     secrets:
+      AWS_ROLE_ARN:
+        required: false
       SENTRY_DSN:
         required: true
       FIREBASE_KEY:
@@ -15,12 +17,15 @@ jobs:
     name: Test for iOS
     runs-on: macos-14-xlarge
     permissions:
+      id-token: write
       contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
           for: ios-test
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Install CocoaPods dependencies
         run: |
           ./gradlew :shared:generateDummyFramework
@@ -59,3 +64,21 @@ jobs:
         with:
           name: ios-ios-results
           path: fastlane/test_output/*
+      # also building the app here to check if running serially but having intermediate results already available is better than running in parallel and starting from just what's cached
+      - name: Fetch AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
+            APP_STORE_CONNECT_API_KEY_ISSUER, mobile-app-ios-app-store-connect-api-key-issuer
+            APP_STORE_CONNECT_API_KEY_P8, mobile-app-ios-app-store-connect-api-key-p8
+            mobile-app-ios-codesigning-id
+      - name: Load code signing key
+        run: |
+          cd iosApp
+          mkdir -p secrets
+          aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-cer --output json | jq -r '.SecretBinary' | base64 --decode > "secrets/${MOBILE_APP_IOS_CODESIGNING_ID}.cer"
+          aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-p12 --output json | jq -r '.SecretBinary' | base64 --decode > "secrets/${MOBILE_APP_IOS_CODESIGNING_ID}.p12"
+      - name: Build iOS app
+        run: |
+          bundle exec fastlane ios build scheme:Staging
