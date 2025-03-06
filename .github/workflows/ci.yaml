@@ -33,9 +33,9 @@ jobs:
     uses: ./.github/workflows/build-android.yaml
     with:
       build-type: "Debug"
+      deploy: false
       flavor: "Staging"
       sentry-environment: "debug"
-      upload-artifacts: false
     secrets:
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
       GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
