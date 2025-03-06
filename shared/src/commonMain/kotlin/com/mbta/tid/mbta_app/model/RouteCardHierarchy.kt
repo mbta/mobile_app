@@ -24,6 +24,11 @@ private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
  * Upcoming Trips / reason for absence of upcoming trips
  */
 data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: List<RouteStopData>) {
+    enum class Context {
+        NearbyTransit,
+        StopDetails
+    }
+
     data class RouteStopData(
         val stop: Stop,
         val directions: List<Direction>,
@@ -50,11 +55,9 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             filterAtTime: Instant,
-            showAllPatternsWhileLoading: Boolean,
             hideNonTypicalPatternsBeyondNext: Duration?,
-            filterCancellations: Boolean,
-            includeMinorAlerts: Boolean,
-            pinnedRoutes: Set<String>
+            pinnedRoutes: Set<String>,
+            context: Context
         ): List<RouteCardData>? {
 
             // if predictions or alerts are still loading, this is the loading state
@@ -69,8 +72,16 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             return ListBuilder()
                 .addStaticStopsData(stopIds, globalData)
                 .addUpcomingTrips(schedules, predictions, filterAtTime)
-                .filterIrrelevantData(cutoffTime, showAllPatternsWhileLoading, filterCancellations)
-                .addAlerts(alerts, includeMinorAlerts, filterAtTime)
+                .filterIrrelevantData(
+                    cutoffTime,
+                    showAllPatternsWhileLoading = context == Context.StopDetails,
+                    filterCancellations = context == Context.NearbyTransit
+                )
+                .addAlerts(
+                    alerts,
+                    includeMinorAlerts = context == Context.StopDetails,
+                    filterAtTime
+                )
                 .build()
                 .sort(sortByDistanceFrom, pinnedRoutes)
         }
