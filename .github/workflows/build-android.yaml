@@ -7,6 +7,10 @@ on:
         description: "Build type, 'Debug' or 'Release'"
         required: true
         type: string
+      deploy:
+        description: "Whether or not to deploy the app to Google Play"
+        required: true
+        type: boolean
       flavor:
         description: "Android build flavor, 'Staging' or 'Prod'"
         required: true
@@ -14,10 +18,6 @@ on:
       sentry-environment:
         required: true
         type: string
-      upload-artifacts:
-        description: "Whether or not to upload the .apk and .aab as build artifacts"
-        required: true
-        type: boolean
     secrets:
       AWS_ROLE_ARN:
         required: false
@@ -69,12 +69,43 @@ jobs:
         run: |
           bundle exec fastlane android build flavor:${{ inputs.flavor }} build_type:${{ inputs.build-type }}
       - uses: actions/upload-artifact@v4
-        if: ${{ inputs.upload-artifacts }}
+        if: ${{ inputs.deploy }}
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
       - uses: actions/upload-artifact@v4
-        if: ${{ inputs.upload-artifacts }}
+        if: ${{ inputs.deploy }}
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}{{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}${{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
+  deploy-android:
+    name: Upload to Google Play
+    if: ${{ inputs.deploy }}
+    concurrency:
+      group: deploy-android-${{ inputs.flavor }}
+      cancel-in-progress: false
+    needs:
+      - build-android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lowercase build parameters
+        id: lowercase
+        run: |
+          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
+      - uses: ./.github/actions/setup
+        with:
+          for: android-deploy
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Upload to Google Play
+        run: |
+          bundle exec fastlane android internal flavor:${{ inputs.flavor }}
