@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 
 class AlertsChannel {
     companion object {
-        val topic = "alerts"
+        val topic = "alerts:v2"
 
         val newDataEvent = "stream_data"
 
