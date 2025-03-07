@@ -17,6 +17,7 @@
     <string name="amber_alert">Alerta Amber</string>
     <string name="amber_alert_sentence_case">Alerta Amber</string>
     <string name="amtrak">Amtrak</string>
+    <string name="amtrak_train_traffic">Tráfico de trenes de Amtrak</string>
     <string name="an_earlier_mechanical_problem">Un problema mecánico anterior</string>
     <string name="an_earlier_signal_problem">Un problema de señal anterior</string>
     <string name="app_version_number">versión %1$s</string>
@@ -39,6 +40,7 @@
     <string name="connection_to">Conexión a %1$s</string>
     <string name="connections_to_and">Conexiones a %1$s y %2$s</string>
     <string name="construction">Construcción</string>
+    <string name="crossing_issue">Fallo en el cruce</string>
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="delay">Demora</string>
     <string name="demonstration">Demostración</string>
@@ -117,6 +119,7 @@
     <string name="location_settings_prompt_title">MBTA Go funciona mejor con los Servicios de Ubicación activados</string>
     <string name="location_settings_prompt_turn_on">Activar en Configuración</string>
     <string name="maintenance">Mantenimiento</string>
+    <string name="mechanical_issue">Problema mecánico</string>
     <string name="mechanical_problem">Problema mecánico</string>
     <string name="medical_emergency">Emergencia médica</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
@@ -178,6 +181,7 @@
     <string name="power_problem">Problema de energía</string>
     <string name="predictions_unavailable_details">El servicio está en funcionamiento, pero no hay horarios de llegada previstos. Consulte el mapa para ver dónde se encuentra %1$s en este momento.</string>
     <string name="predictions_unavailable_details_hide_maps">El servicio está funcionando, pero los horarios de llegada previstos no están disponibles.</string>
+    <string name="rail_defect">Defecto del riel</string>
     <string name="real_time_arrivals_updating_live">Llegadas en tiempo real actualizadas en vivo</string>
     <string name="recenter">Volver a centrar el mapa en mi ubicación</string>
     <string name="recently_viewed">Visto recientemente</string>
@@ -211,7 +215,9 @@
     <string name="shuttle_bus">Autobús de enlace</string>
     <string name="shuttle_buses">Autobuses de enlace</string>
     <string name="shuttle_buses_replace_service">Los autobuses de enlace reemplazan el servicio</string>
+    <string name="signal_issue">Problema de señal</string>
     <string name="signal_problem">Problema de señal</string>
+    <string name="single_tracking">Seguimiento único</string>
     <string name="slippery_rail">Riel resbaloso</string>
     <string name="snow">Nieve</string>
     <string name="snow_route">Ruta con nieve</string>
@@ -246,6 +252,7 @@
     <string name="strike">Huelga</string>
     <string name="summary">Resumen</string>
     <string name="suspension">Suspensión</string>
+    <string name="switch_issue">Problema de cambio de carril</string>
     <string name="switch_problem">Problema de cambio de carril</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
@@ -256,6 +263,7 @@
     <string name="track_work">Trabajo en vía</string>
     <string name="traffic">Tráfico</string>
     <string name="train">tren</string>
+    <string name="train_traffic">Tráfico ferroviario</string>
     <string name="trains">trenes</string>
     <string name="trip_cancelled">Viaje cancelado</string>
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
