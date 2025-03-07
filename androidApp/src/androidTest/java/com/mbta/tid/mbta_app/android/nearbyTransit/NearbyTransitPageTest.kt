@@ -257,6 +257,13 @@ class NearbyTransitPageTest : KoinTest {
                             val data = NearbyStaticData(global, NearbyResponse(builder))
                             return ApiResult.Ok(data)
                         }
+
+                        override suspend fun getNearbyStops(
+                            global: GlobalResponse,
+                            location: Position
+                        ): ApiResult<Set<String>> {
+                            TODO("Not yet implemented")
+                        }
                     }
                 }
             },

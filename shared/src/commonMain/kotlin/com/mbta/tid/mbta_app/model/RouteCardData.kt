@@ -35,7 +35,11 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         val data: ByDirection
     )
 
-    data class Leaf(val upcomingTrips: List<UpcomingTrip>?, val alertsHere: List<Alert>?)
+    data class Leaf(
+        val routePatterns: List<RoutePattern>,
+        val upcomingTrips: List<UpcomingTrip>,
+        val alertsHere: List<Alert>
+    )
 
     sealed interface LineOrRoute {
         data class Line(
@@ -125,7 +129,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                     val patternsByRouteOrLine =
                         patternsByRouteOrLine(stopId, globalData)
                             // filter out a route if we've already seen all of its patterns
-                            .filter {
+                            .filterNot {
                                 routePatternsUsed.containsAll(
                                     it.value.map { pattern -> pattern.id }.toSet()
                                 )
@@ -162,7 +166,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                 is LineOrRoute.Line -> cardType.line.id
                                 is LineOrRoute.Route -> cardType.route.id
                             }
-                        // TODO: Directions list
+                        // TODO: Directions list with actual values.
                         key to
                             RouteCardData.Builder(
                                 byLineOrRoute.key,
@@ -175,7 +179,9 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                                 data =
                                                     byStop.value
                                                         .groupBy { pattern -> pattern.directionId }
-                                                        .mapValues { LeafBuilder() }
+                                                        .mapValues {
+                                                            LeafBuilder(routePatterns = it.value)
+                                                        }
                                             )
                                     }
                                     .toMap()
@@ -306,13 +312,18 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
     }
 
     data class LeafBuilder(
+        var routePatterns: List<RoutePattern>? = null,
         var upcomingTrips: List<UpcomingTrip>? = null,
         var alertsHere: List<Alert>? = null
     ) {
 
         fun build(): RouteCardData.Leaf {
             // TODO: Once alerts functionality is added, checkNotNull on alerts too
-            return RouteCardData.Leaf(checkNotNull(this.upcomingTrips), alertsHere ?: emptyList())
+            return RouteCardData.Leaf(
+                checkNotNull(routePatterns),
+                checkNotNull(this.upcomingTrips),
+                alertsHere ?: emptyList()
+            )
         }
     }
 }
