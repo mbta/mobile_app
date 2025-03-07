@@ -13,19 +13,22 @@
 setup_ci if ENV['CI']
 
 platform :android do
+  def package_name(flavor)
+    case flavor
+    when "Prod"
+      "com.mbta.tid.mbta_app"
+    when "Staging"
+      "com.mbta.tid.mbta_app.staging"
+    else
+      raise "Unknown flavor #{flavor}"
+    end
+  end
+
   desc "Build an .apk and an .aab with an upcoming version code"
   lane :build do |options|
-    package_name =
-      case options[:flavor]
-      when "Prod"
-        "com.mbta.tid.mbta_app"
-      when "Staging"
-        "com.mbta.tid.mbta_app.staging"
-      else
-        raise "Unknown flavor #{options[:flavor]}"
-      end
+    package_name = package_name(options[:flavor])
 
-  last_version_code = if options[:build_type] == "Debug"
+    last_version_code = if options[:build_type] == "Debug"
       0
     else
       google_play_track_version_codes(
@@ -62,15 +65,7 @@ platform :android do
 
   desc "Deploy a new version to Google Play for internal testing"
   lane :internal do |options|
-    package_name =
-      case options[:flavor]
-      when "Prod"
-        "com.mbta.tid.mbta_app"
-      when "Staging"
-        "com.mbta.tid.mbta_app.staging"
-      else
-        raise "Unknown flavor #{options[:flavor]}"
-      end
+    package_name = package_name(options[:flavor])
     flavor = options[:flavor].downcase
     upload_to_play_store(
       package_name: package_name,
@@ -81,6 +76,68 @@ platform :android do
 end
 
 platform :ios do
+  def app_identifier(scheme)
+    case scheme
+    when "Prod"
+      "com.mbta.tid.mbtaapp"
+    when "Staging"
+      "com.mbta.tid.mbtaapp.staging"
+    else
+      raise "Unknown scheme #{scheme}"
+    end
+  end
+
+  def keychain_path()
+    # For reasons, KEYCHAIN_PATH is not the actual keychain path created by setup_ci,
+    # it's missing a "-db" suffix that macOS adds for some reason,
+    # and this helper will both add that suffix to a path and turn `"login"` into a full path of its own
+    FastlaneCore::Helper.keychain_path(lane_context[SharedValues::KEYCHAIN_PATH] || "login")
+  end
+
+  desc "Configure App Store Connect"
+  private_lane :app_store_connect do
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_P8"],
+    )
+  end
+
+  desc "Create a new code signing certificate"
+  lane :cert_create do
+    app_store_connect
+    get_certificates(output_path: "iosApp/secrets", force: true)
+  end
+
+  desc "Load downloaded code signing certificates"
+  lane :cert_load do |options|
+    app_store_connect
+    import_certificate(
+      certificate_path: "iosApp/secrets/#{options[:cert_id]}.cer",
+      keychain_path: keychain_path
+    )
+    import_certificate(
+      certificate_path: "iosApp/secrets/#{options[:cert_id]}.p12",
+      keychain_path: keychain_path
+    )
+    get_certificates(
+      output_path: "iosApp/secrets",
+      force: false,
+      keychain_path: keychain_path
+    )
+  end
+
+  desc "Check certificate and provisioning configuration"
+  lane :cert_check do |options|
+    app_store_connect
+    get_certificates(
+      output_path: "iosApp/secrets",
+      force: false,
+      keychain_path: keychain_path
+    )
+    get_provisioning_profile(app_identifier: app_identifier(options[:scheme]), output_path: "iosApp/secrets")
+  end
+
   desc "Run tests"
   lane :test do |options|
     run_tests(
@@ -92,5 +149,62 @@ platform :ios do
       xcodebuild_formatter: options[:xcodebuild_formatter],
       number_of_retries: 3
     )
+  end
+
+  desc "Build the app"
+  lane :build do |options|
+    app_store_connect
+    cert_check(scheme: options[:scheme])
+    increment_build_number(
+      build_number: latest_testflight_build_number(app_identifier: app_identifier(options[:scheme])) + 1,
+      xcodeproj: "iosApp/iosApp.xcodeproj"
+    )
+    build_app(
+      workspace: "iosApp/iosApp.xcworkspace",
+      scheme: options[:scheme],
+      output_directory: "iosApp/build",
+      output_name: "iosApp.ipa",
+      export_method: "app-store",
+      xcodebuild_formatter: options[:xcodebuild_formatter]
+    )
+    if ENV["SENTRY_AUTH_TOKEN"].nil?
+      UI.important "Skipped Sentry upload because SENTRY_AUTH_TOKEN not set"
+    else
+      sentry_debug_files_upload(
+        org_slug: "mbtace",
+        project_slug: "mobile_app_ios",
+        path: "iosApp/build",
+        include_sources: true
+      )
+    end
+  end
+
+  desc "Upload the app to TestFlight for internal testing"
+  lane :internal do |options|
+    app_store_connect
+    begin
+      case options[:scheme]
+      when "Staging"
+        upload_to_testflight(
+          ipa: "iosApp/build/iosApp.ipa",
+          distribute_external: true,
+          changelog: "",
+          groups: ["Staging App Users", "TID Beta Testers"]
+        )
+      when "Prod"
+        upload_to_testflight(
+          ipa: "iosApp/build/iosApp.ipa",
+          distribute_external: true,
+          changelog: "",
+          groups: ["Alpha Testers"]
+        )
+      end
+    rescue Spaceship::UnexpectedResponse => e
+      if e.error_info == "Builds cannot be assigned to this internal group. - Cannot add internal group to a build."
+        UI.important "Ignoring App Store Connect error about internal groups - in practice it works fine"
+      else
+        raise
+      end
+    end
   end
 end
