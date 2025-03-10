@@ -37,6 +37,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
 
     data class Leaf(
         val routePatterns: List<RoutePattern>,
+        val stopIds: Set<String>,
         val upcomingTrips: List<UpcomingTrip>,
         val alertsHere: List<Alert>
     )
@@ -106,6 +107,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
 
     class ListBuilder() {
         var data: ByLineOrRouteBuilder = emptyMap()
+            private set
 
         /**
          * Construct a map of the route/line-ids served by the given stops. Uses the order of the
@@ -180,7 +182,15 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                                     byStop.value
                                                         .groupBy { pattern -> pattern.directionId }
                                                         .mapValues {
-                                                            LeafBuilder(routePatterns = it.value)
+                                                            LeafBuilder(
+                                                                routePatterns = it.value,
+                                                                stopIds =
+                                                                    fullStopIds.getOrElse(
+                                                                        byStop.key.id
+                                                                    ) {
+                                                                        setOf(byStop.key.id)
+                                                                    }
+                                                            )
                                                         }
                                             )
                                     }
@@ -313,6 +323,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
 
     data class LeafBuilder(
         var routePatterns: List<RoutePattern>? = null,
+        var stopIds: Set<String>? = null,
         var upcomingTrips: List<UpcomingTrip>? = null,
         var alertsHere: List<Alert>? = null
     ) {
@@ -321,6 +332,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             // TODO: Once alerts functionality is added, checkNotNull on alerts too
             return RouteCardData.Leaf(
                 checkNotNull(routePatterns),
+                checkNotNull(stopIds),
                 checkNotNull(this.upcomingTrips),
                 alertsHere ?: emptyList()
             )
