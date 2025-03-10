@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
@@ -355,6 +356,9 @@ fun HomeMapView(
 
                 MapEffect(true) { map ->
                     map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+                    map.mapboxMap.setBounds(
+                        CameraBoundsOptions.Builder().maxZoom(18.0).minZoom(6.0).build()
+                    )
                     map.location.setLocationProvider(locationProvider)
                     map.location.updateSettings {
                         locationPuck = createDefault2DPuck(withBearing = false)
