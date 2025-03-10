@@ -1,17 +1,14 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -42,6 +38,7 @@ import com.mbta.tid.mbta_app.android.more.MoreButton
 import com.mbta.tid.mbta_app.android.more.MoreSectionView
 import com.mbta.tid.mbta_app.android.more.MoreViewModel
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
 import org.koin.compose.koinInject
@@ -62,48 +59,53 @@ fun MorePage(
         Column(Modifier.padding(outerSheetPadding).background(colorResource(R.color.fill3))) {
             NavHost(navController, startDestination = "more") {
                 composable("more") {
-                    Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Absolute.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Text(
-                            text = stringResource(R.string.more_title),
-                            style = Typography.title1Bold,
-                            modifier = Modifier.semantics { heading() }
-                        )
-                        Text(
-                            stringResource(R.string.app_version_number, BuildConfig.VERSION_NAME),
-                            style = Typography.footnote
-                        )
-                    }
-                    HorizontalDivider()
-                    Column(
-                        Modifier.verticalScroll(rememberScrollState())
-                            .background(colorResource(R.color.fill1))
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        sections.map { section ->
-                            MoreSectionView(section = section) { setting ->
-                                viewModel.toggleSetting(setting)
-                            }
-                        }
+                    Column {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                            verticalAlignment = Alignment.Bottom
                         ) {
-                            Icon(
-                                painterResource(R.drawable.mbta_logo),
-                                contentDescription = null,
-                                modifier = Modifier.size(64.dp),
-                                tint = Color.Unspecified
-                            )
-
                             Text(
-                                stringResource(R.string.more_page_footer),
-                                style = Typography.callout
+                                text = stringResource(R.string.more_title),
+                                style = Typography.title1Bold,
+                                modifier = Modifier.semantics { heading() }
                             )
+                            Text(
+                                stringResource(
+                                    R.string.app_version_number,
+                                    BuildConfig.VERSION_NAME
+                                ),
+                                style = Typography.footnote
+                            )
+                        }
+                        HorizontalDivider()
+                        Column(
+                            Modifier.verticalScroll(rememberScrollState())
+                                .background(colorResource(R.color.fill1))
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            sections.map { section ->
+                                MoreSectionView(section = section) { setting ->
+                                    viewModel.toggleSetting(setting)
+                                }
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.mbta_logo),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = Color.Unspecified
+                                )
+
+                                Text(
+                                    stringResource(R.string.more_page_footer),
+                                    style = Typography.callout
+                                )
+                            }
                         }
                     }
                 }
@@ -115,7 +117,7 @@ fun MorePage(
                                     .padding(vertical = 8.dp, horizontal = 10.dp)
                                     .fillMaxWidth()
                                     .height(44.dp),
-                            horizontalArrangement = Arrangement.Absolute.SpaceAround,
+                            horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Button(
@@ -139,21 +141,15 @@ fun MorePage(
                             Text(
                                 text = stringResource(R.string.software_licenses),
                                 style = Typography.headlineSemibold,
-                                modifier = Modifier.semantics { heading() }
-                            )
-                            Spacer(Modifier.weight(1f))
-                        }
-                        HorizontalDivider(Modifier.padding(bottom = 24.dp))
-                        Column(Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
-                            Column(
                                 modifier =
-                                    Modifier.border(
-                                            1.dp,
-                                            colorResource(R.color.halo),
-                                            RoundedCornerShape(8.dp)
-                                        )
-                                        .clip(RoundedCornerShape(8.dp))
-                            ) {
+                                    Modifier.weight(1f).padding(start = 8.dp).semantics {
+                                        heading()
+                                    }
+                            )
+                        }
+                        HorizontalDivider()
+                        Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
+                            Column(modifier = Modifier.haloContainer(1.dp)) {
                                 dependencies.mapIndexed { index, it ->
                                     MoreButton(
                                         label = it.name,
@@ -187,7 +183,7 @@ fun MorePage(
                                     .padding(vertical = 8.dp, horizontal = 10.dp)
                                     .fillMaxWidth()
                                     .height(44.dp),
-                            horizontalArrangement = Arrangement.Absolute.Left,
+                            horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Button(
@@ -209,14 +205,16 @@ fun MorePage(
                                 )
                             }
                         }
-                        HorizontalDivider(Modifier.padding(bottom = 24.dp))
+                        HorizontalDivider()
                         Column(
-                            modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())
+                            modifier =
+                                Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
                                 text = dependency.name,
                                 style = Typography.title2Bold,
-                                modifier = Modifier.padding(bottom = 24.dp).semantics { heading() }
+                                modifier = Modifier.semantics { heading() }
                             )
                             Text(text = dependency.licenseText, style = Typography.body)
                         }
