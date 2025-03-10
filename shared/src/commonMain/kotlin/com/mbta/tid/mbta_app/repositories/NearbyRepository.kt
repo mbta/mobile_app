@@ -11,30 +11,11 @@ import org.koin.core.component.KoinComponent
 
 interface INearbyRepository {
     suspend fun getNearby(global: GlobalResponse, location: Position): ApiResult<NearbyStaticData>
-
-    suspend fun getNearbyStops(global: GlobalResponse, location: Position): ApiResult<Set<String>>
 }
 
 class NearbyRepository : KoinComponent, INearbyRepository {
-    override suspend fun getNearby(
-        global: GlobalResponse,
-        location: Position
-    ): ApiResult<NearbyStaticData> {
-
-        return when (val nearbyStopsResult = getNearbyStops(global, location)) {
-            is ApiResult.Error -> ApiResult.Error(nearbyStopsResult.code, nearbyStopsResult.message)
-            is ApiResult.Ok ->
-                ApiResult.Ok(
-                    NearbyStaticData(global, NearbyResponse(nearbyStopsResult.data.toList()))
-                )
-        }
-    }
-
-    override suspend fun getNearbyStops(
-        global: GlobalResponse,
-        location: Position
-    ): ApiResult<Set<String>> {
-        return ApiResult.runCatching {
+    override suspend fun getNearby(global: GlobalResponse, location: Position) =
+        ApiResult.runCatching {
             val searchPosition =
                 Position(latitude = location.latitude, longitude = location.longitude)
 
@@ -72,10 +53,8 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                         else stopSiblings.filter { it.vehicleType == RouteType.COMMUTER_RAIL }
                     selectedStops.map { it.id }
                 }
-
-            nearbyStopsAndSiblings
+            NearbyStaticData(global, NearbyResponse(nearbyStopsAndSiblings.toList()))
         }
-    }
 }
 
 class MockNearbyRepository(val response: NearbyResponse) : INearbyRepository {
@@ -85,13 +64,6 @@ class MockNearbyRepository(val response: NearbyResponse) : INearbyRepository {
     ): ApiResult<NearbyStaticData> {
         return ApiResult.Ok(NearbyStaticData(global, response))
     }
-
-    override suspend fun getNearbyStops(
-        global: GlobalResponse,
-        location: Position
-    ): ApiResult<Set<String>> {
-        return ApiResult.Ok(result.stopIds())
-    }
 }
 
 class IdleNearbyRepository : INearbyRepository {
@@ -99,13 +71,6 @@ class IdleNearbyRepository : INearbyRepository {
         global: GlobalResponse,
         location: Position
     ): ApiResult<NearbyStaticData> {
-        return suspendCancellableCoroutine {}
-    }
-
-    override suspend fun getNearbyStops(
-        global: GlobalResponse,
-        location: Position
-    ): ApiResult<Set<String>> {
         return suspendCancellableCoroutine {}
     }
 }
