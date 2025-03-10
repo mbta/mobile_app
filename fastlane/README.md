@@ -36,6 +36,30 @@ Deploy a new version to Google Play for internal testing
 
 ## iOS
 
+### ios cert_create
+
+```sh
+[bundle exec] fastlane ios cert_create
+```
+
+Create a new code signing certificate
+
+### ios cert_load
+
+```sh
+[bundle exec] fastlane ios cert_load
+```
+
+Load downloaded code signing certificates
+
+### ios cert_check
+
+```sh
+[bundle exec] fastlane ios cert_check
+```
+
+Check certificate and provisioning configuration
+
 ### ios test
 
 ```sh
@@ -43,6 +67,22 @@ Deploy a new version to Google Play for internal testing
 ```
 
 Run tests
+
+### ios build
+
+```sh
+[bundle exec] fastlane ios build
+```
+
+Build the app
+
+### ios internal
+
+```sh
+[bundle exec] fastlane ios internal
+```
+
+Upload the app to TestFlight for internal testing
 
 ----
 
