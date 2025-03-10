@@ -1,0 +1,122 @@
+name: Build for iOS
+
+on:
+  workflow_call:
+    inputs:
+      deploy:
+        description: "Whether or not to deploy the app to the App Store"
+        required: true
+        type: boolean
+      scheme:
+        description: "iOS build scheme, 'Staging' or 'Prod'"
+        required: true
+        type: string
+      sentry-environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      FIREBASE_KEY:
+        required: true
+      GOOGLE_APP_ID_IOS:
+        required: true
+      SENTRY_AUTH_TOKEN:
+        required: true
+      SENTRY_DSN_IOS:
+        required: true
+
+jobs:
+  build-ios:
+    name: Build for iOS
+    runs-on: macos-14-xlarge
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: ios-build
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
+      - name: Fetch AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
+            APP_STORE_CONNECT_API_KEY_ISSUER, mobile-app-ios-app-store-connect-api-key-issuer
+            APP_STORE_CONNECT_API_KEY_P8, mobile-app-ios-app-store-connect-api-key-p8
+            mobile-app-ios-codesigning-id
+      - name: Load code signing key
+        run: |
+          pushd iosApp
+          mkdir -p secrets
+          aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-cer --output json | jq -r '.SecretBinary' | base64 --decode > "secrets/${MOBILE_APP_IOS_CODESIGNING_ID}.cer"
+          aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-p12 --output json | jq -r '.SecretBinary' | base64 --decode > "secrets/${MOBILE_APP_IOS_CODESIGNING_ID}.p12"
+          popd
+          bundle exec fastlane ios cert_load cert_id:"${MOBILE_APP_IOS_CODESIGNING_ID}"
+      - name: Install CocoaPods dependencies
+        run: |
+          ./gradlew :shared:generateDummyFramework
+          pushd iosApp
+          bundle exec pod install
+          popd
+          bundle exec ./gradlew :shared:podInstallSyntheticIos
+      - name: Add build environment variables
+        run: |
+          {
+            echo "export FIREBASE_KEY=${FIREBASE_KEY}"
+            echo "export GOOGLE_APP_ID_IOS=${GOOGLE_APP_ID_IOS}"
+            echo "export SENTRY_DSN_IOS=${SENTRY_DSN_IOS}"
+            echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"
+          } >> .envrc
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
+          SENTRY_DSN_IOS: ${{ secrets.SENTRY_DSN_IOS }}
+          SENTRY_ENVIRONMENT: ${{ inputs.sentry-environment }}
+      - name: Build iOS app
+        run: |
+          bundle exec fastlane ios build scheme:${{ inputs.scheme }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.deploy }}
+        with:
+          name: ios-ipa
+          path: iosApp/build/iosApp.ipa
+  deploy-ios:
+    name: Upload to App Store
+    if: ${{ inputs.deploy }}
+    concurrency:
+      group: deploy-ios-${{ inputs.scheme }}
+      cancel-in-progress: false
+    needs:
+      - build-ios
+    runs-on: macos-14-xlarge
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-ipa
+          path: iosApp/build
+      - uses: ./.github/actions/setup
+        with:
+          for: ios-deploy
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
+      - name: Fetch AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
+            APP_STORE_CONNECT_API_KEY_ISSUER, mobile-app-ios-app-store-connect-api-key-issuer
+            APP_STORE_CONNECT_API_KEY_P8, mobile-app-ios-app-store-connect-api-key-p8
+      - name: Upload to App Store
+        run: |
+          bundle exec fastlane ios internal scheme:${{ inputs.scheme }}
