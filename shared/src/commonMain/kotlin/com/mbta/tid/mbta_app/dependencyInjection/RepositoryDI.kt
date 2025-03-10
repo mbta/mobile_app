@@ -1,5 +1,17 @@
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+package com.mbta.tid.mbta_app.dependencyInjection
+
 import com.mbta.tid.mbta_app.model.AppVersion
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.TripResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
@@ -38,12 +50,16 @@ import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
+import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.NearbyRepository
@@ -138,64 +154,54 @@ class RealRepositories : IRepositories {
     override val visitHistory = VisitHistoryRepository()
 }
 
-class MockRepositories(
-    override val accessibilityStatus: IAccessibilityStatusRepository,
-    override val alerts: IAlertsRepository,
-    override val config: IConfigRepository,
-    override val currentAppVersion: ICurrentAppVersionRepository,
-    override val errorBanner: IErrorBannerStateRepository,
-    override val global: IGlobalRepository,
-    override val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository,
-    override val nearby: INearbyRepository,
-    override val onboarding: IOnboardingRepository,
-    override val pinnedRoutes: IPinnedRoutesRepository,
-    override val predictions: IPredictionsRepository,
-    override val railRouteShapes: IRailRouteShapeRepository,
-    override val schedules: ISchedulesRepository,
-    override val searchResults: ISearchResultRepository,
-    override val sentry: ISentryRepository,
-    override val settings: ISettingsRepository,
-    override val stop: IStopRepository,
-    override val trip: ITripRepository,
-    override val tripPredictions: ITripPredictionsRepository,
-    override val vehicle: IVehicleRepository,
-    override val vehicles: IVehiclesRepository,
-    override val visitHistory: IVisitHistoryRepository
-) : IRepositories {
-    companion object {
-        @DefaultArgumentInterop.Enabled
-        fun buildWithDefaults(
-            errorBanner: IErrorBannerStateRepository = MockErrorBannerStateRepository(),
-            global: IGlobalRepository = IdleGlobalRepository(),
-            schedules: ISchedulesRepository = IdleScheduleRepository(),
-            stop: IStopRepository = IdleStopRepository(),
-            trip: ITripRepository = IdleTripRepository(),
-        ): MockRepositories {
-            return MockRepositories(
-                accessibilityStatus =
-                    MockAccessibilityStatusRepository(isScreenReaderEnabled = false),
-                alerts = MockAlertsRepository(),
-                config = MockConfigRepository(),
-                currentAppVersion = MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u)),
-                errorBanner = errorBanner,
-                global = global,
-                lastLaunchedAppVersion = MockLastLaunchedAppVersionRepository(null),
-                nearby = IdleNearbyRepository(),
-                onboarding = MockOnboardingRepository(),
-                pinnedRoutes = PinnedRoutesRepository(),
-                predictions = MockPredictionsRepository(),
-                railRouteShapes = IdleRailRouteShapeRepository(),
-                schedules = schedules,
-                searchResults = IdleSearchResultRepository(),
-                sentry = MockSentryRepository(),
-                settings = MockSettingsRepository(),
-                stop = stop,
-                trip = trip,
-                tripPredictions = MockTripPredictionsRepository(),
-                vehicle = MockVehicleRepository(),
-                vehicles = MockVehiclesRepository(),
-                visitHistory = VisitHistoryRepository()
+class MockRepositories : IRepositories {
+    override var accessibilityStatus: IAccessibilityStatusRepository =
+        MockAccessibilityStatusRepository(isScreenReaderEnabled = false)
+    override var alerts: IAlertsRepository = MockAlertsRepository()
+    override var config: IConfigRepository = MockConfigRepository()
+    override var currentAppVersion: ICurrentAppVersionRepository =
+        MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u))
+    override var errorBanner: IErrorBannerStateRepository = MockErrorBannerStateRepository()
+    override var global: IGlobalRepository = IdleGlobalRepository()
+    override var lastLaunchedAppVersion: ILastLaunchedAppVersionRepository =
+        MockLastLaunchedAppVersionRepository(null)
+    override var nearby: INearbyRepository = IdleNearbyRepository()
+    override var onboarding: IOnboardingRepository = MockOnboardingRepository()
+    override var pinnedRoutes: IPinnedRoutesRepository = PinnedRoutesRepository()
+    override var predictions: IPredictionsRepository = MockPredictionsRepository()
+    override var railRouteShapes: IRailRouteShapeRepository = IdleRailRouteShapeRepository()
+    override var schedules: ISchedulesRepository = IdleScheduleRepository()
+    override var searchResults: ISearchResultRepository = IdleSearchResultRepository()
+    override var sentry: ISentryRepository = MockSentryRepository()
+    override var settings: ISettingsRepository = MockSettingsRepository()
+    override var stop: IStopRepository = IdleStopRepository()
+    override var trip: ITripRepository = IdleTripRepository()
+    override var tripPredictions: ITripPredictionsRepository = MockTripPredictionsRepository()
+    override var vehicle: IVehicleRepository = MockVehicleRepository()
+    override var vehicles: IVehiclesRepository = MockVehiclesRepository()
+    override var visitHistory: IVisitHistoryRepository = VisitHistoryRepository()
+
+    fun useObjects(objects: ObjectCollectionBuilder) {
+        alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))
+        global = MockGlobalRepository(GlobalResponse(objects))
+        nearby = MockNearbyRepository(NearbyResponse(objects))
+        predictions =
+            MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
+        schedules = MockScheduleRepository(ScheduleResponse(objects))
+        trip =
+            MockTripRepository(
+                TripSchedulesResponse.Schedules(objects.schedules.values.toList()),
+                TripResponse(
+                    objects.trips.values.singleOrNull() ?: ObjectCollectionBuilder.Single.trip()
+                )
             )
-        }
+        tripPredictions =
+            MockTripPredictionsRepository(response = PredictionsStreamDataResponse(objects))
+        vehicle =
+            MockVehicleRepository(
+                outcome =
+                    ApiResult.Ok(VehicleStreamDataResponse(objects.vehicles.values.singleOrNull()))
+            )
+        vehicles = MockVehiclesRepository(objects)
     }
 }

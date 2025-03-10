@@ -754,11 +754,9 @@ final class NearbyTransitViewTests: XCTestCase {
 
     @MainActor
     func testNearbyErrorMessage() throws {
-        loadKoinMocks(repositories: MockRepositories.companion
-            .buildWithDefaults(errorBanner: MockErrorBannerStateRepository(state: .DataError(
-                messages: [],
-                action: {}
-            ))))
+        let repositories = MockRepositories()
+        repositories.errorBanner = MockErrorBannerStateRepository(state: .DataError(messages: [], action: {}))
+        loadKoinMocks(repositories: repositories)
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,

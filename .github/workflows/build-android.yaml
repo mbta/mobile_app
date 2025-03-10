@@ -1,0 +1,111 @@
+name: Build for Android
+
+on:
+  workflow_call:
+    inputs:
+      build-type:
+        description: "Build type, 'Debug' or 'Release'"
+        required: true
+        type: string
+      deploy:
+        description: "Whether or not to deploy the app to Google Play"
+        required: true
+        type: boolean
+      flavor:
+        description: "Android build flavor, 'Staging' or 'Prod'"
+        required: true
+        type: string
+      sentry-environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ROLE_ARN:
+        required: false
+      FIREBASE_KEY:
+        required: true
+      GCP_WORKLOAD_IDENTITY_PROVIDER:
+        required: false
+      GCP_SERVICE_ACCOUNT:
+        required: false
+      GOOGLE_APP_ID_ANDROID:
+        required: true
+      SENTRY_AUTH_TOKEN:
+        required: true
+      SENTRY_DSN_ANDROID:
+        required: true
+
+jobs:
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: android-build
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Lowercase build parameters
+        id: lowercase
+        run: |
+          echo "build-type=$(echo ${{ inputs.build-type }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+      - name: Build Android app
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID }}
+          KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
+          KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
+          KEY_ALIAS: "upload"
+          KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
+          SENTRY_ENVIRONMENT: ${{ inputs.sentry-environment }}
+        run: |
+          bundle exec fastlane android build flavor:${{ inputs.flavor }} build_type:${{ inputs.build-type }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.deploy }}
+        with:
+          name: android-apk
+          path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.deploy }}
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}${{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
+  deploy-android:
+    name: Upload to Google Play
+    if: ${{ inputs.deploy }}
+    concurrency:
+      group: deploy-android-${{ inputs.flavor }}
+      cancel-in-progress: false
+    needs:
+      - build-android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lowercase build parameters
+        id: lowercase
+        run: |
+          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
+      - uses: ./.github/actions/setup
+        with:
+          for: android-deploy
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Upload to Google Play
+        run: |
+          bundle exec fastlane android internal flavor:${{ inputs.flavor }}

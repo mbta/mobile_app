@@ -1,0 +1,25 @@
+name: iOS staging deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ios:
+    name: Build for iOS
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/build-ios.yaml
+    with:
+      deploy: true
+      scheme: "Staging"
+      sentry-environment: "staging"
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+      GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_DSN_IOS: ${{ secrets.SENTRY_DSN_IOS }}
