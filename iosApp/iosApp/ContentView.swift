@@ -362,7 +362,10 @@ struct ContentView: View {
 
     @ViewBuilder
     var searchHeaderBackground: some View {
-        (searchObserver.isSearching ? Color.fill2 : Color.clear).ignoresSafeArea(.all)
+        (
+            searchObserver.isSearching && nearbyVM.navigationStack.lastSafe() == .nearby
+                ? Color.fill2 : Color.clear
+        ).ignoresSafeArea(.all)
     }
 
     private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
