@@ -64,6 +64,13 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                 is Route -> this.route.type.isSubway()
             }
         }
+
+        fun id(): String {
+            return when (this) {
+                is Line -> this.line.id
+                is Route -> this.route.id
+            }
+        }
     }
 
     companion object {
@@ -374,7 +381,9 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                 )
                             }
                 }
+                byStopId.stopData = byStopId.stopData.filterNot { it.value.data.isEmpty() }
             }
+            this.data = this.data.filterNot { it.value.stopData.isEmpty() }
             return this
         }
 
@@ -388,7 +397,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         }
     }
 
-    data class Builder(val lineOrRoute: LineOrRoute, val stopData: ByStopIdBuilder) {
+    data class Builder(val lineOrRoute: LineOrRoute, var stopData: ByStopIdBuilder) {
 
         fun build(): RouteCardData {
             return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() })
@@ -439,9 +448,9 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                 directionId,
                 checkNotNull(routePatterns),
                 checkNotNull(stopIds),
-                checkNotNull(this.upcomingTrips),
+                this.upcomingTrips ?: emptyList(),
                 alertsHere ?: emptyList(),
-                checkNotNull(allDataLoaded)
+                allDataLoaded ?: false
             )
         }
 
