@@ -54,6 +54,7 @@ class RouteCardDataTest {
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
                                     stop1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(route1rp1),
                                             stopIds = setOf(stop1.id)
                                         )
@@ -109,6 +110,7 @@ class RouteCardDataTest {
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
                                     stop1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(route1rp1),
                                             stopIds = setOf(stop1.id)
                                         )
@@ -117,6 +119,7 @@ class RouteCardDataTest {
                                 stop2.id to RouteCardData.RouteStopDataBuilder(
                                     stop2, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(
                                                 route1rp1,
                                                 route1rp2
@@ -175,6 +178,7 @@ class RouteCardDataTest {
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
                                     stop1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(
                                                 route1rp1,
                                                 route1rp2
@@ -183,6 +187,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id)
                                         ),
                                         1 to RouteCardData.LeafBuilder(
+                                            directionId = 1,
                                             routePatterns = listOf(
                                                 route1rp3
                                             ),
@@ -237,6 +242,7 @@ class RouteCardDataTest {
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
                                     stop1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(route1rp1),
                                             stopIds = setOf(stop1.id)
                                         )
@@ -251,6 +257,7 @@ class RouteCardDataTest {
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
                                     stop1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(route2rp1),
                                             stopIds = setOf(stop1.id)
                                         )
@@ -319,6 +326,7 @@ class RouteCardDataTest {
                                 station1.id to RouteCardData.RouteStopDataBuilder(
                                     station1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(
                                                 route1rp1, route1rp2
                                             ),
@@ -330,6 +338,7 @@ class RouteCardDataTest {
                                 stop2.id to RouteCardData.RouteStopDataBuilder(
                                     stop2, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(
                                                 route1rp3
                                             ),
@@ -387,6 +396,7 @@ class RouteCardDataTest {
                                 parentStation.id to RouteCardData.RouteStopDataBuilder(
                                     parentStation, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(routePattern ),
                                             stopIds = setOf(parentStation.id, logicalPlatform.id, physicalPlatform.id)
                                         )
@@ -452,6 +462,7 @@ class RouteCardDataTest {
                                 stop.id to RouteCardData.RouteStopDataBuilder(
                                     stop, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(railPattern ),
                                             stopIds = setOf(stop.id)
                                         )
@@ -463,6 +474,7 @@ class RouteCardDataTest {
                 RouteCardData.Builder(RouteCardData.LineOrRoute.Route(shuttleRoute), mapOf(
                     stop.id to RouteCardData.RouteStopDataBuilder(stop, emptyList(), mapOf(
                         0 to RouteCardData.LeafBuilder(
+                            directionId = 0,
                             routePatterns = listOf(shuttlePattern ),
                             stopIds = setOf(stop.id)
                         )
@@ -636,10 +648,12 @@ class RouteCardDataTest {
                                 stopGov.id to RouteCardData.RouteStopDataBuilder(
                                     stopGov, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(routeDrp1, routeBrp1, routeCrp1 ),
                                             stopIds = setOf(stopGov.id)
                                         ),
                                         1 to RouteCardData.LeafBuilder(
+                                            directionId = 1,
                                             routePatterns = listOf(routeDrp2, routeCrp3 ),
                                             stopIds = setOf(stopGov.id)
                                         )
@@ -733,24 +747,28 @@ class RouteCardDataTest {
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
                                     stop1, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(pattern1, pattern2),
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips = listOf(
                                                 objects.upcomingTrip(stop1Pattern2Prediction),
                                                 objects.upcomingTrip(stop1Pattern1Prediction)
                                             ),
+                                            allDataLoaded = false
                                         )
                                     )
                                 ),
                                 stop2.id to RouteCardData.RouteStopDataBuilder(
                                     stop2, emptyList(), mapOf(
                                         0 to RouteCardData.LeafBuilder(
+                                            directionId = 0,
                                             routePatterns = listOf(pattern3),
                                             stopIds = setOf(stop2.id),
                                             upcomingTrips = listOf(
                                                 objects.upcomingTrip(stop2Pattern1Prediction),
                                                 objects.upcomingTrip(stop2Pattern3Prediction),
                                             ),
+                                            allDataLoaded = false
                                         )
                                     )
                                 )
@@ -763,7 +781,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `ListBuilder addUpcomingTrips hides rare patterns with no predictions`() {
+    fun `RouteCardData routeCardsForStopList hides rare direction with no predictions in next 120 min`() {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -778,23 +796,7 @@ class RouteCardDataTest {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "Typical Out" }
             }
-        // should be included because typical
-        val typicalInbound =
-            objects.routePattern(route1) {
-                directionId = 1
-                sortOrder = 2
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Typical In" }
-            }
-        // should be included because prediction within 90 minutes
-        val deviationOutbound =
-            objects.routePattern(route1) {
-                directionId = 0
-                sortOrder = 3
-                typicality = RoutePattern.Typicality.Deviation
-                representativeTrip { headsign = "Deviation Out" }
-            }
-        // should be included because prediction beyond 90 minutes
+        // should not be included because not typical and prediction beyond 120 minutes
         val deviationInbound =
             objects.routePattern(route1) {
                 directionId = 1
@@ -802,36 +804,9 @@ class RouteCardDataTest {
                 typicality = RoutePattern.Typicality.Deviation
                 representativeTrip { headsign = "Deviation In" }
             }
-        // should be included because prediction
-        val atypicalOutbound =
-            objects.routePattern(route1) {
-                directionId = 0
-                sortOrder = 5
-                typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { headsign = "Atypical Out" }
-            }
-        // should be excluded because no prediction
-        val atypicalInbound =
-            objects.routePattern(route1) {
-                directionId = 1
-                sortOrder = 6
-                typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { headsign = "Atypical In" }
-            }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(route1) {
-                    stop(stop1) {
-                        headsign("Typical Out", listOf(typicalOutbound))
-                        headsign("Typical In", listOf(typicalInbound))
-                        headsign("Deviation Out", listOf(deviationOutbound))
-                        headsign("Deviation In", listOf(deviationInbound))
-                        headsign("Atypical Out", listOf(atypicalOutbound))
-                        headsign("Atypical In", listOf(atypicalInbound))
-                    }
-                }
-            }
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id,
+           deviationInbound.id)))
 
         val time = Instant.parse("2024-02-22T12:08:19-05:00")
 
@@ -842,13 +817,7 @@ class RouteCardDataTest {
                 stopId = stop1.id
                 tripId = typicalOutbound.representativeTripId
             }
-        val deviationOutboundPrediction =
-            objects.prediction {
-                departureTime = time + 119.minutes
-                routeId = route1.id
-                stopId = stop1.id
-                tripId = deviationOutbound.representativeTripId
-            }
+
         val deviationInboundPrediction =
             objects.prediction {
                 departureTime = time + 121.minutes
@@ -856,71 +825,127 @@ class RouteCardDataTest {
                 stopId = stop1.id
                 tripId = deviationInbound.representativeTripId
             }
-        val atypicalInboundPrediction =
-            objects.prediction {
-                departureTime = time + 1.minutes
-                routeId = route1.id
-                stopId = stop1.id
-                tripId = atypicalInbound.representativeTripId
-            }
-
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            route1,
-                            stop1,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "Typical Out",
-                                    null,
-                                    listOf(typicalOutbound),
-                                    listOf(objects.upcomingTrip(typicalOutboundPrediction)),
-                                    allDataLoaded = false
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "Deviation Out",
-                                    null,
-                                    listOf(deviationOutbound),
-                                    listOf(objects.upcomingTrip(deviationOutboundPrediction)),
-                                    allDataLoaded = false
-                                ),
-                                // since this has trips it's sorted earlier than typical in
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "Atypical In",
-                                    null,
-                                    listOf(atypicalInbound),
-                                    listOf(objects.upcomingTrip(atypicalInboundPrediction)),
-                                    allDataLoaded = false
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "Typical In",
-                                    null,
-                                    listOf(typicalInbound),
-                                    emptyList(),
-                                    allDataLoaded = false
-                                ),
-                            )
-                        )
-                    )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
-                sortByDistanceFrom = stop1.position,
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(typicalOutbound),
+                        stopIds = setOf(stop1.id),
+                        upcomingTrips = listOf(
+                            objects.upcomingTrip(typicalOutboundPrediction),
+                        ),
+                        allDataLoaded = false,
+                        alertsHere = emptyList()
+                    ))))
+            )),
+
+            RouteCardData.routeCardsForStopList(listOf(stop1.id), global,
+                filterAtTime = time,
+                sortByDistanceFrom = null,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
-                filterAtTime = time,
-                pinnedRoutes = setOf(),)
-        )
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit))
     }
+
+    @Test
+    fun `RouteCardData routeCardsForStopList shows rare direction with predictions in next 120 min`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+
+        val route1 = objects.route()
+
+        // should be included because typical and has prediction < 120 minutes
+        val typicalOutbound =
+            objects.routePattern(route1) {
+                directionId = 0
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Typical Out" }
+            }
+        // should also be included even though > 120 minutes because above prediction < 120
+        val deviationInbound =
+            objects.routePattern(route1) {
+                directionId = 1
+                sortOrder = 4
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip { headsign = "Deviation In" }
+            }
+
+        val deviationInboundTrip2 = objects.trip {
+            directionId = 1
+            routePatternId = deviationInbound.id
+            routeId = route1.id
+        }
+
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id,
+            deviationInbound.id)))
+
+        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+
+        val typicalOutboundPrediction =
+            objects.prediction {
+                departureTime = time
+                routeId = route1.id
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
+
+        val deviationInboundPrediction =
+            objects.prediction {
+                departureTime = time + 119.minutes
+                routeId = route1.id
+                stopId = stop1.id
+                tripId = deviationInbound.representativeTripId
+            }
+
+        val deviationInboundPredictionLater =
+            objects.prediction {
+                departureTime = time + 121.minutes
+                routeId = route1.id
+                stopId = stop1.id
+                tripId = deviationInboundTrip2.id
+            }
+        assertEquals(
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(typicalOutbound),
+                        stopIds = setOf(stop1.id),
+                        upcomingTrips = listOf(
+                            objects.upcomingTrip(typicalOutboundPrediction),
+                        ),
+                        allDataLoaded = false,
+                        alertsHere = emptyList()
+                    ),
+                        RouteCardData.Leaf(
+                            directionId = 1,
+                            routePatterns = listOf(typicalOutbound),
+                            stopIds = setOf(stop1.id),
+                            upcomingTrips = listOf(
+                                objects.upcomingTrip(deviationInboundPrediction),
+                                objects.upcomingTrip(deviationInboundPredictionLater),
+                                ),
+                            allDataLoaded = false,
+                            alertsHere = emptyList()
+                        )),
+            )))),
+            RouteCardData.routeCardsForStopList(listOf(stop1.id), global,
+                filterAtTime = time,
+                sortByDistanceFrom = null,
+                schedules = null,
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit))
+    }
+
 
     @Test
     fun `ListBuilder addUpcomingTrips handles schedule and predictions edge cases`()  {

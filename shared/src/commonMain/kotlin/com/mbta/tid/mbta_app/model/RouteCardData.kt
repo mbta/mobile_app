@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
 // type aliases can't be nested :(
@@ -87,7 +88,6 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             filterAtTime: Instant,
-            hideNonTypicalPatternsBeyondNext: Duration?,
             pinnedRoutes: Set<String>,
             context: Context
         ): List<RouteCardData>? {
@@ -98,6 +98,13 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             // if global data was still loading, there'd be no nearby data, and null handling is
             // annoying
             if (globalData == null) return null
+
+            val hideNonTypicalPatternsBeyondNext: Duration? =
+                when (context) {
+                    Context.NearbyTransit -> 120.minutes
+                    Context.StopDetailsFiltered -> 120.minutes
+                    Context.StopDetailsUnfiltered -> null
+                }
 
             val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
 
