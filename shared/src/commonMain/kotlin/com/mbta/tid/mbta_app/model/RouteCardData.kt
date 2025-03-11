@@ -123,7 +123,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             val patternsGrouped =
                 mutableMapOf<LineOrRoute, MutableMap<Stop, MutableList<RoutePattern>>>()
 
-            val fullStopIds = mutableMapOf<String, MutableSet<String>>()
+            val parentToAllStopIds = mutableMapOf<String, MutableSet<String>>()
 
             globalData.run {
                 stopIds.forEach { stopId ->
@@ -140,21 +140,17 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                         patternsByRouteOrLine.flatMap { it.value }.map { it.id }
                     )
 
-                    val stopKey =
-                        stop.parentStationId?.let { parentStationId ->
-                            fullStopIds
-                                .getOrPut(parentStationId) { mutableSetOf(parentStationId) }
-                                .add(stop.id)
-                            // Parents should be disjoint, but if somehow a parent has its own
-                            // patterns,
-                            // find it in the regular stops list
-                            stops[parentStationId]
-                        }
-                            ?: stop
+                    stop.parentStationId?.let { parentStationId ->
+                        parentToAllStopIds
+                            .getOrPut(parentStationId) { mutableSetOf(parentStationId) }
+                            .add(stop.id)
+                    }
+
+                    val stopOrParent = stop.resolveParent(stops)
 
                     for ((routeOrLine, routePatterns) in patternsByRouteOrLine) {
                         val routeStops = patternsGrouped.getOrPut(routeOrLine) { mutableMapOf() }
-                        val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
+                        val patternsForStop = routeStops.getOrPut(stopOrParent) { mutableListOf() }
                         patternsForStop += routePatterns
                     }
                 }
@@ -185,7 +181,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                                             LeafBuilder(
                                                                 routePatterns = it.value,
                                                                 stopIds =
-                                                                    fullStopIds.getOrElse(
+                                                                    parentToAllStopIds.getOrElse(
                                                                         byStop.key.id
                                                                     ) {
                                                                         setOf(byStop.key.id)
