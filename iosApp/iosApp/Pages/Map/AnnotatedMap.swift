@@ -67,6 +67,7 @@ struct AnnotatedMap: View {
             }
             .additionalSafeAreaInsets(.bottom, sheetHeight + 8)
             .additionalSafeAreaInsets(.top, 20)
+            .ignoresSafeArea(.all)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom

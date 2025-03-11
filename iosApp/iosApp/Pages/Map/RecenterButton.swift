@@ -23,9 +23,7 @@ struct RecenterButton: View {
             .clipShape(Circle())
             .overlay(Circle().stroke(Color.halo, lineWidth: 2).frame(width: 50, height: 50))
             .padding(.horizontal, 20)
-            .padding(.top, 16)
             .onTapGesture(perform: perform)
-            .transition(AnyTransition.opacity.animation(.linear(duration: 0.25)))
             .accessibilityLabel(Text(
                 "Recenter map on my location",
                 comment: "Screen reader text describing the behavior of the map recenter button"
