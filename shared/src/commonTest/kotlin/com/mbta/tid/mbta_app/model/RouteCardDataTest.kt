@@ -1335,20 +1335,17 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips handles parent stops`()  {
+    fun `RouteCardData routeCardsForStopList handles parent stops`()  {
         val objects = ObjectCollectionBuilder()
-        val parentStop = objects.stop()
-        val childStop = objects.stop { parentStationId = parentStop.id }
+        val parentStop = objects.stop {
+            childStopIds = listOf("childStop")
+        }
+        val childStop = objects.stop { id = "childStop"
+            parentStationId = parentStop.id }
         val route1 = objects.route()
         val pattern1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(route1) {
-                    stop(parentStop, listOf(childStop.id)) { headsign("Harvard", listOf(pattern1)) }
-                }
-            }
-
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(childStop.id to listOf(pattern1.id)))
         val time = Instant.parse("2024-02-26T10:45:38-05:00")
 
         val prediction1 =
@@ -1360,35 +1357,29 @@ class RouteCardDataTest {
             }
 
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            route1,
-                            parentStop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "Harvard",
-                                    null,
-                                    listOf(pattern1),
-                                    listOf(objects.upcomingTrip(prediction1)),
-                                    allDataLoaded = false
-                                )
-                            )
-                        )
-                    )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(parentStop, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(pattern1),
+                        stopIds = setOf(parentStop.id, childStop.id),
+                        upcomingTrips = listOf(objects.upcomingTrip(prediction1)),
+                        allDataLoaded = false,
+                        alertsHere = emptyList()
+
+                    )),
+                    )))),
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(childStop.id, parentStop.id),
+                globalData = global,
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),)
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit)
         )
     }
 
