@@ -18,6 +18,12 @@ private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuild
 
 private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 
+// route/ine id =>  stop id => direction id => upcoming trips
+private typealias MutablePartialHierarchy<T> =
+    MutableMap<String, MutableMap<String, MutableMap<Int, T>>>
+
+private typealias PartialHierarchy<T> = Map<String, Map<String, Map<Int, T>>>
+
 /**
  * Contain all data for presentation in a route card. A route card is a snapshot of service for a
  * route at a set of stops. It has the general structure: Route (or Line) => Stop(s) => Direction =>
@@ -89,7 +95,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
 
             return ListBuilder()
                 .addStaticStopsData(stopIds, globalData)
-                .addUpcomingTrips(schedules, predictions, filterAtTime)
+                .addUpcomingTrips(schedules, predictions, filterAtTime, globalData)
                 .filterIrrelevantData(
                     cutoffTime,
                     showAllPatternsWhileLoading = context == Context.StopDetails,
@@ -106,7 +112,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
     }
 
     class ListBuilder() {
-        var data: ByLineOrRouteBuilder = emptyMap()
+        var data: ByLineOrRouteBuilder = mutableMapOf()
             private set
 
         /**
@@ -238,12 +244,80 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         fun addUpcomingTrips(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse,
-            filterAtTime: Instant
+            filterAtTime: Instant,
+            globalData: GlobalResponse,
         ): ListBuilder {
-            // TODO build upcoming trips
-            // transform into map route => stop => direction => upcoming trips
-            // merge into data
+
+            val upcomingTrips =
+                UpcomingTrip.tripsFromData(
+                    globalData.stops,
+                    schedules?.schedules.orEmpty(),
+                    predictions.predictions.values.toList(),
+                    schedules?.trips.orEmpty() + predictions.trips,
+                    predictions.vehicles,
+                    filterAtTime
+                )
+
+            val partialHierarchy: MutablePartialHierarchy<MutableList<UpcomingTrip>> =
+                mutableMapOf()
+
+            for (upcomingTrip in upcomingTrips) {
+                val parentStopId =
+                    upcomingTrip.stopId?.let { parentStop(globalData, it)?.id } ?: continue
+                val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.trip.routeId) ?: continue
+                partialHierarchy
+                    .getOrPut(lineOrRouteId, ::mutableMapOf)
+                    .getOrPut(parentStopId, ::mutableMapOf)
+                    .getOrPut(upcomingTrip.trip.directionId, ::mutableListOf)
+                    .add(upcomingTrip)
+            }
+
+            this.updateLeaves<List<UpcomingTrip>>(partialHierarchy) { leafBuilder, upcomingTrips ->
+                leafBuilder.upcomingTrips = upcomingTrips
+            }
             return this
+        }
+
+        private fun parentStop(global: GlobalResponse, stopId: String): Stop? {
+            val stop = global.stops[stopId] ?: return null
+            return stop.resolveParent(global.stops)
+        }
+
+        private fun lineOrRouteId(global: GlobalResponse, routeId: String): String? {
+            val route = global.routes[routeId] ?: return null
+            val line = route.lineId.let { global.lines[it] }
+            return if (line != null && line.isGrouped && !route.isShuttle) {
+                line.id
+            } else {
+                routeId
+            }
+        }
+
+        /**
+         * update the [ByLineOrRouteBuilder] leaves by only adding data to the existing
+         * LeafBuilders. with the provided [add] function. If the partialHierarchy contains any
+         * routes / stops / directions that are not present in the builder, they *will not* be added
+         * to the builder.
+         */
+        private fun <T> updateLeaves(
+            partialHierarchy: PartialHierarchy<T>,
+            add: (leafBuilder: LeafBuilder, newData: T) -> Unit
+        ) {
+            for (entry in partialHierarchy) {
+                val (routeOrLineId, byStopId) = entry
+                for (stopEntry in byStopId) {
+                    val (stopId, byDirectionId) = stopEntry
+                    for (directionEntry in byDirectionId) {
+                        val (directionId, newLeafData) = directionEntry
+                        this.data[routeOrLineId]
+                            ?.stopData
+                            ?.get(stopId)
+                            ?.data
+                            ?.get(directionId)
+                            ?.let { add(it, newLeafData) }
+                    }
+                }
+            }
         }
 
         fun addAlerts(
