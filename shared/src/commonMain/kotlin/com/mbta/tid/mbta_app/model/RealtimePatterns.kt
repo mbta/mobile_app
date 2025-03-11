@@ -299,20 +299,10 @@ sealed class RealtimePatterns {
      * should be hidden until data is available.
      */
     fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
-        upcomingTrips.any {
-            val tripTime = it.time
-            tripTime != null &&
-                tripTime < cutoffTime &&
-                (tripTime >= currentTime ||
-                    (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
-        }
+        upcomingTrips.isUpcomingWithin(currentTime, cutoffTime)
 
     /** Checks if a trip exists. */
-    fun isUpcoming() =
-        upcomingTrips.any {
-            val tripTime = it.time
-            tripTime != null
-        }
+    fun isUpcoming() = upcomingTrips.isUpcoming()
 
     /**
      * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
@@ -322,13 +312,7 @@ sealed class RealtimePatterns {
      * - No trips are scheduled or predicted with a departure
      */
     fun isArrivalOnly(): Boolean {
-        // Intermediate variable set because kotlin can't smart cast properties with open getters
-        val upcoming = upcomingTrips
-        return upcoming
-            .mapTo(mutableSetOf()) { it.isArrivalOnly() }
-            .let { upcomingTripsArrivalOnly ->
-                upcomingTripsArrivalOnly.contains(true) && !upcomingTripsArrivalOnly.contains(false)
-            }
+        return upcomingTrips.isArrivalOnly()
     }
 
     fun directionId(): Int {
