@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -63,6 +64,8 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit
 ) {
+    val hasAccessibilityWarning =
+        departures.elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
     Column(
         Modifier.background(colorResource(R.color.fill2)),
         verticalArrangement = Arrangement.spacedBy(0.dp)
@@ -90,24 +93,28 @@ fun StopDetailsUnfilteredRoutesView(
                 verticalArrangement = Arrangement.spacedBy(0.dp),
                 contentPadding = PaddingValues(top = 16.dp)
             ) {
-                if (showElevatorAccessibility && departures.elevatorAlerts.isNotEmpty()) {
+                if (showElevatorAccessibility && hasAccessibilityWarning) {
                     item {
                         Column(
                             Modifier.padding(bottom = 14.dp, start = 14.dp, end = 14.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            departures.elevatorAlerts.map {
-                                AlertCard(
-                                    it,
-                                    AlertCardSpec.Elevator,
-                                    Color.Unspecified,
-                                    MaterialTheme.colorScheme.onPrimary,
-                                    {
-                                        openModal(
-                                            ModalRoutes.AlertDetails(it.id, null, null, stop.id)
-                                        )
-                                    }
-                                )
+                            if (departures.elevatorAlerts.isNotEmpty()) {
+                                departures.elevatorAlerts.map {
+                                    AlertCard(
+                                        it,
+                                        AlertCardSpec.Elevator,
+                                        Color.Unspecified,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        {
+                                            openModal(
+                                                ModalRoutes.AlertDetails(it.id, null, null, stop.id)
+                                            )
+                                        }
+                                    )
+                                }
+                            } else {
+                                NotAccessibleAlertCard()
                             }
                         }
                     }

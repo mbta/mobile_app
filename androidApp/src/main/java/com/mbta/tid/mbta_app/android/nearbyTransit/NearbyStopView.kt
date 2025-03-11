@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -36,6 +37,8 @@ fun NearbyStopView(
     showElevatorAccessibility: Boolean = false
 ) {
     val hasElevatorAlerts = patternsAtStop.elevatorAlerts.isNotEmpty()
+    val isWheelchairAccessible = patternsAtStop.stop.isWheelchairAccessible
+    val hasAccessibilityWarning = hasElevatorAlerts || !isWheelchairAccessible
     Row(
         modifier =
             Modifier.background(colorResource(id = R.color.fill2))
@@ -46,9 +49,15 @@ fun NearbyStopView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (showElevatorAccessibility && hasElevatorAlerts) {
+            if (showElevatorAccessibility && hasAccessibilityWarning) {
                 Image(
                     painterResource(R.drawable.elevator_alert),
+                    "",
+                    modifier = Modifier.height(24.dp).placeholderIfLoading().clearAndSetSemantics {}
+                )
+            } else if (showElevatorAccessibility) {
+                Image(
+                    painterResource(R.drawable.wheelchair_accessible),
                     "",
                     modifier = Modifier.height(24.dp).placeholderIfLoading().clearAndSetSemantics {}
                 )
@@ -64,14 +73,16 @@ fun NearbyStopView(
                         .weight(.6f),
                 style = Typography.callout
             )
-            if (showElevatorAccessibility && hasElevatorAlerts) {
+            if (showElevatorAccessibility && hasAccessibilityWarning) {
                 Text(
                     text =
-                        pluralStringResource(
-                            R.plurals.elevator_closure_count,
-                            patternsAtStop.elevatorAlerts.size,
-                            patternsAtStop.elevatorAlerts.size
-                        ),
+                        if (hasElevatorAlerts)
+                            pluralStringResource(
+                                R.plurals.elevator_closure_count,
+                                patternsAtStop.elevatorAlerts.size,
+                                patternsAtStop.elevatorAlerts.size
+                            )
+                        else stringResource(R.string.not_accessible),
                     modifier = Modifier.placeholderIfLoading().alpha(0.6f).weight(.4f),
                     style = Typography.footnote
                 )

@@ -9026,6 +9026,10 @@
         }
       }
     },
+    "Not accessible" : {
+      "comment" : "Status of a station that is not wheelchair accessible",
+      "extractionState" : "manual"
+    },
     "Now" : {
       "comment" : "Label for a trip that's arriving right now",
       "localizations" : {

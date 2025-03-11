@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -21,7 +22,7 @@ class NearbyStopViewTest {
     val route =
         builder.route {
             id = "route_1"
-            type = RouteType.BUS
+            type = RouteType.LIGHT_RAIL
             directionNames = listOf("North", "South")
             directionDestinations = listOf("Downtown", "Uptown")
             longName = "Sample Route Long Name"
@@ -47,6 +48,12 @@ class NearbyStopViewTest {
         builder.stop {
             id = "stop_1"
             name = "Sample Stop"
+        }
+    val inaccessibleStop =
+        builder.stop {
+            id = "stop_2"
+            name = "Sample Stop"
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
         }
     val trip =
         builder.trip(routePattern) {
@@ -93,6 +100,40 @@ class NearbyStopViewTest {
             listOf(elevatorAlert)
         )
 
+    val inaccessiblePatternsByStop =
+        PatternsByStop(
+            route,
+            stop,
+            listOf(
+                RealtimePatterns.ByHeadsign(
+                    route,
+                    "Sample Headsign",
+                    line,
+                    listOf(routePattern),
+                    listOf(
+                        UpcomingTrip(
+                            trip,
+                            Prediction(
+                                "prediction_1",
+                                now,
+                                now.plus(1.minutes),
+                                0,
+                                false,
+                                Prediction.ScheduleRelationship.Scheduled,
+                                null,
+                                1,
+                                route.id,
+                                inaccessibleStop.id,
+                                trip.id,
+                                null
+                            )
+                        )
+                    )
+                )
+            ),
+            emptyList()
+        )
+
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
@@ -125,5 +166,20 @@ class NearbyStopViewTest {
             )
         }
         composeTestRule.onNodeWithText("1 elevator closed").assertIsDisplayed()
+    }
+
+    @Test
+    fun testNearbyStopViewDisplaysWheelchairAccessibilityAlerts() {
+        composeTestRule.setContent {
+            NearbyStopView(
+                patternsAtStop = inaccessiblePatternsByStop,
+                condenseHeadsignPredictions = false,
+                now = now,
+                pinned = false,
+                onOpenStopDetails = { _, _ -> },
+                showElevatorAccessibility = true
+            )
+        }
+        composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
     }
 }

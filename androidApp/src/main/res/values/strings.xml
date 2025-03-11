@@ -146,6 +146,7 @@
     <string name="no_stops_nearby_pan">View transit near Boston</string>
     <string name="no_stops_nearby_search">Search by stop</string>
     <string name="no_stops_nearby_title">No nearby stops</string>
+    <string name="not_accessible">Not accessible</string>
     <string name="northbound">Northbound</string>
     <string name="now">Now</string>
     <string name="now_at">Now at</string>
