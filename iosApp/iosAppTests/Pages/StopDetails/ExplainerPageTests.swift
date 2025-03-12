@@ -54,7 +54,7 @@ final class ExplainerPageTests: XCTestCase {
             explainer: .init(type: .noPrediction, routeAccents: .init()),
             onClose: { closeExpectation.fulfill() }
         )
-        try sut.inspect().find(ActionButton.self).button().tap()
+        try sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
         wait(for: [closeExpectation], timeout: 1)
     }
 }
