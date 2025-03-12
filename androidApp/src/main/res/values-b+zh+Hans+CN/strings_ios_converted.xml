@@ -143,6 +143,7 @@
     <string name="no_stops_nearby_search">按站点搜索</string>
     <string name="no_stops_nearby_title">附近无站点</string>
     <string name="northbound">北行</string>
+    <string name="not_accessible">无法访问</string>
     <string name="now">现在</string>
     <string name="now_at">现在停靠</string>
     <string name="onboarding_feedback_advance">开始</string>
