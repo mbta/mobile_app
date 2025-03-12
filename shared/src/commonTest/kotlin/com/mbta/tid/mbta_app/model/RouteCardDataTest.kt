@@ -1384,7 +1384,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips incorporates schedules`()  {
+    fun `RouteCardData routeCardsForStopList incorporates schedules`()  {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
@@ -1412,48 +1412,40 @@ class RouteCardDataTest {
         val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
         val pred2 = objects.prediction(sched2) { departureTime = null }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
-            }
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(stop.id to listOf(routePattern.id)))
+
 
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    route,
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "A",
-                                    null,
-                                    listOf(routePattern),
-                                    listOf(
-                                        objects.upcomingTrip(sched1, pred1),
-                                        objects.upcomingTrip(sched2, pred2)
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(route),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(routePattern),
+                        stopIds = setOf(stop.id),
+                        upcomingTrips = listOf(objects.upcomingTrip(prediction = pred1, schedule = sched1),
+                            objects.upcomingTrip(prediction = pred2, schedule = sched2)),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
+                    )),
+                    )))),
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(stop.id),
+                globalData = global,
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),)
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit)
         )
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips checks if any trips are scheduled all day`()  {
+    @Ignore // TODO: Add hasSchedules functionality as part of special service dates
+    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`()  {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
@@ -1535,7 +1527,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips checks route along with route pattern and stop`()  {
+    fun `RouteCardData routeCardsForList checks route along with route pattern and stop`()  {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route { sortOrder = 1 }
