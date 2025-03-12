@@ -22,6 +22,17 @@ class NearbyStopViewTest {
     val route =
         builder.route {
             id = "route_1"
+            type = RouteType.BUS
+            directionNames = listOf("North", "South")
+            directionDestinations = listOf("Downtown", "Uptown")
+            longName = "Sample Route Long Name"
+            shortName = "Sample Route"
+            lineId = "line_1"
+            routePatternIds = mutableListOf("pattern_1", "pattern_2")
+        }
+    val inaccessibleRoute =
+        builder.route {
+            id = "route_2"
             type = RouteType.LIGHT_RAIL
             directionNames = listOf("North", "South")
             directionDestinations = listOf("Downtown", "Uptown")
@@ -42,6 +53,14 @@ class NearbyStopViewTest {
             directionId = 0
             name = "Sample Route Pattern"
             routeId = "route_1"
+            representativeTripId = "trip_1"
+        }
+    val inaccessibleRoutePattern =
+        builder.routePattern(inaccessibleRoute) {
+            id = "pattern_1"
+            directionId = 0
+            name = "Sample Route Pattern"
+            routeId = "route_2"
             representativeTripId = "trip_1"
         }
     val stop =
@@ -102,14 +121,14 @@ class NearbyStopViewTest {
 
     val inaccessiblePatternsByStop =
         PatternsByStop(
-            route,
-            stop,
+            inaccessibleRoute,
+            inaccessibleStop,
             listOf(
                 RealtimePatterns.ByHeadsign(
                     route,
                     "Sample Headsign",
                     line,
-                    listOf(routePattern),
+                    listOf(inaccessibleRoutePattern),
                     listOf(
                         UpcomingTrip(
                             trip,
@@ -122,7 +141,7 @@ class NearbyStopViewTest {
                                 Prediction.ScheduleRelationship.Scheduled,
                                 null,
                                 1,
-                                route.id,
+                                inaccessibleRoute.id,
                                 inaccessibleStop.id,
                                 trip.id,
                                 null
