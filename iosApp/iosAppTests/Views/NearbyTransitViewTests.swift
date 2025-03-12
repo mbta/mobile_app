@@ -379,19 +379,30 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             try view.implicitAnyView().vStack().callOnChange(newValue: predictionsByStop)
             let stops = view.findAll(NearbyStopView.self)
-            XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(ViewType.ProgressView.self))
+            XCTAssertNotNil(try stops[0]
+                .find(text: "Charles River Loop")
+                .find(DestinationRowView.self, relation: .parent)
+                .find(ViewType.ProgressView.self))
 
-            XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().parent().find(text: "10 min"))
-            XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().parent().find(text: "Overridden"))
+            XCTAssertNotNil(try stops[0]
+                .find(text: "Dedham Mall")
+                .find(DestinationRowView.self, relation: .parent)
+                .find(text: "10 min"))
+            XCTAssertNotNil(try stops[0]
+                .find(text: "Dedham Mall")
+                .find(DestinationRowView.self, relation: .parent)
+                .find(text: "Overridden"))
 
-            XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-                .parent().parent().find(text: "1 min"))
+            XCTAssertNotNil(try stops[1]
+                .find(text: "Watertown Yard")
+                .find(DestinationRowView.self, relation: .parent)
+                .find(text: "1 min"))
+
             let expectedMinutes = distantMinutes
             let expectedState = UpcomingTripView.State.some(.Minutes(minutes: Int32(expectedMinutes)))
-            XCTAssert(try !stops[1].find(text: "Watertown Yard").parent().parent()
+            XCTAssert(try !stops[1]
+                .find(text: "Watertown Yard")
+                .find(DestinationRowView.self, relation: .parent)
                 .findAll(UpcomingTripView.self, where: { sut in
                     try sut.actualView().prediction == expectedState
                 }).isEmpty)
@@ -518,7 +529,8 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try kenmoreDirection.find(text: "Overridden"))
 
             XCTAssertNotNil(try stops[0].find(text: "Heath Street")
-                .parent().parent().find(text: "5 min"))
+                .find(DestinationRowView.self, relation: .parent)
+                .find(text: "5 min"))
 
             let parkDirection = try stops[0].find(text: "Park St & North")
                 .find(DirectionRowView.self, relation: .parent)

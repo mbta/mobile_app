@@ -109,29 +109,17 @@ final class UpcomingTripViewTests: XCTestCase {
                                    routeType: .heavyRail,
                                    isFirst: true,
                                    isOnly: false)
-        let predictionView = try sut.inspect().find(PredictionText.self)
-        XCTAssertEqual(
-            "trains arriving in 5 min",
-            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 5 min"))
     }
 
     func testPredictedAccessibilityLabel() throws {
         let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5)), isFirst: false)
-        let predictionView = try sut.inspect().find(PredictionText.self)
-        XCTAssertEqual(
-            "and in 5 min",
-            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 5 min"))
     }
 
     func testPredictedHourAccessibilityLabel() throws {
         let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 67)), isFirst: false)
-        let predictionView = try sut.inspect().find(PredictionText.self)
-        XCTAssertEqual(
-            "and in 1 hr 7 min",
-            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 1 hr 7 min"))
     }
 
     func testCancelledAccessibilityLabel() throws {

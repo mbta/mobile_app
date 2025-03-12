@@ -15,25 +15,18 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
         app.launchArguments = ["--e2e-mocks"]
         XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 42.356395, longitude: -71.062424))
 
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests
-        // before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
     func testOpenStopDetails() throws {
-        // UI tests must launch the application that they test.
         app.launch()
         let alewifeHeadsign = app.staticTexts["Alewife"]
         XCTAssert(alewifeHeadsign.waitForExistence(timeout: 30))
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        app.staticTexts["Alewife"].tap()
+        alewifeHeadsign.tap()
+
+        let rlPill = app.staticTexts["RL"]
+        XCTAssert(rlPill.waitForExistence(timeout: 30))
 
         XCTAssertFalse(app.staticTexts["Nearby Transit"].exists)
         XCTAssertTrue(app.staticTexts["Northbound to"].exists)

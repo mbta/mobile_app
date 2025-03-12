@@ -6,6 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
+import DeveloperToolsSupport
 import Foundation
 
 enum SelectedTab: Hashable, CaseIterable {

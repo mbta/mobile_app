@@ -327,7 +327,7 @@ final class TripHeaderCardTests: XCTestCase {
         )
         XCTAssertEqual(
             "displays more information",
-            try withTap.inspect().zStack().accessibilityHint().string()
+            try withTap.inspect().find(TripHeaderCard.self).implicitAnyView().zStack().accessibilityHint().string()
         )
 
         let withoutTap = TripHeaderCard(
@@ -340,7 +340,7 @@ final class TripHeaderCardTests: XCTestCase {
         )
         XCTAssertEqual(
             "",
-            try withoutTap.inspect().zStack().accessibilityHint().string()
+            try withoutTap.inspect().find(TripHeaderCard.self).implicitAnyView().zStack().accessibilityHint().string()
         )
 
         let vehicle = objects.vehicle { vehicle in
