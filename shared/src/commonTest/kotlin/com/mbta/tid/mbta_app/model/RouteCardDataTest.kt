@@ -926,7 +926,7 @@ class RouteCardDataTest {
                     ),
                         RouteCardData.Leaf(
                             directionId = 1,
-                            routePatterns = listOf(typicalOutbound),
+                            routePatterns = listOf(deviationInbound),
                             stopIds = setOf(stop1.id),
                             upcomingTrips = listOf(
                                 objects.upcomingTrip(deviationInboundPrediction),
@@ -1474,7 +1474,6 @@ class RouteCardDataTest {
             stopSequence = 90
             departureTime = time - 2.hours
         }
-
         val staticData =
             NearbyStaticData.build {
                 route(route) {
@@ -1527,7 +1526,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForList checks route along with route pattern and stop`()  {
+    fun `RouteCardData routeCardsForStopList checks route along with route pattern and stop`()  {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route { sortOrder = 1 }
@@ -1538,7 +1537,8 @@ class RouteCardDataTest {
         val routePattern2 = objects.routePattern(route2) { representativeTrip { headsign = "B" } }
         val trip2 = objects.trip(routePattern2)
 
-        // Should not be included
+        // change from before: this will be included because it has a matching
+        // route & direction, even if it is an unexpected route pattern.
         val trip3 = objects.trip(routePattern2) { routePatternId = "not the right id" }
 
         val time = Instant.parse("2024-03-18T10:41:13-04:00")
@@ -1569,64 +1569,52 @@ class RouteCardDataTest {
         val pred2 = objects.prediction(sched2) { departureTime = time + 2.3.minutes }
         val pred3 = objects.prediction(sched3) { departureTime = time + 3.4.minutes }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(route1) { stop(stop) { headsign("A", listOf(routePattern1)) } }
-                route(route2) { stop(stop) { headsign("B", listOf(routePattern2)) } }
-            }
+
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
 
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            route1,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "A",
-                                    null,
-                                    listOf(routePattern1),
-                                    listOf(objects.upcomingTrip(sched1, pred1))
-                                )
-                            )
-                        )
-                    )
-                ),
-                StopsAssociated.WithRoute(
-                    route2,
-                    listOf(
-                        PatternsByStop(
-                            route2,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route2,
-                                    "B",
-                                    null,
-                                    listOf(routePattern2),
-                                    listOf(objects.upcomingTrip(sched2, pred2))
-                                )
-                            )
-                        )
-                    )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(routePattern1),
+                        stopIds = setOf(stop.id),
+                        upcomingTrips = listOf(objects.upcomingTrip(prediction = pred1, schedule = sched1)),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
+                    )),
+                    ))),
+                RouteCardData(
+                    lineOrRoute = RouteCardData.LineOrRoute.Route(route2),
+                    stopData = listOf(
+                        RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                            directionId = 0,
+                            routePatterns = listOf(routePattern2),
+                            stopIds = setOf(stop.id),
+                            upcomingTrips = listOf(objects.upcomingTrip(prediction = pred2, schedule = sched2),
+                                objects.upcomingTrip(prediction = pred3, schedule = sched3)),
+                            allDataLoaded = true,
+                            alertsHere = emptyList()
+
+                        )),
+                        )))),
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(stop.id),
+                globalData = global,
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),)
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit)
         )
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips groups lines by direction`()  {
+    fun `RouteCardData routeCardsForStopList groups lines by direction`()  {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val line = objects.line { id = "line-Green" }
@@ -1752,123 +1740,65 @@ class RouteCardDataTest {
         val predE1 = objects.prediction(schedE1) { departureTime = time + 2.3.minutes }
         val predE2 = objects.prediction(schedE2) { departureTime = time + 6.3.minutes }
 
+        // TODO: Use directions
         val directionWest = Direction("West", "Kenmore & West", 0)
         val directionEast = Direction("East", "Park St & North", 1)
 
-        val staticData =
-            NearbyStaticData.build {
-                line(line, listOf(routeB, routeC, routeE)) {
-                    stop(stop, listOf(routeB, routeC, routeE)) {
-                        direction(
-                            directionWest,
-                            listOf(routeB, routeC),
-                            listOf(routePatternB1, routePatternC1)
-                        )
-                        headsign(routeE, "Heath Street", listOf(routePatternE1))
-                        direction(
-                            directionEast,
-                            listOf(routeB, routeC, routeE),
-                            listOf(routePatternB2, routePatternC2, routePatternE2)
-                        )
-                    }
-                }
-            }
+        val global = GlobalResponse(objects,
+            patternIdsByStop = mapOf(stop.id to listOf(routePatternB1.id,
+                routePatternB2.id,
+                routePatternC1.id,
+                routePatternC2.id,
+                routePatternE1.id,
+                routePatternE2.id)))
 
         val expected =
-            StopsAssociated.WithLine(
-                line,
-                listOf(routeB, routeC, routeE),
-                listOf(
-                    PatternsByStop(
-                        listOf(routeB, routeC, routeE),
-                        line,
-                        stop,
-                        listOf(
-                            RealtimePatterns.ByDirection(
-                                line,
-                                listOf(routeB, routeC),
-                                directionWest,
-                                listOf(routePatternB1, routePatternC1),
-                                listOf(
-                                    objects.upcomingTrip(schedB1, predB1),
-                                    objects.upcomingTrip(schedC1, predC1),
-                                )
-                            ),
-                            RealtimePatterns.ByHeadsign(
-                                routeE,
-                                "Heath Street",
-                                line,
-                                listOf(routePatternE1),
-                                listOf(objects.upcomingTrip(schedE1, predE1))
-                            ),
-                            RealtimePatterns.ByDirection(
-                                line,
-                                listOf(routeB, routeC, routeE),
-                                directionEast,
-                                listOf(routePatternB2, routePatternC2, routePatternE2),
-                                listOf(
-                                    objects.upcomingTrip(schedB2, predB2),
-                                    objects.upcomingTrip(schedC2, predC2),
-                                    objects.upcomingTrip(schedE2, predE2),
-                                )
-                            ),
-                        ),
-                        listOf(directionWest, directionEast),
-                        emptyList()
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(routeB, routeC, routeE)),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(routePatternB1, routePatternC1, routePatternE1),
+                        stopIds = setOf(stop.id),
+                        upcomingTrips = listOf(objects.upcomingTrip(prediction = predB1, schedule = schedB1),
+                            objects.upcomingTrip(prediction = predC1, schedule = schedC1),
+                            objects.upcomingTrip(prediction = predE1, schedule = schedE1)),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
+                    ),RouteCardData.Leaf(
+                        directionId = 1,
+                        routePatterns = listOf(routePatternB2, routePatternC2, routePatternE2),
+                        stopIds = setOf(stop.id),
+                        upcomingTrips = listOf(objects.upcomingTrip(prediction = predB2, schedule = schedB2),
+                            objects.upcomingTrip(prediction = predC2, schedule = schedC2),
+                            objects.upcomingTrip(prediction = predE2, schedule = schedE2)),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
                     )
-                )
-            )
+                        ),
+                    ))))
+
+
 
         assertEquals(
-            listOf(expected),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+            expected,
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(stop.id),
+                globalData = global,
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),)
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit)
         )
     }
 
     @Test
-    fun `NearbyStaticData getSchedulesTodayByPattern determines which patterns have service today`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route()
-        val routePatternA =
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "A" }
-            }
-        val routePatternB =
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "B" }
-            }
-        val trip1 = objects.trip(routePatternA)
-
-        val time = Instant.parse("2024-03-14T12:23:44-04:00")
-
-        objects.schedule {
-            trip = trip1
-            stopId = stop.id
-            stopSequence = 90
-            departureTime = time - 2.hours
-        }
-
-        assertNull(NearbyStaticData.getSchedulesTodayByPattern(null))
-
-        val hasSchedulesToday =
-            NearbyStaticData.getSchedulesTodayByPattern(ScheduleResponse(objects))
-
-        assertTrue(hasSchedulesToday?.get(routePatternA.id)!!)
-        assertNull(hasSchedulesToday[routePatternB.id])
-    }
-
-    @Test
-    fun `ListBuilder addUpcomingTrips north station disruption case`() {
+    fun `RouteCardData routeCardsForStopList north station disruption case`() {
         val objects = ObjectCollectionBuilder()
         val northStation =
             objects.stop {
@@ -1973,9 +1903,13 @@ class RouteCardDataTest {
                 }
             }
 
-        val orangeNorthboundTypicalTrip = objects.trip(orangeNorthboundTypical)
+        val orangeNorthboundTypicalTrip = objects.trip(orangeNorthboundTypical) {
+            id = "northboundTypical"
+        }
 
-        val orangeNorthboundDiversionTrip = objects.trip(orangeNorthboundDiversion)
+        val orangeNorthboundDiversionTrip = objects.trip(orangeNorthboundDiversion) {
+            id = "northboundDiversion"
+        }
 
         val orangeSouthboundDiversionTrip = objects.trip(orangeSouthboundDiversion)
 
@@ -2078,78 +2012,51 @@ class RouteCardDataTest {
                     )
             }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(orangeRoute) {
-                    stop(northStation) {
-                        headsign(
-                            "Forest Hills",
-                            listOf(orangeSouthboundTypical, orangeSouthboundDiversion)
-                        )
-                        headsign("Oak Grove", listOf(orangeNorthboundTypical))
-                        headsign("North Station", listOf(orangeNorthboundDiversion))
-                    }
-                }
-            }
+        val global = GlobalResponse(objects )
 
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    orangeRoute,
-                    listOf(
-                        PatternsByStop(
-                            orangeRoute,
-                            northStation,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    orangeRoute,
-                                    "Forest Hills",
-                                    null,
-                                    listOf(orangeSouthboundTypical, orangeSouthboundDiversion),
-                                    listOf(
-                                        UpcomingTrip(
-                                            trip = orangeSouthboundDiversionTrip,
-                                            schedule = southboundSchedule
-                                        )
-                                    ),
-                                    alertsHere = listOf(alert),
-                                    hasSchedulesToday = true
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    orangeRoute,
-                                    "Oak Grove",
-                                    null,
-                                    listOf(orangeNorthboundTypical),
-                                    listOf(
-                                        UpcomingTrip(
-                                            trip = orangeNorthboundTypicalTrip,
-                                            prediction = northboundPrediction,
-                                            predictionStop = northStationNorthboundPlatform
-                                        )
-                                    ),
-                                    alertsHere = listOf(alert),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesToday = false
-                                ),
-                            )
-                        )
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(orangeRoute),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(northStation, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(orangeSouthboundTypical, orangeSouthboundDiversion),
+                        stopIds = setOf(northStation.id, northStationSouthboundPlatform.id, northStationNorthboundPlatform.id),
+                        upcomingTrips = listOf(           UpcomingTrip(
+                            trip = orangeSouthboundDiversionTrip,
+                            schedule = southboundSchedule
+                        )),
+                        allDataLoaded = true,
+                        // TODO: incorporate alert
+                        alertsHere = emptyList()
+
+                    ),RouteCardData.Leaf(
+                        directionId = 1,
+                        routePatterns = listOf(orangeNorthboundTypical, orangeNorthboundDiversion),
+                        stopIds = setOf(northStation.id, northStationSouthboundPlatform.id, northStationNorthboundPlatform.id),
+                        upcomingTrips = listOf(),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
                     )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+                    ),
+                    )))),
+            RouteCardData.routeCardsForStopList(
+                listOf(northStation.id, northStationSouthboundPlatform.id, northStationNorthboundPlatform.id),
+                globalData = global,
                 sortByDistanceFrom = northStation.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit
             )
         )
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips filters out headsign if it is the last stop of route pattern`() {
+    fun `RouteCardData routeCardsForList filters out direction if it is the typical last stop of subway`() {
         val objects = ObjectCollectionBuilder()
 
         val oakGrove =
@@ -2186,15 +2093,7 @@ class RouteCardDataTest {
                 }
             }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(orangeRoute) {
-                    stop(oakGrove) {
-                        headsign("Forest Hills", listOf(orangeSouthboundTypical))
-                        headsign("Oak Grove", listOf(orangeNorthboundTypical))
-                    }
-                }
-            }
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(oakGrove.id to listOf(orangeSouthboundTypical.id, orangeNorthboundTypical.id)))
 
         val time = Instant.parse("2024-10-30T16:40:00-04:00")
 
@@ -2218,41 +2117,37 @@ class RouteCardDataTest {
             }
 
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    orangeRoute,
-                    listOf(
-                        PatternsByStop(
-                            orangeRoute,
-                            oakGrove,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    orangeRoute,
-                                    "Forest Hills",
-                                    null,
-                                    listOf(orangeSouthboundTypical),
-                                    listOf(objects.upcomingTrip(sched1)),
-                                    hasSchedulesToday = true
-                                ),
-                            )
-                        )
-                    )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(orangeRoute),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(oakGrove, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(orangeSouthboundTypical),
+                        stopIds = setOf(oakGrove.id),
+                        upcomingTrips = listOf(           UpcomingTrip(
+                            trip = orangeSouthboundTypicalTrip,
+                            schedule = sched1
+                        )),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
+                    )))))),
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(oakGrove.id),
+                globalData = global,
                 sortByDistanceFrom = oakGrove.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit
             )
         )
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips filters out any arrival only for non-subway routes`() {
+    fun `RouteCardData routeCardsForStopList filters out any arrival only for non-subway routes`() {
         val objects = ObjectCollectionBuilder()
 
         val longWharf =
@@ -2292,16 +2187,7 @@ class RouteCardDataTest {
                 }
             }
 
-        val staticData =
-            NearbyStaticData.build {
-                route(ferryRoute) {
-                    stop(longWharf) {
-                        headsign("Hingham", listOf(ferryOutboundToHingham))
-                        headsign("Long Wharf", listOf(ferryInboundToLongWharf))
-                    }
-                }
-            }
-
+        val global = GlobalResponse(objects, patternIdsByStop = mapOf(longWharf.id to listOf(ferryInboundToLongWharf.id, ferryOutboundToHingham.id)))
         val time = Instant.parse("2024-10-30T16:40:00-04:00")
 
         val ferryInboundTrip = objects.trip(ferryInboundToLongWharf)
@@ -2324,35 +2210,28 @@ class RouteCardDataTest {
             }
 
         assertEquals(
-            listOf(
-                StopsAssociated.WithRoute(
-                    ferryRoute,
-                    listOf(
-                        PatternsByStop(
-                            ferryRoute,
-                            longWharf,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    ferryRoute,
-                                    "Hingham",
-                                    null,
-                                    listOf(ferryOutboundToHingham),
-                                    listOf(objects.upcomingTrip(schedOutbound)),
-                                    hasSchedulesToday = true
-                                ),
-                            )
-                        )
-                    )
-                )
-            ),
-            staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects),
+            listOf(RouteCardData(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(ferryRoute),
+                stopData = listOf(
+                    RouteCardData.RouteStopData(longWharf, emptyList(), listOf(RouteCardData.Leaf(
+                        directionId = 0,
+                        routePatterns = listOf(ferryOutboundToHingham),
+                        stopIds = setOf(longWharf.id),
+                        upcomingTrips = listOf(objects.upcomingTrip(schedOutbound)),
+                        allDataLoaded = true,
+                        alertsHere = emptyList()
+
+                    )))))),
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(longWharf.id),
+                globalData = global,
                 sortByDistanceFrom = longWharf.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
-                pinnedRoutes = setOf(),)
+                pinnedRoutes = setOf(),
+                context = RouteCardData.Context.NearbyTransit)
         )
     }
 

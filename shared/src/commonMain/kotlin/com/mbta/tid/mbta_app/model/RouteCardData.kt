@@ -365,10 +365,6 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
 
                     byDirectionId.data =
                         byDirectionId.data
-                            .mapValues {
-                                val (directionId, leafBuilder) = it
-                                leafBuilder.filterCancellations(isSubway, context)
-                            }
                             .filter {
                                 val (directionId, leafBuilder) = it
                                 leafBuilder.shouldShow(
@@ -379,6 +375,12 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                     isSubway,
                                     globalData
                                 )
+                            }
+                            .mapValues {
+                                val (directionId, leafBuilder) = it
+                                leafBuilder
+                                    .filterCancellations(isSubway, context)
+                                    .filterArrivalOnly()
                             }
                 }
                 byStopId.stopData = byStopId.stopData.filterNot { it.value.data.isEmpty() }
@@ -401,25 +403,6 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
 
         fun build(): RouteCardData {
             return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() })
-        }
-
-        companion object {
-            /**
-             * Construct a map of the route/line-ids served by the given stops. Uses the order of
-             * the stops in the given list to determine the stop ids that will be included for each
-             * route.
-             *
-             * A stop is only included at a route if it serves any route pattern that is not served
-             * by an earlier stop in the list.
-             */
-            fun fromListOfStops(
-                global: GlobalResponse,
-                stopIds: List<String>
-            ): Map<String, Builder> {
-                // TODO - basically what NearbyStaticData constructor does but into the new data
-                // types
-                return emptyMap()
-            }
         }
     }
 
@@ -476,6 +459,21 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             return this
         }
 
+        /** Filter the list of upcoming trips to remove any that are arrival-only. */
+        fun filterArrivalOnly(): LeafBuilder {
+
+            val filteredTrips =
+                this.upcomingTrips?.filterNot { trip -> trip.isArrivalOnly() ?: false }
+            this.upcomingTrips = filteredTrips
+            return this
+        }
+
+        /**
+         * Whether this leaf should be a shown. A leaf should be shown if any of the following are
+         * true:
+         * - Any pattern it serves is typical
+         * - it has upcoming service that is not arrival-only
+         */
         fun shouldShow(
             stop: Stop,
             filterAtTime: Instant,
@@ -497,7 +495,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                     // This way, during a scheduled disruption we still show arrival-only
                     // headsign(s) at
                     // a temporary terminal to acknowledge the missing typical service.
-                    this.isLastStopOnRoutePattern(stop, globalData) &&
+                    this.isTypicalLastStopOnRoutePattern(stop, globalData) &&
                         (this.upcomingTrips?.isArrivalOnly() ?: false)
                 } else {
                     this.upcomingTrips?.isArrivalOnly() ?: false
@@ -508,16 +506,19 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             return (isTypical || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
         }
 
-        private fun isLastStopOnRoutePattern(stop: Stop, globalData: GlobalResponse): Boolean {
+        private fun isTypicalLastStopOnRoutePattern(
+            stop: Stop,
+            globalData: GlobalResponse
+        ): Boolean {
             return this.routePatterns
                 ?.filter {
                     it.typicality == com.mbta.tid.mbta_app.model.RoutePattern.Typicality.Typical
                 }
                 ?.mapNotNull { it.representativeTripId }
-                ?.any { representativeTripId ->
+                ?.all { representativeTripId ->
                     val representativeTrip = globalData.trips[representativeTripId]
                     val lastStopIdInPattern =
-                        representativeTrip?.stopIds?.last() ?: return@any false
+                        representativeTrip?.stopIds?.last() ?: return@all false
                     lastStopIdInPattern == stop.id ||
                         stop.childStopIds.contains(lastStopIdInPattern)
                 }
