@@ -6,17 +6,22 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
 // type aliases can't be nested :(
-
-typealias ByDirection = Map<Int, RouteCardData.Leaf>
 
 private typealias ByDirectionBuilder = Map<Int, RouteCardData.LeafBuilder>
 
 private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuilder>
 
 private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
+
+// route/ine id =>  stop id => direction id => upcoming trips
+private typealias MutablePartialHierarchy<T> =
+    MutableMap<String, MutableMap<String, MutableMap<Int, T>>>
+
+private typealias PartialHierarchy<T> = Map<String, Map<String, Map<Int, T>>>
 
 /**
  * Contain all data for presentation in a route card. A route card is a snapshot of service for a
@@ -26,20 +31,23 @@ private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: List<RouteStopData>) {
     enum class Context {
         NearbyTransit,
-        StopDetails
+        StopDetailsFiltered,
+        StopDetailsUnfiltered;
+
+        fun isStopDetails(): Boolean {
+            return this == StopDetailsFiltered || this == StopDetailsUnfiltered
+        }
     }
 
-    data class RouteStopData(
-        val stop: Stop,
-        val directions: List<Direction>,
-        val data: ByDirection
-    )
+    data class RouteStopData(val stop: Stop, val directions: List<Direction>, val data: List<Leaf>)
 
     data class Leaf(
+        val directionId: Int,
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
         val upcomingTrips: List<UpcomingTrip>,
-        val alertsHere: List<Alert>
+        val alertsHere: List<Alert>,
+        val allDataLoaded: Boolean
     )
 
     sealed interface LineOrRoute {
@@ -49,6 +57,20 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         ) : LineOrRoute
 
         data class Route(val route: com.mbta.tid.mbta_app.model.Route) : LineOrRoute
+
+        fun isSubway(): Boolean {
+            return when (this) {
+                is Line -> this.routes.any { it.type.isSubway() }
+                is Route -> this.route.type.isSubway()
+            }
+        }
+
+        fun id(): String {
+            return when (this) {
+                is Line -> this.line.id
+                is Route -> this.route.id
+            }
+        }
     }
 
     companion object {
@@ -73,7 +95,6 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             filterAtTime: Instant,
-            hideNonTypicalPatternsBeyondNext: Duration?,
             pinnedRoutes: Set<String>,
             context: Context
         ): List<RouteCardData>? {
@@ -85,28 +106,27 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
             // annoying
             if (globalData == null) return null
 
+            val hideNonTypicalPatternsBeyondNext: Duration? =
+                when (context) {
+                    Context.NearbyTransit -> 120.minutes
+                    Context.StopDetailsFiltered -> 120.minutes
+                    Context.StopDetailsUnfiltered -> null
+                }
+
             val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
 
             return ListBuilder()
                 .addStaticStopsData(stopIds, globalData)
-                .addUpcomingTrips(schedules, predictions, filterAtTime)
-                .filterIrrelevantData(
-                    cutoffTime,
-                    showAllPatternsWhileLoading = context == Context.StopDetails,
-                    filterCancellations = context == Context.NearbyTransit
-                )
-                .addAlerts(
-                    alerts,
-                    includeMinorAlerts = context == Context.StopDetails,
-                    filterAtTime
-                )
+                .addUpcomingTrips(schedules, predictions, filterAtTime, globalData)
+                .filterIrrelevantData(filterAtTime, cutoffTime, context, globalData)
+                .addAlerts(alerts, includeMinorAlerts = context.isStopDetails(), filterAtTime)
                 .build()
                 .sort(sortByDistanceFrom, pinnedRoutes)
         }
     }
 
     class ListBuilder() {
-        var data: ByLineOrRouteBuilder = emptyMap()
+        var data: ByLineOrRouteBuilder = mutableMapOf()
             private set
 
         /**
@@ -179,6 +199,7 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                                                         .groupBy { pattern -> pattern.directionId }
                                                         .mapValues {
                                                             LeafBuilder(
+                                                                directionId = it.key,
                                                                 routePatterns = it.value,
                                                                 stopIds =
                                                                     parentToAllStopIds.getOrElse(
@@ -238,12 +259,81 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         fun addUpcomingTrips(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse,
-            filterAtTime: Instant
+            filterAtTime: Instant,
+            globalData: GlobalResponse,
         ): ListBuilder {
-            // TODO build upcoming trips
-            // transform into map route => stop => direction => upcoming trips
-            // merge into data
+
+            val upcomingTrips =
+                UpcomingTrip.tripsFromData(
+                    globalData.stops,
+                    schedules?.schedules.orEmpty(),
+                    predictions.predictions.values.toList(),
+                    schedules?.trips.orEmpty() + predictions.trips,
+                    predictions.vehicles,
+                    filterAtTime
+                )
+
+            val partialHierarchy: MutablePartialHierarchy<MutableList<UpcomingTrip>> =
+                mutableMapOf()
+
+            for (upcomingTrip in upcomingTrips) {
+                val parentStopId =
+                    upcomingTrip.stopId?.let { parentStop(globalData, it)?.id } ?: continue
+                val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.trip.routeId) ?: continue
+                partialHierarchy
+                    .getOrPut(lineOrRouteId, ::mutableMapOf)
+                    .getOrPut(parentStopId, ::mutableMapOf)
+                    .getOrPut(upcomingTrip.trip.directionId, ::mutableListOf)
+                    .add(upcomingTrip)
+            }
+
+            this.updateLeaves<List<UpcomingTrip>>(partialHierarchy) { leafBuilder, upcomingTrips ->
+                leafBuilder.upcomingTrips = upcomingTrips
+                leafBuilder.allDataLoaded = schedules != null
+            }
             return this
+        }
+
+        private fun parentStop(global: GlobalResponse, stopId: String): Stop? {
+            val stop = global.stops[stopId] ?: return null
+            return stop.resolveParent(global.stops)
+        }
+
+        private fun lineOrRouteId(global: GlobalResponse, routeId: String): String? {
+            val route = global.routes[routeId] ?: return null
+            val line = route.lineId.let { global.lines[it] }
+            return if (line != null && line.isGrouped && !route.isShuttle) {
+                line.id
+            } else {
+                routeId
+            }
+        }
+
+        /**
+         * update the [ByLineOrRouteBuilder] leaves by only adding data to the existing
+         * LeafBuilders. with the provided [add] function. If the partialHierarchy contains any
+         * routes / stops / directions that are not present in the builder, they *will not* be added
+         * to the builder.
+         */
+        private fun <T> updateLeaves(
+            partialHierarchy: PartialHierarchy<T>,
+            add: (leafBuilder: LeafBuilder, newData: T) -> Unit
+        ) {
+            for (entry in partialHierarchy) {
+                val (routeOrLineId, byStopId) = entry
+                for (stopEntry in byStopId) {
+                    val (stopId, byDirectionId) = stopEntry
+                    for (directionEntry in byDirectionId) {
+                        val (directionId, newLeafData) = directionEntry
+                        this.data[routeOrLineId]
+                            ?.stopData
+                            ?.get(stopId)
+                            ?.data
+                            ?.get(directionId)
+                            ?.let { add(it, newLeafData) }
+                    }
+                }
+            }
         }
 
         fun addAlerts(
@@ -259,11 +349,43 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         }
 
         fun filterIrrelevantData(
+            filterAtTime: Instant,
             cutoffTime: Instant?,
-            showAllPatternsWhileLoading: Boolean,
-            filterCancellations: Boolean
+            context: Context,
+            globalData: GlobalResponse
         ): ListBuilder {
-            // TODO
+
+            val showAllPatternsWhileLoading = context.isStopDetails()
+            for (entry in this.data) {
+                val (routeOrLineId, byStopId) = entry
+                for (stopEntry in byStopId.stopData) {
+                    val (stopId, byDirectionId) = stopEntry
+                    val isSubway = byStopId.lineOrRoute.isSubway()
+                    for (directionEntry in byDirectionId.data) {}
+
+                    byDirectionId.data =
+                        byDirectionId.data
+                            .filter {
+                                val (directionId, leafBuilder) = it
+                                leafBuilder.shouldShow(
+                                    byDirectionId.stop,
+                                    filterAtTime,
+                                    cutoffTime,
+                                    showAllPatternsWhileLoading,
+                                    isSubway,
+                                    globalData
+                                )
+                            }
+                            .mapValues {
+                                val (directionId, leafBuilder) = it
+                                leafBuilder
+                                    .filterCancellations(isSubway, context)
+                                    .filterArrivalOnly()
+                            }
+                }
+                byStopId.stopData = byStopId.stopData.filterNot { it.value.data.isEmpty() }
+            }
+            this.data = this.data.filterNot { it.value.stopData.isEmpty() }
             return this
         }
 
@@ -277,61 +399,130 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         }
     }
 
-    data class Builder(val lineOrRoute: LineOrRoute, val stopData: ByStopIdBuilder) {
+    data class Builder(val lineOrRoute: LineOrRoute, var stopData: ByStopIdBuilder) {
 
         fun build(): RouteCardData {
             return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() })
-        }
-
-        companion object {
-            /**
-             * Construct a map of the route/line-ids served by the given stops. Uses the order of
-             * the stops in the given list to determine the stop ids that will be included for each
-             * route.
-             *
-             * A stop is only included at a route if it serves any route pattern that is not served
-             * by an earlier stop in the list.
-             */
-            fun fromListOfStops(
-                global: GlobalResponse,
-                stopIds: List<String>
-            ): Map<String, Builder> {
-                // TODO - basically what NearbyStaticData constructor does but into the new data
-                // types
-                return emptyMap()
-            }
         }
     }
 
     data class RouteStopDataBuilder(
         val stop: Stop,
         val directions: List<Direction>,
-        val data: ByDirectionBuilder
+        var data: ByDirectionBuilder
     ) {
         fun build(): RouteCardData.RouteStopData {
-            return RouteCardData.RouteStopData(
-                stop,
-                directions,
-                data.mapValues { it.value.build() }
-            )
+            return RouteCardData.RouteStopData(stop, directions, data.values.map { it.build() })
         }
     }
 
     data class LeafBuilder(
+        val directionId: Int,
         var routePatterns: List<RoutePattern>? = null,
         var stopIds: Set<String>? = null,
         var upcomingTrips: List<UpcomingTrip>? = null,
-        var alertsHere: List<Alert>? = null
+        var alertsHere: List<Alert>? = null,
+        var allDataLoaded: Boolean? = null
     ) {
 
         fun build(): RouteCardData.Leaf {
             // TODO: Once alerts functionality is added, checkNotNull on alerts too
             return RouteCardData.Leaf(
+                directionId,
                 checkNotNull(routePatterns),
                 checkNotNull(stopIds),
-                checkNotNull(this.upcomingTrips),
-                alertsHere ?: emptyList()
+                this.upcomingTrips ?: emptyList(),
+                alertsHere ?: emptyList(),
+                allDataLoaded ?: false
             )
+        }
+
+        /**
+         * Filter the list of upcoming trips to remove cancelled trips based on the context and
+         * whether or not the route is a subway route.
+         */
+        fun filterCancellations(isSubway: Boolean, context: Context): LeafBuilder {
+
+            val filteredTrips =
+                this.upcomingTrips?.filter { trip ->
+                    if (
+                        context == Context.NearbyTransit ||
+                            context == Context.StopDetailsUnfiltered ||
+                            isSubway
+                    ) {
+                        !trip.isCancelled
+                    } else {
+                        true
+                    }
+                }
+            this.upcomingTrips = filteredTrips
+            return this
+        }
+
+        /** Filter the list of upcoming trips to remove any that are arrival-only. */
+        fun filterArrivalOnly(): LeafBuilder {
+
+            val filteredTrips =
+                this.upcomingTrips?.filterNot { trip -> trip.isArrivalOnly() ?: false }
+            this.upcomingTrips = filteredTrips
+            return this
+        }
+
+        /**
+         * Whether this leaf should be a shown. A leaf should be shown if any of the following are
+         * true:
+         * - Any pattern it serves is typical
+         * - it has upcoming service that is not arrival-only
+         */
+        fun shouldShow(
+            stop: Stop,
+            filterAtTime: Instant,
+            cutoffTime: Instant?,
+            showAllPatternsWhileLoading: Boolean,
+            isSubway: Boolean,
+            globalData: GlobalResponse
+        ): Boolean {
+            if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
+            val isUpcoming =
+                when (cutoffTime) {
+                    null -> this.upcomingTrips?.isUpcoming() ?: false
+                    else -> this.upcomingTrips?.isUpcomingWithin(filterAtTime, cutoffTime) ?: false
+                }
+
+            val shouldBeFilteredAsArrivalOnly =
+                if (isSubway) {
+                    // On subway, only filter out arrival only patterns at the typical last stop.
+                    // This way, during a scheduled disruption we still show arrival-only
+                    // headsign(s) at
+                    // a temporary terminal to acknowledge the missing typical service.
+                    this.isTypicalLastStopOnRoutePattern(stop, globalData) &&
+                        (this.upcomingTrips?.isArrivalOnly() ?: false)
+                } else {
+                    this.upcomingTrips?.isArrivalOnly() ?: false
+                }
+
+            val isTypical = routePatterns?.isTypical() ?: false
+
+            return (isTypical || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
+        }
+
+        private fun isTypicalLastStopOnRoutePattern(
+            stop: Stop,
+            globalData: GlobalResponse
+        ): Boolean {
+            return this.routePatterns
+                ?.filter {
+                    it.typicality == com.mbta.tid.mbta_app.model.RoutePattern.Typicality.Typical
+                }
+                ?.mapNotNull { it.representativeTripId }
+                ?.all { representativeTripId ->
+                    val representativeTrip = globalData.trips[representativeTripId]
+                    val lastStopIdInPattern =
+                        representativeTrip?.stopIds?.last() ?: return@all false
+                    lastStopIdInPattern == stop.id ||
+                        stop.childStopIds.contains(lastStopIdInPattern)
+                }
+                ?: false
         }
     }
 }
