@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 import SwiftPhoenixClient
 
 class SocketProvider: ObservableObject {

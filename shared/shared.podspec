@@ -6,15 +6,15 @@ Pod::Spec.new do |spec|
     spec.authors                  = ''
     spec.license                  = 'MIT'
     spec.summary                  = 'Common library for the MBTA mobile app'
-    spec.vendored_frameworks      = 'build/cocoapods/framework/shared.framework'
+    spec.vendored_frameworks      = 'build/cocoapods/framework/Shared.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '15.0'
     spec.dependency 'Sentry', '~> 8.44.0'
 
-    if !Dir.exist?('build/cocoapods/framework/shared.framework') || Dir.empty?('build/cocoapods/framework/shared.framework')
+    if !Dir.exist?('build/cocoapods/framework/Shared.framework') || Dir.empty?('build/cocoapods/framework/Shared.framework')
         raise "
 
-        Kotlin framework 'shared' doesn't exist yet, so a proper Xcode project can't be generated.
+        Kotlin framework 'Shared' doesn't exist yet, so a proper Xcode project can't be generated.
         'pod install' should be executed after running ':generateDummyFramework' Gradle task:
 
             ./gradlew :shared:generateDummyFramework
@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
 
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':shared',
-        'PRODUCT_MODULE_NAME' => 'shared',
+        'PRODUCT_MODULE_NAME' => 'Shared',
     }
 
     spec.script_phases = [

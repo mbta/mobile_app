@@ -7,7 +7,7 @@
 //
 
 import os
-import shared
+import Shared
 import SwiftUI
 
 struct StopDetailsFilteredView: View {
@@ -20,8 +20,8 @@ struct StopDetailsFilteredView: View {
     var departures: StopDetailsDepartures?
     var now: Date
 
-    var alerts: [shared.Alert]
-    var downstreamAlerts: [shared.Alert]
+    var alerts: [Shared.Alert]
+    var downstreamAlerts: [Shared.Alert]
     var patternsByStop: PatternsByStop?
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 

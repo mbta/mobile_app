@@ -7,7 +7,7 @@
 //
 
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 import SwiftUI
 
 extension AppVariant {
