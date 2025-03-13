@@ -24,6 +24,10 @@ private typealias MutablePartialHierarchy<T> =
 
 private typealias PartialHierarchy<T> = Map<String, Map<String, Map<Int, T>>>
 
+/**
+ * Basic data that a row of a route card should have. For backwards compatibility with
+ * [RealtimePatterns]
+ */
 interface ILeafData {
     val hasMajorAlerts: Boolean
     val upcomingTrips: List<UpcomingTrip>
@@ -441,7 +445,11 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
         var data: ByDirectionBuilder
     ) {
         fun build(): RouteCardData.RouteStopData {
-            return RouteCardData.RouteStopData(stop, directions, data.values.map { it.build() })
+            return RouteCardData.RouteStopData(
+                stop,
+                directions,
+                data.values.map { it.build() }.sortedBy { it.directionId }
+            )
         }
     }
 
