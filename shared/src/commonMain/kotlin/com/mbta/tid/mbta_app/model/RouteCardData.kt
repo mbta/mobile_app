@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
+import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -23,12 +24,18 @@ private typealias MutablePartialHierarchy<T> =
 
 private typealias PartialHierarchy<T> = Map<String, Map<String, Map<Int, T>>>
 
+interface ILeafData {
+    val hasMajorAlerts: Boolean
+    val upcomingTrips: List<UpcomingTrip>
+    val hasSchedulesToday: Boolean
+}
+
 /**
  * Contain all data for presentation in a route card. A route card is a snapshot of service for a
  * route at a set of stops. It has the general structure: Route (or Line) => Stop(s) => Direction =>
  * Upcoming Trips / reason for absence of upcoming trips
  */
-data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: List<RouteStopData>) {
+data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteStopData>) {
     enum class Context {
         NearbyTransit,
         StopDetailsFiltered,
@@ -45,10 +52,16 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
         val directionId: Int,
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
-        val upcomingTrips: List<UpcomingTrip>,
+        override val upcomingTrips: List<UpcomingTrip>,
         val alertsHere: List<Alert>,
-        val allDataLoaded: Boolean
-    )
+        val allDataLoaded: Boolean,
+        override val hasSchedulesToday: Boolean
+    ) : ILeafData {
+        override val hasMajorAlerts: Boolean
+            get() = run {
+                this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
+            }
+    }
 
     sealed interface LineOrRoute {
         data class Line(
@@ -71,6 +84,22 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                 is Route -> this.route.id
             }
         }
+
+        /** The route whose sortOrder to use when sorting a RouteCardData. */
+        fun sortRoute() =
+            when (this) {
+                is Route -> this.route
+                is Line -> this.routes.min()
+            }
+    }
+
+    @OptIn(ExperimentalTurfApi::class)
+    /** The distance from the given position to the first stop in this route card. */
+    fun distanceFrom(position: Position): Double {
+        return io.github.dellisd.spatialk.turf.distance(
+            position,
+            this.stopData.first().stop.position
+        )
     }
 
     companion object {
@@ -433,7 +462,8 @@ data class RouteCardData(private val lineOrRoute: LineOrRoute, val stopData: Lis
                 checkNotNull(stopIds),
                 this.upcomingTrips ?: emptyList(),
                 alertsHere ?: emptyList(),
-                allDataLoaded ?: false
+                allDataLoaded ?: false,
+                hasSchedulesToday = false // TODO: actually populate
             )
         }
 
@@ -531,6 +561,5 @@ fun List<RouteCardData>.sort(
     distanceFrom: Position?,
     pinnedRoutes: Set<String>
 ): List<RouteCardData> {
-    // TODO
-    return this
+    return this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
 }

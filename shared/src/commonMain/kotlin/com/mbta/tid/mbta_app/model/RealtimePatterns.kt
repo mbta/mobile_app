@@ -27,7 +27,7 @@ internal fun List<UpcomingTrip>.filterCancellations(isSubway: Boolean): List<Upc
 internal fun UpcomingTripsMap.filterCancellations(isSubway: Boolean): UpcomingTripsMap =
     this.entries.associate { it.key to it.value.filterCancellations(isSubway) }
 
-sealed class RealtimePatterns {
+sealed class RealtimePatterns : ILeafData {
     sealed class UpcomingTripKey {
         data class ByRoutePattern(
             val routeId: String,
@@ -43,13 +43,13 @@ sealed class RealtimePatterns {
 
     // contains null if an added trip with no pattern is included in the upcoming trips
     abstract val patterns: List<RoutePattern?>
-    abstract val upcomingTrips: List<UpcomingTrip>
+    abstract override val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
     abstract val alertsDownstream: List<Alert>?
-    abstract val hasSchedulesToday: Boolean
+    abstract override val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
 
-    val hasMajorAlerts
+    override val hasMajorAlerts
         get() = run {
             this.alertsHere?.any { alert -> alert.significance == AlertSignificance.Major } == true
         }

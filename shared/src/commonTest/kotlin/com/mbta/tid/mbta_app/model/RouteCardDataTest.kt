@@ -837,7 +837,7 @@ class RouteCardDataTest {
                             objects.upcomingTrip(typicalOutboundPrediction),
                         ),
                         allDataLoaded = false,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
                     ))))
             )),
 
@@ -922,7 +922,7 @@ class RouteCardDataTest {
                             objects.upcomingTrip(typicalOutboundPrediction),
                         ),
                         allDataLoaded = false,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
                     ),
                         RouteCardData.Leaf(
                             directionId = 1,
@@ -933,7 +933,7 @@ class RouteCardDataTest {
                                 objects.upcomingTrip(deviationInboundPredictionLater),
                                 ),
                             allDataLoaded = false,
-                            alertsHere = emptyList()
+                            alertsHere = emptyList(), hasSchedulesToday = false
                         )),
             )))),
             RouteCardData.routeCardsForStopList(listOf(stop1.id), global,
@@ -1079,7 +1079,7 @@ class RouteCardDataTest {
                             objects.upcomingTrip(scheduleSoonSchedule),
                         ),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     ))),
                     )),
@@ -1094,7 +1094,7 @@ class RouteCardDataTest {
                                 objects.upcomingTrip(prediction = predictionBrdPrediction, vehicle = predictionBrdVehicle),
                             ),
                             allDataLoaded = true,
-                            alertsHere = emptyList()
+                            alertsHere = emptyList(), hasSchedulesToday = false
 
                         ),
                             RouteCardData.Leaf(
@@ -1105,7 +1105,7 @@ class RouteCardDataTest {
                                     objects.upcomingTrip(predictionSoonPrediction),
                                 ),
                                 allDataLoaded = true,
-                                alertsHere = emptyList()
+                                alertsHere = emptyList(), hasSchedulesToday = false
 
                             ))
                     )),
@@ -1166,7 +1166,7 @@ class RouteCardDataTest {
                         stopIds = setOf(stop1.id),
                         upcomingTrips = listOf(),
                         allDataLoaded = false,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     ))),
                 ))),
@@ -1239,7 +1239,7 @@ class RouteCardDataTest {
                         stopIds = setOf(stop1.id),
                         upcomingTrips = listOf(objects.upcomingTrip(typicalOutboundPrediction)),
                         allDataLoaded = false,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     ),
                         RouteCardData.Leaf(
@@ -1248,7 +1248,7 @@ class RouteCardDataTest {
                             stopIds = setOf(stop1.id),
                             upcomingTrips = listOf(objects.upcomingTrip(deviationInboundPrediction)),
                             allDataLoaded = false,
-                            alertsHere = emptyList()
+                            alertsHere = emptyList(), hasSchedulesToday = false
 
                         )),
                 )))),
@@ -1316,7 +1316,7 @@ class RouteCardDataTest {
                         stopIds = setOf(stop1.id),
                         upcomingTrips = listOf(objects.upcomingTrip(prediction = typicalOutboundPrediction, schedule = typicalOutboundSchedule)),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )),
                     )))),
@@ -1366,7 +1366,7 @@ class RouteCardDataTest {
                         stopIds = setOf(parentStop.id, childStop.id),
                         upcomingTrips = listOf(objects.upcomingTrip(prediction1)),
                         allDataLoaded = false,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )),
                     )))),
@@ -1426,7 +1426,7 @@ class RouteCardDataTest {
                         upcomingTrips = listOf(objects.upcomingTrip(prediction = pred1, schedule = sched1),
                             objects.upcomingTrip(prediction = pred2, schedule = sched2)),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )),
                     )))),
@@ -1582,7 +1582,7 @@ class RouteCardDataTest {
                         stopIds = setOf(stop.id),
                         upcomingTrips = listOf(objects.upcomingTrip(prediction = pred1, schedule = sched1)),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )),
                     ))),
@@ -1596,7 +1596,7 @@ class RouteCardDataTest {
                             upcomingTrips = listOf(objects.upcomingTrip(prediction = pred2, schedule = sched2),
                                 objects.upcomingTrip(prediction = pred3, schedule = sched3)),
                             allDataLoaded = true,
-                            alertsHere = emptyList()
+                            alertsHere = emptyList(), hasSchedulesToday = false
 
                         )),
                         )))),
@@ -1764,7 +1764,7 @@ class RouteCardDataTest {
                             objects.upcomingTrip(prediction = predC1, schedule = schedC1),
                             objects.upcomingTrip(prediction = predE1, schedule = schedE1)),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     ),RouteCardData.Leaf(
                         directionId = 1,
@@ -1774,7 +1774,7 @@ class RouteCardDataTest {
                             objects.upcomingTrip(prediction = predC2, schedule = schedC2),
                             objects.upcomingTrip(prediction = predE2, schedule = schedE2)),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )
                         ),
@@ -2028,7 +2028,7 @@ class RouteCardDataTest {
                         )),
                         allDataLoaded = true,
                         // TODO: incorporate alert
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     ),RouteCardData.Leaf(
                         directionId = 1,
@@ -2036,7 +2036,7 @@ class RouteCardDataTest {
                         stopIds = setOf(northStation.id, northStationSouthboundPlatform.id, northStationNorthboundPlatform.id),
                         upcomingTrips = listOf(),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )
                     ),
@@ -2129,7 +2129,7 @@ class RouteCardDataTest {
                             schedule = sched1
                         )),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )))))),
             RouteCardData.routeCardsForStopList(
@@ -2219,7 +2219,7 @@ class RouteCardDataTest {
                         stopIds = setOf(longWharf.id),
                         upcomingTrips = listOf(objects.upcomingTrip(schedOutbound)),
                         allDataLoaded = true,
-                        alertsHere = emptyList()
+                        alertsHere = emptyList(), hasSchedulesToday = false
 
                     )))))),
             RouteCardData.routeCardsForStopList(
