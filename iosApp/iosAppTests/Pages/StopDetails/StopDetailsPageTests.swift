@@ -148,12 +148,10 @@ final class StopDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.background)
-
+        try sut.inspect().findAndCallOnChange(newValue: ScenePhase.background)
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
-
+        try sut.inspect().findAndCallOnChange(newValue: ScenePhase.active)
         wait(for: [joinExpectation], timeout: 1)
     }
 

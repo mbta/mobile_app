@@ -71,7 +71,6 @@ struct SearchField: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 12)
         .onAppear { isFocused = searchObserver.isFocused }
         .onChange(of: isFocused) { searchObserver.isFocused = $0 }
         .onChange(of: searchObserver.isFocused) { isFocused = $0 }

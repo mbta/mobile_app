@@ -18,6 +18,6 @@ extension PresentationDetent {
 private struct AlmostFull: CustomPresentationDetent {
     static func height(in context: Context) -> CGFloat? {
         // Prevent the background content from shrinking underneath the expanded sheet
-        context.maxDetentValue - 1
+        context.maxDetentValue - 0.5
     }
 }

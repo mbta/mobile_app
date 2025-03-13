@@ -35,7 +35,6 @@ struct SearchResultsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         StopResultsView(stops: stops, handleStopTap: handleStopTap)
                     }
-                    .padding(.top, 8)
                 case let .results(stopResults, routeResults, includeRoutes):
                     VStack(spacing: 8) {
                         StopResultsView(stops: stopResults, handleStopTap: handleStopTap)
@@ -81,7 +80,7 @@ struct SearchResultsView: View {
             }
             .animation(.easeInOut(duration: 0.25), value: state)
             .frame(maxWidth: .infinity, alignment: .topLeading)
-            .padding(.top, 8)
+            .padding(.vertical, 16)
             .padding(.horizontal, 16)
         }
         .background(Color.fill1)

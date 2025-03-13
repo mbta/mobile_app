@@ -34,8 +34,6 @@ struct SearchOverlay: View {
     var body: some View {
         VStack(spacing: .zero) {
             SearchField(searchObserver: searchObserver)
-                .padding(.bottom, 12)
-                .background(searchObserver.isSearching ? Color.fill2 : Color.clear)
             if searchObserver.isSearching {
                 ZStack(alignment: .top) {
                     SearchResultsContainer(
@@ -47,8 +45,8 @@ struct SearchOverlay: View {
                     Divider()
                         .frame(height: 2)
                         .overlay(Color.halo)
-                }
+                }.padding(.top, 16)
             }
-        }
+        }.background(searchObserver.isSearching ? Color.fill2 : Color.clear)
     }
 }

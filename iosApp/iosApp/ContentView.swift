@@ -182,21 +182,28 @@ struct ContentView: View {
     var nearbyTab: some View {
         VStack {
             if contentVM.hideMaps {
-                if nearbyVM.navigationStack.lastSafe() == .nearby {
-                    SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
-                    if !searchObserver.isSearching {
-                        LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
-                            .padding(.bottom, 8)
+                ZStack(alignment: .top) {
+                    searchHeaderBackground
+                    VStack {
+                        if nearbyVM.navigationStack.lastSafe() == .nearby {
+                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                                .padding(.top, 12)
+                            if !searchObserver.isSearching {
+                                LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                                    .padding(.bottom, 8)
+                            }
+                        }
+
+                        if !(nearbyVM.navigationStack.lastSafe() == .nearby && searchObserver.isSearching) {
+                            mapWithSheets
+                        }
                     }
-                }
-                if !(nearbyVM.navigationStack.lastSafe() == .nearby && searchObserver.isSearching) {
-                    mapWithSheets
                 }
             } else {
                 ZStack(alignment: .top) {
-                    mapWithSheets
-                        .accessibilityHidden(searchObserver.isSearching)
-                    VStack(alignment: .center, spacing: 0) {
+                    mapWithSheets.accessibilityHidden(searchObserver.isSearching)
+                    searchHeaderBackground
+                    VStack(alignment: .center, spacing: 20) {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
 
@@ -204,23 +211,25 @@ struct ContentView: View {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
                             }
                         }
-                        if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
-                           locationDataManager.currentLocation != nil {
-                            VStack(alignment: .trailing) {
-                                RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
-                                    viewportProvider.follow()
+                        if !searchObserver.isSearching {
+                            VStack(alignment: .trailing, spacing: 20) {
+                                if !viewportProvider.viewport.isFollowing,
+                                   locationDataManager.currentLocation != nil {
+                                    RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
+                                        viewportProvider.follow()
+                                    }
+                                }
+                                if !viewportProvider.viewport.isOverview,
+                                   let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
+                                    RecenterButton(icon: routeIconResource(routeType), size: 32) {
+                                        viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
+                                    }
                                 }
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
-                        if !searchObserver.isSearching, !viewportProvider.viewport.isOverview,
-                           let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
-                            VStack(alignment: .trailing) {
-                                RecenterButton(icon: routeIconResource(routeType), size: 32) {
-                                    viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
-                                }
-                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(.top, 12)
                 }
             }
         }
@@ -349,6 +358,14 @@ struct ContentView: View {
             .background { Color.fill2.ignoresSafeArea(edges: .all) }
             .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
         }
+    }
+
+    @ViewBuilder
+    var searchHeaderBackground: some View {
+        (
+            searchObserver.isSearching && nearbyVM.navigationStack.lastSafe() == .nearby
+                ? Color.fill2 : Color.clear
+        ).ignoresSafeArea(.all)
     }
 
     private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
