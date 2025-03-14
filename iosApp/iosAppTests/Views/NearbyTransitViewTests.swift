@@ -588,7 +588,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     vehicleType: nil,
                     childStopIds: [],
                     connectingStopIds: [],
-                    parentStationId: nil
+                    parentStationId: nil,
+                    wheelchairBoarding: nil
                 )
                 builder.stop(stop: lechmere) { _ in
                 }

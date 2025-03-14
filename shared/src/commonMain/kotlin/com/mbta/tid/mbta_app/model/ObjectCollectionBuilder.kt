@@ -318,6 +318,7 @@ class ObjectCollectionBuilder {
         var childStopIds: List<String> = emptyList()
         var connectingStopIds: List<String> = emptyList()
         var parentStationId: String? = null
+        var wheelchairBoarding: WheelchairBoardingStatus? = null
 
         var position: Position
             get() = Position(latitude = latitude, longitude = longitude)

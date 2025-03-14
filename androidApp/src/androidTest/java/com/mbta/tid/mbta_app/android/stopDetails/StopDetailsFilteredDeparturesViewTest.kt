@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -42,7 +43,7 @@ class StopDetailsFilteredDeparturesViewTest {
     val route =
         builder.route {
             id = "route_1"
-            type = RouteType.BUS
+            type = RouteType.LIGHT_RAIL
             color = "FF0000"
             directionNames = listOf("North", "South")
             directionDestinations = listOf("Downtown", "Uptown")
@@ -84,6 +85,15 @@ class StopDetailsFilteredDeparturesViewTest {
             latitude = 0.0
             longitude = 0.0
         }
+    val inaccessibleStop =
+        builder.stop {
+            id = "stop_3"
+            name = "Sample Stop 3"
+            locationType = LocationType.STOP
+            latitude = 0.0
+            longitude = 0.0
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+        }
     val line =
         builder.line {
             id = "line_1"
@@ -97,7 +107,7 @@ class StopDetailsFilteredDeparturesViewTest {
             directionId = 0
             headsign = "Sample Headsign"
             routePatternId = "pattern_1"
-            stopIds = listOf(stop.id, downstreamStop.id)
+            stopIds = listOf(stop.id, downstreamStop.id, inaccessibleStop.id)
         }
     val prediction =
         builder.prediction {
@@ -117,6 +127,7 @@ class StopDetailsFilteredDeparturesViewTest {
             builder,
             mutableMapOf(
                 stop.id to listOf(routePatternOne.id, routePatternTwo.id),
+                inaccessibleStop.id to listOf(routePatternOne.id, routePatternTwo.id)
             )
         )
 
@@ -611,5 +622,64 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsNotAccessibleAlert() {
+        val departures =
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    inaccessibleStop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    emptySet(),
+                    now,
+                )
+            )
+        val settings =
+            MockSettingsRepository(settings = mapOf(Settings.ElevatorAccessibility to true))
+        val viewModel = StopDetailsViewModel.mocked(settingsRepository = settings)
+        viewModel.setDepartures(departures)
+        viewModel.loadSettings()
+
+        composeTestRule.setContent {
+            val filterState = remember {
+                mutableStateOf(StopDetailsFilter(routeId = route.id, directionId = 0))
+            }
+
+            StopDetailsFilteredDeparturesView(
+                stopId = inaccessibleStop.id,
+                stopFilter = filterState.value,
+                tripFilter = null,
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData =
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = null,
+                elevatorAlerts = emptyList(),
+                global = globalResponse,
+                now = now,
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                openModal = {},
+                openSheetRoute = {},
+                noPredictionsStatus = null,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
     }
 }

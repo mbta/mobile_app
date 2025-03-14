@@ -147,6 +147,7 @@
     <string name="no_stops_nearby_search">Rechercher par arrêt</string>
     <string name="no_stops_nearby_title">Aucun arrêt à proximité</string>
     <string name="northbound">En direction du nord</string>
+    <string name="not_accessible">Non accessible</string>
     <string name="now">Maintenant</string>
     <string name="now_at">Maintenant à</string>
     <string name="onboarding_feedback_advance">Commencer</string>
