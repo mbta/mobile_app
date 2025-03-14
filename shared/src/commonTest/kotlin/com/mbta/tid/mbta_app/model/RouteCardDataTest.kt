@@ -10,8 +10,6 @@ import kotlinx.datetime.Instant
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -52,13 +50,13 @@ class RouteCardDataTest {
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route1), mapOf(
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
-                                    stop1, emptyList(), mapOf(
+                                    stop1, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(route1rp1),
                                             stopIds = setOf(stop1.id)
                                         )
-                                    )
+                                    ), global
                                 ),
 
 
@@ -107,17 +105,16 @@ class RouteCardDataTest {
                 route1.id to
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route1), mapOf(
-                                stop1.id to RouteCardData.RouteStopDataBuilder(
-                                    stop1, emptyList(), mapOf(
+                                stop1.id to  RouteCardData.RouteStopDataBuilder(
+                                    stop1, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(route1rp1),
                                             stopIds = setOf(stop1.id)
                                         )
-                                    )
-                                ),
-                                stop2.id to RouteCardData.RouteStopDataBuilder(
-                                    stop2, emptyList(), mapOf(
+                                    ), global),
+                                stop2.id to  RouteCardData.RouteStopDataBuilder(
+                                    stop2, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(
@@ -127,7 +124,7 @@ class RouteCardDataTest {
                                             ,
                                             stopIds = setOf(stop2.id)
                                         )
-                                    )
+                                    ), global
                                 ),
 
 
@@ -175,8 +172,8 @@ class RouteCardDataTest {
                 route1.id to
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route1), mapOf(
-                                stop1.id to RouteCardData.RouteStopDataBuilder(
-                                    stop1, emptyList(), mapOf(
+                                stop1.id to  RouteCardData.RouteStopDataBuilder(
+                                    stop1, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(
@@ -194,7 +191,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id)
                                         )
 
-                                    )
+                                    ), global
                                 ),
 
 
@@ -237,33 +234,31 @@ class RouteCardDataTest {
         assertEquals(
             mapOf(
                 route1.id to
-                        RouteCardData.Builder(
-                            RouteCardData.LineOrRoute.Route(route1), mapOf(
+                        RouteCardData.Builder(RouteCardData.LineOrRoute.Route(route1), mapOf(
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
-                                    stop1, emptyList(), mapOf(
+                                    stop1, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(route1rp1),
                                             stopIds = setOf(stop1.id)
                                         )
 
-                                    )
+                                    ),global
                                 ),
-                                )
-                        ),
+                        )),
                 route2.id to
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route2), mapOf(
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
-                                    stop1, emptyList(), mapOf(
+                                    stop1, RouteCardData.LineOrRoute.Route(route2), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(route2rp1),
                                             stopIds = setOf(stop1.id)
                                         )
 
-                                    )
-                                ),
+                                    ), global
+                                )
                             )
                         )
             ),
@@ -324,7 +319,7 @@ class RouteCardDataTest {
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route1), mapOf(
                                 station1.id to RouteCardData.RouteStopDataBuilder(
-                                    station1, emptyList(), mapOf(
+                                    station1, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(
@@ -333,10 +328,10 @@ class RouteCardDataTest {
                                             stopIds = setOf(station1.id, station1stop1.id, station1stop2.id)
 
                                         )
-                                    )
+                                    ), global
                                 ),
                                 stop2.id to RouteCardData.RouteStopDataBuilder(
-                                    stop2, emptyList(), mapOf(
+                                    stop2, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(
@@ -344,7 +339,7 @@ class RouteCardDataTest {
                                             ),
                                             stopIds = setOf(stop2.id)
                                         )
-                                    )
+                                    ), global
                                 ),
                             )
                         ),
@@ -394,13 +389,13 @@ class RouteCardDataTest {
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route), mapOf(
                                 parentStation.id to RouteCardData.RouteStopDataBuilder(
-                                    parentStation, emptyList(), mapOf(
+                                    parentStation, RouteCardData.LineOrRoute.Route(route), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(routePattern ),
                                             stopIds = setOf(parentStation.id, logicalPlatform.id, physicalPlatform.id)
                                         )
-                                    )
+                                    ), global
                                 ),
                             )
                         ),
@@ -450,7 +445,6 @@ class RouteCardDataTest {
             )
         val nearby = NearbyResponse(objects)
 
-        // TODO: Actually test for these directions
         val westDir = Direction("West", "Boston College", 0)
         val eastDir = Direction("East", "Government Center", 1)
 
@@ -460,7 +454,7 @@ class RouteCardDataTest {
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Line(line, setOf(railRoute)), mapOf(
                                 stop.id to RouteCardData.RouteStopDataBuilder(
-                                    stop, emptyList(), mapOf(
+                                    stop, listOf(westDir, eastDir), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(railPattern ),
@@ -472,13 +466,13 @@ class RouteCardDataTest {
                         ),
                 shuttleRoute.id to
                 RouteCardData.Builder(RouteCardData.LineOrRoute.Route(shuttleRoute), mapOf(
-                    stop.id to RouteCardData.RouteStopDataBuilder(stop, emptyList(), mapOf(
+                    stop.id to RouteCardData.RouteStopDataBuilder(stop, RouteCardData.LineOrRoute.Route(shuttleRoute), mapOf(
                         0 to RouteCardData.LeafBuilder(
                             directionId = 0,
                             routePatterns = listOf(shuttlePattern ),
                             stopIds = setOf(stop.id)
-                        )
-                    ))
+                        )), global
+                    )
                 ))
             ),
             RouteCardData.ListBuilder().addStaticStopsData(nearby.stopIds, global).data
@@ -489,8 +483,6 @@ class RouteCardDataTest {
     }
 
     @Test
-    @Ignore // I expect this will pass once we have filtering in place, but I'm not entirely sure.
-    // May be something else missing in the direction logic
     fun `ListBuilder addStaticStopsData Green Line routes are grouped together without Government Center direction`() {
         val objects = ObjectCollectionBuilder()
 
@@ -636,7 +628,6 @@ class RouteCardDataTest {
 
         val global = GlobalResponse(objects)
 
-        // TODO: Actually test for these directions
         val westDir = Direction("West", "Copley & West", 0)
         val northDir = Direction("East", "North Station & North", 1)
 
@@ -646,15 +637,15 @@ class RouteCardDataTest {
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Line(line, setOf(routeB, routeC, routeD)), mapOf(
                                 stopGov.id to RouteCardData.RouteStopDataBuilder(
-                                    stopGov, emptyList(), mapOf(
+                                    stopGov, listOf(westDir, northDir), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
-                                            routePatterns = listOf(routeDrp1, routeBrp1, routeCrp1 ),
+                                            routePatterns = listOf(routeBrp1, routeCrp1, routeDrp1 ),
                                             stopIds = setOf(stopGov.id)
                                         ),
                                         1 to RouteCardData.LeafBuilder(
                                             directionId = 1,
-                                            routePatterns = listOf(routeDrp2, routeCrp3 ),
+                                            routePatterns = listOf(routeBrp2, routeCrp2, routeCrp3, routeDrp2),
                                             stopIds = setOf(stopGov.id)
                                         )
                                     )
@@ -745,7 +736,7 @@ class RouteCardDataTest {
                         RouteCardData.Builder(
                             RouteCardData.LineOrRoute.Route(route1), mapOf(
                                 stop1.id to RouteCardData.RouteStopDataBuilder(
-                                    stop1, emptyList(), mapOf(
+                                    stop1, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(pattern1, pattern2),
@@ -756,10 +747,10 @@ class RouteCardDataTest {
                                             ),
                                             allDataLoaded = false
                                         )
-                                    )
+                                    ), global
                                 ),
                                 stop2.id to RouteCardData.RouteStopDataBuilder(
-                                    stop2, emptyList(), mapOf(
+                                    stop2, RouteCardData.LineOrRoute.Route(route1), mapOf(
                                         0 to RouteCardData.LeafBuilder(
                                             directionId = 0,
                                             routePatterns = listOf(pattern3),
@@ -770,7 +761,7 @@ class RouteCardDataTest {
                                             ),
                                             allDataLoaded = false
                                         )
-                                    )
+                                    ), global
                                 )
                             )
                         )
@@ -820,26 +811,26 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(subwayRoute),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(subwayStop, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(subwayStop,  RouteCardData.LineOrRoute.Route(subwayRoute), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(subwayRp),
                         stopIds = setOf(subwayStop.id),
                         upcomingTrips = listOf(),
                         allDataLoaded = false,
                         alertsHere = emptyList(), hasSchedulesToday = false
-                    ))))
+                    )), global))
             ),
                 RouteCardData(
                     lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
                     stopData = listOf(
-                        RouteCardData.RouteStopData(busStop, emptyList(), listOf(RouteCardData.Leaf(
+                        RouteCardData.RouteStopData(busStop,  RouteCardData.LineOrRoute.Route(busRoute), listOf(RouteCardData.Leaf(
                             directionId = 0,
                             routePatterns = listOf(busRp),
                             stopIds = setOf(busStop.id),
                             upcomingTrips = listOf(),
                             allDataLoaded = false,
                             alertsHere = emptyList(), hasSchedulesToday = false
-                        ))))
+                        )), global))
                 )),
 
             RouteCardData.routeCardsForStopList(listOf(busStop.id, subwayStop.id),
@@ -894,26 +885,26 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(subwayRoute2),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(closerStop, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(closerStop,  RouteCardData.LineOrRoute.Route(subwayRoute2), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(subway2Rp1),
                         stopIds = setOf(closerStop.id),
                         upcomingTrips = listOf(),
                         allDataLoaded = false,
                         alertsHere = emptyList(), hasSchedulesToday = false
-                    ))))
+                    )), global))
             ),
                 RouteCardData(
                     lineOrRoute = RouteCardData.LineOrRoute.Route(subwayRoute1),
                     stopData = listOf(
-                        RouteCardData.RouteStopData(furtherStop, emptyList(), listOf(RouteCardData.Leaf(
+                        RouteCardData.RouteStopData(furtherStop,  RouteCardData.LineOrRoute.Route(subwayRoute1), listOf(RouteCardData.Leaf(
                             directionId = 0,
                             routePatterns = listOf(subway1Rp1),
                             stopIds = setOf(furtherStop.id),
                             upcomingTrips = listOf(),
                             allDataLoaded = false,
                             alertsHere = emptyList(), hasSchedulesToday = false
-                        ))))
+                        )), global))
                 )),
 
             RouteCardData.routeCardsForStopList(nearby.stopIds,
@@ -1523,7 +1514,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(typicalOutbound),
                         stopIds = setOf(stop1.id),
@@ -1532,7 +1523,7 @@ class RouteCardDataTest {
                         ),
                         allDataLoaded = false,
                         alertsHere = emptyList(), hasSchedulesToday = false
-                    ))))
+                    )), global))
             )),
 
             RouteCardData.routeCardsForStopList(listOf(stop1.id), global,
@@ -1608,7 +1599,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(typicalOutbound),
                         stopIds = setOf(stop1.id),
@@ -1628,7 +1619,7 @@ class RouteCardDataTest {
                                 ),
                             allDataLoaded = false,
                             alertsHere = emptyList(), hasSchedulesToday = false
-                        )),
+                        )), global
             )))),
             RouteCardData.routeCardsForStopList(listOf(stop1.id), global,
                 filterAtTime = time,
@@ -1765,7 +1756,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 1,
                         routePatterns = listOf(scheduleSoon),
                         stopIds = setOf(stop1.id),
@@ -1775,12 +1766,12 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    ))),
+                    )), global),
                     )),
                 RouteCardData(
                     lineOrRoute = RouteCardData.LineOrRoute.Route(route3),
                     stopData = listOf(
-                        RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                        RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route3), listOf(RouteCardData.Leaf(
                             directionId = 0,
                             routePatterns = listOf(predictionBrd),
                             stopIds = setOf(stop1.id),
@@ -1801,7 +1792,7 @@ class RouteCardDataTest {
                                 allDataLoaded = true,
                                 alertsHere = emptyList(), hasSchedulesToday = false
 
-                            ))
+                            )), global
                     )),
                 )),
              RouteCardData.routeCardsForStopList(
@@ -1854,7 +1845,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(typicalOutbound),
                         stopIds = setOf(stop1.id),
@@ -1862,7 +1853,7 @@ class RouteCardDataTest {
                         allDataLoaded = false,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    ))),
+                    )), global),
                 ))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop1.id),
@@ -1927,7 +1918,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(typicalOutbound),
                         stopIds = setOf(stop1.id),
@@ -1944,7 +1935,7 @@ class RouteCardDataTest {
                             allDataLoaded = false,
                             alertsHere = emptyList(), hasSchedulesToday = false
 
-                        )),
+                        )), global
                 )))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop1.id),
@@ -2004,7 +1995,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop1, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop1,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(typicalOutbound),
                         stopIds = setOf(stop1.id),
@@ -2012,7 +2003,7 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )),
+                    )), global
                     )))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop1.id),
@@ -2054,7 +2045,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(parentStop, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(parentStop,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(pattern1),
                         stopIds = setOf(parentStop.id, childStop.id),
@@ -2062,7 +2053,7 @@ class RouteCardDataTest {
                         allDataLoaded = false,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )),
+                    )), global
                     )))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(childStop.id, parentStop.id),
@@ -2113,7 +2104,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop,  RouteCardData.LineOrRoute.Route(route), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(routePattern),
                         stopIds = setOf(stop.id),
@@ -2122,7 +2113,7 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )),
+                    )),global
                     )))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop.id),
@@ -2270,7 +2261,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(route1),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(stop,  RouteCardData.LineOrRoute.Route(route1), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(routePattern1),
                         stopIds = setOf(stop.id),
@@ -2278,12 +2269,12 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )),
+                    )), global
                     ))),
                 RouteCardData(
                     lineOrRoute = RouteCardData.LineOrRoute.Route(route2),
                     stopData = listOf(
-                        RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                        RouteCardData.RouteStopData(stop,  RouteCardData.LineOrRoute.Route(route2), listOf(RouteCardData.Leaf(
                             directionId = 0,
                             routePatterns = listOf(routePattern2),
                             stopIds = setOf(stop.id),
@@ -2292,7 +2283,7 @@ class RouteCardDataTest {
                             allDataLoaded = true,
                             alertsHere = emptyList(), hasSchedulesToday = false
 
-                        )),
+                        )),global
                         )))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop.id),
@@ -2310,25 +2301,44 @@ class RouteCardDataTest {
     @Test
     fun `RouteCardData routeCardsForStopList groups lines by direction`()  {
         val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
+        val hynes = objects.stop {
+            id = "place-hymnl"
+        }
+
+        val gov = objects.stop { id = "place-gover" }
+
+        // These stops are included because they're thresholds in Direction.specialCases
+        val boylston = objects.stop {id = "place-boyls"}
+        val arlington = objects.stop { id = "place-armnl" }
+        val haymarket = objects.stop { id = "place-haecl" }
+
+        val bc = objects.stop { id = "place-lake" }
+        val cleCenter = objects.stop { id = "place-clmnl" }
+        val heath = objects.stop { id = "place-hsmnl" }
+        val unionSquare = objects.stop { id = "place-unsqu" }
+
         val line = objects.line { id = "line-Green" }
         val routeB =
             objects.route {
-                id = "B"
+                id = "Green-B"
                 sortOrder = 1
                 lineId = "line-Green"
                 directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
+                directionDestinations = listOf("Ignored West B", "Ignored East B")
             }
         val routePatternB1 =
             objects.routePattern(routeB) {
-                representativeTrip { headsign = "B" }
+                representativeTrip { headsign = "B"
+                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, bc.id)
+                }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
             }
         val routePatternB2 =
             objects.routePattern(routeB) {
-                representativeTrip { headsign = "B" }
+                representativeTrip { headsign = "B"
+                    stopIds = listOf(bc.id, hynes.id, arlington.id,  boylston.id, gov.id)
+                }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
             }
@@ -2337,21 +2347,25 @@ class RouteCardDataTest {
 
         val routeC =
             objects.route {
-                id = "C"
+                id = "Green-C"
                 sortOrder = 2
                 lineId = "line-Green"
                 directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
+                directionDestinations = listOf("Ignored West C", "Ignored East C")
             }
         val routePatternC1 =
             objects.routePattern(routeC) {
-                representativeTrip { headsign = "C" }
+                representativeTrip { headsign = "C"
+                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, cleCenter.id)
+            }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
             }
         val routePatternC2 =
             objects.routePattern(routeC) {
-                representativeTrip { headsign = "C" }
+                representativeTrip { headsign = "C"
+                    stopIds = listOf(cleCenter.id, hynes.id, arlington.id, boylston.id, gov.id)
+                }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
             }
@@ -2360,22 +2374,27 @@ class RouteCardDataTest {
 
         val routeE =
             objects.route {
-                id = "E"
+                id = "Green-E"
                 sortOrder = 3
                 lineId = "line-Green"
                 directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath Street", "Park St & North")
+                directionDestinations = listOf("Ignored West E", "Ignored East E")
             }
         val routePatternE1 =
             objects.routePattern(routeE) {
                 id = "test-hs"
-                representativeTrip { headsign = "Heath Street" }
+                representativeTrip { headsign = "Heath Street"
+                    stopIds = listOf(unionSquare.id, haymarket.id, gov.id, boylston.id, arlington.id, hynes.id, heath.id)
+
+                }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
             }
         val routePatternE2 =
             objects.routePattern(routeE) {
-                representativeTrip { headsign = "Medford/Tufts" }
+                representativeTrip { headsign = "Medford/Tufts"
+                    stopIds = listOf(heath.id, hynes.id, arlington.id, boylston.id, gov.id, haymarket.id, unionSquare.id)
+                }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
             }
@@ -2387,42 +2406,42 @@ class RouteCardDataTest {
         val schedB1 =
             objects.schedule {
                 trip = tripB1
-                stopId = stop.id
+                stopId = hynes.id
                 stopSequence = 90
                 departureTime = time + 1.minutes
             }
         val schedB2 =
             objects.schedule {
                 trip = tripB2
-                stopId = stop.id
+                stopId = hynes.id
                 stopSequence = 90
                 departureTime = time + 4.minutes
             }
         val schedC1 =
             objects.schedule {
                 trip = tripC1
-                stopId = stop.id
+                stopId = hynes.id
                 stopSequence = 90
                 departureTime = time + 2.minutes
             }
         val schedC2 =
             objects.schedule {
                 trip = tripC2
-                stopId = stop.id
+                stopId = hynes.id
                 stopSequence = 90
                 departureTime = time + 5.minutes
             }
         val schedE1 =
             objects.schedule {
                 trip = tripE1
-                stopId = stop.id
+                stopId = hynes.id
                 stopSequence = 90
                 departureTime = time + 3.minutes
             }
         val schedE2 =
             objects.schedule {
                 trip = tripE2
-                stopId = stop.id
+                stopId = hynes.id
                 stopSequence = 90
                 departureTime = time + 6.minutes
             }
@@ -2434,12 +2453,11 @@ class RouteCardDataTest {
         val predE1 = objects.prediction(schedE1) { departureTime = time + 2.3.minutes }
         val predE2 = objects.prediction(schedE2) { departureTime = time + 6.3.minutes }
 
-        // TODO: Use directions
         val directionWest = Direction("West", "Kenmore & West", 0)
         val directionEast = Direction("East", "Park St & North", 1)
 
         val global = GlobalResponse(objects,
-            patternIdsByStop = mapOf(stop.id to listOf(routePatternB1.id,
+            patternIdsByStop = mapOf(hynes.id to listOf(routePatternB1.id,
                 routePatternB2.id,
                 routePatternC1.id,
                 routePatternC2.id,
@@ -2450,10 +2468,10 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(routeB, routeC, routeE)),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(stop, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(hynes,  listOf(directionWest, directionEast), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(routePatternB1, routePatternC1, routePatternE1),
-                        stopIds = setOf(stop.id),
+                        stopIds = setOf(hynes.id),
                         upcomingTrips = listOf(objects.upcomingTrip(prediction = predB1, schedule = schedB1),
                             objects.upcomingTrip(prediction = predC1, schedule = schedC1),
                             objects.upcomingTrip(prediction = predE1, schedule = schedE1)),
@@ -2463,15 +2481,14 @@ class RouteCardDataTest {
                     ),RouteCardData.Leaf(
                         directionId = 1,
                         routePatterns = listOf(routePatternB2, routePatternC2, routePatternE2),
-                        stopIds = setOf(stop.id),
+                        stopIds = setOf(hynes.id),
                         upcomingTrips = listOf(objects.upcomingTrip(prediction = predB2, schedule = schedB2),
                             objects.upcomingTrip(prediction = predC2, schedule = schedC2),
                             objects.upcomingTrip(prediction = predE2, schedule = schedE2)),
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )
-                        ),
+                    ))
                     ))))
 
 
@@ -2479,9 +2496,9 @@ class RouteCardDataTest {
         assertEquals(
             expected,
             RouteCardData.routeCardsForStopList(
-                stopIds = listOf(stop.id),
+                stopIds = listOf(hynes.id),
                 globalData = global,
-                sortByDistanceFrom = stop.position,
+                sortByDistanceFrom = hynes.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = AlertsStreamDataResponse(emptyMap()),
@@ -2712,7 +2729,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(orangeRoute),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(northStation, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(northStation,  RouteCardData.LineOrRoute.Route(orangeRoute), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(orangeSouthboundTypical, orangeSouthboundDiversion),
                         stopIds = setOf(northStation.id, northStationSouthboundPlatform.id, northStationNorthboundPlatform.id),
@@ -2732,8 +2749,7 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )
-                    ),
+                    )), global
                     )))),
             RouteCardData.routeCardsForStopList(
                 listOf(northStation.id, northStationSouthboundPlatform.id, northStationNorthboundPlatform.id),
@@ -2814,7 +2830,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(orangeRoute),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(oakGrove, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(oakGrove,  RouteCardData.LineOrRoute.Route(orangeRoute), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(orangeSouthboundTypical),
                         stopIds = setOf(oakGrove.id),
@@ -2825,7 +2841,8 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )))))),
+                    )), global
+                    )))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(oakGrove.id),
                 globalData = global,
@@ -2907,7 +2924,7 @@ class RouteCardDataTest {
             listOf(RouteCardData(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(ferryRoute),
                 stopData = listOf(
-                    RouteCardData.RouteStopData(longWharf, emptyList(), listOf(RouteCardData.Leaf(
+                    RouteCardData.RouteStopData(longWharf,  RouteCardData.LineOrRoute.Route(ferryRoute), listOf(RouteCardData.Leaf(
                         directionId = 0,
                         routePatterns = listOf(ferryOutboundToHingham),
                         stopIds = setOf(longWharf.id),
@@ -2915,7 +2932,7 @@ class RouteCardDataTest {
                         allDataLoaded = true,
                         alertsHere = emptyList(), hasSchedulesToday = false
 
-                    )))))),
+                    )), global)))),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(longWharf.id),
                 globalData = global,
