@@ -33,7 +33,7 @@ extension shared.Alert.ActivePeriod {
                 "end of service",
                 comment: "Used when an alert ends at the end of a service day"
             )
-            let previousDate = date - (3600.0 * 24)
+            let previousDate = date - (60 * 60 * 24)
             formattedDate = previousDate.formatted(dateFormat)
         } else if !start, durationCertainty == .estimated {
             formattedTime = NSLocalizedString(
