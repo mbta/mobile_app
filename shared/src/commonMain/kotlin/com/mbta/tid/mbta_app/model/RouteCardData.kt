@@ -50,7 +50,27 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
         }
     }
 
-    data class RouteStopData(val stop: Stop, val directions: List<Direction>, val data: List<Leaf>)
+    data class RouteStopData(
+        val stop: Stop,
+        val directions: List<Direction>,
+        val data: List<Leaf>
+    ) {
+        // convenience constructor for when directions are not directly under test
+        constructor(
+            stop: Stop,
+            lineOrRoute: LineOrRoute,
+            data: List<Leaf>,
+            globalData: GlobalResponse
+        ) : this(
+            stop,
+            lineOrRoute.directions(
+                globalData,
+                stop,
+                data.mapNotNull { it.routePatterns }.flatten()
+            ),
+            data
+        )
+    }
 
     data class Leaf(
         val directionId: Int,
@@ -94,6 +114,16 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             when (this) {
                 is Route -> this.route
                 is Line -> this.routes.min()
+            }
+
+        fun directions(
+            globalData: GlobalResponse,
+            stop: Stop,
+            patterns: List<RoutePattern>
+        ): List<Direction> =
+            when (this) {
+                is Line -> Direction.getDirectionsForLine(globalData, stop, patterns)
+                is Route -> Direction.getDirections(globalData, stop, this.route, patterns)
             }
     }
 
@@ -223,10 +253,26 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
                                 byLineOrRoute.key,
                                 byLineOrRoute.value
                                     .map { byStop ->
+                                        val directions =
+                                            when (val lineOrRoute = byLineOrRoute.key) {
+                                                is LineOrRoute.Line ->
+                                                    Direction.getDirectionsForLine(
+                                                        globalData,
+                                                        byStop.key,
+                                                        byStop.value
+                                                    )
+                                                is LineOrRoute.Route ->
+                                                    Direction.getDirections(
+                                                        globalData,
+                                                        byStop.key,
+                                                        lineOrRoute.route,
+                                                        byStop.value
+                                                    )
+                                            }
                                         byStop.key.id to
                                             RouteStopDataBuilder(
                                                 byStop.key,
-                                                directions = emptyList(),
+                                                directions = directions,
                                                 data =
                                                     byStop.value
                                                         .groupBy { pattern -> pattern.directionId }
@@ -444,6 +490,23 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
         val directions: List<Direction>,
         var data: ByDirectionBuilder
     ) {
+
+        // convenience constructor for when directions are not directly under test
+        constructor(
+            stop: Stop,
+            lineOrRoute: LineOrRoute,
+            data: ByDirectionBuilder,
+            globalData: GlobalResponse
+        ) : this(
+            stop,
+            lineOrRoute.directions(
+                globalData,
+                stop,
+                data.values.mapNotNull { it.routePatterns }.flatten()
+            ),
+            data
+        )
+
         fun build(): RouteCardData.RouteStopData {
             return RouteCardData.RouteStopData(
                 stop,
