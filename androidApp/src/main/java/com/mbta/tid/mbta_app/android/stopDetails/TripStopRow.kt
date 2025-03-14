@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -59,6 +61,7 @@ fun TripStopRow(
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
+    showElevatorAccessibility: Boolean = false,
     modifier: Modifier = Modifier,
     targeted: Boolean = false,
     firstStop: Boolean = false,
@@ -72,11 +75,36 @@ fun TripStopRow(
             }
             Row(
                 Modifier.fillMaxHeight(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                RouteLine(routeAccents.color, firstStop, lastStop, routeAccents, targeted)
-                Column(Modifier.padding(vertical = 12.dp).padding(start = 8.dp)) {
+                if (showElevatorAccessibility) {
+                    Icon(
+                        modifier =
+                            Modifier.height(24.dp)
+                                .padding(
+                                    start = if (stop.stop.isWheelchairAccessible) 6.dp else 3.dp
+                                ),
+                        painter =
+                            if (stop.stop.isWheelchairAccessible) {
+                                painterResource(R.drawable.wheelchair_accessible)
+                            } else {
+                                painterResource(R.drawable.elevator_alert)
+                            },
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+                }
+                RouteLine(
+                    routeAccents.color,
+                    firstStop,
+                    lastStop,
+                    routeAccents,
+                    targeted,
+                    showElevatorAccessibility,
+                    isWheelchairAccessible = stop.stop.isWheelchairAccessible
+                )
+                Column(Modifier.padding(vertical = 12.dp).padding(start = 16.dp)) {
                     Row(
                         Modifier.semantics(mergeDescendants = true) {
                                 if (targeted) {
@@ -230,11 +258,20 @@ private fun RouteLine(
     firstStop: Boolean,
     lastStop: Boolean,
     routeAccents: TripRouteAccents,
-    targeted: Boolean
+    targeted: Boolean,
+    showElevatorAccessibility: Boolean,
+    isWheelchairAccessible: Boolean
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxHeight().padding(start = 34.dp).width(20.dp)
+        modifier =
+            Modifier.fillMaxHeight()
+                .padding(
+                    start =
+                        if (showElevatorAccessibility && isWheelchairAccessible) 5.dp
+                        else if (showElevatorAccessibility) 3.dp else 34.dp
+                )
+                .width(20.dp)
     ) {
         Column(Modifier.fillMaxHeight()) {
             if (firstStop) {
@@ -284,7 +321,8 @@ private fun TripStopRowPreview() {
                 TripRouteAccents.default.copy(
                     type = RouteType.HEAVY_RAIL,
                     color = Color.fromHex("DA291C")
-                )
+                ),
+                showElevatorAccessibility = true,
             )
             TripStopRow(
                 stop =
@@ -318,7 +356,8 @@ private fun TripStopRowPreview() {
                 TripRouteAccents.default.copy(
                     type = RouteType.HEAVY_RAIL,
                     color = Color.fromHex("DA291C")
-                )
+                ),
+                showElevatorAccessibility = true
             )
             TripStopRow(
                 stop =
@@ -340,7 +379,8 @@ private fun TripStopRowPreview() {
                 TripRouteAccents.default.copy(
                     type = RouteType.COMMUTER_RAIL,
                     color = Color.fromHex("DA291C")
-                )
+                ),
+                showElevatorAccessibility = true,
             )
         }
     }

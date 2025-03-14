@@ -143,6 +143,7 @@
     <string name="no_stops_nearby_search">Tìm kiếm theo điểm dừng</string>
     <string name="no_stops_nearby_title">Không có điểm dừng gần đó</string>
     <string name="northbound">Về hướng bắc</string>
+    <string name="not_accessible">Không thể truy cập</string>
     <string name="now">Hiện nay</string>
     <string name="now_at">Hiện giờ tại</string>
     <string name="onboarding_feedback_advance">Bắt đầu</string>
