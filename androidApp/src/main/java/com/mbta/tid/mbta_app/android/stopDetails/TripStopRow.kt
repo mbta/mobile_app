@@ -61,7 +61,7 @@ fun TripStopRow(
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
-    showElevatorAccessibility: Boolean,
+    showElevatorAccessibility: Boolean = false,
     modifier: Modifier = Modifier,
     targeted: Boolean = false,
     firstStop: Boolean = false,

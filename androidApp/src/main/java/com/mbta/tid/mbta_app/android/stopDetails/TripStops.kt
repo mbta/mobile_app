@@ -63,7 +63,7 @@ fun TripStops(
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
-    showElevatorAccessibility: Boolean,
+    showElevatorAccessibility: Boolean = false,
 ) {
     val context = LocalContext.current
 
