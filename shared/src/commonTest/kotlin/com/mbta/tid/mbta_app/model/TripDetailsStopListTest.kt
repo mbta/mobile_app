@@ -8,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -117,7 +118,7 @@ class TripDetailsStopListTest {
         fun globalData(patternIdsByStop: Map<String, List<String>> = emptyMap()) =
             GlobalResponse(objects, patternIdsByStop)
 
-        fun fromPieces(
+        suspend fun fromPieces(
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle? = null,
@@ -146,7 +147,7 @@ class TripDetailsStopListTest {
         fun predictions() = PredictionsStreamDataResponse(objects)
     }
 
-    private fun test(block: TestBuilder.() -> Unit) {
+    private fun test(block: suspend TestBuilder.() -> Unit) = runBlocking {
         val builder = TestBuilder()
         builder.block()
     }
@@ -346,7 +347,7 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces can deduplicate predictions by stop sequence from real data`() {
+    fun `fromPieces can deduplicate predictions by stop sequence from real data`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val p1 =
@@ -439,7 +440,7 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces handles happy path with schedules and vehicles`() {
+    fun `fromPieces handles happy path with schedules and vehicles`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }

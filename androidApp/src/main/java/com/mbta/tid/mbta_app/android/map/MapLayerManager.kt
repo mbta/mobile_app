@@ -46,10 +46,8 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
 
     suspend fun addLayers(colorPalette: ColorPalette) {
         val layers: List<MapboxLayer> =
-            withContext(Dispatchers.Default) {
-                RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
-                    StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
-            }
+            RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
+                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
         withContext(Dispatchers.Main) {
             for (layer in layers) {
                 if (map.styleLayerExists(checkNotNull(layer.layerId))) {

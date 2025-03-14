@@ -2,12 +2,13 @@ package com.mbta.tid.mbta_app.parametric
 
 import kotlin.enums.enumEntries
 import kotlin.test.assertEquals
+import kotlinx.coroutines.runBlocking
 
 /**
  * Sometimes there are values that don't matter in your individual test, and you want to run the
  * test with all those values without having to write for loops yourself.
  */
-class ParametricTest(val block: ParametricTest.() -> Unit) {
+class ParametricTest(val block: suspend ParametricTest.() -> Unit) {
     var state: State = State.Gathering
     var parameterSpace = mutableListOf<List<Any>>()
 
@@ -44,13 +45,13 @@ class ParametricTest(val block: ParametricTest.() -> Unit) {
             is State.Executing -> state.nextParameter()
         }
 
-    internal fun gatherParameters() {
+    internal suspend fun gatherParameters() {
         state = State.Gathering
         parameterSpace.clear()
         block()
     }
 
-    internal fun executeAll() {
+    internal suspend fun executeAll() {
         // constructing all these partial lists will be inefficient for more than a handful of
         // parameters
         val parameterSets =
@@ -74,8 +75,10 @@ class ParametricTest(val block: ParametricTest.() -> Unit) {
     }
 }
 
-fun parametricTest(block: ParametricTest.() -> Unit) {
-    val test = ParametricTest(block)
-    test.gatherParameters()
-    test.executeAll()
+fun parametricTest(block: suspend ParametricTest.() -> Unit) {
+    runBlocking {
+        val test = ParametricTest(block)
+        test.gatherParameters()
+        test.executeAll()
+    }
 }

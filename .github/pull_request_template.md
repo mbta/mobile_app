@@ -10,7 +10,7 @@ iOS
 
 android
 - [ ] All user-facing strings added to strings resource in alphabetical order
-- [ ] Expensive calculations are run in `withContext(Dispatchers.Default)` where possible
+- [ ] Expensive calculations are run in `withContext(Dispatchers.Default)` where possible (ideally in shared code)
 
 ### Testing
 

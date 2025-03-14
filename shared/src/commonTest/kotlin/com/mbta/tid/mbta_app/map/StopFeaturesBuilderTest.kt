@@ -12,10 +12,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.runBlocking
 
 class StopFeaturesBuilderTest {
     @Test
-    fun `stop sources are created`() {
+    fun `stop sources are created`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 =
@@ -135,7 +136,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stops are snapped to routes`() {
+    fun `stops are snapped to routes`() = runBlocking {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
@@ -168,7 +169,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `selected stop has prop set`() {
+    fun `selected stop has prop set`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val selectedStop =
             objects.stop {
@@ -216,7 +217,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `filtered stop ids`() {
+    fun `filtered stop ids`(): Unit = runBlocking {
         val collection =
             StopFeaturesBuilder.buildCollection(
                 stopData =
@@ -248,7 +249,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stops features have service status`() {
+    fun `stops features have service status`() = runBlocking {
         val objects = MapTestDataHelper.objects
 
         val stops =
@@ -338,7 +339,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have routes`() {
+    fun `stop features have routes`()  = runBlocking {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
@@ -383,7 +384,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have names`() {
+    fun `stop features have names`() = runBlocking {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
@@ -411,7 +412,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have terminals`() {
+    fun `stop features have terminals`() = runBlocking {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAlewife.id to MapTestDataHelper.mapStopAlewife,

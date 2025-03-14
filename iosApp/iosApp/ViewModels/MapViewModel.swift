@@ -57,9 +57,9 @@ class MapViewModel: ObservableObject {
         updateRouteSource(globalData: globalData, globalMapData: globalMapData)
     }
 
-    private func getLineFeatures(globalData: GlobalResponse?, globalMapData: GlobalMapData?) -> MapboxMaps
+    private func getLineFeatures(globalData: GlobalResponse?, globalMapData: GlobalMapData?) async throws -> MapboxMaps
         .FeatureCollection {
-        RouteFeaturesBuilder.shared.buildCollection(
+        try await RouteFeaturesBuilder.shared.buildCollection(
             routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
                 routeData: routeSourceData,
                 routesById: globalData?.routes,
@@ -76,14 +76,14 @@ class MapViewModel: ObservableObject {
         }
         routeUpdateTask = Task(priority: .high) {
             try Task.checkCancellation()
-            let routeFeatures = self.getLineFeatures(globalData: globalData, globalMapData: globalMapData)
+            let routeFeatures = try await self.getLineFeatures(globalData: globalData, globalMapData: globalMapData)
             try Task.checkCancellation()
             layerManager.updateSourceData(routeData: routeFeatures)
         }
     }
 
-    private func getStopFeatures(globalMapData: GlobalMapData) -> MapboxMaps.FeatureCollection {
-        StopFeaturesBuilder.shared.buildCollection(
+    private func getStopFeatures(globalMapData: GlobalMapData) async throws -> MapboxMaps.FeatureCollection {
+        try await StopFeaturesBuilder.shared.buildCollection(
             stopData: stopSourceData,
             stops: globalMapData.mapStops,
             linesToSnap: snappedStopRouteLines
@@ -97,7 +97,7 @@ class MapViewModel: ObservableObject {
         }
         stopUpdateTask = Task(priority: .high) {
             try Task.checkCancellation()
-            let stopFeatures = self.getStopFeatures(globalMapData: globalMapData)
+            let stopFeatures = try await self.getStopFeatures(globalMapData: globalMapData)
             try Task.checkCancellation()
             layerManager.updateSourceData(stopData: stopFeatures)
         }

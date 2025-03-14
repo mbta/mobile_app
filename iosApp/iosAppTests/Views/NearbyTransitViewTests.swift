@@ -241,19 +241,20 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             schedulesRepository: IdleScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
+            globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
             noNearbyStops: noNearbyStops
         )
+        sut.globalRepository = MockGlobalRepository(response: .init(objects: objects))
 
-        let exp = sut.on(\.didAppear) { view in
-            try view.implicitAnyView().vStack().callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
+        let exp = sut.on(\.didLoadData) { view in
             let patterns = view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
@@ -365,19 +366,19 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: predictionsByStop),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
+            globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             now: now,
             noNearbyStops: noNearbyStops
         )
 
-        let exp = sut.on(\.didAppear) { view in
-            try view.implicitAnyView().vStack().callOnChange(newValue: predictionsByStop)
+        let exp = sut.on(\.didLoadData) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0]
                 .find(text: "Charles River Loop")
@@ -600,24 +601,28 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [lechmereExpectation], timeout: 1)
     }
 
-    func testRendersUpdatedPredictions() throws {
+    @MainActor func testRendersUpdatedPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
-        var sut = NearbyTransitView(
+        let predictionsRepository = MockPredictionsRepository(connectV2Response: .init(objects: .init()))
+        let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: predictionsRepository,
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
+            globalRepository: MockGlobalRepository(response: .init(objects: .init())),
+            globalData: .init(objects: .init()),
             nearbyVM: nearbyVM,
             noNearbyStops: noNearbyStops
         )
+        ViewHosting.host(view: sut)
 
-        func prediction(minutesAway: Double) -> PredictionsByStopJoinResponse {
+        func prediction(minutesAway: Double) -> PredictionsByStopMessageResponse {
             let objects = ObjectCollectionBuilder()
             let trip = objects.trip { trip in
                 trip.headsign = "Dedham Mall"
@@ -629,17 +634,26 @@ final class NearbyTransitViewTests: XCTestCase {
                 prediction.stopId = "8552"
                 prediction.tripId = trip.id
             }
-            return PredictionsByStopJoinResponse(objects: objects)
+            return PredictionsByStopMessageResponse(objects: objects, stopId: "8552")
         }
 
-        let exp = sut.on(\.didAppear) { view in
-            try view.implicitAnyView().vStack().callOnChange(newValue: prediction(minutesAway: 2))
+        let predictionsLoaded = PassthroughSubject<Void, Never>()
+
+        let exp1 = sut.inspection.inspect(onReceive: predictionsLoaded, after: 0.1) { view in
             XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "2 min"))
-            try view.implicitAnyView().vStack().callOnChange(newValue: prediction(minutesAway: 3))
+        }
+
+        let exp2 = sut.inspection.inspect(onReceive: predictionsLoaded.dropFirst(), after: 0.1) { view in
             XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "3 min"))
         }
-        ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
+
+        predictionsRepository.sendMessage(message: prediction(minutesAway: 2))
+        predictionsLoaded.send()
+        wait(for: [exp1], timeout: 1)
+
+        predictionsRepository.sendMessage(message: prediction(minutesAway: 3))
+        predictionsLoaded.send()
+        wait(for: [exp2], timeout: 1)
     }
 
     func testLeavesChannelWhenBackgrounded() throws {
@@ -753,7 +767,7 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: nearbyVM,
             noNearbyStops: noNearbyStops
         )
-        let exp = sut.on(\.didAppear) { view in
+        let exp = sut.on(\.didLoadData) { view in
             let actualView = try view.actualView()
             actualView.scrollSubject.sink { _ in
                 scrollPositionSetExpectation.fulfill()

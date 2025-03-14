@@ -277,28 +277,26 @@ class StopDetailsViewModel(
     ): StateFlow<TripDetailsStopList?> {
         val tripData = this.tripData.collectAsState().value
         LaunchedEffect(tripFilter, tripData, allAlerts, globalResponse) {
-            withContext(Dispatchers.Default) {
-                _tripDetailsStopList.value =
-                    if (
-                        tripFilter != null &&
-                            tripData != null &&
-                            tripData.tripFilter == tripFilter &&
-                            tripData.tripPredictionsLoaded &&
-                            globalResponse != null
-                    ) {
-                        TripDetailsStopList.fromPieces(
-                            tripFilter.tripId,
-                            tripData.trip.directionId,
-                            tripData.tripSchedules,
-                            tripData.tripPredictions,
-                            tripData.vehicle,
-                            allAlerts,
-                            globalResponse
-                        )
-                    } else {
-                        null
-                    }
-            }
+            _tripDetailsStopList.value =
+                if (
+                    tripFilter != null &&
+                        tripData != null &&
+                        tripData.tripFilter == tripFilter &&
+                        tripData.tripPredictionsLoaded &&
+                        globalResponse != null
+                ) {
+                    TripDetailsStopList.fromPieces(
+                        tripFilter.tripId,
+                        tripData.trip.directionId,
+                        tripData.tripSchedules,
+                        tripData.tripPredictions,
+                        tripData.vehicle,
+                        allAlerts,
+                        globalResponse
+                    )
+                } else {
+                    null
+                }
         }
         return this._tripDetailsStopList.asStateFlow()
     }
@@ -488,8 +486,7 @@ fun stopDetailsManagedVM(
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
-    checkPredictionsStaleInterval: Duration = 5.seconds,
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+    checkPredictionsStaleInterval: Duration = 5.seconds
 ): StopDetailsViewModel {
     val stopId = filters?.stopId
     val timer = timer(checkPredictionsStaleInterval)
@@ -513,28 +510,26 @@ fun stopDetailsManagedVM(
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
-        withContext(coroutineDispatcher) {
-            val schedules = stopData.value?.schedules
-            viewModel.setDepartures(
-                if (
-                    globalResponse != null &&
-                        stopId != null &&
-                        stopId == stopData.value?.stopId &&
-                        schedules != null &&
-                        stopData.value?.predictionsLoaded == true
-                ) {
-                    StopDetailsDepartures.fromData(
-                        stopId,
-                        globalResponse,
-                        schedules,
-                        stopData.value?.predictionsByStop?.toPredictionsStreamDataResponse(),
-                        alertData,
-                        pinnedRoutes,
-                        now,
-                    )
-                } else null
-            )
-        }
+        val schedules = stopData.value?.schedules
+        viewModel.setDepartures(
+            if (
+                globalResponse != null &&
+                    stopId != null &&
+                    stopId == stopData.value?.stopId &&
+                    schedules != null &&
+                    stopData.value?.predictionsLoaded == true
+            ) {
+                StopDetailsDepartures.fromData(
+                    stopId,
+                    globalResponse,
+                    schedules,
+                    stopData.value?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                    alertData,
+                    pinnedRoutes,
+                    now,
+                )
+            } else null
+        )
     }
 
     LaunchedEffect(key1 = timer) { viewModel.checkStopPredictionsStale() }

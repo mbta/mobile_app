@@ -22,7 +22,10 @@ struct TripDetailsView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @State var stops: TripDetailsStopList?
+
     let analytics: Analytics
+    var didLoadData: ((Self) -> Void)?
     let inspection = Inspection<Self>()
 
     init(
@@ -53,14 +56,21 @@ struct TripDetailsView: View {
     var body: some View {
         content
             .task { stopDetailsVM.handleTripFilterChange(tripFilter) }
+            .onAppear { updateStops() }
             .onDisappear {
                 if stopDetailsVM.tripData?.tripFilter == tripFilter || tripFilter == nil {
                     stopDetailsVM.clearTripDetails()
                 }
                 clearMapVehicle()
             }
-            .onChange(of: tripFilter) { nextTripFilter in stopDetailsVM.handleTripFilterChange(nextTripFilter) }
-            .onChange(of: stopDetailsVM.tripData?.vehicle) { vehicle in mapVM.selectedVehicle = vehicle }
+            .onChange(of: tripFilter) { nextTripFilter in stopDetailsVM.handleTripFilterChange(nextTripFilter)
+                updateStops()
+            }
+            .onChange(of: stopDetailsVM.tripData?.vehicle) { vehicle in mapVM.selectedVehicle = vehicle
+                updateStops()
+            }
+            .onChange(of: stopDetailsVM.tripData?.tripFilter) { _ in updateStops() }
+            .onChange(of: stopDetailsVM.tripData?.tripPredictionsLoaded) { _ in updateStops() }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .withScenePhaseHandlers(
                 onActive: {
@@ -91,19 +101,12 @@ struct TripDetailsView: View {
                tripData.tripFilter == tripFilter,
                tripData.tripPredictionsLoaded,
                let global = stopDetailsVM.global,
-               let stops = TripDetailsStopList.companion.fromPieces(
-                   tripId: tripFilter.tripId,
-                   directionId: tripData.trip.directionId,
-                   tripSchedules: tripData.tripSchedules,
-                   tripPredictions: tripData.tripPredictions,
-                   vehicle: vehicle,
-                   alertsData: nearbyVM.alerts,
-                   globalData: global
-               ) {
+               let stops {
                 let routeAccents = stopDetailsVM.getTripRouteAccents()
                 let terminalStop = getParentFor(tripData.trip.stopIds?.first, stops: global.stops)
                 let vehicleStop = getParentFor(vehicle?.stopId, stops: global.stops)
                 tripDetails(tripFilter.tripId, stops, terminalStop, vehicle, vehicleStop, routeAccents)
+                    .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
             }
@@ -191,6 +194,30 @@ struct TripDetailsView: View {
             placeholderInfo.vehicleStop,
             TripRouteAccents()
         ).loadingPlaceholder()
+    }
+
+    private func updateStops() {
+        Task {
+            let vehicle = stopDetailsVM.tripData?.vehicle
+            if let tripFilter,
+               tripFilter.vehicleId != nil ? vehicle != nil : true,
+               let tripData = stopDetailsVM.tripData,
+               tripData.tripFilter == tripFilter,
+               tripData.tripPredictionsLoaded,
+               let global = stopDetailsVM.global {
+                stops = try await TripDetailsStopList.companion.fromPieces(
+                    tripId: tripFilter.tripId,
+                    directionId: tripData.trip.directionId,
+                    tripSchedules: tripData.tripSchedules,
+                    tripPredictions: tripData.tripPredictions,
+                    vehicle: vehicle,
+                    alertsData: nearbyVM.alerts,
+                    globalData: global
+                )
+            } else {
+                stops = nil
+            }
+        }
     }
 
     private func clearMapVehicle() {

@@ -5,6 +5,8 @@ import com.mbta.tid.mbta_app.map.style.LineJoin
 import com.mbta.tid.mbta_app.map.style.LineLayer
 import com.mbta.tid.mbta_app.map.style.downcastToColor
 import com.mbta.tid.mbta_app.model.SegmentAlertState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object RouteLayerGenerator {
     val routeLayerId = "route-layer"
@@ -15,11 +17,13 @@ object RouteLayerGenerator {
 
     fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
 
-    fun createAllRouteLayers(colorPalette: ColorPalette): List<LineLayer> =
-        listOf(createRouteLayer()) +
-            // Draw all alerting layers on top so they are not covered by any overlapping route
-            // shape
-            createAlertingRouteLayers(colorPalette)
+    suspend fun createAllRouteLayers(colorPalette: ColorPalette): List<LineLayer> =
+        withContext(Dispatchers.Default) {
+            listOf(createRouteLayer()) +
+                // Draw all alerting layers on top so they are not covered by any overlapping route
+                // shape
+                createAlertingRouteLayers(colorPalette)
+        }
 
     fun createRouteLayer(): LineLayer {
         val layer = baseRouteLayer(routeLayerId)

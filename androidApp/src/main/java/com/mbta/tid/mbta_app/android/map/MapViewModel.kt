@@ -158,30 +158,26 @@ open class MapViewModel(
     }
 
     override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {
-        withContext(Dispatchers.Default) {
-            val globalResponse = globalResponse.first() ?: return@withContext
-            val railRouteShapes = railRouteShapes.first() ?: return@withContext
-            _railRouteLineData.value =
-                RouteFeaturesBuilder.generateRouteLines(
-                    railRouteShapes.routesWithSegmentedShapes,
-                    globalResponse.routes,
-                    globalResponse.stops,
-                    globalMapData?.alertsByStop
-                )
-        }
+        val globalResponse = globalResponse.first() ?: return
+        val railRouteShapes = railRouteShapes.first() ?: return
+        _railRouteLineData.value =
+            RouteFeaturesBuilder.generateRouteLines(
+                railRouteShapes.routesWithSegmentedShapes,
+                globalResponse.routes,
+                globalResponse.stops,
+                globalMapData?.alertsByStop
+            )
     }
 
     override suspend fun refreshStopFeatures(selectedStop: Stop?, globalMapData: GlobalMapData?) {
-        withContext(Dispatchers.Default) {
-            val routeLineData = railRouteLineData.first() ?: return@withContext
-            _stopSourceData.value =
-                StopFeaturesBuilder.buildCollection(
-                        StopSourceData(selectedStopId = selectedStop?.id),
-                        globalMapData?.mapStops.orEmpty(),
-                        routeLineData
-                    )
-                    .toMapbox()
-        }
+        val routeLineData = railRouteLineData.first() ?: return
+        _stopSourceData.value =
+            StopFeaturesBuilder.buildCollection(
+                    StopSourceData(selectedStopId = selectedStop?.id),
+                    globalMapData?.mapStops.orEmpty(),
+                    routeLineData
+                )
+                .toMapbox()
     }
 
     override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {

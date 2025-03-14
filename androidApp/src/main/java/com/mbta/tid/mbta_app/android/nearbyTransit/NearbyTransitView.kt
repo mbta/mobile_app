@@ -40,9 +40,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -104,20 +102,18 @@ fun NearbyTransitView(
             now,
             pinnedRoutes
         ) {
-            withContext(Dispatchers.Default) {
-                if (targetLocation != null) {
-                    nearbyVM.nearby?.withRealtimeInfo(
-                        globalData = globalResponse,
-                        sortByDistanceFrom = targetLocation,
-                        schedules,
-                        predictions,
-                        alertData,
-                        now,
-                        pinnedRoutes.orEmpty(),
-                    )
-                } else {
-                    null
-                }
+            if (targetLocation != null) {
+                nearbyVM.nearby?.withRealtimeInfo(
+                    globalData = globalResponse,
+                    sortByDistanceFrom = targetLocation,
+                    schedules,
+                    predictions,
+                    alertData,
+                    now,
+                    pinnedRoutes.orEmpty(),
+                )
+            } else {
+                null
             }
         }
 

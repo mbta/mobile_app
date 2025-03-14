@@ -553,7 +553,7 @@ class StopDetailsDeparturesTest {
         fun expected(vararg pattern: RealtimePatterns.ByHeadsign): StopDetailsDepartures =
             StopDetailsDepartures(listOf(PatternsByStop(route, stop, pattern.toList())))
 
-        fun actual(includeSchedules: Boolean = true, includePredictions: Boolean = true) =
+        suspend fun actual(includeSchedules: Boolean = true, includePredictions: Boolean = true) =
             StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(objects, mapOf(stop.id to objects.routePatterns.keys.toList())),

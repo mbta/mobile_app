@@ -179,7 +179,7 @@ struct StopDetailsPage: View {
     func updateDepartures() {
         Task {
             if stopId != stopDetailsVM.stopData?.stopId { return }
-            let nextDepartures = stopDetailsVM.getDepartures(
+            let nextDepartures = await stopDetailsVM.getDepartures(
                 stopId: stopId,
                 alerts: nearbyVM.alerts,
                 now: now

@@ -225,6 +225,13 @@ constructor(
         if (connectV2Outcome != null) {
             onJoin(connectV2Outcome)
         }
+        this.onMessage = onMessage
+    }
+
+    var onMessage: ((ApiResult<PredictionsByStopMessageResponse>) -> Unit)? = null
+
+    fun sendMessage(message: PredictionsByStopMessageResponse) {
+        onMessage?.invoke(ApiResult.Ok(message))
     }
 
     override var lastUpdated: Instant? = null

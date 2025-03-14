@@ -20,12 +20,13 @@ import io.github.dellisd.spatialk.turf.lineSlice
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalTurfApi::class)
 class RouteFeaturesBuilderTest {
     @Test
-    fun `creates route feature collection`() {
+    fun `creates route feature collection`() = runBlocking {
         val collection =
             RouteFeaturesBuilder.buildCollection(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
@@ -91,7 +92,7 @@ class RouteFeaturesBuilderTest {
     }
 
     @Test
-    fun `preserves route properties`() {
+    fun `preserves route properties`() = runBlocking {
         val collection =
             RouteFeaturesBuilder.buildCollection(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
@@ -121,7 +122,7 @@ class RouteFeaturesBuilderTest {
     }
 
     @Test
-    fun `splits for alerts`() {
+    fun `splits for alerts`() = runBlocking {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()

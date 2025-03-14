@@ -10,6 +10,7 @@ import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -325,7 +326,7 @@ class TemporaryTerminalTest {
         )
 
     @Test
-    fun `shows only regular terminals when outside shuttle`() {
+    fun `shows only regular terminals when outside shuttle`() = runBlocking {
         val expected =
             expected(
                 harvard.station,
@@ -392,7 +393,7 @@ class TemporaryTerminalTest {
     }
 
     @Test
-    fun `shows only regular terminals when inside shuttle`() {
+    fun `shows only regular terminals when inside shuttle`() = runBlocking {
         val expected =
             expected(
                 parkStreet.station,
@@ -452,7 +453,7 @@ class TemporaryTerminalTest {
     }
 
     @Test
-    fun `shows only regular terminals when at boundary of shuttle`() {
+    fun `shows only regular terminals when at boundary of shuttle`() = runBlocking {
         val expected =
             expected(
                 jfkUmass.station,

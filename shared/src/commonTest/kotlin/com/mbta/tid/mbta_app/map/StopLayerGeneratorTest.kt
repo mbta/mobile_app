@@ -10,10 +10,11 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopAlertState
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.runBlocking
 
 class StopLayerGeneratorTest {
     @Test
-    fun `stop layers are created`() {
+    fun `stop layers are created`() = runBlocking {
         val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light)
 
         assertEquals(11, stopLayers.size)
@@ -31,7 +32,7 @@ class StopLayerGeneratorTest {
     }
 
     @Test
-    fun `North Station with alerts has correct properties`() {
+    fun `North Station with alerts has correct properties`() = runBlocking {
         val northStation =
             Stop(
                 id = "place-north",

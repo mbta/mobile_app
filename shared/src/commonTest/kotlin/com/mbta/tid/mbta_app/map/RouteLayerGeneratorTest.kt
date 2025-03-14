@@ -3,13 +3,14 @@ package com.mbta.tid.mbta_app.map
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 
 class RouteLayerGeneratorTest {
     @Test
-    fun `route layers are created`() {
+    fun `route layers are created`(): Unit = runBlocking {
         val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
 
         assertEquals(4, routeLayers.size)
@@ -27,7 +28,7 @@ class RouteLayerGeneratorTest {
     }
 
     @Test
-    fun `layers have offset`() {
+    fun `layers have offset`(): Unit = runBlocking {
         val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
 
         assertEquals(4, routeLayers.size)
@@ -45,7 +46,7 @@ class RouteLayerGeneratorTest {
     }
 
     @Test
-    fun `base layer color comes from data`() {
+    fun `base layer color comes from data`() = runBlocking {
         val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
 
         val baseRouteLayer = routeLayers[0]
@@ -59,7 +60,7 @@ class RouteLayerGeneratorTest {
     }
 
     @Test
-    fun `sort key comes from data`() {
+    fun `sort key comes from data`() = runBlocking {
         val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
 
         val baseRouteLayer = routeLayers[0]
@@ -73,8 +74,8 @@ class RouteLayerGeneratorTest {
     }
 
     @Test
-    fun `uses provided colors`() {
-        fun checkColorsMatch(colorPalette: ColorPalette) {
+    fun `uses provided colors`() = runBlocking {
+        suspend fun checkColorsMatch(colorPalette: ColorPalette) {
             val routeLayers = RouteLayerGenerator.createAllRouteLayers(colorPalette)
 
             val suspendedLayer =

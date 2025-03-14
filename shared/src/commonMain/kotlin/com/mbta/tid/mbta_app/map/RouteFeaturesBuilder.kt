@@ -23,6 +23,8 @@ import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.put
 
 data class RouteLineData(
@@ -48,36 +50,40 @@ object RouteFeaturesBuilder {
     val propRouteColor = FeatureProperty<Color>("routeColor")
     val propAlertStateKey = FeatureProperty<String>("alertState")
 
-    fun generateRouteLines(
+    suspend fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?,
         stopsById: Map<String, Stop>?,
         alertsByStop: Map<String, AlertAssociatedStop>?
     ): List<RouteLineData> {
-        return routeData.flatMap {
-            generateRouteLines(
-                routeWithShapes = it,
-                route = routesById?.get(it.routeId),
-                stopsById = stopsById,
-                alertsByStop = alertsByStop
-            )
+        return withContext(Dispatchers.Default) {
+            routeData.flatMap {
+                generateRouteLines(
+                    routeWithShapes = it,
+                    route = routesById?.get(it.routeId),
+                    stopsById = stopsById,
+                    alertsByStop = alertsByStop
+                )
+            }
         }
     }
 
-    fun buildCollection(
+    suspend fun buildCollection(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?,
         stopsById: Map<String, Stop>?,
         alertsByStop: Map<String, AlertAssociatedStop>?
     ): FeatureCollection {
-        val routeLines: List<RouteLineData> =
-            generateRouteLines(
-                routeData = routeData,
-                routesById = routesById,
-                stopsById = stopsById,
-                alertsByStop = alertsByStop
-            )
-        return buildCollection(routeLines = routeLines)
+        return withContext(Dispatchers.Default) {
+            val routeLines: List<RouteLineData> =
+                generateRouteLines(
+                    routeData = routeData,
+                    routesById = routesById,
+                    stopsById = stopsById,
+                    alertsByStop = alertsByStop
+                )
+            buildCollection(routeLines = routeLines)
+        }
     }
 
     fun buildCollection(routeLines: List<RouteLineData>): FeatureCollection {

@@ -14,6 +14,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 
 class NearbyResponseTest {
@@ -2878,7 +2879,7 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `withRealtimeInfo north station disruption case`() {
+    fun `withRealtimeInfo north station disruption case`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val northStation =
             objects.stop {
@@ -3159,7 +3160,7 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `withRealtimeInfo filters out headsign if it is the last stop of route pattern`() {
+    fun `withRealtimeInfo filters out headsign if it is the last stop of route pattern`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val oakGrove =
@@ -3262,7 +3263,7 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `withRealtimeInfo filters out any arrival only for non-subway routes`() {
+    fun `withRealtimeInfo filters out any arrival only for non-subway routes`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val longWharf =
