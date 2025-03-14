@@ -329,13 +329,15 @@ struct NearbyTransitView: View {
     ) {
         let fallbackPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
 
-        nearbyWithRealtimeInfo = withRealtimeInfo(
-            schedules: scheduleResponse ?? self.scheduleResponse,
-            predictions: predictions ?? fallbackPredictions,
-            alerts: alerts ?? nearbyVM.alerts,
-            filterAtTime: now.toKotlinInstant(),
-            pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
-        )
+        Task {
+            nearbyWithRealtimeInfo = await withRealtimeInfo(
+                schedules: scheduleResponse ?? self.scheduleResponse,
+                predictions: predictions ?? fallbackPredictions,
+                alerts: alerts ?? nearbyVM.alerts,
+                filterAtTime: now.toKotlinInstant(),
+                pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
+            )
+        }
     }
 
     private func withRealtimeInfo(
@@ -344,9 +346,9 @@ struct NearbyTransitView: View {
         alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant,
         pinnedRoutes: Set<String>
-    ) -> [StopsAssociated]? {
+    ) async -> [StopsAssociated]? {
         guard let loadedLocation = state.loadedLocation else { return nil }
-        return state.nearbyByRouteAndStop?.withRealtimeInfo(
+        return try? await state.nearbyByRouteAndStop?.withRealtimeInfo(
             globalData: globalData,
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
             schedules: schedules,

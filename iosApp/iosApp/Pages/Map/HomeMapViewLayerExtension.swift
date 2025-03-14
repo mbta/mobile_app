@@ -44,14 +44,16 @@ extension HomeMapView {
     }
 
     func handleSetStopSources() {
-        let snappedStopRouteLines = RouteFeaturesBuilder.shared.generateRouteLines(
-            routeData: mapVM.allRailSourceData,
-            routesById: mapVM.globalData?.routes,
-            stopsById: mapVM.globalData?.stops,
-            alertsByStop: globalMapData?.alertsByStop
-        )
-        mapVM.snappedStopRouteLines = snappedStopRouteLines
-        mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
+        Task {
+            let snappedStopRouteLines = try await RouteFeaturesBuilder.shared.generateRouteLines(
+                routeData: mapVM.allRailSourceData,
+                routesById: mapVM.globalData?.routes,
+                stopsById: mapVM.globalData?.stops,
+                alertsByStop: globalMapData?.alertsByStop
+            )
+            mapVM.snappedStopRouteLines = snappedStopRouteLines
+            mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
+        }
     }
 
     func initializeLayers(_ layerManager: IMapLayerManager) {
