@@ -34,6 +34,7 @@ class AlertsChannelTest {
                             }
                             put("cause", "parade")
                             put("description", "Description")
+                            put("duration_certainty", "known")
                             put("effect", "station_issue")
                             put("effect_name", JsonNull)
                             put("header", "Header")
@@ -71,6 +72,7 @@ class AlertsChannelTest {
                             ),
                             Alert.Cause.Parade,
                             "Description",
+                            Alert.DurationCertainty.Known,
                             Alert.Effect.StationIssue,
                             null,
                             "Header",
@@ -113,6 +115,7 @@ class AlertsChannelTest {
                             }
                             put("cause", "gravitational_anomalies")
                             put("description", "Description")
+                            put("duration_certainty", "beyond_mortal_comprehension")
                             put("effect", "hover_trains")
                             put("effect_name", JsonNull)
                             put("header", "Header")
@@ -144,6 +147,7 @@ class AlertsChannelTest {
                                 ),
                                 Alert.Cause.UnknownCause,
                                 "Description",
+                                Alert.DurationCertainty.Unknown,
                                 Alert.Effect.UnknownEffect,
                                 null,
                                 "Header",

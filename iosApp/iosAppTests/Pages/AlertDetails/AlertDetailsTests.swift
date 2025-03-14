@@ -84,6 +84,78 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[1].formatStart().characters)))
     }
 
+    func testServiceStartAndEndActivePeriod() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = Date.now
+
+        guard let eastern = TimeZone(identifier: "America/New_York") else {
+            XCTFail("Eastern time couldn't be loaded")
+            return
+        }
+        var calendar = Calendar.current
+        calendar.timeZone = eastern
+
+        let nowComponents: DateComponents = Calendar.current.dateComponents(in: eastern, from: now)
+
+        let serviceStart = calendar.date(bySettingHour: 3, minute: 0, second: 0, of: now)!
+        let serviceEnd = calendar.date(
+            bySettingHour: 2, minute: 59, second: 0, of: now
+        )!.addingTimeInterval(60 * 60 * 24)
+
+        let alert = objects.alert { alert in
+            alert.activePeriod(
+                start: serviceStart.toKotlinInstant(),
+                end: serviceEnd.toKotlinInstant()
+            )
+            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
+
+        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
+            string.contains("start of service") &&
+                string.contains(" \(String(nowComponents.day!)),")
+        }))
+        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in
+            string.contains(serviceStart.formatted(date: .omitted, time: .shortened))
+        }))
+        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
+            string.contains("end of service") &&
+                string.contains(" \(String(nowComponents.day!)),")
+        }))
+        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in
+            string.contains(serviceEnd.formatted(date: .omitted, time: .shortened))
+        }))
+    }
+
+    func testLaterTodayActivePeriod() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = Date.now
+
+        let start = now.addingTimeInterval(-20)
+        let end = now.addingTimeInterval(60 * 60 * 2)
+
+        let alert = objects.alert { alert in
+            alert.durationCertainty = .estimated
+            alert.activePeriod(start: start.toKotlinInstant(), end: end.toKotlinInstant())
+            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
+
+        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
+            string.contains(start.formatted(date: .omitted, time: .shortened))
+        }))
+        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in
+            string.contains(end.formatted(date: .omitted, time: .shortened))
+        }))
+        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
+            string.contains("later today")
+        }))
+    }
+
     func testNoCurrentActivePeriod() throws {
         let objects = ObjectCollectionBuilder()
 
