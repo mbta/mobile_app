@@ -70,6 +70,7 @@
         <item quantity="other">%1$d elevadores fechados</item>
     </plurals>
     <string name="end">Fim</string>
+    <string name="end_of_service">fim do serviço</string>
     <string name="error_loading_data">Erro ao carregar dados</string>
     <string name="escalator_closed_sentence_case">Escada rolante fechada</string>
     <string name="escalator_closure">Fechamento de escada rolante</string>
@@ -110,6 +111,7 @@
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="inbound">Entrada</string>
     <string name="is_stops_away_from">%1$s está a %2$d paradas de %3$s</string>
+    <string name="later_today">mais tarde hoje</string>
     <string name="live">Ao vivo</string>
     <string name="loading">Carregando...</string>
     <string name="location_not_available_yet">Localização ainda não disponível</string>
@@ -230,6 +232,7 @@
     <string name="star_route">Marcar rota como favorita</string>
     <string name="star_route_hint">fixar rota no topo da lista</string>
     <string name="start">Início</string>
+    <string name="start_of_service">início do serviço</string>
     <string name="station_closed">Estação fechada</string>
     <string name="station_closed_sentence_case">Estação fechada</string>
     <string name="station_closure">Fechamento de estação</string>
@@ -271,6 +274,7 @@
     <string name="unable_to_connect">Impossível conectar</string>
     <string name="unruly_passenger">Passageiro indisciplinado</string>
     <string name="unstar_route_hint">desafixar a rota do topo da lista</string>
+    <string name="until_further_notice">Até novo aviso</string>
     <string name="updated_at">Atualização: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Atualizado há %1$d minuto</item>

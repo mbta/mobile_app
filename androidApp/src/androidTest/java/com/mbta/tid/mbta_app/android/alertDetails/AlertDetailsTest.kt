@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -63,7 +64,11 @@ class AlertDetailsTest {
 
         composeTestRule.onNodeWithText("Red Line Stop Closure").assertIsDisplayed()
         composeTestRule.onNodeWithText("Unruly Passenger").assertIsDisplayed()
-        composeTestRule.onNodeWithText(alert.activePeriod[0].formatStart().text).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(
+                alert.activePeriod[0].formatStart(ApplicationProvider.getApplicationContext()).text
+            )
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()
         composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
@@ -105,7 +110,11 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText(alert.activePeriod[1].formatStart().text).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(
+                alert.activePeriod[1].formatStart(ApplicationProvider.getApplicationContext()).text
+            )
+            .assertIsDisplayed()
     }
 
     @Test

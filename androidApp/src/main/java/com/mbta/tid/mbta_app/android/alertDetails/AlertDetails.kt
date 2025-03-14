@@ -15,10 +15,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -42,6 +43,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -222,21 +224,55 @@ private fun AlertTitle(
 
 @Composable
 private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
-    if (currentPeriod != null) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                Modifier.widthIn(min = 48.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Text(stringResource(R.string.start), style = Typography.callout)
-                Text(stringResource(R.string.end), style = Typography.callout)
+    var startWidth by remember { mutableStateOf<Int?>(null) }
+    var endWidth by remember { mutableStateOf<Int?>(null) }
+
+    // This is all because Jetpack Compose has no built in table layout, we need the "Start" and
+    // "End" label texts to take up the same column width, but they can be variable widths in
+    // different languages, so we can't use a fixed size, but we also need the label and formatted
+    // period to be in rows together in case the period needs to break onto multiple lines.
+    val density = LocalDensity.current
+    val style = Typography.callout
+    val textMeasurer = rememberTextMeasurer()
+    val columnTexts = listOf(stringResource(R.string.start), stringResource(R.string.end))
+
+    val columnWidth = remember {
+        columnTexts.maxOf { text ->
+            with(density) {
+                textMeasurer.measure(text = AnnotatedString(text), style = style).size.width.toDp()
             }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                Text(currentPeriod.formatStart(), style = Typography.callout)
-                Text(currentPeriod.formatEnd(), style = Typography.callout)
+        }
+    }
+
+    if (currentPeriod != null) {
+        Column(
+            Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    columnTexts[0],
+                    Modifier.width(columnWidth),
+                    style = style,
+                    onTextLayout = { startWidth = it.size.width }
+                )
+                Text(currentPeriod.formatStart(LocalContext.current), style = style)
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    columnTexts[1],
+                    Modifier.width(columnWidth),
+                    style = style,
+                    onTextLayout = { endWidth = it.size.width }
+                )
+                Text(currentPeriod.formatEnd(LocalContext.current), style = style)
             }
         }
     } else {
@@ -260,15 +296,16 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
                             onTappedAffectedStops()
                         }
                     }
-                    .padding(16.dp)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     affectedStopsLabel,
+                    Modifier.weight(1f),
                     color = colorResource(R.color.text),
                     textAlign = TextAlign.Start,
                     style = Typography.callout
                 )
-                Spacer(Modifier.weight(1f))
                 val degrees by
                     animateFloatAsState(if (areStopsExpanded) 90f else 0f, label = "rotation")
                 Icon(
@@ -313,15 +350,16 @@ fun TripPlannerLink(onTappedTripPlanner: () -> Unit) {
                 }
             }
             .tile()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             "Plan a route with Trip Planner",
+            Modifier.weight(1f),
             color = colorResource(R.color.text),
             textAlign = TextAlign.Start,
             style = Typography.callout
         )
-        Spacer(Modifier.weight(1f))
         Icon(
             painterResource(R.drawable.fa_route),
             null,
