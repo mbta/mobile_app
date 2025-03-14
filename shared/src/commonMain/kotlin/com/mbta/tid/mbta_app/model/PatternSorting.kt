@@ -3,13 +3,12 @@ package com.mbta.tid.mbta_app.model
 import io.github.dellisd.spatialk.geojson.Position
 
 object PatternSorting {
-    private fun patternServiceBucket(realtimePatterns: RealtimePatterns) =
+    private fun patternServiceBucket(leafData: ILeafData) =
         when {
             // showing either a trip or an alert
-            realtimePatterns.hasMajorAlerts ||
-                realtimePatterns.upcomingTrips.orEmpty().isNotEmpty() -> 1
+            leafData.hasMajorAlerts || leafData.upcomingTrips.orEmpty().isNotEmpty() -> 1
             // service ended
-            realtimePatterns.hasSchedulesToday -> 2
+            leafData.hasSchedulesToday -> 2
             // no service today
             else -> 3
         }
@@ -84,5 +83,21 @@ object PatternSorting {
                 { 0 }
             },
             { it.sortRoute() },
+        )
+
+    fun compareRouteCards(
+        pinnedRoutes: Set<String>,
+        sortByDistanceFrom: Position?
+    ): Comparator<RouteCardData> =
+        compareBy(
+            { pinnedRouteBucket(it.lineOrRoute.sortRoute(), pinnedRoutes) },
+            { patternServiceBucket(it.stopData.first().data.first()) },
+            { subwayBucket(it.lineOrRoute.sortRoute()) },
+            if (sortByDistanceFrom != null) {
+                { it.distanceFrom(sortByDistanceFrom) }
+            } else {
+                { 0 }
+            },
+            { it.lineOrRoute.sortRoute() },
         )
 }
