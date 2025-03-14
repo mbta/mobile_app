@@ -8,7 +8,7 @@
 
 import Combine
 import CoreLocation
-import shared
+import Shared
 import SwiftUI
 
 struct SearchResultsContainer: View {

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 import SwiftPhoenixClient
 
 open class MockSocket: PhoenixSocket {
@@ -35,7 +35,7 @@ open class MockSocket: PhoenixSocket {
 }
 
 class MockPush: PhoenixPush {
-    func receive(status _: shared.PhoenixPushStatus,
+    func receive(status _: Shared.PhoenixPushStatus,
                  callback _: @escaping (any PhoenixMessage) -> Void) -> any PhoenixPush {
         MockPush()
     }

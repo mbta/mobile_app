@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 import SwiftUI
 
 func routeIcon(_ route: Route) -> Image {

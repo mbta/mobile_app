@@ -8,7 +8,7 @@
 
 import CoreLocation
 import os
-import shared
+import Shared
 import SwiftUI
 
 class NearbyViewModel: ObservableObject {

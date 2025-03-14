@@ -8,7 +8,7 @@
 
 @testable import iosApp
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 import XCTest
 
 final class ViewportProviderTest: XCTestCase {

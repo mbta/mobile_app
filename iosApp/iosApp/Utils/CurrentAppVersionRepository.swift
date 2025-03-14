@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 class CurrentAppVersionRepository: ICurrentAppVersionRepository {
     func getCurrentAppVersion() -> AppVersion? {

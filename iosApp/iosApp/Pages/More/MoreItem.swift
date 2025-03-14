@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 enum MoreItem: Identifiable, Equatable {
     case toggle(label: String, setting: Settings, value: Bool)

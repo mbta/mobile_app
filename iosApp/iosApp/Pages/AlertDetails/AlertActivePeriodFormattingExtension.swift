@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 // This is for performing iOS specific date string formatting and localization for AlertDetails
-extension shared.Alert.ActivePeriod {
+extension Shared.Alert.ActivePeriod {
     private func format(instant: Instant) -> AttributedString {
         let date = instant.toNSDate()
         let formattedDate = date.formatted(Date.FormatStyle().weekday(.wide).month().day())

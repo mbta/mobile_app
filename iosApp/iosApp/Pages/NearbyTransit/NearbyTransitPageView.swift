@@ -10,7 +10,7 @@ import Combine
 import CoreLocation
 @_spi(Experimental) import MapboxMaps
 import os
-import shared
+import Shared
 import SwiftUI
 
 struct NearbyTransitPageView: View {

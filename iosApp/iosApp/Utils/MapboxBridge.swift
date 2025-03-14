@@ -7,7 +7,7 @@
 //
 
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 
 private func bridgeStyleObject<T: Decodable>(_ object: MapboxStyleObject) -> T {
     // the json is supposed to be valid
@@ -61,7 +61,7 @@ extension GeojsonLineString {
     }
 }
 
-extension shared.JSONValue {
+extension Shared.JSONValue {
     func toMapbox() -> MapboxMaps.JSONValue {
         switch onEnum(of: self) {
         case let .array(data): .array(data.data.map { $0.toMapbox() })
@@ -73,7 +73,7 @@ extension shared.JSONValue {
     }
 }
 
-extension shared.Feature {
+extension Shared.Feature {
     func toMapbox() -> MapboxMaps.Feature {
         var result = Feature(geometry: geometry.toMapbox())
         if let id {
@@ -84,25 +84,25 @@ extension shared.Feature {
     }
 }
 
-extension shared.FeatureCollection {
+extension Shared.FeatureCollection {
     func toMapbox() -> MapboxMaps.FeatureCollection {
         MapboxMaps.FeatureCollection(features: features.map { $0.toMapbox() })
     }
 }
 
-extension shared.Exp {
+extension Shared.Exp {
     func toMapbox() -> MapboxMaps.Exp {
         bridgeStyleObject(self)
     }
 }
 
-extension shared.LineLayer {
+extension Shared.LineLayer {
     func toMapbox() -> MapboxMaps.LineLayer {
         bridgeStyleObject(self)
     }
 }
 
-extension shared.SymbolLayer {
+extension Shared.SymbolLayer {
     func toMapbox() -> MapboxMaps.SymbolLayer {
         bridgeStyleObject(self)
     }

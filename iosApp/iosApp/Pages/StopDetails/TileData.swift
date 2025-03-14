@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 struct TileData: Identifiable {
     let id: String

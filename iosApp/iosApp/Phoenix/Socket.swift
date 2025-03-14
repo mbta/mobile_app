@@ -8,7 +8,7 @@
 
 import Foundation
 import os
-import shared
+import Shared
 import SwiftPhoenixClient
 
 extension Socket: PhoenixSocket {

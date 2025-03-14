@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 enum MoreNavTarget: Identifiable, Hashable {
     case licenses

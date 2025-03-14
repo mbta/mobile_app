@@ -9,7 +9,7 @@
 import Foundation
 
 import OrderedCollections
-import shared
+import Shared
 import SwiftPhoenixClient
 import SwiftUI
 

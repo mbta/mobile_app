@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 extension RouteType {
     func typeText(isOnly: Bool) -> String {

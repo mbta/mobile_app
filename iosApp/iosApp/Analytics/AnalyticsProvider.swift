@@ -8,9 +8,9 @@
 
 import FirebaseAnalytics
 import Foundation
-import shared
+import Shared
 
-class AnalyticsProvider: shared.Analytics {
+class AnalyticsProvider: Shared.Analytics {
     static let shared = AnalyticsProvider()
 
     override func logEvent(name: String, parameters: [String: String]) {

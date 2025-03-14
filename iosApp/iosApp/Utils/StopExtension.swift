@@ -7,7 +7,7 @@
 //
 
 import CoreLocation
-import shared
+import Shared
 
 extension Stop {
     var coordinate: CLLocationCoordinate2D {

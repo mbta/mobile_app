@@ -8,7 +8,7 @@
 
 import Combine
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 import SwiftUI
 
 class ViewportProvider: ObservableObject {

@@ -8,7 +8,7 @@
 
 @_spi(Experimental) import MapboxMaps
 import os
-import shared
+import Shared
 import SwiftUI
 
 protocol IMapLayerManager {

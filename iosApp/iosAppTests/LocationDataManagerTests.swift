@@ -8,7 +8,7 @@
 
 import CoreLocation
 @testable import iosApp
-import shared
+import Shared
 import XCTest
 
 final class LocationDataManagerTests: XCTestCase {

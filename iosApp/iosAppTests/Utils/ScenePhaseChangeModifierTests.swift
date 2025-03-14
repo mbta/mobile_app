@@ -8,7 +8,7 @@
 
 import Foundation
 @testable import iosApp
-import shared
+import Shared
 import SwiftUI
 import ViewInspector
 import XCTest

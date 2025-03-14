@@ -6,7 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 extension [Settings: Bool] {

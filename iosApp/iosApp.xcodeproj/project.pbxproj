@@ -1911,7 +1911,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					shared,
+					Shared,
 					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbta.tid.mbtaapp;
@@ -1947,7 +1947,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					shared,
+					Shared,
 					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbta.tid.mbtaapp;
@@ -2044,7 +2044,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					shared,
+					Shared,
 					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbta.tid.mbtaapp.staging;
@@ -2195,7 +2195,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					shared,
+					Shared,
 					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbta.tid.mbtaapp.staging;

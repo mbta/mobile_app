@@ -9,7 +9,7 @@
 import Combine
 @testable import iosApp
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 struct FormattedAlert: Equatable {
     let effect: String

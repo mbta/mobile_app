@@ -1,7 +1,7 @@
 import FirebaseAnalytics
 import FirebaseCore
 import os
-import shared
+import Shared
 import SwiftPhoenixClient
 import SwiftUI
 

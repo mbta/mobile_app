@@ -7,7 +7,7 @@
 //
 
 import Combine
-import shared
+import Shared
 import SwiftPhoenixClient
 import SwiftUI
 

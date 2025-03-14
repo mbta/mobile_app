@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 struct MoreSectionView: View {

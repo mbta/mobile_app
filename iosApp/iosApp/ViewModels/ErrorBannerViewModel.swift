@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 class ErrorBannerViewModel: ObservableObject {
     let errorRepository: IErrorBannerStateRepository

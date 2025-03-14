@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 extension TripInstantDisplay.Overridden {
@@ -236,7 +236,7 @@ struct DisruptionView: View {
 struct UpcomingTripView_Previews: PreviewProvider {
     static let route = MapStopRoute.orange
 
-    static func disruption(_ effect: shared.Alert.Effect) -> UpcomingTripView.State {
+    static func disruption(_ effect: Shared.Alert.Effect) -> UpcomingTripView.State {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = effect }
         let format = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: route)
         return .disruption(.init(alert: alert), iconName: format.iconName)

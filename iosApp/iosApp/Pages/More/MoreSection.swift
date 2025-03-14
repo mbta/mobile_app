@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 struct MoreSection: Identifiable, Equatable {
     enum Category: String {
