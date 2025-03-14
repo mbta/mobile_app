@@ -498,7 +498,7 @@ class RouteCardDataTest {
         val stop2 = objects.stop { id = "place-clmnl" }
         val stop3 = objects.stop { id = "place-river" }
         val stop4 = objects.stop { id = "place-pktrm" }
-        val stop5 = objects.stop { id = "place-unsqu" }
+        val stop5 = objects.stop { id = "place-mgngl" }
 
         val line = objects.line { id = "line-Green" }
 
@@ -2301,9 +2301,7 @@ class RouteCardDataTest {
     @Test
     fun `RouteCardData routeCardsForStopList groups lines by direction`()  {
         val objects = ObjectCollectionBuilder()
-        val hynes = objects.stop {
-            id = "place-hymnl"
-        }
+        val hynes = objects.stop { id = "place-hymnl" }
 
         val gov = objects.stop { id = "place-gover" }
 
@@ -2315,7 +2313,7 @@ class RouteCardDataTest {
         val bc = objects.stop { id = "place-lake" }
         val cleCenter = objects.stop { id = "place-clmnl" }
         val heath = objects.stop { id = "place-hsmnl" }
-        val unionSquare = objects.stop { id = "place-unsqu" }
+        val magoun = objects.stop { id = "place-mgngl" }
 
         val line = objects.line { id = "line-Green" }
         val routeB =
@@ -2384,7 +2382,7 @@ class RouteCardDataTest {
             objects.routePattern(routeE) {
                 id = "test-hs"
                 representativeTrip { headsign = "Heath Street"
-                    stopIds = listOf(unionSquare.id, haymarket.id, gov.id, boylston.id, arlington.id, hynes.id, heath.id)
+                    stopIds = listOf(magoun.id, haymarket.id, gov.id, boylston.id, arlington.id, hynes.id, heath.id)
 
                 }
                 directionId = 0
@@ -2393,7 +2391,7 @@ class RouteCardDataTest {
         val routePatternE2 =
             objects.routePattern(routeE) {
                 representativeTrip { headsign = "Medford/Tufts"
-                    stopIds = listOf(heath.id, hynes.id, arlington.id, boylston.id, gov.id, haymarket.id, unionSquare.id)
+                    stopIds = listOf(heath.id, hynes.id, arlington.id, boylston.id, gov.id, haymarket.id, magoun.id)
                 }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
