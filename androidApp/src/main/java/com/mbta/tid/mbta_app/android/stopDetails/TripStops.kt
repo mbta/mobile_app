@@ -62,7 +62,8 @@ fun TripStops(
     now: Instant,
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
-    routeAccents: TripRouteAccents
+    routeAccents: TripRouteAccents,
+    showElevatorAccessibility: Boolean,
 ) {
     val context = LocalContext.current
 
@@ -102,7 +103,14 @@ fun TripStops(
             if (showFirstStopSeparately) {
                 val firstStop = splitStops.firstStop
                 if (firstStop != null) {
-                    TripStopRow(stop = firstStop, now, onTapLink, routeAccents, firstStop = true)
+                    TripStopRow(
+                        stop = firstStop,
+                        now,
+                        onTapLink,
+                        routeAccents,
+                        firstStop = true,
+                        showElevatorAccessibility = showElevatorAccessibility
+                    )
                 }
             }
             if (splitStops.collapsedStops.isNotEmpty() && stopsAway != null) {
@@ -179,7 +187,8 @@ fun TripStops(
                             lastStopSequence,
                             now,
                             onTapLink,
-                            routeAccents
+                            routeAccents,
+                            showElevatorAccessibility
                         )
                     }
                 }
@@ -205,15 +214,30 @@ fun TripStops(
                     routeAccents,
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
-                    modifier = Modifier.background(colorResource(R.color.fill3))
+                    modifier = Modifier.background(colorResource(R.color.fill3)),
+                    showElevatorAccessibility = showElevatorAccessibility
                 )
 
                 HaloUnderRouteLine(routeAccents.color)
                 HaloUnderRouteLine(routeAccents.color)
             }
-            StopList(splitStops.followingStops, lastStopSequence, now, onTapLink, routeAccents)
+            StopList(
+                splitStops.followingStops,
+                lastStopSequence,
+                now,
+                onTapLink,
+                routeAccents,
+                showElevatorAccessibility
+            )
         } else {
-            StopList(stops.stops, lastStopSequence, now, onTapLink, routeAccents)
+            StopList(
+                stops.stops,
+                lastStopSequence,
+                now,
+                onTapLink,
+                routeAccents,
+                showElevatorAccessibility
+            )
         }
     }
 }
@@ -234,7 +258,8 @@ private fun StopList(
     lastStopSequence: Int?,
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
-    routeAccents: TripRouteAccents
+    routeAccents: TripRouteAccents,
+    showElevatorAccessibility: Boolean
 ) {
     for (stop in list) {
         TripStopRow(
@@ -242,7 +267,8 @@ private fun StopList(
             now,
             onTapLink,
             routeAccents,
-            lastStop = stop.stopSequence == lastStopSequence
+            lastStop = stop.stopSequence == lastStopSequence,
+            showElevatorAccessibility = showElevatorAccessibility
         )
     }
 }
@@ -286,7 +312,8 @@ private fun TripStopsPreview() {
             Clock.System.now(),
             GlobalResponse(objects),
             onTapLink = {},
-            TripRouteAccents(route)
+            TripRouteAccents(route),
+            showElevatorAccessibility = true
         )
     }
 }

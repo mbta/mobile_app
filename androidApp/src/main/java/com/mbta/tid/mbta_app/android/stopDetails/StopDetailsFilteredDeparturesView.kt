@@ -207,7 +207,7 @@ fun StopDetailsFilteredDeparturesView(
                             if (elevatorAlerts.isNotEmpty()) {
                                 elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
                             } else {
-                                NotAccessibleAlertCard()
+                                NotAccessibleCard()
                             }
                         }
                     }

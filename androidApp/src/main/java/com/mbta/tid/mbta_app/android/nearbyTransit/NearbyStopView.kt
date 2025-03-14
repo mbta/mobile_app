@@ -49,13 +49,13 @@ fun NearbyStopView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (showElevatorAccessibility && hasAccessibilityWarning) {
+            if (showElevatorAccessibility && hasElevatorAlerts) {
                 Image(
                     painterResource(R.drawable.elevator_alert),
                     "",
                     modifier = Modifier.height(24.dp).placeholderIfLoading().clearAndSetSemantics {}
                 )
-            } else if (showElevatorAccessibility) {
+            } else if (showElevatorAccessibility && isWheelchairAccessible) {
                 Image(
                     painterResource(R.drawable.wheelchair_accessible),
                     "",
@@ -70,7 +70,7 @@ fun NearbyStopView(
                             start =
                                 if (showElevatorAccessibility && hasElevatorAlerts) 0.dp else 8.dp
                         )
-                        .weight(.6f),
+                        .weight(.4f),
                 style = Typography.callout
             )
             if (showElevatorAccessibility && hasAccessibilityWarning) {
@@ -83,7 +83,7 @@ fun NearbyStopView(
                                 patternsAtStop.elevatorAlerts.size
                             )
                         else stringResource(R.string.not_accessible),
-                    modifier = Modifier.placeholderIfLoading().alpha(0.6f).weight(.4f),
+                    modifier = Modifier.placeholderIfLoading().alpha(0.6f).weight(.6f),
                     style = Typography.footnote
                 )
             }

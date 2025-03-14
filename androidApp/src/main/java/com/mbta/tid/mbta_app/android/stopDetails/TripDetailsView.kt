@@ -45,7 +45,7 @@ fun TripDetailsView(
     analytics: Analytics = koinInject(),
     modifier: Modifier = Modifier
 ) {
-
+    val showElevatorAccessibility = stopDetailsVM.showElevatorAccessibility.collectAsState().value
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
     val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
     val vehicle = tripData?.vehicle
@@ -111,6 +111,7 @@ fun TripDetailsView(
             tripFilter,
             now,
             globalResponse,
+            showElevatorAccessibility,
             modifier
         )
     } else {
@@ -140,7 +141,8 @@ fun TripDetailsView(
                     placeholderTripStops,
                     tripFilter,
                     now,
-                    globalResponse ?: GlobalResponse(ObjectCollectionBuilder())
+                    globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
+                    showElevatorAccessibility
                 )
             }
         }
@@ -159,6 +161,7 @@ private fun TripDetailsView(
     tripFilter: TripDetailsFilter?,
     now: Instant,
     globalResponse: GlobalResponse,
+    showElevatorAccessibility: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -183,7 +186,8 @@ private fun TripDetailsView(
                 now,
                 globalResponse,
                 onTapStop,
-                routeAccents
+                routeAccents,
+                showElevatorAccessibility
             )
         }
     }
