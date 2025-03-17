@@ -6,7 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 struct StopDetailsIconCard<Header: View, Details: View>: View {
