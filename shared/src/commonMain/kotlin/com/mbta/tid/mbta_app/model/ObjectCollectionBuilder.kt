@@ -293,6 +293,7 @@ class ObjectCollectionBuilder {
                 if (representativeTrip != null) {
                     headsign = representativeTrip.headsign
                     shapeId = representativeTrip.shapeId
+                    stopIds = representativeTrip.stopIds
                 }
             },
             block
