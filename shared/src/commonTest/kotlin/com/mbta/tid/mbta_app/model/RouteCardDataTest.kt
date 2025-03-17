@@ -1159,7 +1159,7 @@ class RouteCardDataTest {
 
     @Test
     @Ignore // TODO once no service today state added
-    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`()  {
+    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
