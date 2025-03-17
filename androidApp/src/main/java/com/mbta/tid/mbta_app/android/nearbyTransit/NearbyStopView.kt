@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -63,16 +64,22 @@ fun NearbyStopView(
                 if (showElevatorAlerts) {
                     Image(
                         painterResource(R.drawable.elevator_alert),
-                        "",
+                        null,
                         modifier =
-                            Modifier.height(24.dp).placeholderIfLoading().clearAndSetSemantics {}
+                            Modifier.height(24.dp)
+                                .placeholderIfLoading()
+                                .testTag("elevator_alert")
+                                .clearAndSetSemantics {}
                     )
                 } else if (showAccessible) {
                     Image(
                         painterResource(R.drawable.wheelchair_accessible),
-                        "",
+                        null,
                         modifier =
-                            Modifier.height(24.dp).placeholderIfLoading().clearAndSetSemantics {}
+                            Modifier.height(24.dp)
+                                .placeholderIfLoading()
+                                .testTag("wheelchair_accessible")
+                                .clearAndSetSemantics {}
                     )
                 }
                 Text(

@@ -6,12 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
@@ -202,5 +206,59 @@ class TripStopRowTest {
 
         composeTestRule.onNodeWithText(stop.name).performClick()
         assertEquals(entry, linkTappedWith)
+    }
+
+    @Test
+    fun testElevatorAccessibility() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val accessibleStop =
+            objects.stop {
+                name = "Park Street"
+                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+            }
+        val inaccessibleStop =
+            objects.stop {
+                name = "Boylston"
+                wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+            }
+        val schedule = objects.schedule { departureTime = now + 5.seconds }
+        val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
+        val route = objects.route()
+
+        fun entry(stop: Stop, elevatorAlerts: List<Alert> = emptyList()) =
+            TripDetailsStopList.Entry(
+                stop,
+                0,
+                null,
+                schedule,
+                prediction,
+                stop,
+                null,
+                listOf(route),
+                elevatorAlerts
+            )
+
+        var testEntry by mutableStateOf(entry(inaccessibleStop))
+        composeTestRule.setContent {
+            TripStopRow(
+                testEntry,
+                now,
+                onTapLink = {},
+                TripRouteAccents(route),
+                showElevatorAccessibility = true
+            )
+        }
+
+        composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
+
+        testEntry = entry(accessibleStop)
+        composeTestRule.onNodeWithTag("wheelchair_accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
+
+        testEntry = entry(accessibleStop, listOf(objects.alert {}))
+        composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
     }
 }

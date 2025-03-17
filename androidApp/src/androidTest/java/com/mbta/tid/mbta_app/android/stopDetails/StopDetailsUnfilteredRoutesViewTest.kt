@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -59,6 +60,16 @@ class StopDetailsUnfilteredRoutesViewTest {
             locationType = LocationType.STOP
             latitude = 0.0
             longitude = 0.0
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
+    val inaccessibleStop =
+        builder.stop {
+            id = "stop_2"
+            name = "Inaccessible Stop"
+            locationType = LocationType.STOP
+            latitude = 0.0
+            longitude = 0.0
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
         }
     val line =
         builder.line {
@@ -124,7 +135,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 departures = departures,
                 servedRoutes = emptyList(),
                 errorBannerViewModel = errorBannerViewModel,
-                showElevatorAccessibility = false,
+                showElevatorAccessibility = true,
                 now = now,
                 pinRoute = {},
                 pinnedRoutes = emptySet(),
@@ -138,5 +149,44 @@ class StopDetailsUnfilteredRoutesViewTest {
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertDoesNotExist()
+    }
+
+    @Test
+    fun testNotAccessibleStopDetails() {
+
+        val departures =
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    inaccessibleStop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    emptySet(),
+                    now,
+                )
+            )
+
+        composeTestRule.setContent {
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+
+            StopDetailsUnfilteredRoutesView(
+                stop = inaccessibleStop,
+                departures = departures,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = errorBannerViewModel,
+                showElevatorAccessibility = true,
+                now = now,
+                pinRoute = {},
+                pinnedRoutes = emptySet(),
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
+        }
+
+        composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -86,14 +87,14 @@ fun TripStopRow(
                 ) {
                     if (showElevatorAccessibility && stop.elevatorAlerts.isNotEmpty()) {
                         Icon(
-                            modifier = Modifier.height(24.dp),
+                            modifier = Modifier.height(24.dp).testTag("elevator_alert"),
                             painter = painterResource(R.drawable.elevator_alert),
                             contentDescription = null,
                             tint = Color.Unspecified
                         )
                     } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
                         Icon(
-                            modifier = Modifier.height(24.dp),
+                            modifier = Modifier.height(24.dp).testTag("wheelchair_accessible"),
                             painter = painterResource(R.drawable.wheelchair_accessible),
                             contentDescription = null,
                             tint = Color.Unspecified
@@ -281,9 +282,8 @@ private fun TripStopRowPreview() {
                 stop =
                     TripDetailsStopList.Entry(
                         objects.stop {
-                            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
                             name = "Charles/MGH"
-                            vehicleType = RouteType.BUS
+                            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
                         },
                         stopSequence = 10,
                         disruption = null,
