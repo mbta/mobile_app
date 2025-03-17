@@ -55,7 +55,22 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
         val directions: List<Direction>,
         val data: List<Leaf>
     ) {
-        // convenience constructor for when directions are not directly under test
+        // convenience constructors for when directions are not directly under test
+        constructor(
+            stop: Stop,
+            route: Route,
+            data: List<Leaf>,
+            globalData: GlobalResponse
+        ) : this(stop, LineOrRoute.Route(route), data, globalData)
+
+        constructor(
+            stop: Stop,
+            line: Line,
+            routes: Set<Route>,
+            data: List<Leaf>,
+            globalData: GlobalResponse
+        ) : this(stop, LineOrRoute.Line(line, routes), data, globalData)
+
         constructor(
             stop: Stop,
             lineOrRoute: LineOrRoute,
@@ -490,8 +505,22 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
         val directions: List<Direction>,
         var data: ByDirectionBuilder
     ) {
+        // convenience constructors for when directions are not directly under test
+        constructor(
+            stop: Stop,
+            route: Route,
+            data: ByDirectionBuilder,
+            globalData: GlobalResponse
+        ) : this(stop, LineOrRoute.Route(route), data, globalData)
 
-        // convenience constructor for when directions are not directly under test
+        constructor(
+            stop: Stop,
+            line: Line,
+            routes: Set<Route>,
+            data: ByDirectionBuilder,
+            globalData: GlobalResponse
+        ) : this(stop, LineOrRoute.Line(line, routes), data, globalData)
+
         constructor(
             stop: Stop,
             lineOrRoute: LineOrRoute,
