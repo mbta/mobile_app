@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -30,8 +31,8 @@ fun NotAccessibleCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                stringResource(R.string.not_accessible),
-                Modifier.weight(1f),
+                stringResource(R.string.not_accessible_stop_card),
+                Modifier.weight(1f).alpha(0.6f),
                 style = Typography.bodySemibold
             )
         }
