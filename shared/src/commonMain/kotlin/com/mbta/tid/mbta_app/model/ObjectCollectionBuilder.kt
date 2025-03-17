@@ -46,6 +46,7 @@ class ObjectCollectionBuilder {
         var informedEntity = mutableListOf<Alert.InformedEntity>()
         var header: String? = null
         var lifecycle = Alert.Lifecycle.New
+        var severity = 0
         var updatedAt = Instant.fromEpochMilliseconds(0)
 
         fun activePeriod(start: Instant, end: Instant?) {
@@ -85,6 +86,7 @@ class ObjectCollectionBuilder {
                 header,
                 informedEntity,
                 lifecycle,
+                severity,
                 updatedAt
             )
     }
