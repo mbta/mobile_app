@@ -15,11 +15,22 @@ import java.util.TimeZone
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Instant
 
+/**
+ * Return a localized string containing the date and time of an alert. This includes special
+ * handling to check if the alert starts at the beginning of the service day, ends at the end of the
+ * service day, or should be shown as ending "later today".
+ *
+ * @param context The context to get string resources from.
+ * @param instant The instant of the active period to format.
+ * @param durationCertainty The duration certainty of the active period.
+ * @param isStart True if the provided instant is the start of the period, false if it's the end.
+ * @return A localized and formatted string describing the active period.
+ */
 private fun format(
     context: Context,
     instant: Instant,
     durationCertainty: Alert.DurationCertainty?,
-    start: Boolean
+    isStart: Boolean
 ): AnnotatedString {
     val date = instant.toJavaDate()
     val dateFormat =
@@ -35,13 +46,13 @@ private fun format(
     calendar.timeZone = TimeZone.getTimeZone("America/New_York")
     val hour = calendar.get(Calendar.HOUR_OF_DAY)
     val minutes = calendar.get(Calendar.MINUTE)
-    if (start && hour == 3 && minutes == 0) {
+    if (isStart && hour == 3 && minutes == 0) {
         formattedTime = context.getString(R.string.start_of_service)
-    } else if (!start && hour == 2 && minutes == 59) {
+    } else if (!isStart && hour == 2 && minutes == 59) {
         formattedTime = context.getString(R.string.end_of_service)
         val previousDate = instant.minus(24.hours).toJavaDate()
         formattedDate = dateFormat.format(previousDate)
-    } else if (!start && durationCertainty == Alert.DurationCertainty.Estimated) {
+    } else if (!isStart && durationCertainty == Alert.DurationCertainty.Estimated) {
         formattedTime = context.getString(R.string.later_today)
     }
 

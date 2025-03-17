@@ -9,9 +9,18 @@
 import Foundation
 import shared
 
-// This is for performing iOS specific date string formatting and localization for AlertDetails
+/**
+ This is for performing iOS specific date string formatting and localization for AlertDetails.
+ This includes special handling to check if the alert starts at the beginning of the service day,
+ ends at the end of the service day, or should be shown as ending "later today".
+
+ - Parameters:
+     - instant: The instant of the active period to format.
+     - isStart: True if the provided instant is the start of the period, false if it's the end.
+ - Returns: A localized and formatted string describing the active period.
+  */
 extension shared.Alert.ActivePeriod {
-    private func format(instant: Instant, start: Bool) -> AttributedString {
+    private func format(instant: Instant, isStart: Bool) -> AttributedString {
         let date = instant.toNSDate()
         let dateFormat = Date.FormatStyle().weekday(.wide).month().day()
         var formattedDate = date.formatted(dateFormat)
@@ -23,19 +32,19 @@ extension shared.Alert.ActivePeriod {
         let hour = comp?.hour
         let minute = comp?.minute
 
-        if start, hour == 3, minute == 0 {
+        if isStart, hour == 3, minute == 0 {
             formattedTime = NSLocalizedString(
                 "start of service",
                 comment: "Used when an alert begins at the start of a service day"
             )
-        } else if !start, hour == 2, minute == 59 {
+        } else if !isStart, hour == 2, minute == 59 {
             formattedTime = NSLocalizedString(
                 "end of service",
                 comment: "Used when an alert ends at the end of a service day"
             )
             let previousDate = date - (60 * 60 * 24)
             formattedDate = previousDate.formatted(dateFormat)
-        } else if !start, durationCertainty == .estimated {
+        } else if !isStart, durationCertainty == .estimated {
             formattedTime = NSLocalizedString(
                 "later today",
                 comment: "Used when an alert ends at an indeterminite time later the same day"
@@ -50,7 +59,7 @@ extension shared.Alert.ActivePeriod {
     }
 
     func formatStart() -> AttributedString {
-        format(instant: start, start: true)
+        format(instant: start, isStart: true)
     }
 
     func formatEnd() -> AttributedString {
@@ -62,6 +71,6 @@ extension shared.Alert.ActivePeriod {
             furtherNotice.font = .body.bold()
             return furtherNotice
         }
-        return format(instant: end, start: false)
+        return format(instant: end, isStart: false)
     }
 }

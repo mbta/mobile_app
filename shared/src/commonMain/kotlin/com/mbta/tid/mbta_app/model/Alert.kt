@@ -60,7 +60,9 @@ data class Alert(
 
     @Serializable
     data class ActivePeriod(val start: Instant, val end: Instant?) {
-        var durationCertainty: Alert.DurationCertainty? = null
+        // This is only nullable because it's set after serialization within the Alert init,
+        // in practice it should always be populated with a value, unless something has gone wrong.
+        var durationCertainty: DurationCertainty? = null
 
         fun activeAt(instant: Instant): Boolean {
             if (end == null) {
