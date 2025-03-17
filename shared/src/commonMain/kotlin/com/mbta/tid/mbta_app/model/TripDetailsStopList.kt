@@ -20,7 +20,8 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         // contains more specific boarding information for a prediction, like the track number
         val predictionStop: Stop?,
         val vehicle: Vehicle?,
-        val routes: List<Route>
+        val routes: List<Route>,
+        val elevatorAlerts: List<Alert> = emptyList()
     ) {
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
@@ -192,10 +193,15 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             }
 
             val sortedEntries = entries.entries.sortedBy { it.key }
+            val allElevatorAlerts =
+                alertsData.alerts.values.filter { it.effect == Alert.Effect.ElevatorClosure }
 
             fun getEntry(optionalWorking: WorkingEntry?): Entry? {
                 val working = optionalWorking ?: return null
                 val stop = globalData.stops[working.stopId] ?: return null
+                val parent = stop.resolveParent(globalData.stops)
+                val parentAndChildStopIds = setOf(parent.id) + parent.childStopIds
+
                 return Entry(
                     stop,
                     working.stopSequence,
@@ -204,7 +210,8 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                     working.prediction,
                     globalData.stops[working.prediction?.stopId],
                     working.vehicle,
-                    getTransferRoutes(working, globalData)
+                    getTransferRoutes(working, globalData),
+                    Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds)
                 )
             }
 

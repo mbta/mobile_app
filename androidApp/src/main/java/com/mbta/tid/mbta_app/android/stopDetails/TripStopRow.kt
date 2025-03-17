@@ -51,6 +51,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -61,8 +62,8 @@ fun TripStopRow(
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
-    showElevatorAccessibility: Boolean = false,
     modifier: Modifier = Modifier,
+    showElevatorAccessibility: Boolean = false,
     targeted: Boolean = false,
     firstStop: Boolean = false,
     lastStop: Boolean = false
@@ -78,32 +79,28 @@ fun TripStopRow(
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (showElevatorAccessibility) {
-                    Icon(
-                        modifier =
-                            Modifier.height(24.dp)
-                                .padding(
-                                    start = if (stop.stop.isWheelchairAccessible) 6.dp else 3.dp
-                                ),
-                        painter =
-                            if (stop.stop.isWheelchairAccessible) {
-                                painterResource(R.drawable.wheelchair_accessible)
-                            } else {
-                                painterResource(R.drawable.elevator_alert)
-                            },
-                        contentDescription = null,
-                        tint = Color.Unspecified
-                    )
+                Row(
+                    Modifier.padding(start = 6.dp).width(28.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (showElevatorAccessibility && stop.elevatorAlerts.isNotEmpty()) {
+                        Icon(
+                            modifier = Modifier.height(24.dp),
+                            painter = painterResource(R.drawable.elevator_alert),
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                    } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
+                        Icon(
+                            modifier = Modifier.height(24.dp),
+                            painter = painterResource(R.drawable.wheelchair_accessible),
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                    }
                 }
-                RouteLine(
-                    routeAccents.color,
-                    firstStop,
-                    lastStop,
-                    routeAccents,
-                    targeted,
-                    showElevatorAccessibility,
-                    isWheelchairAccessible = stop.stop.isWheelchairAccessible
-                )
+                RouteLine(routeAccents.color, firstStop, lastStop, routeAccents, targeted)
                 Column(Modifier.padding(vertical = 12.dp).padding(start = 16.dp)) {
                     Row(
                         Modifier.semantics(mergeDescendants = true) {
@@ -258,21 +255,9 @@ private fun RouteLine(
     firstStop: Boolean,
     lastStop: Boolean,
     routeAccents: TripRouteAccents,
-    targeted: Boolean,
-    showElevatorAccessibility: Boolean,
-    isWheelchairAccessible: Boolean
+    targeted: Boolean
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            Modifier.fillMaxHeight()
-                .padding(
-                    start =
-                        if (showElevatorAccessibility && isWheelchairAccessible) 5.dp
-                        else if (showElevatorAccessibility) 3.dp else 34.dp
-                )
-                .width(20.dp)
-    ) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().width(20.dp)) {
         Column(Modifier.fillMaxHeight()) {
             if (firstStop) {
                 ColoredRouteLine(Color.Transparent, Modifier.weight(1f))
@@ -295,7 +280,11 @@ private fun TripStopRowPreview() {
             TripStopRow(
                 stop =
                     TripDetailsStopList.Entry(
-                        objects.stop { name = "Charles/MGH" },
+                        objects.stop {
+                            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                            name = "Charles/MGH"
+                            vehicleType = RouteType.BUS
+                        },
                         stopSequence = 10,
                         disruption = null,
                         schedule = null,
@@ -372,7 +361,8 @@ private fun TripStopRowPreview() {
                             },
                         predictionStop = objects.stop { platformCode = "1" },
                         vehicle = null,
-                        routes = emptyList()
+                        routes = emptyList(),
+                        elevatorAlerts = listOf(objects.alert {})
                     ),
                 Clock.System.now(),
                 onTapLink = {},
@@ -380,7 +370,7 @@ private fun TripStopRowPreview() {
                     type = RouteType.COMMUTER_RAIL,
                     color = Color.fromHex("DA291C")
                 ),
-                showElevatorAccessibility = true,
+                showElevatorAccessibility = true
             )
         }
     }
