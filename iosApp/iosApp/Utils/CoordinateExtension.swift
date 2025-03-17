@@ -8,7 +8,7 @@
 
 import CoreLocation
 import Foundation
-import shared
+import Shared
 
 extension CLLocationCoordinate2D {
     /// Rounds the double to decimal places value

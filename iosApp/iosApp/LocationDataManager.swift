@@ -9,7 +9,7 @@
 import Combine
 import CoreLocation
 import Foundation
-import shared
+import Shared
 
 public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableObject {
     var locationFetcher: LocationFetcher

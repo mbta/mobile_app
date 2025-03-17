@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 /**
  This is for performing iOS specific date string formatting and localization for AlertDetails.
@@ -19,7 +19,7 @@ import shared
      - isStart: True if the provided instant is the start of the period, false if it's the end.
  - Returns: A localized and formatted string describing the active period.
   */
-extension shared.Alert.ActivePeriod {
+extension Shared.Alert.ActivePeriod {
     private func format(instant: Instant, isStart: Bool) -> AttributedString {
         let date = instant.toNSDate()
         let dateFormat = Date.FormatStyle().weekday(.wide).month().day()

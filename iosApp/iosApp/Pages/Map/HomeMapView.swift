@@ -9,7 +9,7 @@
 import Combine
 @_spi(Experimental) import MapboxMaps
 import os
-import shared
+import Shared
 import SwiftUI
 
 struct HomeMapView: View {

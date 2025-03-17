@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 struct TripDetailsTarget: Hashable {
     let stopId: String

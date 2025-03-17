@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 
 /// If `getData` returns an `ApiResultOk`, clears any preexisting data error in `errorKey` in `errorBannerRepo` and
 /// calls `onSuccess`.

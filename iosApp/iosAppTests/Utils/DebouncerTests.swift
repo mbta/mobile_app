@@ -9,7 +9,7 @@
 import Foundation
 @testable import iosApp
 
-import shared
+import Shared
 import XCTest
 
 final class DebouncerTests: XCTestCase {
