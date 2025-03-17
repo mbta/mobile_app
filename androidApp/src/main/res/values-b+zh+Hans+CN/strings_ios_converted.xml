@@ -66,6 +66,7 @@
         <item quantity="other">%1$d部电梯已关停</item>
     </plurals>
     <string name="end">结束日期</string>
+    <string name="end_of_service">服务结束</string>
     <string name="error_loading_data">加载数据时出错</string>
     <string name="escalator_closed_sentence_case">自动扶梯已关闭</string>
     <string name="escalator_closure">自动扶梯关闭</string>
@@ -106,6 +107,7 @@
     <string name="ice_in_harbor">港口结冰</string>
     <string name="inbound">进站</string>
     <string name="is_stops_away_from">%1$s距离%3$s还有%2$d站</string>
+    <string name="later_today">今天晚些时候</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>
@@ -226,6 +228,7 @@
     <string name="star_route">为线路添加星号</string>
     <string name="star_route_hint">在列表中置顶路线</string>
     <string name="start">开始日期</string>
+    <string name="start_of_service">服务开始</string>
     <string name="station_closed">车站已关闭</string>
     <string name="station_closed_sentence_case">车站已关闭</string>
     <string name="station_closure">车站关闭</string>
@@ -265,6 +268,7 @@
     <string name="unable_to_connect">无法连接</string>
     <string name="unruly_passenger">乘客干扰</string>
     <string name="unstar_route_hint">在列表中取消置顶路线</string>
+    <string name="until_further_notice">等待进一步通知</string>
     <string name="updated_at">最后更新：%1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="other">%1$d 分钟前更新</item>
