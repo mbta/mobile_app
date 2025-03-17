@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 
 extension Date {
     init(instant: Instant) {

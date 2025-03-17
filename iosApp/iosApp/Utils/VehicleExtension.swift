@@ -7,7 +7,7 @@
 //
 
 import CoreLocation
-import shared
+import Shared
 
 extension Vehicle {
     var coordinate: CLLocationCoordinate2D {

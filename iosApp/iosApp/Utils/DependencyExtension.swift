@@ -6,6 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 
 extension Dependency: Identifiable {}

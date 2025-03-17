@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import shared
+import Shared
 import SwiftUI
 
 class SettingsViewModel: ObservableObject {

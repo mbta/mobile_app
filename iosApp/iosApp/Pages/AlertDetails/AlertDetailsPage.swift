@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 struct AlertDetailsPage: View {
@@ -18,7 +18,7 @@ struct AlertDetailsPage: View {
     var errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner
     var globalRepository: IGlobalRepository = RepositoryDI().global
 
-    @State private var alert: shared.Alert?
+    @State private var alert: Shared.Alert?
     @State var globalResponse: GlobalResponse?
     @State private var now = Date.now
 
