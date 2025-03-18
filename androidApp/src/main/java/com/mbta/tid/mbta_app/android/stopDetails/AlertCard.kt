@@ -52,8 +52,7 @@ fun AlertCard(
         when (spec) {
             AlertCardSpec.Downstream -> formattedAlert.downstreamEffect
             AlertCardSpec.Elevator -> alert.header ?: formattedAlert.effect
-            // TODO: Make sure unknown cause is handled
-            AlertCardSpec.Delay -> "Delays due to ${formattedAlert.cause}"
+            AlertCardSpec.Delay -> formattedAlert.cause?.let { "Delays due to $it" } ?: "Delays"
             else -> formattedAlert.effect
         }
     val iconSize =
