@@ -34,7 +34,8 @@ enum class AlertCardSpec {
     Major,
     Downstream,
     Secondary,
-    Elevator
+    Elevator,
+    Delay
 }
 
 @Composable
@@ -51,6 +52,8 @@ fun AlertCard(
         when (spec) {
             AlertCardSpec.Downstream -> formattedAlert.downstreamEffect
             AlertCardSpec.Elevator -> alert.header ?: formattedAlert.effect
+            // TODO: Make sure unknown cause is handled
+            AlertCardSpec.Delay -> "Delays due to ${formattedAlert.cause}"
             else -> formattedAlert.effect
         }
     val iconSize =
