@@ -7,7 +7,7 @@
 //
 
 import CoreLocation
-import shared
+import Shared
 import SwiftUI
 
 struct PromoScreenView: View {

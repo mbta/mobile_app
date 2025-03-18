@@ -6,7 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 enum AlertCardSpec {
@@ -17,7 +17,7 @@ enum AlertCardSpec {
 }
 
 struct AlertCard: View {
-    let alert: shared.Alert
+    let alert: Shared.Alert
     let spec: AlertCardSpec
     let color: Color
     let textColor: Color

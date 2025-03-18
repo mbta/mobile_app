@@ -7,7 +7,7 @@
 //
 
 @testable import iosApp
-import shared
+import Shared
 import XCTest
 
 final class ContentViewModelTests: XCTestCase {

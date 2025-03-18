@@ -69,6 +69,7 @@
         <item quantity="other">%1$d elevators closed</item>
     </plurals>
     <string name="end">End</string>
+    <string name="end_of_service">end of service</string>
     <string name="error_loading_data">Error loading data</string>
     <string name="escalator_closed_sentence_case">Escalator closed</string>
     <string name="escalator_closure">Escalator Closure</string>
@@ -110,6 +111,7 @@
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
+    <string name="later_today">later today</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -232,6 +234,7 @@
     <string name="star_route">Star route</string>
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
+    <string name="start_of_service">start of service</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
     <string name="station_closure">Station Closure</string>
@@ -272,6 +275,7 @@
     <string name="unable_to_connect">Unable to connect</string>
     <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
+    <string name="until_further_notice">Until further notice</string>
     <string name="updated_at">Updated: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Updated %1$d minute ago</item>

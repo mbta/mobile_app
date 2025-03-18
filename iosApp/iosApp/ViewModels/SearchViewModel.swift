@@ -7,7 +7,7 @@
 //
 
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 
 class SearchViewModel: ObservableObject {
     enum ResultsState: Equatable {

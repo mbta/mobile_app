@@ -7,7 +7,7 @@
 //
 
 @testable import iosApp
-import shared
+import Shared
 import ViewInspector
 import XCTest
 
