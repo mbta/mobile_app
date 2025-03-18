@@ -207,7 +207,8 @@ struct TripStopRow: View {
                     $0.color = "#00843D"
                     $0.textColor = "#ffffff"
                 },
-            ]
+            ],
+            elevatorAlerts: []
         ),
         now: Date.now.toKotlinInstant(),
         onTapLink: { _ in },
