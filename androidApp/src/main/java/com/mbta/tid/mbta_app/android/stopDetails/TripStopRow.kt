@@ -85,7 +85,7 @@ fun TripStopRow(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (showElevatorAccessibility && stop.elevatorAlerts.isNotEmpty()) {
+                    if (showElevatorAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
                         Icon(
                             modifier = Modifier.height(24.dp).testTag("elevator_alert"),
                             painter = painterResource(R.drawable.elevator_alert),
@@ -276,6 +276,7 @@ private fun RouteLine(
 @Composable
 private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder()
+    val now = Clock.System.now()
     MyApplicationTheme {
         Column(Modifier.background(colorResource(R.color.fill3))) {
             TripStopRow(
@@ -305,7 +306,7 @@ private fun TripStopRowPreview() {
                                 }
                             )
                     ),
-                Clock.System.now(),
+                now,
                 onTapLink = {},
                 TripRouteAccents.default.copy(
                     type = RouteType.HEAVY_RAIL,
@@ -320,10 +321,7 @@ private fun TripStopRowPreview() {
                         stopSequence = 10,
                         disruption = null,
                         schedule = null,
-                        prediction =
-                            objects.prediction {
-                                departureTime = Clock.System.now().plus(5.minutes)
-                            },
+                        prediction = objects.prediction { departureTime = now.plus(5.minutes) },
                         predictionStop = null,
                         vehicle = null,
                         routes =
@@ -340,7 +338,7 @@ private fun TripStopRowPreview() {
                                 }
                             )
                     ),
-                Clock.System.now(),
+                now,
                 onTapLink = {},
                 TripRouteAccents.default.copy(
                     type = RouteType.HEAVY_RAIL,
@@ -355,16 +353,18 @@ private fun TripStopRowPreview() {
                         stopSequence = 10,
                         disruption = null,
                         schedule = null,
-                        prediction =
-                            objects.prediction {
-                                departureTime = Clock.System.now().plus(5.minutes)
-                            },
+                        prediction = objects.prediction { departureTime = now.plus(5.minutes) },
                         predictionStop = objects.stop { platformCode = "1" },
                         vehicle = null,
                         routes = emptyList(),
-                        elevatorAlerts = listOf(objects.alert {})
+                        elevatorAlerts =
+                            listOf(
+                                objects.alert {
+                                    activePeriod(now.minus(20.minutes), now.plus(20.minutes))
+                                }
+                            )
                     ),
-                Clock.System.now(),
+                now,
                 onTapLink = {},
                 TripRouteAccents.default.copy(
                     type = RouteType.COMMUTER_RAIL,

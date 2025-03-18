@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -257,7 +258,11 @@ class TripStopRowTest {
         composeTestRule.onNodeWithTag("wheelchair_accessible").assertIsDisplayed()
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
 
-        testEntry = entry(accessibleStop, listOf(objects.alert {}))
+        testEntry =
+            entry(
+                accessibleStop,
+                listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) })
+            )
         composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
     }

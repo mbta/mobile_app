@@ -26,6 +26,8 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
+        fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
+
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
                 prediction,
