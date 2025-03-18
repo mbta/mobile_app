@@ -187,7 +187,7 @@ struct TripStopRow: View {
 
 #Preview {
     let objects = ObjectCollectionBuilder()
-    return TripStopRow(
+    TripStopRow(
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
