@@ -16,7 +16,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.serializer
 import okio.FileSystem
 import okio.Path
@@ -68,7 +67,7 @@ class ResponseCache<T : Any>(
 
     private val lock = Mutex()
 
-    private fun decodeData(body: String): T {
+    private fun decodeString(body: String): T {
         return json.decodeFromString(serializer, body)
     }
 
@@ -89,20 +88,23 @@ class ResponseCache<T : Any>(
     }
 
     private suspend fun putData(response: HttpResponse) {
-        val body = decodeData(response.bodyAsText())
+        val responseBody = response.bodyAsText()
         val nextData =
-            Response(ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()), body)
+            Response(
+                ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()),
+                decodeString(responseBody)
+            )
         this.data = nextData
-        this.flow.value = body
+        this.flow.value = nextData.body
 
-        this.writeData(nextData)
+        this.writeData(nextData.metadata, responseBody)
     }
 
     private fun readData(): Response<T>? {
         try {
             val diskMetadata: ResponseMetadata =
                 json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
-            val diskData = decodeData(fileSystem.read(cacheFilePath) { readUtf8() })
+            val diskData = decodeString(fileSystem.read(cacheFilePath) { readUtf8() })
             this.data = Response(diskMetadata, diskData)
             return this.data
         } catch (error: Exception) {
@@ -110,13 +112,11 @@ class ResponseCache<T : Any>(
         }
     }
 
-    private fun writeData(response: Response<T>) {
+    private fun writeData(metadata: ResponseMetadata, responseBody: String) {
         try {
             fileSystem.createDirectories(cacheFilePath.parent!!)
-            fileSystem.write(cacheFilePath) {
-                writeUtf8(json.encodeToString(serializer, response.body))
-            }
-            writeMetadata(response.metadata)
+            fileSystem.write(cacheFilePath) { writeUtf8(responseBody) }
+            writeMetadata(metadata)
         } catch (error: Exception) {
             println("Writing to '$cacheFilePath' failed. $error")
         }
