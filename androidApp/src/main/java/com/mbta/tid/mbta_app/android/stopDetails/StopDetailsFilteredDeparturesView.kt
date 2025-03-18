@@ -81,6 +81,8 @@ fun StopDetailsFilteredDeparturesView(
 ) {
     val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+    val hasAccessibilityWarning =
+        (elevatorAlerts.isNotEmpty() || !patternsByStop.stop.isWheelchairAccessible)
     val hideMaps by viewModel.hideMaps.collectAsState()
 
     val alertsHere: List<Alert> =
@@ -193,7 +195,7 @@ fun StopDetailsFilteredDeparturesView(
                 if (
                     alertsHere.isNotEmpty() ||
                         downstreamAlerts.isNotEmpty() ||
-                        (showElevatorAccessibility && elevatorAlerts.isNotEmpty())
+                        (showElevatorAccessibility && hasAccessibilityWarning)
                 ) {
                     Column(
                         Modifier.padding(horizontal = 10.dp),
@@ -201,8 +203,12 @@ fun StopDetailsFilteredDeparturesView(
                     ) {
                         alertsHere.forEach { AlertCard(it) }
                         downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
-                        if (showElevatorAccessibility) {
-                            elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
+                        if (showElevatorAccessibility && hasAccessibilityWarning) {
+                            if (elevatorAlerts.isNotEmpty()) {
+                                elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
+                            } else {
+                                NotAccessibleCard()
+                            }
                         }
                     }
                 }

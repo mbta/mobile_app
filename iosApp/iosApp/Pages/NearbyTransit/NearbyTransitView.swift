@@ -10,7 +10,7 @@ import Combine
 import CoreLocation
 @_spi(Experimental) import MapboxMaps
 import os
-import shared
+import Shared
 import SwiftUI
 
 struct NearbyTransitView: View {
@@ -385,7 +385,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             vehicleType: .bus,
             childStopIds: [],
             connectingStopIds: [],
-            parentStationId: nil
+            parentStationId: nil,
+            wheelchairBoarding: nil
         )
         let busTrip = Trip(
             id: "trip1",
@@ -458,7 +459,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             vehicleType: nil,
             childStopIds: [],
             connectingStopIds: [],
-            parentStationId: nil
+            parentStationId: nil,
+            wheelchairBoarding: nil
         )
         let crTrip = Trip(
             id: "canonical-CR-Providence-C1-0",

@@ -27,7 +27,7 @@ internal fun List<UpcomingTrip>.filterCancellations(isSubway: Boolean): List<Upc
 internal fun UpcomingTripsMap.filterCancellations(isSubway: Boolean): UpcomingTripsMap =
     this.entries.associate { it.key to it.value.filterCancellations(isSubway) }
 
-sealed class RealtimePatterns {
+sealed class RealtimePatterns : ILeafData {
     sealed class UpcomingTripKey {
         data class ByRoutePattern(
             val routeId: String,
@@ -43,13 +43,13 @@ sealed class RealtimePatterns {
 
     // contains null if an added trip with no pattern is included in the upcoming trips
     abstract val patterns: List<RoutePattern?>
-    abstract val upcomingTrips: List<UpcomingTrip>
+    abstract override val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
     abstract val alertsDownstream: List<Alert>?
-    abstract val hasSchedulesToday: Boolean
+    abstract override val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
 
-    val hasMajorAlerts
+    override val hasMajorAlerts
         get() = run {
             this.alertsHere?.any { alert -> alert.significance == AlertSignificance.Major } == true
         }
@@ -299,20 +299,10 @@ sealed class RealtimePatterns {
      * should be hidden until data is available.
      */
     fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
-        upcomingTrips.any {
-            val tripTime = it.time
-            tripTime != null &&
-                tripTime < cutoffTime &&
-                (tripTime >= currentTime ||
-                    (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
-        }
+        upcomingTrips.isUpcomingWithin(currentTime, cutoffTime)
 
     /** Checks if a trip exists. */
-    fun isUpcoming() =
-        upcomingTrips.any {
-            val tripTime = it.time
-            tripTime != null
-        }
+    fun isUpcoming() = upcomingTrips.isUpcoming()
 
     /**
      * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
@@ -322,13 +312,7 @@ sealed class RealtimePatterns {
      * - No trips are scheduled or predicted with a departure
      */
     fun isArrivalOnly(): Boolean {
-        // Intermediate variable set because kotlin can't smart cast properties with open getters
-        val upcoming = upcomingTrips
-        return upcoming
-            .mapTo(mutableSetOf()) { it.isArrivalOnly() }
-            .let { upcomingTripsArrivalOnly ->
-                upcomingTripsArrivalOnly.contains(true) && !upcomingTripsArrivalOnly.contains(false)
-            }
+        return upcomingTrips.isArrivalOnly()
     }
 
     fun directionId(): Int {

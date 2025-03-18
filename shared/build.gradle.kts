@@ -45,7 +45,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
 
         framework {
-            baseName = "shared"
+            baseName = "Shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
             export(libs.kotlinx.datetime)
             export(libs.sentry)

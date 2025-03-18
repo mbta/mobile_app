@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import Shared
 import SwiftUI
 
 struct StopDetailsRouteView: View {

@@ -41,6 +41,7 @@ class ObjectCollectionBuilder {
         var activePeriod = mutableListOf<Alert.ActivePeriod>()
         var cause = Alert.Cause.UnknownCause
         var description: String? = null
+        var durationCertainty = Alert.DurationCertainty.Unknown
         var effect = Alert.Effect.UnknownEffect
         var effectName: String? = null
         var informedEntity = mutableListOf<Alert.InformedEntity>()
@@ -80,6 +81,7 @@ class ObjectCollectionBuilder {
                 activePeriod,
                 cause,
                 description,
+                durationCertainty,
                 effect,
                 effectName,
                 header,
@@ -291,6 +293,7 @@ class ObjectCollectionBuilder {
                 if (representativeTrip != null) {
                     headsign = representativeTrip.headsign
                     shapeId = representativeTrip.shapeId
+                    stopIds = representativeTrip.stopIds
                 }
             },
             block
@@ -318,6 +321,7 @@ class ObjectCollectionBuilder {
         var childStopIds: List<String> = emptyList()
         var connectingStopIds: List<String> = emptyList()
         var parentStationId: String? = null
+        var wheelchairBoarding: WheelchairBoardingStatus? = null
 
         var position: Position
             get() = Position(latitude = latitude, longitude = longitude)

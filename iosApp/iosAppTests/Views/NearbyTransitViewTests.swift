@@ -10,7 +10,7 @@ import Combine
 import CoreLocation
 @testable import iosApp
 @_spi(Experimental) import MapboxMaps
-import shared
+import Shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
@@ -588,7 +588,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     vehicleType: nil,
                     childStopIds: [],
                     connectingStopIds: [],
-                    parentStationId: nil
+                    parentStationId: nil,
+                    wheelchairBoarding: nil
                 )
                 builder.stop(stop: lechmere) { _ in
                 }

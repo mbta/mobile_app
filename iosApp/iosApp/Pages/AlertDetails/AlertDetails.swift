@@ -6,13 +6,13 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 // swiftlint:disable:next type_body_length
 struct AlertDetails: View {
     var analytics: Analytics = AnalyticsProvider.shared
-    var alert: shared.Alert
+    var alert: Shared.Alert
     var line: Line?
     var routes: [Route]?
     var stop: Stop?
@@ -141,7 +141,7 @@ struct AlertDetails: View {
         }
     }
 
-    private var currentPeriod: shared.Alert.ActivePeriod? {
+    private var currentPeriod: Shared.Alert.ActivePeriod? {
         let nowInstant = now.toKotlinInstant()
         return alert.activePeriod.first { period in period.activeAt(instant: nowInstant) }
     }

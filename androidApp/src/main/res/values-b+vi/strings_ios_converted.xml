@@ -66,6 +66,7 @@
         <item quantity="other">%1$d thang máy đã đóng cửa</item>
     </plurals>
     <string name="end">Kết thúc</string>
+    <string name="end_of_service">kết thúc dịch vụ</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
     <string name="escalator_closed_sentence_case">Thang cuốn đóng cửa</string>
     <string name="escalator_closure">Thang cuốn đóng cửa</string>
@@ -106,6 +107,7 @@
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="inbound">Đến</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
+    <string name="later_today">hôm nay muộn hơn</string>
     <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="location_not_available_yet">Vị trí chưa có sẵn</string>
@@ -143,6 +145,7 @@
     <string name="no_stops_nearby_search">Tìm kiếm theo điểm dừng</string>
     <string name="no_stops_nearby_title">Không có điểm dừng gần đó</string>
     <string name="northbound">Về hướng bắc</string>
+    <string name="not_accessible">Không thể truy cập</string>
     <string name="now">Hiện nay</string>
     <string name="now_at">Hiện giờ tại</string>
     <string name="onboarding_feedback_advance">Bắt đầu</string>
@@ -225,6 +228,7 @@
     <string name="star_route">Tuyến đường sao</string>
     <string name="star_route_hint">ghim đường dẫn ở đầu danh sách</string>
     <string name="start">Bắt đầu</string>
+    <string name="start_of_service">bắt đầu dịch vụ</string>
     <string name="station_closed">Nhà ga/trạm dừng đóng cửa</string>
     <string name="station_closed_sentence_case">Nhà ga/trạm dừng đóng cửa</string>
     <string name="station_closure">Đóng ga</string>
@@ -264,6 +268,7 @@
     <string name="unable_to_connect">Không thể kết nối</string>
     <string name="unruly_passenger">Hành khách ngỗ ngược</string>
     <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>
+    <string name="until_further_notice">Cho đến khi có thông báo mới</string>
     <string name="updated_at">Cập nhật: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="other">Đã cập nhật %1$d phút trước</item>

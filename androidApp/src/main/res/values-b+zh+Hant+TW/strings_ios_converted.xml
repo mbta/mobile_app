@@ -66,6 +66,7 @@
         <item quantity="other">%1$d部電梯關閉</item>
     </plurals>
     <string name="end">結束日期</string>
+    <string name="end_of_service">服務結束</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
     <string name="escalator_closed_sentence_case">自動扶梯已關閉</string>
     <string name="escalator_closure">自動扶梯關閉</string>
@@ -106,6 +107,7 @@
     <string name="ice_in_harbor">港口結冰</string>
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
+    <string name="later_today">今天晚些時候</string>
     <string name="live">即時</string>
     <string name="loading">正在載入……</string>
     <string name="location_not_available_yet">位置尚未確定</string>
@@ -143,6 +145,7 @@
     <string name="no_stops_nearby_search">按站點搜尋</string>
     <string name="no_stops_nearby_title">附近沒有站點</string>
     <string name="northbound">北行</string>
+    <string name="not_accessible">無法訪問</string>
     <string name="now">現在</string>
     <string name="now_at">現在停靠</string>
     <string name="onboarding_feedback_advance">開始</string>
@@ -225,6 +228,7 @@
     <string name="star_route">為線路添加星號</string>
     <string name="star_route_hint">將線路固定到清單頂部</string>
     <string name="start">開始日期</string>
+    <string name="start_of_service">服務開始</string>
     <string name="station_closed">車站已關閉</string>
     <string name="station_closed_sentence_case">車站已關閉</string>
     <string name="station_closure">車站關閉</string>
@@ -264,6 +268,7 @@
     <string name="unable_to_connect">無法連接</string>
     <string name="unruly_passenger">乘客干擾</string>
     <string name="unstar_route_hint">從清單頂部取消固定線路</string>
+    <string name="until_further_notice">等待進一步通知</string>
     <string name="updated_at">最後更新：%1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="other">%1$d 分鐘前更新</item>

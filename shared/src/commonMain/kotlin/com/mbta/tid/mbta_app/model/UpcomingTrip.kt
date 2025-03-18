@@ -199,3 +199,39 @@ constructor(
         }
     }
 }
+
+/**
+ * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet left
+ * this stop.
+ */
+fun List<UpcomingTrip>.isUpcomingWithin(currentTime: Instant, cutoffTime: Instant): Boolean {
+    return this.any {
+        val tripTime = it.time
+        tripTime != null &&
+            tripTime < cutoffTime &&
+            (tripTime >= currentTime ||
+                (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
+    }
+}
+/** Checks if a trip has a time */
+fun List<UpcomingTrip>.isUpcoming(): Boolean {
+    return this.any {
+        val tripTime = it.time
+        tripTime != null
+    }
+}
+
+fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
+    /**
+     * Checks if this upcoming trips end at this stop, i.e. all trips are arrival-only.
+     *
+     * Criteria:
+     * - At least one trip is scheduled as arrival-only
+     * - No trips are scheduled or predicted with a departure
+     */
+    // Intermediate variable set because kotlin can't smart cast properties with open getters
+    return this.mapTo(mutableSetOf()) { it.isArrivalOnly() }
+        .let { upcomingTripsArrivalOnly ->
+            upcomingTripsArrivalOnly.contains(true) && !upcomingTripsArrivalOnly.contains(false)
+        }
+}

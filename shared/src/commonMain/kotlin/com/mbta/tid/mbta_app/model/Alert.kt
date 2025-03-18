@@ -10,6 +10,8 @@ data class Alert(
     @SerialName("active_period") val activePeriod: List<ActivePeriod>,
     val cause: Cause = Cause.UnknownCause,
     val description: String?,
+    @SerialName("duration_certainty")
+    val durationCertainty: DurationCertainty = DurationCertainty.Unknown,
     val effect: Effect = Effect.UnknownEffect,
     @SerialName("effect_name") val effectName: String?,
     val header: String?,
@@ -17,6 +19,11 @@ data class Alert(
     val lifecycle: Lifecycle,
     @SerialName("updated_at") val updatedAt: Instant
 ) : BackendObject {
+    init {
+        // This is done on init to avoid having to pass it in for any call to format an ActivePeriod
+        activePeriod.forEach { period -> period.durationCertainty = durationCertainty }
+    }
+
     val alertState: StopAlertState =
         when (this.effect) {
             Effect.ElevatorClosure -> StopAlertState.Elevator
@@ -53,6 +60,10 @@ data class Alert(
 
     @Serializable
     data class ActivePeriod(val start: Instant, val end: Instant?) {
+        // This is only nullable because it's set after serialization within the Alert init,
+        // in practice it should always be populated with a value, unless something has gone wrong.
+        var durationCertainty: DurationCertainty? = null
+
         fun activeAt(instant: Instant): Boolean {
             if (end == null) {
                 return start <= instant
@@ -120,6 +131,13 @@ data class Alert(
         @SerialName("unruly_passenger") UnrulyPassenger,
         @SerialName("unknown_cause") UnknownCause,
         @SerialName("weather") Weather,
+    }
+
+    @Serializable
+    enum class DurationCertainty {
+        @SerialName("estimated") Estimated,
+        @SerialName("known") Known,
+        @SerialName("unknown") Unknown,
     }
 
     @Serializable

@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
+import Shared
 import SwiftUI
 
 struct StopDetailsFilteredDepartureDetails: View {
@@ -18,8 +18,8 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var tiles: [TileData]
     var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
-    var alerts: [shared.Alert]
-    var downstreamAlerts: [shared.Alert]
+    var alerts: [Shared.Alert]
+    var downstreamAlerts: [Shared.Alert]
     var patternsByStop: PatternsByStop
     var pinned: Bool
 
@@ -216,7 +216,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     @ViewBuilder
-    func alertCard(_ alert: shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
+    func alertCard(_ alert: Shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
         let spec = spec ?? (alert.significance == .major ? .major : .secondary)
         AlertCard(
             alert: alert,
