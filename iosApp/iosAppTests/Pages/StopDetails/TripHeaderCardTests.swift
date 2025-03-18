@@ -182,7 +182,8 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: prediction,
                 predictionStop: nil,
                 vehicle: vehicle,
-                routes: []
+                routes: [],
+                elevatorAlerts: []
             ), true),
             tripId: "",
             targetId: stop.id,
@@ -229,7 +230,8 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: prediction,
                 predictionStop: platformStop,
                 vehicle: vehicle,
-                routes: []
+                routes: [],
+                elevatorAlerts: []
             ), true),
             tripId: "",
             targetId: stop.id,
@@ -259,7 +261,8 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: nil,
                 predictionStop: nil,
                 vehicle: nil,
-                routes: []
+                routes: [],
+                elevatorAlerts: []
             )),
             tripId: "",
             targetId: stop.id,
@@ -296,7 +299,8 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: nil,
                 predictionStop: nil,
                 vehicle: nil,
-                routes: []
+                routes: [],
+                elevatorAlerts: []
             )),
             tripId: "",
             targetId: stop.id,
@@ -384,7 +388,8 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: nil,
                 predictionStop: nil,
                 vehicle: nil,
-                routes: []
+                routes: [],
+                elevatorAlerts: []
             )),
             tripId: "",
             targetId: stop.id,
@@ -405,7 +410,8 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: nil,
                 predictionStop: nil,
                 vehicle: nil,
-                routes: []
+                routes: [],
+                elevatorAlerts: []
             )),
             tripId: "",
             targetId: stop.id,
@@ -435,7 +441,7 @@ final class TripHeaderCardTests: XCTestCase {
                 prediction: objects.prediction { prediction in
                     prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
                     prediction.stopId = platformStop.id
-                }, predictionStop: platformStop, vehicle: boardingVehicle, routes: []
+                }, predictionStop: platformStop, vehicle: boardingVehicle, routes: [], elevatorAlerts: []
             ), false),
             tripId: "", targetId: coreCRStop.id,
             routeAccents: .init(type: .commuterRail),
