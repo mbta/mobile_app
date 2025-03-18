@@ -1860,6 +1860,53 @@
         }
       }
     },
+    "accident" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "accidente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "accident"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aksidan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "acidente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tai nạn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "事故"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意外事故"
+          }
+        }
+      }
+    },
     "Accident" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2425,7 +2472,7 @@
       }
     },
     "Amtrak" : {
-      "comment" : "Possible alert cause",
+      "comment" : "Possible alert cause\nPossible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2460,13 +2507,60 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amtrak"
+            "value" : "美铁"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amtrak"
+            "value" : "美鐵"
+          }
+        }
+      }
+    },
+    "Amtrak train traffic" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tráfico de trenes Amtrak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trafic ferroviaire Amtrak"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trafik tren Amtrak"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tráfego de trem Amtrak"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giao thông đường sắt Amtrak"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amtrak 火车交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amtrak 火車交通"
           }
         }
       }
@@ -2518,6 +2612,53 @@
         }
       }
     },
+    "an earlier mechanical problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un problema mecánico anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un problème mécanique antérieur"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yon pwoblèm mekanik pi bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "um problema mecânico anterior"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "một vấn đề cơ học trước đó"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "早期的机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "早期的機械問題"
+          }
+        }
+      }
+    },
     "An Earlier Mechanical Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2561,6 +2702,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "早前的機械故障"
+          }
+        }
+      }
+    },
+    "an earlier signal problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un problema de señal anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un problème de signal antérieur"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yon pwoblèm siyal pi bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "um problema de sinal anterior"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề về tín hiệu trước đó"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "较早的信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "較早的訊號問題"
           }
         }
       }
@@ -3377,6 +3565,53 @@
         }
       }
     },
+    "autos impeding service" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "autos que impiden el servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "les automobiles gênent le service"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "oto anpeche sèvis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "serviço de impedimento de automóveis"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ô tô cản trở dịch vụ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "汽车妨碍服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "汽車妨礙服務"
+          }
+        }
+      }
+    },
     "Autos Impeding Service" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4177,6 +4412,53 @@
         }
       }
     },
+    "Coast Guard restriction" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restricción de la Guardia Costera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restriction de la Garde côtière"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restriksyon Gad Kòt"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restrição da Guarda Costeira"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hạn chế của Cảnh sát biển"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "海岸警卫队限制"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "海岸警衛隊限制"
+          }
+        }
+      }
+    },
     "Coast Guard Restriction" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4315,6 +4597,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通勤列車和輪渡票"
+          }
+        }
+      }
+    },
+    "congestion" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "congestión"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anbouteyaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "congestionamento"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sự tắc nghẽn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拥塞"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "擁塞"
           }
         }
       }
@@ -4466,6 +4789,53 @@
         }
       }
     },
+    "construction" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "construcción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "construction"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "konstriksyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "construção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sự thi công"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建造"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建造"
+          }
+        }
+      }
+    },
     "Construction" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4559,6 +4929,53 @@
         }
       }
     },
+    "crossing issue" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de cruce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème de passage à niveau"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm travèse"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de travessia"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề vượt biên"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交叉问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交叉問題"
+          }
+        }
+      }
+    },
     "Crossing Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4602,6 +5019,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "交通交叉問題"
+          }
+        }
+      }
+    },
+    "crossing malfunction" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mal funcionamiento del cruce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dysfonctionnement du passage à niveau"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "travèse malfonksyònman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mau funcionamento do cruzamento"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sự cố băng qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "道口故障"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "道口故障"
           }
         }
       }
@@ -4795,6 +5259,53 @@
         }
       }
     },
+    "demonstration" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "demostración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "démonstration"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "demonstrasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "demonstração"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cuộc biểu tình"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "示范"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "示範"
+          }
+        }
+      }
+    },
     "Demonstration" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4984,6 +5495,53 @@
         }
       }
     },
+    "disabled bus" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "autobús discapacitado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "autobus handicapé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "otobis andikape"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ônibus desativado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "xe buýt khuyết tật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残疾人巴士"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "殘障巴士"
+          }
+        }
+      }
+    },
     "Disabled Bus" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -5027,6 +5585,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "巴士拋錨"
+          }
+        }
+      }
+    },
+    "disabled train" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tren discapacitado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "train handicapé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tren andikape"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trem deficiente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tàu khuyết tật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残疾人列车"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "殘障列車"
           }
         }
       }
@@ -5551,6 +6156,53 @@
         }
       }
     },
+    "drawbridge being raised" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "puente levadizo levantado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "le pont-levis est relevé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pon levasyon ap monte"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ponte levadiça sendo levantada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cầu kéo đang được nâng lên"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吊桥正在升起"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吊橋正在升起"
+          }
+        }
+      }
+    },
     "Drawbridge Being Raised" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -5641,6 +6293,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "東行"
+          }
+        }
+      }
+    },
+    "electrical work" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trabajo electrico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "travaux électriques"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "travay elektrik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trabalho elétrico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "công việc điện"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电力工作"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電力工作"
           }
         }
       }
@@ -6493,6 +7192,53 @@
         }
       }
     },
+    "fire" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fuego"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "feu"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dife"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fogo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ngọn lửa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火"
+          }
+        }
+      }
+    },
     "Fire" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -6536,6 +7282,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "火災"
+          }
+        }
+      }
+    },
+    "fire department activity" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "actividad del departamento de bomberos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activité des pompiers"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aktivite ponpye"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "atividade do corpo de bombeiros"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hoạt động cứu hỏa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消防部门活动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消防局活動"
           }
         }
       }
@@ -6587,6 +7380,53 @@
         }
       }
     },
+    "flooding" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inundación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inondation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inondasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inundação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lũ lụt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "洪水"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "洪水"
+          }
+        }
+      }
+    },
     "Flooding" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -6634,6 +7474,53 @@
         }
       }
     },
+    "fog" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niebla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "brouillard"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bwouya"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "névoa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sương mù"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多雾路段"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多霧路段"
+          }
+        }
+      }
+    },
     "Fog" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -6677,6 +7564,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "大霧"
+          }
+        }
+      }
+    },
+    "freight train interference" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "interferencia del tren de mercancías"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "interférence des trains de marchandises"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "entèferans tren machandiz"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "interferência de trem de carga"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sự can thiệp của tàu chở hàng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货运列车干扰"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨運列車幹擾"
           }
         }
       }
@@ -6915,6 +7849,53 @@
         }
       }
     },
+    "hazmat condition" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "condición de materiales peligrosos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "état des matières dangereuses"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kondisyon danje"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "condição de materiais perigosos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tình trạng nguy hiểm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "危险品状况"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "危險品狀況"
+          }
+        }
+      }
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7005,6 +7986,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "方向"
+          }
+        }
+      }
+    },
+    "heavy ridership" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gran cantidad de pasajeros"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "forte fréquentation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gwo pasaje"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "viagens pesadas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hành khách hạng nặng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "客流量大"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "客流量大"
           }
         }
       }
@@ -7243,6 +8271,53 @@
         }
       }
     },
+    "high winds" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fuertes vientos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vents violents"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gwo van"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ventos fortes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gió lớn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大风"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大風"
+          }
+        }
+      }
+    },
     "High Winds" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7286,6 +8361,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "強風"
+          }
+        }
+      }
+    },
+    "holiday" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "día festivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vacances"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jou ferye"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "feriado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ngày lễ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "假期"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "假期"
           }
         }
       }
@@ -7337,6 +8459,53 @@
         }
       }
     },
+    "hurricane" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "huracán"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ouragan"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "siklòn"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "furacão"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cơn bão"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "飓风"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "颶風"
+          }
+        }
+      }
+    },
     "Hurricane" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7380,6 +8549,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "颶風"
+          }
+        }
+      }
+    },
+    "ice in harbor" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hielo en el puerto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "glace dans le port"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "glas nan pò"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gelo no porto"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "băng ở bến cảng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "港口里的冰"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "港口裡的冰"
           }
         }
       }
@@ -8043,6 +9259,53 @@
         }
       }
     },
+    "maintenance" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mantenimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "entretien"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "antretyen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "manutenção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BẢO TRÌ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "维护"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "維護"
+          }
+        }
+      }
+    },
     "Maintenance" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -8275,6 +9538,53 @@
         }
       }
     },
+    "mechanical issue" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema mecanico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème mécanique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm mekanik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema mecânico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề cơ khí"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "機械問題"
+          }
+        }
+      }
+    },
     "Mechanical Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -8317,6 +9627,53 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
+            "value" : "機械問題"
+          }
+        }
+      }
+    },
+    "mechanical problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema mecanico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème mécanique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm mekanik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema mecânico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề cơ khí"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "機械問題"
           }
         }
@@ -8365,6 +9722,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "機械故障"
+          }
+        }
+      }
+    },
+    "medical emergency" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "emergencia medica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "urgence médicale"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ijans medikal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "emergência médica"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cấp cứu y tế"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "医疗紧急情况"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "醫療緊急狀況"
           }
         }
       }
@@ -9357,6 +10761,53 @@
         }
       }
     },
+    "parade" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "desfile"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parade"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parad"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cuộc diễu hành"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遊行"
+          }
+        }
+      }
+    },
     "Parade" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -9732,6 +11183,53 @@
         }
       }
     },
+    "police action" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "acción policial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "action policière"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aksyon lapolis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ação policial"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hành động của cảnh sát"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警察行动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警察行動"
+          }
+        }
+      }
+    },
     "Police Action" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -9775,6 +11273,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "警方行動"
+          }
+        }
+      }
+    },
+    "police activity" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "actividad policial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activité policière"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aktivite lapolis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "atividade policial"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hoạt động của cảnh sát"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警察活动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警察活動"
           }
         }
       }
@@ -9916,6 +11461,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "政策變化"
+          }
+        }
+      }
+    },
+    "power problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de poder"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème d'alimentation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm pouvwa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de energia"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề về điện"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电源问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電源問題"
           }
         }
       }
@@ -10104,6 +11696,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隱私政策"
+          }
+        }
+      }
+    },
+    "rail defect" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "defecto del carril"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "défaut ferroviaire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "defo ray"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "defeito ferroviário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "khiếm khuyết đường sắt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "钢轨缺陷"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鋼軌缺陷"
           }
         }
       }
@@ -11685,6 +13324,53 @@
         }
       }
     },
+    "severe weather" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "clima severo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "temps violent"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "move tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "clima severo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "thời tiết khắc nghiệt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恶劣天气"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "惡劣天氣"
+          }
+        }
+      }
+    },
     "Severe Weather" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12061,6 +13747,53 @@
         }
       }
     },
+    "signal issue" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de señal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème de signal"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm siyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de sinal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề tín hiệu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "訊號問題"
+          }
+        }
+      }
+    },
     "Signal Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12108,6 +13841,53 @@
         }
       }
     },
+    "signal problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de señal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème de signal"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm siyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de sinal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề tín hiệu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "訊號問題"
+          }
+        }
+      }
+    },
     "Signal Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12151,6 +13931,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "信號故障"
+          }
+        }
+      }
+    },
+    "single tracking" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seguimiento único"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "suivi unique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sèl swiv"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rastreamento único"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "theo dõi đơn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单次追踪"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "單次追蹤"
           }
         }
       }
@@ -12249,6 +14076,53 @@
         }
       }
     },
+    "slippery rail" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "carril resbaladizo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rail glissant"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tren glise"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trilho escorregadio"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "đường ray trơn trượt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滑轨"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滑軌"
+          }
+        }
+      }
+    },
     "Slippery Rail" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12292,6 +14166,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "軌道濕滑"
+          }
+        }
+      }
+    },
+    "snow" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nieve"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "neige"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nèj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "neve"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tuyết"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雪"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雪"
           }
         }
       }
@@ -12531,6 +14452,53 @@
         }
       }
     },
+    "special event" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "evento especial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "événement spécial"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "evènman espesyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "evento especial"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sự kiện đặc biệt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特别活动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特別活動"
+          }
+        }
+      }
+    },
     "Special Event" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12574,6 +14542,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "特殊事件"
+          }
+        }
+      }
+    },
+    "speed restriction" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "restricción de velocidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "limitation de vitesse"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "restriksyon vitès"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "restrição de velocidade"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hạn chế tốc độ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "速度限制"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "速度限制"
           }
         }
       }
@@ -13473,6 +15488,53 @@
         }
       }
     },
+    "strike" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "huelga"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "grève"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "grèv"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "batida"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "đánh đập"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "罢工"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "罷工"
+          }
+        }
+      }
+    },
     "Strike" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -13614,6 +15676,53 @@
         }
       }
     },
+    "switch issue" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de cambio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème de commutation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm switch"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de mudança"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề chuyển đổi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开关问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開關問題"
+          }
+        }
+      }
+    },
     "Switch Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -13657,6 +15766,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "道岔故障"
+          }
+        }
+      }
+    },
+    "switch problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema del interruptor"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème de commutation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm chanjman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de mudança"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề chuyển đổi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开关问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開關問題"
           }
         }
       }
@@ -13751,6 +15907,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切換方向"
+          }
+        }
+      }
+    },
+    "technical problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema técnico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème technique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm teknik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema técnico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vấn đề kỹ thuật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技术问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技術問題"
           }
         }
       }
@@ -13990,6 +16193,53 @@
         }
       }
     },
+    "tie replacement" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reemplazo de corbata"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "remplacement de cravate"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ranplasman mare"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "substituição de gravata"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "thay thế cà vạt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "领带更换"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "領帶更換"
+          }
+        }
+      }
+    },
     "Tie Replacement" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -14036,6 +16286,12 @@
           }
         }
       }
+    },
+    "TODO OTHER CAUSE" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+    },
+    "TODO UNKNOWN CAUSE" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
     },
     "Track %@" : {
       "comment" : "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc",
@@ -14178,6 +16434,53 @@
         }
       }
     },
+    "track problem" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de seguimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème de piste"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pwoblèm tras"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problema de rastreamento"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "theo dõi vấn đề"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轨道问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "軌道問題"
+          }
+        }
+      }
+    },
     "Track Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -14225,6 +16528,53 @@
         }
       }
     },
+    "track work" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pista de trabajo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "suivre le travail"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "swiv travay"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "acompanhar o trabalho"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "theo dõi công việc"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟踪工作"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追蹤工作"
+          }
+        }
+      }
+    },
     "Track Work" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -14268,6 +16618,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "軌道作業"
+          }
+        }
+      }
+    },
+    "traffic" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tráfico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trafic"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trafik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tráfego"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "giao thông"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
           }
         }
       }
@@ -14362,6 +16759,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "列車"
+          }
+        }
+      }
+    },
+    "train traffic" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tráfico de trenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trafic ferroviaire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trafik tren"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tráfego de trem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "giao thông tàu hỏa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火车交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火車交通"
           }
         }
       }
@@ -14738,6 +17182,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "從清單頂部取消固定線路"
+          }
+        }
+      }
+    },
+    "unruly passenger" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pasajero rebelde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passager indiscipliné"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pasaje dezobeyisan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passageiro indisciplinado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hành khách ngỗ ngược"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不守规矩的乘客"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不守規矩的乘客"
           }
         }
       }
@@ -15499,6 +17990,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我們使用您的位置向您顯示附近的交通選擇。"
+          }
+        }
+      }
+    },
+    "weather" : {
+      "comment" : "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "clima"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "météo"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "move tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "clima"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "thời tiết"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天气"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天氣"
           }
         }
       }

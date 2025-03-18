@@ -12,6 +12,7 @@ import Shared
 struct FormattedAlert: Equatable {
     let effect: String
     let downstreamLabel: String
+    let cause: String
     /// Represents the text and possible accessibility label that would be used if replacing predictions. Does not
     /// guarantee that the alert should replace predictions.
     let predictionReplacement: PredictionReplacement
@@ -89,6 +90,9 @@ struct FormattedAlert: Equatable {
         the interpolated value can be any alert effect,
         ex. "[Detour] ahead", "[Shuttle buses] ahead"
         """), downstreamEffect)
+
+        cause = "TODO"
+
         // a handful of cases have different text when replacing predictions than in a details title
         predictionReplacement = switch alert.effect {
         case .dockClosure: .init(text: NSLocalizedString("Dock Closed", comment: "Possible alert effect"))
@@ -106,6 +110,290 @@ struct FormattedAlert: Equatable {
                 accessibilityLabel: NSLocalizedString("Service suspended", comment: "Suspension alert VoiceOver text")
             )
         default: .init(text: effect, accessibilityLabel: nil)
+        }
+    }
+
+    static func cause(cause: Alert.Cause) -> String? {
+        switch cause { case .accident:
+            NSLocalizedString(
+                "accident",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .amtrak:
+            NSLocalizedString(
+                "Amtrak",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .amtrakTrainTraffic:
+            NSLocalizedString(
+                "Amtrak train traffic",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .anEarlierMechanicalProblem:
+            NSLocalizedString(
+                "an earlier mechanical problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .anEarlierSignalProblem:
+            NSLocalizedString(
+                "an earlier signal problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .autosImpedingService:
+            NSLocalizedString(
+                "autos impeding service",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .coastGuardRestriction:
+            NSLocalizedString(
+                "Coast Guard restriction",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .congestion:
+            NSLocalizedString(
+                "congestion",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .construction:
+            NSLocalizedString(
+                "construction",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .crossingIssue:
+            NSLocalizedString(
+                "crossing issue",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .crossingMalfunction:
+            NSLocalizedString(
+                "crossing malfunction",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .demonstration:
+            NSLocalizedString(
+                "demonstration",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .disabledBus:
+            NSLocalizedString(
+                "disabled bus",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .disabledTrain:
+            NSLocalizedString(
+                "disabled train",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .drawbridgeBeingRaised:
+            NSLocalizedString(
+                "drawbridge being raised",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .electricalWork:
+            NSLocalizedString(
+                "electrical work",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .fire:
+            NSLocalizedString(
+                "fire",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .fireDepartmentActivity:
+            NSLocalizedString(
+                "fire department activity",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .flooding:
+            NSLocalizedString(
+                "flooding",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .fog:
+            NSLocalizedString(
+                "fog",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .freightTrainInterference:
+            NSLocalizedString(
+                "freight train interference",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .hazmatCondition:
+            NSLocalizedString(
+                "hazmat condition",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .heavyRidership:
+            NSLocalizedString(
+                "heavy ridership",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .highWinds:
+            NSLocalizedString(
+                "high winds",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .holiday:
+            NSLocalizedString(
+                "holiday",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .hurricane:
+            NSLocalizedString(
+                "hurricane",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .iceInHarbor:
+            NSLocalizedString(
+                "ice in harbor",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .maintenance:
+            NSLocalizedString(
+                "maintenance",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .mechanicalIssue:
+            NSLocalizedString(
+                "mechanical issue",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .mechanicalProblem:
+            NSLocalizedString(
+                "mechanical problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .medicalEmergency:
+            NSLocalizedString(
+                "medical emergency",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+            NSLocalizedString(
+                "TODO OTHER CAUSE",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .parade:
+            NSLocalizedString(
+                "parade",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .policeAction:
+            NSLocalizedString(
+                "police action",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .policeActivity:
+            NSLocalizedString(
+                "police activity",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .powerProblem:
+            NSLocalizedString(
+                "power problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .railDefect:
+            NSLocalizedString(
+                "rail defect",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .severeWeather:
+            NSLocalizedString(
+                "severe weather",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .signalIssue:
+            NSLocalizedString(
+                "signal issue",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .signalProblem:
+            NSLocalizedString(
+                "signal problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .singleTracking:
+            NSLocalizedString(
+                "single tracking",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .slipperyRail:
+            NSLocalizedString(
+                "slippery rail",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .snow:
+            NSLocalizedString(
+                "snow",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .specialEvent:
+            NSLocalizedString(
+                "special event",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .speedRestriction:
+            NSLocalizedString(
+                "speed restriction",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .strike:
+            NSLocalizedString(
+                "strike",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .switchIssue:
+            NSLocalizedString(
+                "switch issue",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .switchProblem:
+            NSLocalizedString(
+                "switch problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .technicalProblem:
+            NSLocalizedString(
+                "technical problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .tieReplacement:
+            NSLocalizedString(
+                "tie replacement",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .trackProblem:
+            NSLocalizedString(
+                "track problem",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .trackWork:
+            NSLocalizedString(
+                "track work",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .traffic:
+            NSLocalizedString(
+                "traffic",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .trainTraffic:
+            NSLocalizedString(
+                "train traffic",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .unrulyPassenger:
+            NSLocalizedString(
+                "unruly passenger",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        case .weather:
+            NSLocalizedString(
+                "weather",
+                comment: "Possible alert cause lowercase, for use in composite strings. Ex: 'Delays due to [cause]'"
+            )
+        default: nil
         }
     }
 
