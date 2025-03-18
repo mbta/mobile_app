@@ -11576,8 +11576,8 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "problème d'alimentation"
+            "state" : "translated",
+            "value" : "problème d’alimentation"
           }
         },
         "ht" : {

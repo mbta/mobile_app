@@ -127,61 +127,63 @@ data class FormattedAlert(
         @StringRes
         private fun causeRes(cause: Alert.Cause) =
             when (cause) {
-                Alert.Cause.Accident -> R.string.accident
+                Alert.Cause.Accident -> R.string.accident_lowercase
                 Alert.Cause.Amtrak -> R.string.amtrak
-                Alert.Cause.AmtrakTrainTraffic -> R.string.amtrak_train_traffic
-                Alert.Cause.AnEarlierMechanicalProblem -> R.string.an_earlier_mechanical_problem
-                Alert.Cause.AnEarlierSignalProblem -> R.string.an_earlier_signal_problem
-                Alert.Cause.AutosImpedingService -> R.string.autos_impeding_service
-                Alert.Cause.CoastGuardRestriction -> R.string.coast_guard_restriction
-                Alert.Cause.Congestion -> R.string.congestion
-                Alert.Cause.Construction -> R.string.construction
-                Alert.Cause.CrossingIssue -> R.string.crossing_issue
-                Alert.Cause.CrossingMalfunction -> R.string.crossing_malfunction
-                Alert.Cause.Demonstration -> R.string.demonstration
-                Alert.Cause.DisabledBus -> R.string.disabled_bus
-                Alert.Cause.DisabledTrain -> R.string.disabled_train
-                Alert.Cause.DrawbridgeBeingRaised -> R.string.drawbridge_being_raised
-                Alert.Cause.ElectricalWork -> R.string.electrical_work
-                Alert.Cause.Fire -> R.string.fire
-                Alert.Cause.FireDepartmentActivity -> R.string.fire_department_activity
-                Alert.Cause.Flooding -> R.string.flooding
-                Alert.Cause.Fog -> R.string.fog
-                Alert.Cause.FreightTrainInterference -> R.string.freight_train_interference
-                Alert.Cause.HazmatCondition -> R.string.hazmat_condition
-                Alert.Cause.HeavyRidership -> R.string.heavy_ridership
-                Alert.Cause.HighWinds -> R.string.high_winds
-                Alert.Cause.Holiday -> R.string.holiday
-                Alert.Cause.Hurricane -> R.string.hurricane
-                Alert.Cause.IceInHarbor -> R.string.ice_in_harbor
-                Alert.Cause.Maintenance -> R.string.maintenance
-                Alert.Cause.MechanicalIssue -> R.string.mechanical_issue
-                Alert.Cause.MechanicalProblem -> R.string.mechanical_problem
-                Alert.Cause.MedicalEmergency -> R.string.medical_emergency
-                Alert.Cause.Parade -> R.string.parade
-                Alert.Cause.PoliceAction -> R.string.police_action
-                Alert.Cause.PoliceActivity -> R.string.police_activity
-                Alert.Cause.PowerProblem -> R.string.power_problem
-                Alert.Cause.RailDefect -> R.string.rail_defect
-                Alert.Cause.SevereWeather -> R.string.severe_weather
-                Alert.Cause.SignalIssue -> R.string.signal_issue
-                Alert.Cause.SignalProblem -> R.string.signal_problem
-                Alert.Cause.SingleTracking -> R.string.single_tracking
-                Alert.Cause.SlipperyRail -> R.string.slippery_rail
-                Alert.Cause.Snow -> R.string.snow
-                Alert.Cause.SpecialEvent -> R.string.special_event
-                Alert.Cause.SpeedRestriction -> R.string.speed_restriction
-                Alert.Cause.Strike -> R.string.strike
-                Alert.Cause.SwitchIssue -> R.string.switch_issue
-                Alert.Cause.SwitchProblem -> R.string.switch_problem
-                Alert.Cause.TechnicalProblem -> R.string.technical_problem
-                Alert.Cause.TieReplacement -> R.string.tie_replacement
-                Alert.Cause.TrackProblem -> R.string.track_problem
-                Alert.Cause.TrackWork -> R.string.track_work
-                Alert.Cause.Traffic -> R.string.traffic
-                Alert.Cause.TrainTraffic -> R.string.train_traffic
-                Alert.Cause.UnrulyPassenger -> R.string.unruly_passenger
-                Alert.Cause.Weather -> R.string.weather
+                Alert.Cause.AmtrakTrainTraffic -> R.string.amtrak_train_traffic_lowercase
+                Alert.Cause.AnEarlierMechanicalProblem ->
+                    R.string.an_earlier_mechanical_problem_lowercase
+                Alert.Cause.AnEarlierSignalProblem -> R.string.an_earlier_signal_problem_lowercase
+                Alert.Cause.AutosImpedingService -> R.string.autos_impeding_service_lowercase
+                Alert.Cause.CoastGuardRestriction -> R.string.coast_guard_restriction_lowercase
+                Alert.Cause.Congestion -> R.string.congestion_lowercase
+                Alert.Cause.Construction -> R.string.construction_lowercase
+                Alert.Cause.CrossingIssue -> R.string.crossing_issue_lowercase
+                Alert.Cause.CrossingMalfunction -> R.string.crossing_malfunction_lowercase
+                Alert.Cause.Demonstration -> R.string.demonstration_lowercase
+                Alert.Cause.DisabledBus -> R.string.disabled_bus_lowercase
+                Alert.Cause.DisabledTrain -> R.string.disabled_train_lowercase
+                Alert.Cause.DrawbridgeBeingRaised -> R.string.drawbridge_being_raised_lowercase
+                Alert.Cause.ElectricalWork -> R.string.electrical_work_lowercase
+                Alert.Cause.Fire -> R.string.fire_lowercase
+                Alert.Cause.FireDepartmentActivity -> R.string.fire_department_activity_lowercase
+                Alert.Cause.Flooding -> R.string.flooding_lowercase
+                Alert.Cause.Fog -> R.string.fog_lowercase
+                Alert.Cause.FreightTrainInterference ->
+                    R.string.freight_train_interference_lowercase
+                Alert.Cause.HazmatCondition -> R.string.hazmat_condition_lowercase
+                Alert.Cause.HeavyRidership -> R.string.heavy_ridership_lowercase
+                Alert.Cause.HighWinds -> R.string.high_winds_lowercase
+                Alert.Cause.Holiday -> R.string.holiday_lowercase
+                Alert.Cause.Hurricane -> R.string.hurricane_lowercase
+                Alert.Cause.IceInHarbor -> R.string.ice_in_harbor_lowercase
+                Alert.Cause.Maintenance -> R.string.maintenance_lowercase
+                Alert.Cause.MechanicalIssue -> R.string.mechanical_issue_lowercase
+                Alert.Cause.MechanicalProblem -> R.string.mechanical_problem_lowercase
+                Alert.Cause.MedicalEmergency -> R.string.medical_emergency_lowercase
+                Alert.Cause.Parade -> R.string.parade_lowercase
+                Alert.Cause.PoliceAction -> R.string.police_action_lowercase
+                Alert.Cause.PoliceActivity -> R.string.police_activity_lowercase
+                Alert.Cause.PowerProblem -> R.string.power_problem_lowercase
+                Alert.Cause.RailDefect -> R.string.rail_defect_lowercase
+                Alert.Cause.SevereWeather -> R.string.severe_weather_lowercase
+                Alert.Cause.SignalIssue -> R.string.signal_issue_lowercase
+                Alert.Cause.SignalProblem -> R.string.signal_problem_lowercase
+                Alert.Cause.SingleTracking -> R.string.single_tracking_lowercase
+                Alert.Cause.SlipperyRail -> R.string.slippery_rail_lowercase
+                Alert.Cause.Snow -> R.string.snow_lowercase
+                Alert.Cause.SpecialEvent -> R.string.special_event_lowercase
+                Alert.Cause.SpeedRestriction -> R.string.speed_restriction_lowercase
+                Alert.Cause.Strike -> R.string.strike_lowercase
+                Alert.Cause.SwitchIssue -> R.string.switch_issue_lowercase
+                Alert.Cause.SwitchProblem -> R.string.switch_problem_lowercase
+                Alert.Cause.TechnicalProblem -> R.string.technical_problem_lowercase
+                Alert.Cause.TieReplacement -> R.string.tie_replacement_lowercase
+                Alert.Cause.TrackProblem -> R.string.track_problem_lowercase
+                Alert.Cause.TrackWork -> R.string.track_work_lowercase
+                Alert.Cause.Traffic -> R.string.traffic_lowercase
+                Alert.Cause.TrainTraffic -> R.string.train_traffic_lowercase
+                Alert.Cause.UnrulyPassenger -> R.string.unruly_passenger_lowercase
+                Alert.Cause.Weather -> R.string.weather_lowercase
                 else -> null
             }
 
