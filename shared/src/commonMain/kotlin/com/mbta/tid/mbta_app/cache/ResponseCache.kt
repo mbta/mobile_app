@@ -26,7 +26,8 @@ import org.koin.core.component.inject
 data class ResponseMetadata(
     val etag: String?,
     @Serializable(with = TimeMarkSerializer::class)
-    var fetchTime: TimeSource.Monotonic.ValueTimeMark
+    var fetchTime: TimeSource.Monotonic.ValueTimeMark,
+    val invalidationKey: String? = null
 )
 
 @Serializable data class Response<T>(val metadata: ResponseMetadata, val body: T)
@@ -34,13 +35,17 @@ data class ResponseMetadata(
 class ResponseCache<T : Any>(
     private val cacheKey: String,
     val maxAge: Duration,
-    private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>,
+    private val invalidationKey: String? = null
 ) : KoinComponent {
     companion object {
         const val CACHE_SUBDIRECTORY = "responseCache"
 
-        inline fun <reified T : Any> create(cacheKey: String, maxAge: Duration = 1.hours) =
-            ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer())
+        inline fun <reified T : Any> create(
+            cacheKey: String,
+            maxAge: Duration = 1.hours,
+            invalidationKey: String? = null
+        ) = ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer(), invalidationKey)
     }
 
     internal var data: Response<T>? = null
@@ -91,7 +96,7 @@ class ResponseCache<T : Any>(
         val responseBody = response.bodyAsText()
         val nextData =
             Response(
-                ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()),
+                ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow(), invalidationKey),
                 decodeString(responseBody)
             )
         this.data = nextData
@@ -104,6 +109,9 @@ class ResponseCache<T : Any>(
         try {
             val diskMetadata: ResponseMetadata =
                 json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
+            if (diskMetadata.invalidationKey != invalidationKey) {
+                return null
+            }
             val diskData = decodeString(fileSystem.read(cacheFilePath) { readUtf8() })
             this.data = Response(diskMetadata, diskData)
             return this.data
