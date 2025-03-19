@@ -43,6 +43,7 @@ fun NearbyStopView(
 ) {
     val isWheelchairAccessible = patternsAtStop.stop.isWheelchairAccessible
     val showAccessible = showElevatorAccessibility && isWheelchairAccessible
+    val showInaccessible = showElevatorAccessibility && !isWheelchairAccessible
     val showElevatorAlerts = showElevatorAccessibility && patternsAtStop.elevatorAlerts.isNotEmpty()
 
     Row(
@@ -87,29 +88,26 @@ fun NearbyStopView(
                     modifier =
                         Modifier.placeholderIfLoading()
                             .padding(start = if (showAccessible) 0.dp else 8.dp)
-                            .then(if (showAccessible) Modifier.fillMaxWidth() else Modifier),
+                            .fillMaxWidth(),
                     overflow = TextOverflow.Visible,
                     style = Typography.callout
                 )
-                if (showElevatorAccessibility && !isWheelchairAccessible) {
-                    Text(
-                        text = stringResource(R.string.not_accessible),
-                        modifier = Modifier.placeholderIfLoading().alpha(0.5f),
-                        textAlign = TextAlign.Start,
-                        overflow = TextOverflow.Visible,
-                        style = Typography.footnoteSemibold
-                    )
-                }
             }
-            if (showElevatorAlerts) {
+            if (showInaccessible || showElevatorAlerts) {
                 Text(
                     text =
-                        pluralStringResource(
-                            R.plurals.elevator_closure_count,
-                            patternsAtStop.elevatorAlerts.size,
-                            patternsAtStop.elevatorAlerts.size
-                        ),
-                    modifier = Modifier.placeholderIfLoading().alpha(0.5f).fillMaxWidth(),
+                        if (showInaccessible) stringResource(R.string.not_accessible)
+                        else
+                            pluralStringResource(
+                                R.plurals.elevator_closure_count,
+                                patternsAtStop.elevatorAlerts.size,
+                                patternsAtStop.elevatorAlerts.size
+                            ),
+                    modifier =
+                        Modifier.placeholderIfLoading()
+                            .alpha(0.5f)
+                            .padding(start = 8.dp)
+                            .fillMaxWidth(),
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Visible,
                     style = Typography.footnoteSemibold
