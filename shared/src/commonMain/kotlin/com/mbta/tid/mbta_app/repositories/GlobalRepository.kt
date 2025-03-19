@@ -23,7 +23,7 @@ interface IGlobalRepository {
 
 class GlobalRepository(
     val cache: ResponseCache<GlobalResponse> =
-        ResponseCache.create(cacheKey = "global", invalidationKey = "2025-03-18")
+        ResponseCache.create(cacheKey = "global", invalidationKey = "2025-03-19")
 ) : IGlobalRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
     override val state = cache.state

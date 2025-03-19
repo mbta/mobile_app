@@ -36,6 +36,10 @@ class ResponseCache<T : Any>(
     private val cacheKey: String,
     val maxAge: Duration,
     private val serializer: KSerializer<T>,
+    // The invalidation key is written to the cache metadata on disk, if a loaded key doesn't match
+    // the key provided on cache creation, the data will be reloaded from the backend. This can be
+    // set to any arbitrary string value, but should only be changed if you want to wipe the cached
+    // data after an update, even when the etag matches the backend.
     private val invalidationKey: String? = null
 ) : KoinComponent {
     companion object {
