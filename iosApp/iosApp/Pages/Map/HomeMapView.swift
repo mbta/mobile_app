@@ -43,7 +43,6 @@ struct HomeMapView: View {
     @State var lastNavEntry: SheetNavigationStackEntry?
 
     let inspection = Inspection<Self>()
-    let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
     let log = Logger()
 
     private var isNearbyNotFollowing: Bool {
@@ -149,9 +148,12 @@ struct HomeMapView: View {
                 onInactive: leaveVehiclesChannel,
                 onBackground: leaveVehiclesChannel
             )
-            .onReceive(timer) { input in
-                now = input
-                handleGlobalMapDataChange(now: now)
+            .task {
+                while !Task.isCancelled {
+                    now = Date.now
+                    handleGlobalMapDataChange(now: now)
+                    try? await Task.sleep(for: .seconds(30))
+                }
             }
     }
 
