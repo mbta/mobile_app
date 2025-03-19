@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -86,18 +86,16 @@ fun TripStopRow(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     if (showElevatorAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
-                        Icon(
+                        Image(
                             modifier = Modifier.height(24.dp).testTag("elevator_alert"),
                             painter = painterResource(R.drawable.elevator_alert),
-                            contentDescription = null,
-                            tint = Color.Unspecified
+                            contentDescription = null
                         )
                     } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
-                        Icon(
+                        Image(
                             modifier = Modifier.height(24.dp).testTag("wheelchair_accessible"),
                             painter = painterResource(R.drawable.wheelchair_accessible),
-                            contentDescription = null,
-                            tint = Color.Unspecified
+                            contentDescription = null
                         )
                     }
                 }

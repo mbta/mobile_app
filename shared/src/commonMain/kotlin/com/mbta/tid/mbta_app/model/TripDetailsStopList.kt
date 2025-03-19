@@ -10,7 +10,10 @@ import kotlinx.datetime.Instant
 data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
 constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
-    data class Entry(
+
+    data class Entry
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val stop: Stop,
         val stopSequence: Int,
         val disruption: RealtimePatterns.Format.Disruption?,
