@@ -350,7 +350,8 @@ class ObjectCollectionBuilder {
                 vehicleType,
                 childStopIds,
                 connectingStopIds,
-                parentStationId
+                parentStationId,
+                wheelchairBoarding,
             )
     }
 

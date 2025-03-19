@@ -33,7 +33,7 @@ final class TripStopRowTests: XCTestCase {
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
-                vehicle: nil, routes: [route]
+                vehicle: nil, routes: [route], elevatorAlerts: []
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
@@ -59,7 +59,7 @@ final class TripStopRowTests: XCTestCase {
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
-                vehicle: nil, routes: [route]
+                vehicle: nil, routes: [route], elevatorAlerts: []
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
@@ -91,7 +91,7 @@ final class TripStopRowTests: XCTestCase {
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: platformStop,
-                vehicle: nil, routes: [route]
+                vehicle: nil, routes: [route], elevatorAlerts: []
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
@@ -118,7 +118,7 @@ final class TripStopRowTests: XCTestCase {
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
-                vehicle: nil, routes: [route]
+                vehicle: nil, routes: [route], elevatorAlerts: []
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
@@ -134,7 +134,7 @@ final class TripStopRowTests: XCTestCase {
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
                 schedule: schedule, prediction: prediction, predictionStop: nil,
-                vehicle: nil, routes: [route]
+                vehicle: nil, routes: [route], elevatorAlerts: []
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
@@ -161,7 +161,7 @@ final class TripStopRowTests: XCTestCase {
         let stopEntry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
             schedule: schedule, prediction: prediction, predictionStop: nil,
-            vehicle: nil, routes: [route]
+            vehicle: nil, routes: [route], elevatorAlerts: []
         )
 
         let basicRow = TripStopRow(
