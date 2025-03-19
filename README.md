@@ -74,6 +74,43 @@ To switch between the staging and prod app flavors, go to Build > Select Build V
 Populate any configuration needed in your the .envrc file. These will be read by a gradle build task
  set as BuildConfig values so that they can be read by the application.
 
+## i18n
+
+The source of truth for our translations is
+[Localizable.xcstrings](iosApp/iosApp/Localizable.xcstrings), any `en` strings added to
+[strings.xml](androidApp/src/main/res/values/strings.xml) which match an equivalent `en` string in
+`Localizable.xcstrings` will automatically have all existing translations imported to Android by the
+[convertIosLocalization](buildSrc/src/main/kotlin/com/mbta/tid/mbta_app/gradle/ConvertIosLocalizationTask.kt)
+gradle task on Android build.
+
+Any time we add new user facing strings to the app, we add temporary machine translations of that
+text, while we're waiting to get translations back from our vendor. Any machine translations that
+are added must be marked as "Needs review" in XCode so that the translators know to audit them.
+
+### Importing from `.xliff`
+
+When we get translations from our vendor, they're generally in `.xliff` format, which we can import
+into XCode by selecting `Product > Import Localizations...`, selecting `iOSApp Project` in the
+dialog, then reviewing the imported strings and hitting `Import`. It's expected that many strings
+will be missing, since we generally only get a partial batch of translations at a time.
+
+### Importing from a spreadsheet
+
+Sometimes, we need to batch import translations from a spreadsheet if the vendor has not provided us
+with `.xliff` files. For this, you can use the [csv-to-xliff.py](bin/csv-to-xliff.py) script to
+convert a CSV file into individual `.xliff`s for each language. The CSV must be formatted with a
+header row of all of the language codes exactly matching the language codes that XCode expects, and
+the first column must be `en`. The strings will also not be imported properly if the `en` string
+doesn't _exactly_ match the strings in `Localizable.xcstrings`, we've had issues before where some
+markdown formatting was removed in the provided spreadsheet, which resulted in XCode not importing
+them as the same string.
+
+To run `csv-to-xliff.py`, you should be able to just run `./bin/csv-to-xliff.py <csv file path>`
+from the directory root. By default, it will put the `.xliff` files in a `translations-YYYY-MM-DD`
+directory in the same directory you ran the script, but you can also add `-o <output directory>` to
+specify a different directory. The generated files should never be commited directly, only imported.
+This isn't a particularly robust or well tested script, so expect issues and be cautious about the
+output.
 
 ## Running Tests
 

@@ -93,6 +93,7 @@
         <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
     <string name="end">Fen</string>
+    <string name="end_of_service">fen sèvis</string>
     <string name="error_loading_data">Erè nan chajman done</string>
     <string name="escalator_closed_sentence_case">Fèmti eskalye</string>
     <string name="escalator_closure">Fèmti Eskalye</string>
@@ -144,6 +145,7 @@
     <string name="ice_in_harbor_lowercase">glas nan pò</string>
     <string name="inbound">Antran</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
+    <string name="later_today">pita jodi a</string>
     <string name="live">An dirèk</string>
     <string name="loading">Chajman...</string>
     <string name="location_not_available_yet">Pozisyon poko disponib</string>
@@ -281,6 +283,7 @@
     <string name="star_route">Mete wout nan favori</string>
     <string name="star_route_hint">tache wout la nan tèt lis la</string>
     <string name="start">Kòmanse</string>
+    <string name="start_of_service">kòmansman sèvis</string>
     <string name="station_closed">Estasyon Fèmen</string>
     <string name="station_closed_sentence_case">Estasyon fèmen</string>
     <string name="station_closure">Estasyon Fèmen</string>
@@ -335,6 +338,7 @@
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unruly_passenger_lowercase">pasaje dezobeyisan</string>
     <string name="unstar_route_hint">detache wout la soti nan tèt lis la</string>
+    <string name="until_further_notice">Jiskaske yo bay lòt avi</string>
     <string name="updated_at">Mizajou: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="zero">Mizajou %1$d minit de sa</item>
