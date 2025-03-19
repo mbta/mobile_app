@@ -492,7 +492,7 @@ fun stopDetailsManagedVM(
     val stopId = filters?.stopId
     val timer = timer(checkPredictionsStaleInterval)
 
-    val stopData = viewModel.stopData.collectAsState()
+    val stopData by viewModel.stopData.collectAsState()
 
     val departures by viewModel.stopDepartures.collectAsState()
 
@@ -511,20 +511,20 @@ fun stopDetailsManagedVM(
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
-        val schedules = stopData.value?.schedules
+        val schedules = stopData?.schedules
         viewModel.setDepartures(
             if (
                 globalResponse != null &&
                     stopId != null &&
-                    stopId == stopData.value?.stopId &&
+                    stopId == stopData?.stopId &&
                     schedules != null &&
-                    stopData.value?.predictionsLoaded == true
+                    stopData?.predictionsLoaded == true
             ) {
                 StopDetailsDepartures.fromData(
                     stopId,
                     globalResponse,
                     schedules,
-                    stopData.value?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                    stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                     alertData,
                     pinnedRoutes,
                     now,
