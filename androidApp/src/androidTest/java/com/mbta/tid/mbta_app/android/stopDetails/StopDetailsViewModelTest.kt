@@ -997,8 +997,7 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testManagerSetsDeparturesOnChange() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
+    fun testManagerSetsDeparturesOnChange() {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
@@ -1016,7 +1015,6 @@ class StopDetailsViewModelTest {
                 errorBannerRepo,
                 predictionsRepo,
                 schedulesRepo,
-                coroutineDispatcher = dispatcher
             )
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
@@ -1036,8 +1034,6 @@ class StopDetailsViewModelTest {
                 setMapSelectedVehicle = {},
             )
         }
-
-        advanceUntilIdle()
 
         composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
 
