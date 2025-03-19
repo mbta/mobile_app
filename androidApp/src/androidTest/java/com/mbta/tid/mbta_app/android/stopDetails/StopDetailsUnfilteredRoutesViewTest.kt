@@ -153,8 +153,7 @@ class StopDetailsUnfilteredRoutesViewTest {
     }
 
     @Test
-    fun testNotAccessibleStopDetails() {
-
+    fun testNotAccessibleStopDetails(): Unit = runBlocking {
         val departures =
             checkNotNull(
                 StopDetailsDepartures.fromData(

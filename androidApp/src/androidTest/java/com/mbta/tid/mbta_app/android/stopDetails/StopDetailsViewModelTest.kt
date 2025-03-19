@@ -742,6 +742,7 @@ class StopDetailsViewModelTest {
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
                     setMapSelectedVehicle = {},
+                    coroutineDispatcher = dispatcher
                 )
             }
         }
@@ -828,6 +829,7 @@ class StopDetailsViewModelTest {
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
                     setMapSelectedVehicle = {},
+                    coroutineDispatcher = dispatcher
                 )
             }
         }
@@ -941,6 +943,7 @@ class StopDetailsViewModelTest {
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
                     setMapSelectedVehicle = {},
+                    coroutineDispatcher = dispatcher
                 )
             }
         }
@@ -997,7 +1000,8 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testManagerSetsDeparturesOnChange() {
+    fun testManagerSetsDeparturesOnChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
@@ -1015,6 +1019,7 @@ class StopDetailsViewModelTest {
                 errorBannerRepo,
                 predictionsRepo,
                 schedulesRepo,
+                coroutineDispatcher = dispatcher
             )
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
@@ -1032,8 +1037,11 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
         }
+
+        advanceUntilIdle()
 
         composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
 
@@ -1075,6 +1083,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
         }
 
@@ -1118,6 +1127,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
         }
 
@@ -1162,6 +1172,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
         }
 
@@ -1211,6 +1222,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
         }
 
@@ -1279,6 +1291,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, filter -> newStopFilter = filter },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
 
             LaunchedEffect(null) {
@@ -1355,6 +1368,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
 
             LaunchedEffect(null) {
@@ -1429,6 +1443,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
                 setMapSelectedVehicle = {},
+                coroutineDispatcher = dispatcher
             )
 
             LaunchedEffect(null) {

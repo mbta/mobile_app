@@ -66,7 +66,7 @@ class StopDetailsViewModel(
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
-    internal val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
     companion object {
@@ -486,7 +486,8 @@ fun stopDetailsManagedVM(
     setMapSelectedVehicle: (Vehicle?) -> Unit,
     now: Instant = Clock.System.now(),
     viewModel: StopDetailsViewModel = koinViewModel(),
-    checkPredictionsStaleInterval: Duration = 5.seconds
+    checkPredictionsStaleInterval: Duration = 5.seconds,
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ): StopDetailsViewModel {
     val stopId = filters?.stopId
     val timer = timer(checkPredictionsStaleInterval)
@@ -527,7 +528,7 @@ fun stopDetailsManagedVM(
                     alertData,
                     pinnedRoutes,
                     now,
-                    viewModel.coroutineDispatcher
+                    coroutineDispatcher
                 )
             } else null
         )
