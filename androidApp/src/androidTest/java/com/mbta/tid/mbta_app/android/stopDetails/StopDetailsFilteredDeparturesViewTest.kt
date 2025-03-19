@@ -625,6 +625,84 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
+    fun testShowsSubwayDelayAlert() {
+        val now = Clock.System.now()
+        val alert =
+            builder.alert {
+                activePeriod(now - 5.seconds, now + 5.seconds)
+                effect = Alert.Effect.Delay
+                header = "Delays alert header"
+                cause = Alert.Cause.HeavyRidership
+                severity = 10
+                informedEntity(
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                    directionId = 0,
+                    route = route.id,
+                    routeType = RouteType.LIGHT_RAIL,
+                    stop = stop.id
+                )
+            }
+        val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
+        val departures =
+            checkNotNull(
+                StopDetailsDepartures.fromData(
+                    stop,
+                    globalResponse,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    alertResponse,
+                    emptySet(),
+                    now,
+                )
+            )
+        val viewModel = StopDetailsViewModel.mocked()
+        viewModel.setDepartures(departures)
+
+        composeTestRule.setContent {
+            val filterState = remember {
+                mutableStateOf(StopDetailsFilter(routeId = route.id, directionId = 0))
+            }
+
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = filterState.value,
+                tripFilter = null,
+                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                tileData =
+                    departures
+                        .stopDetailsFormattedTrips(
+                            filterState.value.routeId,
+                            filterState.value.directionId,
+                            now
+                        )
+                        .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) },
+                allAlerts = null,
+                elevatorAlerts = emptyList(),
+                global = globalResponse,
+                now = now,
+                viewModel = viewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                pinnedRoutes = emptySet(),
+                togglePinnedRoute = {},
+                onClose = {},
+                openModal = {},
+                openSheetRoute = {},
+                noPredictionsStatus = null,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
+    }
+
+    @Test
     fun testShowsNotAccessibleAlert() {
         val departures =
             checkNotNull(
