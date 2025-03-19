@@ -681,6 +681,6 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
     }
 }

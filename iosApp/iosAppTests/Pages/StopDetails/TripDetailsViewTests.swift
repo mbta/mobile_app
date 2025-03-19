@@ -314,7 +314,7 @@ final class TripDetailsViewTests: XCTestCase {
         sut.onTapStop(stop: TripDetailsStopList.Entry(
             stop: targetStop, stopSequence: 0,
             disruption: nil, schedule: nil, prediction: nil, predictionStop: nil,
-            vehicle: nil, routes: []
+            vehicle: nil, routes: [], elevatorAlerts: []
         ))
         XCTAssertEqual(nearbyVM.navigationStack, [oldNavEntry, newNavEntry])
     }
