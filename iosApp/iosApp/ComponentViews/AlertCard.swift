@@ -48,7 +48,7 @@ struct AlertCard: View {
     }
 
     func delayHeader(_ formattedAlert: FormattedAlert) -> String {
-        if let cause = formattedAlert.cause {
+        if let cause = formattedAlert.dueToCause {
             String(format: NSLocalizedString(
                 "Delays due to %@",
                 comment: "Describes the cause of a delay. Ex: 'Delays due to [traffic]'"

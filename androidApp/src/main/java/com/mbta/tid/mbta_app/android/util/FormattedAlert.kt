@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.model.Alert
 data class FormattedAlert(
     @StringRes val effectRes: Int,
     @StringRes val downstreamEffectRes: Int,
-    @StringRes val causeRes: Int?,
+    @StringRes val dueToCauseRes: Int?,
     /**
      * Represents the text and possible accessibility label that would be used if replacing
      * predictions. Does not guarantee that the alert should replace predictions.
@@ -32,9 +32,11 @@ data class FormattedAlert(
         @Composable
         get() = stringResource(R.string.effect_ahead, stringResource(downstreamEffectRes))
 
-    // TODO: Decide if should be nullable or not
-    val cause
-        @Composable get() = causeRes?.let { stringResource(it) }
+    val delaysDueToCause
+        @Composable
+        get() =
+            dueToCauseRes?.let { stringResource(R.string.delays_due_to_cause, stringResource(it)) }
+                ?: stringResource(R.string.delays_unknown_reason)
 
     data class PredictionReplacement(
         @StringRes val textRes: Int,

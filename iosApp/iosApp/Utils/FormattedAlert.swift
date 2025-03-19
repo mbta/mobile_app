@@ -12,7 +12,7 @@ import Shared
 struct FormattedAlert: Equatable {
     let effect: String
     let downstreamLabel: String
-    let cause: String?
+    let dueToCause: String?
     /// Represents the text and possible accessibility label that would be used if replacing predictions. Does not
     /// guarantee that the alert should replace predictions.
     let predictionReplacement: PredictionReplacement
@@ -91,7 +91,7 @@ struct FormattedAlert: Equatable {
         ex. "[Detour] ahead", "[Shuttle buses] ahead"
         """), downstreamEffect)
 
-        cause = causeLabel(alert.cause)
+        dueToCause = dueToCause(alert.cause)
 
         // a handful of cases have different text when replacing predictions than in a details title
         predictionReplacement = switch alert.effect {
@@ -123,7 +123,7 @@ struct FormattedAlert: Equatable {
 }
 
 // swiftlint:disable:next cyclomatic_complexity function_body_length
-private func causeLabel(_ cause: Alert.Cause) -> String? {
+private func dueToCause(_ cause: Alert.Cause) -> String? {
     switch cause {
     case .accident: NSLocalizedString("accident", comment: "Alert cause, used in 'Delays due to [cause]'")
     case .amtrak: NSLocalizedString("Amtrak", comment: "Alert cause, used in 'Delays due to [cause]'")
