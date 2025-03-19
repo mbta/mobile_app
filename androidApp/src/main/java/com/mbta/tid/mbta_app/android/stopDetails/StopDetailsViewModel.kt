@@ -66,7 +66,7 @@ class StopDetailsViewModel(
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+    internal val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
     companion object {
@@ -527,6 +527,7 @@ fun stopDetailsManagedVM(
                     alertData,
                     pinnedRoutes,
                     now,
+                    viewModel.coroutineDispatcher
                 )
             } else null
         )

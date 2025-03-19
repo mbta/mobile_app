@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Format
 import com.mbta.tid.mbta_app.model.RealtimePatterns.NoTripsFormat
@@ -9,6 +10,7 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
@@ -146,6 +148,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     }
 
     companion object {
+        @DefaultArgumentInterop.Enabled
         suspend fun fromData(
             stopId: String,
             global: GlobalResponse,
@@ -154,8 +157,9 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
             filterAtTime: Instant,
+            dispatcher: CoroutineDispatcher = Dispatchers.Default
         ): StopDetailsDepartures? =
-            withContext(Dispatchers.Default) {
+            withContext(dispatcher) {
                 val stop = global.stops[stopId]
                 if (stop == null) {
                     null
@@ -167,11 +171,13 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         predictions,
                         alerts,
                         pinnedRoutes,
-                        filterAtTime
+                        filterAtTime,
+                        dispatcher
                     )
                 }
             }
 
+        @DefaultArgumentInterop.Enabled
         suspend fun fromData(
             stop: Stop,
             global: GlobalResponse,
@@ -179,9 +185,10 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
-            filterAtTime: Instant
+            filterAtTime: Instant,
+            dispatcher: CoroutineDispatcher = Dispatchers.Default
         ): StopDetailsDepartures? =
-            withContext(Dispatchers.Default) {
+            withContext(dispatcher) {
                 val allStopIds =
                     if (global.patternIdsByStop.containsKey(stop.id)) {
                         listOf(stop.id)
