@@ -19,7 +19,7 @@
     <string name="amber_alert_sentence_case">Alerta amarelo</string>
     <string name="amtrak">Amtrak</string>
     <string name="amtrak_train_traffic">Tráfego de trem da Amtrak</string>
-    <string name="amtrak_train_traffic_lowercase">Tráfego de trem Amtrak</string>
+    <string name="amtrak_train_traffic_lowercase">tráfego de trem Amtrak</string>
     <string name="an_earlier_mechanical_problem">Um problema mecânico anterior</string>
     <string name="an_earlier_mechanical_problem_lowercase">um problema mecânico anterior</string>
     <string name="an_earlier_signal_problem">Um problema de sinal anterior</string>
@@ -40,7 +40,7 @@
     <string name="cancelled">Cancelado</string>
     <string name="close_button_label">Fechar</string>
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
-    <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
+    <string name="coast_guard_restriction_lowercase">restrição da Guarda Costeira</string>
     <string name="collapse_remaining_stops">recolher paradas restantes</string>
     <string name="congestion">Congestionamento</string>
     <string name="congestion_lowercase">congestionamento</string>

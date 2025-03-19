@@ -2524,31 +2524,31 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Tráfico de trenes Amtrak"
+            "value" : "tráfico de trenes Amtrak"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Trafic ferroviaire Amtrak"
+            "value" : "trafic ferroviaire Amtrak"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Trafik tren Amtrak"
+            "value" : "trafik tren Amtrak"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Tráfego de trem Amtrak"
+            "value" : "tráfego de trem Amtrak"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Giao thông đường sắt Amtrak"
+            "value" : "giao thông đường sắt Amtrak"
           }
         },
         "zh-Hans-CN" : {
@@ -4418,31 +4418,31 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Restricción de la Guardia Costera"
+            "value" : "restricción de la Guardia Costera"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Restriction de la Garde côtière"
+            "value" : "restriction de la Garde côtière"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Restriksyon Gad Kòt"
+            "value" : "restriksyon Gad Kòt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Restrição da Guarda Costeira"
+            "value" : "restrição da Guarda Costeira"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Hạn chế của Cảnh sát biển"
+            "value" : "hạn chế của Cảnh sát biển"
           }
         },
         "zh-Hans-CN" : {
@@ -9483,7 +9483,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "BẢO TRÌ"
+            "value" : "bảo trì"
           }
         },
         "zh-Hans-CN" : {

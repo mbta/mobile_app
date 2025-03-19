@@ -17,7 +17,7 @@
     <string name="amber_alert_sentence_case">Cảnh báo Amber</string>
     <string name="amtrak">Amtrak</string>
     <string name="amtrak_train_traffic">Kẹt tàu Amtrak</string>
-    <string name="amtrak_train_traffic_lowercase">Giao thông đường sắt Amtrak</string>
+    <string name="amtrak_train_traffic_lowercase">giao thông đường sắt Amtrak</string>
     <string name="an_earlier_mechanical_problem">Một vấn đề về cơ khí trước đó</string>
     <string name="an_earlier_mechanical_problem_lowercase">một vấn đề cơ học trước đó</string>
     <string name="an_earlier_signal_problem">Một vấn đề về đèn tín hiệu trước đó</string>
@@ -38,7 +38,7 @@
     <string name="cancelled">Đã hủy</string>
     <string name="close_button_label">Đóng</string>
     <string name="coast_guard_restriction">Hạn chế của cảnh sát biển</string>
-    <string name="coast_guard_restriction_lowercase">Hạn chế của Cảnh sát biển</string>
+    <string name="coast_guard_restriction_lowercase">hạn chế của Cảnh sát biển</string>
     <string name="collapse_remaining_stops">thu gọn các điểm dừng còn lại</string>
     <string name="congestion">Tắc nghẽn</string>
     <string name="congestion_lowercase">sự tắc nghẽn</string>
@@ -145,7 +145,7 @@
     <string name="location_settings_prompt_title">MBTA Go hoạt động tốt nhất khi bật dịch vụ định vị</string>
     <string name="location_settings_prompt_turn_on">Bật trong Cài đặt</string>
     <string name="maintenance">Bảo trì</string>
-    <string name="maintenance_lowercase">BẢO TRÌ</string>
+    <string name="maintenance_lowercase">bảo trì</string>
     <string name="mechanical_issue">Vấn đề cơ khí</string>
     <string name="mechanical_issue_lowercase">vấn đề cơ khí</string>
     <string name="mechanical_problem">Vấn đề cơ khí</string>
