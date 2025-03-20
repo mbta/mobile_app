@@ -55,11 +55,12 @@ class VehiclesRepositoryTest : KoinTest {
     @Test
     fun testChannelClearedBeforeJoin() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val vehiclesRepo = VehiclesRepository(socket)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
-        every { channel.attach() } returns mock<PhoenixPush>(MockMode.autofill)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
-        vehiclesRepo.channel = channel
+        val push = mock<PhoenixPush>(MockMode.autofill)
+        val vehiclesRepo = VehiclesRepository(socket)
+        every { channel.attach() } returns push
+        every { push.receive(any(), any()) } returns push
+        every { socket.getChannel(any(), any()) } returns channel
         vehiclesRepo.connect(routeId = "Test", directionId = 0, onReceive = { })
         verify { vehiclesRepo.disconnect() }
         verify { channel.detach() }

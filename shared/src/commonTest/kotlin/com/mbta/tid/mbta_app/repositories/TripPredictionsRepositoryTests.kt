@@ -16,11 +16,12 @@ class TripPredictionsRepositoryTests {
     @Test
     fun testChannelClearedBeforeJoin() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val tripPredictionsRepo = TripPredictionsRepository(socket)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
-        every { channel.attach() } returns mock<PhoenixPush>(MockMode.autofill)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
-        tripPredictionsRepo.channel = channel
+        val push = mock<PhoenixPush>(MockMode.autofill)
+        val tripPredictionsRepo = TripPredictionsRepository(socket)
+        every { channel.attach() } returns push
+        every { push.receive(any(), any()) } returns push
+        every { socket.getChannel(any(), any()) } returns channel
         tripPredictionsRepo.connect(tripId = "Test", onReceive = { })
         verify { tripPredictionsRepo.disconnect() }
         verify { channel.detach() }
