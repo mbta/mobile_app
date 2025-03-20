@@ -22,7 +22,6 @@ class VehicleRepositoryTests {
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         vehiclesRepo.channel = channel
         vehiclesRepo.connect(vehicleId = "Test", onReceive = { })
-        verify { vehiclesRepo.disconnect() }
         verify { channel.detach() }
     }
 

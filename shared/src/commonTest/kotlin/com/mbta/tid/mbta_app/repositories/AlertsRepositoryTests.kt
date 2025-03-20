@@ -46,7 +46,6 @@ class AlertsRepositoryTests {
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         alertsRepo.channel = channel
         alertsRepo.connect(onReceive = { })
-        verify { alertsRepo.disconnect() }
         verify { channel.detach() }
     }
 

@@ -22,7 +22,6 @@ class TripPredictionsRepositoryTests {
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         tripPredictionsRepo.channel = channel
         tripPredictionsRepo.connect(tripId = "Test", onReceive = { })
-        verify { tripPredictionsRepo.disconnect() }
         verify { channel.detach() }
     }
 

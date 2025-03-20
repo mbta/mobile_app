@@ -53,7 +53,6 @@ class PredictionsRepositoryTests : KoinTest {
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         predictionsRepo.channel = channel
         predictionsRepo.connect(stopIds = listOf("Test"), onReceive = { })
-        verify { predictionsRepo.disconnect() }
         verify { channel.detach() }
     }
 

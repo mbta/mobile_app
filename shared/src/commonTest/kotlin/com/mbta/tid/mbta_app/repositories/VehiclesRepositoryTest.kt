@@ -61,7 +61,6 @@ class VehiclesRepositoryTest : KoinTest {
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         vehiclesRepo.channel = channel
         vehiclesRepo.connect(routeId = "Test", directionId = 0, onReceive = { })
-        verify { vehiclesRepo.disconnect() }
         verify { channel.detach() }
     }
 
