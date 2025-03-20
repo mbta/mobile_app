@@ -76,10 +76,11 @@ class MapLayerManager: IMapLayerManager {
         Task {
             let colorPalette = getColorPalette(colorScheme: colorScheme)
             currentScheme = colorScheme
-            let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
-                .map { $0.toMapbox() } + StopLayerGenerator.shared.createStopLayers(
-                    colorPalette: colorPalette
-                ).map { $0.toMapbox() }
+            let routeLayers = try await RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
+                .map { $0.toMapbox() }
+            let stopLayers = try await StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette)
+                .map { $0.toMapbox() }
+            let layers: [MapboxMaps.Layer] = routeLayers + stopLayers
 
             for layer in layers {
                 DispatchQueue.main.async { [weak self] in

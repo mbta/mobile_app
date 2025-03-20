@@ -159,7 +159,7 @@ final class StopDetailsViewModelTests: XCTestCase {
             predictionsLoaded: true
         )
 
-        let departures = stopDetailsVM.getDepartures(
+        let departures = await stopDetailsVM.getDepartures(
             stopId: stop.id,
             alerts: .init(objects: objects),
             now: now

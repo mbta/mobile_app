@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
@@ -112,8 +113,7 @@ class StopDetailsUnfilteredRoutesViewTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testStopDetailsRoutesViewDisplaysCorrectly() {
-
+    fun testStopDetailsRoutesViewDisplaysCorrectly(): Unit = runBlocking {
         val departures =
             checkNotNull(
                 StopDetailsDepartures.fromData(
@@ -153,8 +153,7 @@ class StopDetailsUnfilteredRoutesViewTest {
     }
 
     @Test
-    fun testNotAccessibleStopDetails() {
-
+    fun testNotAccessibleStopDetails(): Unit = runBlocking {
         val departures =
             checkNotNull(
                 StopDetailsDepartures.fromData(

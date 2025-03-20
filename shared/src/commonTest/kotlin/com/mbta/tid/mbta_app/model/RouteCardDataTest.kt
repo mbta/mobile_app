@@ -14,6 +14,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.runBlocking
 
 class RouteCardDataTest {
 
@@ -1149,7 +1150,7 @@ class RouteCardDataTest {
 
     @Test
     @Ignore // TODO once no service today state added
-    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`()  {
+    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
@@ -2130,7 +2131,7 @@ class RouteCardDataTest {
 
     @Test
     @Ignore // TODO: Add hasSchedules functionality as part of special service dates
-    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`()  {
+    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()

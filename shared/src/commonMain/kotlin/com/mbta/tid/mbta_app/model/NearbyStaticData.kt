@@ -11,6 +11,8 @@ import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 
 /**
@@ -795,7 +797,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
         .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
 }
 
-fun NearbyStaticData.withRealtimeInfo(
+suspend fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
     sortByDistanceFrom: Position,
     schedules: ScheduleResponse?,
@@ -804,19 +806,21 @@ fun NearbyStaticData.withRealtimeInfo(
     filterAtTime: Instant,
     pinnedRoutes: Set<String>,
 ): List<StopsAssociated>? {
-    return this.withRealtimeInfoWithoutTripHeadsigns(
-        globalData,
-        sortByDistanceFrom,
-        schedules,
-        predictions,
-        alerts,
-        filterAtTime,
-        showAllPatternsWhileLoading = false,
-        hideNonTypicalPatternsBeyondNext = 120.minutes,
-        filterCancellations = true,
-        includeMinorAlerts = false,
-        pinnedRoutes
-    )
+    return withContext(Dispatchers.Default) {
+        this@withRealtimeInfo.withRealtimeInfoWithoutTripHeadsigns(
+            globalData,
+            sortByDistanceFrom,
+            schedules,
+            predictions,
+            alerts,
+            filterAtTime,
+            showAllPatternsWhileLoading = false,
+            hideNonTypicalPatternsBeyondNext = 120.minutes,
+            filterCancellations = true,
+            includeMinorAlerts = false,
+            pinnedRoutes
+        )
+    }
 }
 
 class NearbyStaticDataBuilder {
