@@ -56,7 +56,7 @@ class SearchViewModel: ObservableObject {
     }
 
     func getStopFor(id: String) -> Stop? {
-        globalResponse?.stops[id]
+        globalResponse?.getStop(stopId: id)
     }
 
     func determineStateFor(query: String) {
@@ -158,7 +158,7 @@ class SearchViewModel: ObservableObject {
 
     private func mapStopIdToResult(id: String) -> Result? {
         guard let globalResponse,
-              let stop = globalResponse.stops[id]
+              let stop = globalResponse.getStop(stopId: id)
         else { return nil }
         let isStation = stop.locationType == .station
         let routes = globalResponse.getTypicalRoutesFor(stopId: id)

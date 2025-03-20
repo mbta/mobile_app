@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.utils.PerformsPoorlyInSwift
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -19,7 +20,7 @@ data class GlobalResponse(
     @SerialName("pattern_ids_by_stop") val patternIdsByStop: Map<String, List<String>>,
     val routes: Map<String, Route>,
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
-    val stops: Map<String, Stop>,
+    @PerformsPoorlyInSwift val stops: Map<String, Stop>,
     val trips: Map<String, Trip>,
 ) {
     constructor(
@@ -62,6 +63,8 @@ data class GlobalResponse(
                 }
                 .map { it.id to it.position }
         )
+
+    fun getStop(stopId: String?) = stops[stopId]
 
     fun getLine(lineId: String?) =
         if (lineId != null) {

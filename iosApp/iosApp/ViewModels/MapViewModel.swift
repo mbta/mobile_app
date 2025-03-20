@@ -62,8 +62,7 @@ class MapViewModel: ObservableObject {
         try await RouteFeaturesBuilder.shared.buildCollection(
             routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
                 routeData: routeSourceData,
-                routesById: globalData?.routes,
-                stopsById: globalData?.stops,
+                globalData: globalData,
                 alertsByStop: globalMapData?.alertsByStop
             )
         ).toMapbox()
@@ -85,7 +84,7 @@ class MapViewModel: ObservableObject {
     private func getStopFeatures(globalMapData: GlobalMapData) async throws -> MapboxMaps.FeatureCollection {
         try await StopFeaturesBuilder.shared.buildCollection(
             stopData: stopSourceData,
-            stops: globalMapData.mapStops,
+            globalMapData: globalMapData,
             linesToSnap: snappedStopRouteLines
         ).toMapbox()
     }

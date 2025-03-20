@@ -151,7 +151,7 @@ extension HomeMapView {
         }
         if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
             if oldNavEntry?.stopId() != stopId {
-                if let stop = mapVM.globalData?.stops[stopId] {
+                if let stop = mapVM.globalData?.getStop(stopId: stopId) {
                     handleStopDetailsChange(stop, stopFilter)
                 }
             }
@@ -198,7 +198,7 @@ extension HomeMapView {
             """)
             return false
         }
-        guard let stop = mapVM.globalData?.stops[stopId] else {
+        guard let stop = mapVM.globalData?.getStop(stopId: stopId) else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.

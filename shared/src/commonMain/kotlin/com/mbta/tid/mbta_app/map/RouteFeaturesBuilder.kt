@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.greenRoutes
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -49,6 +50,12 @@ object RouteFeaturesBuilder {
     val propRouteSortKey = FeatureProperty<Number>("routeSortKey")
     val propRouteColor = FeatureProperty<Color>("routeColor")
     val propAlertStateKey = FeatureProperty<String>("alertState")
+
+    suspend fun generateRouteLines(
+        routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        globalData: GlobalResponse?,
+        alertsByStop: Map<String, AlertAssociatedStop>?
+    ) = generateRouteLines(routeData, globalData?.routes, globalData?.stops, alertsByStop)
 
     suspend fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,

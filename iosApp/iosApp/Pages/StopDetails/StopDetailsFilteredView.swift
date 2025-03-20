@@ -35,7 +35,7 @@ struct StopDetailsFilteredView: View {
     var tiles: [TileData] = []
     var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
 
-    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
     var nowInstant: Instant { now.toKotlinInstant() }
 
     init(
