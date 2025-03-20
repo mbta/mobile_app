@@ -24,6 +24,7 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
         vehicleId: String,
         onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
     ) {
+        channel?.detach()
         channel = socket.getChannel(VehicleChannel.topic(vehicleId), emptyMap())
 
         channel?.onEvent(VehicleChannel.newDataEvent) { message ->

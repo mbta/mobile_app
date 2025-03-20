@@ -39,6 +39,7 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
         tripId: String,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
+        channel?.detach()
         channel = socket.getChannel("predictions:trip:$tripId", emptyMap())
 
         channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
