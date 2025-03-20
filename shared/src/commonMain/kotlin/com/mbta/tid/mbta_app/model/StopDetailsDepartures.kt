@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Format
 import com.mbta.tid.mbta_app.model.RealtimePatterns.NoTripsFormat
@@ -9,6 +10,9 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 
 data class TripAndFormat(
@@ -144,7 +148,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     }
 
     companion object {
-        fun fromData(
+        @DefaultArgumentInterop.Enabled
+        suspend fun fromData(
             stopId: String,
             global: GlobalResponse,
             schedules: ScheduleResponse?,
@@ -152,51 +157,65 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
             filterAtTime: Instant,
-        ): StopDetailsDepartures? {
-            val stop = global.stops[stopId]
-            return if (stop == null) {
-                null
-            } else {
-                fromData(stop, global, schedules, predictions, alerts, pinnedRoutes, filterAtTime)
+            dispatcher: CoroutineDispatcher = Dispatchers.Default
+        ): StopDetailsDepartures? =
+            withContext(dispatcher) {
+                val stop = global.stops[stopId]
+                if (stop == null) {
+                    null
+                } else {
+                    fromData(
+                        stop,
+                        global,
+                        schedules,
+                        predictions,
+                        alerts,
+                        pinnedRoutes,
+                        filterAtTime,
+                        dispatcher
+                    )
+                }
             }
-        }
 
-        fun fromData(
+        @DefaultArgumentInterop.Enabled
+        suspend fun fromData(
             stop: Stop,
             global: GlobalResponse,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
-            filterAtTime: Instant
-        ): StopDetailsDepartures? {
-            val allStopIds =
-                if (global.patternIdsByStop.containsKey(stop.id)) {
-                    listOf(stop.id)
-                } else {
-                    stop.childStopIds.filter { global.stops.containsKey(it) }
-                }
+            filterAtTime: Instant,
+            dispatcher: CoroutineDispatcher = Dispatchers.Default
+        ): StopDetailsDepartures? =
+            withContext(dispatcher) {
+                val allStopIds =
+                    if (global.patternIdsByStop.containsKey(stop.id)) {
+                        listOf(stop.id)
+                    } else {
+                        stop.childStopIds.filter { global.stops.containsKey(it) }
+                    }
 
-            val staticData = NearbyStaticData(global, NearbyResponse(allStopIds))
-            val routes =
-                staticData
-                    .withRealtimeInfoWithoutTripHeadsigns(
-                        global,
-                        null,
-                        schedules,
-                        predictions,
-                        alerts,
-                        filterAtTime,
-                        showAllPatternsWhileLoading = true,
-                        hideNonTypicalPatternsBeyondNext = null,
-                        filterCancellations = false,
-                        includeMinorAlerts = true,
-                        pinnedRoutes
-                    )
-                    ?.flatMap { it.patternsByStop }
+                val staticData = NearbyStaticData(global, NearbyResponse(allStopIds))
+                val routes =
+                    staticData
+                        .withRealtimeInfoWithoutTripHeadsigns(
+                            global,
+                            null,
+                            schedules,
+                            predictions,
+                            alerts,
+                            filterAtTime,
+                            showAllPatternsWhileLoading = true,
+                            hideNonTypicalPatternsBeyondNext = null,
+                            filterCancellations = false,
+                            includeMinorAlerts = true,
+                            pinnedRoutes
+                        )
+                        ?.flatMap { it.patternsByStop }
 
-            return routes?.let { StopDetailsDepartures(it) }
-        }
+                routes?.let { StopDetailsDepartures(it) }
+            }
 
         fun getNoPredictionsStatus(
             realtimePatterns: List<RealtimePatterns>,

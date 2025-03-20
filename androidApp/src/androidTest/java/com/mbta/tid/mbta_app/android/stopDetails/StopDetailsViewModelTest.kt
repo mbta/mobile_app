@@ -1043,6 +1043,10 @@ class StopDetailsViewModelTest {
 
         advanceUntilIdle()
 
+        while (viewModel.stopDepartures.value == null) {
+            composeTestRule.awaitIdle()
+        }
+
         composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
 
         assertNotNull(viewModel.stopDepartures.value)

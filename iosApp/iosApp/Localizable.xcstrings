@@ -16387,6 +16387,54 @@
         }
       }
     },
+    "This stop is not accessible" : {
+      "comment" : "Displayed on the stop page when the stop is not wheelchair accessible",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta parada no es accesible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cet arrêt n’est pas accessible"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estasyon sa a pa aksesib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta parada não é acessível"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Điểm dừng này không có lối vào cho xe lăn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此站不适合轮椅通行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此站不適合輪椅通行"
+          }
+        }
+      }
+    },
     "This trip has been cancelled. We’re sorry for the inconvenience." : {
       "comment" : "Explanation for a cancelled trip on stop details",
       "localizations" : {

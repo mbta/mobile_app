@@ -13,6 +13,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -594,7 +595,7 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `properly applies platform alerts by pattern`() {
+    fun `properly applies platform alerts by pattern`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         lateinit var platform1: Stop
         lateinit var platform2: Stop
@@ -694,7 +695,7 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `handles logical vs physical platforms`() {
+    fun `handles logical vs physical platforms`() = runBlocking {
         // at Union Sq, North/South Station, and some others, the platforms don't map one-to-one to
         // the directions, and the schedules are by direction but the predictions are by physical
         // platform

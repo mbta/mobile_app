@@ -23,7 +23,7 @@ interface IRailRouteShapeRepository {
 
 class RailRouteShapeRepository(
     val cache: ResponseCache<MapFriendlyRouteResponse> =
-        ResponseCache.create(cacheKey = "rail-route-shapes")
+        ResponseCache.create(cacheKey = "rail-route-shapes", invalidationKey = "2025-03-19")
 ) : IRailRouteShapeRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
     override val state = cache.state

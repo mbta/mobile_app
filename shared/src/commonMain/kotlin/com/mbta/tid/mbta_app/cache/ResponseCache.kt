@@ -16,7 +16,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.serializer
 import okio.FileSystem
 import okio.Path
@@ -27,7 +26,8 @@ import org.koin.core.component.inject
 data class ResponseMetadata(
     val etag: String?,
     @Serializable(with = TimeMarkSerializer::class)
-    var fetchTime: TimeSource.Monotonic.ValueTimeMark
+    var fetchTime: TimeSource.Monotonic.ValueTimeMark,
+    val invalidationKey: String? = null
 )
 
 @Serializable data class Response<T>(val metadata: ResponseMetadata, val body: T)
@@ -35,13 +35,21 @@ data class ResponseMetadata(
 class ResponseCache<T : Any>(
     private val cacheKey: String,
     val maxAge: Duration,
-    private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>,
+    // The invalidation key is written to the cache metadata on disk, if a loaded key doesn't match
+    // the key provided on cache creation, the data will be reloaded from the backend. This can be
+    // set to any arbitrary string value, but should only be changed if you want to wipe the cached
+    // data after an update, even when the etag matches the backend.
+    private val invalidationKey: String? = null
 ) : KoinComponent {
     companion object {
         const val CACHE_SUBDIRECTORY = "responseCache"
 
-        inline fun <reified T : Any> create(cacheKey: String, maxAge: Duration = 1.hours) =
-            ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer())
+        inline fun <reified T : Any> create(
+            cacheKey: String,
+            maxAge: Duration = 1.hours,
+            invalidationKey: String? = null
+        ) = ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer(), invalidationKey)
     }
 
     internal var data: Response<T>? = null
@@ -68,7 +76,7 @@ class ResponseCache<T : Any>(
 
     private val lock = Mutex()
 
-    private fun decodeData(body: String): T {
+    private fun decodeString(body: String): T {
         return json.decodeFromString(serializer, body)
     }
 
@@ -89,20 +97,26 @@ class ResponseCache<T : Any>(
     }
 
     private suspend fun putData(response: HttpResponse) {
-        val body = decodeData(response.bodyAsText())
+        val responseBody = response.bodyAsText()
         val nextData =
-            Response(ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()), body)
+            Response(
+                ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow(), invalidationKey),
+                decodeString(responseBody)
+            )
         this.data = nextData
-        this.flow.value = body
+        this.flow.value = nextData.body
 
-        this.writeData(nextData)
+        this.writeData(nextData.metadata, responseBody)
     }
 
     private fun readData(): Response<T>? {
         try {
             val diskMetadata: ResponseMetadata =
                 json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
-            val diskData = decodeData(fileSystem.read(cacheFilePath) { readUtf8() })
+            if (diskMetadata.invalidationKey != invalidationKey) {
+                return null
+            }
+            val diskData = decodeString(fileSystem.read(cacheFilePath) { readUtf8() })
             this.data = Response(diskMetadata, diskData)
             return this.data
         } catch (error: Exception) {
@@ -110,13 +124,11 @@ class ResponseCache<T : Any>(
         }
     }
 
-    private fun writeData(response: Response<T>) {
+    private fun writeData(metadata: ResponseMetadata, responseBody: String) {
         try {
             fileSystem.createDirectories(cacheFilePath.parent!!)
-            fileSystem.write(cacheFilePath) {
-                writeUtf8(json.encodeToString(serializer, response.body))
-            }
-            writeMetadata(response.metadata)
+            fileSystem.write(cacheFilePath) { writeUtf8(responseBody) }
+            writeMetadata(metadata)
         } catch (error: Exception) {
             println("Writing to '$cacheFilePath' failed. $error")
         }

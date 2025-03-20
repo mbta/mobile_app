@@ -23,10 +23,12 @@ tasks.register("checkMapboxBridge") {
     val mapboxBridgePieces = mapboxBridgeSource.split(Regex("\n\n(?=\\S)"))
 
     val lineLayerBridge =
-        checkNotNull(mapboxBridgePieces.find { it.startsWith("fun LineLayer.toMapbox()") })
+        checkNotNull(mapboxBridgePieces.find { it.startsWith("suspend fun LineLayer.toMapbox()") })
     val lineLayerIdentifiers = identifiersInCode(lineLayerBridge)
     val symbolLayerBridge =
-        checkNotNull(mapboxBridgePieces.find { it.startsWith("fun SymbolLayer.toMapbox()") })
+        checkNotNull(
+            mapboxBridgePieces.find { it.startsWith("suspend fun SymbolLayer.toMapbox()") }
+        )
     val symbolLayerIdentifiers = identifiersInCode(symbolLayerBridge)
 
     val sharedMapStylePackage =

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +52,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -61,8 +63,8 @@ fun TripStopRow(
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
-    showElevatorAccessibility: Boolean = false,
     modifier: Modifier = Modifier,
+    showElevatorAccessibility: Boolean = false,
     targeted: Boolean = false,
     firstStop: Boolean = false,
     lastStop: Boolean = false
@@ -78,32 +80,26 @@ fun TripStopRow(
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (showElevatorAccessibility) {
-                    Icon(
-                        modifier =
-                            Modifier.height(24.dp)
-                                .padding(
-                                    start = if (stop.stop.isWheelchairAccessible) 6.dp else 3.dp
-                                ),
-                        painter =
-                            if (stop.stop.isWheelchairAccessible) {
-                                painterResource(R.drawable.wheelchair_accessible)
-                            } else {
-                                painterResource(R.drawable.elevator_alert)
-                            },
-                        contentDescription = null,
-                        tint = Color.Unspecified
-                    )
+                Row(
+                    Modifier.padding(start = 6.dp).width(28.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (showElevatorAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
+                        Image(
+                            modifier = Modifier.height(24.dp).testTag("elevator_alert"),
+                            painter = painterResource(R.drawable.elevator_alert),
+                            contentDescription = null
+                        )
+                    } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
+                        Image(
+                            modifier = Modifier.height(24.dp).testTag("wheelchair_accessible"),
+                            painter = painterResource(R.drawable.wheelchair_accessible),
+                            contentDescription = null
+                        )
+                    }
                 }
-                RouteLine(
-                    routeAccents.color,
-                    firstStop,
-                    lastStop,
-                    routeAccents,
-                    targeted,
-                    showElevatorAccessibility,
-                    isWheelchairAccessible = stop.stop.isWheelchairAccessible
-                )
+                RouteLine(routeAccents.color, firstStop, lastStop, routeAccents, targeted)
                 Column(Modifier.padding(vertical = 12.dp).padding(start = 16.dp)) {
                     Row(
                         Modifier.semantics(mergeDescendants = true) {
@@ -258,21 +254,9 @@ private fun RouteLine(
     firstStop: Boolean,
     lastStop: Boolean,
     routeAccents: TripRouteAccents,
-    targeted: Boolean,
-    showElevatorAccessibility: Boolean,
-    isWheelchairAccessible: Boolean
+    targeted: Boolean
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            Modifier.fillMaxHeight()
-                .padding(
-                    start =
-                        if (showElevatorAccessibility && isWheelchairAccessible) 5.dp
-                        else if (showElevatorAccessibility) 3.dp else 34.dp
-                )
-                .width(20.dp)
-    ) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().width(20.dp)) {
         Column(Modifier.fillMaxHeight()) {
             if (firstStop) {
                 ColoredRouteLine(Color.Transparent, Modifier.weight(1f))
@@ -290,12 +274,16 @@ private fun RouteLine(
 @Composable
 private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder()
+    val now = Clock.System.now()
     MyApplicationTheme {
         Column(Modifier.background(colorResource(R.color.fill3))) {
             TripStopRow(
                 stop =
                     TripDetailsStopList.Entry(
-                        objects.stop { name = "Charles/MGH" },
+                        objects.stop {
+                            name = "Charles/MGH"
+                            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                        },
                         stopSequence = 10,
                         disruption = null,
                         schedule = null,
@@ -316,7 +304,7 @@ private fun TripStopRowPreview() {
                                 }
                             )
                     ),
-                Clock.System.now(),
+                now,
                 onTapLink = {},
                 TripRouteAccents.default.copy(
                     type = RouteType.HEAVY_RAIL,
@@ -331,10 +319,7 @@ private fun TripStopRowPreview() {
                         stopSequence = 10,
                         disruption = null,
                         schedule = null,
-                        prediction =
-                            objects.prediction {
-                                departureTime = Clock.System.now().plus(5.minutes)
-                            },
+                        prediction = objects.prediction { departureTime = now.plus(5.minutes) },
                         predictionStop = null,
                         vehicle = null,
                         routes =
@@ -351,7 +336,7 @@ private fun TripStopRowPreview() {
                                 }
                             )
                     ),
-                Clock.System.now(),
+                now,
                 onTapLink = {},
                 TripRouteAccents.default.copy(
                     type = RouteType.HEAVY_RAIL,
@@ -366,21 +351,24 @@ private fun TripStopRowPreview() {
                         stopSequence = 10,
                         disruption = null,
                         schedule = null,
-                        prediction =
-                            objects.prediction {
-                                departureTime = Clock.System.now().plus(5.minutes)
-                            },
+                        prediction = objects.prediction { departureTime = now.plus(5.minutes) },
                         predictionStop = objects.stop { platformCode = "1" },
                         vehicle = null,
-                        routes = emptyList()
+                        routes = emptyList(),
+                        elevatorAlerts =
+                            listOf(
+                                objects.alert {
+                                    activePeriod(now.minus(20.minutes), now.plus(20.minutes))
+                                }
+                            )
                     ),
-                Clock.System.now(),
+                now,
                 onTapLink = {},
                 TripRouteAccents.default.copy(
                     type = RouteType.COMMUTER_RAIL,
                     color = Color.fromHex("DA291C")
                 ),
-                showElevatorAccessibility = true,
+                showElevatorAccessibility = true
             )
         }
     }
