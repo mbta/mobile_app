@@ -143,9 +143,9 @@ class StopDetailsViewModel: ObservableObject {
         stopId: String,
         alerts: AlertsStreamDataResponse?,
         now: Date
-    ) -> StopDetailsDepartures? {
+    ) async -> StopDetailsDepartures? {
         if let global, let schedules = stopData?.schedules {
-            StopDetailsDepartures.companion.fromData(
+            try? await StopDetailsDepartures.companion.fromData(
                 stopId: stopId,
                 global: global,
                 schedules: schedules,

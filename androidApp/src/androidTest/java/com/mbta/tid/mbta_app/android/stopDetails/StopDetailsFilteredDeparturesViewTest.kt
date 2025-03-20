@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -137,7 +138,7 @@ class StopDetailsFilteredDeparturesViewTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testStopDetailsRouteViewDisplaysCorrectly() {
+    fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
         val departures =
             checkNotNull(
                 StopDetailsDepartures.fromData(
@@ -194,7 +195,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testTappingTripSetsFilter() {
+    fun testTappingTripSetsFilter() = runBlocking {
         var tripFilter: TripDetailsFilter? = null
 
         val departures =
@@ -410,7 +411,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsSuspension() {
+    fun testShowsSuspension(): Unit = runBlocking {
         val now = Clock.System.now()
         val alert =
             builder.alert {
@@ -488,7 +489,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsDownstreamAlert() {
+    fun testShowsDownstreamAlert(): Unit = runBlocking {
         val alert =
             builder.alert {
                 activePeriod(now - 5.seconds, now + 5.seconds)
@@ -561,7 +562,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsElevatorAlert() {
+    fun testShowsElevatorAlert(): Unit = runBlocking {
         val alert =
             builder.alert {
                 effect = Alert.Effect.ElevatorClosure
@@ -625,7 +626,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsNotAccessibleAlert() {
+    fun testShowsNotAccessibleAlert(): Unit = runBlocking {
         val departures =
             checkNotNull(
                 StopDetailsDepartures.fromData(
@@ -680,6 +681,6 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
     }
 }

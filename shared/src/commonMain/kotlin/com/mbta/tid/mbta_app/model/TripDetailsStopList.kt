@@ -5,12 +5,17 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 
 data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
 constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
-    data class Entry(
+
+    data class Entry
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val stop: Stop,
         val stopSequence: Int,
         val disruption: RealtimePatterns.Format.Disruption?,
@@ -20,10 +25,13 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         // contains more specific boarding information for a prediction, like the track number
         val predictionStop: Stop?,
         val vehicle: Vehicle?,
-        val routes: List<Route>
+        val routes: List<Route>,
+        val elevatorAlerts: List<Alert> = emptyList()
     ) {
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
+
+        fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
 
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
@@ -144,7 +152,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             }
         }
 
-        fun fromPieces(
+        suspend fun fromPieces(
             tripId: String,
             directionId: Int,
             tripSchedules: TripSchedulesResponse?,
@@ -152,83 +160,90 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             vehicle: Vehicle?,
             alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
-        ): TripDetailsStopList? {
-            if (alertsData == null) return null
-            val entries = mutableMapOf<Int, WorkingEntry>()
-            val routeId =
-                tripPredictions?.trips?.values?.singleOrNull()?.routeId ?: tripSchedules?.routeId()
-            val route = globalData.routes[routeId]
+        ): TripDetailsStopList? =
+            withContext(Dispatchers.Default) {
+                if (alertsData == null) return@withContext null
+                val entries = mutableMapOf<Int, WorkingEntry>()
+                val routeId =
+                    tripPredictions?.trips?.values?.singleOrNull()?.routeId
+                        ?: tripSchedules?.routeId()
+                val route = globalData.routes[routeId]
 
-            var predictions = emptyList<Prediction>()
-            if (tripPredictions != null) {
-                val tripPredictionsWithCorrectRoute =
-                    tripPredictions.predictions.values.filter {
-                        routeId == null || it.routeId == routeId
-                    }
-                predictions =
-                    deduplicatePredictionsByStopSequence(
-                        tripPredictionsWithCorrectRoute,
-                        tripSchedules,
-                        globalData
+                var predictions = emptyList<Prediction>()
+                if (tripPredictions != null) {
+                    val tripPredictionsWithCorrectRoute =
+                        tripPredictions.predictions.values.filter {
+                            routeId == null || it.routeId == routeId
+                        }
+                    predictions =
+                        deduplicatePredictionsByStopSequence(
+                            tripPredictionsWithCorrectRoute,
+                            tripSchedules,
+                            globalData
+                        )
+
+                    predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
+                }
+                if (tripSchedules is TripSchedulesResponse.Schedules) {
+                    tripSchedules.schedules.forEach { entries.putSchedule(it) }
+                } else if (tripSchedules is TripSchedulesResponse.StopIds) {
+                    val aligner =
+                        ScheduleStopSequenceAligner(
+                            tripSchedules.stopIds,
+                            predictions,
+                            globalData,
+                            entries
+                        )
+                    aligner.run()
+                }
+
+                if (entries.isEmpty()) {
+                    return@withContext TripDetailsStopList(tripId, emptyList())
+                }
+
+                val sortedEntries = entries.entries.sortedBy { it.key }
+                val allElevatorAlerts =
+                    alertsData.alerts.values.filter { it.effect == Alert.Effect.ElevatorClosure }
+
+                fun getEntry(optionalWorking: WorkingEntry?): Entry? {
+                    val working = optionalWorking ?: return null
+                    val stop = globalData.stops[working.stopId] ?: return null
+                    val parent = stop.resolveParent(globalData.stops)
+                    val parentAndChildStopIds = setOf(parent.id) + parent.childStopIds
+                    return Entry(
+                        stop,
+                        working.stopSequence,
+                        getDisruption(working, alertsData, route, tripId, directionId),
+                        working.schedule,
+                        working.prediction,
+                        globalData.stops[working.prediction?.stopId],
+                        working.vehicle,
+                        getTransferRoutes(working, globalData),
+                        Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds)
                     )
+                }
 
-                predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
-            }
-            if (tripSchedules is TripSchedulesResponse.Schedules) {
-                tripSchedules.schedules.forEach { entries.putSchedule(it) }
-            } else if (tripSchedules is TripSchedulesResponse.StopIds) {
-                val aligner =
-                    ScheduleStopSequenceAligner(
-                        tripSchedules.stopIds,
-                        predictions,
-                        globalData,
-                        entries
-                    )
-                aligner.run()
-            }
-
-            if (entries.isEmpty()) {
-                return TripDetailsStopList(tripId, emptyList())
-            }
-
-            val sortedEntries = entries.entries.sortedBy { it.key }
-
-            fun getEntry(optionalWorking: WorkingEntry?): Entry? {
-                val working = optionalWorking ?: return null
-                val stop = globalData.stops[working.stopId] ?: return null
-                return Entry(
-                    stop,
-                    working.stopSequence,
-                    getDisruption(working, alertsData, route, tripId, directionId),
-                    working.schedule,
-                    working.prediction,
-                    globalData.stops[working.prediction?.stopId],
-                    working.vehicle,
-                    getTransferRoutes(working, globalData)
+                val startTerminalEntry = getEntry(sortedEntries.firstOrNull()?.value)
+                TripDetailsStopList(
+                    tripId,
+                    sortedEntries
+                        .dropWhile {
+                            if (
+                                vehicle == null ||
+                                    vehicle.tripId != tripId ||
+                                    vehicle.currentStopSequence == null
+                            ) {
+                                false
+                            } else {
+                                it.value.stopSequence < vehicle.currentStopSequence ||
+                                    (it.value.stopSequence == vehicle.currentStopSequence &&
+                                        vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt)
+                            }
+                        }
+                        .mapNotNull { getEntry(it.value) },
+                    startTerminalEntry
                 )
             }
-
-            val startTerminalEntry = getEntry(sortedEntries.firstOrNull()?.value)
-            return TripDetailsStopList(
-                tripId,
-                sortedEntries
-                    .dropWhile {
-                        if (
-                            vehicle == null ||
-                                vehicle.tripId != tripId ||
-                                vehicle.currentStopSequence == null
-                        ) {
-                            false
-                        } else {
-                            it.value.stopSequence < vehicle.currentStopSequence ||
-                                (it.value.stopSequence == vehicle.currentStopSequence &&
-                                    vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt)
-                        }
-                    }
-                    .mapNotNull { getEntry(it.value) },
-                startTerminalEntry
-            )
-        }
 
         // unfortunately, stop sequence is not always actually unique
         // conveniently, it seems like duplicates are rare

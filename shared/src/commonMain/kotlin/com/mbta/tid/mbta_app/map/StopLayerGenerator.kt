@@ -5,6 +5,8 @@ import com.mbta.tid.mbta_app.map.style.SymbolLayer
 import com.mbta.tid.mbta_app.map.style.TextAnchor
 import com.mbta.tid.mbta_app.map.style.TextJustify
 import com.mbta.tid.mbta_app.map.style.downcastToColor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object StopLayerGenerator {
     val maxTransferLayers = 3
@@ -22,55 +24,58 @@ object StopLayerGenerator {
 
     fun getTransferLayerId(index: Int) = "${stopLayerId}-transfer-${index}"
 
-    fun createStopLayers(colorPalette: ColorPalette): List<SymbolLayer> {
-        val sourceId = StopFeaturesBuilder.stopSourceId
+    suspend fun createStopLayers(colorPalette: ColorPalette): List<SymbolLayer> {
+        return withContext(Dispatchers.Default) {
+            val sourceId = StopFeaturesBuilder.stopSourceId
 
-        val stopLayer = createStopLayer(id = stopLayerId, colorPalette = colorPalette)
+            val stopLayer = createStopLayer(id = stopLayerId, colorPalette = colorPalette)
 
-        val stopTouchTargetLayer = SymbolLayer(id = stopTouchTargetLayerId, source = sourceId)
-        stopTouchTargetLayer.iconImage = Exp.image(Exp(StopIcons.stopDummyIcon))
-        stopTouchTargetLayer.iconPadding = 22.0
-        includeSharedProps(stopTouchTargetLayer, forBus = false)
+            val stopTouchTargetLayer = SymbolLayer(id = stopTouchTargetLayerId, source = sourceId)
+            stopTouchTargetLayer.iconImage = Exp.image(Exp(StopIcons.stopDummyIcon))
+            stopTouchTargetLayer.iconPadding = 22.0
+            includeSharedProps(stopTouchTargetLayer, forBus = false)
 
-        val stopSelectedPinLayer = SymbolLayer(id = stopLayerSelectedPinId, source = sourceId)
-        stopSelectedPinLayer.iconImage =
-            Exp.case(
-                MapExp.selectedExp to Exp.image(Exp(StopIcons.stopPinIcon)),
-                Exp.image(Exp(""))
-            )
-        stopSelectedPinLayer.textField =
-            Exp.case(MapExp.selectedExp to Exp.get(StopFeaturesBuilder.propNameKey), Exp(""))
-        includedDefaultTextProps(stopSelectedPinLayer, colorPalette)
-        stopSelectedPinLayer.iconOffset = offsetPinValue()
-        stopTouchTargetLayer.filter =
-            Exp.ge(
-                Exp.zoom(),
-                Exp.case(MapExp.isBusExp to Exp(busStopZoomThreshold), Exp(stopZoomThreshold))
-            )
-        includeSharedProps(stopSelectedPinLayer, forBus = false)
+            val stopSelectedPinLayer = SymbolLayer(id = stopLayerSelectedPinId, source = sourceId)
+            stopSelectedPinLayer.iconImage =
+                Exp.case(
+                    MapExp.selectedExp to Exp.image(Exp(StopIcons.stopPinIcon)),
+                    Exp.image(Exp(""))
+                )
+            stopSelectedPinLayer.textField =
+                Exp.case(MapExp.selectedExp to Exp.get(StopFeaturesBuilder.propNameKey), Exp(""))
+            includedDefaultTextProps(stopSelectedPinLayer, colorPalette)
+            stopSelectedPinLayer.iconOffset = offsetPinValue()
+            stopTouchTargetLayer.filter =
+                Exp.ge(
+                    Exp.zoom(),
+                    Exp.case(MapExp.isBusExp to Exp(busStopZoomThreshold), Exp(stopZoomThreshold))
+                )
+            includeSharedProps(stopSelectedPinLayer, forBus = false)
 
-        val transferLayers =
-            (0.rangeUntil(maxTransferLayers)).map { index ->
-                val transferLayer = SymbolLayer(id = getTransferLayerId(index), source = sourceId)
-                transferLayer.iconImage = (StopIcons.getTransferLayerIcon(index))
-                transferLayer.iconOffset = offsetTransferValue(index)
-                includeSharedProps(transferLayer, forBus = false)
+            val transferLayers =
+                (0.rangeUntil(maxTransferLayers)).map { index ->
+                    val transferLayer =
+                        SymbolLayer(id = getTransferLayerId(index), source = sourceId)
+                    transferLayer.iconImage = (StopIcons.getTransferLayerIcon(index))
+                    transferLayer.iconOffset = offsetTransferValue(index)
+                    includeSharedProps(transferLayer, forBus = false)
 
-                return@map transferLayer
-            }
+                    return@map transferLayer
+                }
 
-        val alertLayers =
-            (0.rangeUntil(maxTransferLayers)).map { index ->
-                createAlertLayer(id = getAlertLayerId(index), index)
-            }
+            val alertLayers =
+                (0.rangeUntil(maxTransferLayers)).map { index ->
+                    createAlertLayer(id = getAlertLayerId(index), index)
+                }
 
-        val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
-        val busAlertLayer = createAlertLayer(id = busAlertLayerId, forBus = true)
+            val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
+            val busAlertLayer = createAlertLayer(id = busAlertLayerId, forBus = true)
 
-        return listOf(stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer) +
-            transferLayers +
-            alertLayers +
-            listOf(stopSelectedPinLayer)
+            listOf(stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer) +
+                transferLayers +
+                alertLayers +
+                listOf(stopSelectedPinLayer)
+        }
     }
 
     fun createAlertLayer(id: String, index: Int = 0, forBus: Boolean = false): SymbolLayer {

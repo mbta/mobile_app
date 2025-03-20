@@ -40,14 +40,17 @@ import io.github.dellisd.spatialk.geojson.MultiPolygon
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Polygon
 import io.github.dellisd.spatialk.geojson.Position
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 fun Position.toMapbox() = toPoint()
 
-@JvmName("listPositionToMapbox") fun List<Position>.toMapbox() = map { it.toMapbox() }
+@JvmName("listPositionToMapbox") private fun List<Position>.toMapbox() = map { it.toMapbox() }
 
-@JvmName("listListPositionToMapbox") fun List<List<Position>>.toMapbox() = map { it.toMapbox() }
+@JvmName("listListPositionToMapbox")
+private fun List<List<Position>>.toMapbox() = map { it.toMapbox() }
 
-fun Geometry.toMapbox(): MapboxGeometry =
+private fun Geometry.toMapbox(): MapboxGeometry =
     when (this) {
         is GeometryCollection ->
             MapboxGeometryCollection.fromGeometries(this.geometries.map { it.toMapbox() })
@@ -59,21 +62,21 @@ fun Geometry.toMapbox(): MapboxGeometry =
         is MultiPolygon -> MapboxMultiPolygon.fromLngLats(this.coordinates.map { it.toMapbox() })
     }
 
-fun JSONArray.toMapbox(): MapboxJsonArray =
+private fun JSONArray.toMapbox(): MapboxJsonArray =
     MapboxJsonArray().apply {
         for (el in this@toMapbox) {
             add(el.toMapbox())
         }
     }
 
-fun JSONObject.toMapbox(): MapboxJsonObject =
+private fun JSONObject.toMapbox(): MapboxJsonObject =
     MapboxJsonObject().apply {
         for (el in this@toMapbox) {
             add(el.key, el.value.toMapbox())
         }
     }
 
-fun JSONValue.toMapbox(): MapboxJsonElement =
+private fun JSONValue.toMapbox(): MapboxJsonElement =
     when (this) {
         is JSONValue.Array -> this.data.toMapbox()
         is JSONValue.Boolean -> MapboxJsonPrimitive(this.data)
@@ -82,15 +85,17 @@ fun JSONValue.toMapbox(): MapboxJsonElement =
         is JSONValue.String -> MapboxJsonPrimitive(this.data)
     }
 
-fun Feature.toMapbox(): MapboxFeature =
+private fun Feature.toMapbox(): MapboxFeature =
     MapboxFeature.fromGeometry(this.geometry.toMapbox(), this.properties.data.toMapbox(), this.id)
 
-fun FeatureCollection.toMapbox(): MapboxFeatureCollection =
-    MapboxFeatureCollection.fromFeatures(this.features.map { it.toMapbox() })
+suspend fun FeatureCollection.toMapbox(): MapboxFeatureCollection =
+    withContext(Dispatchers.Default) {
+        MapboxFeatureCollection.fromFeatures(this@toMapbox.features.map { it.toMapbox() })
+    }
 
-fun <T> Exp<T>.toMapbox() = MapboxExpression.fromRaw(this.toJsonString())
+private fun <T> Exp<T>.toMapbox() = MapboxExpression.fromRaw(this.toJsonString())
 
-fun LineJoin.toMapbox() =
+private fun LineJoin.toMapbox() =
     when (this) {
         LineJoin.Bevel -> MapboxLineJoin.BEVEL
         LineJoin.Round -> MapboxLineJoin.ROUND
@@ -98,9 +103,9 @@ fun LineJoin.toMapbox() =
         LineJoin.None -> null
     }
 
-fun TextAnchor.toMapbox() = this.name.lowercase().replace("_", "-")
+private fun TextAnchor.toMapbox() = this.name.lowercase().replace("_", "-")
 
-fun TextJustify.toMapbox() =
+private fun TextJustify.toMapbox() =
     when (this) {
         TextJustify.AUTO -> MapboxTextJustify.AUTO
         TextJustify.LEFT -> MapboxTextJustify.LEFT
@@ -108,48 +113,50 @@ fun TextJustify.toMapbox() =
         TextJustify.RIGHT -> MapboxTextJustify.RIGHT
     }
 
-fun LineLayer.toMapbox(): MapboxLineLayer {
-    val result = MapboxLineLayer(layerId = this.id, sourceId = this.source)
+suspend fun LineLayer.toMapbox(): MapboxLineLayer =
+    withContext(Dispatchers.Default) {
+        val result = MapboxLineLayer(layerId = this@toMapbox.id, sourceId = this@toMapbox.source)
 
-    filter?.let { result.filter(it.toMapbox()) }
-    minZoom?.let { result.minZoom(it) }
+        filter?.let { result.filter(it.toMapbox()) }
+        minZoom?.let { result.minZoom(it) }
 
-    lineColor?.let { result.lineColor(it.toMapbox()) }
-    lineDasharray?.let { result.lineDasharray(it) }
-    lineJoin?.toMapbox()?.let { result.lineJoin(it) }
-    lineOffset?.let { result.lineOffset(it.toMapbox()) }
-    lineSortKey?.let { result.lineSortKey(it.toMapbox()) }
-    lineWidth?.let { result.lineWidth(it.toMapbox()) }
+        lineColor?.let { result.lineColor(it.toMapbox()) }
+        lineDasharray?.let { result.lineDasharray(it) }
+        lineJoin?.toMapbox()?.let { result.lineJoin(it) }
+        lineOffset?.let { result.lineOffset(it.toMapbox()) }
+        lineSortKey?.let { result.lineSortKey(it.toMapbox()) }
+        lineWidth?.let { result.lineWidth(it.toMapbox()) }
 
-    return result
-}
+        result
+    }
 
-fun SymbolLayer.toMapbox(): MapboxSymbolLayer {
-    val result = MapboxSymbolLayer(layerId = this.id, sourceId = this.source)
+suspend fun SymbolLayer.toMapbox(): MapboxSymbolLayer =
+    withContext(Dispatchers.Default) {
+        val result = MapboxSymbolLayer(layerId = this@toMapbox.id, sourceId = this@toMapbox.source)
 
-    filter?.let { result.filter(it.toMapbox()) }
-    minZoom?.let { result.minZoom(it) }
+        filter?.let { result.filter(it.toMapbox()) }
+        minZoom?.let { result.minZoom(it) }
 
-    iconAllowOverlap?.let { result.iconAllowOverlap(it) }
-    iconImage?.let { result.iconImage(it.toMapbox()) }
-    iconOffset?.let { result.iconOffset(it.toMapbox()) }
-    iconPadding?.let { result.iconPadding(it) }
-    iconSize?.let { result.iconSize(it.toMapbox()) }
+        iconAllowOverlap?.let { result.iconAllowOverlap(it) }
+        iconImage?.let { result.iconImage(it.toMapbox()) }
+        iconOffset?.let { result.iconOffset(it.toMapbox()) }
+        iconPadding?.let { result.iconPadding(it) }
+        iconSize?.let { result.iconSize(it.toMapbox()) }
 
-    symbolSortKey?.let { result.symbolSortKey(it.toMapbox()) }
+        symbolSortKey?.let { result.symbolSortKey(it.toMapbox()) }
 
-    textAllowOverlap?.let { result.textAllowOverlap(it) }
-    textColor?.let { result.textColor(it.toMapbox()) }
-    textField?.let { result.textField(it.toMapbox()) }
-    textFont?.let { result.textFont(it) }
-    textHaloColor?.let { result.textHaloColor(it.toMapbox()) }
-    textHaloWidth?.let { result.textHaloWidth(it) }
-    textJustify?.let { result.textJustify(it.toMapbox()) }
-    textOffset?.let { result.textOffset(it.toMapbox()) }
-    textOptional?.let { result.textOptional(it) }
-    textRadialOffset?.let { result.textRadialOffset(it) }
-    textSize?.let { result.textSize(it) }
-    textVariableAnchor?.let { result.textVariableAnchor(it.map(TextAnchor::toMapbox)) }
+        textAllowOverlap?.let { result.textAllowOverlap(it) }
+        textColor?.let { result.textColor(it.toMapbox()) }
+        textField?.let { result.textField(it.toMapbox()) }
+        textFont?.let { result.textFont(it) }
+        textHaloColor?.let { result.textHaloColor(it.toMapbox()) }
+        textHaloWidth?.let { result.textHaloWidth(it) }
+        textJustify?.let { result.textJustify(it.toMapbox()) }
+        textOffset?.let { result.textOffset(it.toMapbox()) }
+        textOptional?.let { result.textOptional(it) }
+        textRadialOffset?.let { result.textRadialOffset(it) }
+        textSize?.let { result.textSize(it) }
+        textVariableAnchor?.let { result.textVariableAnchor(it.map(TextAnchor::toMapbox)) }
 
-    return result
-}
+        result
+    }

@@ -72,7 +72,7 @@ final class TripDetailsViewTests: XCTestCase {
             vehicle: vehicle
         )
 
-        let sut = TripDetailsView(
+        var sut = TripDetailsView(
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
@@ -82,8 +82,12 @@ final class TripDetailsViewTests: XCTestCase {
             stopDetailsVM: stopDetailsVM
         )
 
-        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: "Next stop"))
-        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: vehicleStop.name))
+        let exp = sut.on(\.didLoadData) { view in
+            XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Next stop"))
+            XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: vehicleStop.name))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     func testDisplaysScheduleCard() throws {
@@ -133,7 +137,7 @@ final class TripDetailsViewTests: XCTestCase {
             vehicle: nil
         )
 
-        let sut = TripDetailsView(
+        var sut = TripDetailsView(
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
@@ -143,8 +147,14 @@ final class TripDetailsViewTests: XCTestCase {
             stopDetailsVM: stopDetailsVM
         )
 
-        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: "Scheduled to depart"))
-        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: targetStop.name))
+        let exp = sut.on(\.didLoadData) { view in
+            let card = try view.find(TripHeaderCard.self)
+            try debugPrint(card.findAll(ViewType.Text.self).map { try $0.string() })
+            XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Scheduled to depart"))
+            XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: targetStop.name))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     func testDisplaysStopList() throws {
@@ -207,7 +217,7 @@ final class TripDetailsViewTests: XCTestCase {
             vehicle: vehicle
         )
 
-        let sut = TripDetailsView(
+        var sut = TripDetailsView(
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
@@ -217,7 +227,11 @@ final class TripDetailsViewTests: XCTestCase {
             stopDetailsVM: stopDetailsVM
         )
 
-        XCTAssertNotNil(try sut.inspect().find(TripStops.self).find(text: targetStop.name))
+        let exp = sut.on(\.didLoadData) { view in
+            XCTAssertNotNil(try view.find(TripStops.self).find(text: targetStop.name))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     func testTappingDownstreamStopAppendsToNavStack() throws {
@@ -300,7 +314,7 @@ final class TripDetailsViewTests: XCTestCase {
         sut.onTapStop(stop: TripDetailsStopList.Entry(
             stop: targetStop, stopSequence: 0,
             disruption: nil, schedule: nil, prediction: nil, predictionStop: nil,
-            vehicle: nil, routes: []
+            vehicle: nil, routes: [], elevatorAlerts: []
         ))
         XCTAssertEqual(nearbyVM.navigationStack, [oldNavEntry, newNavEntry])
     }

@@ -11,6 +11,8 @@ import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.nearestPointOnLine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 data class StopFeatureData(val stop: MapStop, val feature: Feature)
 
@@ -32,20 +34,21 @@ object StopFeaturesBuilder {
     val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
     val propSortOrderKey = FeatureProperty<Number>("sortOrder")
 
-    fun buildCollection(
+    suspend fun buildCollection(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
         linesToSnap: List<RouteLineData>
-    ): FeatureCollection {
-        val filteredStops =
-            if (stopData.filteredStopIds != null) {
-                stops.filter { stopData.filteredStopIds.contains(it.key) }
-            } else {
-                stops
-            }
-        val stopFeatures = generateStopFeatures(stopData, filteredStops, linesToSnap)
-        return buildCollection(stopFeatures = stopFeatures)
-    }
+    ): FeatureCollection =
+        withContext(Dispatchers.Default) {
+            val filteredStops =
+                if (stopData.filteredStopIds != null) {
+                    stops.filter { stopData.filteredStopIds.contains(it.key) }
+                } else {
+                    stops
+                }
+            val stopFeatures = generateStopFeatures(stopData, filteredStops, linesToSnap)
+            buildCollection(stopFeatures = stopFeatures)
+        }
 
     fun buildCollection(stopFeatures: List<StopFeatureData>): FeatureCollection {
         return FeatureCollection(features = stopFeatures.map { it.feature })
