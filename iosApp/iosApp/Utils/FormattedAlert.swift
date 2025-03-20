@@ -91,7 +91,7 @@ struct FormattedAlert: Equatable {
         ex. "[Detour] ahead", "[Shuttle buses] ahead"
         """), downstreamEffect)
 
-        dueToCause = dueToCause(alert.cause)
+        dueToCause = dueToCauseLabel(alert.cause)
 
         // a handful of cases have different text when replacing predictions than in a details title
         predictionReplacement = switch alert.effect {
@@ -123,7 +123,7 @@ struct FormattedAlert: Equatable {
 }
 
 // swiftlint:disable:next cyclomatic_complexity function_body_length
-private func dueToCause(_ cause: Alert.Cause) -> String? {
+private func dueToCauseLabel(_ cause: Alert.Cause) -> String? {
     switch cause {
     case .accident: NSLocalizedString("accident", comment: "Alert cause, used in 'Delays due to [cause]'")
     case .amtrak: NSLocalizedString("Amtrak", comment: "Alert cause, used in 'Delays due to [cause]'")
