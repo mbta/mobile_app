@@ -45,6 +45,19 @@ class PredictionsRepositoryTests : KoinTest {
     }
 
     @Test
+    fun testChannelClearedBeforeJoin() {
+        val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val predictionsRepo = PredictionsRepository(socket)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        every { channel.attach() } returns mock<PhoenixPush>(MockMode.autofill)
+        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
+        predictionsRepo.channel = channel
+        predictionsRepo.connect(stopIds = listOf("Test"), onReceive = { })
+        verify { predictionsRepo.disconnect() }
+        verify { channel.detach() }
+    }
+
+    @Test
     fun testChannelClearedOnLeave() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val predictionsRepo = PredictionsRepository(socket)

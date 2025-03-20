@@ -15,6 +15,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -49,6 +50,19 @@ class VehiclesRepositoryTest : KoinTest {
 
         vehiclesRepo.disconnect()
         assertNull(vehiclesRepo.channel)
+    }
+
+    @Test
+    fun testChannelClearedBeforeJoin() {
+        val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val vehiclesRepo = VehiclesRepository(socket)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        every { channel.attach() } returns mock<PhoenixPush>(MockMode.autofill)
+        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
+        vehiclesRepo.channel = channel
+        vehiclesRepo.connect(routeId = "Test", directionId = 0, onReceive = { })
+        verify { vehiclesRepo.disconnect() }
+        verify { channel.detach() }
     }
 
     @Test

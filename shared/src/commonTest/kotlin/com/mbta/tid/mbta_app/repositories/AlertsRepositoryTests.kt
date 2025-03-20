@@ -14,6 +14,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -34,6 +35,19 @@ class AlertsRepositoryTests {
         assertNull(alertsRepo.channel)
         alertsRepo.connect(onReceive = { /* no-op */})
         assertNotNull(alertsRepo.channel)
+    }
+
+    @Test
+    fun testChannelClearedBeforeJoin() {
+        val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val alertsRepo = AlertsRepository(socket)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        every { channel.attach() } returns mock<PhoenixPush>(MockMode.autofill)
+        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
+        alertsRepo.channel = channel
+        alertsRepo.connect(onReceive = { })
+        verify { alertsRepo.disconnect() }
+        verify { channel.detach() }
     }
 
     @Test
