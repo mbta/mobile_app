@@ -31,7 +31,7 @@ struct UpcomingTripView: View {
 
     enum State: Equatable {
         case loading
-        case noTrips(RealtimePatterns.NoTripsFormat)
+        case noTrips(UpcomingFormat.NoTripsFormat)
         case disruption(FormattedAlert, iconName: String)
         case some(TripInstantDisplay)
     }
@@ -238,7 +238,7 @@ struct UpcomingTripView_Previews: PreviewProvider {
 
     static func disruption(_ effect: Shared.Alert.Effect) -> UpcomingTripView.State {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = effect }
-        let format = RealtimePatterns.FormatDisruption(alert: alert, mapStopRoute: route)
+        let format = UpcomingFormatDisruption(alert: alert, mapStopRoute: route)
         return .disruption(.init(alert: alert), iconName: format.iconName)
     }
 

@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -25,7 +27,8 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.LoadingRouteCard
+import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
+import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -73,7 +76,10 @@ fun NearbyTransitView(
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
+
+    val groupByDirection by nearbyVM.groupByDirection.collectAsState(false)
     val showElevatorAccessibility by nearbyVM.showElevatorAccessibility.collectAsState(false)
+
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
@@ -91,32 +97,6 @@ fun NearbyTransitView(
         }
     }
 
-    val nearbyWithRealtimeInfo =
-        rememberSuspend(
-            nearbyVM.nearby,
-            globalResponse,
-            targetLocation,
-            schedules,
-            predictions,
-            alertData,
-            now,
-            pinnedRoutes
-        ) {
-            if (targetLocation != null) {
-                nearbyVM.nearby?.withRealtimeInfo(
-                    globalData = globalResponse,
-                    sortByDistanceFrom = targetLocation,
-                    schedules,
-                    predictions,
-                    alertData,
-                    now,
-                    pinnedRoutes.orEmpty(),
-                )
-            } else {
-                null
-            }
-        }
-
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.nearby_transit),
@@ -124,47 +104,130 @@ fun NearbyTransitView(
             style = Typography.title3Semibold,
         )
         ErrorBanner(errorBannerViewModel)
-        if (nearbyWithRealtimeInfo == null) {
-            CompositionLocalProvider(IsLoadingSheetContents provides true) {
+        if (groupByDirection) {
+            rememberSuspend(
+                nearbyVM.nearby,
+                globalResponse,
+                targetLocation,
+                schedules,
+                predictions,
+                alertData,
+                now,
+                pinnedRoutes
+            ) {
+                nearbyVM.loadRouteCardData(
+                    globalResponse,
+                    targetLocation,
+                    schedules,
+                    predictions,
+                    alertData,
+                    now,
+                    pinnedRoutes
+                )
+            }
+
+            val routeCardData = nearbyVM.routeCardData
+
+            if (routeCardData == null) {
+                CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                    Column(
+                        Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    ) {
+                        for (i in 1..5) {
+                            LoadingRouteCard()
+                        }
+                        Spacer(Modifier.weight(1f))
+                    }
+                }
+            } else if (routeCardData.isEmpty()) {
                 Column(
                     Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    for (i in 1..5) {
-                        LoadingRouteCard()
-                    }
+                    noNearbyStopsView()
                     Spacer(Modifier.weight(1f))
                 }
-            }
-        } else if (nearbyWithRealtimeInfo.isEmpty()) {
-            Column(
-                Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                noNearbyStopsView()
-                Spacer(Modifier.weight(1f))
+            } else {
+                LazyColumn(
+                    contentPadding =
+                        PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    items(routeCardData) {
+                        RouteCard(it, now, showElevatorAccessibility, onOpenStopDetails)
+                    }
+                }
             }
         } else {
-            LazyColumn {
-                items(nearbyWithRealtimeInfo) {
-                    when (it) {
-                        is StopsAssociated.WithRoute ->
-                            NearbyRouteView(
-                                it,
-                                pinnedRoutes.orEmpty().contains(it.id),
-                                ::togglePinnedRoute,
-                                now,
-                                onOpenStopDetails,
-                                showElevatorAccessibility
-                            )
-                        is StopsAssociated.WithLine ->
-                            NearbyLineView(
-                                it,
-                                pinnedRoutes.orEmpty().contains(it.id),
-                                ::togglePinnedRoute,
-                                now,
-                                onOpenStopDetails,
-                                showElevatorAccessibility
-                            )
+            val nearbyWithRealtimeInfo =
+                rememberSuspend(
+                    nearbyVM.nearby,
+                    globalResponse,
+                    targetLocation,
+                    schedules,
+                    predictions,
+                    alertData,
+                    now,
+                    pinnedRoutes
+                ) {
+                    if (targetLocation != null) {
+                        nearbyVM.nearby?.withRealtimeInfo(
+                            globalData = globalResponse,
+                            sortByDistanceFrom = targetLocation,
+                            schedules,
+                            predictions,
+                            alertData,
+                            now,
+                            pinnedRoutes.orEmpty(),
+                        )
+                    } else {
+                        null
+                    }
+                }
+
+            if (nearbyWithRealtimeInfo == null) {
+                CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                    Column(
+                        Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    ) {
+                        for (i in 1..5) {
+                            LoadingRouteCard()
+                        }
+                        Spacer(Modifier.weight(1f))
+                    }
+                }
+            } else if (nearbyWithRealtimeInfo.isEmpty()) {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    noNearbyStopsView()
+                    Spacer(Modifier.weight(1f))
+                }
+            } else {
+                LazyColumn {
+                    items(nearbyWithRealtimeInfo) {
+                        when (it) {
+                            is StopsAssociated.WithRoute ->
+                                NearbyRouteView(
+                                    it,
+                                    pinnedRoutes.orEmpty().contains(it.id),
+                                    ::togglePinnedRoute,
+                                    now,
+                                    onOpenStopDetails,
+                                    showElevatorAccessibility
+                                )
+                            is StopsAssociated.WithLine ->
+                                NearbyLineView(
+                                    it,
+                                    pinnedRoutes.orEmpty().contains(it.id),
+                                    ::togglePinnedRoute,
+                                    now,
+                                    onOpenStopDetails,
+                                    showElevatorAccessibility
+                                )
+                        }
                     }
                 }
             }

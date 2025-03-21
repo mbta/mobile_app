@@ -383,7 +383,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 tileData = listOf(),
-                noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 allAlerts = null,
                 elevatorAlerts = listOf(),
                 patternsByStop =

@@ -33,7 +33,7 @@ struct StopDetailsFilteredView: View {
     var analytics: Analytics = AnalyticsProvider.shared
 
     var tiles: [TileData] = []
-    var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
+    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
     var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
     var nowInstant: Instant { now.toKotlinInstant() }
@@ -192,7 +192,7 @@ struct StopDetailsFilteredView: View {
         let tiles = (0 ..< 4).map { index in TileData(
             route: loadingPatterns.representativeRoute,
             headsign: "placeholder",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "\(index)", routeType: .lightRail, format: .Boarding())],
                 secondaryAlert: nil
             )

@@ -24,7 +24,7 @@ final class DepartureTileTests: XCTestCase {
             data: .init(
                 route: route,
                 headsign: "headsign",
-                formatted: RealtimePatterns.FormatSome(
+                formatted: UpcomingFormatSome(
                     trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
                     secondaryAlert: nil
                 )
@@ -44,7 +44,7 @@ final class DepartureTileTests: XCTestCase {
             data: .init(
                 route: route,
                 headsign: "headsign",
-                formatted: RealtimePatterns.FormatSome(
+                formatted: UpcomingFormatSome(
                     trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
                     secondaryAlert: nil
                 )
@@ -66,7 +66,7 @@ final class DepartureTileTests: XCTestCase {
             data: .init(
                 route: route,
                 headsign: "headsign",
-                formatted: RealtimePatterns.FormatSome(
+                formatted: UpcomingFormatSome(
                     trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
                     secondaryAlert: nil
                 )
@@ -86,7 +86,7 @@ final class DepartureTileTests: XCTestCase {
         let tileData = TileData(
             route: route,
             headsign: "headsign",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
                 secondaryAlert: nil
             )

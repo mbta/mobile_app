@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct TripStatus: View {
-    let predictions: RealtimePatterns.Format
+    let predictions: UpcomingFormat
 
     var body: some View {
         switch onEnum(of: predictions) {

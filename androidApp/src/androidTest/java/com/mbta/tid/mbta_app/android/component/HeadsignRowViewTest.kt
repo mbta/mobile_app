@@ -7,16 +7,16 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import org.junit.Rule
 import org.junit.Test
 
 class HeadsignRowViewTest {
     @get:Rule val composeTestRule = createComposeRule()
 
-    private fun init(headsign: String, predictions: RealtimePatterns.Format) {
+    private fun init(headsign: String, predictions: UpcomingFormat) {
         composeTestRule.setContent { MyApplicationTheme { HeadsignRowView(headsign, predictions) } }
     }
 
@@ -24,14 +24,14 @@ class HeadsignRowViewTest {
     fun showsTwoPredictions() {
         init(
             "Headsign",
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
+                    UpcomingFormat.Some.FormattedTrip(
                         "a",
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(2)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
+                    UpcomingFormat.Some.FormattedTrip(
                         "b",
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(10)
@@ -50,9 +50,9 @@ class HeadsignRowViewTest {
     fun showsOnePrediction() {
         init(
             "A Place",
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
+                    UpcomingFormat.Some.FormattedTrip(
                         "a",
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding
@@ -70,15 +70,15 @@ class HeadsignRowViewTest {
     fun showsOnePredictionWithSecondaryAlert() {
         init(
             "A Place",
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
+                    UpcomingFormat.Some.FormattedTrip(
                         "a",
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding
                     )
                 ),
-                secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-green-issue")
+                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue")
             )
         )
 
@@ -91,7 +91,7 @@ class HeadsignRowViewTest {
     fun showsNoPredictions() {
         init(
             "Somewhere",
-            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.PredictionsUnavailable)
+            UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
         )
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
@@ -102,9 +102,9 @@ class HeadsignRowViewTest {
     fun showsNoPredictionsWithSecondaryAlert() {
         init(
             "Somewhere",
-            RealtimePatterns.Format.NoTrips(
-                noTripsFormat = RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
-                secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+            UpcomingFormat.NoTrips(
+                noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
             )
         )
 
@@ -117,10 +117,7 @@ class HeadsignRowViewTest {
     fun showsAlert() {
         init(
             "Headsign",
-            RealtimePatterns.Format.Disruption(
-                alert { effect = Alert.Effect.Shuttle },
-                mapStopRoute = null
-            )
+            UpcomingFormat.Disruption(alert { effect = Alert.Effect.Shuttle }, mapStopRoute = null)
         )
 
         composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
@@ -128,7 +125,7 @@ class HeadsignRowViewTest {
 
     @Test
     fun showsLoading() {
-        init("Headsign", RealtimePatterns.Format.Loading)
+        init("Headsign", UpcomingFormat.Loading)
 
         composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
     }

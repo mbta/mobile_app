@@ -1,10 +1,11 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.runtime.Composable
+import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.model.Route
 
 @Composable
-fun RouteCard(
+fun LegacyRouteCard(
     route: Route,
     pinned: Boolean,
     onPin: (String) -> Unit,
