@@ -40,11 +40,8 @@ extension HomeMapView {
         Task(priority: .high) {
             let newMapData = GlobalMapData(
                 globalData: globalData,
-                alertsByStop: GlobalMapData.companion.getAlertsByStop(
-                    globalData: globalData,
-                    alerts: nearbyVM.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
+                alerts: nearbyVM.alerts,
+                filterAtTime: now.toKotlinInstant()
             )
             DispatchQueue.main.async { globalMapData = newMapData }
         }

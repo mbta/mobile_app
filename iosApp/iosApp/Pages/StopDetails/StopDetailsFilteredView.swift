@@ -162,7 +162,7 @@ struct StopDetailsFilteredView: View {
     @ViewBuilder
     var header: some View {
         let route: Route? = if let routeId = patternsByStop?.representativeRoute.id {
-            stopDetailsVM.global?.routes[routeId]
+            stopDetailsVM.global?.getRoute(routeId: routeId)
         } else {
             nil
         }

@@ -161,7 +161,7 @@ class StopDetailsViewModel: ObservableObject {
 
     func getTripRouteAccents() -> TripRouteAccents {
         guard let routeId = tripData?.trip.routeId,
-              let route = global?.routes[routeId]
+              let route = global?.getRoute(routeId: routeId)
         else {
             return TripRouteAccents()
         }
@@ -256,9 +256,7 @@ class StopDetailsViewModel: ObservableObject {
                     existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                 } else {
                     PredictionsByStopJoinResponse(
-                        predictionsByStop: [result.data.stopId: result.data.predictions],
-                        trips: result.data.trips,
-                        vehicles: result.data.vehicles
+                        partialResponse: result.data
                     )
                 }
                 Task { @MainActor in

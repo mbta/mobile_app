@@ -48,7 +48,7 @@ extension HomeMapView {
             let snappedStopRouteLines = try await RouteFeaturesBuilder.shared.generateRouteLines(
                 routeData: mapVM.allRailSourceData,
                 globalData: mapVM.globalData,
-                alertsByStop: globalMapData?.alertsByStop
+                globalMapData: globalMapData
             )
             mapVM.snappedStopRouteLines = snappedStopRouteLines
             mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
@@ -99,7 +99,7 @@ extension HomeMapView {
                 mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(
                     stopShapes: stopMapData.routeShapes,
                     railShapes: mapVM.allRailSourceData,
-                    routesById: mapVM.globalData?.routes
+                    globalData: mapVM.globalData
                 )
             }
         }

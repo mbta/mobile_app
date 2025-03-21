@@ -63,7 +63,7 @@ class MapViewModel: ObservableObject {
             routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
                 routeData: routeSourceData,
                 globalData: globalData,
-                alertsByStop: globalMapData?.alertsByStop
+                globalMapData: globalMapData
             )
         ).toMapbox()
     }

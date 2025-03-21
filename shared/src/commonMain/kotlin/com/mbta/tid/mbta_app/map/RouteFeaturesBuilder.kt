@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.map.style.FeatureProperty
 import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.AlertAwareRouteSegment
+import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
@@ -54,8 +55,14 @@ object RouteFeaturesBuilder {
     suspend fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalData: GlobalResponse?,
-        alertsByStop: Map<String, AlertAssociatedStop>?
-    ) = generateRouteLines(routeData, globalData?.routes, globalData?.stops, alertsByStop)
+        globalMapData: GlobalMapData?
+    ) =
+        generateRouteLines(
+            routeData,
+            globalData?.routes,
+            globalData?.stops,
+            globalMapData?.alertsByStop
+        )
 
     suspend fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
@@ -214,6 +221,12 @@ object RouteFeaturesBuilder {
             alertState = segment.alertState
         )
     }
+
+    fun forRailAtStop(
+        stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        railShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        globalData: GlobalResponse?
+    ) = forRailAtStop(stopShapes, railShapes, globalData?.routes)
 
     fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
