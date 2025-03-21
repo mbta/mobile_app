@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.PerformsPoorlyInSwift
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -7,7 +8,7 @@ interface IRouteSegment {
     val sourceRoutePatternId: String
     val sourceRouteId: String
     val stopIds: List<String>
-    val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
+    @PerformsPoorlyInSwift val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
 }
 
 @Serializable
@@ -27,6 +28,7 @@ data class RouteSegment(
     @SerialName("source_route_id") override val sourceRouteId: String,
     @SerialName("stop_ids") override val stopIds: List<String>,
     @SerialName("other_patterns_by_stop_id")
+    @PerformsPoorlyInSwift
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
 ) : IRouteSegment {
 
@@ -173,7 +175,7 @@ data class AlertAwareRouteSegment(
     override val sourceRoutePatternId: String,
     override val sourceRouteId: String,
     override val stopIds: List<String>,
-    override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
+    @PerformsPoorlyInSwift override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
     val alertState: SegmentAlertState
 ) : IRouteSegment
 

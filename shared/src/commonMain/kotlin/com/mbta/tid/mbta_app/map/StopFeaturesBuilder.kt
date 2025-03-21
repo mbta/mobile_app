@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.map.style.Feature
 import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.map.style.FeatureProperty
 import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
+import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import io.github.dellisd.spatialk.geojson.Point
@@ -36,6 +37,12 @@ object StopFeaturesBuilder {
 
     suspend fun buildCollection(
         stopData: StopSourceData,
+        globalMapData: GlobalMapData,
+        linesToSnap: List<RouteLineData>
+    ) = buildCollection(stopData, globalMapData.mapStops, linesToSnap)
+
+    suspend fun buildCollection(
+        stopData: StopSourceData,
         stops: Map<String, MapStop>,
         linesToSnap: List<RouteLineData>
     ): FeatureCollection =
@@ -50,7 +57,7 @@ object StopFeaturesBuilder {
             buildCollection(stopFeatures = stopFeatures)
         }
 
-    fun buildCollection(stopFeatures: List<StopFeatureData>): FeatureCollection {
+    private fun buildCollection(stopFeatures: List<StopFeatureData>): FeatureCollection {
         return FeatureCollection(features = stopFeatures.map { it.feature })
     }
 

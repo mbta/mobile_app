@@ -253,9 +253,7 @@ struct NearbyTransitView: View {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
-                            predictionsByStop: [result.data.stopId: result.data.predictions],
-                            trips: result.data.trips,
-                            vehicles: result.data.vehicles
+                            partialResponse: result.data
                         )
                     }
                     checkPredictionsStale()

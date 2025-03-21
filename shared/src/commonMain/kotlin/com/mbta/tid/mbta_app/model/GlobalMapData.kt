@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.PerformsPoorlyInSwift
 import kotlinx.datetime.Instant
 
 data class MapStop(
@@ -13,8 +14,8 @@ data class MapStop(
 )
 
 data class GlobalMapData(
-    val mapStops: Map<String, MapStop>,
-    val alertsByStop: Map<String, AlertAssociatedStop>?
+    @PerformsPoorlyInSwift val mapStops: Map<String, MapStop>,
+    @PerformsPoorlyInSwift val alertsByStop: Map<String, AlertAssociatedStop>?
 ) {
     companion object {
         /*
@@ -22,6 +23,7 @@ data class GlobalMapData(
         Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on
         their children, but those child alerts aren't included in the map returned by this function.
          */
+        @PerformsPoorlyInSwift
         fun getAlertsByStop(
             globalData: GlobalResponse,
             alerts: AlertsStreamDataResponse?,
@@ -78,6 +80,12 @@ data class GlobalMapData(
             return alertingStop
         }
     }
+
+    constructor(
+        globalData: GlobalResponse,
+        alerts: AlertsStreamDataResponse?,
+        filterAtTime: Instant
+    ) : this(globalData, getAlertsByStop(globalData, alerts, filterAtTime))
 
     constructor(
         globalData: GlobalResponse,

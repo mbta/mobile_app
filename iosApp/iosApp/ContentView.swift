@@ -375,7 +375,7 @@ struct ContentView: View {
             let globalData = mapVM.globalData,
             let stop = nearbyVM.getTargetStop(global: globalData),
             let routeId = selectedVehicle.routeId ?? stopFilter?.routeId,
-            let route = globalData.routes[routeId] else { return nil }
+            let route = globalData.getRoute(routeId: routeId) else { return nil }
         return (route.type, selectedVehicle, stop)
     }
 
