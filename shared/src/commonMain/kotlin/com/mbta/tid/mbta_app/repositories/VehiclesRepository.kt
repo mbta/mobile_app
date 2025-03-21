@@ -32,6 +32,7 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
     ) {
+        disconnect()
         val topic =
             VehiclesOnRouteChannel.topic(
                 if (routeId == "line-Green") {

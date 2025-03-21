@@ -22,7 +22,7 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
     var channel: PhoenixChannel? = null
 
     override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
-        channel?.detach()
+        disconnect()
         channel = socket.getChannel(AlertsChannel.topic, emptyMap())
 
         channel?.onEvent(AlertsChannel.newDataEvent) { message ->
