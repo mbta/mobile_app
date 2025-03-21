@@ -126,4 +126,48 @@ final class AlertCardTests: XCTestCase {
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
+
+    func testDelayAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .delay
+            alert.header = "header"
+            alert.cause = .heavyRidership
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            spec: .delay,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
+
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
+    }
+
+    func testDelayAlertCardUnknownCause() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .delay
+            alert.header = "header"
+            alert.cause = .unknownCause
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            spec: .delay,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Delays"))
+
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
+    }
 }
