@@ -626,7 +626,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsSubwayDelayAlert() {
+    fun testShowsSubwayDelayAlert(): Unit = runBlocking {
         val now = Clock.System.now()
         val alert =
             builder.alert {
