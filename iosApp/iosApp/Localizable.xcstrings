@@ -1860,6 +1860,53 @@
         }
       }
     },
+    "accident" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "accidente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "accident"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "aksidan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "acidente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tai nạn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "事故"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "意外事故"
+          }
+        }
+      }
+    },
     "Accident" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2425,7 +2472,7 @@
       }
     },
     "Amtrak" : {
-      "comment" : "Possible alert cause",
+      "comment" : "Alert cause, used in 'Delays due to [cause]'\nPossible alert cause",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2467,6 +2514,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Amtrak"
+          }
+        }
+      }
+    },
+    "Amtrak train traffic" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tráfico de trenes Amtrak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trafic ferroviaire Amtrak"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trafik tren Amtrak"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tráfego de trem Amtrak"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "giao thông đường sắt Amtrak"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Amtrak 火车交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Amtrak 火車交通"
           }
         }
       }
@@ -2518,6 +2612,53 @@
         }
       }
     },
+    "an earlier mechanical problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "un problema mecánico anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "un problème mécanique antérieur"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "yon pwoblèm mekanik pi bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "um problema mecânico anterior"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "một vấn đề cơ học trước đó"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "早期的机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "早期的機械問題"
+          }
+        }
+      }
+    },
     "An Earlier Mechanical Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2561,6 +2702,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "早前的機械故障"
+          }
+        }
+      }
+    },
+    "an earlier signal problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "un problema de señal anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "un problème de signal antérieur"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "yon pwoblèm siyal pi bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "um problema de sinal anterior"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề về tín hiệu trước đó"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "较早的信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "較早的訊號問題"
           }
         }
       }
@@ -3377,6 +3565,53 @@
         }
       }
     },
+    "autos impeding service" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "autos que impiden el servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "les automobiles gênent le service"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "oto anpeche sèvis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "serviço de impedimento de automóveis"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ô tô cản trở dịch vụ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "汽车妨碍服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "汽車妨礙服務"
+          }
+        }
+      }
+    },
     "Autos Impeding Service" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4177,6 +4412,53 @@
         }
       }
     },
+    "Coast Guard restriction" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restricción de la Guardia Costera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restriction de la Garde côtière"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restriksyon Gad Kòt"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restrição da Guarda Costeira"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hạn chế của Cảnh sát biển"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "海岸警卫队限制"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "海岸警衛隊限制"
+          }
+        }
+      }
+    },
     "Coast Guard Restriction" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4315,6 +4597,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通勤列車和輪渡票"
+          }
+        }
+      }
+    },
+    "congestion" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "congestión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "congestion"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "anbouteyaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "congestionamento"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự tắc nghẽn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "拥塞"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "擁塞"
           }
         }
       }
@@ -4466,6 +4795,53 @@
         }
       }
     },
+    "construction" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "construcción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "construction"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "konstriksyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "construção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự thi công"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "建造"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "建造"
+          }
+        }
+      }
+    },
     "Construction" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4559,6 +4935,53 @@
         }
       }
     },
+    "crossing issue" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de cruce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème de passage à niveau"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm travèse"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de travessia"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề vượt biên"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "交叉问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "交叉問題"
+          }
+        }
+      }
+    },
     "Crossing Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4602,6 +5025,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "交通交叉問題"
+          }
+        }
+      }
+    },
+    "crossing malfunction" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mal funcionamiento del cruce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "dysfonctionnement du passage à niveau"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "travèse malfonksyònman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mau funcionamento do cruzamento"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự cố băng qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "道口故障"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "道口故障"
           }
         }
       }
@@ -4795,6 +5265,147 @@
         }
       }
     },
+    "Delays" : {
+      "comment" : "Generic delay alert label when cause is unknown",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retrasos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retards"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrasos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sự chậm trễ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "延误"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "延誤"
+          }
+        }
+      }
+    },
+    "Delays due to %@" : {
+      "comment" : "Describes the cause of a delay. Ex: 'Delays due to [traffic]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retrasos debido a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retards dus à %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reta akòz %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Atrasos devido a %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trì hoãn do %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "由于 %@ 造成延误"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "因 %@ 造成延誤"
+          }
+        }
+      }
+    },
+    "demonstration" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "demostración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "démonstration"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "demonstrasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "demonstração"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "cuộc biểu tình"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "示范"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "示範"
+          }
+        }
+      }
+    },
     "Demonstration" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4984,6 +5595,53 @@
         }
       }
     },
+    "disabled bus" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "autobús discapacitado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "autobus handicapé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "otobis andikape"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ônibus desativado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "xe buýt khuyết tật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "残疾人巴士"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "殘障巴士"
+          }
+        }
+      }
+    },
     "Disabled Bus" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -5027,6 +5685,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "巴士拋錨"
+          }
+        }
+      }
+    },
+    "disabled train" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tren discapacitado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "train handicapé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tren andikape"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trem deficiente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tàu khuyết tật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "残疾人列车"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "殘障列車"
           }
         }
       }
@@ -5551,6 +6256,53 @@
         }
       }
     },
+    "drawbridge being raised" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "puente levadizo levantado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "le pont-levis est relevé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pon levasyon ap monte"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ponte levadiça sendo levantada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "cầu kéo đang được nâng lên"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "吊桥正在升起"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "吊橋正在升起"
+          }
+        }
+      }
+    },
     "Drawbridge Being Raised" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -5641,6 +6393,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "東行"
+          }
+        }
+      }
+    },
+    "electrical work" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trabajo electrico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "travaux électriques"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "travay elektrik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trabalho elétrico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "công việc điện"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "电力工作"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "電力工作"
           }
         }
       }
@@ -6540,6 +7339,53 @@
         }
       }
     },
+    "fire" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "fuego"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "feu"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "dife"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "fogo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ngọn lửa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火"
+          }
+        }
+      }
+    },
     "Fire" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -6583,6 +7429,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "火災"
+          }
+        }
+      }
+    },
+    "fire department activity" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "actividad del departamento de bomberos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "activité des pompiers"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "aktivite ponpye"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "atividade do corpo de bombeiros"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hoạt động cứu hỏa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "消防部门活动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "消防局活動"
           }
         }
       }
@@ -6634,6 +7527,53 @@
         }
       }
     },
+    "flooding" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "inundación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "inondation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "inondasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "inundação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "lũ lụt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "洪水"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "洪水"
+          }
+        }
+      }
+    },
     "Flooding" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -6681,6 +7621,53 @@
         }
       }
     },
+    "fog" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "niebla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "brouillard"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "bwouya"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "névoa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sương mù"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多雾路段"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多霧路段"
+          }
+        }
+      }
+    },
     "Fog" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -6724,6 +7711,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "大霧"
+          }
+        }
+      }
+    },
+    "freight train interference" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "interferencia del tren de mercancías"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "interférence des trains de marchandises"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "entèferans tren machandiz"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "interferência de trem de carga"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự can thiệp của tàu chở hàng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "货运列车干扰"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "貨運列車幹擾"
           }
         }
       }
@@ -6962,6 +7996,53 @@
         }
       }
     },
+    "hazmat condition" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "condición de materiales peligrosos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "état des matières dangereuses"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "kondisyon danje"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "condição de materiais perigosos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tình trạng nguy hiểm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "危险品状况"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "危險品狀況"
+          }
+        }
+      }
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7052,6 +8133,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "方向"
+          }
+        }
+      }
+    },
+    "heavy ridership" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "gran cantidad de pasajeros"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "forte fréquentation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "gwo pasaje"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "viagens pesadas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hành khách hạng nặng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "客流量大"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "客流量大"
           }
         }
       }
@@ -7290,6 +8418,53 @@
         }
       }
     },
+    "high winds" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "fuertes vientos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vents violents"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "gwo van"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ventos fortes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "gió lớn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大风"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大風"
+          }
+        }
+      }
+    },
     "High Winds" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7333,6 +8508,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "強風"
+          }
+        }
+      }
+    },
+    "holiday" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "día festivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vacances"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "jou ferye"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "feriado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ngày lễ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "假期"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "假期"
           }
         }
       }
@@ -7384,6 +8606,53 @@
         }
       }
     },
+    "hurricane" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "huracán"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ouragan"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "siklòn"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "furacão"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "cơn bão"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "飓风"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "颶風"
+          }
+        }
+      }
+    },
     "Hurricane" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -7427,6 +8696,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "颶風"
+          }
+        }
+      }
+    },
+    "ice in harbor" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hielo en el puerto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "glace dans le port"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "glas nan pò"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "gelo no porto"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "băng ở bến cảng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "港口里的冰"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "港口裡的冰"
           }
         }
       }
@@ -8137,6 +9453,53 @@
         }
       }
     },
+    "maintenance" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mantenimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "entretien"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "antretyen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "manutenção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "bảo trì"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "维护"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "維護"
+          }
+        }
+      }
+    },
     "Maintenance" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -8369,6 +9732,53 @@
         }
       }
     },
+    "mechanical issue" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema mecanico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème mécanique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm mekanik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema mecânico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề cơ khí"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "機械問題"
+          }
+        }
+      }
+    },
     "Mechanical Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -8400,6 +9810,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Vấn đề cơ khí"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "机械问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "機械問題"
+          }
+        }
+      }
+    },
+    "mechanical problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema mecanico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème mécanique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm mekanik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema mecânico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề cơ khí"
           }
         },
         "zh-Hans-CN" : {
@@ -8459,6 +9916,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "機械故障"
+          }
+        }
+      }
+    },
+    "medical emergency" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "emergencia medica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "urgence médicale"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ijans medikal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "emergência médica"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "cấp cứu y tế"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "医疗紧急情况"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "醫療緊急狀況"
           }
         }
       }
@@ -9451,6 +10955,53 @@
         }
       }
     },
+    "parade" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "desfile"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "parade"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "parad"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "parada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "cuộc diễu hành"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "游行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "遊行"
+          }
+        }
+      }
+    },
     "Parade" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -9826,6 +11377,53 @@
         }
       }
     },
+    "police action" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "acción policial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "action policière"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "aksyon lapolis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ação policial"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hành động của cảnh sát"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "警察行动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "警察行動"
+          }
+        }
+      }
+    },
     "Police Action" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -9869,6 +11467,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "警方行動"
+          }
+        }
+      }
+    },
+    "police activity" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "actividad policial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "activité policière"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "aktivite lapolis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "atividade policial"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hoạt động của cảnh sát"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "警察活动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "警察活動"
           }
         }
       }
@@ -10010,6 +11655,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "政策變化"
+          }
+        }
+      }
+    },
+    "power problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de poder"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "problème d’alimentation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm pouvwa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de energia"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề về điện"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "电源问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "電源問題"
           }
         }
       }
@@ -10198,6 +11890,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隱私政策"
+          }
+        }
+      }
+    },
+    "rail defect" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "defecto del carril"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "défaut ferroviaire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "defo ray"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "defeito ferroviário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "khiếm khuyết đường sắt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "钢轨缺陷"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鋼軌缺陷"
           }
         }
       }
@@ -11779,6 +13518,53 @@
         }
       }
     },
+    "severe weather" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "clima severo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "temps violent"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "move tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "clima severo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "thời tiết khắc nghiệt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "恶劣天气"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "惡劣天氣"
+          }
+        }
+      }
+    },
     "Severe Weather" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12155,6 +13941,53 @@
         }
       }
     },
+    "signal issue" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de señal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème de signal"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm siyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de sinal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề tín hiệu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "訊號問題"
+          }
+        }
+      }
+    },
     "Signal Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12202,6 +14035,53 @@
         }
       }
     },
+    "signal problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de señal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème de signal"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm siyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de sinal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề tín hiệu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "信号问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "訊號問題"
+          }
+        }
+      }
+    },
     "Signal Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12245,6 +14125,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "信號故障"
+          }
+        }
+      }
+    },
+    "single tracking" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "seguimiento único"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "suivi unique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sèl swiv"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "rastreamento único"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "theo dõi đơn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "单次追踪"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "單次追蹤"
           }
         }
       }
@@ -12343,6 +14270,53 @@
         }
       }
     },
+    "slippery rail" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "carril resbaladizo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "rail glissant"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tren glise"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trilho escorregadio"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "đường ray trơn trượt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "滑轨"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "滑軌"
+          }
+        }
+      }
+    },
     "Slippery Rail" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12386,6 +14360,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "軌道濕滑"
+          }
+        }
+      }
+    },
+    "snow" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nieve"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "neige"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nèj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "neve"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tuyết"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "雪"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "雪"
           }
         }
       }
@@ -12625,6 +14646,53 @@
         }
       }
     },
+    "special event" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "evento especial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "événement spécial"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "evènman espesyal"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "evento especial"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự kiện đặc biệt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "特别活动"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "特別活動"
+          }
+        }
+      }
+    },
     "Special Event" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -12668,6 +14736,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "特殊事件"
+          }
+        }
+      }
+    },
+    "speed restriction" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restricción de velocidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "limitation de vitesse"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restriksyon vitès"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "restrição de velocidade"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hạn chế tốc độ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "速度限制"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "速度限制"
           }
         }
       }
@@ -13614,6 +15729,53 @@
         }
       }
     },
+    "strike" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "huelga"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "grève"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "grèv"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "batida"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "đánh đập"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "罢工"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "罷工"
+          }
+        }
+      }
+    },
     "Strike" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -13755,6 +15917,53 @@
         }
       }
     },
+    "switch issue" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de cambio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème de commutation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm switch"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de mudança"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề chuyển đổi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "开关问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "開關問題"
+          }
+        }
+      }
+    },
     "Switch Issue" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -13798,6 +16007,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "道岔故障"
+          }
+        }
+      }
+    },
+    "switch problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema del interruptor"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème de commutation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm chanjman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de mudança"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề chuyển đổi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "开关问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "開關問題"
           }
         }
       }
@@ -13892,6 +16148,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切換方向"
+          }
+        }
+      }
+    },
+    "technical problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema técnico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème technique"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm teknik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema técnico"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề kỹ thuật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "技术问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "技術問題"
           }
         }
       }
@@ -14179,6 +16482,53 @@
         }
       }
     },
+    "tie replacement" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "reemplazo de corbata"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "remplacement de cravate"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ranplasman mare"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "substituição de gravata"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "thay thế cà vạt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "领带更换"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "領帶更換"
+          }
+        }
+      }
+    },
     "Tie Replacement" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -14367,6 +16717,53 @@
         }
       }
     },
+    "track problem" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de seguimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème de piste"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm tras"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema de rastreamento"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "theo dõi vấn đề"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "轨道问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "軌道問題"
+          }
+        }
+      }
+    },
     "Track Problem" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -14414,6 +16811,53 @@
         }
       }
     },
+    "track work" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pista de trabajo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "suivre le travail"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "swiv travay"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "acompanhar o trabalho"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "theo dõi công việc"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跟踪工作"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "追蹤工作"
+          }
+        }
+      }
+    },
     "Track Work" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -14457,6 +16901,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "軌道作業"
+          }
+        }
+      }
+    },
+    "traffic" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tráfico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trafic"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trafik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tráfego"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "giao thông"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "交通"
           }
         }
       }
@@ -14551,6 +17042,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "列車"
+          }
+        }
+      }
+    },
+    "train traffic" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tráfico de trenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trafic ferroviaire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trafik tren"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tráfego de trem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "giao thông tàu hỏa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火车交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火車交通"
           }
         }
       }
@@ -14927,6 +17465,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "從清單頂部取消固定線路"
+          }
+        }
+      }
+    },
+    "unruly passenger" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pasajero rebelde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "passager indiscipliné"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pasaje dezobeyisan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "passageiro indisciplinado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hành khách ngỗ ngược"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不守规矩的乘客"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不守規矩的乘客"
           }
         }
       }
@@ -15688,6 +18273,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我們使用您的位置向您顯示附近的交通選擇。"
+          }
+        }
+      }
+    },
+    "weather" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "clima"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "météo"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "move tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "clima"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "thời tiết"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "天气"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "天氣"
           }
         }
       }

@@ -167,6 +167,11 @@ fun StopDetailsFilteredDeparturesView(
                         spec
                             ?: if (alert.significance == AlertSignificance.Major) {
                                 AlertCardSpec.Major
+                            } else if (
+                                alert.significance == AlertSignificance.Minor &&
+                                    alert.effect == Alert.Effect.Delay
+                            ) {
+                                AlertCardSpec.Delay
                             } else {
                                 AlertCardSpec.Secondary
                             }

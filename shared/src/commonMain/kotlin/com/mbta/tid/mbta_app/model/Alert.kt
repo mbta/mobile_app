@@ -17,6 +17,7 @@ data class Alert(
     val header: String?,
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle,
+    val severity: Int,
     @SerialName("updated_at") val updatedAt: Instant
 ) : BackendObject {
     init {
@@ -55,6 +56,12 @@ data class Alert(
             Effect.ServiceChange -> AlertSignificance.Secondary
             Effect.ElevatorClosure -> AlertSignificance.Accessibility
             Effect.TrackChange -> AlertSignificance.Minor
+            Effect.Delay ->
+                if (severity >= 3 && informedEntity.any { it.routeType?.isSubway() == true }) {
+                    AlertSignificance.Minor
+                } else {
+                    AlertSignificance.None
+                }
             else -> AlertSignificance.None
         }
 
