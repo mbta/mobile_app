@@ -31,11 +31,12 @@ private fun directionNameFormatted(direction: Direction) =
 fun DirectionLabel(
     direction: Direction,
     modifier: Modifier = Modifier,
-    textColor: Color = LocalContentColor.current
+    textColor: Color = LocalContentColor.current,
+    showDestination: Boolean = true
 ) {
     val destination = direction.destination
     Column(modifier = modifier) {
-        if (destination != null) {
+        if (destination != null || !showDestination) {
             Text(
                 stringResource(
                     R.string.directionTo,
@@ -45,12 +46,14 @@ fun DirectionLabel(
                 modifier = Modifier.placeholderIfLoading(),
                 style = Typography.footnote
             )
-            Text(
-                destination,
-                color = textColor,
-                modifier = Modifier.placeholderIfLoading(),
-                style = Typography.bodySemibold
-            )
+            if (destination != null && showDestination) {
+                Text(
+                    destination,
+                    color = textColor,
+                    modifier = Modifier.placeholderIfLoading(),
+                    style = Typography.bodySemibold
+                )
+            }
         } else {
             Text(
                 stringResource(directionNameFormatted(direction)),

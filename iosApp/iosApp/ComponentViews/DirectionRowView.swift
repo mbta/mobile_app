@@ -11,12 +11,12 @@ import SwiftUI
 
 struct DirectionRowView: View {
     var direction: Direction
-    let predictions: RealtimePatterns.Format
+    let predictions: UpcomingFormat
     let pillDecoration: PredictionRowView.PillDecoration
 
     init(
         direction: Direction,
-        predictions: RealtimePatterns.Format,
+        predictions: UpcomingFormat,
         pillDecoration: PredictionRowView.PillDecoration = .none
     ) {
         self.direction = direction
@@ -50,7 +50,7 @@ struct DirectionRowView_Previews: PreviewProvider {
             List {
                 DirectionRowView(
                     direction: Direction(name: "West", destination: "Some", id: 0),
-                    predictions: RealtimePatterns.FormatSome(trips: [
+                    predictions: UpcomingFormatSome(trips: [
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.heavyRail,
@@ -65,17 +65,17 @@ struct DirectionRowView_Previews: PreviewProvider {
                 )
                 DirectionRowView(
                     direction: Direction(name: "North", destination: "None", id: 0),
-                    predictions: RealtimePatterns.FormatNoTrips(
-                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable()
+                    predictions: UpcomingFormatNoTrips(
+                        noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable()
                     )
                 )
                 DirectionRowView(
                     direction: Direction(name: "South", destination: "Loading", id: 1),
-                    predictions: RealtimePatterns.FormatLoading.shared
+                    predictions: UpcomingFormatLoading.shared
                 )
                 DirectionRowView(
                     direction: Direction(name: "East", destination: "No Service", id: 1),
-                    predictions: RealtimePatterns.FormatDisruption(
+                    predictions: UpcomingFormatDisruption(
                         alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                             alert.effect = .suspension
                         }, mapStopRoute: .green

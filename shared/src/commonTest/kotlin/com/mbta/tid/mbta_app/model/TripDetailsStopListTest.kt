@@ -97,7 +97,7 @@ class TripDetailsStopListTest {
         fun entry(
             stopId: String,
             stopSequence: Int,
-            disruption: RealtimePatterns.Format.Disruption? = null,
+            disruption: UpcomingFormat.Disruption? = null,
             schedule: Schedule? = null,
             prediction: Prediction? = null,
             predictionStop: Stop? = null,
@@ -770,7 +770,7 @@ class TripDetailsStopListTest {
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
-                entry("B", 20, disruption = RealtimePatterns.Format.Disruption(alert, iconName = "alert-large-red-issue"), prediction = pred2),
+                entry("B", 20, disruption = UpcomingFormat.Disruption(alert, iconName = "alert-large-red-issue"), prediction = pred2),
                 entry("C", 30, prediction = pred3)
             ),
             fromPieces(null, predictions())

@@ -25,7 +25,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile1 = TileData(
             route: route,
             headsign: "A",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
             )
@@ -33,7 +33,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile2 = TileData(
             route: route,
             headsign: "B",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "2", routeType: .heavyRail, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
             )
@@ -41,7 +41,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile3 = TileData(
             route: route,
             headsign: "C",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "3", routeType: .heavyRail, format: .Minutes(minutes: 7))],
                 secondaryAlert: nil
             )
@@ -82,7 +82,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile1 = TileData(
             route: route,
             headsign: "Matching",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
             )
@@ -90,7 +90,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "2", routeType: .heavyRail, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
             )
@@ -98,7 +98,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile3 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "3", routeType: .heavyRail, format: .Minutes(minutes: 7))],
                 secondaryAlert: nil
             )
@@ -138,7 +138,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile1 = TileData(
             route: route,
             headsign: "Matching",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "1", routeType: .lightRail, format: .Arriving())],
                 secondaryAlert: nil
             )
@@ -146,7 +146,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "2", routeType: .lightRail, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
             )
@@ -154,7 +154,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile3 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "3", routeType: .lightRail, format: .Minutes(minutes: 7))],
                 secondaryAlert: nil
             )
@@ -203,7 +203,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile1 = TileData(
             route: route,
             headsign: "Matching",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: trip.id, routeType: .lightRail, format: .Arriving())],
                 secondaryAlert: nil
             )
@@ -211,7 +211,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "2", routeType: .lightRail, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
             )
@@ -219,7 +219,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile3 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "3", routeType: .lightRail, format: .Minutes(minutes: 7))],
                 secondaryAlert: nil
             )
@@ -272,7 +272,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile1 = TileData(
             route: route,
             headsign: "Harvard",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(
                     id: trip.id, routeType: .bus,
                     format: .Cancelled(
@@ -285,7 +285,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "other", routeType: .bus, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
             )
@@ -350,7 +350,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [],
-            noPredictionsStatus: RealtimePatterns.NoTripsFormatServiceEndedToday(),
+            noPredictionsStatus: UpcomingFormat.NoTripsFormatServiceEndedToday(),
             alerts: [],
             downstreamAlerts: [],
             patternsByStop: .init(
@@ -385,7 +385,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile = TileData(
             route: route,
             headsign: "A",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
             )
@@ -434,7 +434,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile = TileData(
             route: route,
             headsign: "A",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
             )
@@ -483,7 +483,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile = TileData(
             route: route,
             headsign: "A",
-            formatted: RealtimePatterns.FormatSome(
+            formatted: UpcomingFormatSome(
                 trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
             )

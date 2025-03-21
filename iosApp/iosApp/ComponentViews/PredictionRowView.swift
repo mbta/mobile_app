@@ -16,12 +16,12 @@ struct PredictionRowView: View {
         case onPrediction(routesByTrip: [String: Route])
     }
 
-    let predictions: RealtimePatterns.Format
+    let predictions: UpcomingFormat
     let pillDecoration: PillDecoration
     let destination: () -> any View
 
     init(
-        predictions: RealtimePatterns.Format,
+        predictions: UpcomingFormat,
         pillDecoration: PillDecoration = .none,
         destination: @escaping () -> any View
     ) {

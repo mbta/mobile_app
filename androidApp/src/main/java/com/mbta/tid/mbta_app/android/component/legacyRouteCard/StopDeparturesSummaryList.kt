@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.HorizontalDivider
@@ -8,9 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.DirectionRowView
+import com.mbta.tid.mbta_app.android.component.HeadsignRowView
+import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -27,10 +31,10 @@ fun StopDeparturesSummaryList(
     val localContext = LocalContext.current
 
     for (patterns in patternsAtStop.patterns) {
-        fun analyticsTappedDeparture(predictions: RealtimePatterns.Format) {
+        fun analyticsTappedDeparture(predictions: UpcomingFormat) {
             val noTrips =
                 when (predictions) {
-                    is RealtimePatterns.Format.NoTrips -> predictions.noTripsFormat
+                    is UpcomingFormat.NoTrips -> predictions.noTripsFormat
                     else -> null
                 }
             analytics.tappedDeparture(

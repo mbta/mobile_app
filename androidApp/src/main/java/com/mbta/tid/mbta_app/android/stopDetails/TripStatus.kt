@@ -4,25 +4,25 @@ import androidx.compose.runtime.Composable
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
-import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 
 @Composable
-fun TripStatus(predictions: RealtimePatterns.Format) {
+fun TripStatus(predictions: UpcomingFormat) {
     when (predictions) {
-        is RealtimePatterns.Format.Some ->
+        is UpcomingFormat.Some ->
             when (val trip = predictions.trips.firstOrNull()) {
                 null -> {}
                 else -> UpcomingTripView(UpcomingTripViewState.Some(trip.format))
             }
-        is RealtimePatterns.Format.Disruption ->
+        is UpcomingFormat.Disruption ->
             UpcomingTripView(
                 UpcomingTripViewState.Disruption(
                     FormattedAlert(predictions.alert),
                     iconName = predictions.iconName
                 )
             )
-        is RealtimePatterns.Format.NoTrips ->
+        is UpcomingFormat.NoTrips ->
             UpcomingTripView(UpcomingTripViewState.NoTrips(predictions.noTripsFormat))
-        RealtimePatterns.Format.Loading -> UpcomingTripView(UpcomingTripViewState.Loading)
+        UpcomingFormat.Loading -> UpcomingTripView(UpcomingTripViewState.Loading)
     }
 }

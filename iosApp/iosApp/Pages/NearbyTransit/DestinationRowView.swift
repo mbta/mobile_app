@@ -114,8 +114,8 @@ struct DestinationRowView: View {
         }
     }
 
-    private func analyticsTappedDeparture(predictions: RealtimePatterns.Format) {
-        let noTrips: RealtimePatterns.NoTripsFormat? = switch onEnum(of: predictions) {
+    private func analyticsTappedDeparture(predictions: UpcomingFormat) {
+        let noTrips: UpcomingFormat.NoTripsFormat? = switch onEnum(of: predictions) {
         case let .noTrips(noTrips): noTrips.noTripsFormat
         default: nil
         }

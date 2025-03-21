@@ -11,12 +11,12 @@ import SwiftUI
 
 struct HeadsignRowView: View {
     var headsign: String
-    let predictions: RealtimePatterns.Format
+    let predictions: UpcomingFormat
     let pillDecoration: PredictionRowView.PillDecoration
 
     init(
         headsign: String,
-        predictions: RealtimePatterns.Format,
+        predictions: UpcomingFormat,
         pillDecoration: PredictionRowView.PillDecoration = .none
     ) {
         self.headsign = headsign
@@ -49,10 +49,10 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 prediction.trip = trip2
                 prediction.departureTime = now.addingTimeInterval(12 * 60).toKotlinInstant()
             }
-            let secondaryAlert = RealtimePatterns.FormatSecondaryAlert(
+            let secondaryAlert = UpcomingFormatSecondaryAlert(
                 iconName: "alert-large-bus-issue"
             )
-            let greenLineEAlert = RealtimePatterns.FormatSecondaryAlert(
+            let greenLineEAlert = UpcomingFormatSecondaryAlert(
                 iconName: "alert-large-green-issue"
             )
             let greenLineERoute = objects.route { route in
@@ -67,7 +67,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
             List {
                 HeadsignRowView(
                     headsign: "Some",
-                    predictions: RealtimePatterns.FormatSome(trips: [
+                    predictions: UpcomingFormatSome(trips: [
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
@@ -82,7 +82,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 )
                 HeadsignRowView(
                     headsign: "Some with Alert",
-                    predictions: RealtimePatterns.FormatSome(trips: [
+                    predictions: UpcomingFormatSome(trips: [
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
@@ -97,32 +97,32 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 )
                 HeadsignRowView(
                     headsign: "None",
-                    predictions: RealtimePatterns.FormatNoTrips(
-                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable()
+                    predictions: UpcomingFormatNoTrips(
+                        noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable()
                     )
                 )
                 HeadsignRowView(
                     headsign: "None with Alert",
-                    predictions: RealtimePatterns.FormatNoTrips(
-                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
+                    predictions: UpcomingFormatNoTrips(
+                        noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
                         secondaryAlert: secondaryAlert
                     )
                 )
                 HeadsignRowView(
                     headsign: "Decorated None with Alert",
-                    predictions: RealtimePatterns.FormatNoTrips(
-                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
+                    predictions: UpcomingFormatNoTrips(
+                        noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
                         secondaryAlert: greenLineEAlert
                     ),
                     pillDecoration: .onRow(route: greenLineERoute)
                 )
                 HeadsignRowView(
                     headsign: "Loading",
-                    predictions: RealtimePatterns.FormatLoading.shared
+                    predictions: UpcomingFormatLoading.shared
                 )
                 HeadsignRowView(
                     headsign: "No Service",
-                    predictions: RealtimePatterns.FormatDisruption(
+                    predictions: UpcomingFormatDisruption(
                         alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                             alert.effect = .suspension
                         }, mapStopRoute: .orange

@@ -1,6 +1,7 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.runtime.Composable
+import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 

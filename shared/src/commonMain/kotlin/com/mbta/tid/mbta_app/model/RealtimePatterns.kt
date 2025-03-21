@@ -223,7 +223,11 @@ sealed class RealtimePatterns : ILeafData {
         }
     }
 
-    fun format(now: Instant, routeType: RouteType, context: TripInstantDisplay.Context): Format {
+    fun format(
+        now: Instant,
+        routeType: RouteType,
+        context: TripInstantDisplay.Context
+    ): UpcomingFormat {
         return this.format(
             now,
             routeType,
@@ -240,7 +244,7 @@ sealed class RealtimePatterns : ILeafData {
         routeType: RouteType,
         count: Int,
         context: TripInstantDisplay.Context
-    ): Format {
+    ): UpcomingFormat {
         val mapStopRoute =
             MapStopRoute.matching(
                 when (this) {
@@ -249,14 +253,14 @@ sealed class RealtimePatterns : ILeafData {
                 }
             )
         val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
-        if (majorAlert != null) return Format.Disruption(majorAlert, mapStopRoute)
+        if (majorAlert != null) return UpcomingFormat.Disruption(majorAlert, mapStopRoute)
         val secondaryAlertToDisplay =
             alertsHere?.firstOrNull { it.significance >= AlertSignificance.Secondary }
                 ?: alertsDownstream?.firstOrNull()
 
         val secondaryAlert =
             secondaryAlertToDisplay?.let {
-                Format.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
             }
 
         val tripsToShow =
@@ -273,11 +277,15 @@ sealed class RealtimePatterns : ILeafData {
                 }
                 .take(count)
         return when {
-            tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
-            !allDataLoaded -> Format.Loading
+            tripsToShow.isNotEmpty() -> UpcomingFormat.Some(tripsToShow, secondaryAlert)
+            !allDataLoaded -> UpcomingFormat.Loading
             else ->
-                Format.NoTrips(
-                    NoTripsFormat.fromUpcomingTrips(upcomingTrips, hasSchedulesToday, now),
+                UpcomingFormat.NoTrips(
+                    UpcomingFormat.NoTripsFormat.fromUpcomingTrips(
+                        upcomingTrips,
+                        hasSchedulesToday,
+                        now
+                    ),
                     secondaryAlert
                 )
         }
@@ -327,102 +335,6 @@ sealed class RealtimePatterns : ILeafData {
         throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
     }
 
-    sealed class NoTripsFormat {
-        data object NoSchedulesToday : NoTripsFormat()
-
-        data object ServiceEndedToday : NoTripsFormat()
-
-        data object PredictionsUnavailable : NoTripsFormat()
-
-        companion object {
-            /**
-             * Determine the appropriate NoTripsFormat to show. Only for use in situations where it
-             * is already determined that there are no trips to show and we only need to determine
-             * why.
-             */
-            fun fromUpcomingTrips(
-                upcomingTrips: List<UpcomingTrip>,
-                hasSchedulesToday: Boolean,
-                now: Instant
-            ): NoTripsFormat {
-                val hasUpcomingTrips =
-                    upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
-
-                return when {
-                    !hasSchedulesToday -> NoSchedulesToday
-                    hasUpcomingTrips ->
-                        // there are trips in the future but we're not showing them (maybe because
-                        // we're
-                        // on the subway and we have schedules but can't get predictions)
-                        PredictionsUnavailable
-                    else ->
-                        // if there were schedules but there are no trips in the future, service is
-                        // over
-                        ServiceEndedToday
-                }
-            }
-        }
-    }
-
-    sealed class Format {
-        abstract val secondaryAlert: SecondaryAlert?
-
-        data class SecondaryAlert(val iconName: String) {
-            constructor(
-                alert: Alert,
-                mapStopRoute: MapStopRoute?
-            ) : this(alert.alertState, mapStopRoute)
-
-            constructor(
-                alertState: StopAlertState,
-                mapStopRoute: MapStopRoute?
-            ) : this(iconName(alertState, mapStopRoute))
-        }
-
-        data object Loading : Format() {
-            override val secondaryAlert = null
-        }
-
-        data class Some(
-            val trips: List<FormatWithId>,
-            override val secondaryAlert: SecondaryAlert?
-        ) : Format() {
-            data class FormatWithId(
-                val id: String,
-                val routeType: RouteType,
-                val format: TripInstantDisplay
-            ) {
-                constructor(
-                    trip: UpcomingTrip,
-                    routeType: RouteType,
-                    now: Instant,
-                    context: TripInstantDisplay.Context
-                ) : this(trip.trip.id, routeType, trip.format(now, routeType, context))
-            }
-        }
-
-        data class NoTrips
-        @DefaultArgumentInterop.Enabled
-        constructor(
-            val noTripsFormat: NoTripsFormat,
-            override val secondaryAlert: SecondaryAlert? = null
-        ) : Format()
-
-        data class Disruption(val alert: Alert, val iconName: String) : Format() {
-            override val secondaryAlert = null
-
-            constructor(
-                alert: Alert,
-                mapStopRoute: MapStopRoute?
-            ) : this(alert, iconName(alert.alertState, mapStopRoute))
-        }
-
-        companion object {
-            private fun iconName(alertState: StopAlertState, mapStopRoute: MapStopRoute?) =
-                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}" } ?: "borderless"}-${alertState.name.lowercase()}"
-        }
-    }
-
     companion object {
         fun formatUpcomingTrip(
             now: Instant,
@@ -437,15 +349,16 @@ sealed class RealtimePatterns : ILeafData {
             routeType: RouteType,
             context: TripInstantDisplay.Context,
             isSubway: Boolean
-        ): Format.Some.FormatWithId? {
-            return Format.Some.FormatWithId(upcomingTrip, routeType, now, context).takeUnless {
-                it.format is TripInstantDisplay.Hidden ||
-                    it.format is TripInstantDisplay.Skipped ||
-                    // API best practices call for hiding scheduled times on subway
-                    (isSubway &&
-                        (it.format is TripInstantDisplay.ScheduleTime ||
-                            it.format is TripInstantDisplay.ScheduleMinutes))
-            }
+        ): UpcomingFormat.Some.FormattedTrip? {
+            return UpcomingFormat.Some.FormattedTrip(upcomingTrip, routeType, now, context)
+                .takeUnless {
+                    it.format is TripInstantDisplay.Hidden ||
+                        it.format is TripInstantDisplay.Skipped ||
+                        // API best practices call for hiding scheduled times on subway
+                        (isSubway &&
+                            (it.format is TripInstantDisplay.ScheduleTime ||
+                                it.format is TripInstantDisplay.ScheduleMinutes))
+                }
         }
 
         fun hasSchedulesToday(

@@ -11,7 +11,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasClickActionLabel
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingTrip
@@ -33,10 +32,10 @@ class DepartureTileTest {
                     id = trip.id,
                     route,
                     "headsign",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         trips =
                             listOf(
-                                RealtimePatterns.Format.Some.FormatWithId(
+                                UpcomingFormat.Some.FormatWithId(
                                     trip.id,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
@@ -71,10 +70,10 @@ class DepartureTileTest {
                     id = trip.id,
                     route,
                     "headsign",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         trips =
                             listOf(
-                                RealtimePatterns.Format.Some.FormatWithId(
+                                UpcomingFormat.Some.FormatWithId(
                                     trip.id,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
@@ -105,10 +104,10 @@ class DepartureTileTest {
                     id = trip.id,
                     route,
                     "headsign",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         trips =
                             listOf(
-                                RealtimePatterns.Format.Some.FormatWithId(
+                                UpcomingFormat.Some.FormatWithId(
                                     trip.id,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
@@ -141,10 +140,10 @@ class DepartureTileTest {
                     id = trip.id,
                     route,
                     "headsign",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         trips =
                             listOf(
-                                RealtimePatterns.Format.Some.FormatWithId(
+                                UpcomingFormat.Some.FormatWithId(
                                     trip.id,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)

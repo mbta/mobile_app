@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.routeCard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable

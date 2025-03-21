@@ -71,7 +71,7 @@ struct DepartureTile: View {
             data: .init(
                 route: route1,
                 headsign: "Framingham",
-                formatted: RealtimePatterns.FormatSome(trips: [
+                formatted: UpcomingFormatSome(trips: [
                     .init(
                         id: "1",
                         routeType: .commuterRail,
@@ -91,7 +91,7 @@ struct DepartureTile: View {
             data: .init(
                 route: route1,
                 headsign: "Harvard",
-                formatted: RealtimePatterns.FormatSome(trips: [
+                formatted: UpcomingFormatSome(trips: [
                     .init(id: "2", routeType: .bus, format: .Minutes(minutes: 9)),
                 ], secondaryAlert: nil)
             ),
@@ -103,7 +103,7 @@ struct DepartureTile: View {
             data: .init(
                 route: routeB,
                 headsign: "Government Center",
-                formatted: RealtimePatterns.FormatSome(trips: [
+                formatted: UpcomingFormatSome(trips: [
                     .init(id: "3", routeType: .lightRail, format: .Minutes(minutes: 12)),
                 ], secondaryAlert: nil)
             ),

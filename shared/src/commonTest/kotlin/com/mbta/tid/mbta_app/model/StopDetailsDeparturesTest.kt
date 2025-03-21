@@ -1903,7 +1903,7 @@ class StopDetailsDeparturesTest {
                         UpcomingTrip(
                             trip2, schedule2, prediction2, stop, vehicle1
                         ),
-                        RealtimePatterns.Format.Some.FormatWithId(
+                        UpcomingFormat.Some.FormattedTrip(
                             trip2.id, route1.type, TripInstantDisplay.Minutes(minutes = 5))
                     )
                 ),
@@ -1946,7 +1946,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+            UpcomingFormat.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -1987,7 +1987,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.NoSchedulesToday,
+            UpcomingFormat.NoTripsFormat.NoSchedulesToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -2027,7 +2027,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+            UpcomingFormat.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -2086,7 +2086,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
+            UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -2187,7 +2187,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+            UpcomingFormat.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }

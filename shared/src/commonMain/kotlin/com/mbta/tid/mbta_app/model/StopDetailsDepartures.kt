@@ -2,8 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
-import com.mbta.tid.mbta_app.model.RealtimePatterns.Format
-import com.mbta.tid.mbta_app.model.RealtimePatterns.NoTripsFormat
+import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -17,7 +16,7 @@ import kotlinx.datetime.Instant
 
 data class TripAndFormat(
     val upcoming: UpcomingTrip,
-    val formatted: RealtimePatterns.Format.Some.FormatWithId
+    val formatted: UpcomingFormat.Some.FormattedTrip
 )
 
 data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
@@ -220,7 +219,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         fun getNoPredictionsStatus(
             realtimePatterns: List<RealtimePatterns>,
             now: Instant
-        ): RealtimePatterns.NoTripsFormat? {
+        ): NoTripsFormat? {
             val patternStatuses =
                 realtimePatterns.mapNotNull { pattern -> getStatusFormat(pattern, now) }
 
@@ -231,17 +230,17 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             } else if (
                 patternStatuses.all {
                     when (it) {
-                        is RealtimePatterns.NoTripsFormat.NoSchedulesToday -> true
-                        is RealtimePatterns.NoTripsFormat.ServiceEndedToday -> true
+                        is NoTripsFormat.NoSchedulesToday -> true
+                        is NoTripsFormat.ServiceEndedToday -> true
                         else -> false
                     }
                 }
             ) {
                 // If there's a mixture of no service today and service ended, but nothing else,
                 // service ended takes precedence
-                RealtimePatterns.NoTripsFormat.ServiceEndedToday
+                NoTripsFormat.ServiceEndedToday
             } else {
-                RealtimePatterns.NoTripsFormat.PredictionsUnavailable
+                NoTripsFormat.PredictionsUnavailable
             }
         }
 
@@ -256,7 +255,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             StopDetailsStatusRowData(
                                 pattern.route,
                                 pattern.headsign,
-                                RealtimePatterns.Format.NoTrips(it)
+                                UpcomingFormat.NoTrips(it)
                             )
                         }
                     }

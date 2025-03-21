@@ -9,9 +9,9 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
@@ -19,7 +19,7 @@ import kotlinx.datetime.Clock
 @Composable
 fun DirectionRowView(
     direction: Direction,
-    predictions: RealtimePatterns.Format,
+    predictions: UpcomingFormat,
     modifier: Modifier = Modifier,
     pillDecoration: PillDecoration? = null
 ) {
@@ -54,16 +54,16 @@ private fun DirectionRowViewPreview() {
             DirectionRowView(
                 Direction("West", "Some", 0),
                 predictions =
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         trips =
                             listOf(
-                                RealtimePatterns.Format.Some.FormatWithId(
+                                UpcomingFormat.Some.FormattedTrip(
                                     trip = UpcomingTrip(trip = trip1, prediction = prediction1),
                                     routeType = RouteType.LIGHT_RAIL,
                                     now = now,
                                     context = TripInstantDisplay.Context.NearbyTransit
                                 ),
-                                RealtimePatterns.Format.Some.FormatWithId(
+                                UpcomingFormat.Some.FormattedTrip(
                                     trip = UpcomingTrip(trip = trip2, prediction = prediction2),
                                     routeType = RouteType.LIGHT_RAIL,
                                     now = now,
@@ -76,18 +76,16 @@ private fun DirectionRowViewPreview() {
             DirectionRowView(
                 direction = Direction(name = "North", destination = "None", id = 0),
                 predictions =
-                    RealtimePatterns.Format.NoTrips(
-                        RealtimePatterns.NoTripsFormat.PredictionsUnavailable
-                    )
+                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
             )
             DirectionRowView(
                 direction = Direction(name = "South", destination = "Loading", id = 1),
-                predictions = RealtimePatterns.Format.Loading
+                predictions = UpcomingFormat.Loading
             )
             DirectionRowView(
                 direction = Direction(name = "East", destination = "No Service", id = 1),
                 predictions =
-                    RealtimePatterns.Format.Disruption(
+                    UpcomingFormat.Disruption(
                         alert =
                             ObjectCollectionBuilder.Single.alert {
                                 effect = Alert.Effect.Suspension

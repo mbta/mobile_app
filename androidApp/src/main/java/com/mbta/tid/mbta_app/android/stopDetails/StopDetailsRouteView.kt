@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.Composable
-import com.mbta.tid.mbta_app.android.component.LineCard
-import com.mbta.tid.mbta_app.android.component.RouteCard
-import com.mbta.tid.mbta_app.android.component.StopDeparturesSummaryList
+import com.mbta.tid.mbta_app.android.component.legacyRouteCard.LegacyRouteCard
+import com.mbta.tid.mbta_app.android.component.legacyRouteCard.LineCard
+import com.mbta.tid.mbta_app.android.component.legacyRouteCard.StopDeparturesSummaryList
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -34,7 +34,7 @@ fun StopDetailsRouteView(
         }
     } else {
         val route = patternsByStop.routes.firstOrNull() ?: return
-        RouteCard(route, pinned, onPin) {
+        LegacyRouteCard(route, pinned, onPin) {
             StopDeparturesSummaryList(
                 patternsByStop,
                 false,
