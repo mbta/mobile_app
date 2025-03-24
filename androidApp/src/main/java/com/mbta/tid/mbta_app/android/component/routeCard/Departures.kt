@@ -16,7 +16,6 @@ import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.PredictionRowView
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
@@ -49,19 +48,7 @@ fun Departures(
             )
         }
 
-        val formatted =
-            leaf.format(
-                now,
-                cardData.lineOrRoute.sortRoute,
-                3,
-                when (cardData.context) {
-                    RouteCardData.Context.NearbyTransit -> TripInstantDisplay.Context.NearbyTransit
-                    RouteCardData.Context.StopDetailsFiltered ->
-                        TripInstantDisplay.Context.StopDetailsFiltered
-                    RouteCardData.Context.StopDetailsUnfiltered ->
-                        TripInstantDisplay.Context.StopDetailsUnfiltered
-                }
-            )
+        val formatted = leaf.format(now, cardData.lineOrRoute.sortRoute, 3, cardData.context)
         val direction = stopData.directions.first { it.id == leaf.directionId }
 
         val clickModifier =

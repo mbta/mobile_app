@@ -137,7 +137,7 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip.id,
+                        upcomingTrip,
                         route.type,
                         TripInstantDisplay.Minutes(1)
                     )
@@ -177,7 +177,7 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip.id,
+                        upcomingTrip,
                         route.type,
                         TripInstantDisplay.Minutes(1)
                     )
@@ -295,7 +295,7 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip2.id,
+                        upcomingTrip2,
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     )
@@ -342,7 +342,7 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip2.id,
+                        upcomingTrip2,
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(5)
                     )
@@ -362,12 +362,12 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip1.id,
+                        upcomingTrip1,
                         RouteType.BUS,
                         TripInstantDisplay.ScheduleMinutes(5)
                     ),
                     UpcomingFormat.Some.FormattedTrip(
-                        trip2.id,
+                        upcomingTrip2,
                         RouteType.BUS,
                         TripInstantDisplay.Minutes(5)
                     )
@@ -571,17 +571,17 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip1.id,
+                        upcomingTrip1,
                         routeType,
                         TripInstantDisplay.Minutes(3)
                     ),
                     UpcomingFormat.Some.FormattedTrip(
-                        trip2.id,
+                        upcomingTrip2,
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     ),
                     UpcomingFormat.Some.FormattedTrip(
-                        trip3.id,
+                        upcomingTrip3,
                         routeType,
                         TripInstantDisplay.Minutes(7)
                     )
@@ -812,12 +812,12 @@ class RealtimePatternsTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        trip1.id,
+                        upcomingTrip1,
                         routeType,
                         TripInstantDisplay.Cancelled(schedule1.departureTime!!)
                     ),
                     UpcomingFormat.Some.FormattedTrip(
-                        trip2.id,
+                        upcomingTrip2,
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     )

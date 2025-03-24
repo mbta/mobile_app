@@ -14,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 
+// This is no longer necessary now that FormattedTrip includes the UpcomingTrip used to create it,
+// but it's left here for backwards compatibility until we replace StopDetailsDepartures
 data class TripAndFormat(
     val upcoming: UpcomingTrip,
     val formatted: UpcomingFormat.Some.FormattedTrip

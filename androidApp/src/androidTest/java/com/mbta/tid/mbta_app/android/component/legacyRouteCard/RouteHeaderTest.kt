@@ -1,9 +1,8 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.component.legacyRouteCard.RouteHeader
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import org.junit.Rule

@@ -7,9 +7,11 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,12 +29,12 @@ class HeadsignRowViewTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        "a",
+                        UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(2)
                     ),
                     UpcomingFormat.Some.FormattedTrip(
-                        "b",
+                        UpcomingTrip(trip { id = "b" }),
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(10)
                     ),
@@ -53,7 +55,7 @@ class HeadsignRowViewTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        "a",
+                        UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding
                     )
@@ -73,7 +75,7 @@ class HeadsignRowViewTest {
             UpcomingFormat.Some(
                 listOf(
                     UpcomingFormat.Some.FormattedTrip(
-                        "a",
+                        UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding
                     )

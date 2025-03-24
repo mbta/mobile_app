@@ -128,11 +128,19 @@ data class RouteCardData(
             now: Instant,
             representativeRoute: Route,
             count: Int,
-            context: TripInstantDisplay.Context
+            context: Context
         ): UpcomingFormat {
+            val translatedContext =
+                when (context) {
+                    Context.NearbyTransit -> TripInstantDisplay.Context.NearbyTransit
+                    Context.StopDetailsFiltered -> TripInstantDisplay.Context.StopDetailsFiltered
+                    Context.StopDetailsUnfiltered ->
+                        TripInstantDisplay.Context.StopDetailsUnfiltered
+                }
+
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
             val routeType = representativeRoute.type
-            val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
+            val majorAlert = alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
             if (majorAlert != null) return UpcomingFormat.Disruption(majorAlert, mapStopRoute)
             // TODO: handle downstream alerts
             val secondaryAlertToDisplay =
@@ -146,7 +154,7 @@ data class RouteCardData(
 
             val tripsToShow =
                 upcomingTrips
-                    .mapNotNull { formatUpcomingTrip(now, it, routeType, context) }
+                    .mapNotNull { formatUpcomingTrip(now, it, routeType, translatedContext) }
                     .take(count)
             return when {
                 tripsToShow.isNotEmpty() -> UpcomingFormat.Some(tripsToShow, secondaryAlert)

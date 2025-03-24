@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.hasClickActionLabel
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -26,6 +27,7 @@ class DepartureTileTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()
+        val upcoming = UpcomingTrip(trip)
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
@@ -35,15 +37,15 @@ class DepartureTileTest {
                     UpcomingFormat.Some(
                         trips =
                             listOf(
-                                UpcomingFormat.Some.FormatWithId(
-                                    trip.id,
+                                UpcomingFormat.Some.FormattedTrip(
+                                    upcoming,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
                                 )
                             ),
                         secondaryAlert = null
                     ),
-                    UpcomingTrip(trip, null, null, null)
+                    upcoming
                 ),
                 onTap = {}
             )
@@ -64,6 +66,7 @@ class DepartureTileTest {
                 type = RouteType.LIGHT_RAIL
             }
         val trip = objects.trip()
+        val upcoming = UpcomingTrip(trip)
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
@@ -73,15 +76,15 @@ class DepartureTileTest {
                     UpcomingFormat.Some(
                         trips =
                             listOf(
-                                UpcomingFormat.Some.FormatWithId(
-                                    trip.id,
+                                UpcomingFormat.Some.FormattedTrip(
+                                    upcoming,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
                                 )
                             ),
                         secondaryAlert = null
                     ),
-                    UpcomingTrip(trip, null, null, null)
+                    upcoming
                 ),
                 onTap = {},
                 showRoutePill = true
@@ -98,6 +101,7 @@ class DepartureTileTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()
+        val upcoming = UpcomingTrip(trip)
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
@@ -107,15 +111,15 @@ class DepartureTileTest {
                     UpcomingFormat.Some(
                         trips =
                             listOf(
-                                UpcomingFormat.Some.FormatWithId(
-                                    trip.id,
+                                UpcomingFormat.Some.FormattedTrip(
+                                    upcoming,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
                                 )
                             ),
                         secondaryAlert = null
                     ),
-                    UpcomingTrip(trip, null, null, null)
+                    upcoming
                 ),
                 onTap = { tapped = true }
             )
@@ -132,6 +136,7 @@ class DepartureTileTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()
+        val upcoming = UpcomingTrip(trip)
 
         var selected by mutableStateOf(false)
         composeTestRule.setContent {
@@ -143,15 +148,15 @@ class DepartureTileTest {
                     UpcomingFormat.Some(
                         trips =
                             listOf(
-                                UpcomingFormat.Some.FormatWithId(
-                                    trip.id,
+                                UpcomingFormat.Some.FormattedTrip(
+                                    upcoming,
                                     route.type,
                                     TripInstantDisplay.Minutes(5)
                                 )
                             ),
                         secondaryAlert = null
                     ),
-                    UpcomingTrip(trip, null, null, null)
+                    upcoming
                 ),
                 onTap = {},
                 isSelected = selected

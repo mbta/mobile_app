@@ -1,11 +1,10 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.component.legacyRouteCard.StopDeparturesSummaryList
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns

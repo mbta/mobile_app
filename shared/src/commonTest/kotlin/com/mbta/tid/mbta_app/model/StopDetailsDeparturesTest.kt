@@ -1897,14 +1897,16 @@ class StopDetailsDeparturesTest {
                     time,
                 )
 
+            val upcomingTrip = UpcomingTrip(
+                trip2, schedule2, prediction2, stop, vehicle1
+            )
+
             assertEquals(
                 listOf(
                     TripAndFormat(
-                        UpcomingTrip(
-                            trip2, schedule2, prediction2, stop, vehicle1
-                        ),
+                        upcomingTrip,
                         UpcomingFormat.Some.FormattedTrip(
-                            trip2.id, route1.type, TripInstantDisplay.Minutes(minutes = 5))
+                            upcomingTrip, route1.type, TripInstantDisplay.Minutes(minutes = 5))
                     )
                 ),
                 checkNotNull(departures).stopDetailsFormattedTrips(
