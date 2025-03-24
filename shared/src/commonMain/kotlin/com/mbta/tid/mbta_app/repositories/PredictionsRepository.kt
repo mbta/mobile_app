@@ -50,6 +50,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         stopIds: List<String>,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
+        disconnect()
         val joinPayload = PredictionsForStopsChannel.joinPayload(stopIds)
         channel = socket.getChannel(PredictionsForStopsChannel.topic, joinPayload)
 
