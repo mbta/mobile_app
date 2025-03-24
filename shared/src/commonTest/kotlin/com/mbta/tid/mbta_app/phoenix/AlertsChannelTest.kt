@@ -53,6 +53,8 @@ class AlertsChannelTest {
                                 }
                             }
                             put("lifecycle", "ongoing")
+                            put("severity", 10)
+
                             put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
@@ -91,6 +93,7 @@ class AlertsChannelTest {
                                 )
                             ),
                             Alert.Lifecycle.Ongoing,
+                            10,
                             Instant.parse("2023-05-26T16:46:13-04:00")
                         )
                 )
@@ -128,6 +131,7 @@ class AlertsChannelTest {
                                 }
                             }
                             put("lifecycle", "ongoing")
+                            put("severity", 10)
                             put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
@@ -160,6 +164,7 @@ class AlertsChannelTest {
                                     ),
                                 ),
                                 Alert.Lifecycle.Ongoing,
+                                10,
                                 Instant.parse("2023-05-26T16:46:13-04:00")
                             )
                 )

@@ -105,4 +105,30 @@ class AlertCardTests {
         composeTestRule.onNodeWithText("Alert header").assertIsDisplayed().performClick()
         assertTrue { onViewDetailsClicked }
     }
+
+    @Test
+    fun testDelayAlertCard() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Delay
+                cause = Alert.Cause.HeavyRidership
+            }
+        composeTestRule.setContent { AlertCard(alert, AlertCardSpec.Delay, color, textColor, {}) }
+
+        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
+    }
+
+    @Test
+    fun testDelayAlertCardUnknownCause() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Delay
+                cause = Alert.Cause.UnknownCause
+            }
+        composeTestRule.setContent { AlertCard(alert, AlertCardSpec.Delay, color, textColor, {}) }
+
+        composeTestRule.onNodeWithText("Delays").assertIsDisplayed()
+    }
 }

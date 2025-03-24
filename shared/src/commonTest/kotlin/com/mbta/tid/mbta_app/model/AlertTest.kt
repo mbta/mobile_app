@@ -54,6 +54,31 @@ class AlertTest {
     }
 
     @Test
+    fun `alert significance for delay alerts`() {
+                val subwayDelaySevere = ObjectCollectionBuilder.Single.alert {
+                    effect = Alert.Effect.Delay
+                    severity = 10
+                    informedEntity(emptyList(), stop = "stop", routeType = RouteType.LIGHT_RAIL)
+                }
+
+        val subwayDelayNotSevere = ObjectCollectionBuilder.Single.alert {
+            this.effect = Alert.Effect.Delay
+            severity = 0
+            informedEntity(emptyList(), stop = "stop", routeType = RouteType.LIGHT_RAIL)
+        }
+
+        val busDelaySevere = ObjectCollectionBuilder.Single.alert {
+            this.effect = Alert.Effect.Delay
+            severity = 10
+            informedEntity(emptyList(), stop = "stop", routeType = RouteType.BUS)
+        }
+
+        assertEquals(subwayDelaySevere.significance, AlertSignificance.Minor)
+        assertEquals(subwayDelayNotSevere.significance, AlertSignificance.None)
+        assertEquals(busDelaySevere.significance, AlertSignificance.None)
+    }
+
+    @Test
     fun `filter filters alerts to matching stops routes and directions`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()

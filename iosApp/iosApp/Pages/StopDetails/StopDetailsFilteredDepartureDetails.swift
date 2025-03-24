@@ -217,7 +217,16 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @ViewBuilder
     func alertCard(_ alert: Shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
-        let spec = spec ?? (alert.significance == .major ? .major : .secondary)
+        let spec: AlertCardSpec = if let spec {
+            spec
+        } else if alert.significance == .major {
+            .major
+        } else if alert.significance == .minor, alert.effect == .delay {
+            .delay
+        } else {
+            .secondary
+        }
+
         AlertCard(
             alert: alert,
             spec: spec,

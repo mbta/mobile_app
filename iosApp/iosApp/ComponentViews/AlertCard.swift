@@ -14,6 +14,7 @@ enum AlertCardSpec {
     case downstream
     case secondary
     case elevator
+    case delay
 }
 
 struct AlertCard: View {
@@ -41,7 +42,19 @@ struct AlertCard: View {
         return switch spec {
         case .downstream: formattedAlert.downstreamLabel
         case .elevator: alert.header ?? formattedAlert.effect
+        case .delay: delayHeader(formattedAlert)
         default: formattedAlert.effect
+        }
+    }
+
+    func delayHeader(_ formattedAlert: FormattedAlert) -> String {
+        if let cause = formattedAlert.dueToCause {
+            String(format: NSLocalizedString(
+                "Delays due to %@",
+                comment: "Describes the cause of a delay. Ex: 'Delays due to [traffic]'"
+            ), cause)
+        } else {
+            NSLocalizedString("Delays", comment: "Generic delay alert label when cause is unknown")
         }
     }
 
