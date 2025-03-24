@@ -86,7 +86,7 @@ class StopResultsViewTest {
                     routes = listOf()
                 ),
                 routes = listOf(bus5, bus4, sl, cr, red),
-                lines = emptyMap(),
+                globalResponse = null,
                 handleSearch = { handleSearchCalled = true }
             )
         }
@@ -138,7 +138,7 @@ class StopResultsViewTest {
                     routes = listOf()
                 ),
                 routes = listOf(bus5, bus4),
-                lines = emptyMap(),
+                globalResponse = null,
                 handleSearch = {}
             )
         }

@@ -9,23 +9,18 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
-import com.mbta.tid.mbta_app.utils.PerformsPoorlyInSwift
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 @Serializable
 data class GlobalResponse(
-    @PerformsPoorlyInSwift val lines: Map<String, Line>,
-    @SerialName("pattern_ids_by_stop")
-    @PerformsPoorlyInSwift
-    val patternIdsByStop: Map<String, List<String>>,
-    @PerformsPoorlyInSwift val routes: Map<String, Route>,
-    @SerialName("route_patterns")
-    @PerformsPoorlyInSwift
-    val routePatterns: Map<String, RoutePattern>,
-    @PerformsPoorlyInSwift val stops: Map<String, Stop>,
-    @PerformsPoorlyInSwift val trips: Map<String, Trip>,
+    internal val lines: Map<String, Line>,
+    @SerialName("pattern_ids_by_stop") internal val patternIdsByStop: Map<String, List<String>>,
+    internal val routes: Map<String, Route>,
+    @SerialName("route_patterns") internal val routePatterns: Map<String, RoutePattern>,
+    internal val stops: Map<String, Stop>,
+    internal val trips: Map<String, Trip>,
 ) {
     constructor(
         objects: ObjectCollectionBuilder

@@ -37,11 +37,11 @@ object StopFeaturesBuilder {
 
     suspend fun buildCollection(
         stopData: StopSourceData,
-        globalMapData: GlobalMapData,
+        globalMapData: GlobalMapData?,
         linesToSnap: List<RouteLineData>
-    ) = buildCollection(stopData, globalMapData.mapStops, linesToSnap)
+    ) = buildCollection(stopData, globalMapData?.mapStops.orEmpty(), linesToSnap)
 
-    suspend fun buildCollection(
+    internal suspend fun buildCollection(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
         linesToSnap: List<RouteLineData>

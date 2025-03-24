@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.utils.PerformsPoorlyInSwift
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,5 +8,5 @@ import kotlinx.serialization.Serializable
 data class StopMapResponse(
     @SerialName("map_friendly_route_shapes")
     val routeShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-    @SerialName("child_stops") @PerformsPoorlyInSwift val childStops: Map<String, Stop>
+    @SerialName("child_stops") val childStops: Map<String, Stop>
 )

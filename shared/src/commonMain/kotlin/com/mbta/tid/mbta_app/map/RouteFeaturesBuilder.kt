@@ -64,7 +64,7 @@ object RouteFeaturesBuilder {
             globalMapData?.alertsByStop
         )
 
-    suspend fun generateRouteLines(
+    internal suspend fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?,
         stopsById: Map<String, Stop>?,
@@ -228,7 +228,7 @@ object RouteFeaturesBuilder {
         globalData: GlobalResponse?
     ) = forRailAtStop(stopShapes, railShapes, globalData?.routes)
 
-    fun forRailAtStop(
+    private fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         railShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?

@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.isNullOrEmpty
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +29,10 @@ class AlertsViewModel(
         alertsRepository.connect {
             when (it) {
                 is ApiResult.Ok -> {
-                    val oldAlerts = _alerts.value?.alerts ?: emptyMap()
+                    val oldAlerts = _alerts.value
 
                     _alerts.value = it.data
-                    if (oldAlerts.isEmpty() && it.data.alerts.isNotEmpty())
+                    if (oldAlerts.isNullOrEmpty() && !it.data.isEmpty())
                         synchronized(alertFlow) { alertFlow.notifyAll() }
                 }
                 is ApiResult.Error -> {
