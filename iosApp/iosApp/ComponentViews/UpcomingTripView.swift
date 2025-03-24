@@ -238,7 +238,7 @@ struct UpcomingTripView_Previews: PreviewProvider {
 
     static func disruption(_ effect: Shared.Alert.Effect) -> UpcomingTripView.State {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = effect }
-        let format = UpcomingFormatDisruption(alert: alert, mapStopRoute: route)
+        let format = UpcomingFormat.Disruption(alert: alert, mapStopRoute: route)
         return .disruption(.init(alert: alert), iconName: format.iconName)
     }
 

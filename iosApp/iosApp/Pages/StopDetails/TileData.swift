@@ -36,14 +36,14 @@ struct TileData: Identifiable {
             routeType: route.type,
             context: .stopDetailsFiltered
         ) {
-            UpcomingFormatSome(trips: [formattedUpcomingTrip], secondaryAlert: nil)
+            UpcomingFormat.Some(trips: [formattedUpcomingTrip], secondaryAlert: nil)
         } else {
-            UpcomingFormatNoTrips(
+            UpcomingFormat.NoTrips(
                 noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable()
             )
         }
 
-        if !(formatted is UpcomingFormatSome) {
+        if !(formatted is UpcomingFormat.Some) {
             return nil
         }
 

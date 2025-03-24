@@ -15,7 +15,7 @@ import XCTest
 final class PredictionRowViewTests: XCTestCase {
     func testSecondaryAlert() throws {
         let sut = PredictionRowView(
-            predictions: UpcomingFormatNoTrips(
+            predictions: UpcomingFormat.NoTrips(
                 noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
                 secondaryAlert: .init(iconName: "alert-large-bus-issue")
             ),

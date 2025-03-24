@@ -189,11 +189,13 @@ struct StopDetailsFilteredView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         let loadingPatterns = LoadingPlaceholders.shared.patternsByStop(routeId: stopFilter.routeId, trips: 10)
-        let tiles = (0 ..< 4).map { index in TileData(
+        let upcomingTrip = loadingPatterns.patterns.first?.upcomingTrips.first
+
+        let tiles = (0 ..< 4).map { _ in TileData(
             route: loadingPatterns.representativeRoute,
             headsign: "placeholder",
-            formatted: UpcomingFormatSome(
-                trips: [.init(id: "\(index)", routeType: .lightRail, format: .Boarding())],
+            formatted: UpcomingFormat.Some(
+                trips: [.init(trip: upcomingTrip!, routeType: .lightRail, format: .Boarding())],
                 secondaryAlert: nil
             )
         ) }

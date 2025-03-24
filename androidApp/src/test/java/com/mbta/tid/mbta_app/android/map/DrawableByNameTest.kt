@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.map.StopIcons
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 

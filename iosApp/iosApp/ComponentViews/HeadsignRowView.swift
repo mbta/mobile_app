@@ -49,10 +49,10 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 prediction.trip = trip2
                 prediction.departureTime = now.addingTimeInterval(12 * 60).toKotlinInstant()
             }
-            let secondaryAlert = UpcomingFormatSecondaryAlert(
+            let secondaryAlert = UpcomingFormat.SecondaryAlert(
                 iconName: "alert-large-bus-issue"
             )
-            let greenLineEAlert = UpcomingFormatSecondaryAlert(
+            let greenLineEAlert = UpcomingFormat.SecondaryAlert(
                 iconName: "alert-large-green-issue"
             )
             let greenLineERoute = objects.route { route in
@@ -67,7 +67,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
             List {
                 HeadsignRowView(
                     headsign: "Some",
-                    predictions: UpcomingFormatSome(trips: [
+                    predictions: UpcomingFormat.Some(trips: [
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
@@ -82,7 +82,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 )
                 HeadsignRowView(
                     headsign: "Some with Alert",
-                    predictions: UpcomingFormatSome(trips: [
+                    predictions: UpcomingFormat.Some(trips: [
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
@@ -97,20 +97,20 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 )
                 HeadsignRowView(
                     headsign: "None",
-                    predictions: UpcomingFormatNoTrips(
+                    predictions: UpcomingFormat.NoTrips(
                         noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable()
                     )
                 )
                 HeadsignRowView(
                     headsign: "None with Alert",
-                    predictions: UpcomingFormatNoTrips(
+                    predictions: UpcomingFormat.NoTrips(
                         noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
                         secondaryAlert: secondaryAlert
                     )
                 )
                 HeadsignRowView(
                     headsign: "Decorated None with Alert",
-                    predictions: UpcomingFormatNoTrips(
+                    predictions: UpcomingFormat.NoTrips(
                         noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
                         secondaryAlert: greenLineEAlert
                     ),
@@ -118,11 +118,11 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 )
                 HeadsignRowView(
                     headsign: "Loading",
-                    predictions: UpcomingFormatLoading.shared
+                    predictions: UpcomingFormat.Loading.shared
                 )
                 HeadsignRowView(
                     headsign: "No Service",
-                    predictions: UpcomingFormatDisruption(
+                    predictions: UpcomingFormat.Disruption(
                         alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                             alert.effect = .suspension
                         }, mapStopRoute: .orange

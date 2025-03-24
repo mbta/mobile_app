@@ -50,7 +50,7 @@ struct DirectionRowView_Previews: PreviewProvider {
             List {
                 DirectionRowView(
                     direction: Direction(name: "West", destination: "Some", id: 0),
-                    predictions: UpcomingFormatSome(trips: [
+                    predictions: UpcomingFormat.Some(trips: [
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.heavyRail,
@@ -65,17 +65,17 @@ struct DirectionRowView_Previews: PreviewProvider {
                 )
                 DirectionRowView(
                     direction: Direction(name: "North", destination: "None", id: 0),
-                    predictions: UpcomingFormatNoTrips(
+                    predictions: UpcomingFormat.NoTrips(
                         noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable()
                     )
                 )
                 DirectionRowView(
                     direction: Direction(name: "South", destination: "Loading", id: 1),
-                    predictions: UpcomingFormatLoading.shared
+                    predictions: UpcomingFormat.Loading.shared
                 )
                 DirectionRowView(
                     direction: Direction(name: "East", destination: "No Service", id: 1),
-                    predictions: UpcomingFormatDisruption(
+                    predictions: UpcomingFormat.Disruption(
                         alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                             alert.effect = .suspension
                         }, mapStopRoute: .green

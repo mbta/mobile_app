@@ -194,7 +194,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testDisruptionIconName() throws {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .snowRoute }
-        let disruption = UpcomingFormatDisruption(alert: alert, mapStopRoute: .bus)
+        let disruption = UpcomingFormat.Disruption(alert: alert, mapStopRoute: .bus)
         let sut = UpcomingTripView(prediction: .disruption(.init(alert: alert), iconName: disruption.iconName))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "alert-large-bus-issue"

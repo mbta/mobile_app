@@ -92,11 +92,7 @@ data class RouteCardData(
             globalData: GlobalResponse
         ) : this(
             stop,
-            lineOrRoute.directions(
-                globalData,
-                stop,
-                data.mapNotNull { it.routePatterns }.flatten()
-            ),
+            lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
             data
         )
 
@@ -417,7 +413,7 @@ data class RouteCardData(
             return globalData.run {
                 patternIdsByStop
                     .getOrElse(stopId) { emptyList() }
-                    .mapNotNull { patternId ->
+                    .map { patternId ->
                         val pattern = routePatterns[patternId]
                         val route = pattern?.let { routes[it.routeId] }
                         Pair(route, pattern)
