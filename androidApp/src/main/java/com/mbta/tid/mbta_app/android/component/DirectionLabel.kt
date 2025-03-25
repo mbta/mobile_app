@@ -28,6 +28,31 @@ private fun directionNameFormatted(direction: Direction) =
     localizedDirectionNames[direction.name] ?: R.string.heading
 
 @Composable
+fun DirectionTo(direction: Direction, textColor: Color) {
+    Text(
+        stringResource(R.string.directionTo, stringResource(directionNameFormatted(direction))),
+        color = textColor,
+        modifier = Modifier.placeholderIfLoading(),
+        style = Typography.footnote
+    )
+}
+
+@Composable
+fun DestinationLabel(direction: Direction, textColor: Color) {
+    DestinationLabel(stringResource(directionNameFormatted(direction)), textColor)
+}
+
+@Composable
+fun DestinationLabel(destination: String, textColor: Color) {
+    Text(
+        destination,
+        color = textColor,
+        modifier = Modifier.placeholderIfLoading(),
+        style = Typography.bodySemibold
+    )
+}
+
+@Composable
 fun DirectionLabel(
     direction: Direction,
     modifier: Modifier = Modifier,
@@ -36,31 +61,13 @@ fun DirectionLabel(
 ) {
     val destination = direction.destination
     Column(modifier = modifier) {
-        if (destination != null || !showDestination) {
-            Text(
-                stringResource(
-                    R.string.directionTo,
-                    stringResource(directionNameFormatted(direction))
-                ),
-                color = textColor,
-                modifier = Modifier.placeholderIfLoading(),
-                style = Typography.footnote
-            )
-            if (destination != null && showDestination) {
-                Text(
-                    destination,
-                    color = textColor,
-                    modifier = Modifier.placeholderIfLoading(),
-                    style = Typography.bodySemibold
-                )
-            }
+        if (!showDestination) {
+            DirectionTo(direction, textColor)
+        } else if (destination != null) {
+            DirectionTo(direction, textColor)
+            DestinationLabel(destination, textColor)
         } else {
-            Text(
-                stringResource(directionNameFormatted(direction)),
-                color = textColor,
-                modifier = Modifier.placeholderIfLoading(),
-                style = Typography.bodySemibold
-            )
+            DestinationLabel(direction, textColor)
         }
     }
 }

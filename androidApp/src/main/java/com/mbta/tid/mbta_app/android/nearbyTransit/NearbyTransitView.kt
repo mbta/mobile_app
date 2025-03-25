@@ -105,7 +105,7 @@ fun NearbyTransitView(
         )
         ErrorBanner(errorBannerViewModel)
         if (groupByDirection) {
-            rememberSuspend(
+            LaunchedEffect(
                 nearbyVM.nearby,
                 globalResponse,
                 targetLocation,
