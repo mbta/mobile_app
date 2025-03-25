@@ -56,13 +56,17 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 
 ### iOS
 
+The entire Xcode project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+To generate the project, potentially overwriting local changes, use `bin/generate-xcodeproj.sh`.
+If you need to make changes that you only understand in Xcode, make the changes and then use `bin/diff-xcodeproj.sh` to determine what the actual settings need to be.
+
 The shared library dependency is managed using Cocoapods. To install the dependency and build the
 ios app:
 
 - Run a gradle sync of the project from Android Studio, or you may run
   `./gradlew :shared:generateDummyFramework` from the root directory
 - `bundle install` to install cocoapods and fastlane
-- `bundle exec pod install` from within the `iosApp` directory.
+- `bin/generate-xcodeproj.sh` to generate the Xcode project and then integrate CocoaPods with it
 - Open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
 - Populate any configuration needed in your the .envrc file. These will be read by a build phase
   script and set as info.plist values so that they can be read by the application.

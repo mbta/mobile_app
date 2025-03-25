@@ -1,0 +1,246 @@
+# https://github.com/yonaskolb/XcodeGen
+name: iosApp
+options:
+  bundleIdPrefix: com.mbta.tid
+  defaultConfig: ProdRelease
+attributes:
+  LastSwiftUpdateCheck: 1510
+  LastUpgradeCheck: 1130
+  ORGANIZATIONNAME: MBTA
+configs:
+  ProdRelease: release
+  ProdDebug: debug
+  StagingRelease: release
+  StagingDebug: debug
+settings:
+  base:
+    IPHONEOS_DEPLOYMENT_TARGET: '16.4'
+  configs:
+    Debug:
+      DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+    Release:
+      VALIDATE_PRODUCT: 'YES'
+    Staging:
+      PRODUCT_NAME: MBTA Go Staging
+    Prod:
+      PRODUCT_NAME: MBTA Go
+settingGroups:
+  default:
+    base:
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: RP77QY87AD
+      PRODUCT_NAME: "$(TARGET_NAME)"
+      SUPPORTED_PLATFORMS: iphoneos iphonesimulator
+      SUPPORTS_MACCATALYST: 'NO'
+      SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: 'NO'
+      SWIFT_VERSION: '5.0'
+      TARGETED_DEVICE_FAMILY: '1'
+    configs:
+      Debug:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG $(inherited)
+  build:
+    configs:
+      Debug:
+        KOTLIN_FRAMEWORK_BUILD_TYPE: debug
+      Release:
+        KOTLIN_FRAMEWORK_BUILD_TYPE: release
+      ProdDebug:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: PROD DEBUG $(inherited)
+      StagingDebug:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING DEBUG $(inherited)
+      ProdRelease:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: PROD $(inherited)
+      StagingRelease:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING $(inherited)
+  test:
+    base:
+      ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: 'YES'
+      CLANG_CXX_LANGUAGE_STANDARD: gnu++20
+      CURRENT_PROJECT_VERSION: '1'
+      GCC_C_LANGUAGE_STANDARD: gnu17
+      GENERATE_INFOPLIST_FILE: 'YES'
+      LOCALIZATION_PREFERS_STRING_CATALOGS: 'YES'
+      MARKETING_VERSION: '1.0'
+      SWIFT_EMIT_LOC_STRINGS: 'NO'
+    configs:
+      Debug:
+        DEBUG_INFORMATION_FORMAT: dwarf
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 11.1.0
+  MapboxMaps:
+    url: https://github.com/mapbox/mapbox-maps-ios.git
+    from: 11.3.0
+  swift-collections:
+    url: https://github.com/apple/swift-collections.git
+    from: 1.1.1
+  SwiftPhoenixClient:
+    url: https://github.com/davidstump/SwiftPhoenixClient
+    revision: 4e548e4ce4d46574a20b8a539d52d367fb0eae24
+  SwiftUI-Shimmer:
+    url: https://github.com/markiv/SwiftUI-Shimmer
+    from: 1.5.1
+  ViewInspector:
+    url: https://github.com/nalexn/ViewInspector
+    from: 0.10.0
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.4"
+    sources: [iosApp]
+    dependencies:
+      - package: Firebase
+        product: FirebaseAnalyticsWithoutAdIdSupport
+      - package: MapboxMaps
+      - package: swift-collections
+        product: Collections
+      - package: SwiftPhoenixClient
+      - package: SwiftUI-Shimmer
+        product: Shimmer
+    requiresObjCLinking: true
+    settings:
+      groups:
+        - default
+        - build
+      base:
+        DEVELOPMENT_ASSET_PATHS: '"iosApp/Preview Content"'
+        ENABLE_PREVIEWS: 'YES'
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-framework"
+          - Shared
+          - "-ObjC"
+      configs:
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          DEVELOPMENT_TEAM: RP77QY87AD
+        Release:
+          CODE_SIGN_IDENTITY: iPhone Distribution
+          CODE_SIGN_STYLE: Manual
+          DEVELOPMENT_TEAM: RP77QY87AD
+          PROVISIONING_PROFILE_SPECIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER) AppStore"
+        Staging:
+          ASSETCATALOG_COMPILER_APPICON_NAME: AppIconStaging
+          BUNDLE_NAME: MBTA Go Staging
+          PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp.staging
+        Prod:
+          BUNDLE_NAME: MBTA Go
+          PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp
+    postBuildScripts:
+      - name: Configure Build Variables
+        script: |
+          echo "Adding info.plist values from .envrc"
+          cat ../.envrc | grep '^export' | while IFS="=" read -r key value; do
+            key=$(echo $key | sed 's/export //')
+            echo "$key"
+            case "$key" in
+              "FIREBASE_KEY" | "GOOGLE_APP_ID_IOS")
+                if [ -n "$value" ]; then
+                  transformed_key=$key
+                  if [[ "$key" == "FIREBASE_KEY" ]]; then
+                    transformed_key="API_KEY"
+                  else
+                    transformed_key="GOOGLE_APP_ID"
+                  fi
+                  plutil -replace $transformed_key -string $value "$TARGET_BUILD_DIR/iosApp.app/GoogleService-Info.plist"
+                  echo "Google plist entry for $transformed_key added"
+                else
+                  echo "Skipping google plist entry for $key - no value set, this will crash the app"
+                fi
+              ;;
+              "");;
+              *)
+                if [ -n "$value" ]; then
+                  plutil -replace $key -string $value "$TARGET_BUILD_DIR/$INFOPLIST_PATH"
+                  echo "plist entry for $key added"
+                else
+                  echo "Skipping plist entry for $key - no value set"
+                fi
+              ;;
+            esac
+          done
+          echo "Setting GoogleService-Info BUNDLE ID"
+          plutil -replace "BUNDLE_ID" -string $PRODUCT_BUNDLE_IDENTIFIER "$TARGET_BUILD_DIR/iosApp.app/GoogleService-Info.plist"
+        basedOnDependencyAnalysis: false
+  iosAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources: [iosAppTests]
+    dependencies:
+      - target: iosApp
+      - package: ViewInspector
+    settings:
+      groups:
+        - default
+        - build
+        - test
+    postCompileScripts:
+      - name: SwiftLint
+        script: |
+          if [[ "$(uname -m)" == arm64 ]]; then
+            export PATH="/opt/homebrew/bin:$PATH"
+          fi
+
+          if which swiftlint >/dev/null; then
+            swiftlint
+          else
+            echo 'warning: SwiftLint not installed, `brew install swiftlint`'
+          fi
+        basedOnDependencyAnalysis: false
+  iosAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources: [iosAppUITests]
+    dependencies:
+      - target: iosApp
+    settings:
+      base:
+        ENABLE_USER_SCRIPT_SANDBOXING: 'YES'
+      groups:
+        - default
+        - test
+fileGroups:
+  - .swift-version
+  - .swiftlint.yml
+  - 10 Park Plaza.gpx
+  - iosApp.xctestplan
+  - iosAppRetries.xctestplan
+  - PrivacyInfo.xcprivacy
+  - project.yml
+schemes:
+  Staging:
+    templates:
+      - EnvironmentScheme
+  Prod:
+    templates:
+      - EnvironmentScheme
+schemeTemplates:
+  EnvironmentScheme:
+    build:
+      targets:
+        iosApp: all
+    run:
+      config: ${scheme_name}Debug
+      commandLineArguments:
+        "-FIRDebugEnabled": true
+    test:
+      config: ${scheme_name}Debug
+      targets:
+        - name: iosAppTests
+          parallelizable: true
+        - name: iosAppUITests
+          parallelizable: true
+      testPlans:
+        - path: iosApp.xctestplan
+          defaultPlan: true
+        - path: iosAppRetries.xctestplan
+    profile:
+      config: ${scheme_name}Release
+    analyze:
+      config: ${scheme_name}Debug
+    archive:
+      config: ${scheme_name}Release

@@ -313,6 +313,7 @@ DEPENDENCIES
   cyclonedx-cocoapods
   fastlane
   fastlane-plugin-sentry
+  xcodeproj
 
 BUNDLED WITH
    2.5.3
