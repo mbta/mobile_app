@@ -131,8 +131,8 @@ runs:
       shell: bash
       run: |
         OUT=$(mktemp -d)
-        pushd ${OUT}
         VERSION=$(cat .tool-versions | grep xcodegen | cut -d' ' -f2)
+        pushd ${OUT}
         curl --output xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/${VERSION}/xcodegen.zip
         unzip -q xcodegen.zip
         popd
