@@ -1569,14 +1569,10 @@ class RouteCardDataTest {
             // Routes with no service today should sort below all routes with any service today,
             // unless they are a pinned route, in which case we want them to sort beneath all other
             // pinned routes, but above any unpinned ones. Here, the far and mid subway routes are
-            // both
-            // pinned, but mid has no scheduled service, so it's sorted below the farther pinned
-            // route.
-            // For unpinned routes, mid bus is the only one with any schedules, so it's sorted above
-            // all
-            // the other unpinned routes, then the remaining  are ordered with the usual nearby
-            // transit
-            // sort order, subway first, then by distance.
+            // both pinned, but mid has no scheduled service, so it's sorted below the farther
+            // pinned route. For unpinned routes, mid bus is the only one with any schedules, so
+            // it's sorted above all the other unpinned routes, then the remaining  are ordered with
+            // the usual nearby transit sort order, subway first, then by distance.
             assertEquals(
                 listOf(
                     farSubwayRoute,
