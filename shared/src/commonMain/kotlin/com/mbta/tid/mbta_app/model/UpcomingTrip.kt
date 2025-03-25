@@ -56,6 +56,9 @@ constructor(
         prediction?.stopSequence ?: schedule?.stopSequence
     }
 
+    val headsign: String
+        get() = schedule?.stopHeadsign ?: trip.headsign
+
     val isCancelled: Boolean
         get() =
             schedule?.stopTime != null &&

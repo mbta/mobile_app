@@ -11,6 +11,7 @@ data class Schedule(
     @SerialName("departure_time") override val departureTime: Instant?,
     @SerialName("drop_off_type") val dropOffType: StopEdgeType,
     @SerialName("pick_up_type") val pickUpType: StopEdgeType,
+    @SerialName("stop_headsign") val stopHeadsign: String?,
     @SerialName("stop_sequence") val stopSequence: Int,
     @SerialName("route_id") val routeId: String,
     @SerialName("stop_id") val stopId: String,
