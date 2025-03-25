@@ -137,7 +137,7 @@ runs:
         unzip -q xcodegen.zip
         popd
         cd iosApp
-        ${OUT}/bin/xcodegen generate
+        ${OUT}/xcodegen/bin/xcodegen generate
         rm -r ${OUT}
     - name: Cache CocoaPods dependencies
       if: steps.settings.outputs.xcode == 'true'
