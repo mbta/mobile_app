@@ -191,7 +191,7 @@ struct HomeMapView: View {
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
-            routes: mapVM.globalData?.routes,
+            globalData: mapVM.globalData,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
             vehicles: vehicles,

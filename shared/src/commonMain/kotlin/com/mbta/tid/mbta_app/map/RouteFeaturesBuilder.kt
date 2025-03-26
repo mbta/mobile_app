@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.map.style.FeatureProperty
 import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.AlertAwareRouteSegment
+import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
@@ -16,6 +17,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.greenRoutes
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -51,6 +53,18 @@ object RouteFeaturesBuilder {
     val propAlertStateKey = FeatureProperty<String>("alertState")
 
     suspend fun generateRouteLines(
+        routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        globalData: GlobalResponse?,
+        globalMapData: GlobalMapData?
+    ) =
+        generateRouteLines(
+            routeData,
+            globalData?.routes,
+            globalData?.stops,
+            globalMapData?.alertsByStop
+        )
+
+    internal suspend fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?,
         stopsById: Map<String, Stop>?,
@@ -209,6 +223,12 @@ object RouteFeaturesBuilder {
     }
 
     fun forRailAtStop(
+        stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        railShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        globalData: GlobalResponse?
+    ) = forRailAtStop(stopShapes, railShapes, globalData?.routes)
+
+    private fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         railShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?

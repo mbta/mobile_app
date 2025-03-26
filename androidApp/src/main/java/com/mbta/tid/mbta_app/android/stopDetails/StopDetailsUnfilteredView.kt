@@ -36,7 +36,7 @@ fun StopDetailsUnfilteredView(
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
 
-    val stop: Stop? = globalResponse?.stops?.get(stopId)
+    val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()
 

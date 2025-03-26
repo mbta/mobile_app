@@ -49,8 +49,8 @@ struct TripDetailsView: View {
         self.analytics = analytics
     }
 
-    func getParentFor(_ stopId: String?, stops: [String: Stop]) -> Stop? {
-        if let stopId { stops[stopId]?.resolveParent(stops: stops) } else { nil }
+    func getParentFor(_ stopId: String?, global: GlobalResponse) -> Stop? {
+        global.getStop(stopId: stopId)?.resolveParent(global: global)
     }
 
     var body: some View {
@@ -103,8 +103,8 @@ struct TripDetailsView: View {
                let global = stopDetailsVM.global,
                let stops {
                 let routeAccents = stopDetailsVM.getTripRouteAccents()
-                let terminalStop = getParentFor(tripData.trip.stopIds?.first, stops: global.stops)
-                let vehicleStop = getParentFor(vehicle?.stopId, stops: global.stops)
+                let terminalStop = getParentFor(tripData.trip.stopIds?.first, global: global)
+                let vehicleStop = getParentFor(vehicle?.stopId, global: global)
                 tripDetails(tripFilter.tripId, stops, terminalStop, vehicle, vehicleStop, routeAccents)
                     .onAppear { didLoadData?(self) }
             } else {
@@ -227,7 +227,8 @@ struct TripDetailsView: View {
     }
 
     func onTapStop(stop: TripDetailsStopList.Entry) {
-        let parentStop = stop.stop.resolveParent(stops: stopDetailsVM.global?.stops ?? [:])
+        let parentStop = if let global = stopDetailsVM.global { stop.stop.resolveParent(global: global) }
+        else { stop.stop }
         nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(
             routeId: stopDetailsVM.tripData?.trip.routeId ?? "",

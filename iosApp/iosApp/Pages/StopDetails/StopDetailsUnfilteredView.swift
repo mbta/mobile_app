@@ -56,7 +56,7 @@ struct StopDetailsUnfilteredView: View {
     }
 
     var stop: Stop? {
-        stopDetailsVM.global?.stops[stopId]
+        stopDetailsVM.global?.getStop(stopId: stopId)
     }
 
     var hasAccessibilityWarning: Bool {

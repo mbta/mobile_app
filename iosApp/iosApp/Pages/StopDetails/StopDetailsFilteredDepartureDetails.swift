@@ -40,7 +40,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
     var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
     var routeTextColor: Color { Color(hex: patternsByStop.representativeRoute.textColor) }

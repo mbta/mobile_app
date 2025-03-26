@@ -149,12 +149,7 @@ class StopDetailsViewModel(
                     StopData(
                         it.stopId,
                         it.schedules,
-                        (it.predictionsByStop
-                                ?: PredictionsByStopJoinResponse(
-                                    mapOf(it.stopId to message.predictions),
-                                    message.trips,
-                                    message.vehicles
-                                ))
+                        (it.predictionsByStop ?: PredictionsByStopJoinResponse(message))
                             .mergePredictions(message),
                         true
                     )

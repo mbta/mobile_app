@@ -148,9 +148,7 @@ open class MapViewModel(
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
         withContext(Dispatchers.Default) {
-            globalResponse.first()?.let {
-                GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData.value, now))
-            }
+            globalResponse.first()?.let { GlobalMapData(it, alertsData.value, now) }
         }
 
     override suspend fun refreshGlobalMapData(now: Instant) {
@@ -163,9 +161,8 @@ open class MapViewModel(
         _railRouteLineData.value =
             RouteFeaturesBuilder.generateRouteLines(
                 railRouteShapes.routesWithSegmentedShapes,
-                globalResponse.routes,
-                globalResponse.stops,
-                globalMapData?.alertsByStop
+                globalResponse,
+                globalMapData
             )
     }
 
@@ -174,7 +171,7 @@ open class MapViewModel(
         _stopSourceData.value =
             StopFeaturesBuilder.buildCollection(
                     StopSourceData(selectedStopId = selectedStop?.id),
-                    globalMapData?.mapStops.orEmpty(),
+                    globalMapData,
                     routeLineData
                 )
                 .toMapbox()
