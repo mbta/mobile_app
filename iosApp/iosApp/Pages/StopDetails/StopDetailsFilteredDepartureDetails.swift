@@ -59,6 +59,10 @@ struct StopDetailsFilteredDepartureDetails: View {
         alerts.contains(where: { $0.significance == .major })
     }
 
+    var hasAccessibilityWarning: Bool {
+        !patternsByStop.elevatorAlerts.isEmpty || !patternsByStop.stop.isWheelchairAccessible
+    }
+
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
 
@@ -240,7 +244,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var alertCards: some View {
         if !alerts.isEmpty ||
             !downstreamAlerts.isEmpty ||
-            (stopDetailsVM.showElevatorAccessibility && !patternsByStop.elevatorAlerts.isEmpty) {
+            (stopDetailsVM.showElevatorAccessibility && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     alertCard(alert)
@@ -248,9 +252,13 @@ struct StopDetailsFilteredDepartureDetails: View {
                 ForEach(downstreamAlerts, id: \.id) { alert in
                     alertCard(alert, .downstream)
                 }
-                if stopDetailsVM.showElevatorAccessibility {
-                    ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
-                        alertCard(alert, .elevator)
+                if stopDetailsVM.showElevatorAccessibility, hasAccessibilityWarning {
+                    if !patternsByStop.elevatorAlerts.isEmpty {
+                        ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
+                            alertCard(alert, .elevator)
+                        }
+                    } else {
+                        NotAccessibleCard()
                     }
                 }
             }.padding(.horizontal, 16)

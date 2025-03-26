@@ -59,6 +59,10 @@ struct StopDetailsUnfilteredView: View {
         stopDetailsVM.global?.stops[stopId]
     }
 
+    var hasAccessibilityWarning: Bool {
+        departures?.elevatorAlerts.isEmpty == false || stop?.isWheelchairAccessible == false
+    }
+
     var body: some View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
@@ -90,31 +94,37 @@ struct StopDetailsUnfilteredView: View {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             if let departures {
-                                if stopDetailsVM.showElevatorAccessibility {
-                                    ForEach(departures.elevatorAlerts, id: \.id) { alert in
-                                        AlertCard(
-                                            alert: alert,
-                                            spec: .elevator,
-                                            color: Color.clear,
-                                            textColor: Color.text,
-                                            onViewDetails: {
-                                                nearbyVM.pushNavEntry(.alertDetails(
-                                                    alertId: alert.id,
-                                                    line: nil,
-                                                    routes: nil,
-                                                    stop: stop
-                                                ))
-                                                analytics.tappedAlertDetails(
-                                                    routeId: "",
-                                                    stopId: stopId,
-                                                    alertId: alert.id,
-                                                    elevator: true
-                                                )
-                                            }
-                                        )
+                                if stopDetailsVM.showElevatorAccessibility, hasAccessibilityWarning {
+                                    if !departures.elevatorAlerts.isEmpty {
+                                        ForEach(departures.elevatorAlerts, id: \.id) { alert in
+                                            AlertCard(
+                                                alert: alert,
+                                                spec: .elevator,
+                                                color: Color.clear,
+                                                textColor: Color.text,
+                                                onViewDetails: {
+                                                    nearbyVM.pushNavEntry(.alertDetails(
+                                                        alertId: alert.id,
+                                                        line: nil,
+                                                        routes: nil,
+                                                        stop: stop
+                                                    ))
+                                                    analytics.tappedAlertDetails(
+                                                        routeId: "",
+                                                        stopId: stopId,
+                                                        alertId: alert.id,
+                                                        elevator: true
+                                                    )
+                                                }
+                                            )
+                                            .padding(.horizontal, 16)
+                                            .padding(.bottom, 16)
+                                        }
+                                    }
+                                } else {
+                                    NotAccessibleCard()
                                         .padding(.horizontal, 16)
                                         .padding(.bottom, 16)
-                                    }
                                 }
 
                                 ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in

@@ -239,6 +239,7 @@
 		EDE692382CD038990081A4D2 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */; };
 		EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */; };
 		EDE92FAA2C408A50007AD2F6 /* MoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA92C408A50007AD2F6 /* MoreSection.swift */; };
+		EDF2F2082D93A550007C3A31 /* NotAccessibleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF2F2072D93A547007C3A31 /* NotAccessibleCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -530,6 +531,7 @@
 		EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		EDE92FA92C408A50007AD2F6 /* MoreSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSection.swift; sourceTree = "<group>"; };
+		EDF2F2072D93A547007C3A31 /* NotAccessibleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotAccessibleCard.swift; sourceTree = "<group>"; };
 		F35CF19A11F0511AA7B2E080 /* Pods-iosApp.stagingdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingdebug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingdebug.xcconfig"; sourceTree = "<group>"; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		FC22C03A28BCE0F50A921CED /* Pods-iosAppTests.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.staging debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.staging debug.xcconfig"; sourceTree = "<group>"; };
@@ -1076,6 +1078,7 @@
 		9AFCD9DD2CE66AE1001A2384 /* StopDetails */ = {
 			isa = PBXGroup;
 			children = (
+				EDF2F2072D93A547007C3A31 /* NotAccessibleCard.swift */,
 				9A4092E82D0248880026EB01 /* ColoredRouteLine.swift */,
 				9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */,
 				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
@@ -1476,6 +1479,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A3739982D41450100BBE127 /* SettingsExtension.swift in Sources */,
+				EDF2F2082D93A550007C3A31 /* NotAccessibleCard.swift in Sources */,
 				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
 				9AF29DF82CF5454E005AA4A3 /* StopDetailsFilteredView.swift in Sources */,
 				9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */,

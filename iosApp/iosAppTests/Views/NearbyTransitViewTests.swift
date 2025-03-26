@@ -85,6 +85,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let stop1 = objects.stop { stop in
             stop.id = "8552"
             stop.name = "Sawmill Brook Pkwy @ Walsh Rd"
+            stop.wheelchairBoarding = .accessible
         }
         let stop2 = objects.stop { stop in
             stop.id = "84791"
@@ -873,6 +874,31 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(text: "1 elevator closed"))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
+    }
+
+    func testDisplaysWheelchairAccessibility() throws {
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.showElevatorAccessibility = true
+        nearbyVM.alerts = AlertsStreamDataResponse(alerts: [:])
+        var sut = NearbyTransitView(
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
+            schedulesRepository: MockScheduleRepository(),
+            getNearby: { _, _ in },
+            state: .constant(route52State),
+            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
+        )
+
+        let exp = sut.on(\.didLoadData) { view in
+            XCTAssertThrowsError(try view.find(text: "1 elevator closed"))
+            XCTAssertNotNil(try view.find(viewWithTag: "wheelchair_accessible"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
