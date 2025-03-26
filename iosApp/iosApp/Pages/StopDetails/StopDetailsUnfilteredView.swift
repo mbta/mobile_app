@@ -120,11 +120,11 @@ struct StopDetailsUnfilteredView: View {
                                             .padding(.horizontal, 16)
                                             .padding(.bottom, 16)
                                         }
+                                    } else {
+                                        NotAccessibleCard()
+                                            .padding(.horizontal, 16)
+                                            .padding(.bottom, 16)
                                     }
-                                } else {
-                                    NotAccessibleCard()
-                                        .padding(.horizontal, 16)
-                                        .padding(.bottom, 16)
                                 }
 
                                 ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
