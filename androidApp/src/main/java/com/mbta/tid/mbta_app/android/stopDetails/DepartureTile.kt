@@ -34,9 +34,10 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlinx.datetime.Clock
 
 @Composable
@@ -125,10 +126,10 @@ private fun DepartureTilePreview() {
                     trip1.id,
                     route1,
                     "Framingham",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         listOf(
-                            RealtimePatterns.Format.Some.FormatWithId(
-                                trip1.id,
+                            UpcomingFormat.Some.FormattedTrip(
+                                UpcomingTrip(trip1),
                                 RouteType.COMMUTER_RAIL,
                                 TripInstantDisplay.TimeWithStatus(
                                     Clock.System.now(),
@@ -150,10 +151,10 @@ private fun DepartureTilePreview() {
                     trip2.id,
                     route1,
                     "Harvard",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         listOf(
-                            RealtimePatterns.Format.Some.FormatWithId(
-                                trip2.id,
+                            UpcomingFormat.Some.FormattedTrip(
+                                UpcomingTrip(trip2),
                                 RouteType.BUS,
                                 TripInstantDisplay.Minutes(9)
                             )
@@ -170,10 +171,10 @@ private fun DepartureTilePreview() {
                     trip3.id,
                     routeB,
                     "Government Center",
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         listOf(
-                            RealtimePatterns.Format.Some.FormatWithId(
-                                trip3.id,
+                            UpcomingFormat.Some.FormattedTrip(
+                                UpcomingTrip(trip3),
                                 RouteType.LIGHT_RAIL,
                                 TripInstantDisplay.Minutes(12)
                             )

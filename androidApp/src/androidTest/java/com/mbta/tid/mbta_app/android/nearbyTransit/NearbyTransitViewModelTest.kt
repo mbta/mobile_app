@@ -44,6 +44,11 @@ class NearbyTransitViewModelTest {
 
         val nearbyRepository =
             object : INearbyRepository {
+                override fun getStopIdsNearby(
+                    global: GlobalResponse,
+                    location: Position
+                ): List<String> = emptyList()
+
                 override suspend fun getNearby(
                     global: GlobalResponse,
                     location: Position

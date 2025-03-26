@@ -13,13 +13,13 @@ struct TileData: Identifiable {
     let id: String
     let route: Route
     let headsign: String
-    let formatted: RealtimePatterns.Format
+    let formatted: UpcomingFormat
     let upcoming: UpcomingTrip?
 
     init(
         route: Route,
         headsign: String,
-        formatted: RealtimePatterns.Format,
+        formatted: UpcomingFormat,
         upcoming: UpcomingTrip? = nil
     ) {
         self.route = route
@@ -36,14 +36,14 @@ struct TileData: Identifiable {
             routeType: route.type,
             context: .stopDetailsFiltered
         ) {
-            RealtimePatterns.FormatSome(trips: [formattedUpcomingTrip], secondaryAlert: nil)
+            UpcomingFormat.Some(trips: [formattedUpcomingTrip], secondaryAlert: nil)
         } else {
-            RealtimePatterns.FormatNoTrips(
-                noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable()
+            UpcomingFormat.NoTrips(
+                noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable()
             )
         }
 
-        if !(formatted is RealtimePatterns.FormatSome) {
+        if !(formatted is UpcomingFormat.Some) {
             return nil
         }
 

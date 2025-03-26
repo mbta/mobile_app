@@ -19,7 +19,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
 
     func testPredictionsUnavailable() throws {
         let sut = StopDetailsNoTripCard(
-            status: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
+            status: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
             accentColor: Color.text,
             routeType: .bus,
             hideMaps: false
@@ -37,7 +37,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
 
     func testServiceEnded() throws {
         let sut = StopDetailsNoTripCard(
-            status: RealtimePatterns.NoTripsFormatServiceEndedToday(),
+            status: UpcomingFormat.NoTripsFormatServiceEndedToday(),
             accentColor: Color.text,
             routeType: .ferry,
             hideMaps: false
@@ -51,7 +51,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
 
     func testNoSchedulesToday() throws {
         let sut = StopDetailsNoTripCard(
-            status: RealtimePatterns.NoTripsFormatNoSchedulesToday(),
+            status: UpcomingFormat.NoTripsFormatNoSchedulesToday(),
             accentColor: Color.text,
             routeType: .commuterRail,
             hideMaps: false

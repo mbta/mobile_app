@@ -12,14 +12,16 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.route
-import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 
 @Composable
 fun HeadsignRowView(
     headsign: String,
-    predictions: RealtimePatterns.Format,
+    predictions: UpcomingFormat,
     modifier: Modifier = Modifier,
     pillDecoration: PillDecoration? = null,
 ) {
@@ -39,15 +41,15 @@ fun HeadsignRowViewPreview() {
         Column {
             HeadsignRowView(
                 "Some",
-                RealtimePatterns.Format.Some(
+                UpcomingFormat.Some(
                     listOf(
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            "1",
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip { id = "1" }),
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(5)
                         ),
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            "2",
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip { id = "2" }),
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(15)
                         )
@@ -57,41 +59,38 @@ fun HeadsignRowViewPreview() {
             )
             HeadsignRowView(
                 "Some with Alert",
-                RealtimePatterns.Format.Some(
+                UpcomingFormat.Some(
                     listOf(
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            "1",
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip { id = "1" }),
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(5)
                         ),
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            "2",
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip { id = "2" }),
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(15)
                         )
                     ),
-                    secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
                 )
             )
             HeadsignRowView(
                 "None",
-                RealtimePatterns.Format.NoTrips(
-                    RealtimePatterns.NoTripsFormat.PredictionsUnavailable
-                )
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
             )
             HeadsignRowView(
                 "None with Alert",
-                RealtimePatterns.Format.NoTrips(
-                    RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
-                    secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+                UpcomingFormat.NoTrips(
+                    UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
                 )
             )
             HeadsignRowView(
                 "Decorated None with Alert",
-                RealtimePatterns.Format.NoTrips(
-                    RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
-                    secondaryAlert =
-                        RealtimePatterns.Format.SecondaryAlert("alert-large-green-issue")
+                UpcomingFormat.NoTrips(
+                    UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue")
                 ),
                 pillDecoration =
                     PillDecoration.OnRow(
@@ -105,10 +104,10 @@ fun HeadsignRowViewPreview() {
                         }
                     )
             )
-            HeadsignRowView("Loading", RealtimePatterns.Format.Loading)
+            HeadsignRowView("Loading", UpcomingFormat.Loading)
             HeadsignRowView(
                 "No Service",
-                RealtimePatterns.Format.Disruption(
+                UpcomingFormat.Disruption(
                     alert { effect = Alert.Effect.Suspension },
                     MapStopRoute.ORANGE
                 )

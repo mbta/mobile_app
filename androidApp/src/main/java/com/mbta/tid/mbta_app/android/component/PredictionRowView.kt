@@ -32,10 +32,11 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 
 sealed interface PillDecoration {
     data class OnRow(val route: Route) : PillDecoration
@@ -45,7 +46,7 @@ sealed interface PillDecoration {
 
 @Composable
 fun PredictionRowView(
-    predictions: RealtimePatterns.Format,
+    predictions: UpcomingFormat,
     modifier: Modifier = Modifier,
     pillDecoration: PillDecoration? = null,
     destination: @Composable () -> Unit
@@ -83,7 +84,7 @@ fun PredictionRowView(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     when (predictions) {
-                        is RealtimePatterns.Format.Some ->
+                        is UpcomingFormat.Some ->
                             predictions.trips.mapIndexed { index, prediction ->
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -114,25 +115,23 @@ fun PredictionRowView(
                                     }
                                 }
                             }
-                        is RealtimePatterns.Format.Disruption ->
+                        is UpcomingFormat.Disruption ->
                             UpcomingTripView(
                                 UpcomingTripViewState.Disruption(
                                     FormattedAlert(predictions.alert),
                                     iconName = predictions.iconName
                                 )
                             )
-                        is RealtimePatterns.Format.NoTrips ->
+                        is UpcomingFormat.NoTrips ->
                             UpcomingTripView(
                                 (UpcomingTripViewState.NoTrips(predictions.noTripsFormat))
                             )
-                        is RealtimePatterns.Format.Loading ->
-                            UpcomingTripView(UpcomingTripViewState.Loading)
+                        is UpcomingFormat.Loading -> UpcomingTripView(UpcomingTripViewState.Loading)
                     }
                 }
-                //
             }
 
-            if (predictions !is RealtimePatterns.Format.Disruption) {
+            if (predictions !is UpcomingFormat.Disruption) {
                 Column(
                     modifier = Modifier.padding(8.dp).widthIn(max = 8.dp),
                 ) {
@@ -167,10 +166,10 @@ private fun PredictionRowViewPreview() {
         Column {
             PredictionRowView(
                 predictions =
-                    RealtimePatterns.Format.Some(
+                    UpcomingFormat.Some(
                         listOf(
-                            RealtimePatterns.Format.Some.FormatWithId(
-                                trip.id,
+                            UpcomingFormat.Some.FormattedTrip(
+                                UpcomingTrip(trip),
                                 RouteType.LIGHT_RAIL,
                                 TripInstantDisplay.Boarding
                             )
@@ -183,10 +182,10 @@ private fun PredictionRowViewPreview() {
             }
 
             PredictionRowView(
-                RealtimePatterns.Format.Some(
+                UpcomingFormat.Some(
                     listOf(
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            trip.id,
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip),
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Overridden("Stopped 10 stops away")
                         )
@@ -199,10 +198,10 @@ private fun PredictionRowViewPreview() {
             }
 
             PredictionRowView(
-                RealtimePatterns.Format.Some(
+                UpcomingFormat.Some(
                     listOf(
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            trip.id,
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip),
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Overridden("Stopped 10 stops away")
                         )
@@ -215,15 +214,15 @@ private fun PredictionRowViewPreview() {
             }
 
             PredictionRowView(
-                RealtimePatterns.Format.Some(
+                UpcomingFormat.Some(
                     listOf(
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            "a",
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip),
                             RouteType.BUS,
                             TripInstantDisplay.ScheduleMinutes(6)
                         ),
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            "b",
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip),
                             RouteType.BUS,
                             TripInstantDisplay.ScheduleMinutes(15)
                         ),
@@ -235,7 +234,7 @@ private fun PredictionRowViewPreview() {
             }
 
             PredictionRowView(
-                RealtimePatterns.Format.Disruption(
+                UpcomingFormat.Disruption(
                     alert { effect = Alert.Effect.Detour },
                     MapStopRoute.GREEN
                 )
