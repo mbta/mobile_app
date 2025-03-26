@@ -17,9 +17,9 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -256,8 +256,7 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithDisruption() {
         val alert = ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Suspension }
-        val disruption =
-            RealtimePatterns.Format.Disruption(alert, mapStopRoute = MapStopRoute.FERRY)
+        val disruption = UpcomingFormat.Disruption(alert, mapStopRoute = MapStopRoute.FERRY)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName)

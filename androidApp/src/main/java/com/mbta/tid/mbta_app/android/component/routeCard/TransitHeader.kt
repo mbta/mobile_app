@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.routeCard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -20,10 +20,30 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+
+@Composable
+fun TransitHeader(
+    transit: RouteCardData.LineOrRoute,
+    rightContent: (@Composable (textColor: Color) -> Unit)? = null
+) {
+    val (modeIcon, modeDescription) = routeIcon(transit.sortRoute)
+    TransitHeader(
+        transit.name,
+        routeType = transit.type,
+        backgroundColor = Color.fromHex(transit.backgroundColor),
+        textColor = Color.fromHex(transit.textColor),
+        modeIcon = modeIcon,
+        modeDescription = modeDescription,
+        rightContent
+    )
+}
 
 @Composable
 fun TransitHeader(
@@ -35,7 +55,6 @@ fun TransitHeader(
     modeDescription: String?,
     rightContent: (@Composable (textColor: Color) -> Unit)? = null
 ) {
-
     val routeContentDescription =
         stringResource(
             id = R.string.route_with_type,

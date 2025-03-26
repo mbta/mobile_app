@@ -24,8 +24,12 @@ final class DepartureTileTests: XCTestCase {
             data: .init(
                 route: route,
                 headsign: "headsign",
-                formatted: RealtimePatterns.FormatSome(
-                    trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                formatted: UpcomingFormat.Some(
+                    trips: [.init(
+                        trip: .init(trip: objects.trip { _ in }),
+                        routeType: .heavyRail,
+                        format: .Minutes(minutes: 5)
+                    )],
                     secondaryAlert: nil
                 )
             ),
@@ -44,8 +48,12 @@ final class DepartureTileTests: XCTestCase {
             data: .init(
                 route: route,
                 headsign: "headsign",
-                formatted: RealtimePatterns.FormatSome(
-                    trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                formatted: UpcomingFormat.Some(
+                    trips: [.init(
+                        trip: .init(trip: objects.trip { _ in }),
+                        routeType: .heavyRail,
+                        format: .Minutes(minutes: 5)
+                    )],
                     secondaryAlert: nil
                 )
             ),
@@ -66,8 +74,12 @@ final class DepartureTileTests: XCTestCase {
             data: .init(
                 route: route,
                 headsign: "headsign",
-                formatted: RealtimePatterns.FormatSome(
-                    trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                formatted: UpcomingFormat.Some(
+                    trips: [.init(
+                        trip: .init(trip: objects.trip { _ in }),
+                        routeType: .heavyRail,
+                        format: .Minutes(minutes: 5)
+                    )],
                     secondaryAlert: nil
                 )
             ),
@@ -86,8 +98,12 @@ final class DepartureTileTests: XCTestCase {
         let tileData = TileData(
             route: route,
             headsign: "headsign",
-            formatted: RealtimePatterns.FormatSome(
-                trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+            formatted: UpcomingFormat.Some(
+                trips: [.init(
+                    trip: .init(trip: objects.trip { _ in }),
+                    routeType: .heavyRail,
+                    format: .Minutes(minutes: 5)
+                )],
                 secondaryAlert: nil
             )
         )

@@ -5,8 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import org.junit.Rule
 import org.junit.Test
 
@@ -18,7 +18,7 @@ class StopDetailsNoTripCardTests {
     fun testPredictionsUnavailable() {
         composeTestRule.setContent {
             StopDetailsNoTripCard(
-                status = RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
+                status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
                 accentColor = Color.Black,
                 routeType = RouteType.BUS,
                 hideMaps = false
@@ -39,7 +39,7 @@ class StopDetailsNoTripCardTests {
     fun testPredictionsUnavailableHideMaps() {
         composeTestRule.setContent {
             StopDetailsNoTripCard(
-                status = RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
+                status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
                 accentColor = Color.Black,
                 routeType = RouteType.BUS,
                 hideMaps = true
@@ -58,7 +58,7 @@ class StopDetailsNoTripCardTests {
     fun testServiceEnded() {
         composeTestRule.setContent {
             StopDetailsNoTripCard(
-                status = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                status = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 accentColor = Color.Black,
                 routeType = RouteType.FERRY,
                 hideMaps = false
@@ -72,7 +72,7 @@ class StopDetailsNoTripCardTests {
     fun testNoSchedulesToday() {
         composeTestRule.setContent {
             StopDetailsNoTripCard(
-                status = RealtimePatterns.NoTripsFormat.NoSchedulesToday,
+                status = UpcomingFormat.NoTripsFormat.NoSchedulesToday,
                 accentColor = Color.Black,
                 routeType = RouteType.COMMUTER_RAIL,
                 hideMaps = false

@@ -90,14 +90,14 @@ object PatternSorting {
         sortByDistanceFrom: Position?
     ): Comparator<RouteCardData> =
         compareBy(
-            { pinnedRouteBucket(it.lineOrRoute.sortRoute(), pinnedRoutes) },
+            { pinnedRouteBucket(it.lineOrRoute.sortRoute, pinnedRoutes) },
             { patternServiceBucket(it.stopData.first().data.first()) },
-            { subwayBucket(it.lineOrRoute.sortRoute()) },
+            { subwayBucket(it.lineOrRoute.sortRoute) },
             if (sortByDistanceFrom != null) {
                 { it.distanceFrom(sortByDistanceFrom) }
             } else {
                 { 0 }
             },
-            { it.lineOrRoute.sortRoute() },
+            { it.lineOrRoute.sortRoute },
         )
 }

@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.analytics
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -84,7 +84,7 @@ abstract class Analytics {
         pinned: Boolean,
         alert: Boolean,
         routeType: RouteType,
-        noTrips: RealtimePatterns.NoTripsFormat?
+        noTrips: UpcomingFormat.NoTripsFormat?
     ) {
         val mode =
             when (routeType) {
@@ -96,9 +96,9 @@ abstract class Analytics {
             }
         val noTrips =
             when (noTrips) {
-                RealtimePatterns.NoTripsFormat.NoSchedulesToday -> "no service today"
-                RealtimePatterns.NoTripsFormat.PredictionsUnavailable -> "predictions unavailable"
-                RealtimePatterns.NoTripsFormat.ServiceEndedToday -> "service ended"
+                UpcomingFormat.NoTripsFormat.NoSchedulesToday -> "no service today"
+                UpcomingFormat.NoTripsFormat.PredictionsUnavailable -> "predictions unavailable"
+                UpcomingFormat.NoTripsFormat.ServiceEndedToday -> "service ended"
                 null -> ""
             }
         logEvent(

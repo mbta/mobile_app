@@ -44,10 +44,10 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.coroutines.launch
@@ -62,7 +62,7 @@ fun StopDetailsFilteredDeparturesView(
     tripFilter: TripDetailsFilter?,
     patternsByStop: PatternsByStop,
     tileData: List<TileData>,
-    noPredictionsStatus: RealtimePatterns.NoTripsFormat?,
+    noPredictionsStatus: NoTripsFormat?,
     allAlerts: AlertsStreamDataResponse?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,

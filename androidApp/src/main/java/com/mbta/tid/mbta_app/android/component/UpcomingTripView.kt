@@ -43,9 +43,9 @@ import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.time.Duration.Companion.minutes
@@ -58,7 +58,7 @@ import kotlinx.datetime.toLocalDateTime
 sealed interface UpcomingTripViewState {
     data object Loading : UpcomingTripViewState
 
-    data class NoTrips(val format: RealtimePatterns.NoTripsFormat) : UpcomingTripViewState
+    data class NoTrips(val format: UpcomingFormat.NoTripsFormat) : UpcomingTripViewState
 
     data class Disruption(val formattedAlert: FormattedAlert, val iconName: String) :
         UpcomingTripViewState
@@ -317,21 +317,21 @@ fun UpcomingTripView(
             )
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
-                is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
+                is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
                     Text(
                         stringResource(R.string.no_predictions),
                         modifier,
                         textAlign = TextAlign.End,
                         style = Typography.footnote
                     )
-                is RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
+                is UpcomingFormat.NoTripsFormat.ServiceEndedToday ->
                     Text(
                         stringResource(R.string.service_ended),
                         modifier,
                         textAlign = TextAlign.End,
                         style = Typography.footnote
                     )
-                is RealtimePatterns.NoTripsFormat.NoSchedulesToday ->
+                is UpcomingFormat.NoTripsFormat.NoSchedulesToday ->
                     Text(
                         stringResource(R.string.no_service_today),
                         modifier,
@@ -425,7 +425,7 @@ fun DisruptionViewPreview() {
 
     fun disruption(effect: Alert.Effect): UpcomingTripViewState {
         val alert = Single.alert { this.effect = effect }
-        val format = RealtimePatterns.Format.Disruption(alert, mapStopRoute = route)
+        val format = UpcomingFormat.Disruption(alert, mapStopRoute = route)
         return UpcomingTripViewState.Disruption(FormattedAlert(alert), iconName = format.iconName)
     }
 

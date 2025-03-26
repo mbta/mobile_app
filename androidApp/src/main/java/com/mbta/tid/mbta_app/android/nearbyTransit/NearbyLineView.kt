@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.runtime.Composable
-import com.mbta.tid.mbta_app.android.component.LineCard
+import com.mbta.tid.mbta_app.android.component.legacyRouteCard.LineCard
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import kotlinx.datetime.Instant

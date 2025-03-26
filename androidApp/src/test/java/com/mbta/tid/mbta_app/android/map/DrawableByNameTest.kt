@@ -6,7 +6,7 @@ import com.mbta.tid.mbta_app.map.StopIcons
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
-import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 
@@ -30,7 +30,7 @@ class DrawableByNameTest {
         for (alertEffect in Alert.Effect.entries - Alert.Effect.ElevatorClosure) {
             val alert = alert { effect = alertEffect }
             for (route in MapStopRoute.entries + null) {
-                val icon = RealtimePatterns.Format.SecondaryAlert(alert, route)
+                val icon = UpcomingFormat.SecondaryAlert(alert, route)
                 assertNotNull(drawableByName(icon.iconName))
             }
         }
