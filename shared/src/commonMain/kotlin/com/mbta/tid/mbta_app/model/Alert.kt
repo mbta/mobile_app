@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -77,6 +79,23 @@ data class Alert(
             }
             return instant in start..end
         }
+
+        val fromStartOfService: Boolean
+            get() {
+                val localTime = start.toLocalDateTime(TimeZone.of("America/New_York"))
+                return localTime.hour == 3 && localTime.minute == 0
+            }
+
+        val toEndOfService: Boolean
+            get() {
+                val end = end ?: return false
+                val localTime = end.toLocalDateTime(TimeZone.of("America/New_York"))
+                return (localTime.hour == 3 && localTime.minute == 0) ||
+                    (localTime.hour == 2 && localTime.minute == 59)
+            }
+
+        val endingLaterToday: Boolean
+            get() = durationCertainty == Alert.DurationCertainty.Estimated
     }
 
     @Serializable
