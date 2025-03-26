@@ -179,16 +179,11 @@ fun HomeMapView(
                 RouteFeaturesBuilder.forRailAtStop(
                     stopMapData.routeShapes,
                     railRouteShapes.routesWithSegmentedShapes,
-                    globalResponse.routes
+                    globalResponse
                 )
             }
         val newRailData =
-            RouteFeaturesBuilder.generateRouteLines(
-                filteredRoutes,
-                globalResponse.routes,
-                globalResponse.stops,
-                globalMapData?.alertsByStop
-            )
+            RouteFeaturesBuilder.generateRouteLines(filteredRoutes, globalResponse, globalMapData)
         layerManager.run {
             updateRouteSourceData(RouteFeaturesBuilder.buildCollection(newRailData).toMapbox())
         }
@@ -232,7 +227,7 @@ fun HomeMapView(
             viewModel.setSelectedStop(null)
             return
         }
-        viewModel.setSelectedStop(globalResponse?.stops?.get(stopId))
+        viewModel.setSelectedStop(globalResponse?.getStop(stopId))
     }
 
     val cameraZoomFlow =
@@ -431,7 +426,7 @@ fun HomeMapView(
                 }
 
                 for (vehicle in allVehicles) {
-                    val route = globalResponse?.routes?.get(vehicle.routeId) ?: continue
+                    val route = globalResponse?.getRoute(vehicle.routeId) ?: continue
                     val isSelected = vehicle.id == selectedVehicle?.id
                     ViewAnnotation(
                         options =
@@ -489,8 +484,7 @@ fun HomeMapView(
 
                 if (showTripCenterButton) {
                     if (selectedVehicle != null) {
-                        val routeType =
-                            (globalResponse?.routes ?: emptyMap())[selectedVehicle.routeId]?.type
+                        val routeType = globalResponse?.getRoute(selectedVehicle.routeId)?.type
                         if (routeType != null) {
                             TripCenterButton(
                                 routeType = routeType,

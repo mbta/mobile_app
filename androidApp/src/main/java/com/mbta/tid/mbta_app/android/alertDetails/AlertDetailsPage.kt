@@ -55,8 +55,8 @@ fun AlertDetailsPage(
     val now = timer(5.seconds)
 
     val line = globalResponse?.getLine(lineId)
-    val routes = routeIds?.mapNotNull { globalResponse?.routes?.get(it) }
-    val stop = globalResponse?.stops?.get(stopId)
+    val routes = routeIds?.mapNotNull { globalResponse?.getRoute(it) }
+    val stop = globalResponse?.getStop(stopId)
 
     val firstRoute = routes?.firstOrNull()
 
@@ -129,7 +129,7 @@ private fun getAlert(
 ): Alert? {
     var result by rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<Alert?>(null) }
     if (alerts == null) return result
-    val newAlertData = alerts.alerts[alertId]
+    val newAlertData = alerts.getAlert(alertId)
     // If no alert is already set, and no alert was found with the provided ID,
     // something went wrong, and the alert didn't exist in the data to begin with,
     // navigate back to the previous page.

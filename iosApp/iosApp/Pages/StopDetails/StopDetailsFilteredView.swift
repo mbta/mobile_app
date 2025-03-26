@@ -35,7 +35,7 @@ struct StopDetailsFilteredView: View {
     var tiles: [TileData] = []
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
     var nowInstant: Instant { now.toKotlinInstant() }
 
     init(
@@ -162,7 +162,7 @@ struct StopDetailsFilteredView: View {
     @ViewBuilder
     var header: some View {
         let route: Route? = if let routeId = patternsByStop?.representativeRoute.id {
-            stopDetailsVM.global?.routes[routeId]
+            stopDetailsVM.global?.getRoute(routeId: routeId)
         } else {
             nil
         }

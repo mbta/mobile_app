@@ -209,7 +209,7 @@ class NearbyViewModel: ObservableObject {
     func getTargetStop(global: GlobalResponse) -> Stop? {
         switch navigationStack.last {
         case .nearby: nil
-        case let .stopDetails(stopId: stopId, _, _): global.stops[stopId]
+        case let .stopDetails(stopId: stopId, _, _): global.getStop(stopId: stopId)
         default: nil
         }
     }

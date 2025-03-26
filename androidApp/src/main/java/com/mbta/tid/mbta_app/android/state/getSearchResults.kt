@@ -68,7 +68,7 @@ class SearchResultsViewModel(
         globalResponse: GlobalResponse?
     ): StopResult? {
         if (visit is Visit.StopVisit && globalResponse != null) {
-            val stop = globalResponse.stops[visit.stopId]
+            val stop = globalResponse.getStop(visit.stopId)
             if (stop == null) {
                 return null
             }

@@ -9,9 +9,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PredictionsByStopJoinResponse(
-    @SerialName("predictions_by_stop") val predictionsByStop: Map<String, Map<String, Prediction>>,
-    val trips: Map<String, Trip>,
-    val vehicles: Map<String, Vehicle>
+    @SerialName("predictions_by_stop")
+    internal val predictionsByStop: Map<String, Map<String, Prediction>>,
+    internal val trips: Map<String, Trip>,
+    internal val vehicles: Map<String, Vehicle>
 ) {
 
     constructor(
@@ -22,6 +23,14 @@ data class PredictionsByStopJoinResponse(
             .mapValues { predictions -> predictions.value.associateBy { it.id } },
         objects.trips,
         objects.vehicles
+    )
+
+    constructor(
+        partialResponse: PredictionsByStopMessageResponse
+    ) : this(
+        mapOf(partialResponse.stopId to partialResponse.predictions),
+        partialResponse.trips,
+        partialResponse.vehicles
     )
 
     /**

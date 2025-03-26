@@ -56,7 +56,7 @@ class SearchViewModel: ObservableObject {
     }
 
     func getStopFor(id: String) -> Stop? {
-        globalResponse?.stops[id]
+        globalResponse?.getStop(stopId: id)
     }
 
     func determineStateFor(query: String) {
@@ -158,14 +158,14 @@ class SearchViewModel: ObservableObject {
 
     private func mapStopIdToResult(id: String) -> Result? {
         guard let globalResponse,
-              let stop = globalResponse.stops[id]
+              let stop = globalResponse.getStop(stopId: id)
         else { return nil }
         let isStation = stop.locationType == .station
         let routes = globalResponse.getTypicalRoutesFor(stopId: id)
         let routePills: [RoutePillSpec] = routes
             .sorted(by: { $0.sortOrder < $1.sortOrder })
             .map { route -> RoutePillSpec in
-                let line: Line? = if let lineId = route.lineId { globalResponse.lines[lineId] } else { nil }
+                let line: Line? = globalResponse.getLine(lineId: route.lineId)
                 let context: RoutePillSpec.Context = isStation ? .searchStation : .default
                 return RoutePillSpec(route: route,
                                      line: line,

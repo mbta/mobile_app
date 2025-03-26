@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PredictionsStreamDataResponse(
-    val predictions: Map<String, Prediction>,
-    val trips: Map<String, Trip>,
-    val vehicles: Map<String, Vehicle>
+    internal val predictions: Map<String, Prediction>,
+    internal val trips: Map<String, Trip>,
+    internal val vehicles: Map<String, Vehicle>
 ) {
     constructor(
         objects: ObjectCollectionBuilder

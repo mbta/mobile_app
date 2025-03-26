@@ -29,7 +29,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import com.mbta.tid.mbta_app.utils.resolveParentId
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -50,12 +49,13 @@ fun TripDetailsView(
     val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
     val vehicle = tripData?.vehicle
 
-    fun getParentFor(stopId: String?, stops: Map<String, Stop>): Stop? {
-        return stopId.let { stops[stopId]?.resolveParent(stops) }
+    fun getParentFor(stopId: String?, globalResponse: GlobalResponse): Stop? {
+        return stopId.let { globalResponse.getStop(stopId)?.resolveParent(globalResponse) }
     }
 
     fun onTapStop(stop: TripDetailsStopList.Entry) {
-        val parentStationId = globalResponse?.stops?.resolveParentId(stop.stop.id) ?: stop.stop.id
+        val parentStationId =
+            globalResponse?.getStop(stop.stop.id)?.resolveParent(globalResponse)?.id ?: stop.stop.id
         openSheetRoute(SheetRoutes.StopDetails(parentStationId, null, null))
         analytics.tappedDownstreamStop(
             routeId = tripData?.trip?.routeId ?: "",
@@ -72,11 +72,11 @@ fun TripDetailsView(
             .value
 
     if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
-        val route = globalResponse.routes[tripData.trip.routeId]
+        val route = globalResponse.getRoute(tripData.trip.routeId)
         val routeAccents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
-        val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse.stops)
+        val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse)
         val vehicleStop =
-            if (vehicle != null) getParentFor(vehicle.stopId, globalResponse.stops) else null
+            if (vehicle != null) getParentFor(vehicle.stopId, globalResponse) else null
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
