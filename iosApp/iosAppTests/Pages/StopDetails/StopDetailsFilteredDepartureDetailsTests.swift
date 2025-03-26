@@ -546,6 +546,46 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
     }
 
+    func testShowsInaccessible() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.wheelchairBoarding = .inaccessible
+        }
+        let route = objects.route { _ in }
+        let tile = TileData(
+            route: route,
+            headsign: "A",
+            formatted: UpcomingFormat.Some(
+                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                secondaryAlert: nil
+            )
+        )
+        let nearbyVM = NearbyViewModel()
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.showElevatorAccessibility = true
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            tiles: [tile],
+            noPredictionsStatus: nil,
+            alerts: [],
+            downstreamAlerts: [],
+            patternsByStop: .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM
+        ).environmentObject(ViewportProvider())
+
+        XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
+    }
+
     func testShowsSubwayDelayAlert() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }

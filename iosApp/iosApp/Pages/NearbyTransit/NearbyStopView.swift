@@ -34,31 +34,42 @@ struct NearbyStopView: View {
         self.pinned = pinned
     }
 
-    var elevatorAlerts: Int {
-        patternsAtStop.elevatorAlerts.count
-    }
-
-    var hasElevatorAlerts: Bool {
-        elevatorAlerts > 0
-    }
+    var elevatorAlerts: Int { patternsAtStop.elevatorAlerts.count }
+    var isWheelchairAccessible: Bool { patternsAtStop.stop.isWheelchairAccessible }
+    var showAccessible: Bool { showElevatorAccessibility && isWheelchairAccessible }
+    var showInaccessible: Bool { showElevatorAccessibility && !isWheelchairAccessible }
+    var showElevatorAlerts: Bool { showElevatorAccessibility && !patternsAtStop.elevatorAlerts.isEmpty }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
-                if showElevatorAccessibility, hasElevatorAlerts {
+                if showElevatorAlerts {
                     Image(.accessibilityIconAlert)
                         .accessibilityHidden(true)
+                } else if showAccessible {
+                    Image(.accessibilityIconAccessible)
+                        .accessibilityHidden(true)
+                        .tag("wheelchair_accessible")
                 }
                 Text(patternsAtStop.stop.name)
                     .font(Typography.callout)
                     .foregroundStyle(Color.text)
-                if showElevatorAccessibility, hasElevatorAlerts {
-                    Spacer()
-                    Text(
-                        "\(elevatorAlerts, specifier: "%ld") elevators closed",
-                        comment: "Header displayed when elevators are not working at a station"
-                    )
+            }
+            if showInaccessible || showElevatorAlerts {
+                Group {
+                    if showInaccessible {
+                        Text("Not accessible", comment: "Header displayed when station is not wheelchair accessible")
+                    } else {
+                        Text(
+                            "\(elevatorAlerts, specifier: "%ld") elevators closed",
+                            comment: "Header displayed when elevators are not working at a station"
+                        )
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
+                .font(Typography.footnoteSemibold)
+                .foregroundColor(Color.text.opacity(0.5))
             }
         }
         .padding(.horizontal, 16)
