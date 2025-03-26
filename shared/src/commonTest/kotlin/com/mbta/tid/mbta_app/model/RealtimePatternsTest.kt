@@ -35,7 +35,7 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            RealtimePatterns.Format.Disruption(alert, "alert-large-red-suspension"),
+            UpcomingFormat.Disruption(alert, "alert-large-red-suspension"),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
                 .format(now, anyNonScheduleBasedRouteType(), anyContext())
         )
@@ -67,9 +67,9 @@ class RealtimePatternsTest {
 
         for ((route, icon) in cases) {
             assertEquals(
-                RealtimePatterns.Format.NoTrips(
-                    RealtimePatterns.NoTripsFormat.ServiceEndedToday,
-                    RealtimePatterns.Format.SecondaryAlert(icon)
+                UpcomingFormat.NoTrips(
+                    UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+                    UpcomingFormat.SecondaryAlert(icon)
                 ),
                 RealtimePatterns.ByHeadsign(
                         route,
@@ -103,7 +103,7 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            RealtimePatterns.Format.Disruption(alert, "alert-large-silver-suspension"),
+            UpcomingFormat.Disruption(alert, "alert-large-silver-suspension"),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -134,15 +134,15 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.ServiceChange }
 
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip,
                         route.type,
                         TripInstantDisplay.Minutes(1)
                     )
                 ),
-                RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+                UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
             ),
             RealtimePatterns.ByHeadsign(
                     route,
@@ -174,15 +174,15 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.Shuttle }
 
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip,
                         route.type,
                         TripInstantDisplay.Minutes(1)
                     )
                 ),
-                RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+                UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
             ),
             RealtimePatterns.ByHeadsign(
                     route,
@@ -205,7 +205,7 @@ class RealtimePatternsTest {
         val route = objects.route()
 
         assertEquals(
-            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.ServiceEndedToday),
+            UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -232,7 +232,7 @@ class RealtimePatternsTest {
                 departureTime = now + 2.minutes
             }
         assertEquals(
-            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.PredictionsUnavailable),
+            UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -254,7 +254,7 @@ class RealtimePatternsTest {
         val route = objects.route { type = anyEnumValue() }
         val pattern = objects.routePattern(route)
         assertEquals(
-            RealtimePatterns.Format.Loading,
+            UpcomingFormat.Loading,
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -292,10 +292,10 @@ class RealtimePatternsTest {
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
         val routeType = anyNonScheduleBasedRouteType()
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip2,
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     )
@@ -339,10 +339,10 @@ class RealtimePatternsTest {
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
 
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip2,
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(5)
                     )
@@ -359,15 +359,15 @@ class RealtimePatternsTest {
                 .format(now, RouteType.LIGHT_RAIL, anyContext())
         )
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip1.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip1,
                         RouteType.BUS,
                         TripInstantDisplay.ScheduleMinutes(5)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip2,
                         RouteType.BUS,
                         TripInstantDisplay.Minutes(5)
                     )
@@ -393,7 +393,7 @@ class RealtimePatternsTest {
         val route = objects.route { type = RouteType.BUS }
 
         assertEquals(
-            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.NoSchedulesToday),
+            UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -568,20 +568,20 @@ class RealtimePatternsTest {
 
         val routeType = anyNonScheduleBasedRouteType()
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip1.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip1,
                         routeType,
                         TripInstantDisplay.Minutes(3)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip2,
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip3.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip3,
                         routeType,
                         TripInstantDisplay.Minutes(7)
                     )
@@ -809,15 +809,15 @@ class RealtimePatternsTest {
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
         val routeType = RouteType.BUS
         assertEquals(
-            RealtimePatterns.Format.Some(
+            UpcomingFormat.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip1.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip1,
                         routeType,
                         TripInstantDisplay.Cancelled(schedule1.departureTime!!)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
+                    UpcomingFormat.Some.FormattedTrip(
+                        upcomingTrip2,
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     )

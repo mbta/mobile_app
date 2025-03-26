@@ -13,8 +13,8 @@ data class MapStop(
 )
 
 data class GlobalMapData(
-    val mapStops: Map<String, MapStop>,
-    val alertsByStop: Map<String, AlertAssociatedStop>?
+    internal val mapStops: Map<String, MapStop>,
+    internal val alertsByStop: Map<String, AlertAssociatedStop>?
 ) {
     companion object {
         /*
@@ -22,7 +22,7 @@ data class GlobalMapData(
         Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on
         their children, but those child alerts aren't included in the map returned by this function.
          */
-        fun getAlertsByStop(
+        internal fun getAlertsByStop(
             globalData: GlobalResponse,
             alerts: AlertsStreamDataResponse?,
             filterAtTime: Instant
@@ -78,6 +78,12 @@ data class GlobalMapData(
             return alertingStop
         }
     }
+
+    constructor(
+        globalData: GlobalResponse,
+        alerts: AlertsStreamDataResponse?,
+        filterAtTime: Instant
+    ) : this(globalData, getAlertsByStop(globalData, alerts, filterAtTime))
 
     constructor(
         globalData: GlobalResponse,

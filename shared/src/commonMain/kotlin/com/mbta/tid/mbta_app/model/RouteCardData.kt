@@ -1,5 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.map.style.Color
+import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
+import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -9,6 +12,12 @@ import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
+
+// These are used in LineOrRoute to disambiguate them from LineOrRoute.Route and LineOrRoute.Line
+
+private typealias LineModel = Line
+
+private typealias RouteModel = Route
 
 // type aliases can't be nested :(
 
@@ -39,7 +48,12 @@ interface ILeafData {
  * route at a set of stops. It has the general structure: Route (or Line) => Stop(s) => Direction =>
  * Upcoming Trips / reason for absence of upcoming trips
  */
-data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteStopData>) {
+data class RouteCardData(
+    val lineOrRoute: LineOrRoute,
+    val stopData: List<RouteStopData>,
+    val context: Context,
+    val at: Instant,
+) {
     enum class Context {
         NearbyTransit,
         StopDetailsFiltered,
@@ -78,13 +92,18 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             globalData: GlobalResponse
         ) : this(
             stop,
-            lineOrRoute.directions(
-                globalData,
-                stop,
-                data.mapNotNull { it.routePatterns }.flatten()
-            ),
+            lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
             data
         )
+
+        val elevatorAlerts: List<Alert>
+            get() =
+                data
+                    .flatMap { it.alertsHere }
+                    .filter { alert -> alert.effect == Alert.Effect.ElevatorClosure }
+
+        val hasElevatorAlerts: Boolean
+            get() = elevatorAlerts.isNotEmpty()
     }
 
     data class Leaf(
@@ -100,36 +119,106 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             get() = run {
                 this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
             }
+
+        fun format(
+            now: Instant,
+            representativeRoute: Route,
+            count: Int,
+            context: Context
+        ): UpcomingFormat {
+            val translatedContext =
+                when (context) {
+                    Context.NearbyTransit -> TripInstantDisplay.Context.NearbyTransit
+                    Context.StopDetailsFiltered -> TripInstantDisplay.Context.StopDetailsFiltered
+                    Context.StopDetailsUnfiltered ->
+                        TripInstantDisplay.Context.StopDetailsUnfiltered
+                }
+
+            val mapStopRoute = MapStopRoute.matching(representativeRoute)
+            val routeType = representativeRoute.type
+            val majorAlert = alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
+            if (majorAlert != null) return UpcomingFormat.Disruption(majorAlert, mapStopRoute)
+            // TODO: handle downstream alerts
+            val secondaryAlertToDisplay =
+                alertsHere.firstOrNull { it.significance >= AlertSignificance.Secondary }
+            //      ?: alertsDownstream?.firstOrNull()
+
+            val secondaryAlert =
+                secondaryAlertToDisplay?.let {
+                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                }
+
+            val tripsToShow =
+                upcomingTrips
+                    .mapNotNull { formatUpcomingTrip(now, it, routeType, translatedContext) }
+                    .take(count)
+            return when {
+                tripsToShow.isNotEmpty() -> UpcomingFormat.Some(tripsToShow, secondaryAlert)
+                !allDataLoaded -> UpcomingFormat.Loading
+                else ->
+                    UpcomingFormat.NoTrips(
+                        NoTripsFormat.fromUpcomingTrips(upcomingTrips, hasSchedulesToday, now),
+                        secondaryAlert
+                    )
+            }
+        }
     }
 
     sealed interface LineOrRoute {
-        data class Line(
-            val line: com.mbta.tid.mbta_app.model.Line,
-            val routes: Set<com.mbta.tid.mbta_app.model.Route>
-        ) : LineOrRoute
 
-        data class Route(val route: com.mbta.tid.mbta_app.model.Route) : LineOrRoute
+        data class Line(val line: LineModel, val routes: Set<RouteModel>) : LineOrRoute
 
-        fun isSubway(): Boolean {
-            return when (this) {
-                is Line -> this.routes.any { it.type.isSubway() }
-                is Route -> this.route.type.isSubway()
-            }
-        }
+        data class Route(val route: RouteModel) : LineOrRoute
 
-        fun id(): String {
-            return when (this) {
-                is Line -> this.line.id
-                is Route -> this.route.id
-            }
-        }
+        val id: String
+            get() =
+                when (this) {
+                    is Line -> this.line.id
+                    is Route -> this.route.id
+                }
+
+        val name: String
+            get() =
+                when (this) {
+                    is Line -> this.line.longName
+                    is Route -> this.route.label
+                }
+
+        val type: RouteType
+            get() =
+                when (this) {
+                    is Line -> this.sortRoute.type
+                    is Route -> this.route.type
+                }
+
+        val backgroundColor: Color
+            get() =
+                when (this) {
+                    is Line -> this.line.color
+                    is Route -> this.route.color
+                }
+
+        val textColor: Color
+            get() =
+                when (this) {
+                    is Line -> this.line.textColor
+                    is Route -> this.route.textColor
+                }
+
+        val isSubway: Boolean
+            get() =
+                when (this) {
+                    is Line -> this.routes.any { it.type.isSubway() }
+                    is Route -> this.route.type.isSubway()
+                }
 
         /** The route whose sortOrder to use when sorting a RouteCardData. */
-        fun sortRoute() =
-            when (this) {
-                is Route -> this.route
-                is Line -> this.routes.min()
-            }
+        val sortRoute: RouteModel
+            get() =
+                when (this) {
+                    is Route -> this.route
+                    is Line -> this.routes.min()
+                }
 
         fun directions(
             globalData: GlobalResponse,
@@ -172,7 +261,7 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
-            filterAtTime: Instant,
+            now: Instant,
             pinnedRoutes: Set<String>,
             context: Context
         ): List<RouteCardData>? {
@@ -191,19 +280,20 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
                     Context.StopDetailsUnfiltered -> null
                 }
 
-            val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
+            val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { now + it }
+            val allDataLoaded = schedules != null
 
-            return ListBuilder()
+            return ListBuilder(allDataLoaded, context, now)
                 .addStaticStopsData(stopIds, globalData)
-                .addUpcomingTrips(schedules, predictions, filterAtTime, globalData)
-                .filterIrrelevantData(filterAtTime, cutoffTime, context, globalData)
-                .addAlerts(alerts, includeMinorAlerts = context.isStopDetails(), filterAtTime)
+                .addUpcomingTrips(schedules, predictions, now, globalData)
+                .filterIrrelevantData(now, cutoffTime, context, globalData)
+                .addAlerts(alerts, includeMinorAlerts = context.isStopDetails(), now)
                 .build()
                 .sort(sortByDistanceFrom, pinnedRoutes)
         }
     }
 
-    class ListBuilder() {
+    class ListBuilder(val allDataLoaded: Boolean, val context: Context, val now: Instant) {
         var data: ByLineOrRouteBuilder = mutableMapOf()
             private set
 
@@ -264,7 +354,7 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
                             }
                         // TODO: Directions list with actual values.
                         key to
-                            RouteCardData.Builder(
+                            Builder(
                                 byLineOrRoute.key,
                                 byLineOrRoute.value
                                     .map { byStop ->
@@ -300,12 +390,15 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
                                                                         byStop.key.id
                                                                     ) {
                                                                         setOf(byStop.key.id)
-                                                                    }
+                                                                    },
+                                                                allDataLoaded = allDataLoaded
                                                             )
                                                         }
                                             )
                                     }
-                                    .toMap()
+                                    .toMap(),
+                                context,
+                                now
                             )
                     }
                     .toMap()
@@ -320,7 +413,7 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             return globalData.run {
                 patternIdsByStop
                     .getOrElse(stopId) { emptyList() }
-                    .mapNotNull { patternId ->
+                    .map { patternId ->
                         val pattern = routePatterns[patternId]
                         val route = pattern?.let { routes[it.routeId] }
                         Pair(route, pattern)
@@ -454,7 +547,7 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
                 val (routeOrLineId, byStopId) = entry
                 for (stopEntry in byStopId.stopData) {
                     val (stopId, byDirectionId) = stopEntry
-                    val isSubway = byStopId.lineOrRoute.isSubway()
+                    val isSubway = byStopId.lineOrRoute.isSubway
                     for (directionEntry in byDirectionId.data) {}
 
                     byDirectionId.data =
@@ -487,16 +580,23 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             return data.map { routeCardBuilder ->
                 RouteCardData(
                     routeCardBuilder.value.lineOrRoute,
-                    routeCardBuilder.value.stopData.values.map { it.build() }
+                    routeCardBuilder.value.stopData.values.map { it.build() },
+                    context,
+                    now
                 )
             }
         }
     }
 
-    data class Builder(val lineOrRoute: LineOrRoute, var stopData: ByStopIdBuilder) {
+    data class Builder(
+        val lineOrRoute: LineOrRoute,
+        var stopData: ByStopIdBuilder,
+        val context: Context,
+        val now: Instant
+    ) {
 
         fun build(): RouteCardData {
-            return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() })
+            return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() }, context, now)
         }
     }
 
@@ -536,8 +636,8 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
             data
         )
 
-        fun build(): RouteCardData.RouteStopData {
-            return RouteCardData.RouteStopData(
+        fun build(): RouteStopData {
+            return RouteStopData(
                 stop,
                 directions,
                 data.values.map { it.build() }.sortedBy { it.directionId }
@@ -644,7 +744,7 @@ data class RouteCardData(val lineOrRoute: LineOrRoute, val stopData: List<RouteS
                 ?.filter {
                     it.typicality == com.mbta.tid.mbta_app.model.RoutePattern.Typicality.Typical
                 }
-                ?.mapNotNull { it.representativeTripId }
+                ?.map { it.representativeTripId }
                 ?.all { representativeTripId ->
                     val representativeTrip = globalData.trips[representativeTripId]
                     val lastStopIdInPattern =

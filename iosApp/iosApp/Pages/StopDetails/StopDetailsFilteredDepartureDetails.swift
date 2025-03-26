@@ -17,7 +17,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var tiles: [TileData]
-    var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
+    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
     var alerts: [Shared.Alert]
     var downstreamAlerts: [Shared.Alert]
     var patternsByStop: PatternsByStop
@@ -40,7 +40,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
     var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
     var routeTextColor: Color { Color(hex: patternsByStop.representativeRoute.textColor) }
@@ -57,6 +57,10 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var hasMajorAlert: Bool {
         alerts.contains(where: { $0.significance == .major })
+    }
+
+    var hasAccessibilityWarning: Bool {
+        !patternsByStop.elevatorAlerts.isEmpty || !patternsByStop.stop.isWheelchairAccessible
     }
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
@@ -139,7 +143,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         .ignoresSafeArea(.all)
     }
 
-    func handleViewportForStatus(_ status: RealtimePatterns.NoTripsFormat?) {
+    func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
         if let status {
             switch onEnum(of: status) {
             case .predictionsUnavailable: setViewportToStop(midZoom: true)
@@ -240,7 +244,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var alertCards: some View {
         if !alerts.isEmpty ||
             !downstreamAlerts.isEmpty ||
-            (stopDetailsVM.showElevatorAccessibility && !patternsByStop.elevatorAlerts.isEmpty) {
+            (stopDetailsVM.showElevatorAccessibility && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     alertCard(alert)
@@ -248,9 +252,13 @@ struct StopDetailsFilteredDepartureDetails: View {
                 ForEach(downstreamAlerts, id: \.id) { alert in
                     alertCard(alert, .downstream)
                 }
-                if stopDetailsVM.showElevatorAccessibility {
-                    ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
-                        alertCard(alert, .elevator)
+                if stopDetailsVM.showElevatorAccessibility, hasAccessibilityWarning {
+                    if !patternsByStop.elevatorAlerts.isEmpty {
+                        ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
+                            alertCard(alert, .elevator)
+                        }
+                    } else {
+                        NotAccessibleCard()
                     }
                 }
             }.padding(.horizontal, 16)

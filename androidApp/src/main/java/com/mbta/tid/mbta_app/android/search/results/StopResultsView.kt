@@ -47,9 +47,8 @@ fun StopResultsView(
 ) {
 
     val routes = globalResponse?.getTypicalRoutesFor(stop.id) ?: emptyList()
-    val lines = globalResponse?.lines ?: mapOf()
 
-    StopResultsView(shape, stop, routes, lines, handleSearch)
+    StopResultsView(shape, stop, routes, globalResponse, handleSearch)
 }
 
 @Composable
@@ -57,7 +56,7 @@ fun StopResultsView(
     shape: RoundedCornerShape,
     stop: StopResult,
     routes: List<Route>,
-    lines: Map<String, Line>,
+    globalResponse: GlobalResponse?,
     handleSearch: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -79,7 +78,7 @@ fun StopResultsView(
                     .map<Route, Pair<Route, RoutePillSpec>> { route ->
                         val line: Line? =
                             if (route.lineId != null) {
-                                lines[route.lineId]
+                                globalResponse?.getLine(route.lineId)
                             } else {
                                 null
                             }

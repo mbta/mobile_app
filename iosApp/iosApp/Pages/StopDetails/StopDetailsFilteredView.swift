@@ -33,9 +33,9 @@ struct StopDetailsFilteredView: View {
     var analytics: Analytics = AnalyticsProvider.shared
 
     var tiles: [TileData] = []
-    var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
+    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
     var nowInstant: Instant { now.toKotlinInstant() }
 
     init(
@@ -162,7 +162,7 @@ struct StopDetailsFilteredView: View {
     @ViewBuilder
     var header: some View {
         let route: Route? = if let routeId = patternsByStop?.representativeRoute.id {
-            stopDetailsVM.global?.routes[routeId]
+            stopDetailsVM.global?.getRoute(routeId: routeId)
         } else {
             nil
         }
@@ -189,11 +189,13 @@ struct StopDetailsFilteredView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         let loadingPatterns = LoadingPlaceholders.shared.patternsByStop(routeId: stopFilter.routeId, trips: 10)
-        let tiles = (0 ..< 4).map { index in TileData(
+        let upcomingTrip = loadingPatterns.patterns.first?.upcomingTrips.first
+
+        let tiles = (0 ..< 4).map { _ in TileData(
             route: loadingPatterns.representativeRoute,
             headsign: "placeholder",
-            formatted: RealtimePatterns.FormatSome(
-                trips: [.init(id: "\(index)", routeType: .lightRail, format: .Boarding())],
+            formatted: UpcomingFormat.Some(
+                trips: [.init(trip: upcomingTrip!, routeType: .lightRail, format: .Boarding())],
                 secondaryAlert: nil
             )
         ) }

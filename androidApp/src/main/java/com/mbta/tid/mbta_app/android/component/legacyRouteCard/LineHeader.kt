@@ -1,7 +1,9 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.mbta.tid.mbta_app.android.component.routeCard.TransitHeader
+import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route

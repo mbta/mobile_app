@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -40,6 +41,8 @@ data class Stop(
         val parentStation = stops[parentStationId] ?: return this
         return parentStation.resolveParent(stops)
     }
+
+    fun resolveParent(global: GlobalResponse) = resolveParent(global.stops)
 
     companion object {
         /**

@@ -15,12 +15,12 @@ import kotlinx.serialization.Transient
 
 @Serializable
 data class GlobalResponse(
-    val lines: Map<String, Line>,
-    @SerialName("pattern_ids_by_stop") val patternIdsByStop: Map<String, List<String>>,
-    val routes: Map<String, Route>,
-    @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
-    val stops: Map<String, Stop>,
-    val trips: Map<String, Trip>,
+    internal val lines: Map<String, Line>,
+    @SerialName("pattern_ids_by_stop") internal val patternIdsByStop: Map<String, List<String>>,
+    internal val routes: Map<String, Route>,
+    @SerialName("route_patterns") internal val routePatterns: Map<String, RoutePattern>,
+    internal val stops: Map<String, Stop>,
+    internal val trips: Map<String, Trip>,
 ) {
     constructor(
         objects: ObjectCollectionBuilder
@@ -62,6 +62,10 @@ data class GlobalResponse(
                 }
                 .map { it.id to it.position }
         )
+
+    fun getRoute(routeId: String?) = routes[routeId]
+
+    fun getStop(stopId: String?) = stops[stopId]
 
     fun getLine(lineId: String?) =
         if (lineId != null) {

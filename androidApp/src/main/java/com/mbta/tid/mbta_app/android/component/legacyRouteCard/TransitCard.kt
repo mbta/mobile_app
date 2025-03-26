@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding

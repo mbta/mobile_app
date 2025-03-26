@@ -74,6 +74,10 @@ ios app:
 - Populate any configuration needed in your the .envrc file. These will be read by a build phase
   script and set as info.plist values so that they can be read by the application.
 
+Running release builds on a real device (e.g. when profiling) may fail because of the code signing setup.
+The simplest solution is to open the iosApp project, select the iosApp target, go to "Signing & Capabilities", and turn on "Automatically manage signing" for the variant you're interested in.
+Make sure you don't commit this change, though, because that will break deployments in CI.
+
 ### Android
 
 To switch between the staging and prod app flavors, go to Build > Select Build Variant and then set the `:androidApp` Active Build Variant.

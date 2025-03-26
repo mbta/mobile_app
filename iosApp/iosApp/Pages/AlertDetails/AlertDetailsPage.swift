@@ -126,7 +126,7 @@ struct AlertDetailsPage: View {
 
     private func updateAlert() {
         guard let alerts = nearbyVM.alerts else { return }
-        let nextAlert = alerts.alerts[alertId]
+        let nextAlert = alerts.getAlert(alertId: alertId)
         // If no alert is already set, and no alert was found with the provided ID,
         // something went wrong, and the alert didn't exist in the data to begin with,
         // navigate back to the previous page.

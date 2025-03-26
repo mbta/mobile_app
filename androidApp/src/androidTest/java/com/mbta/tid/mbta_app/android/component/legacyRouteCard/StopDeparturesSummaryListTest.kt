@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.component
+package com.mbta.tid.mbta_app.android.component.legacyRouteCard
 
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull

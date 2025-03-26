@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.StopDeparturesSummaryList
+import com.mbta.tid.mbta_app.android.component.legacyRouteCard.StopDeparturesSummaryList
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.PatternsByStop

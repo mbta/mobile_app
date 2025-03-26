@@ -12,12 +12,12 @@ import androidx.compose.ui.res.stringResource
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.typeText
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 
 @Composable
 fun StopDetailsNoTripCard(
-    status: RealtimePatterns.NoTripsFormat,
+    status: UpcomingFormat.NoTripsFormat,
     accentColor: Color,
     routeType: RouteType,
     hideMaps: Boolean
@@ -25,7 +25,7 @@ fun StopDetailsNoTripCard(
 
     StopDetailsIconCard(
         accentColor = accentColor,
-        details = DetailText(status, routeType, hideMaps),
+        details = detailText(status, routeType, hideMaps),
         header = { modifier -> HeaderText(status, modifier) }
     ) { modifier ->
         HeaderImage(status, routeType, modifier)
@@ -33,23 +33,23 @@ fun StopDetailsNoTripCard(
 }
 
 @Composable
-private fun HeaderText(status: RealtimePatterns.NoTripsFormat, modifier: Modifier = Modifier) {
+private fun HeaderText(status: UpcomingFormat.NoTripsFormat, modifier: Modifier = Modifier) {
     when (status) {
-        is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
+        is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
             Text(stringResource(R.string.no_predictions), modifier = modifier)
-        is RealtimePatterns.NoTripsFormat.NoSchedulesToday ->
+        is UpcomingFormat.NoTripsFormat.NoSchedulesToday ->
             Text(stringResource(R.string.no_service_today), modifier = modifier)
-        is RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
+        is UpcomingFormat.NoTripsFormat.ServiceEndedToday ->
             Text(stringResource(R.string.service_ended), modifier = modifier)
     }
 }
 
 @Composable
-private fun DetailText(
-    status: RealtimePatterns.NoTripsFormat,
+private fun detailText(
+    status: UpcomingFormat.NoTripsFormat,
     routeType: RouteType,
     hideMaps: Boolean
-): (@Composable() () -> Unit)? {
+): (@Composable () -> Unit)? {
     val context = LocalContext.current
 
     var predictionsUnavailableString =
@@ -59,7 +59,7 @@ private fun DetailText(
         stringResource(R.string.predictions_unavailable_details_hide_maps)
 
     return when (status) {
-        is RealtimePatterns.NoTripsFormat.PredictionsUnavailable -> {
+        is UpcomingFormat.NoTripsFormat.PredictionsUnavailable -> {
             {
                 Text(
                     if (hideMaps) {
@@ -76,19 +76,19 @@ private fun DetailText(
 
 @Composable
 private fun HeaderImage(
-    status: RealtimePatterns.NoTripsFormat,
+    status: UpcomingFormat.NoTripsFormat,
     routeType: RouteType,
     modifier: Modifier = Modifier
 ) {
     when (status) {
-        is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
+        is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
             Icon(
                 painterResource(R.drawable.live_data_slash),
                 null,
                 modifier = modifier.testTag("live_data_slash")
             )
-        is RealtimePatterns.NoTripsFormat.NoSchedulesToday,
-        RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
+        is UpcomingFormat.NoTripsFormat.NoSchedulesToday,
+        UpcomingFormat.NoTripsFormat.ServiceEndedToday ->
             Icon(
                 routeSlashIcon(routeType = routeType),
                 null,

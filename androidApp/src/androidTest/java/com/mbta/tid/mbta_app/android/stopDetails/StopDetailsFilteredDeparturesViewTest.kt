@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -383,7 +384,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 tileData = listOf(),
-                noPredictionsStatus = RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+                noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 allAlerts = null,
                 elevatorAlerts = listOf(),
                 patternsByStop =

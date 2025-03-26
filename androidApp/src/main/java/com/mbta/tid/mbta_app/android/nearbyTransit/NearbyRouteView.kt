@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.runtime.Composable
-import com.mbta.tid.mbta_app.android.component.RouteCard
+import com.mbta.tid.mbta_app.android.component.legacyRouteCard.LegacyRouteCard
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import kotlinx.datetime.Instant
@@ -15,7 +15,7 @@ fun NearbyRouteView(
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     showElevatorAccessibility: Boolean = false
 ) {
-    RouteCard(nearbyRoute.route, pinned, onPin) {
+    LegacyRouteCard(nearbyRoute.route, pinned, onPin) {
         for (patternsAtStop in nearbyRoute.patternsByStop) {
             NearbyStopView(
                 patternsAtStop,

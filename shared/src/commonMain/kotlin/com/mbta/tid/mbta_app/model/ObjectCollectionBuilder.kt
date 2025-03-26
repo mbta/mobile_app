@@ -233,6 +233,7 @@ class ObjectCollectionBuilder {
         var id = uuid()
         var arrivalTime: Instant? = null
         var departureTime: Instant? = null
+        var stopHeadsign: String? = null
         var stopSequence = 0
         var routeId = ""
         var stopId = ""
@@ -258,6 +259,7 @@ class ObjectCollectionBuilder {
                     null -> Schedule.StopEdgeType.Unavailable
                     else -> Schedule.StopEdgeType.Regular
                 },
+                stopHeadsign,
                 stopSequence,
                 routeId,
                 stopId,

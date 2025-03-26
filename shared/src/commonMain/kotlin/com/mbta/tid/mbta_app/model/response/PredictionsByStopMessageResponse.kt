@@ -11,9 +11,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PredictionsByStopMessageResponse(
     @SerialName("stop_id") val stopId: String,
-    val predictions: Map<String, Prediction>,
-    val trips: Map<String, Trip>,
-    val vehicles: Map<String, Vehicle>
+    internal val predictions: Map<String, Prediction>,
+    internal val trips: Map<String, Trip>,
+    internal val vehicles: Map<String, Vehicle>
 ) {
     @DefaultArgumentInterop.Enabled
     constructor(
