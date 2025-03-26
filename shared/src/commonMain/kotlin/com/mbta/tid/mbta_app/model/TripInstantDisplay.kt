@@ -138,14 +138,14 @@ sealed class TripInstantDisplay {
                 vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
                     vehicle.stopId == prediction.stopId &&
                     vehicle.tripId == prediction.tripId &&
-                    timeRemaining <= BOARDING_CUTOFF
+                    (timeRemaining <= BOARDING_CUTOFF || prediction.hasArrivedButNotDeparted(now))
             ) {
                 return Boarding
             }
             if (timeRemaining.isNegative()) {
                 return Hidden
             }
-            if (timeRemaining <= ARRIVAL_CUTOFF) {
+            if (timeRemaining <= ARRIVAL_CUTOFF || prediction.hasArrivedButNotDeparted(now)) {
                 return Arriving
             }
             if (timeRemaining <= APPROACH_CUTOFF) {
@@ -154,4 +154,6 @@ sealed class TripInstantDisplay {
             return Minutes(minutes)
         }
     }
+
+    fun scheduleBasedDisplay() {}
 }
