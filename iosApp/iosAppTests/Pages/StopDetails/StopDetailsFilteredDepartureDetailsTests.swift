@@ -555,8 +555,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let tile = TileData(
             route: route,
             headsign: "A",
-            formatted: RealtimePatterns.FormatSome(
-                trips: [.init(id: "1", routeType: .heavyRail, format: .Arriving())],
+            formatted: UpcomingFormat.Some(
+                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
             )
         )
