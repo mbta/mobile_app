@@ -1,0 +1,10 @@
+AllCops:
+  Include:
+    - '**/*.rb'
+    - 'Gemfile'
+#    - 'fastlane/*file'
+#    - 'iosApp/Podfile'
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false

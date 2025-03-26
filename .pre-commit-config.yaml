@@ -37,3 +37,8 @@ repos:
         entry: ./bin/diff-xcodeproj.sh
         language: script
         always_run: true
+      - id: rubocop
+        name: rubocop
+        entry: bundle exec rubocop -A
+        language: system
+        types: [ruby]
