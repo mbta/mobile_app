@@ -22,7 +22,7 @@ runs:
       run: |
         case ${{ inputs.for }} in
           pre-commit)
-            tools="java"
+            tools="java ruby"
             ;;
           android-test)
             tools="java kotlin-cache rsvg"
