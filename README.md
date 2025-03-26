@@ -60,6 +60,9 @@ The entire Xcode project is generated with [XcodeGen](https://github.com/yonasko
 To generate the project, potentially overwriting local changes, use `bin/generate-xcodeproj.sh`.
 If you need to make changes that you only understand in Xcode, make the changes and then use `bin/diff-xcodeproj.sh` to determine what the actual settings need to be.
 
+When you switch branches or merge, pre-commit will automatically run `bin/generate-xcodeproj.sh`; this will clobber existing changes you may have made to your Xcode project, so don't change branches if your Xcode project is dirty.
+When you commit, pre-commit will automatically run `bin/diff-xcodeproj.sh` to check that your Xcode project is not dirty; you'll need to parse through the signal vs noise and make any necessary changes to project.yml before running `bin/generate-xcodeproj.sh` manually to synchronize the Xcode project with what XcodeGen thinks it should look like.
+
 The shared library dependency is managed using Cocoapods. To install the dependency and build the
 ios app:
 
