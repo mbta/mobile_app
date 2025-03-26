@@ -74,7 +74,7 @@ fun Departures(
                     )
                     formatted.trips.forEach {
                         HeadsignRowView(
-                            it.trip.trip.headsign,
+                            it.trip.headsign,
                             UpcomingFormat.Some(it, formatted.secondaryAlert),
                             pillDecoration = null
                         )
