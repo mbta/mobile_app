@@ -1897,14 +1897,16 @@ class StopDetailsDeparturesTest {
                     time,
                 )
 
+            val upcomingTrip = UpcomingTrip(
+                trip2, schedule2, prediction2, stop, vehicle1
+            )
+
             assertEquals(
                 listOf(
                     TripAndFormat(
-                        UpcomingTrip(
-                            trip2, schedule2, prediction2, stop, vehicle1
-                        ),
-                        RealtimePatterns.Format.Some.FormatWithId(
-                            trip2.id, route1.type, TripInstantDisplay.Minutes(minutes = 5))
+                        upcomingTrip,
+                        UpcomingFormat.Some.FormattedTrip(
+                            upcomingTrip, route1.type, TripInstantDisplay.Minutes(minutes = 5))
                     )
                 ),
                 checkNotNull(departures).stopDetailsFormattedTrips(
@@ -1946,7 +1948,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+            UpcomingFormat.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -1987,7 +1989,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.NoSchedulesToday,
+            UpcomingFormat.NoTripsFormat.NoSchedulesToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -2027,7 +2029,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+            UpcomingFormat.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -2086,7 +2088,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
+            UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -2187,7 +2189,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
+            UpcomingFormat.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }

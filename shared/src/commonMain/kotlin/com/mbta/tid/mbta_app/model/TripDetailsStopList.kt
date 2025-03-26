@@ -18,7 +18,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     constructor(
         val stop: Stop,
         val stopSequence: Int,
-        val disruption: RealtimePatterns.Format.Disruption?,
+        val disruption: UpcomingFormat.Disruption?,
         val schedule: Schedule?,
         val prediction: Prediction?,
         // The prediction stop can be the same as `stop`, but it can also be a child stop which
@@ -418,7 +418,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             route: Route?,
             tripId: String,
             directionId: Int
-        ): RealtimePatterns.Format.Disruption? {
+        ): UpcomingFormat.Disruption? {
             val entryTime = (entry.prediction ?: entry.schedule)?.stopTime
             val entryRouteType = route?.type
 
@@ -439,10 +439,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                         alert.significance >= AlertSignificance.Major
                 }
             if (alert == null) return null
-            return RealtimePatterns.Format.Disruption(
-                alert,
-                route?.let { MapStopRoute.matching(it) }
-            )
+            return UpcomingFormat.Disruption(alert, route?.let { MapStopRoute.matching(it) })
         }
     }
 }

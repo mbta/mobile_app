@@ -65,15 +65,16 @@ struct DepartureTile: View {
         route.textColor = "FFFFFF"
         route.type = .lightRail
     }
+    let upcomingTrip = objects.upcomingTrip()
 
-    return HStack {
+    HStack {
         DepartureTile(
             data: .init(
                 route: route1,
                 headsign: "Framingham",
-                formatted: RealtimePatterns.FormatSome(trips: [
+                formatted: UpcomingFormat.Some(trips: [
                     .init(
-                        id: "1",
+                        trip: upcomingTrip,
                         routeType: .commuterRail,
                         format: .TimeWithStatus(
                             predictionTime: Date.now.toKotlinInstant(),
@@ -91,8 +92,8 @@ struct DepartureTile: View {
             data: .init(
                 route: route1,
                 headsign: "Harvard",
-                formatted: RealtimePatterns.FormatSome(trips: [
-                    .init(id: "2", routeType: .bus, format: .Minutes(minutes: 9)),
+                formatted: UpcomingFormat.Some(trips: [
+                    .init(trip: upcomingTrip, routeType: .bus, format: .Minutes(minutes: 9)),
                 ], secondaryAlert: nil)
             ),
             onTap: {},
@@ -103,8 +104,8 @@ struct DepartureTile: View {
             data: .init(
                 route: routeB,
                 headsign: "Government Center",
-                formatted: RealtimePatterns.FormatSome(trips: [
-                    .init(id: "3", routeType: .lightRail, format: .Minutes(minutes: 12)),
+                formatted: UpcomingFormat.Some(trips: [
+                    .init(trip: upcomingTrip, routeType: .lightRail, format: .Minutes(minutes: 12)),
                 ], secondaryAlert: nil)
             ),
             onTap: {},

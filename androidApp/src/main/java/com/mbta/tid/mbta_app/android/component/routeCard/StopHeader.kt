@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.nearbyTransit
+package com.mbta.tid.mbta_app.android.component.routeCard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,27 +24,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.legacyRouteCard.StopDeparturesSummaryList
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.TripInstantDisplay
-import kotlinx.datetime.Instant
+import com.mbta.tid.mbta_app.model.RouteCardData
 
 @Composable
-fun NearbyStopView(
-    patternsAtStop: PatternsByStop,
-    condenseHeadsignPredictions: Boolean = false,
-    now: Instant,
-    pinned: Boolean,
-    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
-    showElevatorAccessibility: Boolean = false
-) {
-    val isWheelchairAccessible = patternsAtStop.stop.isWheelchairAccessible
+fun StopHeader(data: RouteCardData.RouteStopData, showElevatorAccessibility: Boolean) {
+
+    val isWheelchairAccessible = data.stop.isWheelchairAccessible
+
     val showAccessible = showElevatorAccessibility && isWheelchairAccessible
     val showInaccessible = showElevatorAccessibility && !isWheelchairAccessible
-    val showElevatorAlerts = showElevatorAccessibility && patternsAtStop.elevatorAlerts.isNotEmpty()
+    val showElevatorAlerts = showElevatorAccessibility && data.hasElevatorAlerts
 
     Row(
         Modifier.background(colorResource(id = R.color.fill2))
@@ -84,7 +75,7 @@ fun NearbyStopView(
                     )
                 }
                 Text(
-                    text = patternsAtStop.stop.name,
+                    text = data.stop.name,
                     modifier =
                         Modifier.placeholderIfLoading()
                             .padding(start = if (showAccessible) 0.dp else 8.dp)
@@ -100,8 +91,8 @@ fun NearbyStopView(
                         else
                             pluralStringResource(
                                 R.plurals.elevator_closure_count,
-                                patternsAtStop.elevatorAlerts.size,
-                                patternsAtStop.elevatorAlerts.size
+                                data.elevatorAlerts.size,
+                                data.elevatorAlerts.size
                             ),
                     modifier =
                         Modifier.placeholderIfLoading()
@@ -114,18 +105,5 @@ fun NearbyStopView(
                 )
             }
         }
-    }
-
-    StopDeparturesSummaryList(
-        patternsAtStop,
-        condenseHeadsignPredictions,
-        now,
-        TripInstantDisplay.Context.NearbyTransit,
-        pinned,
-    ) { patterns ->
-        onOpenStopDetails(
-            patternsAtStop.stop.id,
-            StopDetailsFilter(patternsAtStop.routeIdentifier, patterns.directionId())
-        )
     }
 }

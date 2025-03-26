@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsNoTripCard: View {
-    var status: RealtimePatterns.NoTripsFormat
+    var status: UpcomingFormat.NoTripsFormat
     var accentColor: Color
     var routeType: RouteType
     var hideMaps: Bool
