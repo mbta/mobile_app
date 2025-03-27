@@ -5,8 +5,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -19,6 +22,7 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -187,5 +191,129 @@ class StopDetailsUnfilteredRoutesViewTest {
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
+    }
+
+    @Test
+    fun testGroupsByDirection() {
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id) + stop.childStopIds,
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                )
+            )
+
+        composeTestRule.setContent {
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+
+            StopDetailsUnfilteredRoutesView(
+                stop = stop,
+                routeCardData = routeCardData,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = errorBannerViewModel,
+                showElevatorAccessibility = true,
+                now = now,
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
+        }
+
+        composeTestRule.onNodeWithText("Sample Route").assertExists()
+        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
+        composeTestRule.onNodeWithText("1 min").assertExists()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertDoesNotExist()
+    }
+
+    @Test
+    fun testInaccessibleByDirection() {
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(inaccessibleStop.id) + inaccessibleStop.childStopIds,
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                )
+            )
+
+        composeTestRule.setContent {
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+
+            StopDetailsUnfilteredRoutesView(
+                stop = inaccessibleStop,
+                routeCardData = routeCardData,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = errorBannerViewModel,
+                showElevatorAccessibility = true,
+                now = now,
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
+        }
+
+        composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
+    }
+
+    @Test
+    @Ignore("Alert data is not actually integrated in routeCardsForStopList yet")
+    fun testShowsElevatorAlertsWhenGroupedByDirection() {
+        val alert =
+            Single.alert {
+                activePeriod(start = Instant.DISTANT_PAST, end = null)
+                effect = Alert.Effect.ElevatorClosure
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                    stop = stop.id
+                )
+            }
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id) + stop.childStopIds,
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(mapOf(alert.id to alert)),
+                    now,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                )
+            )
+
+        composeTestRule.setContent {
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+
+            StopDetailsUnfilteredRoutesView(
+                stop = stop,
+                routeCardData = routeCardData,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = errorBannerViewModel,
+                showElevatorAccessibility = true,
+                now = now,
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
+        }
+
+        TODO("assert that the elevator alerts are shown")
     }
 }

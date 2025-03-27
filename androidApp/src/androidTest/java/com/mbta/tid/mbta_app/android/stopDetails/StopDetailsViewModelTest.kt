@@ -29,9 +29,11 @@ import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -1438,5 +1440,40 @@ class StopDetailsViewModelTest {
 
         composeTestRule.waitUntil { mapSelectedVehicleValues.size == 2 }
         assertEquals(listOf(null, vehicle), mapSelectedVehicleValues)
+    }
+
+    @Test
+    fun testManagerLoadsRouteCardInfo() {
+        val objects = ObjectCollectionBuilder()
+        objects.stop { id = "stop1" }
+
+        val viewModel =
+            StopDetailsViewModel.mocked(
+                objects,
+                settingsRepository =
+                    MockSettingsRepository(mapOf(Settings.GroupByDirection to true))
+            )
+        viewModel.loadSettings()
+
+        val stopFilters = StopDetailsPageFilters("stop1", null, null)
+
+        assertNull(viewModel.routeCardData.value)
+
+        composeTestRule.setContent {
+            stopDetailsManagedVM(
+                stopFilters,
+                viewModel = viewModel,
+                globalResponse = GlobalResponse(objects),
+                alertData = AlertsStreamDataResponse(objects),
+                pinnedRoutes = setOf(),
+                updateStopFilter = { _, _ -> },
+                updateTripFilter = { _, _ -> },
+                setMapSelectedVehicle = {},
+            )
+        }
+
+        composeTestRule.waitUntil { viewModel.routeCardData.value != null }
+
+        assertNotNull(viewModel.routeCardData.value)
     }
 }
