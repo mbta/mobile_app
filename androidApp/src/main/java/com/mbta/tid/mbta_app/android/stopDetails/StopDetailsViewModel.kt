@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -23,6 +24,8 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.StopData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
@@ -91,6 +94,33 @@ class StopDetailsViewModel(
                 coroutineDispatcher
             )
         }
+
+        fun mocked(
+            objects: ObjectCollectionBuilder,
+            errorBannerRepo: IErrorBannerStateRepository = MockErrorBannerStateRepository(),
+            predictionsRepo: IPredictionsRepository =
+                MockPredictionsRepository(
+                    connectV2Response = PredictionsByStopJoinResponse(objects)
+                ),
+            schedulesRepo: ISchedulesRepository =
+                MockScheduleRepository(scheduleResponse = ScheduleResponse(objects)),
+            settingsRepository: ISettingsRepository = MockSettingsRepository(),
+            tripPredictionsRepo: ITripPredictionsRepository =
+                MockTripPredictionsRepository(response = PredictionsStreamDataResponse(objects)),
+            tripRepo: ITripRepository = MockTripRepository(),
+            vehicleRepo: IVehicleRepository = MockVehicleRepository(),
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+        ) =
+            mocked(
+                errorBannerRepo,
+                predictionsRepo,
+                schedulesRepo,
+                settingsRepository,
+                tripPredictionsRepo,
+                tripRepo,
+                vehicleRepo,
+                coroutineDispatcher
+            )
     }
 
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)

@@ -29,7 +29,6 @@ import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -59,16 +58,7 @@ class StopDetailsViewModelTest {
         objects.schedule {}
         objects.trip {}
 
-        val predictionsRepo =
-            MockPredictionsRepository(
-                connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects))
-            )
-
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel = StopDetailsViewModel.mocked(objects)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -92,15 +82,11 @@ class StopDetailsViewModelTest {
 
         val predictionsRepo =
             MockPredictionsRepository(
-                connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
+                connectV2Response = PredictionsByStopJoinResponse(objects),
                 onConnectV2 = { connectCount += 1 }
             )
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -133,11 +119,7 @@ class StopDetailsViewModelTest {
                 onConnectV2 = { connectCount += 1 }
             )
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -175,11 +157,7 @@ class StopDetailsViewModelTest {
                 onDisconnect = { disconnectCount += 1 }
             )
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewModel.loadStopDetails("stop") } }
 
@@ -198,13 +176,7 @@ class StopDetailsViewModelTest {
 
     @Test
     fun testSetDepartures() {
-        val predictionsRepo = MockPredictionsRepository()
-
-        val schedulesRepo = MockScheduleRepository()
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel = StopDetailsViewModel.mocked()
 
         assertNull(viewModel.stopDepartures.value)
 
@@ -227,11 +199,7 @@ class StopDetailsViewModelTest {
                 onDisconnect = { disconnectCount += 1 }
             )
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel = StopDetailsViewModel.mocked(errorBannerRepo, predictionsRepo, schedulesRepo)
+        val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
 
         composeTestRule.setContent {
             LaunchedEffect(Unit) {
@@ -713,15 +681,10 @@ class StopDetailsViewModelTest {
                 onDisconnect = { disconnectCount += 1 }
             )
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
         val viewModel =
             StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                predictionsRepo,
-                schedulesRepo,
+                objects,
+                predictionsRepo = predictionsRepo,
                 coroutineDispatcher = dispatcher
             )
 
@@ -906,15 +869,10 @@ class StopDetailsViewModelTest {
                 ApiResult.Ok(VehicleStreamDataResponse(vehicle0))
             )
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
         val viewModel =
             StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                predictionsRepo,
-                schedulesRepo,
+                objects,
+                predictionsRepo = predictionsRepo,
                 tripPredictionsRepo = tripPredictionsRepo,
                 vehicleRepo = vehicleRepo,
                 coroutineDispatcher = dispatcher
@@ -1005,22 +963,7 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
-        val predictionsRepo =
-            MockPredictionsRepository(
-                connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects))
-            )
-
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                predictionsRepo,
-                schedulesRepo,
-                coroutineDispatcher = dispatcher
-            )
+        val viewModel = StopDetailsViewModel.mocked(objects, coroutineDispatcher = dispatcher)
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
@@ -1059,18 +1002,13 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
-        val emptyPredictionsRepo = MockPredictionsRepository()
         val emptySchedulesRepo = IdleScheduleRepository()
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
         val viewModelNothingLoaded =
             StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                emptyPredictionsRepo,
-                emptySchedulesRepo,
+                schedulesRepo = emptySchedulesRepo,
                 coroutineDispatcher = dispatcher
             )
 
@@ -1104,17 +1042,13 @@ class StopDetailsViewModelTest {
         objects.stop { id = "stop1" }
 
         val emptyPredictionsRepo = MockPredictionsRepository()
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
         val viewModelSchedulesLoaded =
             StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                emptyPredictionsRepo,
-                schedulesRepo,
+                objects,
+                predictionsRepo = emptyPredictionsRepo,
                 coroutineDispatcher = dispatcher
             )
 
@@ -1147,19 +1081,14 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
-        val predictionsRepo =
-            MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
         val emptySchedulesRepo = IdleScheduleRepository()
-
-        val errorBannerRepo = MockErrorBannerStateRepository()
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
         val viewModelPredictionsLoaded =
             StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                predictionsRepo,
-                emptySchedulesRepo,
+                objects,
+                schedulesRepo = emptySchedulesRepo,
                 coroutineDispatcher = dispatcher
             )
 
@@ -1191,8 +1120,6 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.prediction()
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
         val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
         val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
 
@@ -1208,9 +1135,9 @@ class StopDetailsViewModelTest {
 
         val viewModel =
             StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                predictionsRepo,
-                schedulesRepo,
+                objects,
+                errorBannerRepo = errorBannerRepo,
+                predictionsRepo = predictionsRepo,
                 coroutineDispatcher = dispatcher
             )
 
@@ -1265,21 +1192,9 @@ class StopDetailsViewModelTest {
 
         objects.prediction()
 
-        val schedulesRepo = MockScheduleRepository(ScheduleResponse(objects))
-
-        val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
-        val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
-        val errorBannerRepo = MockErrorBannerStateRepository()
-
         val stopFilters = mutableStateOf(StopDetailsPageFilters(stop.id, null, null))
 
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                errorBannerRepo,
-                predictionsRepo,
-                schedulesRepo,
-                coroutineDispatcher = dispatcher
-            )
+        val viewModel = StopDetailsViewModel.mocked(objects, coroutineDispatcher = dispatcher)
 
         var newStopFilter: StopDetailsFilter? = null
 
