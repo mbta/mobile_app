@@ -306,90 +306,51 @@ data class RouteCardData(
          */
         fun addStaticStopsData(stopIds: List<String>, globalData: GlobalResponse): ListBuilder {
 
-            val routePatternsUsed = mutableSetOf<String>()
-
-            val patternsGrouped =
-                mutableMapOf<LineOrRoute, MutableMap<Stop, MutableList<RoutePattern>>>()
-
-            val parentToAllStopIds = mutableMapOf<String, MutableSet<String>>()
-
-            globalData.run {
-                stopIds.forEach { stopId ->
-                    val stop = stops[stopId] ?: return@forEach
-                    val patternsByRouteOrLine =
-                        patternsByRouteOrLine(stopId, globalData)
-                            // filter out a route if we've already seen all of its patterns
-                            .filterNot {
-                                routePatternsUsed.containsAll(
-                                    it.value.map { pattern -> pattern.id }.toSet()
-                                )
-                            }
-                    routePatternsUsed.addAll(
-                        patternsByRouteOrLine.flatMap { it.value }.map { it.id }
-                    )
-
-                    stop.parentStationId?.let { parentStationId ->
-                        parentToAllStopIds
-                            .getOrPut(parentStationId) { mutableSetOf(parentStationId) }
-                            .add(stop.id)
+            // A map of a stop to itself and any children.
+            // for standalone stops, an entry will be <standaloneStop, [standaloneStopId]>.
+            // for stations, an entry will be <station, [stationId, child1Id, child2Id, etc.]>
+            val parentToAllStops: Map<Stop, Set<String>> =
+                stopIds
+                    .mapNotNull { stopId ->
+                        val stop = globalData.stops[stopId]
+                        if (stop != null) {
+                            Pair(stop.resolveParent(globalData), stop)
+                        } else {
+                            null
+                        }
                     }
+                    .groupBy({ it.first }, { it.second.id })
+                    .mapValues { it.value.toSet().plus(it.key.id) }
 
-                    val stopOrParent = stop.resolveParent(stops)
-
-                    for ((routeOrLine, routePatterns) in patternsByRouteOrLine) {
-                        val routeStops = patternsGrouped.getOrPut(routeOrLine) { mutableMapOf() }
-                        val patternsForStop = routeStops.getOrPut(stopOrParent) { mutableListOf() }
-                        patternsForStop += routePatterns
-                    }
-                }
-            }
+            val patternsGrouped = patternsGroupedByLineOrRouteAndStop(globalData, parentToAllStops)
 
             val builderData =
                 patternsGrouped
-                    .map { byLineOrRoute ->
-                        val key =
-                            when (val cardType = byLineOrRoute.key) {
-                                is LineOrRoute.Line -> cardType.line.id
-                                is LineOrRoute.Route -> cardType.route.id
-                            }
-                        // TODO: Directions list with actual values.
+                    .map { (lineOrRoute, patternsByStop) ->
+                        val key = lineOrRoute.id
                         key to
                             Builder(
-                                byLineOrRoute.key,
-                                byLineOrRoute.value
-                                    .map { byStop ->
+                                lineOrRoute,
+                                patternsByStop
+                                    .map { (stop, patterns) ->
                                         val directions =
-                                            when (val lineOrRoute = byLineOrRoute.key) {
-                                                is LineOrRoute.Line ->
-                                                    Direction.getDirectionsForLine(
-                                                        globalData,
-                                                        byStop.key,
-                                                        byStop.value
-                                                    )
-                                                is LineOrRoute.Route ->
-                                                    Direction.getDirections(
-                                                        globalData,
-                                                        byStop.key,
-                                                        lineOrRoute.route,
-                                                        byStop.value
-                                                    )
-                                            }
-                                        byStop.key.id to
+                                            lineOrRoute.directions(globalData, stop, patterns)
+                                        stop.id to
                                             RouteStopDataBuilder(
-                                                byStop.key,
+                                                stop,
                                                 directions = directions,
                                                 data =
-                                                    byStop.value
+                                                    patterns
                                                         .groupBy { pattern -> pattern.directionId }
-                                                        .mapValues {
+                                                        .mapValues { (directionId, patterns) ->
                                                             LeafBuilder(
-                                                                directionId = it.key,
-                                                                routePatterns = it.value,
+                                                                directionId = directionId,
+                                                                routePatterns = patterns,
                                                                 stopIds =
-                                                                    parentToAllStopIds.getOrElse(
-                                                                        byStop.key.id
+                                                                    parentToAllStops.getOrElse(
+                                                                        stop
                                                                     ) {
-                                                                        setOf(byStop.key.id)
+                                                                        setOf(stop.id)
                                                                     },
                                                                 allDataLoaded = allDataLoaded
                                                             )
@@ -407,20 +368,25 @@ data class RouteCardData(
         }
 
         private fun patternsByRouteOrLine(
-            stopId: String,
+            stopIds: Set<String>,
             globalData: GlobalResponse
         ): Map<LineOrRoute, List<RoutePattern>> {
-            return globalData.run {
-                patternIdsByStop
-                    .getOrElse(stopId) { emptyList() }
-                    .map { patternId ->
-                        val pattern = routePatterns[patternId]
-                        val route = pattern?.let { routes[it.routeId] }
+
+            val allPatternsAtStopWithRoute: List<Pair<Route?, RoutePattern?>> =
+                stopIds.flatMap { stopId ->
+                    val patternsIds = globalData.patternIdsByStop.getOrElse(stopId) { emptyList() }
+                    patternsIds.map { patternId ->
+                        val pattern = globalData.routePatterns[patternId]
+                        val route = pattern?.let { globalData.routes[it.routeId] }
                         Pair(route, pattern)
                     }
+                }
+
+            val patternsByRouteOrLine =
+                allPatternsAtStopWithRoute
                     .groupBy { (route, _pattern) ->
                         if (route != null) {
-                            val line = route.lineId?.let { lines[it] }
+                            val line = route.lineId?.let { globalData.lines[it] }
                             if (line != null && !route.isShuttle && line.isGrouped) {
                                 // set routes empty for now, will populate once all routes
                                 // of the line at this stop are known in the next step
@@ -428,19 +394,57 @@ data class RouteCardData(
                             } else LineOrRoute.Route(route)
                         } else null
                     }
-                    .mapNotNull { entry ->
-                        when (val key = entry.key) {
+                    .mapNotNull { (partialLineOrRoute, patternRoutePairs) ->
+                        when (partialLineOrRoute) {
                             is LineOrRoute.Line ->
                                 LineOrRoute.Line(
-                                    key.line,
-                                    routes = entry.value.mapNotNull { it.first }.toSet()
-                                ) to entry.value.mapNotNull { it.second }
-                            is LineOrRoute.Route -> key to entry.value.mapNotNull { it.second }
+                                    partialLineOrRoute.line,
+                                    routes = patternRoutePairs.mapNotNull { it.first }.toSet()
+                                ) to patternRoutePairs.mapNotNull { it.second }
+                            is LineOrRoute.Route ->
+                                partialLineOrRoute to patternRoutePairs.mapNotNull { it.second }
                             null -> null
                         }
                     }
                     .toMap()
+
+            return patternsByRouteOrLine
+        }
+
+        // build the map of LineOrRoute => Stop => Patterns.
+        // A stop is only included for a LineOrRoute if it has any patterns that haven't been seen
+        // at an earlier stop for that LineOrRoute.
+        private fun patternsGroupedByLineOrRouteAndStop(
+            globalData: GlobalResponse,
+            parentToAllStops: Map<Stop, Set<String>>
+        ): Map<LineOrRoute, Map<Stop, List<RoutePattern>>> {
+            val routePatternsUsed = mutableSetOf<String>()
+
+            val patternsGrouped =
+                mutableMapOf<LineOrRoute, MutableMap<Stop, MutableList<RoutePattern>>>()
+
+            globalData.run {
+                parentToAllStops.forEach { (parentStop, allStopsForParent) ->
+                    val patternsByRouteOrLine =
+                        patternsByRouteOrLine(allStopsForParent, globalData)
+                            // filter out a route if we've already seen all of its patterns
+                            .filterNot {
+                                routePatternsUsed.containsAll(
+                                    it.value.map { pattern -> pattern.id }.toSet()
+                                )
+                            }
+                    routePatternsUsed.addAll(
+                        patternsByRouteOrLine.flatMap { it.value }.map { it.id }
+                    )
+                    for ((routeOrLine, routePatterns) in patternsByRouteOrLine) {
+                        val routeStops = patternsGrouped.getOrPut(routeOrLine) { mutableMapOf() }
+                        val patternsForStop = routeStops.getOrPut(parentStop) { mutableListOf() }
+                        patternsForStop += routePatterns
+                    }
+                }
             }
+
+            return patternsGrouped
         }
 
         fun addUpcomingTrips(
