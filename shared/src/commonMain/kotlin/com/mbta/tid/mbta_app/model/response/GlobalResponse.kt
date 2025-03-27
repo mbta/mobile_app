@@ -64,6 +64,7 @@ data class GlobalResponse(
         )
 
     @Transient
+    /** lines with their associated non-shuttle routes */
     internal val routesByLineId: Map<String, List<Route>> =
         routes.values.filter { it.lineId != null && !it.isShuttle }.groupBy { it.lineId!! }
 

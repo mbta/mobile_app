@@ -599,6 +599,100 @@ class RouteCardDataTest {
     }
 
     @Test
+    fun `ListBuilder addStaticStopsData Green Line routes all grouped by direction when different child stops`() {
+        val objects = ObjectCollectionBuilder()
+
+        val parkSt = objects.stop { locationType = LocationType.STATION }
+
+        val bWestPlatform = objects.stop { parentStationId = parkSt.id }
+        val cWestPlatform = objects.stop { parentStationId = parkSt.id }
+        val dWestPlatform = objects.stop { parentStationId = parkSt.id }
+        val  eastPlatform = objects.stop { parentStationId = parkSt.id }
+
+        val line =
+            objects.line {
+                id = "line-Green"
+                sortOrder = 0
+            }
+
+        val bRoute =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Government Center")
+            }
+
+        val cRoute =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Cleveland Circle", "Government Center")
+            }
+
+        val dRoute =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Riverside", "Union Sq")
+            }
+
+
+        val bWestPattern = objects.routePattern(bRoute) {}
+        val bEastPattern = objects.routePattern(bRoute){ directionId = 1 }
+        val cWestPattern = objects.routePattern(cRoute) {}
+        val cEastPattern = objects.routePattern(cRoute) { directionId = 1 }
+        val dWestPattern = objects.routePattern(dRoute) {}
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop = mapOf(eastPlatform.id to listOf(bEastPattern.id, cEastPattern.id),
+                    bWestPlatform.id to listOf(bWestPattern.id),
+                    cWestPlatform.id to listOf(cWestPattern.id),
+                    dWestPlatform.id to listOf(dWestPattern.id)),
+            )
+        val nearby = NearbyResponse(objects)
+        val context = RouteCardData.Context.NearbyTransit
+        val now = Clock.System.now()
+
+        assertEquals(
+            mapOf(
+                line.id to
+                        RouteCardData.Builder(
+                            RouteCardData.LineOrRoute.Line(line, setOf(bRoute, cRoute, dRoute)),
+                            mapOf(
+                                parkSt.id to
+                                        RouteCardData.RouteStopDataBuilder(
+                                            parkSt,
+                                            line,
+                                            setOf(bRoute, cRoute, dRoute),
+                                            mapOf(
+                                                0 to
+                                                        RouteCardData.LeafBuilder(
+                                                            directionId = 0,
+                                                            routePatterns = listOf(bWestPattern, cWestPattern, dWestPattern),
+                                                            stopIds = setOf(parkSt.id, eastPlatform.id, bWestPlatform.id, cWestPlatform.id, dWestPlatform.id),
+                                                            allDataLoaded = false,
+                                                        ),
+                                                1 to
+                                                        RouteCardData.LeafBuilder(
+                                                            directionId = 1,
+                                                            routePatterns = listOf(bEastPattern, cEastPattern),
+                                                            stopIds = setOf(parkSt.id, eastPlatform.id, bWestPlatform.id, cWestPlatform.id, dWestPlatform.id),
+                                                            allDataLoaded = false,
+                                                        )), global
+                            )),
+                            context,
+                            now
+                        ),
+            ),
+            RouteCardData.ListBuilder(false, context, now)
+                .addStaticStopsData(nearby.stopIds, global)
+                .data
+        )
+    }
+
+    @Test
     fun `ListBuilder addStaticStopsData Green Line routes are grouped together without Government Center direction`() {
         val objects = ObjectCollectionBuilder()
 

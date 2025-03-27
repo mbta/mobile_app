@@ -396,7 +396,6 @@ data class RouteCardData(
                                 routes =
                                     globalData.routesByLineId
                                         .getOrElse(line.id) { emptyList() }
-                                        .filterNot { it.isShuttle }
                                         .toSet()
                             )
                         } else LineOrRoute.Route(route)

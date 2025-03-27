@@ -423,4 +423,27 @@ class GlobalResponseTest {
         val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1, route2))
         assertEquals(affectedStops, listOf(stop1, stop2))
     }
+
+    @Test
+    fun `routesByLineId includes only non-shuttle routes`() {
+        val objects = ObjectCollectionBuilder()
+
+        val line = objects.line()
+
+        val route = objects.route {
+            lineId = line.id
+        }
+
+        val shuttleRoute = objects.route {
+            id = "Shuttle-1"
+            lineId = line.id
+        }
+
+        // not included b/c no line
+        val otherRoute = objects.route()
+
+        assertEquals(mapOf(line.id to listOf(route)), GlobalResponse(objects).routesByLineId)
+
+
+    }
 }
