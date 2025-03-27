@@ -11,6 +11,8 @@ import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 
 // These are used in LineOrRoute to disambiguate them from LineOrRoute.Route and LineOrRoute.Line
@@ -254,7 +256,7 @@ data class RouteCardData(
          * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext] are omitted.
          * Cancelled trips are also omitted when [context] = NearbyTransit.
          */
-        fun routeCardsForStopList(
+        suspend fun routeCardsForStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             sortByDistanceFrom: Position?,
@@ -264,33 +266,34 @@ data class RouteCardData(
             now: Instant,
             pinnedRoutes: Set<String>,
             context: Context
-        ): List<RouteCardData>? {
+        ): List<RouteCardData>? =
+            withContext(Dispatchers.Default) {
 
-            // if predictions or alerts are still loading, this is the loading state
-            if (predictions == null || alerts == null) return null
+                // if predictions or alerts are still loading, this is the loading state
+                if (predictions == null || alerts == null) return@withContext null
 
-            // if global data was still loading, there'd be no nearby data, and null handling is
-            // annoying
-            if (globalData == null) return null
+                // if global data was still loading, there'd be no nearby data, and null handling is
+                // annoying
+                if (globalData == null) return@withContext null
 
-            val hideNonTypicalPatternsBeyondNext: Duration? =
-                when (context) {
-                    Context.NearbyTransit -> 120.minutes
-                    Context.StopDetailsUnfiltered -> 120.minutes
-                    Context.StopDetailsFiltered -> null
-                }
+                val hideNonTypicalPatternsBeyondNext: Duration? =
+                    when (context) {
+                        Context.NearbyTransit -> 120.minutes
+                        Context.StopDetailsUnfiltered -> 120.minutes
+                        Context.StopDetailsFiltered -> null
+                    }
 
-            val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { now + it }
-            val allDataLoaded = schedules != null
+                val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { now + it }
+                val allDataLoaded = schedules != null
 
-            return ListBuilder(allDataLoaded, context, now)
-                .addStaticStopsData(stopIds, globalData)
-                .addUpcomingTrips(schedules, predictions, now, globalData)
-                .filterIrrelevantData(now, cutoffTime, context, globalData)
-                .addAlerts(alerts, includeMinorAlerts = context.isStopDetails(), now)
-                .build()
-                .sort(sortByDistanceFrom, pinnedRoutes)
-        }
+                ListBuilder(allDataLoaded, context, now)
+                    .addStaticStopsData(stopIds, globalData)
+                    .addUpcomingTrips(schedules, predictions, now, globalData)
+                    .filterIrrelevantData(now, cutoffTime, context, globalData)
+                    .addAlerts(alerts, includeMinorAlerts = context.isStopDetails(), now)
+                    .build()
+                    .sort(sortByDistanceFrom, pinnedRoutes)
+            }
     }
 
     class ListBuilder(val allDataLoaded: Boolean, val context: Context, val now: Instant) {

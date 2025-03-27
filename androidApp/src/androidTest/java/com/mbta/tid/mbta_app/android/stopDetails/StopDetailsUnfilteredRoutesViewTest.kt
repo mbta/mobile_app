@@ -194,7 +194,7 @@ class StopDetailsUnfilteredRoutesViewTest {
     }
 
     @Test
-    fun testGroupsByDirection() {
+    fun testGroupsByDirection() = runBlocking {
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(
@@ -234,7 +234,7 @@ class StopDetailsUnfilteredRoutesViewTest {
     }
 
     @Test
-    fun testInaccessibleByDirection() {
+    fun testInaccessibleByDirection(): Unit = runBlocking {
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(
@@ -272,7 +272,7 @@ class StopDetailsUnfilteredRoutesViewTest {
 
     @Test
     @Ignore("Alert data is not actually integrated in routeCardsForStopList yet")
-    fun testShowsElevatorAlertsWhenGroupedByDirection() {
+    fun testShowsElevatorAlertsWhenGroupedByDirection(): Unit = runBlocking {
         val alert =
             Single.alert {
                 activePeriod(start = Instant.DISTANT_PAST, end = null)
