@@ -63,6 +63,10 @@ data class GlobalResponse(
                 .map { it.id to it.position }
         )
 
+    @Transient
+    internal val routesByLineId: Map<String, List<Route>> =
+        routes.values.filter { it.lineId != null && !it.isShuttle }.groupBy { it.lineId!! }
+
     fun getRoute(routeId: String?) = routes[routeId]
 
     fun getStop(stopId: String?) = stops[stopId]
