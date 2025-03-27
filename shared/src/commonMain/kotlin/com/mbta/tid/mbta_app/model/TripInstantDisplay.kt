@@ -154,6 +154,4 @@ sealed class TripInstantDisplay {
             return Minutes(minutes)
         }
     }
-
-    fun scheduleBasedDisplay() {}
 }
