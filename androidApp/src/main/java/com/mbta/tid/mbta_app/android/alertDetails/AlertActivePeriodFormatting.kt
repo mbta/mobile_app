@@ -10,10 +10,7 @@ import androidx.compose.ui.text.withStyle
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.toJavaDate
 import com.mbta.tid.mbta_app.model.Alert
-import java.util.Calendar
-import java.util.TimeZone
 import kotlin.time.Duration.Companion.hours
-import kotlinx.datetime.Instant
 
 /**
  * Return a localized string containing the date and time of an alert. This includes special
@@ -28,10 +25,18 @@ import kotlinx.datetime.Instant
  */
 private fun format(
     context: Context,
-    instant: Instant,
-    durationCertainty: Alert.DurationCertainty?,
+    period: Alert.ActivePeriod,
     isStart: Boolean
 ): AnnotatedString {
+    val instant =
+        if (isStart) period.start
+        else
+            period.end
+                ?: return AnnotatedString(
+                    context.getString(R.string.until_further_notice),
+                    SpanStyle(fontWeight = FontWeight.Bold)
+                )
+
     val date = instant.toJavaDate()
     val dateFormat =
         DateFormat.getInstanceForSkeleton(
@@ -41,18 +46,13 @@ private fun format(
     var formattedDate = dateFormat.format(date)
     var formattedTime = DateFormat.getInstanceForSkeleton(DateFormat.HOUR_MINUTE).format(date)
 
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    calendar.timeZone = TimeZone.getTimeZone("America/New_York")
-    val hour = calendar.get(Calendar.HOUR_OF_DAY)
-    val minutes = calendar.get(Calendar.MINUTE)
-    if (isStart && hour == 3 && minutes == 0) {
+    if (isStart && period.fromStartOfService) {
         formattedTime = context.getString(R.string.start_of_service)
-    } else if (!isStart && hour == 2 && minutes == 59) {
+    } else if (!isStart && period.toEndOfService) {
         formattedTime = context.getString(R.string.end_of_service)
         val previousDate = instant.minus(24.hours).toJavaDate()
         formattedDate = dateFormat.format(previousDate)
-    } else if (!isStart && durationCertainty == Alert.DurationCertainty.Estimated) {
+    } else if (!isStart && period.endingLaterToday) {
         formattedTime = context.getString(R.string.later_today)
     }
 
@@ -63,13 +63,6 @@ private fun format(
     }
 }
 
-fun Alert.ActivePeriod.formatStart(context: Context) =
-    format(context, start, durationCertainty, true)
+fun Alert.ActivePeriod.formatStart(context: Context) = format(context, this, true)
 
-fun Alert.ActivePeriod.formatEnd(context: Context): AnnotatedString {
-    return end?.let { format(context, it, durationCertainty, false) }
-        ?: AnnotatedString(
-            context.getString(R.string.until_further_notice),
-            SpanStyle(fontWeight = FontWeight.Bold)
-        )
-}
+fun Alert.ActivePeriod.formatEnd(context: Context) = format(context, this, false)

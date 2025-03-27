@@ -22,7 +22,7 @@ runs:
       run: |
         case ${{ inputs.for }} in
           pre-commit)
-            tools="java"
+            tools="java ruby"
             ;;
           android-test)
             tools="java kotlin-cache rsvg"
@@ -126,6 +126,19 @@ runs:
       shell: bash
       run: |
         sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
+    - name: Generate Xcode project
+      if: steps.settings.outputs.xcode == 'true'
+      shell: bash
+      run: |
+        OUT=$(mktemp -d)
+        VERSION=$(cat .tool-versions | grep xcodegen | cut -d' ' -f2)
+        pushd ${OUT}
+        curl --location --output xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/${VERSION}/xcodegen.zip
+        unzip -q xcodegen.zip
+        popd
+        cd iosApp
+        ${OUT}/xcodegen/bin/xcodegen generate
+        rm -r ${OUT}
     - name: Cache CocoaPods dependencies
       if: steps.settings.outputs.xcode == 'true'
       uses: actions/cache@v4
