@@ -231,6 +231,17 @@ data class RouteCardData(
             }
     }
 
+    /**
+     * LineOrRoute where Line doesn't also contain the list of routes. For use in intermediate
+     * stages where maps are used and we want to match Line/Route records, but don't know the entire
+     * set of routes served by a line yet
+     */
+    private sealed interface LineOrRouteKey {
+        data class Line(val line: LineModel) : LineOrRouteKey
+
+        data class Route(val route: RouteModel) : LineOrRouteKey
+    }
+
     @OptIn(ExperimentalTurfApi::class)
     /** The distance from the given position to the first stop in this route card. */
     fun distanceFrom(position: Position): Double {
@@ -370,43 +381,32 @@ data class RouteCardData(
         private fun patternsByRouteOrLine(
             stopIds: Set<String>,
             globalData: GlobalResponse
-        ): Map<LineOrRoute, List<RoutePattern>> {
+        ): Map<LineOrRouteKey, List<RoutePattern>> {
 
-            val allPatternsAtStopWithRoute: List<Pair<Route?, RoutePattern?>> =
+            val allPatternsAtStopWithRoute: List<Pair<Route, RoutePattern>> =
                 stopIds.flatMap { stopId ->
                     val patternsIds = globalData.patternIdsByStop.getOrElse(stopId) { emptyList() }
-                    patternsIds.map { patternId ->
+                    patternsIds.mapNotNull { patternId ->
                         val pattern = globalData.routePatterns[patternId]
                         val route = pattern?.let { globalData.routes[it.routeId] }
-                        Pair(route, pattern)
+                        if (route != null && pattern != null) {
+                            Pair(route, pattern)
+                        } else {
+                            null
+                        }
                     }
                 }
 
             val patternsByRouteOrLine =
-                allPatternsAtStopWithRoute
-                    .groupBy { (route, _pattern) ->
-                        if (route != null) {
-                            val line = route.lineId?.let { globalData.lines[it] }
-                            if (line != null && !route.isShuttle && line.isGrouped) {
-                                // set routes empty for now, will populate once all routes
-                                // of the line at this stop are known in the next step
-                                LineOrRoute.Line(line, routes = emptySet())
-                            } else LineOrRoute.Route(route)
-                        } else null
-                    }
-                    .mapNotNull { (partialLineOrRoute, patternRoutePairs) ->
-                        when (partialLineOrRoute) {
-                            is LineOrRoute.Line ->
-                                LineOrRoute.Line(
-                                    partialLineOrRoute.line,
-                                    routes = patternRoutePairs.mapNotNull { it.first }.toSet()
-                                ) to patternRoutePairs.mapNotNull { it.second }
-                            is LineOrRoute.Route ->
-                                partialLineOrRoute to patternRoutePairs.mapNotNull { it.second }
-                            null -> null
-                        }
-                    }
-                    .toMap()
+                allPatternsAtStopWithRoute.groupBy(
+                    { (route, _pattern) ->
+                        val line = route.lineId?.let { globalData.lines[it] }
+                        if (line != null && !route.isShuttle && line.isGrouped) {
+                            LineOrRouteKey.Line(line)
+                        } else LineOrRouteKey.Route(route)
+                    },
+                    { it.second }
+                )
 
             return patternsByRouteOrLine
         }
@@ -421,30 +421,44 @@ data class RouteCardData(
             val routePatternsUsed = mutableSetOf<String>()
 
             val patternsGrouped =
-                mutableMapOf<LineOrRoute, MutableMap<Stop, MutableList<RoutePattern>>>()
+                mutableMapOf<LineOrRouteKey, MutableMap<Stop, MutableList<RoutePattern>>>()
 
             globalData.run {
                 parentToAllStops.forEach { (parentStop, allStopsForParent) ->
                     val patternsByRouteOrLine =
                         patternsByRouteOrLine(allStopsForParent, globalData)
                             // filter out a route if we've already seen all of its patterns
-                            .filterNot {
+                            .filterNot { (_key, patterns) ->
                                 routePatternsUsed.containsAll(
-                                    it.value.map { pattern -> pattern.id }.toSet()
+                                    patterns.map { pattern -> pattern.id }.toSet()
                                 )
                             }
-                    routePatternsUsed.addAll(
-                        patternsByRouteOrLine.flatMap { it.value }.map { it.id }
-                    )
-                    for ((routeOrLine, routePatterns) in patternsByRouteOrLine) {
+
+                    for ((routeOrLine, patterns) in patternsByRouteOrLine) {
+                        routePatternsUsed.addAll(patterns.map { it.id })
                         val routeStops = patternsGrouped.getOrPut(routeOrLine) { mutableMapOf() }
                         val patternsForStop = routeStops.getOrPut(parentStop) { mutableListOf() }
-                        patternsForStop += routePatterns
+                        patternsForStop += patterns
                     }
                 }
             }
 
-            return patternsGrouped
+            return patternsGrouped.mapKeys { (key, patternsByStop) ->
+                when (key) {
+                    is LineOrRouteKey.Line ->
+                        LineOrRoute.Line(
+                            key.line,
+                            // now that we know all the patterns included at the stops serving this
+                            // line, we can build the list of routes
+                            routes =
+                                patternsByStop
+                                    .flatMap { it.value }
+                                    .mapNotNull { globalData.getRoute(it.routeId) }
+                                    .toSet()
+                        )
+                    is LineOrRouteKey.Route -> LineOrRoute.Route(key.route)
+                }
+            }
         }
 
         fun addUpcomingTrips(
