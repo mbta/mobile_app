@@ -276,8 +276,8 @@ data class RouteCardData(
             val hideNonTypicalPatternsBeyondNext: Duration? =
                 when (context) {
                     Context.NearbyTransit -> 120.minutes
-                    Context.StopDetailsFiltered -> 120.minutes
-                    Context.StopDetailsUnfiltered -> null
+                    Context.StopDetailsUnfiltered -> 120.minutes
+                    Context.StopDetailsFiltered -> null
                 }
 
             val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { now + it }
