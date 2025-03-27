@@ -26,25 +26,19 @@ extension Shared.Alert.ActivePeriod {
         var formattedDate = date.formatted(dateFormat)
         var formattedTime = date.formatted(date: .omitted, time: .shortened)
 
-        let comp: DateComponents? = if let eastern = TimeZone(identifier: "America/New_York") {
-            Calendar.current.dateComponents(in: eastern, from: date)
-        } else { nil }
-        let hour = comp?.hour
-        let minute = comp?.minute
-
-        if isStart, hour == 3, minute == 0 {
+        if isStart, fromStartOfService {
             formattedTime = NSLocalizedString(
                 "start of service",
                 comment: "Used when an alert begins at the start of a service day"
             )
-        } else if !isStart, hour == 2, minute == 59 {
+        } else if !isStart, toEndOfService {
             formattedTime = NSLocalizedString(
                 "end of service",
                 comment: "Used when an alert ends at the end of a service day"
             )
             let previousDate = date - (60 * 60 * 24)
             formattedDate = previousDate.formatted(dateFormat)
-        } else if !isStart, durationCertainty == .estimated {
+        } else if !isStart, endingLaterToday {
             formattedTime = NSLocalizedString(
                 "later today",
                 comment: "Used when an alert ends at an indeterminite time later the same day"
