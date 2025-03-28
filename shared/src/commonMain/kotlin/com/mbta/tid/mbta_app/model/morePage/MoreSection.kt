@@ -11,7 +11,7 @@ class MoreSection(var id: Category, var items: List<MoreItem>, var note: String?
         Support
     }
 
-    val requiresStaging: Boolean =
+    val hiddenOnProd: Boolean =
         when (this.id) {
             Category.FeatureFlags -> true
             else -> false
