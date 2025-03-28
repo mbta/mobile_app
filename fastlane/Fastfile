@@ -21,6 +21,8 @@ platform :android do
       'com.mbta.tid.mbta_app'
     when 'Staging'
       'com.mbta.tid.mbta_app.staging'
+    when 'DevOrange'
+      'com.mbta.tid.mbta_app.devOrange'
     else
       raise "Unknown flavor #{flavor}"
     end
@@ -34,10 +36,17 @@ platform :android do
       if options[:build_type] == 'Debug'
         0
       else
-        google_play_track_version_codes(
-          package_name: package_name,
-          track: 'internal'
-        ).max
+        begin
+          google_play_track_version_codes(
+            package_name: package_name,
+            track: 'internal'
+          ).max
+        rescue Exception => e
+          unless e.message == "Google Api Error: Invalid request - Package not found: #{package_name}."
+            raise
+          end
+          0
+        end
       end
 
     next_version_code = last_version_code + 1
@@ -70,7 +79,7 @@ platform :android do
   desc 'Deploy a new version to Google Play for internal testing'
   lane :internal do |options|
     package_name = package_name(options[:flavor])
-    flavor = options[:flavor].downcase
+    flavor = options[:flavor][0].downcase + options[:flavor][1..]
     upload_to_play_store(
       package_name: package_name,
       track: 'internal',
@@ -86,6 +95,8 @@ platform :ios do
       'com.mbta.tid.mbtaapp'
     when 'Staging'
       'com.mbta.tid.mbtaapp.staging'
+    when 'DevOrange'
+      'com.mbta.tid.mbtaapp.devorange'
     else
       raise "Unknown scheme #{scheme}"
     end
@@ -188,6 +199,13 @@ platform :ios do
     app_store_connect
     begin
       case options[:scheme]
+      when 'DevOrange'
+        upload_to_testflight(
+          ipa: 'iosApp/build/iosApp.ipa',
+          distribute_external: true,
+          changelog: '',
+          groups: ['Dev Orange Users']
+        )
       when 'Staging'
         upload_to_testflight(
           ipa: 'iosApp/build/iosApp.ipa',

@@ -1,0 +1,54 @@
+name: iOS dev-orange deploy
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - synchronize
+      - labeled
+  schedule:
+    - cron: "45 16 * * MON"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check if build is necessary
+    runs-on: ubuntu-latest
+    steps:
+      - id: check
+        name: Check
+        run: |
+          if ${{ github.event_name == 'schedule' }}; then
+            echo "should-run=$(gh pr list --label 'deploy to ios dev-orange' --json id --jq 'length == 0')" | tee -a "$GITHUB_OUTPUT"
+          elif ${{ github.event_name == 'pull_request' }}; then
+            echo "should-run=${{ contains(github.event.pull_request.labels.*.name, 'deploy to ios dev-orange') }}" | tee -a "$GITHUB_OUTPUT"
+          else
+            echo "should-run=true" | tee -a "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      should-run: ${{ steps.check.outputs.should-run }}
+  build-ios:
+    name: Build for iOS
+    needs: check
+    if: ${{ needs.check.outputs.should-run == 'true' }}
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/build-ios.yaml
+    with:
+      deploy: true
+      scheme: "DevOrange"
+      sentry-environment: "dev-orange"
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+      GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_DEV_ORANGE }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_DSN_IOS: ${{ secrets.SENTRY_DSN_IOS }}

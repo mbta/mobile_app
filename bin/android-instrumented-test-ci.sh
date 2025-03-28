@@ -4,7 +4,7 @@
 # https://github.com/ReactiveCircus/android-emulator-runner/issues/316#issuecomment-1665866511
 
 set +e
-./gradlew connectedCheck --no-daemon
+./gradlew :androidApp:connectedStagingDebugAndroidTest --no-daemon
 GRADLE_EXIT_CODE=$?
 
 if [ $GRADLE_EXIT_CODE -ne 0 ]; then

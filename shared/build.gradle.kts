@@ -51,6 +51,8 @@ kotlin {
             export(libs.sentry)
         }
 
+        xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["DevOrangeRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["StagingRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["ProdDebug"] = NativeBuildType.DEBUG

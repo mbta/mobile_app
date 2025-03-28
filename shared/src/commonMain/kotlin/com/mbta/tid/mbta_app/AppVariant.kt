@@ -5,6 +5,11 @@ enum class AppVariant(
     val lightMapStyle: String,
     val darkMapStyle: String
 ) {
+    DevOrange(
+        "mobile-app-backend-dev-orange.mbtace.com",
+        "mapbox://styles/mbtamobileapp/cm02vf0cf00cu01pnfgnu5onh",
+        "mapbox://styles/mbtamobileapp/cm02vgvsp003c01ombyewgu70"
+    ),
     Staging(
         "mobile-app-backend-staging.mbtace.com",
         "mapbox://styles/mbtamobileapp/cm02vf0cf00cu01pnfgnu5onh",

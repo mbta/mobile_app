@@ -11,7 +11,9 @@ import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
-#if STAGING
+#if DEVORANGE
+    let appVariant = AppVariant.devOrange
+#elseif STAGING
     let appVariant = AppVariant.staging
 #elseif PROD
     let appVariant = AppVariant.prod

@@ -55,7 +55,7 @@ struct MoreSection: Identifiable, Equatable {
         }
     }
 
-    var requiresStaging: Bool {
+    var hiddenOnProd: Bool {
         switch id {
         case .featureFlags: true
         default: false

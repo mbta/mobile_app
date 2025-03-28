@@ -3,8 +3,8 @@
 platform :ios, '15.0'
 
 target 'iosApp' do
-  project 'iosApp', 'Prod Debug' => :debug, 'Staging Debug' => :debug,
-                    'Prod Release' => :release, 'Staging Release' => :release
+  project 'iosApp', 'Prod Debug' => :debug, 'Staging Debug' => :debug, 'DevOrange Debug' => :debug,
+                    'Prod Release' => :release, 'Staging Release' => :release, 'DevOrange Release' => :release
   use_frameworks!
   pod 'shared', path: '../shared/'
 

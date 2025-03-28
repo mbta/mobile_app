@@ -46,6 +46,11 @@ android {
     buildTypes { getByName("release") { isMinifyEnabled = false } }
     flavorDimensions += "environment"
     productFlavors {
+        create("devOrange") {
+            dimension = "environment"
+            applicationIdSuffix = ".devOrange"
+        }
+
         create("staging") {
             dimension = "environment"
             applicationIdSuffix = ".staging"
@@ -160,21 +165,12 @@ task("envVars") {
 
     // https://stackoverflow.com/a/53261807
     val sentryEnv =
-        if (
+        listOf("debug", "dev-orange", "staging", "prod").firstOrNull { env ->
             gradle.startParameter.taskNames.any {
-                it.lowercase(Locale.getDefault()).contains("debug")
+                it.lowercase(Locale.getDefault()).contains(env.replace("-", ""))
             }
-        ) {
-            "debug"
-        } else if (
-            gradle.startParameter.taskNames.any {
-                it.lowercase(Locale.getDefault()).contains("prod")
-            }
-        ) {
-            "prod"
-        } else {
-            "staging"
         }
+            ?: "debug"
 
     val sentryEnvOverride: String = getPropsOrEnv("SENTRY_ENVIRONMENT") ?: sentryEnv
 
