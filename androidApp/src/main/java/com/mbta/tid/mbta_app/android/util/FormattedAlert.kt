@@ -96,12 +96,12 @@ data class FormattedAlert(
                     is AlertSummary.Timeframe.LaterDate ->
                         stringResource(
                             R.string.alert_summary_timeframe_later_date,
-                            it.time.formattedDate()
+                            it.time.formattedServiceDate()
                         )
                     is AlertSummary.Timeframe.ThisWeek ->
                         stringResource(
                             R.string.alert_summary_timeframe_this_week,
-                            it.time.formattedDay()
+                            it.time.formattedServiceDay()
                         )
                     is AlertSummary.Timeframe.Time ->
                         stringResource(

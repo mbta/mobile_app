@@ -7,10 +7,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.formattedDayAndDate
+import com.mbta.tid.mbta_app.android.util.formattedServiceDayAndDate
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.model.Alert
-import kotlin.time.Duration.Companion.hours
 
 /**
  * Return a localized string containing the date and time of an alert. This includes special
@@ -37,14 +36,13 @@ private fun format(
                     SpanStyle(fontWeight = FontWeight.Bold)
                 )
 
-    var formattedDate = instant.formattedDayAndDate()
+    val formattedDate = instant.formattedServiceDayAndDate()
     var formattedTime = instant.formattedTime()
 
     if (isStart && period.fromStartOfService) {
         formattedTime = context.getString(R.string.start_of_service)
     } else if (!isStart && period.toEndOfService) {
         formattedTime = context.getString(R.string.end_of_service)
-        formattedDate = instant.minus(24.hours).formattedDayAndDate()
     } else if (!isStart && period.endingLaterToday) {
         formattedTime = context.getString(R.string.later_today)
     }

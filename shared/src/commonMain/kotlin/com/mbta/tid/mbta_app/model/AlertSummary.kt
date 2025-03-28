@@ -48,16 +48,14 @@ data class AlertSummary(
         private fun alertTimeframe(alert: Alert, atTime: Instant): Timeframe? {
             val currentPeriod = alert.currentPeriod(atTime) ?: return null
             if (currentPeriod.endingLaterToday) return null
-
-            if (currentPeriod.toEndOfService) {
-                return Timeframe.EndOfService
-            }
-
             val endTime = currentPeriod.end ?: return null
 
             val serviceDate = atTime.toBostonTime().serviceDate
             val endDate = endTime.toBostonTime().serviceDate
-            if (serviceDate == endDate) {
+
+            if (serviceDate == endDate && currentPeriod.toEndOfService) {
+                return Timeframe.EndOfService
+            } else if (serviceDate == endDate) {
                 return Timeframe.Time(endTime)
             } else if (serviceDate.plus(DatePeriod(days = 1)) == endDate) {
                 return Timeframe.Tomorrow
