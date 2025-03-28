@@ -25,6 +25,7 @@ fun Departures(
     stopData: RouteCardData.RouteStopData,
     cardData: RouteCardData,
     now: Instant,
+    pinned: Boolean,
     analytics: Analytics = koinInject(),
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
@@ -40,8 +41,7 @@ fun Departures(
             analytics.tappedDeparture(
                 cardData.lineOrRoute.id,
                 stopData.stop.id,
-                // TODO: Handle pinning
-                false,
+                pinned,
                 leaf.alertsHere.isNotEmpty(),
                 cardData.lineOrRoute.type,
                 noTrips
