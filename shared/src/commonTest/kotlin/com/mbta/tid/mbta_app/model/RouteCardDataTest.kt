@@ -20,7 +20,7 @@ import kotlinx.datetime.Instant
 class RouteCardDataTest {
 
     @Test
-    fun `ListBuilder addStaticStopsData when there are no new patterns for a stop then it is omitted`() {
+    fun `ListBuilder addStaticStopsData when there are no new patterns for a stop then it is omitted`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -82,7 +82,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData when second stop serves a new rp for route served by previous stop then include all rps at second stop`() {
+    fun `ListBuilder addStaticStopsData when second stop serves a new rp for route served by previous stop then include all rps at second stop`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -166,7 +166,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData groups patterns by direction`() {
+    fun `ListBuilder addStaticStopsData groups patterns by direction`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -241,7 +241,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData when a stop is served by multiple routes it is included for each route`() {
+    fun `ListBuilder addStaticStopsData when a stop is served by multiple routes it is included for each route`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -325,7 +325,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData groups by parent station`() {
+    fun `ListBuilder addStaticStopsData groups by parent station`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val station1 = objects.stop { id = "station_1" }
@@ -428,7 +428,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData preserves unscheduled physical platform`() {
+    fun `ListBuilder addStaticStopsData preserves unscheduled physical platform`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val parentStation = objects.stop { id = "place-forhl" }
@@ -502,7 +502,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData Green Line shuttles are not grouped together`() {
+    fun `ListBuilder addStaticStopsData Green Line shuttles are not grouped together`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop = objects.stop()
@@ -693,7 +693,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addStaticStopsData Green Line routes are grouped together without Government Center direction`() {
+    fun `ListBuilder addStaticStopsData Green Line routes are grouped together without Government Center direction`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stopGov = objects.stop { id = "place-gover" }
@@ -889,7 +889,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `ListBuilder addUpcomingTrips includes predictions filtered to the correct stop and direction`() {
+    fun `ListBuilder addUpcomingTrips includes predictions filtered to the correct stop and direction`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -1036,7 +1036,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList sorts subway routes first`() {
+    fun `RouteCardData routeCardsForStopList sorts subway routes first`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val busStop = objects.stop()
@@ -1138,7 +1138,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList preserves original stop ordering among subway routes`() {
+    fun `RouteCardData routeCardsForStopList preserves original stop ordering among subway routes`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val closerStop = objects.stop()
@@ -1239,7 +1239,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList sorts subway first then by distance`() {
+    fun `RouteCardData routeCardsForStopList sorts subway first then by distance`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
@@ -1364,7 +1364,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList sorts pinned routes to the top`() {
+    fun `RouteCardData routeCardsForStopList sorts pinned routes to the top`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
@@ -1806,7 +1806,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList hides rare direction with no predictions in next 120 min`() {
+    fun `RouteCardData routeCardsForStopList hides rare direction with no predictions in next 120 min`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -1900,7 +1900,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList shows rare direction with predictions in next 120 min`() {
+    fun `RouteCardData routeCardsForStopList shows rare direction with predictions in next 120 min`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -2023,7 +2023,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList handles schedule and predictions edge cases`() {
+    fun `RouteCardData routeCardsForStopList handles schedule and predictions edge cases`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -2240,7 +2240,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList hides rare patterns while loading`() {
+    fun `RouteCardData routeCardsForStopList hides rare patterns while loading`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -2316,7 +2316,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routCardsForStopList doesn't filter future trips in filtered stop details`() {
+    fun `RouteCardData routCardsForStopList doesn't filter future trips in filtered stop details`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
@@ -2421,7 +2421,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList includes cancellations in filtered stop details context`() {
+    fun `RouteCardData routeCardsForStopList includes cancellations in filtered stop details context`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop1 = objects.stop()
         val route1 = objects.route { type = RouteType.BUS }
@@ -2509,7 +2509,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList handles parent stops`() {
+    fun `RouteCardData routeCardsForStopList handles parent stops`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val parentStop = objects.stop { childStopIds = listOf("childStop") }
         val childStop =
@@ -2575,7 +2575,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList incorporates schedules`() {
+    fun `RouteCardData routeCardsForStopList incorporates schedules`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
@@ -2742,7 +2742,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList checks route along with route pattern and stop`() {
+    fun `RouteCardData routeCardsForStopList checks route along with route pattern and stop`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route { sortOrder = 1 }
@@ -2873,7 +2873,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList groups lines by direction`() {
+    fun `RouteCardData routeCardsForStopList groups lines by direction`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val hynes = objects.stop { id = "place-hymnl" }
 
@@ -3153,7 +3153,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList for line on branch uses branch direction name`() {
+    fun `RouteCardData routeCardsForStopList for line on branch uses branch direction name`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val bc = objects.stop { id = "place-lake" }
@@ -3289,7 +3289,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList direction names for regular route pulled from route data`() {
+    fun `RouteCardData routeCardsForStopList direction names for regular route pulled from route data`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 =
@@ -3376,7 +3376,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList north station disruption case`() {
+    fun `RouteCardData routeCardsForStopList north station disruption case`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val northStation =
             objects.stop {
@@ -3670,7 +3670,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForList filters out direction if it is the typical last stop of subway`() {
+    fun `RouteCardData routeCardsForList filters out direction if it is the typical last stop of subway`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val oakGrove =
@@ -3786,7 +3786,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList filters out any arrival only for non-subway routes`() {
+    fun `RouteCardData routeCardsForStopList filters out any arrival only for non-subway routes`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val longWharf = objects.stop { id = "Boat-Long" }

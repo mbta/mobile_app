@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -143,6 +144,12 @@ class StopDetailsViewModel(
     private val _hideMaps = MutableStateFlow(false)
     val hideMaps: StateFlow<Boolean> = _hideMaps
 
+    private val _groupByDirection = MutableStateFlow(false)
+    val groupByDirection: StateFlow<Boolean> = _groupByDirection
+
+    private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
+    val routeCardData = _routeCardData.asStateFlow()
+
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
             predictionsRepository,
@@ -156,6 +163,7 @@ class StopDetailsViewModel(
             val data = settingsRepository.getSettings()
             _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false
             _hideMaps.value = data[Settings.HideMaps] ?: false
+            _groupByDirection.value = data[Settings.GroupByDirection] ?: false
         }
     }
 
@@ -278,6 +286,10 @@ class StopDetailsViewModel(
 
     fun setDepartures(departures: StopDetailsDepartures?) {
         _stopDepartures.value = departures
+    }
+
+    fun setRouteCardData(routeCardData: List<RouteCardData>?) {
+        _routeCardData.value = routeCardData
     }
 
     private fun clearStopDetails() {
@@ -519,6 +531,7 @@ fun stopDetailsManagedVM(
 
     val stopData by viewModel.stopData.collectAsState()
 
+    val groupByDirection by viewModel.groupByDirection.collectAsState()
     val departures by viewModel.stopDepartures.collectAsState()
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
@@ -557,6 +570,45 @@ fun stopDetailsManagedVM(
                 )
             } else null
         )
+    }
+
+    LaunchedEffect(
+        groupByDirection,
+        stopId,
+        globalResponse,
+        stopData,
+        filters,
+        alertData,
+        pinnedRoutes,
+        now
+    ) {
+        if (groupByDirection) {
+            val schedules = stopData?.schedules
+            withContext(Dispatchers.Default) {
+                viewModel.setRouteCardData(
+                    if (
+                        globalResponse != null &&
+                            stopId != null &&
+                            stopId == stopData?.stopId &&
+                            schedules != null &&
+                            stopData?.predictionsLoaded == true
+                    ) {
+                        RouteCardData.routeCardsForStopList(
+                            globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
+                            globalResponse,
+                            sortByDistanceFrom = null,
+                            schedules,
+                            stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                            alertData,
+                            now,
+                            pinnedRoutes,
+                            // TODO do something about filtered stop details
+                            context = RouteCardData.Context.StopDetailsUnfiltered
+                        )
+                    } else null
+                )
+            }
+        }
     }
 
     LaunchedEffect(key1 = timer) { viewModel.checkStopPredictionsStale() }

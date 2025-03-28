@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -40,7 +41,9 @@ fun StopDetailsUnfilteredView(
 
     val analytics: Analytics = koinInject()
 
-    val departures by viewModel.stopDepartures.collectAsState()
+    val groupByDirection by viewModel.groupByDirection.collectAsState()
+    val departures = viewModel.stopDepartures.collectAsState().value
+    val routeCardData = viewModel.routeCardData.collectAsState().value
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)
@@ -69,15 +72,46 @@ fun StopDetailsUnfilteredView(
             }
         }
 
-    departures?.let { notNullDepartures ->
+    fun getFilterPillRoutes(
+        routeCardData: List<RouteCardData>,
+        global: GlobalResponse
+    ): List<PillFilter> =
+        routeCardData.map {
+            when (val lineOrRoute = it.lineOrRoute) {
+                is RouteCardData.LineOrRoute.Line -> PillFilter.ByLine(lineOrRoute.line)
+                is RouteCardData.LineOrRoute.Route ->
+                    PillFilter.ByRoute(lineOrRoute.route, global.getLine(lineOrRoute.route.lineId))
+            }
+        }
+
+    if (groupByDirection && routeCardData != null) {
         stop?.let {
             val servedRoutes =
-                remember(notNullDepartures, globalResponse) {
-                    getFilterPillRoutes(notNullDepartures, globalResponse)
+                remember(routeCardData, globalResponse) {
+                    getFilterPillRoutes(routeCardData, globalResponse)
                 }
             StopDetailsUnfilteredRoutesView(
                 stop,
-                notNullDepartures,
+                routeCardData,
+                servedRoutes,
+                errorBannerViewModel,
+                showElevatorAccessibility,
+                now,
+                onClose,
+                onTapRoutePill,
+                updateStopFilter,
+                openModal
+            )
+        }
+    } else if (!groupByDirection && departures != null) {
+        stop?.let {
+            val servedRoutes =
+                remember(departures, globalResponse) {
+                    getFilterPillRoutes(departures, globalResponse)
+                }
+            StopDetailsUnfilteredRoutesView(
+                stop,
+                departures,
                 servedRoutes,
                 errorBannerViewModel,
                 showElevatorAccessibility,
@@ -90,33 +124,32 @@ fun StopDetailsUnfilteredView(
                 openModal
             )
         }
-    }
-        ?: run {
-            CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                Column(modifier = Modifier.loadingShimmer()) {
-                    val placeholderDepartures = LoadingPlaceholders.stopDetailsDepartures(null)
-                    val filterRoutes =
-                        if (globalResponse != null) {
-                            getFilterPillRoutes(placeholderDepartures, globalResponse)
-                        } else {
-                            emptyList()
-                        }
+    } else {
+        CompositionLocalProvider(IsLoadingSheetContents provides true) {
+            Column(modifier = Modifier.loadingShimmer()) {
+                val placeholderDepartures = LoadingPlaceholders.stopDetailsDepartures(null)
+                val filterRoutes =
+                    if (globalResponse != null) {
+                        getFilterPillRoutes(placeholderDepartures, globalResponse)
+                    } else {
+                        emptyList()
+                    }
 
-                    StopDetailsUnfilteredRoutesView(
-                        placeholderDepartures.routes.first().stop,
-                        placeholderDepartures,
-                        filterRoutes,
-                        errorBannerViewModel,
-                        showElevatorAccessibility,
-                        now,
-                        {},
-                        emptySet(),
-                        onClose = onClose,
-                        onTapRoutePill = {},
-                        updateStopFilter = {},
-                        openModal = {}
-                    )
-                }
+                StopDetailsUnfilteredRoutesView(
+                    placeholderDepartures.routes.first().stop,
+                    placeholderDepartures,
+                    filterRoutes,
+                    errorBannerViewModel,
+                    showElevatorAccessibility,
+                    now,
+                    {},
+                    emptySet(),
+                    onClose = onClose,
+                    onTapRoutePill = {},
+                    updateStopFilter = {},
+                    openModal = {}
+                )
             }
         }
+    }
 }
