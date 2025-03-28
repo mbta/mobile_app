@@ -31,6 +31,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
+                null,
                 AlertCardSpec.Downstream,
                 color,
                 textColor,
@@ -52,7 +53,14 @@ class AlertCardTests {
             }
         var onViewDetailsClicked = false
         composeTestRule.setContent {
-            AlertCard(alert, AlertCardSpec.Major, color, textColor, { onViewDetailsClicked = true })
+            AlertCard(
+                alert,
+                null,
+                AlertCardSpec.Major,
+                color,
+                textColor,
+                { onViewDetailsClicked = true }
+            )
         }
 
         composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
@@ -72,6 +80,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
+                null,
                 AlertCardSpec.Secondary,
                 color,
                 textColor,
@@ -95,6 +104,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
+                null,
                 AlertCardSpec.Elevator,
                 color,
                 textColor,
@@ -114,7 +124,9 @@ class AlertCardTests {
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.HeavyRidership
             }
-        composeTestRule.setContent { AlertCard(alert, AlertCardSpec.Delay, color, textColor, {}) }
+        composeTestRule.setContent {
+            AlertCard(alert, null, AlertCardSpec.Delay, color, textColor, {})
+        }
 
         composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
     }
@@ -127,7 +139,9 @@ class AlertCardTests {
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.UnknownCause
             }
-        composeTestRule.setContent { AlertCard(alert, AlertCardSpec.Delay, color, textColor, {}) }
+        composeTestRule.setContent {
+            AlertCard(alert, null, AlertCardSpec.Delay, color, textColor, {})
+        }
 
         composeTestRule.onNodeWithText("Delays").assertIsDisplayed()
     }

@@ -483,9 +483,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule
-            .onNodeWithText("Fuchsia Line suspended from Here to There")
-            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service suspended", true).assertIsDisplayed()
         composeTestRule.onNodeWithText("View details").assertHasClickAction()
     }
 
@@ -559,7 +557,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Service suspended ahead").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service suspended", true).assertIsDisplayed()
     }
 
     @Test
