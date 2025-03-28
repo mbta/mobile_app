@@ -2,9 +2,21 @@ AllCops:
   Include:
     - '**/*.rb'
     - 'Gemfile'
-#    - 'fastlane/*file'
-#    - 'iosApp/Podfile'
+    - 'fastlane/*file'
+    - 'iosApp/Podfile'
   NewCops: enable
+
+Metrics/BlockLength:
+  Exclude:
+    - 'fastlane/Fastfile'
+
+Naming/FileName:
+  Exclude:
+    - 'fastlane/*file'
 
 Style/Documentation:
   Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'fastlane/Pluginfile'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 for_platform :android do
-    json_key_data_raw("{}") # Not used by patched Fastlane, but required
+  json_key_data_raw('{}') # Not used by patched Fastlane, but required
 end
