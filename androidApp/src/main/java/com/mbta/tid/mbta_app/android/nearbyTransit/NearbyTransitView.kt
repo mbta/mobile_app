@@ -155,7 +155,14 @@ fun NearbyTransitView(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     items(routeCardData) {
-                        RouteCard(it, now, showElevatorAccessibility, onOpenStopDetails)
+                        RouteCard(
+                            it,
+                            now,
+                            pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
+                            ::togglePinnedRoute,
+                            showElevatorAccessibility,
+                            onOpenStopDetails
+                        )
                     }
                 }
             }

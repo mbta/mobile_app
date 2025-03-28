@@ -98,6 +98,8 @@ fun StopDetailsUnfilteredRoutesView(
     errorBannerViewModel: ErrorBannerViewModel,
     showElevatorAccessibility: Boolean,
     now: Instant,
+    pinnedRoutes: Set<String>,
+    pinRoute: (String) -> Unit,
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
@@ -118,6 +120,8 @@ fun StopDetailsUnfilteredRoutesView(
             RouteCard(
                 routeCardData,
                 now,
+                pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
+                onPin = pinRoute,
                 showElevatorAccessibility,
                 onOpenStopDetails = { _, stopDetailsFilter -> updateStopFilter(stopDetailsFilter) }
             )
