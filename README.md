@@ -203,6 +203,7 @@ CERTID=$(aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesign
 aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-cer --output json | jq -r '.SecretBinary' | base64 --decode > iosApp/secrets/${CERTID}.cer
 aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-p12 --output json | jq -r '.SecretBinary' | base64 --decode > iosApp/secrets/${CERTID}.p12
 bundle exec fastlane ios cert_load cert_id:$CERTID
+bundle exec fastlane ios cert_check scheme:DevOrange
 bundle exec fastlane ios cert_check scheme:Staging
 bundle exec fastlane ios cert_check scheme:Prod
 ```

@@ -38,7 +38,7 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
 
     val note = section.note
 
-    if (!(section.requiresStaging && appVariant != AppVariant.Staging)) {
+    if (!(section.requiresStaging && appVariant == AppVariant.Prod)) {
         Column {
             if (name != null) {
                 Column(modifier = Modifier.padding(2.dp)) {

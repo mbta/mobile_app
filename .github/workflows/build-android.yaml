@@ -12,7 +12,7 @@ on:
         required: true
         type: boolean
       flavor:
-        description: "Android build flavor, 'Staging' or 'Prod'"
+        description: "Android build flavor, 'DevOrange' or 'Staging' or 'Prod'"
         required: true
         type: string
       sentry-environment:
