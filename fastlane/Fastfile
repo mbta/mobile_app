@@ -79,7 +79,7 @@ platform :android do
   desc 'Deploy a new version to Google Play for internal testing'
   lane :internal do |options|
     package_name = package_name(options[:flavor])
-    flavor = options[:flavor].downcase
+    flavor = options[:flavor][0].downcase + options[:flavor][1..]
     upload_to_play_store(
       package_name: package_name,
       track: 'internal',
