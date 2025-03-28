@@ -38,11 +38,13 @@ data class AlertSummary(
 
     companion object {
         fun summarizing(alert: Alert, atTime: Instant, global: GlobalResponse): AlertSummary? {
-            if (alert.significance < AlertSignificance.Secondary) {
-                return null
-            }
+            if (alert.significance < AlertSignificance.Secondary) return null
 
-            return AlertSummary(alert.effect, alertLocation(alert), alertTimeframe(alert, atTime))
+            val location = alertLocation(alert, global)
+            val timeframe = alertTimeframe(alert, atTime)
+
+            if (location == null && timeframe == null) return null
+            return AlertSummary(alert.effect, location, timeframe)
         }
 
         private fun alertTimeframe(alert: Alert, atTime: Instant): Timeframe? {
@@ -70,7 +72,7 @@ data class AlertSummary(
             onDate.dayOfWeek.isoDayNumber < endDate.dayOfWeek.isoDayNumber &&
                 endDate.minus(onDate).days < 7
 
-        private fun alertLocation(alert: Alert): Location? {
+        private fun alertLocation(alert: Alert, global: GlobalResponse): Location? {
             return null
         }
     }
