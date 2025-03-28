@@ -7,7 +7,7 @@ on:
       - synchronize
       - labeled
   schedule:
-    - cron: "13 12 * * MON"
+    - cron: "45 16 * * MON"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
