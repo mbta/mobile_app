@@ -17,3 +17,6 @@ fastlane/test_output
 /iosApp/secrets/*
 /iosApp/Pods/*
 /androidApp/src/main/res/values/secrets*.xml
+/iosApp/iosApp.xcodeproj
+/iosApp/iosApp.xcworkspace/*
+!/iosApp/iosApp.xcworkspace/xcshareddata

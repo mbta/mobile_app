@@ -330,6 +330,36 @@ class TripInstantDisplayTest {
         }
 
     @Test
+    fun `boarding when subway stopped at stop but arrival is in the past and more than 90 seconds until departure`() =
+        parametricTest {
+            val now = Clock.System.now()
+            val vehicle =
+                ObjectCollectionBuilder.Single.vehicle {
+                    currentStatus = Vehicle.CurrentStatus.StoppedAt
+                    stopId = "12345"
+                    tripId = "trip1"
+                }
+            assertEquals(
+                TripInstantDisplay.Boarding,
+                TripInstantDisplay.from(
+                    prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        arrivalTime = now.minus(5.seconds)
+                        departureTime = now.plus(95.seconds)
+                        stopId = "12345"
+                        tripId = "trip1"
+                        vehicleId = vehicle.id
+                    },
+                    schedule = null,
+                    vehicle = vehicle,
+                    routeType = subway(),
+                    now = now,
+                    context = nonTripDetails()
+                )
+            )
+        }
+
+    @Test
     fun `not boarding`() = parametricTest {
         val now = Clock.System.now()
         // wrong vehicle status
@@ -431,6 +461,26 @@ class TripInstantDisplayTest {
                     ObjectCollectionBuilder.Single.prediction {
                         departureTime = now.plus(15.seconds)
                     },
+                schedule = null,
+                vehicle = null,
+                routeType = null,
+                now = now,
+                context = nonTripDetails()
+            )
+        )
+    }
+
+    @Test
+    fun `arriving when prediction arrival in the past and departure more than 30 seconds away`() = parametricTest {
+        val now = Clock.System.now()
+        assertEquals(
+            TripInstantDisplay.Arriving,
+            TripInstantDisplay.from(
+                prediction =
+                ObjectCollectionBuilder.Single.prediction {
+                    arrivalTime = now.minus(10.seconds)
+                    departureTime = now.plus(40.seconds)
+                },
                 schedule = null,
                 vehicle = null,
                 routeType = null,
