@@ -163,168 +163,6 @@
         }
       }
     },
-    " through %1$@/alert_summary_timeframe_later_date" : {
-      "comment" : "Alert summary timeframe ending on a specific date in the future. ex. \" through May 11\". The date component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " through %1$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " hasta el %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " jusqu’au %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " até %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " đến ngày %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "至%1$@"
-          }
-        }
-      }
-    },
-    " through %1$@/alert_summary_timeframe_this_week" : {
-      "comment" : "Alert summary timeframe ending on a specific day later this week. ex. \" through Thursday\". The weekday component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " through %1$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " hasta el %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " jusqu’à %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " até %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " đến thứ %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "至%1$@"
-          }
-        }
-      }
-    },
-    " through %1$@/alert_summary_timeframe_time" : {
-      "comment" : "Alert summary timeframe ending on a specific time later today. ex. \" through 10:00 PM\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " through %1$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " hasta las %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " jusqu’à %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " até às %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : " đến %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "至%1$@"
-          }
-        }
-      }
-    },
     " through end of service" : {
       "comment" : "Alert summary timeframe ending at the end of service on the current day. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
       "extractionState" : "manual",
@@ -9505,6 +9343,168 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保持關閉定位服務"
+          }
+        }
+      }
+    },
+    "key/alert_summary_timeframe_later_date" : {
+      "comment" : "Alert summary timeframe ending on a specific date in the future. ex. \" through May 11\". The date component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " through %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta el %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’au %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến ngày %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        }
+      }
+    },
+    "key/alert_summary_timeframe_this_week" : {
+      "comment" : "Alert summary timeframe ending on a specific day later this week. ex. \" through Thursday\". The weekday component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " through %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta el %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến thứ %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        }
+      }
+    },
+    "key/alert_summary_timeframe_time" : {
+      "comment" : "Alert summary timeframe ending on a specific time later today. ex. \" through 10:00 PM\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " through %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta las %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até às %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
           }
         }
       }
