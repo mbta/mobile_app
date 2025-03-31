@@ -41,10 +41,9 @@ platform :android do
             package_name: package_name,
             track: 'internal'
           ).max
-        rescue Exception => e
-          unless e.message == "Google Api Error: Invalid request - Package not found: #{package_name}."
-            raise
-          end
+        rescue StandardError => e
+          raise unless e.message == "Google Api Error: Invalid request - Package not found: #{package_name}."
+
           0
         end
       end
@@ -89,6 +88,9 @@ platform :android do
 end
 
 platform :ios do
+  # https://github.com/fastlane/fastlane/issues/20919#issuecomment-1344976529
+  ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '120'
+
   def app_identifier(scheme)
     case scheme
     when 'Prod'
