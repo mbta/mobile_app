@@ -6,6 +6,8 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.util.formattedServiceDay
+import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -182,7 +184,9 @@ class AlertCardTests {
         }
 
         composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Service suspended through Saturday").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Service suspended through ${endTime.formattedServiceDay()}")
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertDoesNotExist()
         composeTestRule.onNodeWithText("View details").performClick()
     }
@@ -206,7 +210,9 @@ class AlertCardTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Detour through 5:30 PM").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Detour through ${endTime.formattedTime()}")
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
     }
 }
