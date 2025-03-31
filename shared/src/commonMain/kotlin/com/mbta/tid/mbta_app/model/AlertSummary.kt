@@ -51,10 +51,9 @@ data class AlertSummary(
             val currentPeriod = alert.currentPeriod(atTime) ?: return null
             if (currentPeriod.endingLaterToday) return null
             val endTime = currentPeriod.end ?: return null
+            val endDate = currentPeriod.endServiceDate ?: return null
 
             val serviceDate = atTime.toBostonTime().serviceDate
-            val endDate = endTime.toBostonTime().serviceDate
-
             if (serviceDate == endDate && currentPeriod.toEndOfService) {
                 return Timeframe.EndOfService
             } else if (serviceDate == endDate) {

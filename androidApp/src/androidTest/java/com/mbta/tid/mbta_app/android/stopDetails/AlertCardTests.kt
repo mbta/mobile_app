@@ -8,8 +8,18 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.utils.serviceDate
+import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlin.test.assertTrue
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 import org.junit.Rule
 import org.junit.Test
 
@@ -144,5 +154,59 @@ class AlertCardTests {
         }
 
         composeTestRule.onNodeWithText("Delays").assertIsDisplayed()
+    }
+
+    @Test
+    fun testMajorAlertCardSummary() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Suspension
+            }
+
+        // Fixed time so we can have a specific day of the week (wed)
+        val now = Instant.fromEpochMilliseconds(1743598800000)
+
+        val saturday = now.toBostonTime().serviceDate.plus(DatePeriod(days = 3))
+        val serviceEndTime = LocalTime(hour = 5, minute = 0)
+        val endTime = saturday.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
+                AlertCardSpec.Major,
+                color,
+                textColor,
+                {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service suspended through Saturday").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Alert header").assertDoesNotExist()
+        composeTestRule.onNodeWithText("View details").performClick()
+    }
+
+    @Test
+    fun testSecondaryAlertCardSummary() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Detour
+            }
+        val endTime = Instant.fromEpochMilliseconds(1743629400000)
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
+                AlertCardSpec.Secondary,
+                color,
+                textColor,
+                {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Detour through 5:30 PM").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
     }
 }
