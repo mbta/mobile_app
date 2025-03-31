@@ -14,7 +14,7 @@ struct MoreSectionView: View {
     var toggleSetting: (Settings) -> Void
 
     var body: some View {
-        if !(section.requiresStaging && !(appVariant == .staging)) {
+        if !(section.hiddenOnProd && appVariant == .prod) {
             VStack(alignment: .leading, spacing: 8) {
                 if let name = section.name {
                     VStack(alignment: .leading, spacing: 0) {

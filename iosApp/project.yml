@@ -12,6 +12,8 @@ configs:
   ProdDebug: debug
   StagingRelease: release
   StagingDebug: debug
+  DevOrangeRelease: release
+  DevOrangeDebug: debug
 settings:
   base:
     IPHONEOS_DEPLOYMENT_TARGET: '16.4'
@@ -20,6 +22,8 @@ settings:
       DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
     Release:
       VALIDATE_PRODUCT: 'YES'
+    DevOrange:
+      PRODUCT_NAME: MBTA Go Dev Orange
     Staging:
       PRODUCT_NAME: MBTA Go Staging
     Prod:
@@ -48,10 +52,14 @@ settingGroups:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: PROD DEBUG $(inherited)
       StagingDebug:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING DEBUG $(inherited)
+      DevOrangeDebug:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEVORANGE DEBUG $(inherited)
       ProdRelease:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: PROD $(inherited)
       StagingRelease:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING $(inherited)
+      DevOrangeRelease:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEVORANGE $(inherited)
   test:
     base:
       ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: 'YES'
@@ -122,6 +130,10 @@ targets:
           CODE_SIGN_STYLE: Manual
           DEVELOPMENT_TEAM: RP77QY87AD
           PROVISIONING_PROFILE_SPECIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER) AppStore"
+        DevOrange:
+          ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDevOrange
+          BUNDLE_NAME: MBTA Go Dev Orange
+          PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp.devorange
         Staging:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconStaging
           BUNDLE_NAME: MBTA Go Staging
@@ -213,6 +225,9 @@ fileGroups:
   - PrivacyInfo.xcprivacy
   - project.yml
 schemes:
+  DevOrange:
+    templates:
+      - EnvironmentScheme
   Staging:
     templates:
       - EnvironmentScheme

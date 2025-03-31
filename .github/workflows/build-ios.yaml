@@ -8,7 +8,7 @@ on:
         required: true
         type: boolean
       scheme:
-        description: "iOS build scheme, 'Staging' or 'Prod'"
+        description: "iOS build scheme, 'DevOrange' or 'Staging' or 'Prod'"
         required: true
         type: string
       sentry-environment:

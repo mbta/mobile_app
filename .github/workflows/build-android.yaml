@@ -12,7 +12,7 @@ on:
         required: true
         type: boolean
       flavor:
-        description: "Android build flavor, 'Staging' or 'Prod'"
+        description: "Android build flavor, 'DevOrange' or 'Staging' or 'Prod'"
         required: true
         type: string
       sentry-environment:
@@ -53,8 +53,11 @@ jobs:
       - name: Lowercase build parameters
         id: lowercase
         run: |
-          echo "build-type=$(echo ${{ inputs.build-type }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
-          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+          # https://stackoverflow.com/a/12487455
+          buildType="${{ inputs.build-type }}"
+          echo "build-type=${buildType,}" | tee -a "$GITHUB_OUTPUT"
+          flavor="${{ inputs.flavor }}"
+          echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
       - name: Build Android app
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
@@ -96,7 +99,8 @@ jobs:
       - name: Lowercase build parameters
         id: lowercase
         run: |
-          echo "flavor=$(echo ${{ inputs.flavor }} | tr '[:upper:]' '[:lower:]')" | tee -a "$GITHUB_OUTPUT"
+          flavor="${{ inputs.flavor }}"
+          echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           name: android-aab
