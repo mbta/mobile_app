@@ -32,13 +32,15 @@ repos:
         language: script
         always_run: true
         stages: [post-checkout, post-merge]
+        pass_filenames: false
       - id: diff-xcodeproj
         name: diff xcodeproj
         entry: ./bin/diff-xcodeproj.sh
         language: script
         always_run: true
+        pass_filenames: false
       - id: rubocop
         name: rubocop
         entry: bundle exec rubocop -A
         language: system
-        types: [ruby]
+        files: '\.rb$|file$'
