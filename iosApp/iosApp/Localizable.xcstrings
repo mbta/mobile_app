@@ -1,6 +1,480 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " at **%1$@**" : {
+      "comment" : "Alert summary location for a single stop in the format of \" at [Stop name]\" ex. \" at [Haymarket]\" or \" at [Green St @ Magazine St]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " at **%1$@**"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " en **%1$@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " à **%1$@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " nan **%1$@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " em **%1$@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " tại **%1$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在 **%1$@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在 **%1$@**"
+          }
+        }
+      }
+    },
+    " from **%1$@** to **%2$@**" : {
+      "comment" : "Alert summary location for consecutive stops in the format of \" from [Stop name] to [Other stop name]\" ex. \" from [Alewife] to [Harvard]\" or \" from [Lechmere] to [Park Street]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " from **%1$@** to **%2$@**"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** a **%2$@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** à **%2$@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " soti nan **%1$@** a **%2$@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** para **%2$@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " từ **%1$@** đến **%2$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从 **%1$@** 到 **%2$@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從 **%1$@** 到 **%2$@**"
+          }
+        }
+      }
+    },
+    " from **%1$@** to **%2$@** stops" : {
+      "comment" : "Alert summary location for branching routes in the format of \" from [Stop name] to [direction] stops\" ex. \" from [Kenmore] to [Westbound] stops\" or \" from [JFK/UMass] to [Southbound] stops\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " from **%1$@** to **%2$@** stops"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " desde **%1$@** hasta paradas en **%2$@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** à **%2$@** arrêts"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " soti nan **%1$@** rive nan **%2$@** sispann"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** a **%2$@** paradas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " từ *%1$@** đến các điểm dừng **%2$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从 **%1$@** 到 **%2$@** 站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從 **%1$@** 到 **%2$@** 站"
+          }
+        }
+      }
+    },
+    " through %1$@/alert_summary_timeframe_later_date" : {
+      "comment" : "Alert summary timeframe ending on a specific date in the future. ex. \" through May 11\". The date component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " through %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta el %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’au %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến ngày %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        }
+      }
+    },
+    " through %1$@/alert_summary_timeframe_this_week" : {
+      "comment" : "Alert summary timeframe ending on a specific day later this week. ex. \" through Thursday\". The weekday component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " through %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta el %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến thứ %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        }
+      }
+    },
+    " through %1$@/alert_summary_timeframe_time" : {
+      "comment" : "Alert summary timeframe ending on a specific time later today. ex. \" through 10:00 PM\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " through %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta las %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até às %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "至%1$@"
+          }
+        }
+      }
+    },
+    " through end of service" : {
+      "comment" : "Alert summary timeframe ending at the end of service on the current day. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta el final del servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à la fin du service"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska fen sèvis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até o fim do serviço"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " đến cuối dịch vụ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "直至服务结束"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "直至禮拜結束"
+          }
+        }
+      }
+    },
+    " through tomorrow" : {
+      "comment" : "Alert summary timeframe ending tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à demain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska demen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " através de amanhã"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " qua ngày mai"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "到明天"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "到明天"
+          }
+        }
+      }
+    },
+    "**%1$@**%2$@%3$@" : {
+      "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe]\", ex \"[Stop closed][ at Haymarket][ through this Friday]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service]\"",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@"
+          }
+        }
+      }
+    },
     "**%ld** affected stops" : {
       "comment" : "The number of stops affected by an alert",
       "localizations" : {
@@ -12859,7 +13333,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " %1$@ %2$@ %3$@ selecionados"
+            "value" : "%1$@ %2$@ %3$@ selecionados"
           }
         },
         "vi" : {
@@ -12912,7 +13386,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " %1$@ %2$@ %3$@ selecionados, parada selecionada"
+            "value" : "%1$@ %2$@ %3$@ selecionados, parada selecionada"
           }
         },
         "vi" : {

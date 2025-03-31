@@ -212,8 +212,6 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         outputFile.asFile.writeText(result)
     }
 
-    private fun escapeXML(text: String) = text.replace("&", "&amp;").replace("<", "&lt;")
-
     operator fun NodeList.iterator() =
         object : Iterator<Node> {
             var index = 0
@@ -224,6 +222,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         }
 
     companion object {
+        private fun escapeXML(text: String) = text.replace("&", "&amp;").replace("<", "&lt;")
+
+        private fun escapeLeadingSpace(text: String) =
+            if (text.startsWith(" ")) text.replaceRange(0, 1, "\\u0020") else text
+
         private val template = Regex("""%(?:(?<index>\d+)\$)?l?(?<format>[\w@])""")
 
         private fun replaceTemplate(match: MatchResult, getDefaultIndex: () -> Int): String {
@@ -234,7 +237,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         private fun convertIosTemplate(iosTemplate: String): String {
             var unspecifiedIndex = 1
-            return iosTemplate
+            return escapeLeadingSpace(iosTemplate)
                 .replace(template) {
                     replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
                 }
