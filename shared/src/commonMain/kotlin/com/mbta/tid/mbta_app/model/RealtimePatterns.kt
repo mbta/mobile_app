@@ -296,8 +296,7 @@ sealed class RealtimePatterns : ILeafData {
      *
      * If any typicality is unknown, the route should be shown, and so this will return true.
      */
-    fun isTypical() =
-        patterns.any { it?.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
+    fun isTypical() = patterns.any { it?.isTypical() ?: true }
 
     /**
      * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
@@ -307,10 +306,10 @@ sealed class RealtimePatterns : ILeafData {
      * should be hidden until data is available.
      */
     fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
-        upcomingTrips.isUpcomingWithin(currentTime, cutoffTime)
+        upcomingTrips.any { it.isUpcomingWithin(currentTime, cutoffTime) }
 
     /** Checks if a trip exists. */
-    fun isUpcoming() = upcomingTrips.isUpcoming()
+    fun isUpcoming() = upcomingTrips.any { it.isUpcoming() }
 
     /**
      * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
