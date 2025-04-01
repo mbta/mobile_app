@@ -17,6 +17,15 @@
     <string name="alert">Avètisman</string>
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary_location_branching">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
+    <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_successive">\u0020soti nan &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_timeframe_end_of_service">\u0020jiska fen sèvis la</string>
+    <string name="alert_summary_timeframe_later_date">\u0020jiska %1$s</string>
+    <string name="alert_summary_timeframe_this_week">\u0020jiska %1$s</string>
+    <string name="alert_summary_timeframe_time">\u0020jiska %1$s</string>
+    <string name="alert_summary_timeframe_tomorrow">\u0020jiska demen</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>

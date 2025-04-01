@@ -22,15 +22,19 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val iosStrings = readIosStrings()
         val languageTags = iosStrings.values.map { it.keys }.reduce(Set<String>::plus) - "en"
         val androidResourcesById = parseAndroidStrings(androidEnglishStrings)
-        val androidIdsByIosKey =
+        val androidIdsByEnglishKey =
             androidResourcesById.entries.groupBy({ it.value.key() }, { it.key })
 
         for (languageTag in languageTags) {
             val iosResourcesByEnglishKey = iosStrings.mapValues { it.value[languageTag] }
             val translatedStringsById =
                 iosResourcesByEnglishKey
-                    .flatMap { (englishKey, translations) ->
-                        val androidIds = androidIdsByIosKey[englishKey]
+                    .flatMap { (key, translations) ->
+                        val androidIds =
+                            when (key) {
+                                is IosKey.AndroidKey -> listOf(key.key)
+                                is IosKey.English -> androidIdsByEnglishKey[key.text]
+                            }
                         if (androidIds == null || translations == null) return@flatMap emptyList()
                         androidIds.map { Pair(it, translations) }
                     }
@@ -39,8 +43,8 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         }
     }
 
-    /** Returns (English key => (BCP 47 tag => translated resource)). */
-    private fun readIosStrings(): Map<String, Map<String, Resource>> {
+    /** Returns (key => (BCP 47 tag => translated resource)). */
+    private fun readIosStrings(): Map<IosKey, Map<String, Resource>> {
         val inputData = xcstrings.asFile.readText()
         val strings = Json.decodeFromString<XcStrings>(inputData)
         return strings.resourcesByKey()
@@ -52,11 +56,17 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val strings: Map<String, XcStringInfo>,
         val version: String,
     ) {
-        fun resourcesByKey(): Map<String, Map<String, Resource>> {
+        fun resourcesByKey(): Map<IosKey, Map<String, Resource>> {
             return strings
                 .mapNotNull {
                     val translations = it.value.resources() ?: return@mapNotNull null
-                    val englishKey = translations["en"]?.key() ?: convertIosTemplate(it.key)
+                    val englishKey =
+                        when {
+                            it.key.startsWith("key/") ->
+                                IosKey.AndroidKey(it.key.removePrefix("key/"))
+                            translations["en"] != null -> IosKey.English(translations["en"]!!.key())
+                            else -> IosKey.English(convertIosTemplate(it.key))
+                        }
                     Pair(englishKey, translations)
                 }
                 .toMap()
@@ -131,6 +141,12 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                 } else items
             }
         }
+    }
+
+    private sealed interface IosKey {
+        data class English(val text: String) : IosKey
+
+        data class AndroidKey(val key: String) : IosKey
     }
 
     @Suppress("EnumEntryName")
@@ -212,8 +228,6 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         outputFile.asFile.writeText(result)
     }
 
-    private fun escapeXML(text: String) = text.replace("&", "&amp;").replace("<", "&lt;")
-
     operator fun NodeList.iterator() =
         object : Iterator<Node> {
             var index = 0
@@ -224,6 +238,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         }
 
     companion object {
+        private fun escapeXML(text: String) = text.replace("&", "&amp;").replace("<", "&lt;")
+
+        private fun escapeLeadingSpace(text: String) =
+            if (text.startsWith(" ")) text.replaceRange(0, 1, "\\u0020") else text
+
         private val template = Regex("""%(?:(?<index>\d+)\$)?l?(?<format>[\w@])""")
 
         private fun replaceTemplate(match: MatchResult, getDefaultIndex: () -> Int): String {
@@ -234,7 +253,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         private fun convertIosTemplate(iosTemplate: String): String {
             var unspecifiedIndex = 1
-            return iosTemplate
+            return escapeLeadingSpace(iosTemplate)
                 .replace(template) {
                     replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
                 }
