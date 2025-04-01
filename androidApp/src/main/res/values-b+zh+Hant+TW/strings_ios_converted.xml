@@ -12,6 +12,15 @@
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
     <string name="alert_ended">警報已失效</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary_location_branching">從 &lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b> 站</string>
+    <string name="alert_summary_location_single">在 &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_successive">從 &lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_timeframe_end_of_service">直至禮拜結束</string>
+    <string name="alert_summary_timeframe_later_date">至%1$s</string>
+    <string name="alert_summary_timeframe_this_week">至%1$s</string>
+    <string name="alert_summary_timeframe_time">至%1$s</string>
+    <string name="alert_summary_timeframe_tomorrow">到明天</string>
     <string name="alternative_path">替代路徑</string>
     <string name="amber_alert">安珀警報</string>
     <string name="amber_alert_sentence_case">安珀警報</string>

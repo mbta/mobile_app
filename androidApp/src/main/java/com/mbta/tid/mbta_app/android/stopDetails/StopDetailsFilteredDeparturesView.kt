@@ -175,8 +175,10 @@ fun StopDetailsFilteredDeparturesView(
                             } else {
                                 AlertCardSpec.Secondary
                             }
+                    val summary = global?.let { alert.summary(now, it) }
                     AlertCard(
                         alert,
+                        summary,
                         spec,
                         color = routeColor,
                         textColor = routeTextColor,

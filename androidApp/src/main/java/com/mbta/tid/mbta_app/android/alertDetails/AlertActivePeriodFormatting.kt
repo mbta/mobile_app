@@ -1,16 +1,15 @@
 package com.mbta.tid.mbta_app.android.alertDetails
 
 import android.content.Context
-import android.icu.text.DateFormat
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.toJavaDate
+import com.mbta.tid.mbta_app.android.util.formattedServiceDayAndDate
+import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.model.Alert
-import kotlin.time.Duration.Companion.hours
 
 /**
  * Return a localized string containing the date and time of an alert. This includes special
@@ -37,21 +36,13 @@ private fun format(
                     SpanStyle(fontWeight = FontWeight.Bold)
                 )
 
-    val date = instant.toJavaDate()
-    val dateFormat =
-        DateFormat.getInstanceForSkeleton(
-            DateFormat.WEEKDAY + DateFormat.ABBR_MONTH + DateFormat.DAY
-        )
-
-    var formattedDate = dateFormat.format(date)
-    var formattedTime = DateFormat.getInstanceForSkeleton(DateFormat.HOUR_MINUTE).format(date)
+    val formattedDate = instant.formattedServiceDayAndDate()
+    var formattedTime = instant.formattedTime()
 
     if (isStart && period.fromStartOfService) {
         formattedTime = context.getString(R.string.start_of_service)
     } else if (!isStart && period.toEndOfService) {
         formattedTime = context.getString(R.string.end_of_service)
-        val previousDate = instant.minus(24.hours).toJavaDate()
-        formattedDate = dateFormat.format(previousDate)
     } else if (!isStart && period.endingLaterToday) {
         formattedTime = context.getString(R.string.later_today)
     }

@@ -1,7 +1,11 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.ServiceDateRounding
+import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlinx.datetime.Instant
+import kotlinx.datetime.minus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -66,6 +70,9 @@ data class Alert(
             else -> AlertSignificance.None
         }
 
+    fun summary(atTime: Instant, global: GlobalResponse) =
+        AlertSummary.summarizing(this, atTime, global)
+
     @Serializable
     data class ActivePeriod(val start: Instant, val end: Instant?) {
         // This is only nullable because it's set after serialization within the Alert init,
@@ -78,6 +85,9 @@ data class Alert(
             }
             return instant in start..end
         }
+
+        val startServiceDate = start.toBostonTime().serviceDate
+        val endServiceDate = end?.toBostonTime()?.serviceDate(ServiceDateRounding.BACKWARDS)
 
         val fromStartOfService: Boolean
             get() {
@@ -331,8 +341,9 @@ data class Alert(
         @SerialName("upcoming") Upcoming,
     }
 
-    fun isActive(time: Instant) =
-        activePeriod.any { it.start <= time && (it.end == null || it.end >= time) }
+    fun currentPeriod(time: Instant) = activePeriod.firstOrNull { it.activeAt(time) }
+
+    fun isActive(time: Instant) = currentPeriod(time) != null
 
     fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
 
