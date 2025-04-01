@@ -94,6 +94,9 @@ The source of truth for our translations is
 [convertIosLocalization](buildSrc/src/main/kotlin/com/mbta/tid/mbta_app/gradle/ConvertIosLocalizationTask.kt)
 gradle task on Android build.
 
+If there are distinct strings that have the same English translation, give them an iOS key of
+`key/<Android ID>` and then the Android resources will be written with that key automatically.
+
 Any time we add new user facing strings to the app, we add temporary machine translations of that
 text, while we're waiting to get translations back from our vendor. Any machine translations that
 are added must be marked as "Needs review" in XCode so that the translators know to audit them.

@@ -142,8 +142,7 @@ struct AlertDetails: View {
     }
 
     private var currentPeriod: Shared.Alert.ActivePeriod? {
-        let nowInstant = now.toKotlinInstant()
-        return alert.activePeriod.first { period in period.activeAt(instant: nowInstant) }
+        alert.currentPeriod(time: now.toKotlinInstant())
     }
 
     @ViewBuilder

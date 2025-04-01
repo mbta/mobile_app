@@ -3,40 +3,114 @@ package com.mbta.tid.mbta_app.android.util
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 
 data class FormattedAlert(
+    val alert: Alert,
+    val alertSummary: AlertSummary?,
     @StringRes val effectRes: Int,
-    @StringRes val downstreamEffectRes: Int,
+    @StringRes val sentenceEffectRes: Int,
+    @StringRes val causeRes: Int?,
     @StringRes val dueToCauseRes: Int?,
     /**
      * Represents the text and possible accessibility label that would be used if replacing
      * predictions. Does not guarantee that the alert should replace predictions.
      */
-    val predictionReplacement: PredictionReplacement
+    val predictionReplacement: PredictionReplacement,
 ) {
     constructor(
-        alert: Alert
+        alert: Alert,
+        alertSummary: AlertSummary? = null
     ) : this(
+        alert,
+        alertSummary,
         effectRes(alert.effect),
-        downstreamEffectRes(alert.effect),
+        sentenceEffectRes(alert.effect),
         causeRes(alert.cause),
-        predictionReplacement(alert.effect),
+        dueToCauseRes(alert.cause),
+        predictionReplacement(alert.effect)
     )
+
+    val cause
+        @Composable get() = causeRes?.let { stringResource(it) }
 
     val effect
         @Composable get() = stringResource(effectRes)
 
-    val downstreamEffect
-        @Composable
-        get() = stringResource(R.string.effect_ahead, stringResource(downstreamEffectRes))
+    private val downstreamEffect
+        @Composable get() = stringResource(R.string.effect_ahead, stringResource(sentenceEffectRes))
 
-    val delaysDueToCause
+    private val delaysDueToCause
         @Composable
         get() =
             dueToCauseRes?.let { stringResource(R.string.delays_due_to_cause, stringResource(it)) }
                 ?: stringResource(R.string.delays_unknown_reason)
+
+    private val summary
+        @Composable
+        get() =
+            alertSummary?.let {
+                AnnotatedString.fromHtml(
+                    stringResource(
+                        R.string.alert_summary,
+                        stringResource(sentenceEffectRes),
+                        summaryLocation,
+                        summaryTimeframe
+                    )
+                )
+            }
+
+    @Composable
+    fun alertCardHeader(spec: AlertCardSpec) =
+        when (spec) {
+            AlertCardSpec.Downstream -> summary ?: AnnotatedString(downstreamEffect)
+            AlertCardSpec.Elevator -> alert.header?.let { AnnotatedString(it) }
+                    ?: AnnotatedString(effect)
+            AlertCardSpec.Delay -> AnnotatedString(delaysDueToCause)
+            AlertCardSpec.Secondary ->
+                if (alert.effect == Alert.Effect.ServiceChange) AnnotatedString(effect)
+                else summary ?: AnnotatedString(effect)
+            else -> AnnotatedString(effect)
+        }
+
+    val alertCardMajorBody
+        @Composable get() = summary ?: AnnotatedString(alert.header ?: "")
+
+    private val summaryLocation
+        @Composable get() = alertSummary?.location?.let { "" } ?: ""
+
+    private val summaryTimeframe
+        @Composable
+        get() =
+            alertSummary?.timeframe?.let {
+                when (it) {
+                    AlertSummary.Timeframe.EndOfService ->
+                        stringResource(R.string.alert_summary_timeframe_end_of_service)
+                    AlertSummary.Timeframe.Tomorrow ->
+                        stringResource(R.string.alert_summary_timeframe_tomorrow)
+                    is AlertSummary.Timeframe.LaterDate ->
+                        stringResource(
+                            R.string.alert_summary_timeframe_later_date,
+                            it.time.formattedServiceDate()
+                        )
+                    is AlertSummary.Timeframe.ThisWeek ->
+                        stringResource(
+                            R.string.alert_summary_timeframe_this_week,
+                            it.time.formattedServiceDay()
+                        )
+                    is AlertSummary.Timeframe.Time ->
+                        stringResource(
+                            R.string.alert_summary_timeframe_time,
+                            it.time.formattedTime()
+                        )
+                }
+            }
+                ?: ""
 
     data class PredictionReplacement(
         @StringRes val textRes: Int,
@@ -89,7 +163,7 @@ data class FormattedAlert(
             }
 
         @StringRes
-        private fun downstreamEffectRes(effect: Alert.Effect) =
+        private fun sentenceEffectRes(effect: Alert.Effect) =
             when (effect) {
                 Alert.Effect.AccessIssue -> R.string.access_issue_sentence_case
                 Alert.Effect.AdditionalService -> R.string.additional_service_sentence_case
@@ -126,8 +200,68 @@ data class FormattedAlert(
                 Alert.Effect.UnknownEffect -> R.string.alert
             }
 
+        private fun causeRes(cause: Alert.Cause?) =
+            when (cause) {
+                Alert.Cause.Accident -> R.string.accident
+                Alert.Cause.Amtrak -> R.string.amtrak
+                Alert.Cause.AmtrakTrainTraffic -> R.string.amtrak_train_traffic
+                Alert.Cause.AnEarlierMechanicalProblem -> R.string.an_earlier_mechanical_problem
+                Alert.Cause.AnEarlierSignalProblem -> R.string.an_earlier_signal_problem
+                Alert.Cause.AutosImpedingService -> R.string.autos_impeding_service
+                Alert.Cause.CoastGuardRestriction -> R.string.coast_guard_restriction
+                Alert.Cause.Congestion -> R.string.congestion
+                Alert.Cause.Construction -> R.string.construction
+                Alert.Cause.CrossingIssue -> R.string.crossing_issue
+                Alert.Cause.CrossingMalfunction -> R.string.crossing_malfunction
+                Alert.Cause.Demonstration -> R.string.demonstration
+                Alert.Cause.DisabledBus -> R.string.disabled_bus
+                Alert.Cause.DisabledTrain -> R.string.disabled_train
+                Alert.Cause.DrawbridgeBeingRaised -> R.string.drawbridge_being_raised
+                Alert.Cause.ElectricalWork -> R.string.electrical_work
+                Alert.Cause.Fire -> R.string.fire
+                Alert.Cause.FireDepartmentActivity -> R.string.fire_department_activity
+                Alert.Cause.Flooding -> R.string.flooding
+                Alert.Cause.Fog -> R.string.fog
+                Alert.Cause.FreightTrainInterference -> R.string.freight_train_interference
+                Alert.Cause.HazmatCondition -> R.string.hazmat_condition
+                Alert.Cause.HeavyRidership -> R.string.heavy_ridership
+                Alert.Cause.HighWinds -> R.string.high_winds
+                Alert.Cause.Holiday -> R.string.holiday
+                Alert.Cause.Hurricane -> R.string.hurricane
+                Alert.Cause.IceInHarbor -> R.string.ice_in_harbor
+                Alert.Cause.Maintenance -> R.string.maintenance
+                Alert.Cause.MechanicalIssue -> R.string.mechanical_issue
+                Alert.Cause.MechanicalProblem -> R.string.mechanical_problem
+                Alert.Cause.MedicalEmergency -> R.string.medical_emergency
+                Alert.Cause.Parade -> R.string.parade
+                Alert.Cause.PoliceAction -> R.string.police_action
+                Alert.Cause.PoliceActivity -> R.string.police_activity
+                Alert.Cause.PowerProblem -> R.string.power_problem
+                Alert.Cause.RailDefect -> R.string.rail_defect
+                Alert.Cause.SevereWeather -> R.string.severe_weather
+                Alert.Cause.SignalIssue -> R.string.signal_issue
+                Alert.Cause.SignalProblem -> R.string.signal_problem
+                Alert.Cause.SingleTracking -> R.string.single_tracking
+                Alert.Cause.SlipperyRail -> R.string.slippery_rail
+                Alert.Cause.Snow -> R.string.snow
+                Alert.Cause.SpecialEvent -> R.string.special_event
+                Alert.Cause.SpeedRestriction -> R.string.speed_restriction
+                Alert.Cause.Strike -> R.string.strike
+                Alert.Cause.SwitchIssue -> R.string.switch_issue
+                Alert.Cause.SwitchProblem -> R.string.switch_problem
+                Alert.Cause.TechnicalProblem -> R.string.technical_problem
+                Alert.Cause.TieReplacement -> R.string.tie_replacement
+                Alert.Cause.TrackProblem -> R.string.track_problem
+                Alert.Cause.TrackWork -> R.string.track_work
+                Alert.Cause.Traffic -> R.string.traffic
+                Alert.Cause.TrainTraffic -> R.string.train_traffic
+                Alert.Cause.UnrulyPassenger -> R.string.unruly_passenger
+                Alert.Cause.Weather -> R.string.weather
+                else -> null
+            }
+
         @StringRes
-        private fun causeRes(cause: Alert.Cause) =
+        private fun dueToCauseRes(cause: Alert.Cause) =
             when (cause) {
                 Alert.Cause.Accident -> R.string.accident_lowercase
                 Alert.Cause.Amtrak -> R.string.amtrak

@@ -28,6 +28,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 
 enum class AlertCardSpec {
@@ -41,20 +42,14 @@ enum class AlertCardSpec {
 @Composable
 fun AlertCard(
     alert: Alert,
+    alertSummary: AlertSummary?,
     spec: AlertCardSpec,
     color: Color,
     textColor: Color,
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    val formattedAlert = FormattedAlert(alert)
-    val headerText: String =
-        when (spec) {
-            AlertCardSpec.Downstream -> formattedAlert.downstreamEffect
-            AlertCardSpec.Elevator -> alert.header ?: formattedAlert.effect
-            AlertCardSpec.Delay -> formattedAlert.delaysDueToCause
-            else -> formattedAlert.effect
-        }
+    val formattedAlert = FormattedAlert(alert, alertSummary)
     val iconSize =
         when (spec) {
             AlertCardSpec.Major -> 48.dp
@@ -87,19 +82,18 @@ fun AlertCard(
                         )
             )
             Text(
-                headerText,
+                formattedAlert.alertCardHeader(spec),
                 Modifier.weight(1f),
-                style =
-                    if (spec == AlertCardSpec.Major) Typography.title2Bold
-                    else Typography.bodySemibold
+                style = if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.body
             )
             if (spec != AlertCardSpec.Major) {
                 InfoCircle()
             }
         }
+
         if (spec == AlertCardSpec.Major) {
             HorizontalDivider(color = color.copy(alpha = 0.25f), thickness = 2.dp)
-            Text(alert.header ?: "", style = Typography.callout)
+            Text(formattedAlert.alertCardMajorBody, style = Typography.callout)
             onViewDetails?.let {
                 TextButton(
                     it,
@@ -128,6 +122,7 @@ fun AlertCardPreview() {
                 header = "Orange Line suspended from point A to point B"
                 effect = Alert.Effect.Suspension
             }),
+            null,
             AlertCardSpec.Major,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("ED8B00"),
@@ -135,6 +130,7 @@ fun AlertCardPreview() {
         )
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
+            null,
             AlertCardSpec.Secondary,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("80276C"),
@@ -146,6 +142,7 @@ fun AlertCardPreview() {
                 header =
                     "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
             }),
+            null,
             AlertCardSpec.Elevator,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("ED8B00"),
