@@ -1,11 +1,10 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.ServiceDateRounding
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
-import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -88,17 +87,7 @@ data class Alert(
         }
 
         val startServiceDate = start.toBostonTime().serviceDate
-
-        // Service end times will be set to 3:00 in Alerts UI, which means that `serviceDate` will
-        // think that it belongs to the next service day, this checks for that case and rewinds to
-        // the proper service day when necessary
-        val endServiceDate: LocalDate?
-            get() {
-                val endDateTime = end?.toBostonTime() ?: return null
-                return if (endDateTime.hour == 3 && endDateTime.minute == 0)
-                    endDateTime.serviceDate.minus(DatePeriod(days = 1))
-                else endDateTime.serviceDate
-            }
+        val endServiceDate = end?.toBostonTime()?.serviceDate(ServiceDateRounding.BACKWARDS)
 
         val fromStartOfService: Boolean
             get() {
