@@ -97,6 +97,7 @@ fun StopDetailsUnfilteredView(
                 errorBannerViewModel,
                 showElevatorAccessibility,
                 now,
+                globalResponse,
                 pinnedRoutes,
                 togglePinnedRoute,
                 onClose,
