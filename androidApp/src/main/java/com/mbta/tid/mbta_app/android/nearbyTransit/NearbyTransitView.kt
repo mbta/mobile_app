@@ -157,6 +157,7 @@ fun NearbyTransitView(
                     items(routeCardData) {
                         RouteCard(
                             it,
+                            globalResponse,
                             now,
                             pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
                             ::togglePinnedRoute,

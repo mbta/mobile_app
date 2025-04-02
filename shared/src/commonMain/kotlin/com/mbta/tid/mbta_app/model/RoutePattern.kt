@@ -22,12 +22,12 @@ data class RoutePattern(
         @SerialName("canonical_only") CanonicalOnly
     }
 
+    /**
+     * Checks if this pattern is [Typicality.Typical].
+     *
+     * If any typicality is unknown, the route should be shown, and so this will return true.
+     */
+    fun isTypical() = typicality == null || typicality == Typicality.Typical
+
     override fun compareTo(other: RoutePattern) = sortOrder.compareTo(other.sortOrder)
 }
-/**
- * Checks if any pattern under this headsign is [RoutePattern.Typicality.Typical].
- *
- * If any typicality is unknown, the route should be shown, and so this will return true.
- */
-fun List<RoutePattern>.isTypical() =
-    this.any { it.typicality == null || it.typicality == RoutePattern.Typicality.Typical }

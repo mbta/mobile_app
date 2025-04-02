@@ -12,11 +12,14 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
+import com.mbta.tid.mbta_app.android.component.DirectionRowView
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
-import com.mbta.tid.mbta_app.android.component.PredictionRowView
+import com.mbta.tid.mbta_app.android.component.PillDecoration
+import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -24,6 +27,7 @@ import org.koin.compose.koinInject
 fun Departures(
     stopData: RouteCardData.RouteStopData,
     cardData: RouteCardData,
+    globalData: GlobalResponse?,
     now: Instant,
     pinned: Boolean,
     analytics: Analytics = koinInject(),
@@ -32,12 +36,9 @@ fun Departures(
     val localContext = LocalContext.current
 
     stopData.data.withIndex().forEach { (index, leaf) ->
-        fun analyticsTappedDeparture(predictions: UpcomingFormat) {
-            val noTrips =
-                when (predictions) {
-                    is UpcomingFormat.NoTrips -> predictions.noTripsFormat
-                    else -> null
-                }
+        fun analyticsTappedDeparture(leafFormat: LeafFormat) {
+            val format = (leafFormat as? LeafFormat.Single)?.format
+            val noTrips = (format as? UpcomingFormat.NoTrips)?.noTripsFormat
             analytics.tappedDeparture(
                 cardData.lineOrRoute.id,
                 stopData.stop.id,
@@ -48,7 +49,8 @@ fun Departures(
             )
         }
 
-        val formatted = leaf.format(now, cardData.lineOrRoute.sortRoute, 3, cardData.context)
+        val formatted =
+            leaf.format(now, cardData.lineOrRoute.sortRoute, globalData, cardData.context)
         val direction = stopData.directions.first { it.id == leaf.directionId }
 
         val clickModifier =
@@ -66,24 +68,26 @@ fun Departures(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             when (formatted) {
-                is UpcomingFormat.Some -> {
+                is LeafFormat.Single -> {
+                    DirectionRowView(
+                        direction.copy(destination = formatted.headsign ?: direction.destination),
+                        formatted.format
+                    )
+                }
+                is LeafFormat.Branched -> {
                     DirectionLabel(
                         direction,
                         Modifier.padding(start = 8.dp, top = 8.dp),
                         showDestination = false
                     )
-                    formatted.trips.forEach {
+                    for (branch in formatted.branches) {
                         HeadsignRowView(
-                            it.trip.headsign,
-                            UpcomingFormat.Some(it, formatted.secondaryAlert),
-                            pillDecoration = null
+                            branch.headsign,
+                            branch.format,
+                            pillDecoration = branch.route?.let { PillDecoration.OnRow(it) }
                         )
                     }
                 }
-                else ->
-                    PredictionRowView(predictions = formatted, pillDecoration = null) {
-                        DirectionLabel(direction)
-                    }
             }
             if (index < stopData.data.lastIndex) {
                 HaloSeparator()
