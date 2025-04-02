@@ -80,16 +80,21 @@ data class RouteSegment(
                             .toSet()
                     routes = routes.plus(sourceRouteId)
 
+                    val allServiceAlerts =
+                        (alertsByStop[stopId]?.serviceAlerts.orEmpty() +
+                                alertsByStop[stopId]
+                                    ?.childAlerts
+                                    ?.values
+                                    ?.flatMap { it.serviceAlerts }
+                                    .orEmpty())
+                            .distinct()
                     val serviceAlerts =
-                        alertsByStop[stopId]
-                            ?.serviceAlerts
-                            ?.filter { alert ->
-                                alert.anyInformedEntity { informedEntity ->
-                                    informedEntity.route != null &&
-                                        routes.contains(informedEntity.route)
-                                }
+                        allServiceAlerts.filter { alert ->
+                            alert.anyInformedEntity { informedEntity ->
+                                informedEntity.route != null &&
+                                    routes.contains(informedEntity.route)
                             }
-                            .orEmpty()
+                        }
 
                     // TODO determine effects that count
                     StopAlertState(

@@ -261,6 +261,50 @@ class RouteSegmentTest {
     }
 
     @Test
+    fun `alertStateByStopId includes stop when only children have service alerts`() {
+        lateinit var child1: Stop
+        lateinit var child2: Stop
+        val stop = stop {
+            id = "place-butlr"
+            child1 = childStop()
+            child2 = childStop()
+        }
+
+        val alert = alert {
+            effect = Alert.Effect.Shuttle
+            informedEntity(listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride), routeType = RouteType.LIGHT_RAIL, route = "Mattapan")
+        }
+
+        val segment =
+            RouteSegment(
+                id = "id",
+                sourceRouteId = "Mattapan",
+                sourceRoutePatternId = "sourceRoutePattern",
+                stopIds = listOf("place-butlr"),
+                otherPatternsByStopId = mapOf()
+            )
+
+        val alertsForStop =
+            AlertAssociatedStop(
+                stop = stop,
+                relevantAlerts = emptyList(),
+                childAlerts = mapOf(
+                    child1.id to AlertAssociatedStop(stop = child1, relevantAlerts = listOf(alert), stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)),
+                    child2.id to AlertAssociatedStop(stop = child2, relevantAlerts = listOf(alert), stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)),
+                ),
+                stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)
+            )
+
+        assertEquals(
+            mapOf(
+                "place-butlr" to
+                        RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+            ),
+            segment.alertStateByStopId(mapOf("place-butlr" to alertsForStop))
+        )
+    }
+
+    @Test
     fun `alertingSegments when alerting segment in the middle splits so alert in each segment`() {
 
         assertEquals(
