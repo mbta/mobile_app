@@ -8,11 +8,13 @@ import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
 @Composable
 fun RouteCard(
     data: RouteCardData,
+    globalData: GlobalResponse?,
     now: Instant,
     pinned: Boolean,
     onPin: (String) -> Unit,
@@ -29,7 +31,7 @@ fun RouteCard(
                 StopHeader(it, showElevatorAccessibility)
             }
 
-            Departures(it, data, now, pinned) { leaf ->
+            Departures(it, data, globalData, now, pinned) { leaf ->
                 onOpenStopDetails(
                     it.stop.id,
                     StopDetailsFilter(data.lineOrRoute.id, leaf.directionId)
