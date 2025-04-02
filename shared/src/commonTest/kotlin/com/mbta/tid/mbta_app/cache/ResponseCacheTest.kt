@@ -497,9 +497,10 @@ class ResponseCacheTest {
 
     @Test
     fun `writes full json even when some of it isn't parsed`() = runBlocking {
-        @Serializable data class PartialObject(val a: String,  val b: Int)
+        @Serializable data class PartialObject(val a: String, val b: Int)
         @Serializable data class CompleteObject(val a: String, val b: Int, val c: Double)
-        @Serializable data class FutureObject(val a: String, val b: Int, val c: Double, val d: String)
+        @Serializable
+        data class FutureObject(val a: String, val b: Int, val c: Double, val d: String)
 
         val partial = PartialObject("a", 1)
         val complete = CompleteObject("a", 1, 2.0)
@@ -606,15 +607,12 @@ class ResponseCacheTest {
             return client.get { url { path("api/global") } }
         }
 
-        assertEquals(
-            ApiResult.Ok(globalData),
-            cache.getOrFetch { fetch() }
-        )
+        assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fetch() })
         assertEquals(1, fetchCount)
         assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
 
-        fun metadataFromDisk() = json
-            .decodeFromString<ResponseMetadata>(
+        fun metadataFromDisk() =
+            json.decodeFromString<ResponseMetadata>(
                 fileSystem.read(
                     mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json"
                 ) {
@@ -626,22 +624,24 @@ class ResponseCacheTest {
         assertNull(cache.data!!.metadata.invalidationKey)
 
         val firstInvalidationKey = "key1"
-        val invalidatedCache = ResponseCache.create<GlobalResponse>(cacheKey = "test", invalidationKey = firstInvalidationKey)
-        assertEquals(
-            ApiResult.Ok(globalData),
-            invalidatedCache.getOrFetch { fetch() }
-        )
+        val invalidatedCache =
+            ResponseCache.create<GlobalResponse>(
+                cacheKey = "test",
+                invalidationKey = firstInvalidationKey
+            )
+        assertEquals(ApiResult.Ok(globalData), invalidatedCache.getOrFetch { fetch() })
         assertEquals(2, fetchCount)
         assertEquals(responseEtag, metadataFromDisk().etag)
         assertEquals(firstInvalidationKey, metadataFromDisk().invalidationKey)
         assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
 
         val secondInvalidationKey = "key2"
-        val otherInvalidatedCache = ResponseCache.create<GlobalResponse>(cacheKey = "test", invalidationKey = secondInvalidationKey)
-        assertEquals(
-            ApiResult.Ok(globalData),
-            otherInvalidatedCache.getOrFetch { fetch() }
-        )
+        val otherInvalidatedCache =
+            ResponseCache.create<GlobalResponse>(
+                cacheKey = "test",
+                invalidationKey = secondInvalidationKey
+            )
+        assertEquals(ApiResult.Ok(globalData), otherInvalidatedCache.getOrFetch { fetch() })
         assertEquals(3, fetchCount)
         assertEquals(responseEtag, metadataFromDisk().etag)
         assertEquals(secondInvalidationKey, metadataFromDisk().invalidationKey)

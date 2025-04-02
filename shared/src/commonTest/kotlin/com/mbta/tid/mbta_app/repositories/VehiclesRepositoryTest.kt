@@ -61,7 +61,7 @@ class VehiclesRepositoryTest : KoinTest {
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        vehiclesRepo.connect(routeId = "Test", directionId = 0, onReceive = { })
+        vehiclesRepo.connect(routeId = "Test", directionId = 0, onReceive = {})
         verify { vehiclesRepo.disconnect() }
         verify { channel.detach() }
     }

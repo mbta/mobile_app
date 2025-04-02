@@ -343,13 +343,13 @@ class TripInstantDisplayTest {
                 TripInstantDisplay.Boarding,
                 TripInstantDisplay.from(
                     prediction =
-                    ObjectCollectionBuilder.Single.prediction {
-                        arrivalTime = now.minus(5.seconds)
-                        departureTime = now.plus(95.seconds)
-                        stopId = "12345"
-                        tripId = "trip1"
-                        vehicleId = vehicle.id
-                    },
+                        ObjectCollectionBuilder.Single.prediction {
+                            arrivalTime = now.minus(5.seconds)
+                            departureTime = now.plus(95.seconds)
+                            stopId = "12345"
+                            tripId = "trip1"
+                            vehicleId = vehicle.id
+                        },
                     schedule = null,
                     vehicle = vehicle,
                     routeType = subway(),
@@ -471,24 +471,25 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `arriving when prediction arrival in the past and departure more than 30 seconds away`() = parametricTest {
-        val now = Clock.System.now()
-        assertEquals(
-            TripInstantDisplay.Arriving,
-            TripInstantDisplay.from(
-                prediction =
-                ObjectCollectionBuilder.Single.prediction {
-                    arrivalTime = now.minus(10.seconds)
-                    departureTime = now.plus(40.seconds)
-                },
-                schedule = null,
-                vehicle = null,
-                routeType = null,
-                now = now,
-                context = nonTripDetails()
+    fun `arriving when prediction arrival in the past and departure more than 30 seconds away`() =
+        parametricTest {
+            val now = Clock.System.now()
+            assertEquals(
+                TripInstantDisplay.Arriving,
+                TripInstantDisplay.from(
+                    prediction =
+                        ObjectCollectionBuilder.Single.prediction {
+                            arrivalTime = now.minus(10.seconds)
+                            departureTime = now.plus(40.seconds)
+                        },
+                    schedule = null,
+                    vehicle = null,
+                    routeType = null,
+                    now = now,
+                    context = nonTripDetails()
+                )
             )
-        )
-    }
+        }
 
     @Test
     fun `seconds less than 60 outside trip details`() = parametricTest {
@@ -615,10 +616,11 @@ class TripInstantDisplayTest {
     fun `time with status`() = parametricTest {
         val now = Clock.System.now()
         val predictionTime = now + 2.minutes
-        val prediction = ObjectCollectionBuilder.Single.prediction {
-            status = "All aboard"
-            departureTime = predictionTime
-        }
+        val prediction =
+            ObjectCollectionBuilder.Single.prediction {
+                status = "All aboard"
+                departureTime = predictionTime
+            }
 
         assertEquals(
             TripInstantDisplay.TimeWithStatus(predictionTime, "All aboard", true),

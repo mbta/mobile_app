@@ -375,12 +375,8 @@ class GlobalResponseTest {
 
         val route = objects.route()
         lateinit var childStop: Stop
-        val parentStation = objects.stop {
-            childStop = childStop()
-        }
-        val alert = objects.alert {
-            informedEntity(listOf(), stop = childStop.id)
-        }
+        val parentStation = objects.stop { childStop = childStop() }
+        val alert = objects.alert { informedEntity(listOf(), stop = childStop.id) }
 
         val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route))
         assertEquals(affectedStops, listOf(parentStation))
@@ -395,11 +391,12 @@ class GlobalResponseTest {
         val stop1 = objects.stop()
         val stop2 = objects.stop()
         val stop3 = objects.stop()
-        val alert = objects.alert {
-            informedEntity(listOf(), stop = stop1.id)
-            informedEntity(listOf(), route = route1.id, stop = stop2.id)
-            informedEntity(listOf(), route = route2.id, stop = stop3.id)
-        }
+        val alert =
+            objects.alert {
+                informedEntity(listOf(), stop = stop1.id)
+                informedEntity(listOf(), route = route1.id, stop = stop2.id)
+                informedEntity(listOf(), route = route2.id, stop = stop3.id)
+            }
 
         val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1))
         assertEquals(affectedStops, listOf(stop1, stop2))
@@ -413,14 +410,16 @@ class GlobalResponseTest {
         val route2 = objects.route()
         val stop1 = objects.stop()
         val stop2 = objects.stop()
-        val alert = objects.alert {
-            informedEntity(listOf(), route = route1.id, stop = stop1.id)
-            informedEntity(listOf(), route = route1.id, stop = stop2.id)
-            informedEntity(listOf(), route = route2.id, stop = stop1.id)
-            informedEntity(listOf(), route = route2.id, stop = stop2.id)
-        }
+        val alert =
+            objects.alert {
+                informedEntity(listOf(), route = route1.id, stop = stop1.id)
+                informedEntity(listOf(), route = route1.id, stop = stop2.id)
+                informedEntity(listOf(), route = route2.id, stop = stop1.id)
+                informedEntity(listOf(), route = route2.id, stop = stop2.id)
+            }
 
-        val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1, route2))
+        val affectedStops =
+            GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1, route2))
         assertEquals(affectedStops, listOf(stop1, stop2))
     }
 
@@ -430,20 +429,17 @@ class GlobalResponseTest {
 
         val line = objects.line()
 
-        val route = objects.route {
-            lineId = line.id
-        }
+        val route = objects.route { lineId = line.id }
 
-        val shuttleRoute = objects.route {
-            id = "Shuttle-1"
-            lineId = line.id
-        }
+        val shuttleRoute =
+            objects.route {
+                id = "Shuttle-1"
+                lineId = line.id
+            }
 
         // not included b/c no line
         val otherRoute = objects.route()
 
         assertEquals(mapOf(line.id to listOf(route)), GlobalResponse(objects).routesByLineId)
-
-
     }
 }

@@ -272,7 +272,15 @@ class RouteSegmentTest {
 
         val alert = alert {
             effect = Alert.Effect.Shuttle
-            informedEntity(listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride), routeType = RouteType.LIGHT_RAIL, route = "Mattapan")
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride
+                ),
+                routeType = RouteType.LIGHT_RAIL,
+                route = "Mattapan"
+            )
         }
 
         val segment =
@@ -288,17 +296,30 @@ class RouteSegmentTest {
             AlertAssociatedStop(
                 stop = stop,
                 relevantAlerts = emptyList(),
-                childAlerts = mapOf(
-                    child1.id to AlertAssociatedStop(stop = child1, relevantAlerts = listOf(alert), stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)),
-                    child2.id to AlertAssociatedStop(stop = child2, relevantAlerts = listOf(alert), stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)),
-                ),
+                childAlerts =
+                    mapOf(
+                        child1.id to
+                            AlertAssociatedStop(
+                                stop = child1,
+                                relevantAlerts = listOf(alert),
+                                stateByRoute =
+                                    mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)
+                            ),
+                        child2.id to
+                            AlertAssociatedStop(
+                                stop = child2,
+                                relevantAlerts = listOf(alert),
+                                stateByRoute =
+                                    mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)
+                            ),
+                    ),
                 stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle)
             )
 
         assertEquals(
             mapOf(
                 "place-butlr" to
-                        RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
             ),
             segment.alertStateByStopId(mapOf("place-butlr" to alertsForStop))
         )
