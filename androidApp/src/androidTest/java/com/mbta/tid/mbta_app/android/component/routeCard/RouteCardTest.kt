@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Clock
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -35,6 +36,7 @@ class RouteCardTest {
                     RouteCardData.Context.NearbyTransit,
                     now,
                 ),
+                GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
@@ -68,6 +70,7 @@ class RouteCardTest {
                     RouteCardData.Context.NearbyTransit,
                     now,
                 ),
+                GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = { onPinCalled = true },
@@ -102,6 +105,7 @@ class RouteCardTest {
                     RouteCardData.Context.StopDetailsUnfiltered,
                     now,
                 ),
+                GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},

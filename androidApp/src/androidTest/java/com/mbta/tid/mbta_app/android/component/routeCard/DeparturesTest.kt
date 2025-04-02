@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -80,7 +81,9 @@ class DeparturesTest {
                 now,
             )
 
-        composeTestRule.setContent { Departures(stopData, cardData, now, false) { _ -> } }
+        composeTestRule.setContent {
+            Departures(stopData, cardData, GlobalResponse(objects), now, false) { _ -> }
+        }
 
         composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
         composeTestRule.onNodeWithText(aTrip.headsign).assertIsDisplayed()
@@ -148,7 +151,9 @@ class DeparturesTest {
                 now,
             )
 
-        composeTestRule.setContent { Departures(stopData, cardData, now, false) { _ -> } }
+        composeTestRule.setContent {
+            Departures(stopData, cardData, GlobalResponse(objects), now, false) { _ -> }
+        }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
         composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertIsDisplayed()
@@ -222,7 +227,9 @@ class DeparturesTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                Departures(stopData, cardData, now, pinned = true) { onClickCalled = true }
+                Departures(stopData, cardData, GlobalResponse(objects), now, pinned = true) {
+                    onClickCalled = true
+                }
             }
         }
 

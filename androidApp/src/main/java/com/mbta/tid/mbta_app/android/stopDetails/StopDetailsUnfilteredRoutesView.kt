@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
@@ -98,6 +99,7 @@ fun StopDetailsUnfilteredRoutesView(
     errorBannerViewModel: ErrorBannerViewModel,
     showElevatorAccessibility: Boolean,
     now: Instant,
+    globalData: GlobalResponse,
     pinnedRoutes: Set<String>,
     pinRoute: (String) -> Unit,
     onClose: () -> Unit,
@@ -119,6 +121,7 @@ fun StopDetailsUnfilteredRoutesView(
         items(routeCardData, key = { it.lineOrRoute.id }) { routeCardData ->
             RouteCard(
                 routeCardData,
+                globalData,
                 now,
                 pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
                 onPin = pinRoute,
