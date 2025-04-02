@@ -17,7 +17,6 @@ class AlertAssociatedStop(val stop: Stop) {
     ) : this(stop) {
         global.run {
             relevantAlerts = alertsByStop[stop.id]?.toList() ?: emptyList()
-            serviceAlerts = getServiceAlerts(relevantAlerts)
 
             val childStops =
                 stop.childStopIds
@@ -42,8 +41,9 @@ class AlertAssociatedStop(val stop: Stop) {
                     } + relevantAlerts
             }
 
-            stateByRoute =
-                getAlertStateByRoute(stop, getServiceAlerts(relevantAlerts), childAlerts, global)
+            serviceAlerts = getServiceAlerts(relevantAlerts)
+
+            stateByRoute = getAlertStateByRoute(stop, serviceAlerts, childAlerts, global)
         }
     }
 
@@ -123,9 +123,7 @@ private fun getAlertStateByRoute(
             }
 
             val childStates =
-                childAlerts.values.mapNotNull childState@{
-                    stopState(it.stop, mapRoute, childAlerts)
-                }
+                childAlerts.values.mapNotNull { stopState(it.stop, mapRoute, childAlerts) }
 
             val patternStates =
                 (patterns ?: emptyList()).map { statesForPattern(it, stop, serviceAlerts) }
