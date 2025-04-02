@@ -29,12 +29,6 @@ private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuild
 
 private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 
-// route/ine id =>  stop id => direction id => upcoming trips
-private typealias MutablePartialHierarchy<T> =
-    MutableMap<String, MutableMap<String, MutableMap<Int, T>>>
-
-private typealias PartialHierarchy<T> = Map<String, Map<String, Map<Int, T>>>
-
 /**
  * Basic data that a row of a route card should have. For backwards compatibility with
  * [RealtimePatterns]
@@ -525,23 +519,32 @@ data class RouteCardData(
                     filterAtTime
                 )
 
-            val partialHierarchy: MutablePartialHierarchy<MutableList<UpcomingTrip>> =
-                mutableMapOf()
+            val upcomingTripsBySlot =
+                mutableMapOf<Triple<String, String, Int>, MutableList<UpcomingTrip>>()
 
             for (upcomingTrip in upcomingTrips) {
                 val parentStopId =
                     upcomingTrip.stopId?.let { parentStop(globalData, it)?.id } ?: continue
                 val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.trip.routeId) ?: continue
-                partialHierarchy
-                    .getOrPut(lineOrRouteId, ::mutableMapOf)
-                    .getOrPut(parentStopId, ::mutableMapOf)
-                    .getOrPut(upcomingTrip.trip.directionId, ::mutableListOf)
+                upcomingTripsBySlot
+                    .getOrPut(
+                        Triple(lineOrRouteId, parentStopId, upcomingTrip.trip.directionId),
+                        ::mutableListOf
+                    )
                     .add(upcomingTrip)
             }
 
-            this.updateLeaves<List<UpcomingTrip>>(partialHierarchy) { leafBuilder, upcomingTrips ->
-                leafBuilder.upcomingTrips = upcomingTrips
+            val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
+
+            forEachLeaf { routeOrLineId, stopId, directionId, leafBuilder ->
+                val upcomingTripsHere =
+                    upcomingTripsBySlot[Triple(routeOrLineId, stopId, directionId)]
+                leafBuilder.upcomingTrips = upcomingTripsHere
                 leafBuilder.allDataLoaded = schedules != null
+                leafBuilder.hasSchedulesToday =
+                    if (hasSchedulesTodayByPattern != null)
+                        leafBuilder.routePatterns?.any { hasSchedulesTodayByPattern[it.id] == true }
+                    else null
             }
             return this
         }
@@ -561,28 +564,19 @@ data class RouteCardData(
             }
         }
 
-        /**
-         * update the [ByLineOrRouteBuilder] leaves by only adding data to the existing
-         * LeafBuilders. with the provided [add] function. If the partialHierarchy contains any
-         * routes / stops / directions that are not present in the builder, they *will not* be added
-         * to the builder.
-         */
-        private fun <T> updateLeaves(
-            partialHierarchy: PartialHierarchy<T>,
-            add: (leafBuilder: LeafBuilder, newData: T) -> Unit
+        private fun forEachLeaf(
+            process:
+                (
+                    routeOrLineId: String,
+                    stopId: String,
+                    directionId: Int,
+                    leafBuilder: LeafBuilder
+                ) -> Unit
         ) {
-            for (entry in partialHierarchy) {
-                val (routeOrLineId, byStopId) = entry
-                for (stopEntry in byStopId) {
-                    val (stopId, byDirectionId) = stopEntry
-                    for (directionEntry in byDirectionId) {
-                        val (directionId, newLeafData) = directionEntry
-                        this.data[routeOrLineId]
-                            ?.stopData
-                            ?.get(stopId)
-                            ?.data
-                            ?.get(directionId)
-                            ?.let { add(it, newLeafData) }
+            for ((routeOrLineId, byStopId) in data) {
+                for ((stopId, byDirectionId) in byStopId.stopData) {
+                    for ((directionId, leaf) in byDirectionId.data) {
+                        process(routeOrLineId, stopId, directionId, leaf)
                     }
                 }
             }
@@ -716,7 +710,8 @@ data class RouteCardData(
         var stopIds: Set<String>? = null,
         var upcomingTrips: List<UpcomingTrip>? = null,
         var alertsHere: List<Alert>? = null,
-        var allDataLoaded: Boolean? = null
+        var allDataLoaded: Boolean? = null,
+        var hasSchedulesToday: Boolean? = null
     ) {
 
         fun build(): RouteCardData.Leaf {
@@ -728,7 +723,7 @@ data class RouteCardData(
                 this.upcomingTrips ?: emptyList(),
                 alertsHere ?: emptyList(),
                 allDataLoaded ?: false,
-                hasSchedulesToday = false // TODO: actually populate
+                hasSchedulesToday ?: false
             )
         }
 
