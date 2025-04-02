@@ -46,7 +46,7 @@ class AlertsRepositoryTests {
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        alertsRepo.connect(onReceive = { })
+        alertsRepo.connect(onReceive = {})
         verify { alertsRepo.disconnect() }
         verify { channel.detach() }
     }

@@ -144,29 +144,29 @@ class AlertsChannelTest {
             AlertsStreamDataResponse(
                 mapOf(
                     "501047" to
-                            Alert(
-                                "501047",
-                                listOf(
-                                    Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
+                        Alert(
+                            "501047",
+                            listOf(
+                                Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
+                            ),
+                            Alert.Cause.UnknownCause,
+                            "Description",
+                            Alert.DurationCertainty.Unknown,
+                            Alert.Effect.UnknownEffect,
+                            null,
+                            "Header",
+                            listOf(
+                                Alert.InformedEntity(
+                                    listOf(Alert.InformedEntity.Activity.Board),
+                                    route = "Red",
+                                    routeType = RouteType.HEAVY_RAIL,
+                                    stop = "place-pktrm"
                                 ),
-                                Alert.Cause.UnknownCause,
-                                "Description",
-                                Alert.DurationCertainty.Unknown,
-                                Alert.Effect.UnknownEffect,
-                                null,
-                                "Header",
-                                listOf(
-                                    Alert.InformedEntity(
-                                        listOf(Alert.InformedEntity.Activity.Board),
-                                        route = "Red",
-                                        routeType = RouteType.HEAVY_RAIL,
-                                        stop = "place-pktrm"
-                                    ),
-                                ),
-                                Alert.Lifecycle.Ongoing,
-                                10,
-                                Instant.parse("2023-05-26T16:46:13-04:00")
-                            )
+                            ),
+                            Alert.Lifecycle.Ongoing,
+                            10,
+                            Instant.parse("2023-05-26T16:46:13-04:00")
+                        )
                 )
             ),
             parsed

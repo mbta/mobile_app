@@ -3,11 +3,11 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class PatternsByStopTest {
     @Test
@@ -204,7 +204,8 @@ class PatternsByStopTest {
 
         val route = objects.route()
         val stop = objects.stop()
-        val pattern = objects.routePattern(route) { representativeTrip { stopIds = listOf(stop.id) }}
+        val pattern =
+            objects.routePattern(route) { representativeTrip { stopIds = listOf(stop.id) } }
 
         val time = Clock.System.now()
 
@@ -644,10 +645,7 @@ class PatternsByStopTest {
                 representativeTripId = "trip_1"
             }
 
-        val stop =
-            objects.stop {
-                id = "stop_1"
-            }
+        val stop = objects.stop { id = "stop_1" }
         val trip =
             objects.trip {
                 id = "trip_1"
@@ -656,12 +654,12 @@ class PatternsByStopTest {
                 routePatternId = "pattern_1"
             }
 
-        val schedule = objects.schedule {
-            tripId = "trip_1"
-            stopId = "stop_1"
-            departureTime = now.plus(10.minutes)
-
-        }
+        val schedule =
+            objects.schedule {
+                tripId = "trip_1"
+                stopId = "stop_1"
+                departureTime = now.plus(10.minutes)
+            }
         val prediction =
             objects.prediction {
                 id = "prediction_1"
@@ -683,13 +681,39 @@ class PatternsByStopTest {
                 scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
             }
 
-        assertTrue(PatternsByStop(route, stop,
-            listOf(RealtimePatterns.ByHeadsign(route, trip.headsign, null, listOf(routePattern), listOf(
-                UpcomingTrip(trip, schedule, predictionCancelled))))).tripIsCancelled(trip.id))
+        assertTrue(
+            PatternsByStop(
+                    route,
+                    stop,
+                    listOf(
+                        RealtimePatterns.ByHeadsign(
+                            route,
+                            trip.headsign,
+                            null,
+                            listOf(routePattern),
+                            listOf(UpcomingTrip(trip, schedule, predictionCancelled))
+                        )
+                    )
+                )
+                .tripIsCancelled(trip.id)
+        )
 
-        assertFalse(PatternsByStop(route, stop,
-            listOf(RealtimePatterns.ByHeadsign(route, trip.headsign, null, listOf(routePattern), listOf(
-                UpcomingTrip(trip, schedule, prediction))))).tripIsCancelled(trip.id))
+        assertFalse(
+            PatternsByStop(
+                    route,
+                    stop,
+                    listOf(
+                        RealtimePatterns.ByHeadsign(
+                            route,
+                            trip.headsign,
+                            null,
+                            listOf(routePattern),
+                            listOf(UpcomingTrip(trip, schedule, prediction))
+                        )
+                    )
+                )
+                .tripIsCancelled(trip.id)
+        )
     }
 
     object GroupedGLTestPatterns {
@@ -754,7 +778,11 @@ class PatternsByStopTest {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
             }
         val upcomingTripCCleveland1 =
-            objects.upcomingTrip(scheduleCCleveland1, predictionCCleveland1, vehicle = vehicleCCleveland1)
+            objects.upcomingTrip(
+                scheduleCCleveland1,
+                predictionCCleveland1,
+                vehicle = vehicleCCleveland1
+            )
         val upcomingTripScheduledCCleveland1 = objects.upcomingTrip(scheduleCCleveland1)
 
         val tripEMedford1 = objects.trip(routePatternEMedford)

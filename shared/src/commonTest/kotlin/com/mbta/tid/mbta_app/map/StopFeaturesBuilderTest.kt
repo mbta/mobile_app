@@ -339,7 +339,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have routes`()  = runBlocking {
+    fun `stop features have routes`() = runBlocking {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,

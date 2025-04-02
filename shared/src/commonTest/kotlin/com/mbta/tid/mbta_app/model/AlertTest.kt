@@ -21,29 +21,38 @@ class AlertTest {
     @Test
     fun `alert significance is set properly`() {
         for (effect in Alert.Effect.entries) {
-            val inherentlyStopSpecific = when (effect) {
-                Alert.Effect.DockClosure, Alert.Effect.DockIssue -> true
-                Alert.Effect.StationClosure, Alert.Effect.StationIssue -> true
-                Alert.Effect.StopClosure -> true
-                else -> false
-            }
-            for (specifiedStops in listOfNotNull(false.takeUnless { inherentlyStopSpecific }, true)) {
-                val alert = ObjectCollectionBuilder.Single.alert {
-                    this.effect = effect
-                    informedEntity(emptyList(), stop = "stop".takeIf { specifiedStops })
+            val inherentlyStopSpecific =
+                when (effect) {
+                    Alert.Effect.DockClosure,
+                    Alert.Effect.DockIssue -> true
+                    Alert.Effect.StationClosure,
+                    Alert.Effect.StationIssue -> true
+                    Alert.Effect.StopClosure -> true
+                    else -> false
                 }
-                val expectedSignificance = when (effect) {
-                    Alert.Effect.Detour, Alert.Effect.SnowRoute -> if (specifiedStops) AlertSignificance.Major else AlertSignificance.Secondary
-                    Alert.Effect.DockClosure -> AlertSignificance.Major
-                    Alert.Effect.ElevatorClosure -> AlertSignificance.Accessibility
-                    Alert.Effect.ServiceChange -> AlertSignificance.Secondary
-                    Alert.Effect.Shuttle -> AlertSignificance.Major
-                    Alert.Effect.StationClosure -> AlertSignificance.Major
-                    Alert.Effect.StopClosure -> AlertSignificance.Major
-                    Alert.Effect.Suspension -> AlertSignificance.Major
-                    Alert.Effect.TrackChange -> AlertSignificance.Minor
-                    else -> AlertSignificance.None
-                }
+            for (specifiedStops in
+                listOfNotNull(false.takeUnless { inherentlyStopSpecific }, true)) {
+                val alert =
+                    ObjectCollectionBuilder.Single.alert {
+                        this.effect = effect
+                        informedEntity(emptyList(), stop = "stop".takeIf { specifiedStops })
+                    }
+                val expectedSignificance =
+                    when (effect) {
+                        Alert.Effect.Detour,
+                        Alert.Effect.SnowRoute ->
+                            if (specifiedStops) AlertSignificance.Major
+                            else AlertSignificance.Secondary
+                        Alert.Effect.DockClosure -> AlertSignificance.Major
+                        Alert.Effect.ElevatorClosure -> AlertSignificance.Accessibility
+                        Alert.Effect.ServiceChange -> AlertSignificance.Secondary
+                        Alert.Effect.Shuttle -> AlertSignificance.Major
+                        Alert.Effect.StationClosure -> AlertSignificance.Major
+                        Alert.Effect.StopClosure -> AlertSignificance.Major
+                        Alert.Effect.Suspension -> AlertSignificance.Major
+                        Alert.Effect.TrackChange -> AlertSignificance.Minor
+                        else -> AlertSignificance.None
+                    }
                 assertEquals(
                     expectedSignificance,
                     alert.significance,
@@ -55,23 +64,26 @@ class AlertTest {
 
     @Test
     fun `alert significance for delay alerts`() {
-                val subwayDelaySevere = ObjectCollectionBuilder.Single.alert {
-                    effect = Alert.Effect.Delay
-                    severity = 10
-                    informedEntity(emptyList(), stop = "stop", routeType = RouteType.LIGHT_RAIL)
-                }
+        val subwayDelaySevere =
+            ObjectCollectionBuilder.Single.alert {
+                effect = Alert.Effect.Delay
+                severity = 10
+                informedEntity(emptyList(), stop = "stop", routeType = RouteType.LIGHT_RAIL)
+            }
 
-        val subwayDelayNotSevere = ObjectCollectionBuilder.Single.alert {
-            this.effect = Alert.Effect.Delay
-            severity = 0
-            informedEntity(emptyList(), stop = "stop", routeType = RouteType.LIGHT_RAIL)
-        }
+        val subwayDelayNotSevere =
+            ObjectCollectionBuilder.Single.alert {
+                this.effect = Alert.Effect.Delay
+                severity = 0
+                informedEntity(emptyList(), stop = "stop", routeType = RouteType.LIGHT_RAIL)
+            }
 
-        val busDelaySevere = ObjectCollectionBuilder.Single.alert {
-            this.effect = Alert.Effect.Delay
-            severity = 10
-            informedEntity(emptyList(), stop = "stop", routeType = RouteType.BUS)
-        }
+        val busDelaySevere =
+            ObjectCollectionBuilder.Single.alert {
+                this.effect = Alert.Effect.Delay
+                severity = 10
+                informedEntity(emptyList(), stop = "stop", routeType = RouteType.BUS)
+            }
 
         assertEquals(subwayDelaySevere.significance, AlertSignificance.Minor)
         assertEquals(subwayDelayNotSevere.significance, AlertSignificance.None)
@@ -147,7 +159,6 @@ class AlertTest {
         assertEquals(listOf(alertMatch, alertMatchNoDirection), filteredList)
     }
 
-
     @Test
     fun `filters applicable alerts`() {
         val objects = ObjectCollectionBuilder()
@@ -210,7 +221,7 @@ class AlertTest {
             Alert.applicableAlerts(
                 listOf(alert),
                 null,
-                        listOf(route.id),
+                listOf(route.id),
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -303,7 +314,8 @@ class AlertTest {
             }
         assertEquals(
             listOf(alert),
-            Alert.applicableAlerts(   listOf(alert, otherAlert),
+            Alert.applicableAlerts(
+                listOf(alert, otherAlert),
                 directionId = null,
                 listOf(route.id),
                 stopIds = null,
@@ -387,7 +399,6 @@ class AlertTest {
         assertEquals(listOf(firstRideAlert), downstreamAlerts)
     }
 
-
     @Test
     fun `downstreamAlerts excludes alerts affecting the target stop`() {
         val objects = ObjectCollectionBuilder()
@@ -452,8 +463,6 @@ class AlertTest {
         assertEquals(listOf(alertDownstream2Only), downstreamAlerts)
     }
 
-
-
     @Test
     fun `downstreamAlerts ignores alert without stops specified`() {
         val objects = ObjectCollectionBuilder()
@@ -482,12 +491,7 @@ class AlertTest {
                     )
             }
 
-        val downstreamAlerts =
-            Alert.downstreamAlerts(
-                listOf(alert),
-                trip,
-                setOf(targetStop.id)
-            )
+        val downstreamAlerts = Alert.downstreamAlerts(listOf(alert), trip, setOf(targetStop.id))
 
         assertEquals(listOf(), downstreamAlerts)
     }
@@ -508,17 +512,10 @@ class AlertTest {
         val serviceAlert =
             objects.alert {
                 effect = Alert.Effect.NoService
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    stop = stop.id
-                )
+                informedEntity(listOf(Alert.InformedEntity.Activity.Board), stop = stop.id)
             }
 
-        val alerts =
-            Alert.elevatorAlerts(
-                listOf(serviceAlert, elevatorAlert),
-                setOf(stop.id)
-            )
+        val alerts = Alert.elevatorAlerts(listOf(serviceAlert, elevatorAlert), setOf(stop.id))
 
         assertEquals(listOf(elevatorAlert), alerts)
     }

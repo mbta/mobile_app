@@ -22,9 +22,8 @@ class TripPredictionsRepositoryTests {
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        tripPredictionsRepo.connect(tripId = "Test", onReceive = { })
+        tripPredictionsRepo.connect(tripId = "Test", onReceive = {})
         verify { tripPredictionsRepo.disconnect() }
         verify { channel.detach() }
     }
-
 }

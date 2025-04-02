@@ -163,12 +163,13 @@ class UpcomingTripTest {
                 TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
-                        prediction = prediction {
-                            departureTime = now.plus(10.seconds)
-                            stopId = "12345"
-                            tripId = "trip1"
-                            vehicleId = vehicle.id
-                        },
+                        prediction =
+                            prediction {
+                                departureTime = now.plus(10.seconds)
+                                stopId = "12345"
+                                tripId = "trip1"
+                                vehicleId = vehicle.id
+                            },
                         vehicle = vehicle
                     )
                     .format(now, subway(), anyContext())
@@ -188,13 +189,14 @@ class UpcomingTripTest {
                     TripInstantDisplay.Minutes(2),
                     UpcomingTrip(
                             trip {},
-                        prediction = prediction {
-                                departureTime = now.plus(95.seconds)
-                                stopId = "12345"
-                                tripId = "trip1"
-                                vehicleId = vehicle.id
-                            },
-                        vehicle = vehicle
+                            prediction =
+                                prediction {
+                                    departureTime = now.plus(95.seconds)
+                                    stopId = "12345"
+                                    tripId = "trip1"
+                                    vehicleId = vehicle.id
+                                },
+                            vehicle = vehicle
                         )
                         .format(now, subway(), anyContext())
                 )
@@ -213,13 +215,14 @@ class UpcomingTripTest {
                 TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
-                        prediction = prediction {
-                            departureTime = now.plus(10.seconds)
-                            stopId = "12345"
-                            tripId = "trip1"
-                            vehicleId = vehicle.id
-                        },
-                    vehicle = vehicle
+                        prediction =
+                            prediction {
+                                departureTime = now.plus(10.seconds)
+                                stopId = "12345"
+                                tripId = "trip1"
+                                vehicleId = vehicle.id
+                            },
+                        vehicle = vehicle
                     )
                     .format(now, subway(), anyContext())
             )
@@ -233,13 +236,14 @@ class UpcomingTripTest {
                 TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
-                    prediction = prediction {
-                            departureTime = now.plus(10.seconds)
-                            stopId = "12345"
-                            tripId = "trip1"
-                            vehicleId = vehicle.id
-                        },
-                    vehicle = vehicle
+                        prediction =
+                            prediction {
+                                departureTime = now.plus(10.seconds)
+                                stopId = "12345"
+                                tripId = "trip1"
+                                vehicleId = vehicle.id
+                            },
+                        vehicle = vehicle
                     )
                     .format(now, subway(), anyContext())
             )
@@ -253,13 +257,14 @@ class UpcomingTripTest {
                 TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
-                    prediction = prediction {
-                            departureTime = now.plus(10.seconds)
-                            stopId = "12345"
-                            tripId = "trip1"
-                            vehicleId = vehicle.id
-                        },
-                    vehicle = vehicle
+                        prediction =
+                            prediction {
+                                departureTime = now.plus(10.seconds)
+                                stopId = "12345"
+                                tripId = "trip1"
+                                vehicleId = vehicle.id
+                            },
+                        vehicle = vehicle
                     )
                     .format(now, subway(), anyContext())
             )
