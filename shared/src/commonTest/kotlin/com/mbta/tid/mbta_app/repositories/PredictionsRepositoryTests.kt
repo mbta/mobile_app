@@ -53,7 +53,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        predictionsRepo.connect(stopIds = listOf("Test"), onReceive = { })
+        predictionsRepo.connect(stopIds = listOf("Test"), onReceive = {})
         verify { predictionsRepo.disconnect() }
         verify { channel.detach() }
     }

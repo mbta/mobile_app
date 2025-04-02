@@ -222,7 +222,8 @@ class DirectionTest {
         assertEquals("Gov Ctr & North", directionRp3.destination)
     }
 
-    @Test fun `getDirectionsForLine at different stops along the GL`() {
+    @Test
+    fun `getDirectionsForLine at different stops along the GL`() {
         val objects = ObjectCollectionBuilder()
 
         // B West
@@ -235,9 +236,8 @@ class DirectionTest {
         // Shared Trunk
         val hynes = objects.stop { id = "place-hymnl" }
         val arlington = objects.stop { id = "place-armnl" }
-        val boylston = objects.stop {id = "place-boyls"}
+        val boylston = objects.stop { id = "place-boyls" }
         val gov = objects.stop { id = "place-gover" }
-
 
         // E East / North
         val haymarket = objects.stop { id = "place-haecl" }
@@ -255,16 +255,18 @@ class DirectionTest {
             }
         val routePatternB1 =
             objects.routePattern(routeB) {
-                representativeTrip { headsign = "B"
-                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, southSt.id,  bc.id)
+                representativeTrip {
+                    headsign = "B"
+                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, southSt.id, bc.id)
                 }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
             }
         val routePatternB2 =
             objects.routePattern(routeB) {
-                representativeTrip { headsign = "B"
-                    stopIds = listOf(bc.id, southSt.id, hynes.id, arlington.id,  boylston.id, gov.id)
+                representativeTrip {
+                    headsign = "B"
+                    stopIds = listOf(bc.id, southSt.id, hynes.id, arlington.id, boylston.id, gov.id)
                 }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
@@ -281,17 +283,38 @@ class DirectionTest {
         val routePatternE1 =
             objects.routePattern(routeE) {
                 id = "test-hs"
-                representativeTrip { headsign = "Heath Street"
-                    stopIds = listOf(magoun.id, lechmere.id, haymarket.id, gov.id, boylston.id, arlington.id, hynes.id, heath.id)
-
+                representativeTrip {
+                    headsign = "Heath Street"
+                    stopIds =
+                        listOf(
+                            magoun.id,
+                            lechmere.id,
+                            haymarket.id,
+                            gov.id,
+                            boylston.id,
+                            arlington.id,
+                            hynes.id,
+                            heath.id
+                        )
                 }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
             }
         val routePatternE2 =
             objects.routePattern(routeE) {
-                representativeTrip { headsign = "Medford/Tufts"
-                    stopIds = listOf(heath.id, hynes.id, arlington.id, boylston.id, gov.id, haymarket.id, lechmere.id, magoun.id)
+                representativeTrip {
+                    headsign = "Medford/Tufts"
+                    stopIds =
+                        listOf(
+                            heath.id,
+                            hynes.id,
+                            arlington.id,
+                            boylston.id,
+                            gov.id,
+                            haymarket.id,
+                            lechmere.id,
+                            magoun.id
+                        )
                 }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
@@ -300,19 +323,38 @@ class DirectionTest {
         val global = GlobalResponse(objects)
 
         // on Western branch
-        assertEquals(listOf(Direction("West", "Boston College", 0), Direction("East", "Park St & North", 1)),
-            Direction.getDirectionsForLine(global, southSt, listOf(routePatternB1, routePatternB2)))
+        assertEquals(
+            listOf(Direction("West", "Boston College", 0), Direction("East", "Park St & North", 1)),
+            Direction.getDirectionsForLine(global, southSt, listOf(routePatternB1, routePatternB2))
+        )
 
         // on shard trunk
-        assertEquals(listOf(Direction("West", "Kenmore & West", 0), Direction("East", "Park St & North", 1)),
-            Direction.getDirectionsForLine(global, hynes, listOf(routePatternB1, routePatternB2, routePatternE1, routePatternE2)))
+        assertEquals(
+            listOf(Direction("West", "Kenmore & West", 0), Direction("East", "Park St & North", 1)),
+            Direction.getDirectionsForLine(
+                global,
+                hynes,
+                listOf(routePatternB1, routePatternB2, routePatternE1, routePatternE2)
+            )
+        )
 
         // gov center extra special case
-        assertEquals(listOf(Direction("West", "Copley & West", 0), Direction("East", "North Station & North", 1)),
-            Direction.getDirectionsForLine(global, gov, listOf(routePatternB1, routePatternB2, routePatternE1, routePatternE2)))
+        assertEquals(
+            listOf(
+                Direction("West", "Copley & West", 0),
+                Direction("East", "North Station & North", 1)
+            ),
+            Direction.getDirectionsForLine(
+                global,
+                gov,
+                listOf(routePatternB1, routePatternB2, routePatternE1, routePatternE2)
+            )
+        )
 
         // eastern branch
-        assertEquals(listOf(Direction("West", "Copley & West", 0), Direction("East", "Medford/Tufts", 1)),
-            Direction.getDirectionsForLine(global, magoun, listOf(routePatternE1, routePatternE2)))
+        assertEquals(
+            listOf(Direction("West", "Copley & West", 0), Direction("East", "Medford/Tufts", 1)),
+            Direction.getDirectionsForLine(global, magoun, listOf(routePatternE1, routePatternE2))
+        )
     }
 }

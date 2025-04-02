@@ -44,7 +44,12 @@ class OnboardingRepositoryTest : KoinTest {
         startKoin(isScreenReaderEnabled = true)
         val repo = OnboardingRepository()
         assertEquals(
-            listOf(OnboardingScreen.Location, OnboardingScreen.StationAccessibility, OnboardingScreen.HideMaps, OnboardingScreen.Feedback),
+            listOf(
+                OnboardingScreen.Location,
+                OnboardingScreen.StationAccessibility,
+                OnboardingScreen.HideMaps,
+                OnboardingScreen.Feedback
+            ),
             repo.getPendingOnboarding()
         )
     }
@@ -75,7 +80,11 @@ class OnboardingRepositoryTest : KoinTest {
         startKoin(isScreenReaderEnabled = true, storage)
         val repo = OnboardingRepository()
         assertEquals(
-            listOf(OnboardingScreen.StationAccessibility, OnboardingScreen.HideMaps, OnboardingScreen.Feedback),
+            listOf(
+                OnboardingScreen.StationAccessibility,
+                OnboardingScreen.HideMaps,
+                OnboardingScreen.Feedback
+            ),
             repo.getPendingOnboarding()
         )
     }
@@ -85,7 +94,11 @@ class OnboardingRepositoryTest : KoinTest {
         startKoin(isScreenReaderEnabled = false)
         val repo = OnboardingRepository()
         assertEquals(
-            listOf(OnboardingScreen.Location, OnboardingScreen.StationAccessibility, OnboardingScreen.Feedback),
+            listOf(
+                OnboardingScreen.Location,
+                OnboardingScreen.StationAccessibility,
+                OnboardingScreen.Feedback
+            ),
             repo.getPendingOnboarding()
         )
     }

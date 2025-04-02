@@ -3,6 +3,10 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
@@ -11,21 +15,18 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.time.Duration.Companion.hours
 
 class AlertSummaryTest {
     @Test
     fun `summary is null when there is no timeframe or location`() {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), now.plus(1.hours))
-            durationCertainty = Alert.DurationCertainty.Estimated
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                durationCertainty = Alert.DurationCertainty.Estimated
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 
@@ -37,10 +38,11 @@ class AlertSummaryTest {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
         val endTime = now.plus(1.hours)
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), endTime)
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), endTime)
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 
@@ -59,10 +61,11 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 2, minute = 59)
         val endTime = tomorrow.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
 
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), endTime)
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), endTime)
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 
@@ -81,10 +84,11 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 3, minute = 0)
         val endTime = tomorrow.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
 
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), endTime)
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), endTime)
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 
@@ -104,10 +108,11 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 3, minute = 0)
         val endTime = tomorrow.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
 
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), endTime)
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), endTime)
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 
@@ -127,10 +132,11 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 5, minute = 0)
         val endTime = saturday.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
 
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), endTime)
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), endTime)
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 
@@ -150,10 +156,11 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 5, minute = 0)
         val endTime = monday.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
 
-        val alert = objects.alert {
-            effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(1.hours), endTime)
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), endTime)
+            }
 
         val alertSummary = AlertSummary.summarizing(alert, now, GlobalResponse(objects))
 

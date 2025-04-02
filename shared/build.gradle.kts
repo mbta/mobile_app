@@ -113,10 +113,10 @@ skie {
 
 spotless {
     kotlin {
-        target("src/*Main/**/*.kt")
         custom(
             "ban getValue outside tests",
             FormatterFunc.NeedsFile { text, file ->
+                if (file.path.contains("commonTest")) return@NeedsFile text
                 val lines = text.lines()
                 for (line in lines.withIndex()) {
                     val column = line.value.indexOf("getValue(")

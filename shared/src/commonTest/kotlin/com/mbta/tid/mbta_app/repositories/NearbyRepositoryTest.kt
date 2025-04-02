@@ -70,13 +70,13 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val stopIds = runBlocking {
-            repo.getStopIdsNearby(globalData, Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude))
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+            )
         }
 
-        assertEquals(
-            listOf(nearbySubwayStop.id, nearbyCRStop.id),
-            stopIds
-        )
+        assertEquals(listOf(nearbySubwayStop.id, nearbyCRStop.id), stopIds)
     }
 
     @Test
@@ -104,13 +104,13 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val stopIds = runBlocking {
-            repo.getStopIdsNearby(globalData, Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude))
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+            )
         }
 
-        assertEquals(
-            listOf(nearbySubwayStop.id, nearbyCRStop.id),
-            stopIds
-        )
+        assertEquals(listOf(nearbySubwayStop.id, nearbyCRStop.id), stopIds)
     }
 
     @Test
@@ -129,7 +129,10 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val stopIds = runBlocking {
-            repo.getStopIdsNearby(globalData, Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude))
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+            )
         }
 
         assertEquals(emptyList(), stopIds)
@@ -160,7 +163,10 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val staticData = runBlocking {
-            repo.getNearby(globalData, Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude))
+            repo.getNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+            )
         }
 
         assertEquals(

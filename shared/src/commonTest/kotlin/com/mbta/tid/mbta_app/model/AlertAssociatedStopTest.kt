@@ -57,14 +57,16 @@ class AlertAssociatedStopTest {
         val objects = ObjectCollectionBuilder()
         lateinit var child1: Stop
         lateinit var child2: Stop
-        val stop = objects.stop {
-            child1 = childStop()
-            child2 = childStop()
-        }
-        val route = objects.route {
-            id = "Mattapan"
-            type = RouteType.LIGHT_RAIL
-        }
+        val stop =
+            objects.stop {
+                child1 = childStop()
+                child2 = childStop()
+            }
+        val route =
+            objects.route {
+                id = "Mattapan"
+                type = RouteType.LIGHT_RAIL
+            }
         objects.routePattern(route) {
             directionId = 0
             representativeTrip { stopIds = listOf(child1.id) }
@@ -74,14 +76,19 @@ class AlertAssociatedStopTest {
             representativeTrip { stopIds = listOf(child2.id) }
         }
 
-        val alert = objects.alert {
-            effect = Alert.Effect.Shuttle
-            informedEntity(
-                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                route = route.id,
-                routeType = route.type
-            )
-        }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type
+                )
+            }
 
         val result = AlertAssociatedStop(stop, emptyMap(), setOf(alert), GlobalResponse(objects))
 

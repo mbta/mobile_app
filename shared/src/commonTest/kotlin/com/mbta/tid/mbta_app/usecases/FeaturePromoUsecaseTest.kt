@@ -13,20 +13,22 @@ import kotlinx.coroutines.runBlocking
 class FeaturePromoUsecaseTest {
     @Test
     fun `empty when no current version`() = runBlocking {
-        val useCase = FeaturePromoUseCase(
-            MockCurrentAppVersionRepository(null),
-            MockLastLaunchedAppVersionRepository(AppVersion(0u, 1u, 0u), onSet = { fail() })
-        )
+        val useCase =
+            FeaturePromoUseCase(
+                MockCurrentAppVersionRepository(null),
+                MockLastLaunchedAppVersionRepository(AppVersion(0u, 1u, 0u), onSet = { fail() })
+            )
         assertEquals(emptyList(), useCase.getFeaturePromos())
     }
 
     @Test
     fun `writes current and returns empty when no last launched version`() = runBlocking {
         var savedVersion: AppVersion? = null
-        val useCase = FeaturePromoUseCase(
-            MockCurrentAppVersionRepository(AppVersion(0u, 1u, 0u)),
-            MockLastLaunchedAppVersionRepository(null, onSet = { savedVersion = it })
-        )
+        val useCase =
+            FeaturePromoUseCase(
+                MockCurrentAppVersionRepository(AppVersion(0u, 1u, 0u)),
+                MockLastLaunchedAppVersionRepository(null, onSet = { savedVersion = it })
+            )
         assertEquals(emptyList(), useCase.getFeaturePromos())
         assertEquals(AppVersion(0u, 1u, 0u), savedVersion)
     }
@@ -34,11 +36,13 @@ class FeaturePromoUsecaseTest {
     @Test
     fun `returns new features when version bumped`() = runBlocking {
         // instead of an @Ignore we may forget, skip the test if there are no features
-        if (FeaturePromo.entries.all { it.addedInVersion == AppVersion(0u, 0u, 0u) }) return@runBlocking
-        val useCase = FeaturePromoUseCase(
-            MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
-            MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
-        )
+        if (FeaturePromo.entries.all { it.addedInVersion == AppVersion(0u, 0u, 0u) })
+            return@runBlocking
+        val useCase =
+            FeaturePromoUseCase(
+                MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
+                MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
+            )
         assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
     }
 
@@ -46,10 +50,11 @@ class FeaturePromoUsecaseTest {
     fun `skips promos when too many`() = runBlocking {
         // instead of an @Ignore we may forget, skip the test if there aren't enough features
         if (FeaturePromo.entries.size <= FeaturePromoUseCase.MAX_PROMOS) return@runBlocking
-        val useCase = FeaturePromoUseCase(
-            MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
-            MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
-        )
+        val useCase =
+            FeaturePromoUseCase(
+                MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
+                MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
+            )
         assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
     }
 }

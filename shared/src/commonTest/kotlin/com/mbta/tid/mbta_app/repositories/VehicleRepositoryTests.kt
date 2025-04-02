@@ -22,9 +22,8 @@ class VehicleRepositoryTests {
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        vehicleRepo.connect(vehicleId = "Test", onReceive = { })
+        vehicleRepo.connect(vehicleId = "Test", onReceive = {})
         verify { vehicleRepo.disconnect() }
         verify { channel.detach() }
     }
-
 }
