@@ -714,9 +714,11 @@ data class RouteCardData(
             if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
             val isUpcoming =
                 when (cutoffTime) {
-                    null -> this.upcomingTrips?.isUpcoming() ?: false
-                    else -> this.upcomingTrips?.isUpcomingWithin(filterAtTime, cutoffTime) ?: false
+                    null -> this.upcomingTrips?.any { it.isUpcoming() }
+                    else ->
+                        this.upcomingTrips?.any { it.isUpcomingWithin(filterAtTime, cutoffTime) }
                 }
+                    ?: false
 
             val shouldBeFilteredAsArrivalOnly =
                 if (isSubway) {
@@ -730,7 +732,7 @@ data class RouteCardData(
                     this.upcomingTrips?.isArrivalOnly() ?: false
                 }
 
-            val isTypical = routePatterns?.isTypical() ?: false
+            val isTypical = routePatterns?.any { it.isTypical() } ?: false
 
             return (isTypical || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
         }

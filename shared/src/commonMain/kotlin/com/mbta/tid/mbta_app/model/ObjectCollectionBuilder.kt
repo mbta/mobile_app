@@ -20,17 +20,46 @@ import kotlinx.datetime.Instant
  * - Objects which need to be referenced directly but descend inherently from a parent (e.g. route
  *   patterns from routes) are built with a required parent argument
  */
-class ObjectCollectionBuilder {
-    val alerts = mutableMapOf<String, Alert>()
-    val lines = mutableMapOf<String, Line>()
-    val predictions = mutableMapOf<String, Prediction>()
-    val routes = mutableMapOf<String, Route>()
-    val routePatterns = mutableMapOf<String, RoutePattern>()
-    val schedules = mutableMapOf<String, Schedule>()
-    val stops = mutableMapOf<String, Stop>()
-    val trips = mutableMapOf<String, Trip>()
-    val shapes = mutableMapOf<String, Shape>()
-    val vehicles = mutableMapOf<String, Vehicle>()
+class ObjectCollectionBuilder
+private constructor(
+    val alerts: MutableMap<String, Alert>,
+    val lines: MutableMap<String, Line>,
+    val predictions: MutableMap<String, Prediction>,
+    val routes: MutableMap<String, Route>,
+    val routePatterns: MutableMap<String, RoutePattern>,
+    val schedules: MutableMap<String, Schedule>,
+    val stops: MutableMap<String, Stop>,
+    val trips: MutableMap<String, Trip>,
+    val shapes: MutableMap<String, Shape>,
+    val vehicles: MutableMap<String, Vehicle>,
+) {
+    constructor() :
+        this(
+            alerts = mutableMapOf(),
+            lines = mutableMapOf(),
+            predictions = mutableMapOf(),
+            routes = mutableMapOf(),
+            routePatterns = mutableMapOf(),
+            schedules = mutableMapOf(),
+            stops = mutableMapOf(),
+            trips = mutableMapOf(),
+            shapes = mutableMapOf(),
+            vehicles = mutableMapOf(),
+        )
+
+    fun clone() =
+        ObjectCollectionBuilder(
+            alerts = alerts.toMutableMap(),
+            lines = lines.toMutableMap(),
+            predictions = predictions.toMutableMap(),
+            routes = routes.toMutableMap(),
+            routePatterns = routePatterns.toMutableMap(),
+            schedules = schedules.toMutableMap(),
+            stops = stops.toMutableMap(),
+            trips = trips.toMutableMap(),
+            shapes = shapes.toMutableMap(),
+            vehicles = vehicles.toMutableMap(),
+        )
 
     interface ObjectBuilder<Built : BackendObject> {
         fun built(): Built

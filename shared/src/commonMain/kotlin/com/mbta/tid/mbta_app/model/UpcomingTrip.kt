@@ -67,6 +67,18 @@ constructor(
     val trackNumber: String? =
         if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
+    /** Checks if a trip has a time */
+    fun isUpcoming() = time != null
+
+    /**
+     * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
+     * left this stop.
+     */
+    fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant): Boolean =
+        time != null &&
+            time < cutoffTime &&
+            (time >= currentTime || (prediction != null && prediction.stopId == vehicle?.stopId))
+
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
     /**
@@ -200,27 +212,6 @@ constructor(
                     scheduleTime >= filterAtTime
                 }
         }
-    }
-}
-
-/**
- * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet left
- * this stop.
- */
-fun List<UpcomingTrip>.isUpcomingWithin(currentTime: Instant, cutoffTime: Instant): Boolean {
-    return this.any {
-        val tripTime = it.time
-        tripTime != null &&
-            tripTime < cutoffTime &&
-            (tripTime >= currentTime ||
-                (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
-    }
-}
-/** Checks if a trip has a time */
-fun List<UpcomingTrip>.isUpcoming(): Boolean {
-    return this.any {
-        val tripTime = it.time
-        tripTime != null
     }
 }
 
