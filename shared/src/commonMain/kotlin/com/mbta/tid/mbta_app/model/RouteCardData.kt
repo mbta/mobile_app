@@ -109,7 +109,8 @@ data class RouteCardData(
         override val upcomingTrips: List<UpcomingTrip>,
         val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
-        override val hasSchedulesToday: Boolean
+        override val hasSchedulesToday: Boolean,
+        val alertsDownstream: List<Alert>
     ) : ILeafData {
         override val hasMajorAlerts: Boolean
             get() = run {
@@ -170,10 +171,9 @@ data class RouteCardData(
                     potentialHeadsigns.singleOrNull(),
                     UpcomingFormat.Disruption(majorAlert, mapStopRoute)
                 )
-            // TODO: handle downstream alerts
             val secondaryAlertToDisplay =
                 alertsHere.firstOrNull { it.significance >= AlertSignificance.Secondary }
-            //      ?: alertsDownstream?.firstOrNull()
+                    ?: alertsDownstream.firstOrNull()
 
             val secondaryAlert =
                 secondaryAlertToDisplay?.let {
@@ -350,7 +350,12 @@ data class RouteCardData(
                     .addStaticStopsData(stopIds, globalData)
                     .addUpcomingTrips(schedules, predictions, now, globalData)
                     .filterIrrelevantData(now, cutoffTime, context, globalData)
-                    .addAlerts(alerts, includeMinorAlerts = context.isStopDetails(), now)
+                    .addAlerts(
+                        alerts,
+                        includeMinorAlerts = context.isStopDetails(),
+                        now,
+                        globalData
+                    )
                     .build()
                     .sort(sortByDistanceFrom, pinnedRoutes)
             }
@@ -577,14 +582,55 @@ data class RouteCardData(
         fun addAlerts(
             alerts: AlertsStreamDataResponse?,
             includeMinorAlerts: Boolean,
-            filterAtTime: Instant
+            filterAtTime: Instant,
+            globalData: GlobalResponse
         ): ListBuilder {
-            // TODO
-            // transform into map route => stop => direction => alerts
-            // break out helper steps for different types of alerts as needed
-            // merge into data
+            val activeRelevantAlerts =
+                filterRelevantAlerts(alerts, includeMinorAlerts, filterAtTime)
+            forEachLeaf(
+                process = { routeOrLineId, parentStopId, directionId, leafBuilder ->
+                    val routes =
+                        if (routeOrLineId.startsWith("line-")) {
+                            globalData.routesByLineId[routeOrLineId].orEmpty().map { it.id }
+                        } else {
+                            listOf(routeOrLineId)
+                        }
+                    val applicableAlerts =
+                        Alert.applicableAlerts(
+                            activeRelevantAlerts,
+                            directionId,
+                            routes,
+                            leafBuilder.stopIds,
+                            null
+                        )
+                    val downstreamAlerts =
+                        PatternsByStop.alertsDownstream(
+                            activeRelevantAlerts,
+                            leafBuilder.routePatterns.orEmpty(),
+                            leafBuilder.stopIds.orEmpty(),
+                            globalData.trips
+                        )
+                    val elevatorAlerts =
+                        Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
+                    leafBuilder.alertsHere = applicableAlerts + elevatorAlerts
+                    leafBuilder.alertsDownstream = downstreamAlerts
+                }
+            )
             return this
         }
+
+        private fun filterRelevantAlerts(
+            alerts: AlertsStreamDataResponse?,
+            includeMinorAlerts: Boolean,
+            filterAtTime: Instant
+        ): List<Alert> =
+            alerts?.alerts?.values?.filter {
+                it.isActive(filterAtTime) &&
+                    it.significance >=
+                        if (includeMinorAlerts) AlertSignificance.Minor
+                        else AlertSignificance.Accessibility
+            }
+                ?: emptyList()
 
         fun filterIrrelevantData(
             filterAtTime: Instant,
@@ -703,19 +749,20 @@ data class RouteCardData(
         var upcomingTrips: List<UpcomingTrip>? = null,
         var alertsHere: List<Alert>? = null,
         var allDataLoaded: Boolean? = null,
-        var hasSchedulesToday: Boolean? = null
+        var hasSchedulesToday: Boolean? = null,
+        var alertsDownstream: List<Alert>? = null
     ) {
 
         fun build(): RouteCardData.Leaf {
-            // TODO: Once alerts functionality is added, checkNotNull on alerts too
             return RouteCardData.Leaf(
                 directionId,
                 checkNotNull(routePatterns),
                 checkNotNull(stopIds),
                 this.upcomingTrips ?: emptyList(),
-                alertsHere ?: emptyList(),
+                checkNotNull(alertsHere),
                 allDataLoaded ?: false,
-                hasSchedulesToday ?: false
+                hasSchedulesToday ?: false,
+                checkNotNull(alertsDownstream)
             )
         }
 
