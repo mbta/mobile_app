@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.repositories.IStopRepository
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -14,7 +13,7 @@ class GetStopMapDataTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testStopMapData() = runTest {
+    fun testStopMapData() {
         val builder = ObjectCollectionBuilder()
         val stop = builder.stop()
         val stopMapResponse = StopMapResponse(listOf(), mapOf(stop.id to stop))
@@ -31,7 +30,7 @@ class GetStopMapDataTest {
             actualStopMapResponse = getStopMapData(stop.id, stopRepository)
         }
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntil { stopMapResponse == actualStopMapResponse }
         assertEquals(stopMapResponse, actualStopMapResponse)
     }

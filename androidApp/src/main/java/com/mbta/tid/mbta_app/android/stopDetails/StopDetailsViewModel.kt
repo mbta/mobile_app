@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
@@ -534,15 +537,23 @@ fun stopDetailsManagedVM(
     val groupByDirection by viewModel.groupByDirection.collectAsState()
     val departures by viewModel.stopDepartures.collectAsState()
 
+    var wasInBackground by remember { mutableStateOf(false) }
+
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
     LaunchedEffect(filters?.tripFilter) { viewModel.handleTripFilterChange(filters?.tripFilter) }
 
     LifecycleResumeEffect(null) {
-        viewModel.returnFromBackground()
-        viewModel.rejoinStopPredictions()
-        viewModel.rejoinTripChannels()
+        // we don’t want to return and rejoin on first appearance, only on actual resume, because
+        // the handleStopChange/handleTripFilterChange will handle initial joins
+        if (wasInBackground) {
+            wasInBackground = false
+            viewModel.returnFromBackground()
+            viewModel.rejoinStopPredictions()
+            viewModel.rejoinTripChannels()
+        }
 
         onPauseOrDispose {
+            wasInBackground = true
             viewModel.leaveStopPredictions()
             viewModel.leaveTripChannels()
         }
