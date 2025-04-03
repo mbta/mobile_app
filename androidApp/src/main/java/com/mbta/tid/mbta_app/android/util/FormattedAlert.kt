@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
+import com.mapbox.maps.extension.style.expressions.dsl.generated.string
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -82,7 +84,34 @@ data class FormattedAlert(
         @Composable get() = summary ?: AnnotatedString(alert.header ?: "")
 
     private val summaryLocation
-        @Composable get() = alertSummary?.location?.let { "" } ?: ""
+        @Composable
+        get() =
+            alertSummary?.location?.let {
+                when (it) {
+                    is AlertSummary.Location.SingleStop ->
+                        stringResource(R.string.alert_summary_location_single, it.stopName)
+                    is AlertSummary.Location.SuccessiveStops ->
+                        stringResource(
+                            R.string.alert_summary_location_successive,
+                            it.startStopName,
+                            it.endStopName
+                        )
+                    is AlertSummary.Location.StopToBranch ->
+                        stringResource(
+                            R.string.alert_summary_location_branching,
+                            it.startStopName,
+                            stringResource(directionNameFormatted(it.direction))
+                        )
+                    // TODO: FIX THIS
+                    is AlertSummary.Location.BranchToStop ->
+                        stringResource(
+                            R.string.alert_summary_location_branching,
+                            it.endStopName,
+                            stringResource(directionNameFormatted(it.direction))
+                        ) + " but flipped"
+                }
+            }
+                ?: ""
 
     private val summaryTimeframe
         @Composable

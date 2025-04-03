@@ -24,7 +24,7 @@ private val localizedDirectionNames: Map<String, Int> =
     )
 
 @StringRes
-private fun directionNameFormatted(direction: Direction) =
+fun directionNameFormatted(direction: Direction) =
     localizedDirectionNames[direction.name] ?: R.string.heading
 
 @Composable

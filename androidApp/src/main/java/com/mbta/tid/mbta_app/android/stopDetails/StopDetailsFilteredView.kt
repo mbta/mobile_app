@@ -46,7 +46,6 @@ fun StopDetailsFilteredView(
         }
 
     if (patternsByStop != null) {
-
         val tileData =
             departures
                 .stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
