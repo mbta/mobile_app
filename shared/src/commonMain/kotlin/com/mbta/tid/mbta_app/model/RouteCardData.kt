@@ -588,17 +588,17 @@ data class RouteCardData(
             val activeRelevantAlerts =
                 filterRelevantAlerts(alerts, includeMinorAlerts, filterAtTime)
             forEachLeaf(
-                process = { routeOrLineId, parentStopId, directionId, leafBuilder ->
+                process = { path, leafBuilder ->
                     val routes =
-                        if (routeOrLineId.startsWith("line-")) {
-                            globalData.routesByLineId[routeOrLineId].orEmpty().map { it.id }
+                        if (path.routeOrLineId.startsWith("line-")) {
+                            globalData.routesByLineId[path.routeOrLineId].orEmpty().map { it.id }
                         } else {
-                            listOf(routeOrLineId)
+                            listOf(path.routeOrLineId)
                         }
                     val applicableAlerts =
                         Alert.applicableAlerts(
                             activeRelevantAlerts,
-                            directionId,
+                            path.directionId,
                             routes,
                             leafBuilder.stopIds,
                             null

@@ -6,7 +6,6 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.parametric.parametricTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.days
@@ -1648,7 +1647,6 @@ class RouteCardDataTest {
     }
 
     @Test
-    @Ignore // TODO once no service today state added
     fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
@@ -1849,7 +1847,6 @@ class RouteCardDataTest {
         }
 
     @Test
-    @Ignore // TODO once unscheduled + alerting states added
     fun `withRealtimeInfo doesn't sort unscheduled routes to the bottom if they are disrupted`() =
         parametricTest {
             val objects = ObjectCollectionBuilder()
@@ -2344,8 +2341,8 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            alertsDownstream = emptyList()
                                             hasSchedulesToday = true,
+                                            alertsDownstream = emptyList()
                                         )
                                     ),
                                     global
@@ -2665,8 +2662,8 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            alertsDownstream = emptyList()
                                             hasSchedulesToday = true,
+                                            alertsDownstream = emptyList()
                                         )
                                     ),
                                     global
@@ -2842,7 +2839,6 @@ class RouteCardDataTest {
     }
 
     @Test
-    @Ignore // TODO: Add hasSchedules functionality as part of special service dates
     fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
@@ -3001,8 +2997,8 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            alertsDownstream = emptyList()
                                             hasSchedulesToday = true,
+                                            alertsDownstream = emptyList()
                                         )
                                     ),
                                     global
@@ -3036,8 +3032,8 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            alertsDownstream = emptyList()
                                             hasSchedulesToday = true,
+                                            alertsDownstream = emptyList()
                                         )
                                     ),
                                     global
@@ -3457,7 +3453,7 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
                                             hasSchedulesToday = true,
-                                        alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList()
                                         )
                                     )
                                 )
@@ -3553,8 +3549,8 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            alertsDownstream = emptyList()
                                             hasSchedulesToday = true,
+                                            alertsDownstream = emptyList()
                                         )
                                     )
                                 )
@@ -3965,8 +3961,8 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            alertsDownstream = emptyList()
                                             hasSchedulesToday = true,
+                                            alertsDownstream = emptyList()
                                         )
                                     ),
                                     global
@@ -4248,7 +4244,7 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             alertsHere =
                                                 listOf(parkShuttleAlert, parkElevatorAlert),
-                                            hasSchedulesToday = false,
+                                            hasSchedulesToday = true,
                                             alertsDownstream = southboundDownstreamAlerts
                                         )
                                     ),
@@ -4272,162 +4268,4 @@ class RouteCardDataTest {
                 )
             )
         }
-    @Test
-    fun `RouteCardData routeCardsForStopList returns alertsHere and downstream alerts `() = runBlocking() {
-        val context = RouteCardData.Context.NearbyTransit
-        val objects = ObjectCollectionBuilder()
-
-        val route = objects.route()
-        val park = objects.stop { id = "park" }
-        val alewife = objects.stop { id = "alewife" }
-        val shawmut = objects.stop { id = "shawmut" }
-        val ashmont = objects.stop { id = "ashmont" }
-        val quincyAdams = objects.stop { id = "quincy_adams" }
-        val braintree = objects.stop { id = "braintree" }
-        val routePatternAshmont =
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    directionId = 0
-                    headsign = "Ashmont"
-                    stopIds = listOf(alewife.id, park.id, shawmut.id, ashmont.id)
-                }
-            }
-        val routePatternBraintree =
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    directionId = 0
-                    headsign = "Braintree"
-                    stopIds = listOf(alewife.id, park.id, quincyAdams.id, braintree.id)
-                }
-            }
-
-        val time = Clock.System.now()
-
-        val tripBraintree = objects.trip(routePatternBraintree)
-        val scheduleBraintree =
-            objects.schedule {
-                trip = tripBraintree
-                departureTime = time + 2.minutes
-            }
-        val upcomingTripBraintree = objects.upcomingTrip(scheduleBraintree)
-
-        val tripAshmont = objects.trip(routePatternAshmont)
-        val scheduleAshmont =
-            objects.schedule {
-                trip = tripAshmont
-                departureTime = time + 10.minutes
-            }
-        val upcomingTripAshmont = objects.upcomingTrip(scheduleAshmont)
-
-        val shawmutShuttleAlert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
-                    stop = shawmut.id
-                )
-            }
-
-        val ashmontShuttleAlert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
-                    stop = ashmont.id
-                )
-            }
-
-        val parkShuttleAlert =
-            objects.alert {
-                id = "park_shuttle_alert"
-                effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
-                    stop = park.id
-                )
-            }
-
-        val parkElevatorAlert =
-            objects.alert {
-                id = "park_elevator_alert"
-                effect = Alert.Effect.ElevatorClosure
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    route = route.id,
-                    stop = park.id
-                )
-            }
-
-        val global =
-            GlobalResponse(
-                objects,
-                mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
-            )
-        val southboundDownstreamAlerts =
-            PatternsByStop.alertsDownstream(
-                alerts =
-                    listOf(
-                        ashmontShuttleAlert,
-                        shawmutShuttleAlert,
-                        parkShuttleAlert,
-                        parkElevatorAlert
-                    ),
-                patterns = listOf(routePatternAshmont, routePatternBraintree),
-                targetStopWithChildren = setOf(park.id),
-                tripsById = global.trips
-            )
-        assertEquals(
-            listOf(
-                RouteCardData(
-                    lineOrRoute = RouteCardData.LineOrRoute.Route(route),
-                    stopData =
-                        listOf(
-                            RouteCardData.RouteStopData(
-                                park,
-                                route,
-                                listOf(
-                                    RouteCardData.Leaf(
-                                        directionId = 0,
-                                        routePatterns = listOf(routePatternAshmont, routePatternBraintree),
-                                        stopIds = setOf(park.id),
-                                        upcomingTrips = emptyList(),
-                                        allDataLoaded = true,
-                                        alertsHere = listOf(parkShuttleAlert, parkElevatorAlert),
-                                        hasSchedulesToday = false,
-                                        alertsDownstream = southboundDownstreamAlerts
-                                    )
-                                ),
-                                global
-                            )
-                        ),
-                    context,
-                    time
-                )
-            ),
-            RouteCardData.routeCardsForStopList(
-                stopIds = listOf(park.id),
-                globalData = global,
-                sortByDistanceFrom = park.position,
-                schedules = ScheduleResponse(objects),
-                predictions = PredictionsStreamDataResponse(objects),
-                alerts = AlertsStreamDataResponse(objects),
-                now = time,
-                pinnedRoutes = setOf(),
-                context = context
-            )
-        )
-    }
-
-
 }

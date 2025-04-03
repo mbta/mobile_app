@@ -55,7 +55,8 @@ class DeparturesTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     ),
                     RouteCardData.Leaf(
                         1,
@@ -69,7 +70,8 @@ class DeparturesTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                 )
             )
@@ -125,7 +127,8 @@ class DeparturesTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     ),
                     RouteCardData.Leaf(
                         1,
@@ -139,7 +142,8 @@ class DeparturesTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                 )
             )
@@ -191,7 +195,8 @@ class DeparturesTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     ),
                     RouteCardData.Leaf(
                         1,
@@ -205,7 +210,8 @@ class DeparturesTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                 )
             )
