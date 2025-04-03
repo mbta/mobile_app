@@ -18,8 +18,9 @@
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
-    <string name="alert_summary_location_branching">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
+    <string name="alert_summary_location_branch_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_stop_to_branch">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
     <string name="alert_summary_location_successive">\u0020soti nan &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jiska fen sèvis la</string>
     <string name="alert_summary_timeframe_later_date">\u0020jiska %1$s</string>

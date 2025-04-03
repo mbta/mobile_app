@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -175,7 +176,19 @@ fun StopDetailsFilteredDeparturesView(
                             } else {
                                 AlertCardSpec.Secondary
                             }
-                    val summary = global?.let { alert.summary(now, it) }
+                    val patternsHere =
+                        remember(patternsByStop) {
+                            patternsByStop.patterns
+                                .flatMap { it.patterns }
+                                .filterNotNull()
+                                .filter { it.directionId == stopFilter.directionId }
+                        }
+                    val summary: AlertSummary? =
+                        remember(global, alert, stopId, stopFilter.directionId, patternsHere, now) {
+                            global?.let {
+                                alert.summary(stopId, stopFilter.directionId, patternsHere, now, it)
+                            }
+                        }
                     AlertCard(
                         alert,
                         summary,

@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -82,7 +83,33 @@ data class FormattedAlert(
         @Composable get() = summary ?: AnnotatedString(alert.header ?: "")
 
     private val summaryLocation
-        @Composable get() = alertSummary?.location?.let { "" } ?: ""
+        @Composable
+        get() =
+            alertSummary?.location?.let {
+                when (it) {
+                    is AlertSummary.Location.SingleStop ->
+                        stringResource(R.string.alert_summary_location_single, it.stopName)
+                    is AlertSummary.Location.SuccessiveStops ->
+                        stringResource(
+                            R.string.alert_summary_location_successive,
+                            it.startStopName,
+                            it.endStopName
+                        )
+                    is AlertSummary.Location.StopToBranch ->
+                        stringResource(
+                            R.string.alert_summary_location_stop_to_branch,
+                            it.startStopName,
+                            stringResource(directionNameFormatted(it.direction))
+                        )
+                    is AlertSummary.Location.BranchToStop ->
+                        stringResource(
+                            R.string.alert_summary_location_branch_to_stop,
+                            stringResource(directionNameFormatted(it.direction)),
+                            it.endStopName,
+                        )
+                }
+            }
+                ?: ""
 
     private val summaryTimeframe
         @Composable
