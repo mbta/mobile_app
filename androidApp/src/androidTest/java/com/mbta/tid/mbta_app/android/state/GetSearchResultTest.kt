@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -52,7 +51,7 @@ class GetSearchResultTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testSearchResults() = runTest {
+    fun testSearchResults() {
         var actualSearchResultsViewModel: SearchResultsViewModel? = null
         val mockVisitHistoryRepository = MockVisitHistoryRepository()
         val visitHistory = VisitHistory()
@@ -78,7 +77,7 @@ class GetSearchResultTest {
         }
 
         composeTestRule.waitUntil { actualSearchResultsViewModel != null }
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
 
         actualSearchResultsViewModel?.getSearchResults(
             "",

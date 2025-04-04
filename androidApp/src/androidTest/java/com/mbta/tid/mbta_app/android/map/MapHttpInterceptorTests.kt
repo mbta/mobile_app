@@ -10,7 +10,6 @@ import com.mapbox.common.HttpResponseData
 import com.mapbox.common.SdkInformation
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class MapHttpInterceptorTests {
@@ -23,7 +22,7 @@ class MapHttpInterceptorTests {
             .build()
 
     @Test
-    fun testOnRequestUnchanged() = runTest {
+    fun testOnRequestUnchanged() {
         var requestUnchanged = false
         val interceptor = MapHttpInterceptor {}
         interceptor.onRequest(fakeRequest) { requstOrResponse ->
@@ -36,7 +35,7 @@ class MapHttpInterceptorTests {
     }
 
     @Test
-    fun testOnResponse200DoesNothing() = runTest {
+    fun testOnResponse200DoesNothing() {
         val fakeResponse: HttpResponse =
             HttpResponse(
                 1,
@@ -58,7 +57,7 @@ class MapHttpInterceptorTests {
     }
 
     @Test
-    fun testOn401UpdatesLastError() = runTest {
+    fun testOn401UpdatesLastError() {
         val fakeResponse =
             HttpResponse(
                 1,
@@ -80,7 +79,7 @@ class MapHttpInterceptorTests {
     }
 
     @Test
-    fun testOnRequsetCancelledDoesNothing() = runTest {
+    fun testOnRequsetCancelledDoesNothing() {
         val fakeResponse =
             HttpResponse(
                 1,

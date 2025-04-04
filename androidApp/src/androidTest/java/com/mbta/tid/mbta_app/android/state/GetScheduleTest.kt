@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.test.assertNotNull
-import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -22,7 +21,7 @@ class GetScheduleTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testSchedule() = runTest {
+    fun testSchedule() {
         fun buildSomeSchedules(): ScheduleResponse {
             val objects = ObjectCollectionBuilder()
             objects.schedule()
@@ -58,11 +57,11 @@ class GetScheduleTest {
             actualSchedules = getSchedule(stopIds = stopIds, "errorKey", schedulesRepo)
         }
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         assertEquals(expectedSchedules1, actualSchedules)
 
         stopIds = stops2
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         assertEquals(expectedSchedules2, actualSchedules)
     }
 

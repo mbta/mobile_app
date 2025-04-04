@@ -21,7 +21,6 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -31,7 +30,7 @@ class SubscribeToPredictionsTest {
     @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun testPredictions() = runTest {
+    fun testPredictions() {
         val objects = ObjectCollectionBuilder()
         objects.prediction()
         objects.prediction()
@@ -84,7 +83,7 @@ class SubscribeToPredictionsTest {
     }
 
     @Test
-    fun testDisconnectsOnPause() = runTest {
+    fun testDisconnectsOnPause() {
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
 
         var connectCount = 0
@@ -169,7 +168,7 @@ class SubscribeToPredictionsTest {
     }
 
     @Test
-    fun testCheckPredictionsStaleCalled() = runTest {
+    fun testCheckPredictionsStaleCalled() {
         val objects = ObjectCollectionBuilder()
         objects.prediction()
         val predictionsOnJoin = PredictionsByStopJoinResponse(objects)

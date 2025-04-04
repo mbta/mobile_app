@@ -28,6 +28,7 @@ class MorePageTests : KoinTest {
     fun testNearbyTransitPageDisplaysCorrectly() {
         composeTestRule.setContent { MorePage(bottomBar = {}) }
 
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("MBTA Go").assertIsDisplayed()
     }
 
@@ -55,6 +56,7 @@ class MorePageTests : KoinTest {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
 
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
         composeTestRule.onNodeWithText("Settings").performScrollTo()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
@@ -80,6 +82,7 @@ class MorePageTests : KoinTest {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
 
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExists(hasText("Send app feedback"))
         composeTestRule.onNodeWithText("Send app feedback").assertIsDisplayed()
         composeTestRule.onNodeWithText("Trip Planner").assertIsDisplayed()
@@ -114,6 +117,7 @@ class MorePageTests : KoinTest {
 
         val dependencies = Dependency.getAllDependencies()
         val dependency = dependencies.first()
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExists(hasText("Send app feedback"))
         composeTestRule.onNodeWithText("Software Licenses").performScrollTo()
         composeTestRule.onNodeWithText("Software Licenses").performClick()

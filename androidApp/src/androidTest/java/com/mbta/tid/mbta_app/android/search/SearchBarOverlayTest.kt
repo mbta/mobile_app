@@ -25,7 +25,6 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.koin.androidx.compose.koinViewModel
@@ -77,7 +76,7 @@ class SearchBarOverlayTest : KoinTest {
     @get:Rule var composeTestRule = createComposeRule()
 
     @Test
-    fun testSearchBarOverlayBehavesCorrectly() = runTest {
+    fun testSearchBarOverlayBehavesCorrectly() {
         val navigated = mutableStateOf(false)
         var expanded = mutableStateOf(false)
 
@@ -110,7 +109,7 @@ class SearchBarOverlayTest : KoinTest {
 
         currentNavEntry.value = SheetRoutes.StopDetails(visitedStop.id, null, null)
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
 
         currentNavEntry.value = null
 
@@ -118,7 +117,7 @@ class SearchBarOverlayTest : KoinTest {
         val searchNode = composeTestRule.onNodeWithText("Stops")
         searchNode.assertExists()
         searchNode.requestFocus()
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Recently Viewed").assertExists()
         composeTestRule.waitUntilAtLeastOneExists(hasText(visitedStop.name))
         composeTestRule.onNodeWithText(visitedStop.name).assertExists()

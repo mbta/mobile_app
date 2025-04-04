@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import kotlin.test.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,7 +16,7 @@ class GetRailRouteShapesTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testRailRouteShapes() = runTest {
+    fun testRailRouteShapes() {
         val builder = ObjectCollectionBuilder()
         val route = builder.route()
         val routePattern = builder.routePattern(route)
@@ -56,7 +55,7 @@ class GetRailRouteShapesTest {
             actualRailRouteShapes = getRailRouteShapes(railRouteShapeRepository)
         }
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntil { mapFriendlyRouteResponse == actualRailRouteShapes }
         assertEquals(mapFriendlyRouteResponse, actualRailRouteShapes)
     }
