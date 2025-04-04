@@ -69,7 +69,8 @@ class StopHeaderTest {
                             emptyList(),
                             listOf(alert),
                             true,
-                            true
+                            true,
+                            emptyList()
                         )
                     )
                 ),
