@@ -32,7 +32,16 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(null, UpcomingFormat.Disruption(alert, "alert-large-red-suspension")),
-            RouteCardData.Leaf(0, emptyList(), emptySet(), emptyList(), listOf(alert), true, true)
+            RouteCardData.Leaf(
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    emptyList(),
+                    listOf(alert),
+                    true,
+                    true,
+                    emptyList()
+                )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
     }
@@ -75,7 +84,8 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         listOf(alert),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                     .format(now, route, GlobalResponse(objects), anyEnumValue())
             )
@@ -115,7 +125,8 @@ class RouteCardDataLeafTest {
                     listOf(upcomingTrip),
                     listOf(alert),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
@@ -159,14 +170,14 @@ class RouteCardDataLeafTest {
                     listOf(upcomingTrip),
                     listOf(alert),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
     }
 
     @Test
-    @Ignore // TODO once downstream alerts are added
     fun `includes downstream alert as secondary alert`() = parametricTest {
         val now = Clock.System.now()
 
@@ -185,7 +196,7 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                null,
+                "",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -204,7 +215,8 @@ class RouteCardDataLeafTest {
                     listOf(upcomingTrip),
                     emptyList(),
                     true,
-                    true
+                    true,
+                    listOf(alert)
                 )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
@@ -222,7 +234,16 @@ class RouteCardDataLeafTest {
                 null,
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday)
             ),
-            RouteCardData.Leaf(0, emptyList(), emptySet(), emptyList(), emptyList(), true, true)
+            RouteCardData.Leaf(
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    emptyList(),
+                    emptyList(),
+                    true,
+                    true,
+                    emptyList()
+                )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
     }
@@ -251,7 +272,8 @@ class RouteCardDataLeafTest {
                     listOf(objects.upcomingTrip(schedule)),
                     emptyList(),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
@@ -273,7 +295,8 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     emptyList(),
                     false,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
@@ -323,7 +346,8 @@ class RouteCardDataLeafTest {
                     listOf(upcomingTrip1, upcomingTrip2),
                     listOf(),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
@@ -375,7 +399,8 @@ class RouteCardDataLeafTest {
                     listOf(upcomingTrip1, upcomingTrip2),
                     listOf(),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, subwayRoute, GlobalResponse(objects), anyEnumValue())
         )
@@ -405,7 +430,8 @@ class RouteCardDataLeafTest {
                     listOf(upcomingTrip1, upcomingTrip2),
                     listOf(),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(now, busRoute, GlobalResponse(objects), anyEnumValue())
         )
@@ -423,7 +449,16 @@ class RouteCardDataLeafTest {
                 null,
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday)
             ),
-            RouteCardData.Leaf(0, emptyList(), emptySet(), emptyList(), listOf(), true, false)
+            RouteCardData.Leaf(
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    emptyList(),
+                    listOf(),
+                    true,
+                    false,
+                    emptyList()
+                )
                 .format(now, route, GlobalResponse(objects), anyEnumValue())
         )
     }
@@ -577,7 +612,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     allDataLoaded = true,
-                    hasSchedulesToday = true
+                    hasSchedulesToday = true,
+                    emptyList()
                 )
                 .format(
                     now,
@@ -644,7 +680,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     allDataLoaded = true,
-                    hasSchedulesToday = true
+                    hasSchedulesToday = true,
+                    emptyList()
                 )
                 .format(
                     now,
@@ -728,7 +765,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     allDataLoaded = true,
-                    hasSchedulesToday = true
+                    hasSchedulesToday = true,
+                    emptyList()
                 )
                 .format(now, RedLine.route, RedLine.global, anyEnumValue())
         )
@@ -880,7 +918,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     allDataLoaded = true,
-                    hasSchedulesToday = true
+                    hasSchedulesToday = true,
+                    emptyList()
                 )
                 .format(
                     now,
@@ -1018,7 +1057,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(
                     now,
@@ -1086,7 +1126,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     true,
-                    true
+                    true,
+                    emptyList()
                 )
                 .format(
                     now,
@@ -1176,7 +1217,8 @@ class RouteCardDataLeafTest {
                     ),
                     emptyList(),
                     allDataLoaded = true,
-                    hasSchedulesToday = true
+                    hasSchedulesToday = true,
+                    emptyList()
                 )
                 .format(
                     now,
@@ -1235,7 +1277,8 @@ class RouteCardDataLeafTest {
                     listOf(objects.upcomingTrip(prediction1), objects.upcomingTrip(prediction2)),
                     emptyList(),
                     allDataLoaded = true,
-                    hasSchedulesToday = true
+                    hasSchedulesToday = true,
+                    emptyList()
                 )
                 .format(now, `87`.route, `87`.global, anyEnumValue())
         )
@@ -1293,7 +1336,8 @@ class RouteCardDataLeafTest {
                         ),
                         emptyList(),
                         allDataLoaded = true,
-                        hasSchedulesToday = true
+                        hasSchedulesToday = true,
+                        emptyList()
                     )
                     .format(now, RedLine.route, RedLine.global, anyEnumValue())
             )
@@ -1316,7 +1360,8 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                     .format(now, RedLine.route, RedLine.global, anyEnumValue())
             )
@@ -1399,7 +1444,8 @@ class RouteCardDataLeafTest {
                         ),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                     .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
             )
@@ -1439,7 +1485,8 @@ class RouteCardDataLeafTest {
                         listOf(objects.upcomingTrip(schedule1), objects.upcomingTrip(schedule2)),
                         emptyList(),
                         true,
-                        true
+                        true,
+                        emptyList()
                     )
                     .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
             )

@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -22,7 +23,6 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -277,10 +277,10 @@ class StopDetailsUnfilteredRoutesViewTest {
     }
 
     @Test
-    @Ignore("Alert data is not actually integrated in routeCardsForStopList yet")
     fun testShowsElevatorAlertsWhenGroupedByDirection(): Unit = runBlocking {
         val alert =
             Single.alert {
+                header = "Elevator alert"
                 activePeriod(start = Instant.DISTANT_PAST, end = null)
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
@@ -323,6 +323,6 @@ class StopDetailsUnfilteredRoutesViewTest {
             )
         }
 
-        TODO("assert that the elevator alerts are shown")
+        composeTestRule.onNodeWithText("Elevator alert").assertIsDisplayed()
     }
 }
