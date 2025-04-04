@@ -3807,9 +3807,7 @@ class RouteCardDataTest {
                                             ),
                                         stopIds =
                                             setOf(
-                                                northStation.id,
                                                 northStationSouthboundPlatform.id,
-                                                northStationNorthboundPlatform.id
                                             ),
                                         upcomingTrips =
                                             listOf(
@@ -3819,7 +3817,7 @@ class RouteCardDataTest {
                                                 )
                                             ),
                                         allDataLoaded = true,
-                                        alertsHere = listOf(alert),
+                                        alertsHere = emptyList(),
                                         hasSchedulesToday = true,
                                         alertsDownstream = emptyList()
                                     ),
@@ -3830,12 +3828,7 @@ class RouteCardDataTest {
                                                 orangeNorthboundTypical,
                                                 orangeNorthboundDiversion
                                             ),
-                                        stopIds =
-                                            setOf(
-                                                northStation.id,
-                                                northStationSouthboundPlatform.id,
-                                                northStationNorthboundPlatform.id
-                                            ),
+                                        stopIds = setOf(northStationNorthboundPlatform.id),
                                         upcomingTrips = listOf(),
                                         allDataLoaded = true,
                                         alertsHere = listOf(alert),
