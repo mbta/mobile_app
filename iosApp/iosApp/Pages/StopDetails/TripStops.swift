@@ -17,7 +17,7 @@ struct TripStops: View {
     let now: Date
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let routeAccents: TripRouteAccents
-
+    let showElevatorAccessibility: Bool
     let splitStops: TripDetailsStopList.TargetSplit?
 
     @State private var stopsExpanded = false
@@ -37,6 +37,7 @@ struct TripStops: View {
         now: Date,
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         routeAccents: TripRouteAccents,
+        showElevatorAccessibility: Bool,
         global: GlobalResponse?
     ) {
         self.targetId = targetId
@@ -46,6 +47,7 @@ struct TripStops: View {
         self.now = now
         self.onTapLink = onTapLink
         self.routeAccents = routeAccents
+        self.showElevatorAccessibility = showElevatorAccessibility
 
         splitStops = if let stopSequence, let global {
             stops.splitForTarget(
@@ -71,6 +73,7 @@ struct TripStops: View {
                 now: now.toKotlinInstant(),
                 onTapLink: onTapLink,
                 routeAccents: routeAccents,
+                showElevatorAccessibility: showElevatorAccessibility,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence
             )
         }
@@ -97,6 +100,7 @@ struct TripStops: View {
                         now: now.toKotlinInstant(),
                         onTapLink: onTapLink,
                         routeAccents: routeAccents,
+                        showElevatorAccessibility: showElevatorAccessibility,
                         firstStop: true
                     )
                 }
@@ -169,6 +173,7 @@ struct TripStops: View {
                         now: now.toKotlinInstant(),
                         onTapLink: onTapLink,
                         routeAccents: routeAccents,
+                        showElevatorAccessibility: showElevatorAccessibility,
                         targeted: true,
                         firstStop: showFirstStopSeparately && target == stops.startTerminalEntry
                     )
