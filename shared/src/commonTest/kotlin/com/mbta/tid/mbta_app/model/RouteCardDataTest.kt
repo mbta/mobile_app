@@ -1068,6 +1068,132 @@ class RouteCardDataTest {
         }
 
     @Test
+    fun `ListBuilder addUpcomingTrips sets hasSchedulesToday per leaf`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+        val stop3 = objects.stop()
+
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+
+        val pattern1 =
+            objects.routePattern(route) {
+                sortOrder = 1
+                representativeTrip { headsign = "Future Schedule" }
+            }
+        val pattern2 =
+            objects.routePattern(route) {
+                sortOrder = 2
+                representativeTrip { headsign = "Past Schedule" }
+            }
+        val pattern3 =
+            objects.routePattern(route) {
+                sortOrder = 3
+                representativeTrip { headsign = "No Schedule" }
+            }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        stop1.id to listOf(pattern1.id),
+                        stop2.id to listOf(pattern2.id),
+                        stop3.id to listOf(pattern3.id)
+                    )
+            )
+        val context = RouteCardData.Context.NearbyTransit
+        val now = Clock.System.now()
+
+        val futureSchedule =
+            objects.schedule {
+                trip = objects.trip(pattern1)
+                stopId = stop1.id
+                departureTime = now + 2.hours
+            }
+        objects.schedule {
+            trip = objects.trip(pattern2)
+            stopId = stop2.id
+            departureTime = now - 2.hours
+        }
+
+        assertEquals(
+            mapOf(
+                route.id to
+                    RouteCardData.Builder(
+                        RouteCardData.LineOrRoute.Route(route),
+                        mapOf(
+                            stop1.id to
+                                RouteCardData.RouteStopDataBuilder(
+                                    stop1,
+                                    route,
+                                    mapOf(
+                                        0 to
+                                            RouteCardData.LeafBuilder(
+                                                directionId = 0,
+                                                routePatterns = listOf(pattern1),
+                                                stopIds = setOf(stop1.id),
+                                                upcomingTrips =
+                                                    listOf(objects.upcomingTrip(futureSchedule)),
+                                                allDataLoaded = true,
+                                                hasSchedulesToday = true
+                                            )
+                                    ),
+                                    global
+                                ),
+                            stop2.id to
+                                RouteCardData.RouteStopDataBuilder(
+                                    stop2,
+                                    route,
+                                    mapOf(
+                                        0 to
+                                            RouteCardData.LeafBuilder(
+                                                directionId = 0,
+                                                routePatterns = listOf(pattern2),
+                                                stopIds = setOf(stop2.id),
+                                                upcomingTrips = null,
+                                                allDataLoaded = true,
+                                                hasSchedulesToday = true
+                                            )
+                                    ),
+                                    global
+                                ),
+                            stop3.id to
+                                RouteCardData.RouteStopDataBuilder(
+                                    stop3,
+                                    route,
+                                    mapOf(
+                                        0 to
+                                            RouteCardData.LeafBuilder(
+                                                directionId = 0,
+                                                routePatterns = listOf(pattern3),
+                                                stopIds = setOf(stop3.id),
+                                                upcomingTrips = null,
+                                                allDataLoaded = true,
+                                                hasSchedulesToday = false
+                                            )
+                                    ),
+                                    global
+                                )
+                        ),
+                        context,
+                        now
+                    )
+            ),
+            RouteCardData.ListBuilder(true, context, now)
+                .addStaticStopsData(listOf(stop1.id, stop2.id, stop3.id), global)
+                .addUpcomingTrips(
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    filterAtTime = now,
+                    globalData = global
+                )
+                .data
+        )
+    }
+
+    @Test
     fun `RouteCardData routeCardsForStopList sorts subway routes first`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
@@ -2211,7 +2337,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     ),
                                     global
@@ -2526,7 +2652,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     ),
                                     global
@@ -2675,7 +2801,7 @@ class RouteCardDataTest {
                                             ),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = false
+                                        hasSchedulesToday = true
                                     )
                                 ),
                                 global
@@ -2859,7 +2985,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     ),
                                     global
@@ -2893,7 +3019,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     ),
                                     global
@@ -3147,7 +3273,7 @@ class RouteCardDataTest {
                                             ),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = false
+                                        hasSchedulesToday = true
                                     ),
                                     RouteCardData.Leaf(
                                         directionId = 1,
@@ -3171,7 +3297,7 @@ class RouteCardDataTest {
                                             ),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = false
+                                        hasSchedulesToday = true
                                     )
                                 )
                             )
@@ -3294,7 +3420,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         ),
                                         RouteCardData.Leaf(
                                             directionId = 1,
@@ -3309,7 +3435,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     )
                                 )
@@ -3405,7 +3531,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     )
                                 )
@@ -3676,7 +3802,7 @@ class RouteCardDataTest {
                                         allDataLoaded = true,
                                         // TODO: incorporate alert
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = false
+                                        hasSchedulesToday = true
                                     ),
                                     RouteCardData.Leaf(
                                         directionId = 1,
@@ -3694,7 +3820,7 @@ class RouteCardDataTest {
                                         upcomingTrips = listOf(),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = false
+                                        hasSchedulesToday = true
                                     )
                                 ),
                                 global
@@ -3815,7 +3941,7 @@ class RouteCardDataTest {
                                                 ),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     ),
                                     global
@@ -3928,7 +4054,7 @@ class RouteCardDataTest {
                                                 listOf(objects.upcomingTrip(schedOutbound)),
                                             allDataLoaded = true,
                                             alertsHere = emptyList(),
-                                            hasSchedulesToday = false
+                                            hasSchedulesToday = true
                                         )
                                     ),
                                     global
