@@ -417,11 +417,15 @@ data class RouteCardData(
                                                                 directionId = directionId,
                                                                 routePatterns = patterns,
                                                                 stopIds =
-                                                                    parentToAllStops.getOrElse(
-                                                                        stop
-                                                                    ) {
-                                                                        setOf(stop.id)
-                                                                    },
+                                                                    NearbyStaticData
+                                                                        .filterStopsByPatterns(
+                                                                            patterns,
+                                                                            globalData,
+                                                                            parentToAllStops
+                                                                                .getOrElse(stop) {
+                                                                                    setOf(stop.id)
+                                                                                }
+                                                                        ),
                                                                 allDataLoaded = allDataLoaded
                                                             )
                                                         }
