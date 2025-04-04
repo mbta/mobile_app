@@ -434,4 +434,7 @@ mokkery {
     ignoreFinalMembers.set(true)
 }
 
-sentryKmp { autoInstall.commonMain.enabled = false }
+sentryKmp {
+    autoInstall.commonMain.enabled = false
+    autoInstall.cocoapods.sentryCocoaVersion.set("~> 8.46.0")
+}
