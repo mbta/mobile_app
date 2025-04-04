@@ -356,6 +356,8 @@ data class RouteCardData(
             }
     }
 
+    data class HierarchyPath(val routeOrLineId: String, val stopId: String, val directionId: Int)
+
     class ListBuilder(val allDataLoaded: Boolean, val context: Context, val now: Instant) {
         var data: ByLineOrRouteBuilder = mutableMapOf()
             private set
@@ -519,8 +521,7 @@ data class RouteCardData(
                     filterAtTime
                 )
 
-            val upcomingTripsBySlot =
-                mutableMapOf<Triple<String, String, Int>, MutableList<UpcomingTrip>>()
+            val upcomingTripsBySlot = mutableMapOf<HierarchyPath, MutableList<UpcomingTrip>>()
 
             for (upcomingTrip in upcomingTrips) {
                 val parentStopId =
@@ -528,7 +529,7 @@ data class RouteCardData(
                 val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.trip.routeId) ?: continue
                 upcomingTripsBySlot
                     .getOrPut(
-                        Triple(lineOrRouteId, parentStopId, upcomingTrip.trip.directionId),
+                        HierarchyPath(lineOrRouteId, parentStopId, upcomingTrip.trip.directionId),
                         ::mutableListOf
                     )
                     .add(upcomingTrip)
@@ -536,9 +537,8 @@ data class RouteCardData(
 
             val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
-            forEachLeaf { routeOrLineId, stopId, directionId, leafBuilder ->
-                val upcomingTripsHere =
-                    upcomingTripsBySlot[Triple(routeOrLineId, stopId, directionId)]
+            forEachLeaf { path, leafBuilder ->
+                val upcomingTripsHere = upcomingTripsBySlot[path]
                 leafBuilder.upcomingTrips = upcomingTripsHere
                 leafBuilder.allDataLoaded = schedules != null
                 leafBuilder.hasSchedulesToday =
@@ -564,19 +564,11 @@ data class RouteCardData(
             }
         }
 
-        private fun forEachLeaf(
-            process:
-                (
-                    routeOrLineId: String,
-                    stopId: String,
-                    directionId: Int,
-                    leafBuilder: LeafBuilder
-                ) -> Unit
-        ) {
+        private fun forEachLeaf(process: (path: HierarchyPath, leafBuilder: LeafBuilder) -> Unit) {
             for ((routeOrLineId, byStopId) in data) {
                 for ((stopId, byDirectionId) in byStopId.stopData) {
                     for ((directionId, leaf) in byDirectionId.data) {
-                        process(routeOrLineId, stopId, directionId, leaf)
+                        process(HierarchyPath(routeOrLineId, stopId, directionId), leaf)
                     }
                 }
             }
