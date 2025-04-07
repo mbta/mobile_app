@@ -183,7 +183,7 @@ struct StopDetailsFilteredView: View {
             headsign: "placeholder",
             formatted: UpcomingFormat.Some(
                 trips: [.init(trip: upcomingTrip!, routeType: .lightRail, format: .Boarding())],
-                secondaryAlert: nil,
+                secondaryAlert: nil
             ),
             upcoming: upcomingTrip!
         ) }
