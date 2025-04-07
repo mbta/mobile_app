@@ -6,7 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -537,7 +537,7 @@ fun stopDetailsManagedVM(
     val groupByDirection by viewModel.groupByDirection.collectAsState()
     val departures by viewModel.stopDepartures.collectAsState()
 
-    var wasInBackground by remember { mutableStateOf(false) }
+    var wasInBackground by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
     LaunchedEffect(filters?.tripFilter) { viewModel.handleTripFilterChange(filters?.tripFilter) }
