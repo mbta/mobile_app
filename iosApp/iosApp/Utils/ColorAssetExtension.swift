@@ -9,6 +9,7 @@
 import SwiftUI
 
 extension Color {
+    static let accessibility = Color("Accessibility")
     static let contrast = Color("Contrast")
     static let deemphasized = Color("Deemphasized")
     static let deselectedToggle2 = Color("Deselected Toggle 2")
@@ -28,6 +29,7 @@ extension UIColor {
     // using name strings in UIColor does pick up theme changes properly though.
     // The named colors should always exist unless they're removed from Colors.xcassets,
     // but if they're removed, the fallback using Color will not be responsive to theme.
+    static let accessibility = UIColor(named: "Accessibility") ?? UIColor(Color(.accessibility))
     static let contrast = UIColor(named: "Contrast") ?? UIColor(Color(.contrast))
     static let deemphasized = UIColor(named: "Deemphasized") ?? UIColor(Color(.deemphasized))
     static let deselectedToggle2 = UIColor(named: "Deselected Toggle 2") ?? UIColor(Color(.deselectedToggle2))

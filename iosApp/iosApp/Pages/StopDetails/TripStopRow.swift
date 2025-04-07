@@ -42,10 +42,10 @@ struct TripStopRow: View {
                         Image(.accessibilityIconAlert)
                             .accessibilityHidden(true)
                             .tag("elevator_alert")
-                    } else if showElevatorAccessibility, stop.stop.isWheelchairAccessible {
-                        Image(.accessibilityIconAccessible)
+                    } else if showElevatorAccessibility, !stop.stop.isWheelchairAccessible {
+                        Image(.accessibilityIconNotAccessible)
                             .accessibilityHidden(true)
-                            .tag("wheelchair_accessible")
+                            .tag("wheelchair_not_accessible")
                     }
                 }
                 .frame(minWidth: 28, maxWidth: 28)

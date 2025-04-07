@@ -23,6 +23,7 @@ struct AlertDetailsPage: View {
     @State private var now = Date.now
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
+    @ScaledMetric private var elevatorIconHeight: CGFloat = 18
     private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     let inspection = Inspection<Self>()
@@ -61,11 +62,11 @@ struct AlertDetailsPage: View {
                     .scaledToFit()
                     .frame(maxHeight: modeIconHeight, alignment: .topLeading)
             } else if alert?.effect == .elevatorClosure {
-                AlertIcon(alertState: .elevator, elevatorClosureIcon: .mono)
+                AlertIcon(alertState: .elevator)
                     .scaledToFit()
-                    .frame(maxHeight: modeIconHeight, alignment: .topLeading)
+                    .frame(maxHeight: elevatorIconHeight, alignment: .topLeading)
             }
-            Text("Alert Details", comment: "Header on the alert details page").font(Typography.headline)
+            Text("Alert Details", comment: "Header on the alert details page").font(Typography.headlineBold)
             Spacer()
             ActionButton(kind: .close) {
                 nearbyVM.goBack()
