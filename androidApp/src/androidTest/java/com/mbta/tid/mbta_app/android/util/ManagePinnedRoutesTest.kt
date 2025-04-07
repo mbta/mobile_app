@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -16,7 +16,7 @@ class ManagePinnedRoutesTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testPinnedRoutes() = runTest {
+    fun testPinnedRoutes() = runBlocking {
         val getSync = Channel<Unit>(Channel.RENDEZVOUS)
         val pinnedRoutesRepo =
             object : IPinnedRoutesRepository {

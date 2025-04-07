@@ -8,13 +8,13 @@ import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
 class MapViewModelTests {
 
     @Test
-    fun testWhenLoadConfigSuccessTokenSet() = runTest {
+    fun testWhenLoadConfigSuccessTokenSet() = runBlocking {
         var configuredToken: String? = null
         val mapViewModel =
             MapViewModel(
@@ -33,7 +33,7 @@ class MapViewModelTests {
     }
 
     @Test
-    fun testWhenLoadConfigErrorTokenNotSet() = runTest {
+    fun testWhenLoadConfigErrorTokenNotSet() = runBlocking {
         var configureTokenCalled = false
         val mapViewModel =
             MapViewModel(
@@ -52,7 +52,7 @@ class MapViewModelTests {
     }
 
     @Test
-    fun testInterceptorSetOnInit() = runTest {
+    fun testInterceptorSetOnInit() {
         var httpInterceptorSet = false
         val mapViewModel =
             MapViewModel(

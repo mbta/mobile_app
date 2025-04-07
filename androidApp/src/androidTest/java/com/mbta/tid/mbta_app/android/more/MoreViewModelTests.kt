@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import java.util.Locale
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -18,7 +17,7 @@ class MoreViewModelTests {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testToggleSetting() = runTest {
+    fun testToggleSetting() {
         var toggledHideMaps = false
 
         val settingsRepository =
@@ -36,9 +35,9 @@ class MoreViewModelTests {
             vm = MoreViewModel(LocalContext.current, {}, settingsRepository)
         }
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         vm!!.toggleSetting(Settings.HideMaps)
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.waitUntil { toggledHideMaps }
 
         assertTrue { toggledHideMaps }

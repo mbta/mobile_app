@@ -34,7 +34,6 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -259,7 +258,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsCancelledTripCard() = runTest {
+    fun testShowsCancelledTripCard() {
         val objects = ObjectCollectionBuilder()
         val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
         val route =
