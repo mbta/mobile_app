@@ -12,7 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
@@ -22,7 +22,7 @@ class GetGlobalDataTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testGlobal() = runTest {
+    fun testGlobal() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
@@ -54,7 +54,7 @@ class GetGlobalDataTest {
     }
 
     @Test
-    fun testApiError() = runTest {
+    fun testApiError() {
         val globalRepo = MockGlobalRepository(ApiResult.Error(500, "oops"))
 
         val errorRepo = MockErrorBannerStateRepository()

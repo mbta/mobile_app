@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopResult
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -20,7 +19,7 @@ class StopResultsViewTest {
     @get:Rule var composeTestRule = createComposeRule()
 
     @Test
-    fun testStationResultWithMultipleRoutes() = runTest {
+    fun testStationResultWithMultipleRoutes() {
         val objects = ObjectCollectionBuilder()
         val station =
             objects.stop {
@@ -101,7 +100,7 @@ class StopResultsViewTest {
     }
 
     @Test
-    fun testStandaloneStopShowsAllRoutesResultWithMultipleRoutes() = runTest {
+    fun testStandaloneStopShowsAllRoutesResultWithMultipleRoutes() {
         val objects = ObjectCollectionBuilder()
         val stop =
             objects.stop {
