@@ -31,14 +31,8 @@ data class TileData(
                         secondaryAlert = null
                     )
                 } else {
-                    UpcomingFormat.NoTrips(
-                        noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable
-                    )
+                    return null
                 }
-
-            if (formatted !is UpcomingFormat.Some) {
-                return null
-            }
 
             return TileData(route, upcoming.trip.headsign, formatted, upcoming)
         }
