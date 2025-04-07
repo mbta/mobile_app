@@ -56,7 +56,7 @@ struct NearbyStopView: View {
                     .foregroundStyle(Color.text)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+            .fullFocusSize()
             .accessibilityElement(children: .combine)
             if showInaccessible || showElevatorAlerts {
                 Group {
@@ -70,7 +70,7 @@ struct NearbyStopView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(.rect)
+                .fullFocusSize()
                 .multilineTextAlignment(.leading)
                 .font(Typography.footnoteSemibold)
                 .foregroundColor(Color.text.opacity(0.5))
