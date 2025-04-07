@@ -82,12 +82,9 @@ fun DepartureTile(
                 if (isSelected) colorResource(R.color.text)
                 else colorResource(R.color.deselected_toggle_text)
         ) {
-            if (showHeadsign) {
-                Text(
-                    data.headsign,
-                    textAlign = TextAlign.Start,
-                    style = Typography.footnoteSemibold
-                )
+            val headsign = data.headsign.takeIf { showHeadsign }
+            if (headsign != null) {
+                Text(headsign, textAlign = TextAlign.Start, style = Typography.footnoteSemibold)
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 if (showRoutePill) {

@@ -43,8 +43,11 @@ import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
@@ -55,7 +58,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StopDetailsFilteredDeparturesView(
     stopId: String,
@@ -81,11 +83,13 @@ fun StopDetailsFilteredDeparturesView(
     analytics: Analytics = koinInject()
 ) {
     val expectedDirection = stopFilter.directionId
-    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
-    val hasAccessibilityWarning =
-        (elevatorAlerts.isNotEmpty() || !patternsByStop.stop.isWheelchairAccessible)
-    val hideMaps by viewModel.hideMaps.collectAsState()
-
+    val line = patternsByStop.line
+    val lineOrRoute =
+        if (line != null) {
+            RouteCardData.LineOrRoute.Line(line, patternsByStop.routes.toSet())
+        } else {
+            RouteCardData.LineOrRoute.Route(patternsByStop.representativeRoute)
+        }
     val alertsHere: List<Alert> =
         if (global != null) {
             patternsByStop.alertsHereFor(
@@ -96,21 +100,147 @@ fun StopDetailsFilteredDeparturesView(
         } else {
             emptyList()
         }
-    val pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier)
-
     val downstreamAlerts: List<Alert> =
         if (global != null) patternsByStop.alertsDownstream(expectedDirection) else emptyList()
+    Layout(
+        stopId,
+        stopFilter,
+        tripFilter,
+        groupByDirection = false,
+        lineOrRoute,
+        patternsByStop.stop,
+        availableDirections = patternsByStop.patterns.map { it.directionId() }.distinct().sorted(),
+        patternsByStop.directions,
+        tileData,
+        noPredictionsStatus,
+        selectedTripIsCancelled =
+            tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false,
+        allAlerts,
+        alertsHere,
+        downstreamAlerts,
+        elevatorAlerts,
+        global,
+        now,
+        viewModel,
+        errorBannerViewModel,
+        updateStopFilter,
+        updateTripFilter,
+        tileScrollState,
+        pinnedRoutes,
+        togglePinnedRoute,
+        onClose,
+        openModal,
+        openSheetRoute,
+        analytics
+    )
+}
 
-    val selectedTripIsCancelled: Boolean =
-        tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false
+@Composable
+fun StopDetailsFilteredDeparturesView(
+    stopId: String,
+    stopFilter: StopDetailsFilter,
+    tripFilter: TripDetailsFilter?,
+    routeCardData: RouteCardData,
+    routeStopData: RouteCardData.RouteStopData,
+    leaf: RouteCardData.Leaf,
+    tileData: List<TileData>,
+    noPredictionsStatus: NoTripsFormat?,
+    allAlerts: AlertsStreamDataResponse?,
+    elevatorAlerts: List<Alert>,
+    global: GlobalResponse?,
+    now: Instant,
+    viewModel: StopDetailsViewModel,
+    errorBannerViewModel: ErrorBannerViewModel,
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
+    tileScrollState: ScrollState,
+    pinnedRoutes: Set<String>,
+    togglePinnedRoute: (String) -> Unit,
+    onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit,
+    analytics: Analytics = koinInject()
+) {
+    Layout(
+        stopId,
+        stopFilter,
+        tripFilter,
+        groupByDirection = true,
+        routeCardData.lineOrRoute,
+        routeStopData.stop,
+        availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted(),
+        routeStopData.directions,
+        tileData,
+        noPredictionsStatus,
+        selectedTripIsCancelled =
+            tripFilter?.let {
+                leaf.upcomingTrips.any { it.trip.id == tripFilter.tripId && it.isCancelled }
+            }
+                ?: false,
+        allAlerts,
+        leaf.alertsHere,
+        leaf.alertsDownstream,
+        elevatorAlerts,
+        global,
+        now,
+        viewModel,
+        errorBannerViewModel,
+        updateStopFilter,
+        updateTripFilter,
+        tileScrollState,
+        pinnedRoutes,
+        togglePinnedRoute,
+        onClose,
+        openModal,
+        openSheetRoute,
+        analytics
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun Layout(
+    stopId: String,
+    stopFilter: StopDetailsFilter,
+    tripFilter: TripDetailsFilter?,
+    groupByDirection: Boolean,
+    lineOrRoute: RouteCardData.LineOrRoute,
+    stop: Stop,
+    availableDirections: List<Int>,
+    directions: List<Direction>,
+    tileData: List<TileData>,
+    noPredictionsStatus: NoTripsFormat?,
+    selectedTripIsCancelled: Boolean,
+    allAlerts: AlertsStreamDataResponse?,
+    alertsHere: List<Alert>,
+    downstreamAlerts: List<Alert>,
+    elevatorAlerts: List<Alert>,
+    global: GlobalResponse?,
+    now: Instant,
+    viewModel: StopDetailsViewModel,
+    errorBannerViewModel: ErrorBannerViewModel,
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
+    tileScrollState: ScrollState,
+    pinnedRoutes: Set<String>,
+    togglePinnedRoute: (String) -> Unit,
+    onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
+    openSheetRoute: (SheetRoutes) -> Unit,
+    analytics: Analytics = koinInject()
+) {
+    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+    val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
+    val hideMaps by viewModel.hideMaps.collectAsState()
+
+    val pinned = pinnedRoutes.contains(lineOrRoute.id)
 
     val hasMajorAlert = alertsHere.any { it.significance == AlertSignificance.Major }
 
-    val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
+    val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
-    val routeType: RouteType = patternsByStop.representativeRoute.type
-    val textHex: String =
-        patternsByStop.line?.textColor ?: patternsByStop.representativeRoute.textColor
+    val routeType: RouteType = lineOrRoute.sortRoute.type
+    val textHex: String = lineOrRoute.textColor
     val routeTextColor: Color = Color.fromHex(textHex)
 
     // keys are trip IDs
@@ -124,11 +254,11 @@ fun StopDetailsFilteredDeparturesView(
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         StopDetailsFilteredHeader(
-            patternsByStop.representativeRoute,
-            patternsByStop.line,
-            patternsByStop.stop,
+            lineOrRoute.sortRoute,
+            (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
+            stop,
             pinned = pinned,
-            onPin = { togglePinnedRoute(patternsByStop.routeIdentifier) },
+            onPin = { togglePinnedRoute(lineOrRoute.id) },
             onClose = onClose
         )
 
@@ -143,15 +273,20 @@ fun StopDetailsFilteredDeparturesView(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 DirectionPicker(
-                    patternsByStop,
+                    availableDirections = availableDirections,
+                    directions = directions,
+                    route = lineOrRoute.sortRoute,
+                    line = (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
                     stopFilter,
                     updateStopFilter,
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
-                if (!hasMajorAlert && !tileData.isEmpty()) {
+                if (!hasMajorAlert && tileData.isNotEmpty()) {
                     DepartureTiles(
                         tripFilter,
-                        patternsByStop,
+                        groupByDirection,
+                        lineOrRoute,
+                        stop,
                         tileData,
                         downstreamAlerts,
                         updateTripFilter,
@@ -184,16 +319,27 @@ fun StopDetailsFilteredDeparturesView(
                         color = routeColor,
                         textColor = routeTextColor,
                         onViewDetails = {
+                            val lineId: String?
+                            val routeIds: List<String>
+
+                            when (lineOrRoute) {
+                                is RouteCardData.LineOrRoute.Line -> {
+                                    lineId = lineOrRoute.id
+                                    routeIds = lineOrRoute.routes.map { it.id }
+                                }
+                                is RouteCardData.LineOrRoute.Route -> {
+                                    lineId = null
+                                    routeIds = listOf(lineOrRoute.id)
+                                }
+                            }
+
                             openModal(
                                 ModalRoutes.AlertDetails(
                                     alertId = alert.id,
-                                    lineId =
-                                        if (spec == AlertCardSpec.Elevator) null
-                                        else patternsByStop.line?.id,
+                                    lineId = if (spec == AlertCardSpec.Elevator) null else lineId,
                                     routeIds =
-                                        if (spec == AlertCardSpec.Elevator) null
-                                        else patternsByStop.routes.map { it.id },
-                                    stopId = patternsByStop.stop.id
+                                        if (spec == AlertCardSpec.Elevator) null else routeIds,
+                                    stopId = stop.id
                                 )
                             )
                         }
@@ -270,7 +416,9 @@ fun StopDetailsFilteredDeparturesView(
 @Composable
 private fun DepartureTiles(
     tripFilter: TripDetailsFilter?,
-    patternsByStop: PatternsByStop,
+    groupByDirection: Boolean,
+    lineOrRoute: RouteCardData.LineOrRoute,
+    stop: Stop,
     tiles: List<TileData>,
     alerts: List<Alert>,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -281,7 +429,9 @@ private fun DepartureTiles(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val showTileHeadsigns =
-        patternsByStop.line != null || !tiles.all { it.headsign == tiles.firstOrNull()?.headsign }
+        groupByDirection ||
+            (lineOrRoute is RouteCardData.LineOrRoute.Line ||
+                !tiles.all { it.headsign == tiles.firstOrNull()?.headsign })
     Row(
         Modifier.horizontalScroll(scrollState).padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -302,17 +452,17 @@ private fun DepartureTiles(
                         )
                     )
                     analytics.tappedDeparture(
-                        routeId = patternsByStop.routeIdentifier,
-                        stopId = patternsByStop.stop.id,
+                        routeId = lineOrRoute.id,
+                        stopId = stop.id,
                         pinned = pinned,
                         alert = alerts.isNotEmpty(),
-                        routeType = patternsByStop.representativeRoute.type,
+                        routeType = lineOrRoute.sortRoute.type,
                         noTrips = null
                     )
                     coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
                 },
                 modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
-                showRoutePill = patternsByStop.line != null,
+                showRoutePill = lineOrRoute is RouteCardData.LineOrRoute.Line,
                 showHeadsign = showTileHeadsigns,
                 isSelected = tileData.id == tripFilter?.tripId
             )

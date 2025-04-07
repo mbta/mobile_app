@@ -39,6 +39,8 @@ fun StopDetailsView(
     val analytics: Analytics = koinInject()
 
     val departures by viewModel.stopDepartures.collectAsState()
+    val routeCardData by viewModel.routeCardData.collectAsState()
+    val groupByDirection by viewModel.groupByDirection.collectAsState()
 
     LaunchedEffect(null) { viewModel.loadSettings() }
 
@@ -54,24 +56,45 @@ fun StopDetailsView(
     }
 
     if (stopFilter != null) {
-        StopDetailsFilteredView(
-            stopId,
-            stopFilter,
-            tripFilter,
-            departures,
-            allAlerts,
-            now,
-            viewModel,
-            pinnedRoutes,
-            togglePinnedRoute,
-            onClose,
-            updateStopFilter,
-            updateTripDetailsFilter,
-            tileScrollState,
-            ::openModalAndRecord,
-            openSheetRoute,
-            errorBannerViewModel,
-        )
+        if (groupByDirection) {
+            StopDetailsFilteredView(
+                stopId,
+                stopFilter,
+                tripFilter,
+                routeCardData,
+                allAlerts,
+                now,
+                viewModel,
+                pinnedRoutes,
+                togglePinnedRoute,
+                onClose,
+                updateStopFilter,
+                updateTripDetailsFilter,
+                tileScrollState,
+                ::openModalAndRecord,
+                openSheetRoute,
+                errorBannerViewModel,
+            )
+        } else {
+            StopDetailsFilteredView(
+                stopId,
+                stopFilter,
+                tripFilter,
+                departures,
+                allAlerts,
+                now,
+                viewModel,
+                pinnedRoutes,
+                togglePinnedRoute,
+                onClose,
+                updateStopFilter,
+                updateTripDetailsFilter,
+                tileScrollState,
+                ::openModalAndRecord,
+                openSheetRoute,
+                errorBannerViewModel,
+            )
+        }
     } else {
         StopDetailsUnfilteredView(
             stopId,
