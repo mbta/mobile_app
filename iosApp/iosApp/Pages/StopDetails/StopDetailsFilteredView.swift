@@ -79,25 +79,12 @@ struct StopDetailsFilteredView: View {
                 downstreamAlerts = []
             }
 
-            tiles = departures.stopDetailsFormattedTrips(
+            tiles = departures.tileData(
                 routeId: patternsByStop.routeIdentifier,
                 directionId: stopFilter.directionId,
-                filterAtTime: nowInstant
-            ).compactMap { tripAndFormat in
-                let upcoming = tripAndFormat.upcoming
-                guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
-                    Logger().error("""
-                    Failed to find route ID \(upcoming.trip.routeId) from upcoming \
-                    trip in patternsByStop.routes (\(patternsByStop.routes.map(\.id)))
-                    """)
-                    return nil
-                }
-                return TileData(
-                    upcoming: upcoming,
-                    route: route,
-                    now: nowInstant
-                )
-            }
+                filterAtTime: nowInstant,
+                globalData: stopDetailsVM.global
+            )
             let realtimePatterns = patternsByStop.patterns.filter { $0.directionId() == stopFilter.directionId }
             noPredictionsStatus = tiles.isEmpty ? StopDetailsDepartures.companion.getNoPredictionsStatus(
                 realtimePatterns: realtimePatterns,
@@ -196,8 +183,9 @@ struct StopDetailsFilteredView: View {
             headsign: "placeholder",
             formatted: UpcomingFormat.Some(
                 trips: [.init(trip: upcomingTrip!, routeType: .lightRail, format: .Boarding())],
-                secondaryAlert: nil
-            )
+                secondaryAlert: nil,
+            ),
+            upcoming: upcomingTrip!
         ) }
         StopDetailsFilteredDepartureDetails(
             stopId: stopId,

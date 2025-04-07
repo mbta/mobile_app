@@ -138,7 +138,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
-            selectedDepartureFocus = tiles.first { $0.upcoming?.trip.id == tripFilter?.tripId }?.id ?? cardFocusId
+            selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
         .ignoresSafeArea(.all)
     }
@@ -165,32 +165,30 @@ struct StopDetailsFilteredDepartureDetails: View {
     func departureTiles(_ view: ScrollViewProxy) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 0) {
-                ForEach(tiles) { tileData in
+                ForEach(tiles, id: \.id) { tileData in
                     DepartureTile(
                         data: tileData,
                         onTap: {
-                            if let upcoming = tileData.upcoming {
-                                nearbyVM.navigationStack.lastTripDetailsFilter = .init(
-                                    tripId: upcoming.trip.id,
-                                    vehicleId: upcoming.prediction?.vehicleId,
-                                    stopSequence: upcoming.stopSequence,
-                                    selectionLock: false
-                                )
-                                analytics.tappedDeparture(
-                                    routeId: patternsByStop.routeIdentifier,
-                                    stopId: patternsByStop.stop.id,
-                                    pinned: pinned,
-                                    alert: alerts.count > 0,
-                                    routeType: patternsByStop.representativeRoute.type,
-                                    noTrips: nil
-                                )
-                                view.scrollTo(tileData.id)
-                            }
+                            nearbyVM.navigationStack.lastTripDetailsFilter = .init(
+                                tripId: tileData.upcoming.trip.id,
+                                vehicleId: tileData.upcoming.prediction?.vehicleId,
+                                stopSequence: tileData.upcoming.stopSequence,
+                                selectionLock: false
+                            )
+                            analytics.tappedDeparture(
+                                routeId: patternsByStop.routeIdentifier,
+                                stopId: patternsByStop.stop.id,
+                                pinned: pinned,
+                                alert: alerts.count > 0,
+                                routeType: patternsByStop.representativeRoute.type,
+                                noTrips: nil
+                            )
+                            view.scrollTo(tileData.id)
                         },
                         pillDecoration: patternsByStop
                             .line != nil ? .onPrediction(route: tileData.route) : .none,
                         showHeadsign: showTileHeadsigns,
-                        isSelected: tileData.upcoming?.trip.id == tripFilter?.tripId
+                        isSelected: tileData.id == tripFilter?.tripId
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
                     .padding(.horizontal, 4)

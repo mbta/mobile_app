@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -61,6 +62,23 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 }
         return trips
     }
+
+    fun tileData(
+        routeId: String,
+        directionId: Int,
+        filterAtTime: Instant,
+        globalData: GlobalResponse?
+    ): List<TileData> =
+        stopDetailsFormattedTrips(routeId, directionId, filterAtTime).mapNotNull { tripAndFormat ->
+            val upcoming = tripAndFormat.upcoming
+            val route = globalData?.getRoute(upcoming.trip.routeId)
+            if (route == null) {
+                println("Failed to find route ID ${upcoming.trip.routeId} from upcoming trip")
+                null
+            } else {
+                TileData.fromUpcoming(upcoming, route, filterAtTime)
+            }
+        }
 
     /**
      * If the stop serves only 1 route in a single direction, returns a new filter for that route

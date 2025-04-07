@@ -82,7 +82,8 @@ struct DepartureTile: View {
                             headline: true
                         )
                     ),
-                ], secondaryAlert: nil)
+                ], secondaryAlert: nil),
+                upcoming: upcomingTrip
             ),
             onTap: {},
             showHeadsign: false,
@@ -94,7 +95,8 @@ struct DepartureTile: View {
                 headsign: "Harvard",
                 formatted: UpcomingFormat.Some(trips: [
                     .init(trip: upcomingTrip, routeType: .bus, format: .Minutes(minutes: 9)),
-                ], secondaryAlert: nil)
+                ], secondaryAlert: nil),
+                upcoming: upcomingTrip
             ),
             onTap: {},
             showHeadsign: true,
@@ -106,7 +108,8 @@ struct DepartureTile: View {
                 headsign: "Government Center",
                 formatted: UpcomingFormat.Some(trips: [
                     .init(trip: upcomingTrip, routeType: .lightRail, format: .Minutes(minutes: 12)),
-                ], secondaryAlert: nil)
+                ], secondaryAlert: nil),
+                upcoming: upcomingTrip
             ),
             onTap: {},
             pillDecoration: .onPrediction(route: routeB),

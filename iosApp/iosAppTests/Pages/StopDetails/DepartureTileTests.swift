@@ -20,18 +20,20 @@ final class DepartureTileTests: XCTestCase {
     func testBasic() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
+        let upcomingTrip = UpcomingTrip(trip: objects.trip { _ in })
         let sut = DepartureTile(
             data: .init(
                 route: route,
                 headsign: "headsign",
                 formatted: UpcomingFormat.Some(
                     trips: [.init(
-                        trip: .init(trip: objects.trip { _ in }),
+                        trip: upcomingTrip,
                         routeType: .heavyRail,
                         format: .Minutes(minutes: 5)
                     )],
                     secondaryAlert: nil
-                )
+                ),
+                upcoming: upcomingTrip
             ),
             onTap: {}
         )
@@ -44,18 +46,20 @@ final class DepartureTileTests: XCTestCase {
     func testPillDecorator() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
+        let upcomingTrip = UpcomingTrip(trip: objects.trip { _ in })
         let sut = DepartureTile(
             data: .init(
                 route: route,
                 headsign: "headsign",
                 formatted: UpcomingFormat.Some(
                     trips: [.init(
-                        trip: .init(trip: objects.trip { _ in }),
+                        trip: upcomingTrip,
                         routeType: .heavyRail,
                         format: .Minutes(minutes: 5)
                     )],
                     secondaryAlert: nil
-                )
+                ),
+                upcoming: upcomingTrip
             ),
             onTap: {},
             pillDecoration: .onPrediction(route: route)
@@ -70,18 +74,20 @@ final class DepartureTileTests: XCTestCase {
         let tapExpectation = XCTestExpectation(description: "Departure tile tap callback")
 
         let route = objects.route()
+        let upcomingTrip = UpcomingTrip(trip: objects.trip { _ in })
         let sut = DepartureTile(
             data: .init(
                 route: route,
                 headsign: "headsign",
                 formatted: UpcomingFormat.Some(
                     trips: [.init(
-                        trip: .init(trip: objects.trip { _ in }),
+                        trip: upcomingTrip,
                         routeType: .heavyRail,
                         format: .Minutes(minutes: 5)
                     )],
                     secondaryAlert: nil
-                )
+                ),
+                upcoming: upcomingTrip
             ),
             onTap: { tapExpectation.fulfill() },
             pillDecoration: .onPrediction(route: route)
@@ -94,18 +100,20 @@ final class DepartureTileTests: XCTestCase {
     func testAccessibility() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
+        let upcomingTrip = UpcomingTrip(trip: objects.trip { _ in })
 
         let tileData = TileData(
             route: route,
             headsign: "headsign",
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: upcomingTrip,
                     routeType: .heavyRail,
                     format: .Minutes(minutes: 5)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: upcomingTrip
         )
         let notSelected = DepartureTile(data: tileData, onTap: {})
         XCTAssertEqual(
