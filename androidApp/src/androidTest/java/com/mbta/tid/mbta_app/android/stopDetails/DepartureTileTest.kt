@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +32,6 @@ class DepartureTileTest {
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
-                    id = trip.id,
                     route,
                     "headsign",
                     UpcomingFormat.Some(
@@ -70,7 +70,6 @@ class DepartureTileTest {
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
-                    id = trip.id,
                     route,
                     "headsign",
                     UpcomingFormat.Some(
@@ -105,7 +104,6 @@ class DepartureTileTest {
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
-                    id = trip.id,
                     route,
                     "headsign",
                     UpcomingFormat.Some(
@@ -142,7 +140,6 @@ class DepartureTileTest {
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
-                    id = trip.id,
                     route,
                     "headsign",
                     UpcomingFormat.Some(

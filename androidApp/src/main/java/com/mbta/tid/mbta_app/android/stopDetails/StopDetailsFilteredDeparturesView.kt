@@ -50,6 +50,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
@@ -313,7 +314,7 @@ private fun DepartureTiles(
                 modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
                 showRoutePill = patternsByStop.line != null,
                 showHeadsign = showTileHeadsigns,
-                isSelected = tileData.upcoming.trip.id == tripFilter?.tripId
+                isSelected = tileData.id == tripFilter?.tripId
             )
         }
     }

@@ -21,38 +21,44 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route()
+        let trip1 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip2 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip3 = UpcomingTrip(trip: objects.trip { _ in })
 
         let tile1 = TileData(
             route: route,
             headsign: "A",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip1, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip1
         )
         let tile2 = TileData(
             route: route,
             headsign: "B",
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: trip2,
                     routeType: .heavyRail,
                     format: .Minutes(minutes: 3)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip2
         )
         let tile3 = TileData(
             route: route,
             headsign: "C",
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: trip3,
                     routeType: .heavyRail,
                     format: .Minutes(minutes: 7)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip3
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -86,38 +92,44 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route()
+        let trip1 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip2 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip3 = UpcomingTrip(trip: objects.trip { _ in })
 
         let tile1 = TileData(
             route: route,
             headsign: "Matching",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip1, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip1
         )
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: trip2,
                     routeType: .heavyRail,
                     format: .Minutes(minutes: 3)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip2
         )
         let tile3 = TileData(
             route: route,
             headsign: tile1.headsign,
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: trip3,
                     routeType: .heavyRail,
                     format: .Minutes(minutes: 7)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip3
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -150,38 +162,44 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let stop = objects.stop { _ in }
         let route = objects.route { route in route.id = "Green-B" }
         let line = objects.line { line in line.id = "Green" }
+        let trip1 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip2 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip3 = UpcomingTrip(trip: objects.trip { _ in })
 
         let tile1 = TileData(
             route: route,
             headsign: "Matching",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .lightRail, format: .Arriving())],
+                trips: [.init(trip: trip1, routeType: .lightRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip1
         )
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: trip2,
                     routeType: .lightRail,
                     format: .Minutes(minutes: 3)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip2
         )
         let tile3 = TileData(
             route: route,
             headsign: tile1.headsign,
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: .init(trip: objects.trip { _ in }),
+                    trip: trip3,
                     routeType: .lightRail,
                     format: .Minutes(minutes: 7)
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip3
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -230,7 +248,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             formatted: UpcomingFormat.Some(
                 trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: .init(trip: trip)
         )
         let tile2 = TileData(
             route: route,
@@ -238,7 +257,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             formatted: UpcomingFormat.Some(
                 trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: .init(trip: trip)
         )
         let tile3 = TileData(
             route: route,
@@ -246,7 +266,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             formatted: UpcomingFormat.Some(
                 trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Minutes(minutes: 7))],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: .init(trip: trip)
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -283,42 +304,54 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             route.type = .bus
         }
         let pattern = objects.routePattern(route: route) { _ in }
-        let trip = objects.trip(routePattern: pattern)
-        let schedule = objects.schedule { schedule in
-            schedule.trip = trip
+        let trip1 = objects.trip(routePattern: pattern)
+        let schedule1 = objects.schedule { schedule in
+            schedule.trip = trip1
             schedule.departureTime = now.addingTimeInterval(10).toKotlinInstant()
         }
-        let prediction = objects.prediction(schedule: schedule) { prediction in
-            prediction.trip = trip
+        let prediction1 = objects.prediction(schedule: schedule1) { prediction in
+            prediction.trip = trip1
             prediction.scheduleRelationship = .cancelled
         }
-        let upcoming = objects.upcomingTrip(schedule: schedule, prediction: prediction)
+        let upcoming1 = objects.upcomingTrip(schedule: schedule1, prediction: prediction1)
+        let trip2 = objects.trip(routePattern: pattern)
+        let schedule2 = objects.schedule { schedule in
+            schedule.trip = trip2
+            schedule.departureTime = now.addingTimeInterval(10).toKotlinInstant()
+        }
+        let prediction2 = objects.prediction(schedule: schedule2) { prediction in
+            prediction.trip = trip2
+            prediction.scheduleRelationship = .cancelled
+        }
+        let upcoming2 = objects.upcomingTrip(schedule: schedule2, prediction: prediction2)
 
         let tile1 = TileData(
             route: route,
             headsign: "Harvard",
             formatted: UpcomingFormat.Some(
                 trips: [.init(
-                    trip: upcoming, routeType: .bus,
+                    trip: upcoming1, routeType: .bus,
                     format: .Cancelled(
-                        scheduledTime: schedule.departureTime!
+                        scheduledTime: schedule1.departureTime!
                     )
                 )],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: upcoming1
         )
         let tile2 = TileData(
             route: route,
             headsign: tile1.headsign,
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: trip), routeType: .bus, format: .Minutes(minutes: 3))],
+                trips: [.init(trip: upcoming2, routeType: .bus, format: .Minutes(minutes: 3))],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: upcoming2
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
-            tripFilter: .init(tripId: trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
+            tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [tile1, tile2],
@@ -335,9 +368,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                         headsign: "Harvard",
                         line: nil,
                         patterns: [pattern],
-                        upcomingTrips: [
-                            .init(trip: trip, schedule: schedule, prediction: prediction),
-                        ]
+                        upcomingTrips: [upcoming1, upcoming2]
                     ),
                 ],
                 directions: [
@@ -404,6 +435,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
         }
+        let trip = UpcomingTrip(trip: objects.trip { _ in })
 
         // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
         // skipped
@@ -411,9 +443,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             route: route,
             headsign: "A",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip
         )
         let nearbyVM = NearbyViewModel()
 
@@ -455,14 +488,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
         }
+        let trip = UpcomingTrip(trip: objects.trip { _ in })
 
         let tile = TileData(
             route: route,
             headsign: "A",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip
         )
         let nearbyVM = NearbyViewModel()
 
@@ -504,14 +539,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alert.effect = .elevatorClosure
             alert.header = "Elevator closed at stop"
         }
+        let trip = UpcomingTrip(trip: objects.trip { _ in })
 
         let tile = TileData(
             route: route,
             headsign: "A",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
@@ -552,13 +589,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             stop.wheelchairBoarding = .inaccessible
         }
         let route = objects.route { _ in }
+        let trip = UpcomingTrip(trip: objects.trip { _ in })
         let tile = TileData(
             route: route,
             headsign: "A",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
@@ -602,14 +641,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 stop: nil, trip: nil
             )
         }
+        let trip = UpcomingTrip(trip: objects.trip { _ in })
 
         let tile = TileData(
             route: route,
             headsign: "A",
             formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: objects.trip { _ in }), routeType: .heavyRail, format: .Arriving())],
+                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
                 secondaryAlert: nil
-            )
+            ),
+            upcoming: trip
         )
         let nearbyVM = NearbyViewModel()
 
