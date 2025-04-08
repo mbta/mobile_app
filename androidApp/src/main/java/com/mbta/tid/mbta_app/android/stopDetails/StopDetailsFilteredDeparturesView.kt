@@ -43,7 +43,6 @@ import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
-import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
@@ -58,162 +57,26 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
-@Composable
-fun StopDetailsFilteredDeparturesView(
-    stopId: String,
-    stopFilter: StopDetailsFilter,
-    tripFilter: TripDetailsFilter?,
-    patternsByStop: PatternsByStop,
-    tileData: List<TileData>,
-    noPredictionsStatus: NoTripsFormat?,
-    allAlerts: AlertsStreamDataResponse?,
-    elevatorAlerts: List<Alert>,
-    global: GlobalResponse?,
-    now: Instant,
-    viewModel: StopDetailsViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripFilter: (TripDetailsFilter?) -> Unit,
-    tileScrollState: ScrollState,
-    pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
-    onClose: () -> Unit,
-    openModal: (ModalRoutes) -> Unit,
-    openSheetRoute: (SheetRoutes) -> Unit,
-    analytics: Analytics = koinInject()
-) {
-    val expectedDirection = stopFilter.directionId
-    val line = patternsByStop.line
-    val lineOrRoute =
-        if (line != null) {
-            RouteCardData.LineOrRoute.Line(line, patternsByStop.routes.toSet())
-        } else {
-            RouteCardData.LineOrRoute.Route(patternsByStop.representativeRoute)
-        }
-    val alertsHere: List<Alert> =
-        if (global != null) {
-            patternsByStop.alertsHereFor(
-                directionId = expectedDirection,
-                tripId = tripFilter?.tripId,
-                global = global
-            )
-        } else {
-            emptyList()
-        }
-    val downstreamAlerts: List<Alert> =
-        if (global != null) patternsByStop.alertsDownstream(expectedDirection) else emptyList()
-    Layout(
-        stopId,
-        stopFilter,
-        tripFilter,
-        groupByDirection = false,
-        lineOrRoute,
-        patternsByStop.stop,
-        availableDirections = patternsByStop.patterns.map { it.directionId() }.distinct().sorted(),
-        patternsByStop.directions,
-        tileData,
-        noPredictionsStatus,
-        selectedTripIsCancelled =
-            tripFilter?.let { patternsByStop.tripIsCancelled(tripFilter.tripId) } ?: false,
-        allAlerts,
-        alertsHere,
-        downstreamAlerts,
-        elevatorAlerts,
-        global,
-        now,
-        viewModel,
-        errorBannerViewModel,
-        updateStopFilter,
-        updateTripFilter,
-        tileScrollState,
-        pinnedRoutes,
-        togglePinnedRoute,
-        onClose,
-        openModal,
-        openSheetRoute,
-        analytics
-    )
-}
+sealed interface FilteredDeparturesData {
+    data class PreGroupByDirection(val patternsByStop: PatternsByStop) : FilteredDeparturesData
 
-@Composable
-fun StopDetailsFilteredDeparturesView(
-    stopId: String,
-    stopFilter: StopDetailsFilter,
-    tripFilter: TripDetailsFilter?,
-    routeCardData: RouteCardData,
-    routeStopData: RouteCardData.RouteStopData,
-    leaf: RouteCardData.Leaf,
-    tileData: List<TileData>,
-    noPredictionsStatus: NoTripsFormat?,
-    allAlerts: AlertsStreamDataResponse?,
-    elevatorAlerts: List<Alert>,
-    global: GlobalResponse?,
-    now: Instant,
-    viewModel: StopDetailsViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripFilter: (TripDetailsFilter?) -> Unit,
-    tileScrollState: ScrollState,
-    pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
-    onClose: () -> Unit,
-    openModal: (ModalRoutes) -> Unit,
-    openSheetRoute: (SheetRoutes) -> Unit,
-    analytics: Analytics = koinInject()
-) {
-    Layout(
-        stopId,
-        stopFilter,
-        tripFilter,
-        groupByDirection = true,
-        routeCardData.lineOrRoute,
-        routeStopData.stop,
-        availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted(),
-        routeStopData.directions,
-        tileData,
-        noPredictionsStatus,
-        selectedTripIsCancelled =
-            tripFilter?.let {
-                leaf.upcomingTrips.any { it.trip.id == tripFilter.tripId && it.isCancelled }
-            }
-                ?: false,
-        allAlerts,
-        leaf.alertsHere,
-        leaf.alertsDownstream,
-        elevatorAlerts,
-        global,
-        now,
-        viewModel,
-        errorBannerViewModel,
-        updateStopFilter,
-        updateTripFilter,
-        tileScrollState,
-        pinnedRoutes,
-        togglePinnedRoute,
-        onClose,
-        openModal,
-        openSheetRoute,
-        analytics
-    )
+    data class PostGroupByDirection(
+        val routeCardData: RouteCardData,
+        val routeStopData: RouteCardData.RouteStopData,
+        val leaf: RouteCardData.Leaf
+    ) : FilteredDeparturesData
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Layout(
+fun StopDetailsFilteredDeparturesView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    groupByDirection: Boolean,
-    lineOrRoute: RouteCardData.LineOrRoute,
-    stop: Stop,
-    availableDirections: List<Int>,
-    directions: List<Direction>,
+    data: FilteredDeparturesData,
     tileData: List<TileData>,
     noPredictionsStatus: NoTripsFormat?,
-    selectedTripIsCancelled: Boolean,
     allAlerts: AlertsStreamDataResponse?,
-    alertsHere: List<Alert>,
-    downstreamAlerts: List<Alert>,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
     now: Instant,
@@ -229,11 +92,79 @@ private fun Layout(
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject()
 ) {
+    val groupByDirection = data is FilteredDeparturesData.PostGroupByDirection
+    val lineOrRoute =
+        when (data) {
+            is FilteredDeparturesData.PreGroupByDirection -> {
+                val line = data.patternsByStop.line
+                if (line != null) {
+                    RouteCardData.LineOrRoute.Line(line, data.patternsByStop.routes.toSet())
+                } else {
+                    RouteCardData.LineOrRoute.Route(data.patternsByStop.representativeRoute)
+                }
+            }
+            is FilteredDeparturesData.PostGroupByDirection -> data.routeCardData.lineOrRoute
+        }
+    val stop =
+        when (data) {
+            is FilteredDeparturesData.PreGroupByDirection -> data.patternsByStop.stop
+            is FilteredDeparturesData.PostGroupByDirection -> data.routeStopData.stop
+        }
+    val availableDirections =
+        when (data) {
+                is FilteredDeparturesData.PreGroupByDirection ->
+                    data.patternsByStop.patterns.map { it.directionId() }
+                is FilteredDeparturesData.PostGroupByDirection ->
+                    data.routeStopData.data.map { it.directionId }
+            }
+            .distinct()
+            .sorted()
+    val directions =
+        when (data) {
+            is FilteredDeparturesData.PreGroupByDirection -> data.patternsByStop.directions
+            is FilteredDeparturesData.PostGroupByDirection -> data.routeStopData.directions
+        }
+
+    val expectedDirection = stopFilter.directionId
     val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
     val hideMaps by viewModel.hideMaps.collectAsState()
 
+    val alertsHere: List<Alert> =
+        when (data) {
+            is FilteredDeparturesData.PreGroupByDirection ->
+                if (global != null) {
+                    data.patternsByStop.alertsHereFor(
+                        directionId = expectedDirection,
+                        tripId = tripFilter?.tripId,
+                        global = global
+                    )
+                } else {
+                    emptyList()
+                }
+            is FilteredDeparturesData.PostGroupByDirection -> data.leaf.alertsHere
+        }
     val pinned = pinnedRoutes.contains(lineOrRoute.id)
+
+    val downstreamAlerts: List<Alert> =
+        when (data) {
+            is FilteredDeparturesData.PreGroupByDirection ->
+                if (global != null) data.patternsByStop.alertsDownstream(expectedDirection)
+                else emptyList()
+            is FilteredDeparturesData.PostGroupByDirection -> data.leaf.alertsDownstream
+        }
+
+    val selectedTripIsCancelled =
+        if (tripFilter != null)
+            when (data) {
+                is FilteredDeparturesData.PreGroupByDirection ->
+                    data.patternsByStop.tripIsCancelled(tripFilter.tripId)
+                is FilteredDeparturesData.PostGroupByDirection ->
+                    data.leaf.upcomingTrips.any {
+                        it.trip.id == tripFilter.tripId && it.isCancelled
+                    }
+            }
+        else false
 
     val hasMajorAlert = alertsHere.any { it.significance == AlertSignificance.Major }
 

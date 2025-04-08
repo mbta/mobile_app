@@ -165,7 +165,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -233,9 +236,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 noPredictionsStatus = leafFormat.noPredictionsStatus(),
                 allAlerts = null,
@@ -287,7 +293,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -360,9 +369,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 noPredictionsStatus = leafFormat.noPredictionsStatus(),
                 allAlerts = null,
@@ -468,7 +480,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                 tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(route.id, trip.directionId, now)
@@ -588,9 +603,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                 tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                routeCardData,
-                routeStopData,
-                leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(routeCardData, routeStopData, leaf),
                 tileData = leafFormat.tileData(),
                 noPredictionsStatus = leafFormat.noPredictionsStatus(),
                 allAlerts = null,
@@ -638,14 +652,17 @@ class StopDetailsFilteredDeparturesViewTest {
                 noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 allAlerts = null,
                 elevatorAlerts = listOf(),
-                patternsByStop =
-                    PatternsByStop(
-                        routes = listOf(route),
-                        line = line,
-                        stop = stop,
-                        patterns = listOf(),
-                        directions = listOf(),
-                        elevatorAlerts = listOf()
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop =
+                            PatternsByStop(
+                                routes = listOf(route),
+                                line = line,
+                                stop = stop,
+                                patterns = listOf(),
+                                directions = listOf(),
+                                elevatorAlerts = listOf()
+                            )
                     ),
                 global = globalResponse,
                 now = now,
@@ -708,9 +725,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 allAlerts = null,
                 elevatorAlerts = listOf(),
-                routeCardData = routeCardData,
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData,
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 global = globalResponse,
                 now = now,
                 viewModel = StopDetailsViewModel.mocked(),
@@ -771,7 +791,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -859,9 +882,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 allAlerts = null,
                 elevatorAlerts = emptyList(),
@@ -928,7 +954,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -1013,9 +1042,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 allAlerts = alertResponse,
                 elevatorAlerts = emptyList(),
@@ -1072,7 +1104,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -1150,9 +1185,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 allAlerts = null,
                 elevatorAlerts = listOf(alert),
@@ -1223,7 +1261,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -1312,9 +1353,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = stop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 allAlerts = null,
                 elevatorAlerts = emptyList(),
@@ -1366,7 +1410,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = inaccessibleStop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                patternsByStop = departures.routes.first { it.routeIdentifier == route.id },
+                data =
+                    FilteredDeparturesData.PreGroupByDirection(
+                        patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
+                    ),
                 tileData =
                     departures
                         .stopDetailsFormattedTrips(
@@ -1438,9 +1485,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopId = inaccessibleStop.id,
                 stopFilter = filterState.value,
                 tripFilter = null,
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf,
+                data =
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = routeCardData.single(),
+                        routeStopData = routeStopData,
+                        leaf = leaf
+                    ),
                 tileData = leafFormat.tileData(),
                 allAlerts = null,
                 elevatorAlerts = emptyList(),
