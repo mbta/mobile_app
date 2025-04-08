@@ -87,14 +87,14 @@ fun TripStopRow(
                 ) {
                     if (showElevatorAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
                         Image(
-                            modifier = Modifier.height(24.dp).testTag("elevator_alert"),
-                            painter = painterResource(R.drawable.elevator_alert),
+                            modifier = Modifier.height(18.dp).testTag("elevator_alert"),
+                            painter = painterResource(R.drawable.accessibility_icon_alert),
                             contentDescription = null
                         )
-                    } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
+                    } else if (showElevatorAccessibility && !stop.stop.isWheelchairAccessible) {
                         Image(
-                            modifier = Modifier.height(24.dp).testTag("wheelchair_accessible"),
-                            painter = painterResource(R.drawable.wheelchair_accessible),
+                            modifier = Modifier.height(18.dp).testTag("wheelchair_not_accessible"),
+                            painter = painterResource(R.drawable.accessibility_icon_not_accessible),
                             contentDescription = null
                         )
                     }
