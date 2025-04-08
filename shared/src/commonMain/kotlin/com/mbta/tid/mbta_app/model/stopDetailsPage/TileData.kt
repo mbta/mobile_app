@@ -8,8 +8,8 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlinx.datetime.Instant
 
 data class TileData(
-    val route: Route,
-    val headsign: String,
+    val route: Route?,
+    val headsign: String?,
     val formatted: UpcomingFormat,
     val upcoming: UpcomingTrip
 ) {

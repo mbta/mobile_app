@@ -11,7 +11,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -25,9 +24,8 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
@@ -35,16 +33,14 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
 @Composable
 fun DirectionPicker(
-    patternsByStop: PatternsByStop,
+    availableDirections: List<Int>,
+    directions: List<Direction>,
+    route: Route,
+    line: Line?,
     filter: StopDetailsFilter?,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val availableDirections = patternsByStop.patterns.map { it.directionId() }.distinct().sorted()
-    val directions = patternsByStop.directions
-    val route = patternsByStop.representativeRoute
-    val line = patternsByStop.line
-
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor =
             colorResource(deselectedBackgroundColor(route)).copy(alpha = 0.6f)
@@ -111,45 +107,21 @@ fun DirectionPicker(
 @Composable
 private fun DirectionPickerPreview() {
     val objects = ObjectCollectionBuilder()
-    val stop = objects.stop()
     val route =
         objects.route {
             color = "FFC72C"
             textColor = "000000"
         }
-    val patternOutbound = objects.routePattern(route) { directionId = 0 }
-    val patternInbound = objects.routePattern(route) { directionId = 1 }
     MyApplicationTheme {
         DirectionPicker(
-            patternsByStop =
-                PatternsByStop(
-                    routes = listOf(route),
-                    line = null,
-                    stop,
-                    patterns =
-                        listOf(
-                            RealtimePatterns.ByHeadsign(
-                                route = route,
-                                headsign = "Out",
-                                line = null,
-                                patterns = listOf(patternOutbound),
-                                upcomingTrips = emptyList()
-                            ),
-                            RealtimePatterns.ByHeadsign(
-                                route = route,
-                                headsign = "In",
-                                line = null,
-                                patterns = listOf(patternInbound),
-                                upcomingTrips = emptyList()
-                            ),
-                        ),
-                    directions =
-                        listOf(
-                            Direction(name = "Outbound", destination = "Out", id = 0),
-                            Direction(name = "Inbound", destination = "In", id = 1),
-                        ),
-                    elevatorAlerts = emptyList()
+            availableDirections = listOf(0, 1),
+            directions =
+                listOf(
+                    Direction(name = "Outbound", destination = "Out", id = 0),
+                    Direction(name = "Inbound", destination = "In", id = 1),
                 ),
+            route = route,
+            line = null,
             filter = StopDetailsFilter(routeId = route.id, directionId = 0),
             updateStopFilter = {}
         )
