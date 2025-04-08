@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -28,7 +27,7 @@ class StopDetailsPageTest : KoinTest {
     val koinApplication = testKoinApplication()
 
     @Test
-    fun testCallsUpdateDepartures() = runTest {
+    fun testCallsUpdateDepartures() {
         val viewModel = StopDetailsViewModel.mocked()
         val filters = mutableStateOf(StopDetailsPageFilters("stop", null, null))
 

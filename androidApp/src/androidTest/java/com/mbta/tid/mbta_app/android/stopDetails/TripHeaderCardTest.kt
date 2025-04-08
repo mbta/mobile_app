@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -50,7 +49,7 @@ class TripHeaderCardTest {
     }
 
     @Test
-    fun testDisplaysStatusDescription() = runTest {
+    fun testDisplaysStatusDescription() {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
@@ -84,7 +83,7 @@ class TripHeaderCardTest {
             }
 
         vehicleState.value = incomingVehicle
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Approaching", useUnmergedTree = true).assertIsDisplayed()
 
         val stoppedVehicle =
@@ -95,7 +94,7 @@ class TripHeaderCardTest {
 
         vehicleState.value = stoppedVehicle
 
-        composeTestRule.awaitIdle()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Now at", useUnmergedTree = true).assertIsDisplayed()
     }
 

@@ -38,6 +38,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlinx.datetime.Clock
 
 @Composable
@@ -123,7 +124,6 @@ private fun DepartureTilePreview() {
         Row(Modifier.background(Color.fromHex("00843D")).padding(16.dp)) {
             DepartureTile(
                 TileData(
-                    trip1.id,
                     route1,
                     "Framingham",
                     UpcomingFormat.Some(
@@ -148,7 +148,6 @@ private fun DepartureTilePreview() {
             )
             DepartureTile(
                 TileData(
-                    trip2.id,
                     route1,
                     "Harvard",
                     UpcomingFormat.Some(
@@ -168,7 +167,6 @@ private fun DepartureTilePreview() {
             )
             DepartureTile(
                 TileData(
-                    trip3.id,
                     routeB,
                     "Government Center",
                     UpcomingFormat.Some(

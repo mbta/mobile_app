@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -33,7 +34,6 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -258,7 +258,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsCancelledTripCard() = runTest {
+    fun testShowsCancelledTripCard() {
         val objects = ObjectCollectionBuilder()
         val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
         val route =

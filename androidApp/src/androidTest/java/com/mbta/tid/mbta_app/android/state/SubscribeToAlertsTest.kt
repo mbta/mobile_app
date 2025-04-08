@@ -11,7 +11,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import kotlin.test.assertEquals
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
@@ -20,7 +19,7 @@ class SubscribeToAlertsTest {
     @get:Rule val composeRule = createComposeRule()
 
     @Test
-    fun testAlerts() = runTest {
+    fun testAlerts() {
         val builder = ObjectCollectionBuilder()
         builder.alert {
             id = "1"
@@ -40,7 +39,7 @@ class SubscribeToAlertsTest {
     }
 
     @Test
-    fun testDisconnectsOnPause() = runTest {
+    fun testDisconnectsOnPause() {
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
 
         var connectCount = 0
