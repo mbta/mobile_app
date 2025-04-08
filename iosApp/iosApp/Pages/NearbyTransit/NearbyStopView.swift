@@ -46,7 +46,7 @@ struct NearbyStopView: View {
                 .font(Typography.callout)
                 .foregroundStyle(Color.text)
 
-            HStack(spacing: 8) {
+            HStack(spacing: 5) {
                 if showElevatorAlerts {
                     Image(.accessibilityIconAlert)
                         .accessibilityHidden(true)
