@@ -5,12 +5,14 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -1911,6 +1913,122 @@ class StopDetailsDeparturesTest {
                     .stopDetailsFormattedTrips(route2.id, routePattern2.directionId, time)
             )
         }
+
+    @Test
+    fun `tileData gets tile data`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route1 = objects.route()
+
+        val routePattern1 =
+            objects.routePattern(route1) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val route2 = objects.route()
+        val routePattern2 =
+            objects.routePattern(route2) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val trip0 = objects.trip(routePattern2)
+        val trip1 = objects.trip(routePattern1)
+        val trip2 = objects.trip(routePattern2)
+
+        val vehicle0 =
+            objects.vehicle {
+                tripId = trip0.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+        val vehicle1 =
+            objects.vehicle {
+                tripId = trip2.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+        objects.schedule {
+            stopId = stop.id
+            stopSequence = 0
+            trip = trip0
+            departureTime = time.minus(3.minutes)
+        }
+        objects.schedule {
+            stopId = stop.id
+            stopSequence = 0
+            trip = trip1
+            departureTime = time.plus(2.minutes)
+        }
+        val schedule2 =
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip2
+                departureTime = time.plus(5.minutes)
+            }
+        objects.prediction {
+            stopId = stop.id
+            stopSequence = 0
+            trip = trip0
+            departureTime = time.minus(3.minutes)
+            vehicleId = vehicle0.id
+        }
+        objects.prediction {
+            stopId = stop.id
+            stopSequence = 0
+            trip = trip1
+            departureTime = time.plus(2.minutes)
+        }
+        val prediction2 =
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip2
+                departureTime = time.plus(5.minutes)
+                vehicleId = vehicle1.id
+            }
+
+        val departures =
+            StopDetailsDepartures.fromData(
+                stop,
+                GlobalResponse(
+                    objects,
+                    mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                ),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                emptySet(),
+                time,
+            )
+
+        val upcomingTrip = UpcomingTrip(trip2, schedule2, prediction2, stop, vehicle1)
+
+        assertEquals(
+            listOf(
+                TileData(
+                    route2,
+                    trip2.headsign,
+                    UpcomingFormat.Some(
+                        UpcomingFormat.Some.FormattedTrip(
+                            upcomingTrip,
+                            route1.type,
+                            TripInstantDisplay.Minutes(minutes = 5)
+                        ),
+                        null
+                    ),
+                    upcomingTrip,
+                )
+            ),
+            checkNotNull(departures)
+                .tileData(
+                    route2.id,
+                    routePattern2.directionId,
+                    time,
+                    globalData = GlobalResponse(objects)
+                )
+        )
+    }
 
     @Test
     fun `getNoPredictionsStatus resolves service ended`() {

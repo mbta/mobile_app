@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +17,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlinx.datetime.Instant
 
 @Composable
@@ -47,21 +47,7 @@ fun StopDetailsFilteredView(
 
     if (patternsByStop != null) {
         val tileData =
-            departures
-                .stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
-                .mapNotNull { tripAndFormat ->
-                    val upcoming = tripAndFormat.upcoming
-                    val route = patternsByStop.routes.find { it.id == upcoming.trip.routeId }
-                    if (route == null) {
-                        Log.e(
-                            "StopDetailsFilteredView",
-                            "Failed to find route ID ${upcoming.trip.routeId} from upcoming trip in patternsByStop.routes (${patternsByStop.routes.map { it.id }}"
-                        )
-                        null
-                    } else {
-                        TileData.fromUpcoming(upcoming, route, now)
-                    }
-                }
+            departures.tileData(stopFilter.routeId, stopFilter.directionId, now, globalResponse)
 
         val realtimePatterns =
             patternsByStop.patterns.filter { it.directionId() == stopFilter.directionId }

@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.stopDetails
+package com.mbta.tid.mbta_app.model.stopDetailsPage
 
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
@@ -8,12 +8,13 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlinx.datetime.Instant
 
 data class TileData(
-    val id: String,
     val route: Route,
     val headsign: String,
     val formatted: UpcomingFormat,
     val upcoming: UpcomingTrip
 ) {
+    val id = upcoming.trip.id
+
     companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
             val formattedUpcomingTrip =
@@ -30,16 +31,10 @@ data class TileData(
                         secondaryAlert = null
                     )
                 } else {
-                    UpcomingFormat.NoTrips(
-                        noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable
-                    )
+                    return null
                 }
 
-            if (formatted !is UpcomingFormat.Some) {
-                return null
-            }
-
-            return TileData(upcoming.trip.id, route, upcoming.trip.headsign, formatted, upcoming)
+            return TileData(route, upcoming.trip.headsign, formatted, upcoming)
         }
     }
 }

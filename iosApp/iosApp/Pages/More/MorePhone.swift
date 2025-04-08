@@ -30,7 +30,7 @@ struct MorePhone: View {
                 .fontWeight(.semibold)
                 .accessibilityHidden(true)
         }
-        .contentShape(Rectangle())
+        .fullFocusSize()
         .padding(.vertical, 10)
         .padding(.horizontal, 16)
         .frame(minHeight: 44)
