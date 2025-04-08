@@ -252,7 +252,7 @@ class TripStopRowTest {
         }
 
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("not accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Not accessible").assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
 
