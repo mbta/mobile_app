@@ -184,9 +184,9 @@ fun StopDetailsFilteredDeparturesView(
                                 .filter { it.directionId == stopFilter.directionId }
                         }
                     val summary: AlertSummary? =
-                        remember(global, alert, stopId, stopFilter.directionId, patternsHere, now) {
+                        remember(global, alert, stopFilter.directionId, patternsHere, now) {
                             global?.let {
-                                alert.summary(stopId, stopFilter.directionId, patternsHere, now, it)
+                                alert.summary(stopFilter.directionId, patternsHere, now, it)
                             }
                         }
                     AlertCard(
