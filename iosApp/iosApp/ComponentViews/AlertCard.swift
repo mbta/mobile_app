@@ -25,14 +25,24 @@ struct AlertCard: View {
     let onViewDetails: (() -> Void)?
 
     @ScaledMetric var majorIconSize = 48
-    @ScaledMetric var elevatorIconSize = 28
+    @ScaledMetric var elevatorIconWidth = 33
+    @ScaledMetric var elevatorIconHeight = 18
+
     @ScaledMetric var miniIconSize = 20
     @ScaledMetric var infoIconSize = 16
 
-    var iconSize: Double {
+    var iconWidth: Double {
         switch spec {
         case .major: majorIconSize
-        case .elevator: elevatorIconSize
+        case .elevator: elevatorIconWidth
+        default: miniIconSize
+        }
+    }
+
+    var iconHeight: Double {
+        switch spec {
+        case .major: majorIconSize
+        case .elevator: elevatorIconHeight
         default: miniIconSize
         }
     }
@@ -65,7 +75,7 @@ struct AlertCard: View {
                 HStack(alignment: .top, spacing: 16) {
                     AlertIcon(alertState: alert.alertState, color: color)
                         .scaledToFit()
-                        .frame(width: iconSize, height: iconSize, alignment: .top)
+                        .frame(width: iconWidth, height: iconHeight, alignment: .top)
                     Text(headerString)
                         .font(spec == .major ? Typography.title2Bold : Typography.bodySemibold)
                         .multilineTextAlignment(.leading)
