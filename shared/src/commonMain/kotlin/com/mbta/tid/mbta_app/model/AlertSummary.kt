@@ -99,7 +99,51 @@ data class AlertSummary(
             }
 
             // Map each pattern to its list of stops affected by this alert
-            val affectedPatternStopsWithOverlapping =
+            val affectedPatternStops =
+                mapPatternsToAffectedStops(alert, stopId, directionId, patterns, routes, global)
+
+            // Compare the first stop list to all the others to determine if all patterns share the
+            // same disrupted stops, or if multiple branches are disrupted
+            val firstStops = affectedPatternStops.values.firstOrNull { it.size > 1 } ?: return null
+            val orderedStops = firstStops.mapNotNull { global.stops[it] }
+
+            if (affectedPatternStops.all { it.value.toSet() == firstStops.toSet() }) {
+                return Location.SuccessiveStops(orderedStops.first().name, orderedStops.last().name)
+            }
+
+            // Determine if every effected stop list starts or ends at the same stop, if they do,
+            // the disruption starts on the trunk and ends on multiple branches, if not, return null
+            // because we have some kind more complicated branch to branch disruption.
+            fun locationFrom(stop: Stop, first: Boolean = true): Location? {
+                val directions =
+                    Direction.getDirectionsForLine(global, stop, affectedPatternStops.keys.toList())
+
+                val (stopName, direction) =
+                    if (affectedPatternStops.values.all { it.firstOrNull() == stop.id }) {
+                        Pair(stop.name, directions[directionId])
+                    } else if (affectedPatternStops.values.all { it.lastOrNull() == stop.id }) {
+                        Pair(stop.name, directions[1 - directionId])
+                    } else return null
+
+                return if (first) {
+                    Location.StopToBranch(stopName, direction)
+                } else {
+                    Location.BranchToStop(direction, stopName)
+                }
+            }
+
+            return locationFrom(orderedStops.first()) ?: locationFrom(orderedStops.last(), false)
+        }
+
+        private fun mapPatternsToAffectedStops(
+            alert: Alert,
+            stopId: String,
+            directionId: Int,
+            patterns: List<RoutePattern>,
+            routes: List<Route>,
+            global: GlobalResponse
+        ): Map<RoutePattern, List<String>> {
+            val patternStops =
                 patterns
                     .mapNotNull { pattern ->
                         if (pattern.directionId != directionId) return@mapNotNull null
@@ -154,48 +198,15 @@ data class AlertSummary(
             // On the D branch, there are patterns that terminate at Reservoir and Riverside, this
             // will remove stop lists that are subsets of some other stop list so that we don't
             // display "Westbound stops" instead of "Riverside" in this case.
-            val affectedPatternStops =
-                if (affectedPatternStopsWithOverlapping.size > 1)
-                    affectedPatternStopsWithOverlapping.filter {
-                        !affectedPatternStopsWithOverlapping.any { (otherPattern, otherStops) ->
-                            otherPattern != it.key &&
-                                otherStops.size > it.value.size &&
-                                otherStops.containsAll(it.value)
-                        }
+            return if (patternStops.size > 1)
+                patternStops.filter {
+                    !patternStops.any { (otherPattern, otherStops) ->
+                        otherPattern != it.key &&
+                            otherStops.size > it.value.size &&
+                            otherStops.containsAll(it.value)
                     }
-                else affectedPatternStopsWithOverlapping
-
-            // Compare the first stop list to all the others to determine if all patterns share the
-            // same disrupted stops, or if multiple branches are disrupted
-            val firstStops = affectedPatternStops.values.firstOrNull { it.size > 1 } ?: return null
-            val orderedStops = firstStops.mapNotNull { global.stops[it] }
-
-            if (affectedPatternStops.all { it.value.toSet() == firstStops.toSet() }) {
-                return Location.SuccessiveStops(orderedStops.first().name, orderedStops.last().name)
-            }
-
-            // Determine if every effected stop list starts or ends at the same stop, if they do,
-            // the disruption starts on the trunk and ends on multiple branches, if not, return null
-            // because we have some kind more complicated branch to branch disruption.
-            fun locationFrom(stop: Stop, first: Boolean = true): Location? {
-                val directions =
-                    Direction.getDirectionsForLine(global, stop, affectedPatternStops.keys.toList())
-
-                val (stopName, direction) =
-                    if (affectedPatternStops.values.all { it.firstOrNull() == stop.id }) {
-                        Pair(stop.name, directions[directionId])
-                    } else if (affectedPatternStops.values.all { it.lastOrNull() == stop.id }) {
-                        Pair(stop.name, directions[1 - directionId])
-                    } else return null
-
-                return if (first) {
-                    Location.StopToBranch(stopName, direction)
-                } else {
-                    Location.BranchToStop(direction, stopName)
                 }
-            }
-
-            return locationFrom(orderedStops.first()) ?: locationFrom(orderedStops.last(), false)
+            else patternStops
         }
 
         // The first value in these pairs is the list of trunk stops for each route, including a few
