@@ -38,16 +38,26 @@ struct TripStopRow: View {
             }
             HStack(alignment: .center, spacing: 0) {
                 HStack(alignment: .center) {
-                    if showElevatorAccessibility, !stop.activeElevatorAlerts(now: now).isEmpty {
+                    let activeElevatorAlerts = stop.activeElevatorAlerts(now: now)
+                    if showElevatorAccessibility, !activeElevatorAlerts.isEmpty {
                         Image(.accessibilityIconAlert)
-                            .accessibilityHidden(true)
+                            .accessibilityLabel(Text(
+                                "\(activeElevatorAlerts.count, specifier: "%ld") elevators closed",
+                                comment: "Icon alt text for elevator alert"
+                            ))
+                            // lowest sort priority means this will be read last
+                            .accessibilitySortPriority(0)
                             .tag("elevator_alert")
                     } else if showElevatorAccessibility, !stop.stop.isWheelchairAccessible {
                         Image(.accessibilityIconNotAccessible)
-                            .accessibilityHidden(true)
+                            .accessibilityLabel(Text("Not accessible"))
+                            .accessibilitySortPriority(0)
                             .tag("wheelchair_not_accessible")
+                    } else {
+                        EmptyView().accessibilityHidden(true)
                     }
                 }
+
                 .frame(minWidth: 28, maxWidth: 28)
                 .padding(.leading, 6)
                 routeLine
@@ -90,12 +100,13 @@ struct TripStopRow: View {
                             .accessibilityLabel(scrollRoutesAccessibilityLabel)
                     }
                 }
+                .accessibilitySortPriority(1)
                 .padding(.leading, 8)
                 .padding(.vertical, 12)
                 .padding(.trailing, 8)
                 .padding(.bottom, lastStop ? 0 : 1)
                 .frame(minHeight: 56)
-            }
+            }.accessibilityElement(children: .contain)
         }
     }
 

@@ -232,6 +232,7 @@ final class TripStopRowTests: XCTestCase {
             showElevatorAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "Not accessible"))
     }
 
     func testElevatorAccessibilityAlert() throws {
@@ -268,5 +269,6 @@ final class TripStopRowTests: XCTestCase {
             showElevatorAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "1 elevator closed"))
     }
 }
