@@ -44,13 +44,14 @@ extension HomeMapView {
     }
 
     func handleSetStopSources() {
+        guard let globalData = mapVM.globalData else { return }
         Task {
-            let snappedStopRouteLines = try await RouteFeaturesBuilder.shared.generateRouteLines(
+            let snappedStopRouteSources = try await RouteFeaturesBuilder.shared.generateRouteSources(
                 routeData: mapVM.allRailSourceData,
-                globalData: mapVM.globalData,
+                globalData: globalData,
                 globalMapData: globalMapData
             )
-            mapVM.snappedStopRouteLines = snappedStopRouteLines
+            mapVM.snappedStopRouteSources = snappedStopRouteSources
             mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
         }
     }
@@ -63,7 +64,13 @@ extension HomeMapView {
     }
 
     func addLayers(_ layerManager: IMapLayerManager, recreate: Bool = false) {
-        layerManager.addLayers(colorScheme: colorScheme, recreate: recreate)
+        guard let railRouteShapes, let globalData = mapVM.globalData else { return }
+        layerManager.addLayers(
+            mapFriendlyRouteResponse: railRouteShapes,
+            globalResponse: globalData,
+            colorScheme: colorScheme,
+            recreate: recreate
+        )
     }
 
     func refreshMap() {

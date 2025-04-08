@@ -4,29 +4,63 @@ import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.LineJoin
 import com.mbta.tid.mbta_app.map.style.LineLayer
 import com.mbta.tid.mbta_app.map.style.downcastToColor
+import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object RouteLayerGenerator {
     val routeLayerId = "route-layer"
-    val shuttledRouteLayerId = "route-layer-shuttled"
-    val suspendedRouteLayerId = "route-layer-suspended"
-    val alertingBgRouteLayerId = "route-layer-alerting-bg"
     private val closeZoomCutoff = MapDefaults.closeZoomThreshold
 
     fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
 
-    suspend fun createAllRouteLayers(colorPalette: ColorPalette): List<LineLayer> =
+    suspend fun createAllRouteLayers(
+        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        globalResponse: GlobalResponse,
+        colorPalette: ColorPalette
+    ) =
+        createAllRouteLayers(
+            mapFriendlyRouteResponse.routesWithSegmentedShapes,
+            globalResponse,
+            colorPalette
+        )
+
+    suspend fun createAllRouteLayers(
+        routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        globalResponse: GlobalResponse,
+        colorPalette: ColorPalette
+    ): List<LineLayer> =
         withContext(Dispatchers.Default) {
-            listOf(createRouteLayer()) +
-                // Draw all alerting layers on top so they are not covered by any overlapping route
-                // shape
-                createAlertingRouteLayers(colorPalette)
+            createAllRouteLayers(routesWithShapes, globalResponse.routes, colorPalette)
         }
 
-    fun createRouteLayer(): LineLayer {
-        val layer = baseRouteLayer(routeLayerId)
+    private fun createAllRouteLayers(
+        routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        routesById: Map<String, Route>,
+        colorPalette: ColorPalette
+    ): List<LineLayer> {
+        val sortedRoutes =
+            routesWithShapes
+                .filter { routesById.containsKey(it.routeId) }
+                .sortedBy { // Sort by reverse sort order so that lowest ordered routes are drawn
+                    // first/lowest
+                    -routesById[it.routeId]!!.sortOrder
+                }
+
+        return sortedRoutes.map { createRouteLayer(routesById[it.routeId]!!) } +
+            // Draw all alerting layers on top so they are not covered by any overlapping route
+            // shape
+            sortedRoutes.flatMap {
+                createAlertingRouteLayers(routesById[it.routeId]!!, colorPalette)
+            }
+    }
+
+    fun createRouteLayer(route: Route): LineLayer {
+        val layer = baseRouteLayer(getRouteLayerId(route.id), route)
         layer.lineWidth = Exp.step(Exp.zoom(), Exp(3), Exp(closeZoomCutoff) to Exp(4))
         return layer
     }
@@ -37,8 +71,8 @@ object RouteLayerGenerator {
      * Creates separate layers for shuttle and suspension segments because `LineLayer.lineDasharray`
      * [doesn't support data-driven styling](https://docs.mapbox.com/style-spec/reference/layers/#paint-line-line-dasharray)
      */
-    fun createAlertingRouteLayers(colorPalette: ColorPalette): List<LineLayer> {
-        val shuttledLayer = baseRouteLayer(shuttledRouteLayerId)
+    fun createAlertingRouteLayers(route: Route, colorPalette: ColorPalette): List<LineLayer> {
+        val shuttledLayer = baseRouteLayer(getRouteLayerId("${route.id}-shuttled"), route)
         shuttledLayer.filter =
             Exp.eq(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
@@ -47,7 +81,7 @@ object RouteLayerGenerator {
         shuttledLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
         shuttledLayer.lineDasharray = listOf(2.0, 1.33)
 
-        val suspendedLayer = baseRouteLayer(suspendedRouteLayerId)
+        val suspendedLayer = baseRouteLayer(getRouteLayerId("${route.id}-suspended"), route)
         suspendedLayer.filter =
             Exp.eq(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
@@ -57,7 +91,7 @@ object RouteLayerGenerator {
         suspendedLayer.lineDasharray = listOf(1.33, 2.0)
         suspendedLayer.lineColor = Exp(colorPalette.deemphasized).downcastToColor()
 
-        val alertBackgroundLayer = baseRouteLayer(alertingBgRouteLayerId)
+        val alertBackgroundLayer = baseRouteLayer(getRouteLayerId("${route.id}-alerting-bg"), route)
         alertBackgroundLayer.filter =
             Exp.`in`(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
@@ -70,12 +104,12 @@ object RouteLayerGenerator {
         return listOf(alertBackgroundLayer, shuttledLayer, suspendedLayer)
     }
 
-    fun baseRouteLayer(layerId: String): LineLayer {
-        val layer = LineLayer(id = layerId, source = RouteFeaturesBuilder.routeSourceId)
-        layer.lineColor = Exp.get(RouteFeaturesBuilder.propRouteColor)
+    fun baseRouteLayer(layerId: String, route: Route): LineLayer {
+        val layer =
+            LineLayer(id = layerId, source = RouteFeaturesBuilder.getRouteSourceId(route.id))
+        layer.lineColor = Exp("#${route.color}")
         layer.lineJoin = LineJoin.Round
-        layer.lineOffset = lineOffsetExp()
-        layer.lineSortKey = Exp.get(RouteFeaturesBuilder.propRouteSortKey)
+        layer.lineOffset = Exp(lineOffset(route))
         checkNotNull(layer.id)
         return layer
     }
@@ -84,23 +118,34 @@ object RouteLayerGenerator {
      * Hardcoding offsets based on route properties to minimize the occurences of overlapping rail
      * lines when drawn on the map
      */
-    private fun lineOffsetExp(): Exp<Number> {
+    private fun lineOffset(route: Route): Double {
         val maxLineWidth = 6.0
+        val greenOverlappingCR = setOf("CR-Lowell", "CR-Fitchburg")
+        val redOverlappingCR =
+            setOf("CR-Greenbush", "CR-Kingston", "CR-Middleborough", "CR-NewBedford")
 
-        return Exp.case(
-            Exp.`in`(
-                Exp.get(RouteFeaturesBuilder.propRouteId),
-                Exp.Bare.arrayOf("CR-Lowell", "CR-Fitchburg")
-            ) to Exp(0),
-            Exp.`in`(
-                Exp.get(RouteFeaturesBuilder.propRouteId),
-                Exp.Bare.arrayOf("CR-Greenbush", "CR-Kingston", "CR-Middleborough", "CR-NewBedford")
-            ) to Exp(maxLineWidth * 1.5),
-            Exp.eq(Exp.get(RouteFeaturesBuilder.propRouteType), Exp("COMMUTER_RAIL")) to
-                Exp(-maxLineWidth),
-            Exp.`in`(Exp("Green"), Exp.get(RouteFeaturesBuilder.propRouteId)) to Exp(maxLineWidth),
-            // Default to no offset
-            fallback = Exp(0)
-        )
+        return if (route.type == RouteType.COMMUTER_RAIL) {
+            when {
+                greenOverlappingCR.contains(route.id) -> {
+                    // These overlap with GL, GL is offset below, so do nothing
+                    0.0
+                }
+                redOverlappingCR.contains(route.id) -> {
+                    // These overlap with RL. RL is offset below, shift West
+                    maxLineWidth * 1.5
+                }
+                else -> {
+                    // Some overlap with OL and should shift East.
+                    // Shift the rest east too so they scale porportionally
+                    -maxLineWidth
+                }
+            }
+        } else if (route.id.contains("Green")) {
+            // Account for overlapping North Station - Haymarket
+            // Offset to the East
+            maxLineWidth
+        } else {
+            0.0
+        }
     }
 }

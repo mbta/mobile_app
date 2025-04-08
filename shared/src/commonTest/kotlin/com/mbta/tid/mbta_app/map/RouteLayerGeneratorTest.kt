@@ -1,101 +1,99 @@
 package com.mbta.tid.mbta_app.map
 
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.add
-import kotlinx.serialization.json.buildJsonArray
 
 class RouteLayerGeneratorTest {
     @Test
     fun `route layers are created`(): Unit = runBlocking {
-        val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
+        val routeLayers =
+            RouteLayerGenerator.createAllRouteLayers(
+                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.global,
+                ColorPalette.light
+            )
 
-        assertEquals(4, routeLayers.size)
-        val baseRouteLayer = routeLayers[0]
-        assertEquals(RouteLayerGenerator.routeLayerId, baseRouteLayer.id)
-        val alertingBgLayer = routeLayers[1]
-        assertEquals(RouteLayerGenerator.alertingBgRouteLayerId, alertingBgLayer.id)
-        val shuttledLayer = routeLayers[2]
-        assertEquals(RouteLayerGenerator.shuttledRouteLayerId, shuttledLayer.id)
-        val suspendedLayer = routeLayers[3]
-        assertEquals(RouteLayerGenerator.suspendedRouteLayerId, suspendedLayer.id)
+        assertEquals(
+            listOf(
+                "route-layer-Red",
+                "route-layer-Orange",
+                "route-layer-Red-alerting-bg",
+                "route-layer-Red-shuttled",
+                "route-layer-Red-suspended",
+                "route-layer-Orange-alerting-bg",
+                "route-layer-Orange-shuttled",
+                "route-layer-Orange-suspended",
+            ),
+            routeLayers.map { it.id }
+        )
 
-        assertNotNull(shuttledLayer.lineDasharray)
-        assertNotNull(suspendedLayer.lineDasharray)
+        for (alertingRouteLayer in
+            routeLayers.filter { it.id.endsWith("shuttled") || it.id.endsWith("suspended") }) {
+            assertNotNull(alertingRouteLayer.lineDasharray)
+        }
     }
 
     @Test
     fun `layers have offset`(): Unit = runBlocking {
-        val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
+        val routeLayers =
+            RouteLayerGenerator.createAllRouteLayers(
+                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.global,
+                ColorPalette.light
+            )
 
-        assertEquals(4, routeLayers.size)
-        val baseRouteLayer = routeLayers[0]
-        assertEquals(RouteLayerGenerator.routeLayerId, baseRouteLayer.id)
-        val alertingBgLayer = routeLayers[1]
-        assertEquals(RouteLayerGenerator.alertingBgRouteLayerId, alertingBgLayer.id)
-        val shuttledLayer = routeLayers[2]
-        assertEquals(RouteLayerGenerator.shuttledRouteLayerId, shuttledLayer.id)
-        val suspendedLayer = routeLayers[3]
-        assertEquals(RouteLayerGenerator.suspendedRouteLayerId, suspendedLayer.id)
-
-        assertNotNull(shuttledLayer.lineOffset)
-        assertNotNull(suspendedLayer.lineOffset)
+        for (layer in routeLayers) {
+            assertNotNull(layer.lineOffset)
+        }
     }
 
     @Test
-    fun `base layer color comes from data`() = runBlocking {
-        val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
+    fun `base layer color matches data`() = runBlocking {
+        val routeLayers =
+            RouteLayerGenerator.createAllRouteLayers(
+                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.global,
+                ColorPalette.light
+            )
 
-        val baseRouteLayer = routeLayers[0]
-        assertEquals(
-            buildJsonArray {
-                add("get")
-                add(RouteFeaturesBuilder.propRouteColor.key)
-            },
-            baseRouteLayer.lineColor!!.asJson()
-        )
+        for (route in listOf(MapTestDataHelper.routeRed, MapTestDataHelper.routeOrange)) {
+            assertEquals(
+                JsonPrimitive("#${route.color}"),
+                routeLayers
+                    .first { it.id == RouteLayerGenerator.getRouteLayerId(route.id) }
+                    .lineColor!!
+                    .asJson()
+            )
+        }
     }
 
     @Test
-    fun `sort key comes from data`() = runBlocking {
-        val routeLayers = RouteLayerGenerator.createAllRouteLayers(ColorPalette.light)
+    fun `uses provided colors`() = parametricTest {
+        val colorPalette = anyOf(ColorPalette.light, ColorPalette.dark)
 
-        val baseRouteLayer = routeLayers[0]
-        assertEquals(
-            buildJsonArray {
-                add("get")
-                add(RouteFeaturesBuilder.propRouteSortKey.key)
-            },
-            baseRouteLayer.lineSortKey!!.asJson()
-        )
-    }
+        val routeLayers =
+            RouteLayerGenerator.createAllRouteLayers(
+                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.global,
+                colorPalette
+            )
 
-    @Test
-    fun `uses provided colors`() = runBlocking {
-        suspend fun checkColorsMatch(colorPalette: ColorPalette) {
-            val routeLayers = RouteLayerGenerator.createAllRouteLayers(colorPalette)
-
-            val suspendedLayer =
-                routeLayers.find { it.id == RouteLayerGenerator.suspendedRouteLayerId }
-            assertNotNull(suspendedLayer)
+        for (suspendedLayer in routeLayers.filter { it.id.endsWith("-suspended") }) {
             assertEquals(
                 JsonPrimitive(colorPalette.deemphasized),
                 suspendedLayer.lineColor?.asJson()
             )
+        }
 
-            val alertBackgroundLayer =
-                routeLayers.find { it.id == RouteLayerGenerator.alertingBgRouteLayerId }
-            assertNotNull(alertBackgroundLayer)
+        for (alertBackgroundLayer in routeLayers.filter { it.id.endsWith("-bg") }) {
             assertEquals(
                 JsonPrimitive(colorPalette.fill3),
                 alertBackgroundLayer.lineColor?.asJson()
             )
         }
-
-        checkColorsMatch(ColorPalette.light)
-        checkColorsMatch(ColorPalette.dark)
     }
 }

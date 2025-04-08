@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
-import com.mbta.tid.mbta_app.map.RouteLineData
+import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
@@ -45,7 +45,7 @@ import org.koin.core.component.inject
 
 interface IMapViewModel {
     var lastMapboxErrorTimestamp: Flow<Instant?>
-    var railRouteLineData: Flow<List<RouteLineData>?>
+    var railRouteSourceData: Flow<List<RouteSourceData>?>
     var stopSourceData: Flow<FeatureCollection?>
     var globalResponse: Flow<GlobalResponse?>
     var railRouteShapes: Flow<MapFriendlyRouteResponse?>
@@ -97,8 +97,8 @@ open class MapViewModel(
     var config: StateFlow<ApiResult<ConfigResponse>?> = _config
     private val _lastMapboxErrorTimestamp = MutableStateFlow<Instant?>(null)
     override var lastMapboxErrorTimestamp = _lastMapboxErrorTimestamp.debounce(1.seconds)
-    private val _railRouteLineData = MutableStateFlow<List<RouteLineData>?>(null)
-    override var railRouteLineData: Flow<List<RouteLineData>?> = _railRouteLineData
+    private val _railRouteSourceData = MutableStateFlow<List<RouteSourceData>?>(null)
+    override var railRouteSourceData: Flow<List<RouteSourceData>?> = _railRouteSourceData
     private val _stopSourceData = MutableStateFlow<FeatureCollection?>(null)
     override var stopSourceData: Flow<FeatureCollection?> = _stopSourceData
     private val _globalMapData = MutableStateFlow<GlobalMapData?>(null)
@@ -158,8 +158,8 @@ open class MapViewModel(
     override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {
         val globalResponse = globalResponse.first() ?: return
         val railRouteShapes = railRouteShapes.first() ?: return
-        _railRouteLineData.value =
-            RouteFeaturesBuilder.generateRouteLines(
+        _railRouteSourceData.value =
+            RouteFeaturesBuilder.generateRouteSources(
                 railRouteShapes.routesWithSegmentedShapes,
                 globalResponse,
                 globalMapData
@@ -167,7 +167,7 @@ open class MapViewModel(
     }
 
     override suspend fun refreshStopFeatures(selectedStop: Stop?, globalMapData: GlobalMapData?) {
-        val routeLineData = railRouteLineData.first() ?: return
+        val routeLineData = railRouteSourceData.first() ?: return
         _stopSourceData.value =
             StopFeaturesBuilder.buildCollection(
                     StopSourceData(selectedStopId = selectedStop?.id),

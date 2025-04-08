@@ -9,21 +9,22 @@
 import Foundation
 @testable import iosApp
 @_spi(Experimental) import MapboxMaps
+import Shared
 import SwiftUI
 
 class MockLayerManager: IMapLayerManager {
     var currentScheme: ColorScheme?
     private let addIconsCallback: () -> Void
     private let addLayersCallback: () -> Void
-    private let updateChildStopDataCallback: (FeatureCollection) -> Void
-    private let updateRouteDataCallback: (FeatureCollection) -> Void
-    private let updateStopDataCallback: (FeatureCollection) -> Void
+    private let updateChildStopDataCallback: (MapboxMaps.FeatureCollection) -> Void
+    private let updateRouteDataCallback: ([RouteSourceData]) -> Void
+    private let updateStopDataCallback: (MapboxMaps.FeatureCollection) -> Void
 
     init(addIconsCallback: @escaping () -> Void = {},
          addLayersCallback: @escaping () -> Void = {},
-         updateChildStopDataCallback: @escaping (FeatureCollection) -> Void = { _ in },
-         updateRouteDataCallback: @escaping (FeatureCollection) -> Void = { _ in },
-         updateStopDataCallback: @escaping (FeatureCollection) -> Void = { _ in }) {
+         updateChildStopDataCallback: @escaping (MapboxMaps.FeatureCollection) -> Void = { _ in },
+         updateRouteDataCallback: @escaping ([RouteSourceData]) -> Void = { _ in },
+         updateStopDataCallback: @escaping (MapboxMaps.FeatureCollection) -> Void = { _ in }) {
         self.addIconsCallback = addIconsCallback
         self.addLayersCallback = addLayersCallback
         self.updateChildStopDataCallback = updateChildStopDataCallback
@@ -35,22 +36,27 @@ class MockLayerManager: IMapLayerManager {
         addIconsCallback()
     }
 
-    func addLayers(colorScheme: ColorScheme, recreate _: Bool = false) {
+    func addLayers(
+        mapFriendlyRouteResponse _: MapFriendlyRouteResponse,
+        globalResponse _: GlobalResponse,
+        colorScheme: ColorScheme,
+        recreate _: Bool = false
+    ) {
         currentScheme = colorScheme
         addLayersCallback()
     }
 
     func resetPuckPosition() {}
 
-    func updateSourceData(routeData: FeatureCollection) {
+    func updateSourceData(routeData: [RouteSourceData]) {
         updateRouteDataCallback(routeData)
     }
 
-    func updateSourceData(stopData: FeatureCollection) {
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
         updateStopDataCallback(stopData)
     }
 
-    func updateSourceData(childStopData: FeatureCollection) {
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection) {
         updateChildStopDataCallback(childStopData)
     }
 }

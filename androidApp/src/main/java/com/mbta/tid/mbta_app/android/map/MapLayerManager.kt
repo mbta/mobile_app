@@ -9,6 +9,7 @@ import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.extension.style.layers.Layer as MapboxLayer
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.addLayerBelow
+import com.mapbox.maps.extension.style.layers.generated.SlotLayer
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mbta.tid.mbta_app.android.generated.drawableByName
@@ -16,9 +17,12 @@ import com.mbta.tid.mbta_app.map.AlertIcons
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLayerGenerator
+import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopIcons
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -44,12 +48,56 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    suspend fun addLayers(colorPalette: ColorPalette) {
-        val layers: List<MapboxLayer> =
-            RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
-                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
+    suspend fun addLayers(
+        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        globalResponse: GlobalResponse,
+        colorPalette: ColorPalette
+    ) {
+        val routeLayers: List<MapboxLayer> =
+            RouteLayerGenerator.createAllRouteLayers(
+                    mapFriendlyRouteResponse,
+                    globalResponse,
+                    colorPalette
+                )
+                .map { it.toMapbox() }
+        val stopLayers = StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
+        setLayers(routeLayers, stopLayers)
+    }
+
+    suspend fun addLayers(
+        routes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        globalResponse: GlobalResponse,
+        colorPalette: ColorPalette
+    ) {
+        val routeLayers =
+            RouteLayerGenerator.createAllRouteLayers(routes, globalResponse, colorPalette).map {
+                it.toMapbox()
+            }
+        val stopLayers = StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
+        setLayers(routeLayers, stopLayers)
+    }
+
+    private suspend fun setLayers(routeLayers: List<MapboxLayer>, stopLayers: List<MapboxLayer>) {
         withContext(Dispatchers.Main) {
-            for (layer in layers) {
+            if (!map.styleLayerExists(bufferLayerId)) {
+                val layer = SlotLayer(bufferLayerId)
+                if (map.styleLayerExists("puck")) {
+                    map.addLayerBelow(layer, below = "puck")
+                } else {
+                    map.addLayer(layer)
+                }
+            }
+            val oldLayers = map.styleLayers.mapTo(mutableSetOf()) { it.id }
+            for (layer in routeLayers) {
+                oldLayers.remove(layer.layerId)
+                if (map.styleLayerExists(checkNotNull(layer.layerId))) {
+                    // Skip attempting to add layer if it already exists
+                    continue
+                }
+                map.addLayerBelow(layer, below = bufferLayerId)
+            }
+            for (layer in stopLayers) {
+                oldLayers.remove(layer.layerId)
                 if (map.styleLayerExists(checkNotNull(layer.layerId))) {
                     // Skip attempting to add layer if it already exists
                     continue
@@ -58,6 +106,11 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
                     map.addLayerBelow(layer, below = "puck")
                 } else {
                     map.addLayer(layer)
+                }
+            }
+            for (layer in oldLayers) {
+                if (layer.startsWith(RouteLayerGenerator.routeLayerId)) {
+                    map.removeStyleLayer(layer)
                 }
             }
         }
@@ -85,11 +138,20 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    suspend fun updateRouteSourceData(routeData: FeatureCollection) {
-        updateSourceData(RouteFeaturesBuilder.routeSourceId, routeData)
+    suspend fun updateRouteSourceData(routeData: List<RouteSourceData>) {
+        for (data in routeData) {
+            updateSourceData(
+                RouteFeaturesBuilder.getRouteSourceId(data.routeId),
+                data.features.toMapbox()
+            )
+        }
     }
 
     suspend fun updateStopSourceData(stopData: FeatureCollection) {
         updateSourceData(StopFeaturesBuilder.stopSourceId, stopData)
+    }
+
+    companion object {
+        private val bufferLayerId = "empty-layer-between-routes-and-stops"
     }
 }

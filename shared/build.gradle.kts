@@ -140,6 +140,8 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosArm64").dependsOn("bomCodegenIos")
 
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
+
+    tasks.findByName("compileIosMainKotlinMetadata")?.dependsOn("bomCodegenIos")
 }
 
 // don't run Android BOM codegen for iOS-only CI
