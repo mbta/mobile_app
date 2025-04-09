@@ -24,8 +24,8 @@ struct DepartureTile: View {
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
-                if showHeadsign {
-                    Text(data.headsign)
+                if showHeadsign, let headsign = data.headsign {
+                    Text(headsign)
                         .font(Typography.footnoteSemibold)
                         .multilineTextAlignment(.leading)
                 }
