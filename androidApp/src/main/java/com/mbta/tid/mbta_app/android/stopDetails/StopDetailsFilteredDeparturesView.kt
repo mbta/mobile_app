@@ -195,6 +195,7 @@ fun StopDetailsFilteredDeparturesView(
         global,
         alertsHere,
         downstreamAlerts,
+        stopId,
         stopFilter.directionId,
         patternsHere,
         now
@@ -202,7 +203,7 @@ fun StopDetailsFilteredDeparturesView(
         if (global == null) return@LaunchedEffect
         viewModel.setAlertSummaries(
             (alertsHere + downstreamAlerts).associate {
-                it.id to it.summary(stopFilter.directionId, patternsHere, now, global)
+                it.id to it.summary(stopId, stopFilter.directionId, patternsHere, now, global)
             }
         )
     }
