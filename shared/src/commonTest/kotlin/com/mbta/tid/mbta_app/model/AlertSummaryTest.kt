@@ -30,7 +30,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertNull(alertSummary)
     }
@@ -47,7 +47,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
@@ -71,7 +71,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
@@ -95,7 +95,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
@@ -120,7 +120,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.Tomorrow),
@@ -145,7 +145,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
@@ -170,7 +170,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.LaterDate(endTime)),
@@ -210,7 +210,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, AlertSummary.Location.SingleStop(stop.name), null),
@@ -255,7 +255,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(
@@ -291,6 +291,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stop in stops) {
+
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
@@ -304,8 +305,87 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
 
         assertNull(alertSummary)
+    }
+
+    @Test
+    fun `summary with branching stops ahead`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val unaffectedStops = (1..4).map { objects.stop { name = "Unaffected Stop $it" } }
+        val firstStop = objects.stop { name = "First Stop" }
+        val trunkStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
+        val branch1Stops = (1..4).map { objects.stop { name = "Branch 1 Stop $it" } }
+        val branch2Stops = (1..4).map { objects.stop { name = "Branch 2 Stop $it" } }
+
+        val route =
+            objects.route {
+                directionNames = listOf("Inbound", "Outbound")
+                directionDestinations = listOf("A", "Z")
+            }
+
+        val branch1 =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    stopIds =
+                        (unaffectedStops + listOf(firstStop) + trunkStops + branch1Stops).map {
+                            it.id
+                        }
+                }
+            }
+        val branch2 =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    stopIds =
+                        (unaffectedStops + listOf(firstStop) + trunkStops + branch2Stops).map {
+                            it.id
+                        }
+                }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                for (stop in (listOf(firstStop) + trunkStops + branch1Stops + branch2Stops)) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = stop.id
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                unaffectedStops.first().id,
+                0,
+                listOf(branch1, branch2),
+                now,
+                GlobalResponse(objects)
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.StopToBranch(
+                    firstStop.name,
+                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
+                ),
+                null
+            ),
+            alertSummary
+        )
     }
 }
