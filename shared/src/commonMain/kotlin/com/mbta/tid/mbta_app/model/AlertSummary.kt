@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -16,10 +18,11 @@ data class AlertSummary(
     val timeframe: Timeframe? = null
 ) {
     sealed class Location {
-        data class BranchingStops(val startStopName: String, val directionName: String) :
-            Location()
+        data class BranchToStop(val direction: Direction, val endStopName: String) : Location()
 
         data class SingleStop(val stopName: String) : Location()
+
+        data class StopToBranch(val startStopName: String, val direction: Direction) : Location()
 
         data class SuccessiveStops(val startStopName: String, val endStopName: String) : Location()
     }
@@ -37,14 +40,22 @@ data class AlertSummary(
     }
 
     companion object {
-        fun summarizing(alert: Alert, atTime: Instant, global: GlobalResponse): AlertSummary? {
-            if (alert.significance < AlertSignificance.Secondary) return null
+        suspend fun summarizing(
+            alert: Alert,
+            directionId: Int,
+            patterns: List<RoutePattern>,
+            atTime: Instant,
+            global: GlobalResponse
+        ): AlertSummary? {
+            return withContext(Dispatchers.Default) {
+                if (alert.significance < AlertSignificance.Secondary) return@withContext null
 
-            val location = alertLocation(alert, global)
-            val timeframe = alertTimeframe(alert, atTime)
+                val location = alertLocation(alert, directionId, patterns, global)
+                val timeframe = alertTimeframe(alert, atTime)
 
-            if (location == null && timeframe == null) return null
-            return AlertSummary(alert.effect, location, timeframe)
+                if (location == null && timeframe == null) return@withContext null
+                return@withContext AlertSummary(alert.effect, location, timeframe)
+            }
         }
 
         private fun alertTimeframe(alert: Alert, atTime: Instant): Timeframe? {
@@ -71,8 +82,69 @@ data class AlertSummary(
             onDate.dayOfWeek.isoDayNumber < endDate.dayOfWeek.isoDayNumber &&
                 endDate.minus(onDate).days < 7
 
-        private fun alertLocation(alert: Alert, global: GlobalResponse): Location? {
+        private fun alertLocation(
+            alert: Alert,
+            directionId: Int,
+            patterns: List<RoutePattern>,
+            global: GlobalResponse
+        ): Location? {
+            val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
+            val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
+
+            if (affectedStops.size == 1) {
+                return Location.SingleStop(affectedStops.first().name)
+            }
+
+            // Never show multiple stops for bus
+            if (routes.any { !it.isShuttle && it.type == RouteType.BUS }) {
+                return null
+            }
+
+            // Map each pattern to its list of stops affected by this alert
+            val affectedPatternStops =
+                mapPatternsToAffectedStops(alert, directionId, patterns, global)
+
+            // Compare the first stop list to all the others to determine if all patterns share the
+            // same disrupted stops, or if multiple branches are disrupted
+            val firstStops = affectedPatternStops.values.firstOrNull { it.size > 1 } ?: return null
+            val orderedStops = firstStops.mapNotNull { global.stops[it] }
+
+            if (affectedPatternStops.all { it.value.toSet() == firstStops.toSet() }) {
+                return Location.SuccessiveStops(orderedStops.first().name, orderedStops.last().name)
+            }
+
             return null
+        }
+
+        private fun mapPatternsToAffectedStops(
+            alert: Alert,
+            directionId: Int,
+            patterns: List<RoutePattern>,
+            global: GlobalResponse
+        ): Map<RoutePattern, List<String>> {
+            return patterns
+                .mapNotNull { pattern ->
+                    if (pattern.directionId != directionId) return@mapNotNull null
+                    val trip = global.trips[pattern.representativeTripId] ?: return@mapNotNull null
+                    Pair(pattern, trip.stopIds)
+                }
+                .mapNotNull { (pattern, stopIds) ->
+                    val stopIdsOnPattern =
+                        stopIds
+                            ?.filter { stopOnTrip ->
+                                alert.anyInformedEntitySatisfies {
+                                    // `affectedStops` only includes parent stops, here we check
+                                    // if the child stops on each pattern are affected
+                                    checkStop(stopOnTrip)
+                                    checkRoute(pattern.routeId)
+                                }
+                            }
+                            ?.mapNotNull { global.stops[it]?.resolveParent(global)?.id }
+
+                    if (stopIdsOnPattern != null) pattern to stopIdsOnPattern else null
+                }
+                .filter { (_, affectedStopsOnPattern) -> affectedStopsOnPattern.isNotEmpty() }
+                .toMap()
         }
     }
 }
