@@ -621,8 +621,10 @@ fun stopDetailsManagedVM(
                             alertData,
                             now,
                             pinnedRoutes,
-                            // TODO do something about filtered stop details
-                            context = RouteCardData.Context.StopDetailsUnfiltered
+                            context =
+                                if (filters.stopFilter != null)
+                                    RouteCardData.Context.StopDetailsFiltered
+                                else RouteCardData.Context.StopDetailsUnfiltered
                         )
                     } else null
                 )

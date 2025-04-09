@@ -151,7 +151,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
-        XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign))
+        XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign!))
         XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
         XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
         XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
@@ -224,7 +224,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign))
+        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign!))
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(RoutePill.self))
         XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
         XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
