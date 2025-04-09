@@ -225,7 +225,7 @@ struct OnboardingScreenView: View {
     func toggleSetting(_ setting: Settings) {
         Task {
             try await settingsRepository
-                .setSetting(setting: setting, value: !settings.getSafe(setting))
+                .setSettings(settings: [setting: KotlinBoolean(bool: !settings.getSafe(setting))])
             loadSettings()
         }
     }

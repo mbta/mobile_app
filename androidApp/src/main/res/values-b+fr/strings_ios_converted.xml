@@ -205,10 +205,7 @@
     <string name="onboarding_location_body">Nous utilisons votre position pour afficher les options de transport à proximité.</string>
     <string name="onboarding_location_footer">Vous pourrez changer les paramètres de localisation dans les paramètres de l’application.</string>
     <string name="onboarding_location_header">Voir les transports près de votre position</string>
-    <string name="onboarding_station_accessibility_body">Nous pouvons vous informer lorsque des ascenseurs sont fermés dans une station.</string>
-    <string name="onboarding_station_accessibility_header">Soyez informé des fermetures des ascenseurs</string>
-    <string name="onboarding_station_accessibility_hide">Passer</string>
-    <string name="onboarding_station_accessibility_show">Afficher les fermetures des ascenseurs</string>
+    <string name="onboarding_station_accessibility_continue">Continuer</string>
     <string name="open_for_more_arrivals">Ouvert pour plus d’arrivées</string>
     <string name="other_link_privacy_policy">Politique de confidentialité</string>
     <string name="other_link_source_code">Voir la source dans GitHub</string>

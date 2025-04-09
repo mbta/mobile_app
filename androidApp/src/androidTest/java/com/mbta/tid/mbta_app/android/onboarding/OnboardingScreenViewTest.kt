@@ -1,10 +1,13 @@
 package com.mbta.tid.mbta_app.android.onboarding
 
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
+import com.mbta.tid.mbta_app.android.hasRole
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -52,8 +55,8 @@ class OnboardingScreenViewTest {
         val settingsRepo =
             MockSettingsRepository(
                 settings = mapOf(Settings.StationAccessibility to false),
-                onSaveSettings = {
-                    assertEquals(mapOf(Settings.StationAccessibility to true), it)
+                onSaveSetting = { _, value ->
+                    assertTrue(value)
                     savedSetting = true
                 }
             )
@@ -67,15 +70,25 @@ class OnboardingScreenViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Know about elevator closures").assertIsDisplayed()
         composeTestRule
-            .onNodeWithText("We can tell you when elevators are closed at a station.")
+            .onNode(hasText("Station Accessibility Info") and !hasRole(Role.Switch))
             .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Skip").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Show elevator closures").performClick()
+        composeTestRule
+            .onNodeWithText(
+                " we can show you which stations are inaccessible or have elevator closures.",
+                substring = true
+            )
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Continue").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasText("Station Accessibility Info") and hasRole(Role.Switch))
+            .performClick()
 
         composeTestRule.waitForIdle()
         assertTrue(savedSetting)
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitForIdle()
+
         assertTrue(advanced)
     }
 

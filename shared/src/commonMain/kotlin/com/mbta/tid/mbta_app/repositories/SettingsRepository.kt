@@ -15,8 +15,6 @@ interface ISettingsRepository {
     suspend fun getSettings(): Map<Settings, Boolean>
 
     suspend fun setSettings(settings: Map<Settings, Boolean>)
-
-    suspend fun setSetting(setting: Settings, value: Boolean)
 }
 
 class SettingsRepository : ISettingsRepository, KoinComponent {
@@ -35,10 +33,6 @@ class SettingsRepository : ISettingsRepository, KoinComponent {
             settings.forEach { dataStore[it.key.dataStoreKey] = it.value }
         }
     }
-
-    override suspend fun setSetting(setting: Settings, value: Boolean) {
-        dataStore.edit { dataStore -> dataStore[setting.dataStoreKey] = value }
-    }
 }
 
 enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
@@ -54,8 +48,7 @@ class MockSettingsRepository
 constructor(
     private var settings: Map<Settings, Boolean> = emptyMap(),
     private var onGetSettings: () -> Unit = {},
-    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {},
-    private var onSaveSetting: (Settings, Boolean) -> Unit = { _, _ -> }
+    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {}
 ) : ISettingsRepository {
     override suspend fun getSettings(): Map<Settings, Boolean> {
         onGetSettings()
@@ -63,7 +56,4 @@ constructor(
     }
 
     override suspend fun setSettings(settings: Map<Settings, Boolean>) = onSaveSettings(settings)
-
-    override suspend fun setSetting(setting: Settings, value: Boolean) =
-        onSaveSetting(setting, value)
 }

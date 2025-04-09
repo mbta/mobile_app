@@ -38,8 +38,8 @@ final class OnboardingScreenViewTests: XCTestCase {
 
     @MainActor func testStationAccessibilityFlow() throws {
         let saveSettingsExp = expectation(description: "saves station accessibility setting")
-        let settingsRepo = MockSettingsRepository(settings: [.stationAccessibility: false], onSaveSetting: { _, value in
-            XCTAssertEqual(value, true)
+        let settingsRepo = MockSettingsRepository(settings: [.stationAccessibility: false], onSaveSettings: { _ in
+            XCTAssertEqual($0, [.stationAccessibility: true])
             saveSettingsExp.fulfill()
         })
         let advanceExp = expectation(description: "calls advance()")

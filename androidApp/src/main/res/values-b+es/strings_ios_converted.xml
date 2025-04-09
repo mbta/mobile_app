@@ -205,10 +205,7 @@
     <string name="onboarding_location_body">Usamos su ubicación para mostrarle opciones de tráfico cercanas.</string>
     <string name="onboarding_location_footer">Puede cambiar la configuración de ubicación en la aplicación de Configuración.</string>
     <string name="onboarding_location_header">Ver tráfico cerca de usted</string>
-    <string name="onboarding_station_accessibility_body">Podemos informarle cuando los ascensores están cerrados en una estación.</string>
-    <string name="onboarding_station_accessibility_header">Avisar cierres de ascensores</string>
-    <string name="onboarding_station_accessibility_hide">Omitir</string>
-    <string name="onboarding_station_accessibility_show">Mostrar cierres del ascensor</string>
+    <string name="onboarding_station_accessibility_continue">Continuar</string>
     <string name="open_for_more_arrivals">Abierto para más llegadas</string>
     <string name="other_link_privacy_policy">Política de privacidad</string>
     <string name="other_link_source_code">Ver código fuente en GitHub</string>
