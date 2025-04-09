@@ -388,4 +388,256 @@ class AlertSummaryTest {
             alertSummary
         )
     }
+
+    @Test
+    fun `summary with branching GL stops ahead`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val firstStop =
+            objects.stop {
+                name = "Kenmore"
+                childStop { id = "70151" }
+                childStop { id = "71151" }
+            }
+        objects.stop {
+            name = "Blandford Street"
+            childStop { id = "70149" }
+        }
+        objects.stop {
+            name = "Saint Mary's Street"
+            childStop { id = "70211" }
+        }
+
+        val route =
+            objects.route {
+                lineId = "line-Green"
+                directionNames = listOf("Westbound", "Eastbound")
+                directionDestinations = listOf("", "Park St & North")
+            }
+
+        val bBranch =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = listOf("71151", "70149") }
+            }
+        val cBranch =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = listOf("70151", "70211") }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                for (stop in objects.stops.values) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = stop.id
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                firstStop.id,
+                0,
+                listOf(bBranch, cBranch),
+                now,
+                GlobalResponse(objects)
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.StopToBranch(
+                    firstStop.name,
+                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
+                ),
+                null
+            ),
+            alertSummary
+        )
+    }
+
+    @Test
+    fun `summary with branching GL on branch`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val trunkStop =
+            objects.stop {
+                name = "Kenmore"
+                childStop { id = "70150" }
+            }
+        val bBranchStop =
+            objects.stop {
+                name = "Blandford Street"
+                childStop { id = "70148" }
+            }
+        val cBranchStop =
+            objects.stop {
+                name = "Saint Mary's Street"
+                childStop { id = "70212" }
+            }
+
+        val route =
+            objects.route {
+                lineId = "line-Green"
+                directionNames = listOf("Westbound", "Eastbound")
+                directionDestinations = listOf("", "Park St & North")
+            }
+
+        val cBranch =
+            objects.routePattern(route) {
+                directionId = 1
+                representativeTrip { stopIds = listOf("70212", "70150") }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                for (stop in objects.stops.values) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = stop.id
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                cBranchStop.id,
+                1,
+                listOf(cBranch),
+                now,
+                GlobalResponse(objects)
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.SuccessiveStops(cBranchStop.name, trunkStop.name),
+                null
+            ),
+            alertSummary
+        )
+    }
+
+    @Test
+    fun `summary with branching GL on opposite and disconnected branch`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val eBranchStart =
+            objects.stop {
+                name = "Medford/Tufts"
+                childStop { id = "70511" }
+            }
+        val eBranchEnd =
+            objects.stop {
+                name = "Heath Street"
+                childStop { id = "70260" }
+            }
+
+        val trunkAlertingStop =
+            objects.stop {
+                name = "Kenmore"
+                childStop { id = "70151" }
+                childStop { id = "71151" }
+            }
+        val bStop =
+            objects.stop {
+                name = "Blandford Street"
+                childStop { id = "70149" }
+            }
+        val cStop =
+            objects.stop {
+                name = "Saint Mary's Street"
+                childStop { id = "70211" }
+            }
+
+        val route =
+            objects.route {
+                lineId = "line-Green"
+                directionNames = listOf("Westbound", "Eastbound")
+                directionDestinations = listOf("Copley & West", "Medford/Tufts")
+            }
+
+        val bBranch =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = listOf("71151", "70149") }
+            }
+        val cBranch =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = listOf("70151", "70211") }
+            }
+
+        val eBranch =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = listOf("70511", "70260") }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                for (stopId in
+                    listOf(trunkAlertingStop, bStop, cStop).flatMap {
+                        listOf(it.id) + it.childStopIds
+                    }) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = stopId
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                eBranchStart.id,
+                0,
+                listOf(eBranch),
+                now,
+                GlobalResponse(objects)
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.StopToBranch(
+                    trunkAlertingStop.name,
+                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
+                ),
+                null
+            ),
+            alertSummary
+        )
+    }
 }
