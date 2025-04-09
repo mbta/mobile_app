@@ -7,6 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
@@ -18,7 +19,7 @@ import kotlinx.datetime.toInstant
 
 class AlertSummaryTest {
     @Test
-    fun `summary is null when there is no timeframe or location`() {
+    fun `summary is null when there is no timeframe or location`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
         val alert =
@@ -35,7 +36,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with later today timeframe`() {
+    fun `summary with later today timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
         val endTime = now.plus(1.hours)
@@ -55,7 +56,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with end of service timeframe`() {
+    fun `summary with end of service timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
 
@@ -79,7 +80,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with alt end of service timeframe`() {
+    fun `summary with alt end of service timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
 
@@ -103,7 +104,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with tomorrow timeframe`() {
+    fun `summary with tomorrow timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = Clock.System.now()
 
@@ -128,7 +129,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with this week timeframe`() {
+    fun `summary with this week timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         // Fixed time so we can have a specific day of the week (wed)
         val now = Instant.fromEpochMilliseconds(1743598800000)
@@ -153,7 +154,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with later date timeframe`() {
+    fun `summary with later date timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         // Fixed time so we can have a specific day of the week (wed)
         val now = Instant.fromEpochMilliseconds(1743598800000)
@@ -178,7 +179,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with single stop`() {
+    fun `summary with single stop`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val now = Clock.System.now()
@@ -218,7 +219,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with successive stops`() {
+    fun `summary with successive stops`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val now = Clock.System.now()
@@ -264,5 +265,47 @@ class AlertSummaryTest {
             ),
             alertSummary
         )
+    }
+
+    @Test
+    fun `summary with successive bus stops`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val firstStop = objects.stop { name = "First Stop" }
+        val successiveStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
+        val lastStop = objects.stop { name = "Last Stop" }
+
+        val stops = listOf(firstStop) + successiveStops + listOf(lastStop)
+
+        val route = objects.route { type = RouteType.BUS }
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = stops.map { it.id } }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                for (stop in stops) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = stop.id
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, 0, listOf(pattern), now, GlobalResponse(objects))
+
+        assertNull(alertSummary)
     }
 }

@@ -70,7 +70,7 @@ data class Alert(
             else -> AlertSignificance.None
         }
 
-    fun summary(
+    suspend fun summary(
         directionId: Int,
         patterns: List<RoutePattern>,
         atTime: Instant,

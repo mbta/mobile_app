@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -38,20 +40,22 @@ data class AlertSummary(
     }
 
     companion object {
-        fun summarizing(
+        suspend fun summarizing(
             alert: Alert,
             directionId: Int,
             patterns: List<RoutePattern>,
             atTime: Instant,
             global: GlobalResponse
         ): AlertSummary? {
-            if (alert.significance < AlertSignificance.Secondary) return null
+            return withContext(Dispatchers.Default) {
+                if (alert.significance < AlertSignificance.Secondary) return@withContext null
 
-            val location = alertLocation(alert, directionId, patterns, global)
-            val timeframe = alertTimeframe(alert, atTime)
+                val location = alertLocation(alert, directionId, patterns, global)
+                val timeframe = alertTimeframe(alert, atTime)
 
-            if (location == null && timeframe == null) return null
-            return AlertSummary(alert.effect, location, timeframe)
+                if (location == null && timeframe == null) return@withContext null
+                return@withContext AlertSummary(alert.effect, location, timeframe)
+            }
         }
 
         private fun alertTimeframe(alert: Alert, atTime: Instant): Timeframe? {
