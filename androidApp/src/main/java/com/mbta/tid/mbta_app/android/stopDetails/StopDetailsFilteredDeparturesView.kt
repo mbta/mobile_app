@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -126,9 +127,11 @@ fun StopDetailsFilteredDeparturesView(
         }
 
     val expectedDirection = stopFilter.directionId
-    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
-    val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
+    val alertSummaries by viewModel.alertSummaries.collectAsState()
     val hideMaps by viewModel.hideMaps.collectAsState()
+    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+
+    val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
 
     val alertsHere: List<Alert> =
         when (data) {
@@ -176,6 +179,33 @@ fun StopDetailsFilteredDeparturesView(
 
     // keys are trip IDs
     val bringIntoViewRequesters = remember { mutableStateMapOf<String, BringIntoViewRequester>() }
+
+    val patternsHere =
+        rememberSaveable(data) {
+            when (data) {
+                    is FilteredDeparturesData.PreGroupByDirection ->
+                        data.patternsByStop.patterns.flatMap { it.patterns }
+                    is FilteredDeparturesData.PostGroupByDirection -> data.leaf.routePatterns
+                }
+                .filterNotNull()
+                .filter { it.directionId == stopFilter.directionId }
+        }
+
+    LaunchedEffect(
+        global,
+        alertsHere,
+        downstreamAlerts,
+        stopFilter.directionId,
+        patternsHere,
+        now
+    ) {
+        if (global == null) return@LaunchedEffect
+        viewModel.setAlertSummaries(
+            (alertsHere + downstreamAlerts).associate {
+                it.id to it.summary(stopFilter.directionId, patternsHere, now, global)
+            }
+        )
+    }
 
     LaunchedEffect(tripFilter) {
         if (tripFilter != null) {
@@ -242,10 +272,9 @@ fun StopDetailsFilteredDeparturesView(
                             } else {
                                 AlertCardSpec.Secondary
                             }
-                    val summary = global?.let { alert.summary(now, it) }
                     AlertCard(
                         alert,
-                        summary,
+                        alertSummaries[alert.id],
                         spec,
                         color = routeColor,
                         textColor = routeTextColor,

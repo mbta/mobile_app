@@ -14,8 +14,9 @@
     <string name="alert_details">Alert Details</string>
     <string name="alert_ended">Alert is no longer in effect</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
-    <string name="alert_summary_location_branching">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b> stops</string>
+    <string name="alert_summary_location_branch_to_stop">\u0020from &lt;b>%1$s&lt;/b> stops to &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020at &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_stop_to_branch">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b> stops</string>
     <string name="alert_summary_location_successive">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_end_of_service">\u0020through end of service</string>
     <string name="alert_summary_timeframe_later_date">\u0020through %1$s</string>

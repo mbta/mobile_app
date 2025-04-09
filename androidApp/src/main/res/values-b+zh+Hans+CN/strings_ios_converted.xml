@@ -13,8 +13,9 @@
     <string name="alert_details">警报详情</string>
     <string name="alert_ended">警报已失效</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
-    <string name="alert_summary_location_branching">从 &lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b> 站</string>
+    <string name="alert_summary_location_branch_to_stop">从 &lt;b>%1$s&lt;/b> 站到 &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">在 &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_stop_to_branch">从 &lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b> 站</string>
     <string name="alert_summary_location_successive">从 &lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_end_of_service">直至服务结束</string>
     <string name="alert_summary_timeframe_later_date">至%1$s</string>

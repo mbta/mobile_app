@@ -70,8 +70,12 @@ data class Alert(
             else -> AlertSignificance.None
         }
 
-    fun summary(atTime: Instant, global: GlobalResponse) =
-        AlertSummary.summarizing(this, atTime, global)
+    suspend fun summary(
+        directionId: Int,
+        patterns: List<RoutePattern>,
+        atTime: Instant,
+        global: GlobalResponse
+    ) = AlertSummary.summarizing(this, directionId, patterns, atTime, global)
 
     @Serializable
     data class ActivePeriod(val start: Instant, val end: Instant?) {

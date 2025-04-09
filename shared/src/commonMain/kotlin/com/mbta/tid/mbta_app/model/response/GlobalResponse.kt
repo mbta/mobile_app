@@ -97,8 +97,8 @@ data class GlobalResponse(
     fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
         if (alert == null || routes == null) return null
         val routeEntities =
-            alert.matchingEntities { entity ->
-                routes.any { route -> entity.route == null || entity.route == route.id }
+            routes.flatMap { route ->
+                alert.matchingEntities { entity -> entity.satisfies { checkRoute(route.id) } }
             }
         val parentStops =
             routeEntities.mapNotNull { this.stops[it.stop]?.resolveParent(this.stops) }
