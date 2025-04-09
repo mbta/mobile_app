@@ -390,6 +390,85 @@ class AlertSummaryTest {
     }
 
     @Test
+    fun `summary with branching stops behind`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = Clock.System.now()
+
+        val unaffectedStops = (1..4).map { objects.stop { name = "Unaffected Stop $it" } }
+        val lastStop = objects.stop { name = "Last Stop" }
+        val trunkStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
+        val branch1Stops = (1..4).map { objects.stop { name = "Branch 1 Stop $it" } }
+        val branch2Stops = (1..4).map { objects.stop { name = "Branch 2 Stop $it" } }
+
+        val route =
+            objects.route {
+                directionNames = listOf("Inbound", "Outbound")
+                directionDestinations = listOf("A", "Z")
+            }
+
+        val branch1 =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    stopIds =
+                        (branch1Stops + trunkStops + listOf(lastStop) + unaffectedStops).map {
+                            it.id
+                        }
+                }
+            }
+        val branch2 =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    stopIds =
+                        (branch2Stops + trunkStops + listOf(lastStop) + unaffectedStops).map {
+                            it.id
+                        }
+                }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                for (stop in (listOf(lastStop) + trunkStops + branch1Stops + branch2Stops)) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = stop.id
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                unaffectedStops.first().id,
+                0,
+                listOf(branch1, branch2),
+                now,
+                GlobalResponse(objects)
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.DirectionToStop(
+                    Direction(route.directionNames[1]!!, route.directionDestinations[1]!!, 1),
+                    lastStop.name,
+                ),
+                null
+            ),
+            alertSummary
+        )
+    }
+
+    @Test
     fun `summary with branching GL stops ahead`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
