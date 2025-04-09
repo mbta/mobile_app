@@ -19,17 +19,6 @@ object RouteLayerGenerator {
     fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
 
     suspend fun createAllRouteLayers(
-        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
-        globalResponse: GlobalResponse,
-        colorPalette: ColorPalette
-    ) =
-        createAllRouteLayers(
-            mapFriendlyRouteResponse.routesWithSegmentedShapes,
-            globalResponse,
-            colorPalette
-        )
-
-    suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette
@@ -46,7 +35,8 @@ object RouteLayerGenerator {
         val sortedRoutes =
             routesWithShapes
                 .filter { routesById.containsKey(it.routeId) }
-                .sortedBy { // Sort by reverse sort order so that lowest ordered routes are drawn
+                .sortedBy {
+                    // Sort by reverse sort order so that lowest ordered routes are drawn
                     // first/lowest
                     -routesById[it.routeId]!!.sortOrder
                 }

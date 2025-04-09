@@ -12,7 +12,7 @@ class RouteLayerGeneratorTest {
     fun `route layers are created`(): Unit = runBlocking {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
-                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 ColorPalette.light
             )
@@ -41,7 +41,7 @@ class RouteLayerGeneratorTest {
     fun `layers have offset`(): Unit = runBlocking {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
-                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 ColorPalette.light
             )
@@ -55,7 +55,7 @@ class RouteLayerGeneratorTest {
     fun `base layer color matches data`() = runBlocking {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
-                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 ColorPalette.light
             )
@@ -77,7 +77,7 @@ class RouteLayerGeneratorTest {
 
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
-                MapTestDataHelper.routeResponse,
+                MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 colorPalette
             )

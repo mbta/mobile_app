@@ -15,7 +15,7 @@ protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
     func addIcons(recreate: Bool)
     func addLayers(
-        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         globalResponse: GlobalResponse,
         colorScheme: ColorScheme,
         recreate: Bool
@@ -23,6 +23,22 @@ protocol IMapLayerManager {
     func resetPuckPosition()
     func updateSourceData(routeData: [RouteSourceData])
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
+}
+
+extension IMapLayerManager {
+    func addLayers(
+        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        globalResponse: GlobalResponse,
+        colorScheme: ColorScheme,
+        recreate: Bool
+    ) {
+        addLayers(
+            routes: mapFriendlyRouteResponse.routesWithSegmentedShapes,
+            globalResponse: globalResponse,
+            colorScheme: colorScheme,
+            recreate: recreate
+        )
+    }
 }
 
 struct MapImageError: Error {}
@@ -80,7 +96,7 @@ class MapLayerManager: IMapLayerManager {
      https://docs.mapbox.com/ios/maps/api/11.5.0/documentation/mapboxmaps/stylemanager/addpersistentlayer(_:layerposition:)
      */
     func addLayers(
-        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         globalResponse: GlobalResponse,
         colorScheme: ColorScheme,
         recreate: Bool = false
@@ -89,7 +105,7 @@ class MapLayerManager: IMapLayerManager {
             let colorPalette = getColorPalette(colorScheme: colorScheme)
             currentScheme = colorScheme
             let routeLayers = try await RouteLayerGenerator.shared.createAllRouteLayers(
-                mapFriendlyRouteResponse: mapFriendlyRouteResponse,
+                routesWithShapes: routes,
                 globalResponse: globalResponse,
                 colorPalette: colorPalette
             )

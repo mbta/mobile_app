@@ -53,15 +53,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette
     ) {
-        val routeLayers: List<MapboxLayer> =
-            RouteLayerGenerator.createAllRouteLayers(
-                    mapFriendlyRouteResponse,
-                    globalResponse,
-                    colorPalette
-                )
-                .map { it.toMapbox() }
-        val stopLayers = StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
-        setLayers(routeLayers, stopLayers)
+        addLayers(mapFriendlyRouteResponse.routesWithSegmentedShapes, globalResponse, colorPalette)
     }
 
     suspend fun addLayers(

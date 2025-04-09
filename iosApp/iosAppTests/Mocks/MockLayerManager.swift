@@ -37,7 +37,7 @@ class MockLayerManager: IMapLayerManager {
     }
 
     func addLayers(
-        mapFriendlyRouteResponse _: MapFriendlyRouteResponse,
+        routes _: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         globalResponse _: GlobalResponse,
         colorScheme: ColorScheme,
         recreate _: Bool = false
