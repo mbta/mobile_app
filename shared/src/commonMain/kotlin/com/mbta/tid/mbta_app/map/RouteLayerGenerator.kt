@@ -22,32 +22,30 @@ object RouteLayerGenerator {
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette
-    ): List<LineLayer> =
-        withContext(Dispatchers.Default) {
-            createAllRouteLayers(routesWithShapes, globalResponse.routes, colorPalette)
-        }
+    ): List<LineLayer> = createAllRouteLayers(routesWithShapes, globalResponse.routes, colorPalette)
 
-    private fun createAllRouteLayers(
+    private suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>,
         colorPalette: ColorPalette
-    ): List<LineLayer> {
-        val sortedRoutes =
-            routesWithShapes
-                .filter { routesById.containsKey(it.routeId) }
-                .sortedBy {
-                    // Sort by reverse sort order so that lowest ordered routes are drawn
-                    // first/lowest
-                    -routesById[it.routeId]!!.sortOrder
-                }
+    ): List<LineLayer> =
+        withContext(Dispatchers.Default) {
+            val sortedRoutes =
+                routesWithShapes
+                    .filter { routesById.containsKey(it.routeId) }
+                    .sortedBy {
+                        // Sort by reverse sort order so that lowest ordered routes are drawn
+                        // first/lowest
+                        -routesById[it.routeId]!!.sortOrder
+                    }
 
-        return sortedRoutes.map { createRouteLayer(routesById[it.routeId]!!) } +
-            // Draw all alerting layers on top so they are not covered by any overlapping route
-            // shape
-            sortedRoutes.flatMap {
-                createAlertingRouteLayers(routesById[it.routeId]!!, colorPalette)
-            }
-    }
+            sortedRoutes.map { createRouteLayer(routesById[it.routeId]!!) } +
+                // Draw all alerting layers on top so they are not covered by any overlapping route
+                // shape
+                sortedRoutes.flatMap {
+                    createAlertingRouteLayers(routesById[it.routeId]!!, colorPalette)
+                }
+        }
 
     fun createRouteLayer(route: Route): LineLayer {
         val layer = baseRouteLayer(getRouteLayerId(route.id), route)
