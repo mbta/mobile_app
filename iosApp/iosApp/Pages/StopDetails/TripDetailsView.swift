@@ -159,6 +159,7 @@ struct TripDetailsView: View {
                 now: now,
                 onTapLink: onTapStop,
                 routeAccents: routeAccents,
+                showElevatorAccessibility: stopDetailsVM.showElevatorAccessibility,
                 global: stopDetailsVM.global
             )
             .padding(.top, -56)
