@@ -13,7 +13,7 @@ fun NearbyLineView(
     onPin: (String) -> Unit,
     now: Instant,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
-    showElevatorAccessibility: Boolean = false
+    showStationAccessibility: Boolean = false
 ) {
     LineCard(nearbyLine.line, nearbyLine.routes, pinned, onPin) {
         for (patternsAtStop in nearbyLine.patternsByStop) {
@@ -23,7 +23,7 @@ fun NearbyLineView(
                 now,
                 pinned,
                 onOpenStopDetails,
-                showElevatorAccessibility
+                showStationAccessibility
             )
         }
     }

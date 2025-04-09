@@ -81,7 +81,7 @@ fun OnboardingScreenView(
 
     fun showStationAccessibility(show: Boolean) {
         coroutineScope.launch {
-            settingsRepository.setSettings(mapOf(Settings.ElevatorAccessibility to show))
+            settingsRepository.setSettings(mapOf(Settings.StationAccessibility to show))
             advance()
         }
     }

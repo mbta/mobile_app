@@ -164,4 +164,21 @@ enum OnboardingPieces {
                 .accessibilityHidden(true)
         }
     }
+
+    struct SettingsToggle: View {
+        let getSetting: () -> Bool
+        let toggleSetting: () -> Void
+        let label: Text
+
+        var body: some View {
+            Toggle(isOn: Binding<Bool>(
+                get: getSetting,
+                set: { _ in toggleSetting() }
+            )) { label }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .frame(minHeight: 44)
+                .background(Color.fill3)
+        }
+    }
 }

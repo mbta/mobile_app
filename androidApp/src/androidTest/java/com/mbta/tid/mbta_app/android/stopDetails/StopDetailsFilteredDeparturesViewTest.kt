@@ -580,7 +580,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val settings =
-            MockSettingsRepository(settings = mapOf(Settings.ElevatorAccessibility to true))
+            MockSettingsRepository(settings = mapOf(Settings.StationAccessibility to true))
         val viewModel = StopDetailsViewModel.mocked(settingsRepository = settings)
         viewModel.setDepartures(departures)
         viewModel.loadSettings()
@@ -717,7 +717,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val settings =
-            MockSettingsRepository(settings = mapOf(Settings.ElevatorAccessibility to true))
+            MockSettingsRepository(settings = mapOf(Settings.StationAccessibility to true))
         val viewModel = StopDetailsViewModel.mocked(settingsRepository = settings)
         viewModel.setDepartures(departures)
         viewModel.loadSettings()

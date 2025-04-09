@@ -858,7 +858,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
-        nearbyVM.showElevatorAccessibility = true
+        nearbyVM.showStationAccessibility = true
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -881,7 +881,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
     func testDisplaysWheelchairAccessibility() throws {
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showElevatorAccessibility = true
+        nearbyVM.showStationAccessibility = true
         nearbyVM.alerts = AlertsStreamDataResponse(alerts: [:])
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),

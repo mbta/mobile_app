@@ -135,7 +135,7 @@ class NearbyStopViewTest {
                 now = now,
                 pinned = false,
                 onOpenStopDetails = { _, _ -> },
-                showElevatorAccessibility = true
+                showStationAccessibility = true
             )
         }
         composeTestRule.onNodeWithText("1 elevator closed").assertIsDisplayed()
@@ -151,7 +151,7 @@ class NearbyStopViewTest {
                 now = now,
                 pinned = false,
                 onOpenStopDetails = { _, _ -> },
-                showElevatorAccessibility = true
+                showStationAccessibility = true
             )
         }
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
@@ -168,7 +168,7 @@ class NearbyStopViewTest {
                 now = now,
                 pinned = false,
                 onOpenStopDetails = { _, _ -> },
-                showElevatorAccessibility = true
+                showStationAccessibility = true
             )
         }
         composeTestRule.onNodeWithText("Not accessible").assertDoesNotExist()

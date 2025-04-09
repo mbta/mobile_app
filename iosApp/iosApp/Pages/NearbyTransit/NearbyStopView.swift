@@ -13,7 +13,7 @@ struct NearbyStopView: View {
     var analytics: Analytics = AnalyticsProvider.shared
     let patternsAtStop: PatternsByStop
     let condenseHeadsignPredictions: Bool
-    let showElevatorAccessibility: Bool
+    let showStationAccessibility: Bool
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let pinned: Bool
@@ -21,14 +21,14 @@ struct NearbyStopView: View {
     init(
         patternsAtStop: PatternsByStop,
         condenseHeadsignPredictions: Bool = false,
-        showElevatorAccessibility: Bool = false,
+        showStationAccessibility: Bool = false,
         now: Instant,
         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
         pinned: Bool
     ) {
         self.patternsAtStop = patternsAtStop
         self.condenseHeadsignPredictions = condenseHeadsignPredictions
-        self.showElevatorAccessibility = showElevatorAccessibility
+        self.showStationAccessibility = showStationAccessibility
         self.now = now
         self.pushNavEntry = pushNavEntry
         self.pinned = pinned
@@ -36,9 +36,9 @@ struct NearbyStopView: View {
 
     var elevatorAlerts: Int { patternsAtStop.elevatorAlerts.count }
     var isWheelchairAccessible: Bool { patternsAtStop.stop.isWheelchairAccessible }
-    var showAccessible: Bool { showElevatorAccessibility && isWheelchairAccessible }
-    var showInaccessible: Bool { showElevatorAccessibility && !isWheelchairAccessible }
-    var showElevatorAlerts: Bool { showElevatorAccessibility && !patternsAtStop.elevatorAlerts.isEmpty }
+    var showAccessible: Bool { showStationAccessibility && isWheelchairAccessible }
+    var showInaccessible: Bool { showStationAccessibility && !isWheelchairAccessible }
+    var showElevatorAlerts: Bool { showStationAccessibility && !patternsAtStop.elevatorAlerts.isEmpty }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -101,7 +101,7 @@ struct NearbyStopView: View {
         patternsAtStop: .init(routes: [route], line: nil, stop: stop, patterns: [], directions: [],
                               elevatorAlerts: [alert]),
         condenseHeadsignPredictions: false,
-        showElevatorAccessibility: true,
+        showStationAccessibility: true,
         now: Date.now.toKotlinInstant(),
         pushNavEntry: { _ in },
         pinned: false

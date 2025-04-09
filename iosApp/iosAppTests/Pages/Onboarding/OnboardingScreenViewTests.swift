@@ -38,8 +38,8 @@ final class OnboardingScreenViewTests: XCTestCase {
 
     @MainActor func testStationAccessibilityFlow() throws {
         let saveSettingsExp = expectation(description: "saves station accessibility setting")
-        let settingsRepo = MockSettingsRepository(settings: [.elevatorAccessibility: false], onSaveSettings: {
-            XCTAssertEqual($0, [.elevatorAccessibility: true])
+        let settingsRepo = MockSettingsRepository(settings: [.stationAccessibility: false], onSaveSetting: { _, value in
+            XCTAssertEqual(value, true)
             saveSettingsExp.fulfill()
         })
         let advanceExp = expectation(description: "calls advance()")
@@ -48,10 +48,15 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "We can tell you when elevators are closed at a station."))
-        XCTAssertNotNil(try sut.inspect().find(button: "Skip"))
-        try sut.inspect().find(button: "Show elevator closures").tap()
-        wait(for: [saveSettingsExp, advanceExp], timeout: 1)
+        XCTAssertNotNil(try sut.inspect().find(where: { view in
+            try view.text().string()
+                .contains("we can show you which stations are inaccessible or have elevator closures.")
+        }))
+        XCTAssertNotNil(try sut.inspect().find(button: "Continue"))
+        try sut.inspect().find(ViewType.Toggle.self).tap()
+        wait(for: [saveSettingsExp], timeout: 1)
+        try sut.inspect().find(button: "Continue").tap()
+        wait(for: [advanceExp], timeout: 1)
     }
 
     func testHideMapsFlow() throws {

@@ -4348,6 +4348,9 @@
         }
       }
     },
+    "By opting in, we can show you which stations are inaccessible or have elevator closures." : {
+
+    },
     "Cancel" : {
       "comment" : "Cancel searching, clears the search term and closes the search page",
       "localizations" : {
@@ -5202,6 +5205,7 @@
       }
     },
     "Continue" : {
+      "comment" : "Button to advance to next scren in onboarding flow",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -9510,6 +9514,7 @@
       }
     },
     "Know about elevator closures" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13945,6 +13950,9 @@
         }
       }
     },
+    "Set station accessibility info preference" : {
+
+    },
     "Settings" : {
       "comment" : "More page section header, includes settings that the user can configure",
       "localizations" : {
@@ -14088,6 +14096,7 @@
     },
     "Show elevator accessibility" : {
       "comment" : "A setting on the More page to display elevator accessibility",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -14135,6 +14144,7 @@
     },
     "Show elevator closures" : {
       "comment" : "Onboarding button text for setting station accessibility to shown",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -14699,6 +14709,7 @@
     },
     "Skip" : {
       "comment" : "Onboarding button text for setting station accessibility to hidden",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15448,6 +15459,9 @@
           }
         }
       }
+    },
+    "Station Accessibility Info" : {
+      "comment" : "A setting on the More page to toggle displaying station accessibility info"
     },
     "Station closed" : {
       "comment" : "Possible alert effect",
@@ -18567,6 +18581,7 @@
       }
     },
     "We can tell you when elevators are closed at a station." : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

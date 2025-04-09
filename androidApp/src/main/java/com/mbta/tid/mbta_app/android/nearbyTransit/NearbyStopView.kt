@@ -39,12 +39,12 @@ fun NearbyStopView(
     now: Instant,
     pinned: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
-    showElevatorAccessibility: Boolean = false
+    showStationAccessibility: Boolean = false
 ) {
     val isWheelchairAccessible = patternsAtStop.stop.isWheelchairAccessible
-    val showAccessible = showElevatorAccessibility && isWheelchairAccessible
-    val showInaccessible = showElevatorAccessibility && !isWheelchairAccessible
-    val showElevatorAlerts = showElevatorAccessibility && patternsAtStop.elevatorAlerts.isNotEmpty()
+    val showAccessible = showStationAccessibility && isWheelchairAccessible
+    val showInaccessible = showStationAccessibility && !isWheelchairAccessible
+    val showElevatorAlerts = showStationAccessibility && patternsAtStop.elevatorAlerts.isNotEmpty()
 
     Row(
         Modifier.background(colorResource(id = R.color.fill2))

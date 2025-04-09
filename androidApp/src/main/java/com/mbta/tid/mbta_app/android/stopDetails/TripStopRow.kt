@@ -64,7 +64,7 @@ fun TripStopRow(
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
     modifier: Modifier = Modifier,
-    showElevatorAccessibility: Boolean = false,
+    showStationAccessibility: Boolean = false,
     targeted: Boolean = false,
     firstStop: Boolean = false,
     lastStop: Boolean = false
@@ -85,13 +85,13 @@ fun TripStopRow(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (showElevatorAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
+                    if (showStationAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
                         Image(
                             modifier = Modifier.height(24.dp).testTag("elevator_alert"),
                             painter = painterResource(R.drawable.elevator_alert),
                             contentDescription = null
                         )
-                    } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
+                    } else if (showStationAccessibility && stop.stop.isWheelchairAccessible) {
                         Image(
                             modifier = Modifier.height(24.dp).testTag("wheelchair_accessible"),
                             painter = painterResource(R.drawable.wheelchair_accessible),
@@ -310,7 +310,7 @@ private fun TripStopRowPreview() {
                     type = RouteType.HEAVY_RAIL,
                     color = Color.fromHex("DA291C")
                 ),
-                showElevatorAccessibility = true,
+                showStationAccessibility = true,
             )
             TripStopRow(
                 stop =
@@ -342,7 +342,7 @@ private fun TripStopRowPreview() {
                     type = RouteType.HEAVY_RAIL,
                     color = Color.fromHex("DA291C")
                 ),
-                showElevatorAccessibility = true
+                showStationAccessibility = true
             )
             TripStopRow(
                 stop =
@@ -368,7 +368,7 @@ private fun TripStopRowPreview() {
                     type = RouteType.COMMUTER_RAIL,
                     color = Color.fromHex("DA291C")
                 ),
-                showElevatorAccessibility = true
+                showStationAccessibility = true
             )
         }
     }

@@ -81,7 +81,7 @@ fun StopDetailsFilteredDeparturesView(
     analytics: Analytics = koinInject()
 ) {
     val expectedDirection = stopFilter.directionId
-    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+    val showStationAccessibility by viewModel.showStationAccessibility.collectAsState()
     val hasAccessibilityWarning =
         (elevatorAlerts.isNotEmpty() || !patternsByStop.stop.isWheelchairAccessible)
     val hideMaps by viewModel.hideMaps.collectAsState()
@@ -169,7 +169,7 @@ fun StopDetailsFilteredDeparturesView(
                             ?: if (alert.significance == AlertSignificance.Major) {
                                 AlertCardSpec.Major
                             } else if (
-                                alert.significance == AlertSignificance.Minor &&
+                                alert.significance == AlertSigniSicance.Minor &&
                                     alert.effect == Alert.Effect.Delay
                             ) {
                                 AlertCardSpec.Delay
@@ -203,7 +203,7 @@ fun StopDetailsFilteredDeparturesView(
                 if (
                     alertsHere.isNotEmpty() ||
                         downstreamAlerts.isNotEmpty() ||
-                        (showElevatorAccessibility && hasAccessibilityWarning)
+                        (showStationAccessibility && hasAccessibilityWarning)
                 ) {
                     Column(
                         Modifier.padding(horizontal = 10.dp),
@@ -211,7 +211,7 @@ fun StopDetailsFilteredDeparturesView(
                     ) {
                         alertsHere.forEach { AlertCard(it) }
                         downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
-                        if (showElevatorAccessibility && hasAccessibilityWarning) {
+                        if (showStationAccessibility && hasAccessibilityWarning) {
                             if (elevatorAlerts.isNotEmpty()) {
                                 elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
                             } else {
