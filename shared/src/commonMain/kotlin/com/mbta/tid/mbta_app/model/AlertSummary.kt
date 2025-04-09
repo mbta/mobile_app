@@ -18,11 +18,12 @@ data class AlertSummary(
     val timeframe: Timeframe? = null
 ) {
     sealed class Location {
-        data class BranchToStop(val direction: Direction, val endStopName: String) : Location()
+        data class DirectionToStop(val direction: Direction, val endStopName: String) : Location()
 
         data class SingleStop(val stopName: String) : Location()
 
-        data class StopToBranch(val startStopName: String, val direction: Direction) : Location()
+        data class StopToDirection(val startStopName: String, val direction: Direction) :
+            Location()
 
         data class SuccessiveStops(val startStopName: String, val endStopName: String) : Location()
     }
@@ -116,8 +117,8 @@ data class AlertSummary(
             }
 
             // Determine if every effected stop list starts or ends at the same stop, if they do,
-            // the disruption starts on the trunk and ends on multiple branches, if not, return null
-            // because we have some kind more complicated branch to branch disruption.
+            // the disruption starts on the trunk and ends on multiple branches (or vice versa), if
+            // not, return null because we have a more complicated branch to branch disruption.
             fun locationFrom(stop: Stop, first: Boolean = true): Location? {
                 val directions =
                     Direction.getDirectionsForLine(global, stop, affectedPatternStops.keys.toList())
@@ -130,9 +131,9 @@ data class AlertSummary(
                     } else return null
 
                 return if (first) {
-                    Location.StopToBranch(stopName, direction)
+                    Location.StopToDirection(stopName, direction)
                 } else {
-                    Location.BranchToStop(direction, stopName)
+                    Location.DirectionToStop(direction, stopName)
                 }
             }
 
@@ -173,9 +174,15 @@ data class AlertSummary(
                             else
                                 directionStops.map { (earlier, branched) ->
                                     Pair(
-                                        ObjectCollectionBuilder.Single.routePattern(routes[0]) {
-                                            this.directionId = directionId
-                                        },
+                                        RoutePattern(
+                                            "",
+                                            directionId,
+                                            "",
+                                            0,
+                                            RoutePattern.Typicality.Typical,
+                                            representativeTripId = "",
+                                            routeId = routes[0].id
+                                        ),
                                         earlier + branched
                                     )
                                 }
@@ -214,8 +221,8 @@ data class AlertSummary(
         }
 
         // The first value in these pairs is the list of trunk stops for each route, including a few
-        // minor child stop differences at some stops, like Park and Kenmore. These trunk lists
-        // start at the first trunk stop on the opposite end of the trip (Lechmere and Kenmore).
+        // minor child stop differences at some stops, like Park and Kenmore. Stops on branches on
+        // the opposite end of the line are not included, only trunk stops are included.
         // The second value contains all the child stops that exist only on each branch.
         // These are hard coded because the patterns provided to `summarizing` will only include
         // ones served at the selected stop, they don't take other branches into account, but we
@@ -224,7 +231,7 @@ data class AlertSummary(
             listOf(
                 Pair( // B Branch
                     listOf(
-                        "70502",
+                        "70502", // Lechmere
                         "70208",
                         "70206",
                         "70204",
@@ -234,10 +241,10 @@ data class AlertSummary(
                         "70157",
                         "70155",
                         "70153",
-                        "71151"
+                        "71151" // Kenmore
                     ),
                     listOf(
-                        "70149",
+                        "70149", // Blandford Street
                         "70147",
                         "70145",
                         "170141",
@@ -252,12 +259,12 @@ data class AlertSummary(
                         "70115",
                         "70113",
                         "70111",
-                        "70107"
+                        "70107" // Boston College
                     )
                 ),
                 Pair( // C Branch
                     listOf(
-                        "70502",
+                        "70502", // Lechmere
                         "70208",
                         "70206",
                         "70204",
@@ -267,10 +274,10 @@ data class AlertSummary(
                         "70157",
                         "70155",
                         "70153",
-                        "70151"
+                        "70151" // Kenmore
                     ),
                     listOf(
-                        "70211",
+                        "70211", // Saint Mary's Street
                         "70213",
                         "70215",
                         "70217",
@@ -282,12 +289,12 @@ data class AlertSummary(
                         "70231",
                         "70233",
                         "70235",
-                        "70237"
+                        "70237" // Cleveland Circle
                     )
                 ),
                 Pair( // D Branch
                     listOf(
-                        "70502",
+                        "70502", // Lechmere
                         "70208",
                         "70206",
                         "70204",
@@ -297,10 +304,10 @@ data class AlertSummary(
                         "70157",
                         "70155",
                         "70153",
-                        "70151"
+                        "70151" // Kenmore
                     ),
                     listOf(
-                        "70187",
+                        "70187", // Fenway
                         "70183",
                         "70181",
                         "70179",
@@ -312,12 +319,12 @@ data class AlertSummary(
                         "70167",
                         "70165",
                         "70163",
-                        "70161"
+                        "70161" // Riverside
                     )
                 ),
                 Pair( // E Branch
                     listOf(
-                        "70502",
+                        "70502", // Lechmere
                         "70208",
                         "70206",
                         "70204",
@@ -325,10 +332,10 @@ data class AlertSummary(
                         "70199",
                         "70159",
                         "70157",
-                        "70155"
+                        "70155" // Copley
                     ),
                     listOf(
-                        "70239",
+                        "70239", // Prudential
                         "70241",
                         "70243",
                         "70245",
@@ -338,7 +345,7 @@ data class AlertSummary(
                         "70253",
                         "70255",
                         "70257",
-                        "70260"
+                        "70260" // Heath Street
                     )
                 ),
             )
@@ -347,7 +354,7 @@ data class AlertSummary(
             listOf(
                 Pair( // Medford/Tufts
                     listOf(
-                        "70150",
+                        "70150", // Kenmore
                         "70152",
                         "70154",
                         "70156",
@@ -357,13 +364,19 @@ data class AlertSummary(
                         "70203",
                         "70205",
                         "70207",
-                        "70501"
+                        "70501" // Lechmere
                     ),
-                    listOf("70513", "70505", "70507", "70509", "70511")
+                    listOf(
+                        "70513", // East Somerville
+                        "70505",
+                        "70507",
+                        "70509",
+                        "70511" // Medford/Tufts
+                    )
                 ),
                 Pair( // Union
                     listOf(
-                        "70150",
+                        "70150", // Kenmore
                         "70152",
                         "70154",
                         "70156",
@@ -373,9 +386,9 @@ data class AlertSummary(
                         "70203",
                         "70205",
                         "70207",
-                        "70501"
+                        "70501" // Lechmere
                     ),
-                    listOf("70503")
+                    listOf("70503") // Union Square
                 ),
             )
     }

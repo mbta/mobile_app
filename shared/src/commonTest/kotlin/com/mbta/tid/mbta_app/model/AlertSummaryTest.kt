@@ -379,7 +379,7 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary(
                 alert.effect,
-                AlertSummary.Location.StopToBranch(
+                AlertSummary.Location.StopToDirection(
                     firstStop.name,
                     Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
                 ),
@@ -458,7 +458,7 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary(
                 alert.effect,
-                AlertSummary.Location.StopToBranch(
+                AlertSummary.Location.StopToDirection(
                     firstStop.name,
                     Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
                 ),
@@ -631,7 +631,7 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary(
                 alert.effect,
-                AlertSummary.Location.StopToBranch(
+                AlertSummary.Location.StopToDirection(
                     trunkAlertingStop.name,
                     Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
                 ),
