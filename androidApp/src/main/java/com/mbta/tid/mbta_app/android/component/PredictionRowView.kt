@@ -4,13 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
@@ -52,34 +51,37 @@ fun PredictionRowView(
     destination: @Composable () -> Unit
 ) {
     Row(
-        modifier
-            .fillMaxWidth()
-            .heightIn(min = 44.dp)
-            .padding(8.dp)
-            .background(color = MaterialTheme.colorScheme.background),
+        modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (pillDecoration is PillDecoration.OnRow) {
+            RoutePill(
+                pillDecoration.route,
+                line = null,
+                RoutePillType.Flex,
+                modifier =
+                    if (predictions.secondaryAlert == null) Modifier.padding(end = 8.dp)
+                    else Modifier
+            )
+        }
         predictions.secondaryAlert?.let { secondaryAlert ->
             Image(
                 painterResource(drawableByName(secondaryAlert.iconName)),
                 stringResource(R.string.alert),
-                modifier = Modifier.placeholderIfLoading()
+                modifier = Modifier.placeholderIfLoading().padding(end = 8.dp)
             )
         }
-        if (pillDecoration is PillDecoration.OnRow) {
-            RoutePill(pillDecoration.route, line = null, RoutePillType.Flex)
-        }
 
-        Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) { destination() }
+        Column(modifier = Modifier.weight(1f)) { destination() }
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.width(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProvideTextStyle(value = Typography.callout) {
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f, fill = false),
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -130,18 +132,6 @@ fun PredictionRowView(
                     }
                 }
             }
-
-            if (predictions !is UpcomingFormat.Disruption) {
-                Column(
-                    modifier = Modifier.padding(8.dp).widthIn(max = 8.dp),
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.baseline_chevron_right_24),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                }
-            }
         }
     }
 }
@@ -163,7 +153,7 @@ private fun PredictionRowViewPreview() {
     val trip = objects.trip()
 
     MyApplicationTheme {
-        Column {
+        Column(Modifier.background(MaterialTheme.colorScheme.background)) {
             PredictionRowView(
                 predictions =
                     UpcomingFormat.Some(
@@ -178,7 +168,7 @@ private fun PredictionRowViewPreview() {
                     ),
                 pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
             ) {
-                Text("Destination")
+                Text("Longer Destination than That")
             }
 
             PredictionRowView(

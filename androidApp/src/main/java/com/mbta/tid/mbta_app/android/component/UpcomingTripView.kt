@@ -390,7 +390,7 @@ fun DisruptionView(
                         }
                             ?: Modifier
                     ),
-            style = Typography.footnote
+            style = Typography.footnoteSemibold
         )
         Image(icon, null, Modifier.size(20.dp))
     }
