@@ -205,7 +205,9 @@
     <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
     <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
     <string name="onboarding_location_header">Ver transporte perto de você</string>
+    <string name="onboarding_station_accessibility_body">Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados.</string>
     <string name="onboarding_station_accessibility_continue">Continuar</string>
+    <string name="onboarding_station_accessibility_header">Informações de acessibilidade da estação</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>
@@ -254,7 +256,7 @@
     <string name="service_change_sentence_case">Troca de serviço</string>
     <string name="service_ended">Serviço encerrado</string>
     <string name="service_suspended">Serviço suspenso</string>
-    <string name="setting_elevator_accessibility">Mostrar acessibilidade do elevador</string>
+    <string name="setting_station_accessibility">Informações de acessibilidade da estação</string>
     <string name="setting_toggle_hide_maps">Ocultar mapas</string>
     <string name="settings_link">Configurações</string>
     <string name="severe_weather">Tempo ruim</string>

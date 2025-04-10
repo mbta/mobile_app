@@ -4349,7 +4349,50 @@
       }
     },
     "By opting in, we can show you which stations are inaccessible or have elevator closures." : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Al suscribirse, podemos mostrarle qué estaciones son inaccesibles o tienen cierres de ascensores."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En vous inscrivant, nous pouvons vous montrer quelles stations sont inaccessibles ou dont les ascenseurs sont fermés."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lè nou patisipe, nou ka montre w ki estasyon ki pa aksesib oswa ki fèmen asansè."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bằng cách chọn tham gia, chúng tôi có thể cho bạn biết trạm nào không thể tiếp cận được hoặc thang máy bị đóng."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "通过选择加入，我们可以向您显示哪些车站无法到达或电梯关闭。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "透過選擇加入，我們可以向您顯示哪些車站無法到達或電梯關閉。"
+          }
+        }
+      }
     },
     "Cancel" : {
       "comment" : "Cancel searching, clears the search term and closes the search page",
@@ -9513,53 +9556,6 @@
         }
       }
     },
-    "Know about elevator closures" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avisar cierres de ascensores"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soyez informé des fermetures des ascenseurs"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konnen lè asansè yo fèmen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saiba mais sobre fechamentos de elevadores"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tìm hiểu về việc đóng cửa thang máy"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "了解电梯关停情况"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "了解電梯關閉"
-          }
-        }
-      }
-    },
     "later today" : {
       "comment" : "Used when an alert ends at an indeterminite time later the same day",
       "localizations" : {
@@ -13951,7 +13947,50 @@
       }
     },
     "Set station accessibility info preference" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Establecer preferencia de información de accesibilidad de la estación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Définir les préférences d’informations sur l’accessibilité de la station"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mete preferans enfòmasyon sou aksè estasyon an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Definir preferência de informações de acessibilidade da estação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đặt tùy chọn thông tin khả năng tiếp cận trạm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "设置车站可访问性信息首选项"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "設定車站可訪問性資訊首選項"
+          }
+        }
+      }
     },
     "Settings" : {
       "comment" : "More page section header, includes settings that the user can configure",
@@ -14090,102 +14129,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "惡劣天氣"
-          }
-        }
-      }
-    },
-    "Show elevator accessibility" : {
-      "comment" : "A setting on the More page to display elevator accessibility",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar accesibilidad del ascensor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher l’accessibilité des ascenseurs"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Montre kote asansè a ye"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar acessibilidade do elevador"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị khả năng tiếp cận thang máy"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示电梯可用情况"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "顯示電梯可及性"
-          }
-        }
-      }
-    },
-    "Show elevator closures" : {
-      "comment" : "Onboarding button text for setting station accessibility to shown",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar cierres del ascensor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher les fermetures des ascenseurs"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Montre asansè ki fèmen yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar fechamentos de elevadores"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị thang máy đóng cửa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示电梯关停情况"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "顯示電梯關閉"
           }
         }
       }
@@ -14703,54 +14646,6 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "單次追蹤"
-          }
-        }
-      }
-    },
-    "Skip" : {
-      "comment" : "Onboarding button text for setting station accessibility to hidden",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Omitir"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passer"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sote"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pular"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bỏ qua"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "跳过"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "跳過"
           }
         }
       }
@@ -15461,7 +15356,51 @@
       }
     },
     "Station Accessibility Info" : {
-      "comment" : "A setting on the More page to toggle displaying station accessibility info"
+      "comment" : "A setting on the More page to toggle displaying station accessibility info",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Información de accesibilidad de la estación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informations sur l’accessibilité de la gare"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enfòmasyon sou Aksè Estasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informações de acessibilidade da estação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thông tin về khả năng tiếp cận trạm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "车站无障碍信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "車站無障礙訊息"
+          }
+        }
+      }
     },
     "Station closed" : {
       "comment" : "Possible alert effect",
@@ -18576,53 +18515,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "等待離開"
-          }
-        }
-      }
-    },
-    "We can tell you when elevators are closed at a station." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podemos informarle cuando los ascensores están cerrados en una estación."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous pouvons vous informer lorsque des ascenseurs sont fermés dans une station."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nou ka di w lè asansè yo fèmen nan yon estasyon."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podemos dizer quando os elevadores estão fechados em uma estação."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chúng tôi có thể cho bạn biết khi nào thang máy đóng cửa tại một nhà ga."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我们可以告诉您车站电梯的关停时间。"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我們可以告訴您車站的電梯何時關閉。"
           }
         }
       }

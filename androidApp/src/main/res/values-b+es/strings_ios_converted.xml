@@ -205,7 +205,9 @@
     <string name="onboarding_location_body">Usamos su ubicación para mostrarle opciones de tráfico cercanas.</string>
     <string name="onboarding_location_footer">Puede cambiar la configuración de ubicación en la aplicación de Configuración.</string>
     <string name="onboarding_location_header">Ver tráfico cerca de usted</string>
+    <string name="onboarding_station_accessibility_body">Al suscribirse, podemos mostrarle qué estaciones son inaccesibles o tienen cierres de ascensores.</string>
     <string name="onboarding_station_accessibility_continue">Continuar</string>
+    <string name="onboarding_station_accessibility_header">Información de accesibilidad de la estación</string>
     <string name="open_for_more_arrivals">Abierto para más llegadas</string>
     <string name="other_link_privacy_policy">Política de privacidad</string>
     <string name="other_link_source_code">Ver código fuente en GitHub</string>
@@ -254,7 +256,7 @@
     <string name="service_change_sentence_case">Cambio de servicio</string>
     <string name="service_ended">Servicio finalizado</string>
     <string name="service_suspended">Servicio suspendido</string>
-    <string name="setting_elevator_accessibility">Mostrar accesibilidad del ascensor</string>
+    <string name="setting_station_accessibility">Información de accesibilidad de la estación</string>
     <string name="setting_toggle_hide_maps">Ocultar Mapas</string>
     <string name="settings_link">Configuración</string>
     <string name="severe_weather">Clima severo</string>
