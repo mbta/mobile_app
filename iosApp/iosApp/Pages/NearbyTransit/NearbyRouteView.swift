@@ -18,7 +18,7 @@ struct NearbyRouteView: View {
     let showElevatorAccessibility: Bool
 
     var body: some View {
-        RouteCard(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
+        LegacyRouteCard(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
             ForEach(Array(nearbyRoute.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
                     NearbyStopView(

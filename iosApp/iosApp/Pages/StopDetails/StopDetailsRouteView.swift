@@ -32,7 +32,7 @@ struct StopDetailsRouteView: View {
                 )
             }
         } else if let route = patternsByStop.routes.first {
-            RouteCard(route: route, pinned: pinned, onPin: onPin) {
+            LegacyRouteCard(route: route, pinned: pinned, onPin: onPin) {
                 StopDeparturesSummaryList(
                     patternsByStop: patternsByStop,
                     condenseHeadsignPredictions: false,

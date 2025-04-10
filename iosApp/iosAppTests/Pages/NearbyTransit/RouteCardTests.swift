@@ -19,7 +19,7 @@ final class RouteCardTests: XCTestCase {
             route.longName = "Red"
         }
 
-        let sut = RouteCard(route: route, pinned: false, onPin: { _ in }) {
+        let sut = LegacyRouteCard(route: route, pinned: false, onPin: { _ in }) {
             Text("Route details")
         }
 
@@ -38,7 +38,7 @@ final class RouteCardTests: XCTestCase {
             pinRouteExp.fulfill()
         }
 
-        let sut = RouteCard(route: route, pinned: false, onPin: onPin) {
+        let sut = LegacyRouteCard(route: route, pinned: false, onPin: onPin) {
             Text("Route details")
         }
 
