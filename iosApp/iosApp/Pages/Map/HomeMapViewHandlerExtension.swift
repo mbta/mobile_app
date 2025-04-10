@@ -159,6 +159,10 @@ extension HomeMapView {
         if nextNavEntry == nil {
             clearSelectedStop()
             viewportProvider.restoreNearbyTransitViewport()
+            mapVM.routeSourceData = mapVM.allRailSourceData
+            if let layerManager = mapVM.layerManager {
+                addLayers(layerManager)
+            }
         }
     }
 
