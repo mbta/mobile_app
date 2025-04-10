@@ -25,7 +25,8 @@ struct AlertCard: View {
     let onViewDetails: (() -> Void)?
 
     @ScaledMetric var majorIconSize = 48
-    @ScaledMetric var elevatorIconSize = 28
+    @ScaledMetric var elevatorIconSize = 36
+
     @ScaledMetric var miniIconSize = 20
     @ScaledMetric var infoIconSize = 16
 

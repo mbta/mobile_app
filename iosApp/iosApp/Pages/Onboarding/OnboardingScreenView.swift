@@ -169,7 +169,7 @@ struct OnboardingScreenView: View {
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
                     if typeSize < .xxxLarge {
-                        Image(.accessibilityIconAccessibleLarge)
+                        Image(.accessibilityIconAccessible)
                             .resizable()
                             .frame(width: 196, height: 196)
                             .offset(x: 0, y: haloOffset)

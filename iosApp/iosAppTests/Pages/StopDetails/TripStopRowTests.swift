@@ -202,4 +202,73 @@ final class TripStopRowTests: XCTestCase {
             viewWithAccessibilityLabel: "stop, selected stop, first stop"
         ))
     }
+
+    func testWheelchairNotAccessibile() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.name = "stop"
+            stop.wheelchairBoarding = .inaccessible
+        }
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+        }
+        let prediction = objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = now.addingTimeInterval(6).toKotlinInstant()
+        }
+        let route = objects.route()
+
+        let stopEntry = TripDetailsStopList.Entry(
+            stop: stop, stopSequence: 0, disruption: nil,
+            schedule: schedule, prediction: prediction, predictionStop: nil,
+            vehicle: nil, routes: [route], elevatorAlerts: []
+        )
+
+        let row = TripStopRow(
+            stop: stopEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _ in },
+            routeAccents: TripRouteAccents(route: route),
+            showElevatorAccessibility: true
+        )
+        XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "Not accessible"))
+    }
+
+    func testElevatorAccessibilityAlert() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.name = "stop"
+            stop.wheelchairBoarding = .accessible
+        }
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+        }
+        let prediction = objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = now.addingTimeInterval(6).toKotlinInstant()
+        }
+        let route = objects.route()
+
+        let stopEntry = TripDetailsStopList.Entry(
+            stop: stop, stopSequence: 0, disruption: nil,
+            schedule: schedule, prediction: prediction, predictionStop: nil,
+            vehicle: nil, routes: [route], elevatorAlerts: [objects.alert {
+                $0.activePeriod(
+                    start: Date.now.addingTimeInterval(-20 * 60).toKotlinInstant(),
+                    end: Date.now.addingTimeInterval(20 * 60).toKotlinInstant()
+                )
+            }]
+        )
+
+        let row = TripStopRow(
+            stop: stopEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _ in },
+            routeAccents: TripRouteAccents(route: route),
+            showElevatorAccessibility: true
+        )
+        XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "1 elevator closed"))
+    }
 }

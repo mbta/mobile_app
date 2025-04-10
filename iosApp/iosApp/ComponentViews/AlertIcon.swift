@@ -12,17 +12,15 @@ import SwiftUI
 struct AlertIcon: View {
     var alertState: StopAlertState
     var color: Color
-    let elevatorClosureIcon: ElevatorClosureIconType
 
-    init(alertState: StopAlertState, color: Color? = nil, elevatorClosureIcon: ElevatorClosureIconType = .color) {
+    init(alertState: StopAlertState, color: Color? = nil) {
         self.alertState = alertState
         self.color = color ?? .text
-        self.elevatorClosureIcon = elevatorClosureIcon
     }
 
     private var iconName: String? {
         switch alertState {
-        case .elevator: elevatorClosureIcon.iconName
+        case .elevator: "accessibility-icon-alert"
         case .issue: "alert-borderless-issue"
         case .shuttle: "alert-borderless-shuttle"
         case .suspension: "alert-borderless-suspension"
@@ -35,17 +33,5 @@ struct AlertIcon: View {
             .resizable()
             .foregroundStyle(color)
             .accessibilityLabel(Text("Alert"))
-    }
-
-    enum ElevatorClosureIconType {
-        case color
-        case mono
-
-        var iconName: String {
-            switch self {
-            case .color: "accessibility-icon-alert"
-            case .mono: "accessibility-icon-alert-mono"
-            }
-        }
     }
 }

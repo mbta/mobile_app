@@ -1770,7 +1770,7 @@
       }
     },
     "%ld elevators closed" : {
-      "comment" : "Header displayed when elevators are not working at a station",
+      "comment" : "Header displayed when elevators are not working at a station\nIcon alt text for elevator alert",
       "localizations" : {
         "en" : {
           "variations" : {
