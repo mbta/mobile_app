@@ -38,13 +38,13 @@ object StopFeaturesBuilder {
     suspend fun buildCollection(
         stopData: StopSourceData,
         globalMapData: GlobalMapData?,
-        linesToSnap: List<RouteLineData>
-    ) = buildCollection(stopData, globalMapData?.mapStops.orEmpty(), linesToSnap)
+        routeSourceDetails: List<RouteSourceData>
+    ) = buildCollection(stopData, globalMapData?.mapStops.orEmpty(), routeSourceDetails)
 
     internal suspend fun buildCollection(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
-        linesToSnap: List<RouteLineData>
+        routeSourceDetails: List<RouteSourceData>
     ): FeatureCollection =
         withContext(Dispatchers.Default) {
             val filteredStops =
@@ -53,7 +53,7 @@ object StopFeaturesBuilder {
                 } else {
                     stops
                 }
-            val stopFeatures = generateStopFeatures(stopData, filteredStops, linesToSnap)
+            val stopFeatures = generateStopFeatures(stopData, filteredStops, routeSourceDetails)
             buildCollection(stopFeatures = stopFeatures)
         }
 
@@ -64,10 +64,11 @@ object StopFeaturesBuilder {
     private fun generateStopFeatures(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
-        linesToSnap: List<RouteLineData>
+        routeSourceDetails: List<RouteSourceData>
     ): List<StopFeatureData> {
         val touchedStopIds: MutableSet<String> = mutableSetOf()
-        val routeStops = generateRouteAssociatedStops(stopData, stops, linesToSnap, touchedStopIds)
+        val routeStops =
+            generateRouteAssociatedStops(stopData, stops, routeSourceDetails, touchedStopIds)
         val otherStops = generateRemainingStops(stopData, stops, touchedStopIds)
         return otherStops + routeStops
     }
@@ -76,27 +77,29 @@ object StopFeaturesBuilder {
     private fun generateRouteAssociatedStops(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
-        linesToSnap: List<RouteLineData>,
+        routeSourceDetails: List<RouteSourceData>,
         touchedStopIds: MutableSet<String>
     ): List<StopFeatureData> {
-        return linesToSnap.flatMap { lineData ->
-            lineData.stopIds.mapNotNull { childStopId ->
-                val stopOnRoute = stops[childStopId] ?: return@mapNotNull null
-                val mapStop = stops[stopOnRoute.stop.parentStationId ?: ""] ?: stopOnRoute
-                val stop = mapStop.stop
+        return routeSourceDetails.flatMap { routeSource ->
+            routeSource.lines.flatMap { lineData ->
+                lineData.stopIds.mapNotNull { childStopId ->
+                    val stopOnRoute = stops[childStopId] ?: return@mapNotNull null
+                    val mapStop = stops[stopOnRoute.stop.parentStationId ?: ""] ?: stopOnRoute
+                    val stop = mapStop.stop
 
-                if (touchedStopIds.contains(stop.id) || mapStop.routeTypes.isEmpty()) {
-                    return@mapNotNull null
+                    if (touchedStopIds.contains(stop.id) || mapStop.routeTypes.isEmpty()) {
+                        return@mapNotNull null
+                    }
+
+                    val snappedCoord =
+                        nearestPointOnLine(line = lineData.line, point = stop.position).point
+                    touchedStopIds.add(stop.id)
+                    return@mapNotNull StopFeatureData(
+                        stop = mapStop,
+                        feature =
+                            generateStopFeature(mapStop, stopData, overrideLocation = snappedCoord)
+                    )
                 }
-
-                val snappedCoord =
-                    nearestPointOnLine(line = lineData.line, point = stop.position).point
-                touchedStopIds.add(stop.id)
-                return@mapNotNull StopFeatureData(
-                    stop = mapStop,
-                    feature =
-                        generateStopFeature(mapStop, stopData, overrideLocation = snappedCoord)
-                )
             }
         }
     }

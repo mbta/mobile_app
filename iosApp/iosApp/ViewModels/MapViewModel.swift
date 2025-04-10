@@ -20,7 +20,7 @@ class MapViewModel: ObservableObject {
     @Published var globalData: GlobalResponse?
     var stopUpdateTask: Task<Void, Error>?
     var routeUpdateTask: Task<Void, Error>?
-    var snappedStopRouteLines: [RouteLineData] = []
+    var snappedStopRouteSources: [RouteSourceData] = []
 
     var lastMapboxErrorSubject: PassthroughSubject<Date?, Never>
 
@@ -57,15 +57,14 @@ class MapViewModel: ObservableObject {
         updateRouteSource(globalData: globalData, globalMapData: globalMapData)
     }
 
-    private func getLineFeatures(globalData: GlobalResponse?, globalMapData: GlobalMapData?) async throws -> MapboxMaps
-        .FeatureCollection {
-        try await RouteFeaturesBuilder.shared.buildCollection(
-            routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
-                routeData: routeSourceData,
-                globalData: globalData,
-                globalMapData: globalMapData
-            )
-        ).toMapbox()
+    private func getRouteSources(globalData: GlobalResponse?,
+                                 globalMapData: GlobalMapData?) async throws -> [RouteSourceData] {
+        guard let globalData else { return [] }
+        return try await RouteFeaturesBuilder.shared.generateRouteSources(
+            routeData: routeSourceData,
+            globalData: globalData,
+            globalMapData: globalMapData
+        )
     }
 
     func updateRouteSource(globalData: GlobalResponse?, globalMapData: GlobalMapData?) {
@@ -75,9 +74,9 @@ class MapViewModel: ObservableObject {
         }
         routeUpdateTask = Task(priority: .high) {
             try Task.checkCancellation()
-            let routeFeatures = try await self.getLineFeatures(globalData: globalData, globalMapData: globalMapData)
+            let routeSources = try await self.getRouteSources(globalData: globalData, globalMapData: globalMapData)
             try Task.checkCancellation()
-            layerManager.updateSourceData(routeData: routeFeatures)
+            layerManager.updateSourceData(routeData: routeSources)
         }
     }
 
@@ -85,7 +84,7 @@ class MapViewModel: ObservableObject {
         try await StopFeaturesBuilder.shared.buildCollection(
             stopData: stopSourceData,
             globalMapData: globalMapData,
-            linesToSnap: snappedStopRouteLines
+            routeSourceDetails: snappedStopRouteSources
         ).toMapbox()
     }
 

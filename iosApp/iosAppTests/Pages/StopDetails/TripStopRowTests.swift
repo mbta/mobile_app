@@ -203,12 +203,12 @@ final class TripStopRowTests: XCTestCase {
         ))
     }
 
-    func testWheelchairAccessibility() throws {
+    func testWheelchairNotAccessibile() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in
             stop.name = "stop"
-            stop.wheelchairBoarding = .accessible
+            stop.wheelchairBoarding = .inaccessible
         }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
@@ -229,9 +229,10 @@ final class TripStopRowTests: XCTestCase {
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
-            showElevatorAccessibility: true
+            showStationAccessibility: true
         )
-        XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_accessible"))
+        XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "Not accessible"))
     }
 
     func testElevatorAccessibilityAlert() throws {
@@ -265,8 +266,9 @@ final class TripStopRowTests: XCTestCase {
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
-            showElevatorAccessibility: true
+            showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "1 elevator closed"))
     }
 }

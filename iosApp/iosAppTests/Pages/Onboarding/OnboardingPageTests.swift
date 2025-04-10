@@ -33,7 +33,7 @@ final class OnboardingPageTests: XCTestCase {
             try view.find(button: "Continue").tap()
         }
         let stationAccessibilityExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(), after: 0.1) { view in
-            try view.find(button: "Skip").tap()
+            try view.find(button: "Continue").tap()
         }
         let hideMapsExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(2), after: 0.1) { view in
             try view.find(button: "Show maps").tap()

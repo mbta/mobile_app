@@ -71,11 +71,12 @@ data class Alert(
         }
 
     suspend fun summary(
+        stopId: String,
         directionId: Int,
         patterns: List<RoutePattern>,
         atTime: Instant,
         global: GlobalResponse
-    ) = AlertSummary.summarizing(this, directionId, patterns, atTime, global)
+    ) = AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, global)
 
     @Serializable
     data class ActivePeriod(val start: Instant, val end: Instant?) {

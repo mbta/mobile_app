@@ -32,7 +32,7 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.map.RouteLineData
+import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -259,7 +259,7 @@ class NearbyTransitPageTest : KoinTest {
         open class MockMapVM : IMapViewModel {
             var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
             override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
-            override var railRouteLineData: Flow<List<RouteLineData>?> =
+            override var railRouteSourceData: Flow<List<RouteSourceData>?> =
                 MutableStateFlow(value = null)
             override var stopSourceData: Flow<FeatureCollection?> = MutableStateFlow(value = null)
             override var globalResponse: Flow<GlobalResponse?> = MutableStateFlow(value = null)

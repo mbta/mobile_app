@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -156,7 +157,7 @@ class NearbyStopViewTest {
         }
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
     }
 
     @Test
@@ -173,6 +174,6 @@ class NearbyStopViewTest {
         }
         composeTestRule.onNodeWithText("Not accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsNotDisplayed()
     }
 }

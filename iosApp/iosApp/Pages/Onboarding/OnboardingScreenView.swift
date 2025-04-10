@@ -153,7 +153,7 @@ struct OnboardingScreenView: View {
                     Spacer()
                     if typeSize < .xxxLarge {
                         HStack {
-                            Image(.accessibilityIconAccessibleLarge)
+                            Image(.accessibilityIconAccessible)
                                 .resizable()
                                 .frame(width: 196, height: 196)
                                 .accessibilityHidden(true)

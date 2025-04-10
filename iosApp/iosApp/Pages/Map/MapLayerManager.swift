@@ -14,10 +14,31 @@ import SwiftUI
 protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
     func addIcons(recreate: Bool)
-    func addLayers(colorScheme: ColorScheme, recreate: Bool)
+    func addLayers(
+        routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+        globalResponse: GlobalResponse,
+        colorScheme: ColorScheme,
+        recreate: Bool
+    )
     func resetPuckPosition()
-    func updateSourceData(routeData: MapboxMaps.FeatureCollection)
+    func updateSourceData(routeData: [RouteSourceData])
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
+}
+
+extension IMapLayerManager {
+    func addLayers(
+        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        globalResponse: GlobalResponse,
+        colorScheme: ColorScheme,
+        recreate: Bool
+    ) {
+        addLayers(
+            routes: mapFriendlyRouteResponse.routesWithSegmentedShapes,
+            globalResponse: globalResponse,
+            colorScheme: colorScheme,
+            recreate: recreate
+        )
+    }
 }
 
 struct MapImageError: Error {}
@@ -25,6 +46,8 @@ struct MapImageError: Error {}
 class MapLayerManager: IMapLayerManager {
     var currentScheme: ColorScheme?
     let map: MapboxMap
+
+    private static let bufferLayerId = "empty-layer-between-routes-and-stops"
 
     init(map: MapboxMap) {
         self.map = map
@@ -72,44 +95,86 @@ class MapLayerManager: IMapLayerManager {
 
      https://docs.mapbox.com/ios/maps/api/11.5.0/documentation/mapboxmaps/stylemanager/addpersistentlayer(_:layerposition:)
      */
-    func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
+    func addLayers(
+        routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+        globalResponse: GlobalResponse,
+        colorScheme: ColorScheme,
+        recreate: Bool = false
+    ) {
         Task {
             let colorPalette = getColorPalette(colorScheme: colorScheme)
             currentScheme = colorScheme
-            let routeLayers = try await RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
-                .map { $0.toMapbox() }
+            let routeLayers = try await RouteLayerGenerator.shared.createAllRouteLayers(
+                routesWithShapes: routes,
+                globalResponse: globalResponse,
+                colorPalette: colorPalette
+            )
+            .map { $0.toMapbox() }
             let stopLayers = try await StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette)
                 .map { $0.toMapbox() }
-            let layers: [MapboxMaps.Layer] = routeLayers + stopLayers
 
-            for layer in layers {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-                    do {
-                        if map.layerExists(withId: layer.id) {
-                            if recreate {
-                                try map.removeLayer(withId: layer.id)
-                            } else {
-                                // Skip attempting to add layer if it already exists
-                                return
-                            }
-                        }
+            await setLayers(routeLayers: routeLayers, stopLayers: stopLayers, recreate: recreate)
+        }
+    }
 
-                        if map.layerExists(withId: "puck") {
-                            try map.addPersistentLayer(layer, layerPosition: .below("puck"))
-                        } else {
-                            try map.addPersistentLayer(layer)
-                        }
-                    } catch {
-                        Logger().error("Failed to add layer \(layer.id)\n\(error)")
-                    }
-                }
-            }
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                resetPuckPosition()
+    @MainActor private func setLayers(
+        routeLayers: [MapboxMaps.Layer],
+        stopLayers: [MapboxMaps.Layer],
+        recreate: Bool = false
+    ) {
+        if !map.layerExists(withId: Self.bufferLayerId) {
+            let layer = SlotLayer(id: Self.bufferLayerId)
+            if map.layerExists(withId: "puck") {
+                try? map.addPersistentLayer(layer, layerPosition: .below("puck"))
+            } else {
+                try? map.addPersistentLayer(layer)
             }
         }
+        var oldLayers = Set(map.allLayerIdentifiers.map(\.id))
+        for layer in routeLayers {
+            do {
+                oldLayers.remove(layer.id)
+                if map.layerExists(withId: layer.id) {
+                    if recreate {
+                        try map.removeLayer(withId: layer.id)
+                    } else {
+                        // Skip attempting to add layer if it already exists
+                        continue
+                    }
+                }
+
+                try map.addPersistentLayer(layer, layerPosition: .below(Self.bufferLayerId))
+            } catch {
+                Logger().error("Failed to add layer \(layer.id)\n\(error)")
+            }
+        }
+        for layer in stopLayers {
+            do {
+                oldLayers.remove(layer.id)
+                if map.layerExists(withId: layer.id) {
+                    if recreate {
+                        try map.removeLayer(withId: layer.id)
+                    } else {
+                        // Skip attempting to add layer if it already exists
+                        continue
+                    }
+                }
+
+                if map.layerExists(withId: "puck") {
+                    try map.addPersistentLayer(layer, layerPosition: .below("puck"))
+                } else {
+                    try map.addPersistentLayer(layer)
+                }
+            } catch {
+                Logger().error("Failed to add layer \(layer.id)\n\(error)")
+            }
+        }
+        for oldLayer in oldLayers {
+            if oldLayer.starts(with: RouteLayerGenerator.shared.routeLayerId) {
+                try? map.removeLayer(withId: oldLayer)
+            }
+        }
+        resetPuckPosition()
     }
 
     func getColorPalette(colorScheme: ColorScheme) -> ColorPalette {
@@ -143,8 +208,13 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(routeData: MapboxMaps.FeatureCollection) {
-        updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
+    func updateSourceData(routeData: [RouteSourceData]) {
+        for data in routeData {
+            updateSourceData(
+                sourceId: RouteFeaturesBuilder.shared.getRouteSourceId(routeId: data.routeId),
+                data: data.features.toMapbox()
+            )
+        }
     }
 
     func updateSourceData(stopData: MapboxMaps.FeatureCollection) {

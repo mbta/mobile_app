@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.map
 
-import com.mbta.tid.mbta_app.map.MapTestDataHelper.routesById
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -128,7 +127,7 @@ class StopFeaturesBuilderTest {
                                 alerts = null
                             ),
                     ),
-                linesToSnap = emptyList()
+                routeSourceDetails = emptyList()
             )
 
         assertEquals(5, collection.features.size)
@@ -146,9 +145,8 @@ class StopFeaturesBuilderTest {
             )
 
         val routeLines =
-            RouteFeaturesBuilder.generateRouteLines(
+            RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                routesById = routesById,
                 stopsById = stops.mapValues { it.value.stop },
                 alertsByStop = emptyMap()
             )
@@ -156,7 +154,7 @@ class StopFeaturesBuilderTest {
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                linesToSnap = routeLines
+                routeSourceDetails = routeLines
             )
         val snappedStopCoordinates =
             Position(latitude = 42.3961623851223, longitude = -71.14129664101432)
@@ -203,7 +201,7 @@ class StopFeaturesBuilderTest {
                             alerts = null
                         )
                     },
-                linesToSnap = emptyList()
+                routeSourceDetails = emptyList()
             )
 
         assertEquals(2, collection.features.size)
@@ -240,7 +238,7 @@ class StopFeaturesBuilderTest {
                                 alerts = null
                             )
                         },
-                linesToSnap = emptyList()
+                routeSourceDetails = emptyList()
             )
 
         assertEquals(1, collection.features.size)
@@ -317,7 +315,7 @@ class StopFeaturesBuilderTest {
                                 alerts = mapOf(MapStopRoute.ORANGE to StopAlertState.Suspension)
                             ),
                     ),
-                linesToSnap = emptyList()
+                routeSourceDetails = emptyList()
             )
 
         assertEquals(2, collection.features.size)
@@ -349,9 +347,8 @@ class StopFeaturesBuilderTest {
             )
 
         val routeLines =
-            RouteFeaturesBuilder.generateRouteLines(
+            RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                routesById = routesById,
                 stopsById = stops.mapValues { it.value.stop },
                 alertsByStop = emptyMap()
             )
@@ -359,7 +356,7 @@ class StopFeaturesBuilderTest {
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                linesToSnap = routeLines
+                routeSourceDetails = routeLines
             )
 
         assertEquals(4, collection.features.size)
@@ -395,7 +392,7 @@ class StopFeaturesBuilderTest {
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                linesToSnap = emptyList()
+                routeSourceDetails = emptyList()
             )
 
         assertEquals(2, collection.features.size)
@@ -423,7 +420,7 @@ class StopFeaturesBuilderTest {
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                linesToSnap = emptyList()
+                routeSourceDetails = emptyList()
             )
 
         assertEquals(2, collection.features.size)

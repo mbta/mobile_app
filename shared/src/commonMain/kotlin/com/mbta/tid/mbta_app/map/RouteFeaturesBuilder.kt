@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.map
 
-import com.mbta.tid.mbta_app.map.style.Color
 import com.mbta.tid.mbta_app.map.style.Feature
 import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.map.style.FeatureProperty
@@ -31,78 +30,64 @@ import kotlinx.serialization.json.put
 
 data class RouteLineData(
     val id: String,
-    val routeId: String,
-    val route: Route?,
-    val routePatternId: String,
+    val sourceRoutePatternId: String,
     val line: LineString,
     val stopIds: List<String>,
     val alertState: SegmentAlertState
-) {
-    val routeType = route?.type?.name
-    val color = route?.color?.let { "#$it" }
-    val sortKey = route?.sortOrder?.unaryMinus() ?: Int.MIN_VALUE
-}
+)
+
+data class RouteSourceData(
+    val routeId: String,
+    val lines: List<RouteLineData>,
+    val features: FeatureCollection
+)
 
 object RouteFeaturesBuilder {
     val routeSourceId = "route-source"
 
-    val propRouteId = FeatureProperty<String>("routeId")
-    val propRouteType = FeatureProperty<String>("routeType")
-    val propRouteSortKey = FeatureProperty<Number>("routeSortKey")
-    val propRouteColor = FeatureProperty<Color>("routeColor")
+    fun getRouteSourceId(routeId: String) = "$routeSourceId-$routeId"
+
     val propAlertStateKey = FeatureProperty<String>("alertState")
 
-    suspend fun generateRouteLines(
+    suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-        globalData: GlobalResponse?,
+        globalData: GlobalResponse,
         globalMapData: GlobalMapData?
-    ) =
-        generateRouteLines(
-            routeData,
-            globalData?.routes,
-            globalData?.stops,
-            globalMapData?.alertsByStop
-        )
+    ) = generateRouteSources(routeData, globalData.stops, globalMapData?.alertsByStop.orEmpty())
 
-    internal suspend fun generateRouteLines(
+    suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-        routesById: Map<String, Route>?,
-        stopsById: Map<String, Stop>?,
-        alertsByStop: Map<String, AlertAssociatedStop>?
-    ): List<RouteLineData> {
-        return withContext(Dispatchers.Default) {
-            routeData.flatMap {
-                generateRouteLines(
-                    routeWithShapes = it,
-                    route = routesById?.get(it.routeId),
-                    stopsById = stopsById,
-                    alertsByStop = alertsByStop
+        stopsById: Map<String, Stop>,
+        alertsByStop: Map<String, AlertAssociatedStop>
+    ): List<RouteSourceData> =
+        withContext(Dispatchers.Default) {
+            routeData.map {
+                generateRouteSource(
+                    routeId = it.routeId,
+                    routeShapes = it.segmentedShapes,
+                    stopsById,
+                    alertsByStop
                 )
             }
         }
-    }
 
-    suspend fun buildCollection(
-        routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-        routesById: Map<String, Route>?,
-        stopsById: Map<String, Stop>?,
-        alertsByStop: Map<String, AlertAssociatedStop>?
-    ): FeatureCollection {
-        return withContext(Dispatchers.Default) {
-            val routeLines: List<RouteLineData> =
-                generateRouteLines(
-                    routeData = routeData,
-                    routesById = routesById,
-                    stopsById = stopsById,
-                    alertsByStop = alertsByStop
+    private fun generateRouteSource(
+        routeId: String,
+        routeShapes: List<SegmentedRouteShape>,
+        stopsById: Map<String, Stop>,
+        alertsByStop: Map<String, AlertAssociatedStop>
+    ): RouteSourceData {
+        val routeLines = generateRouteLines(routeId, routeShapes, stopsById, alertsByStop)
+        val routeFeatures =
+            routeLines.map { lineData ->
+                Feature(
+                    geometry = lineData.line,
+                    properties =
+                        buildFeatureProperties { put(propAlertStateKey, lineData.alertState.name) }
                 )
-            buildCollection(routeLines = routeLines)
-        }
-    }
-
-    fun buildCollection(routeLines: List<RouteLineData>): FeatureCollection {
-        val routeFeatures = routeLines.map { lineToFeature(routeLineData = it) }
-        return FeatureCollection(routeFeatures)
+            }
+        val featureCollection = FeatureCollection(routeFeatures)
+        return RouteSourceData(routeId, routeLines, featureCollection)
     }
 
     fun shapesWithStopsToMapFriendly(
@@ -144,39 +129,19 @@ object RouteFeaturesBuilder {
         )
     }
 
-    fun lineToFeature(routeLineData: RouteLineData) =
-        Feature(
-            geometry = routeLineData.line,
-            properties =
-                buildFeatureProperties {
-                    put(propRouteId, routeLineData.routeId)
-                    routeLineData.routeType?.let { put(propRouteType, it) }
-                    routeLineData.color?.let { put(propRouteColor, it) }
-                    put(propRouteSortKey, routeLineData.sortKey)
-
-                    put(propAlertStateKey, routeLineData.alertState.name)
-                }
-        )
-
-    fun generateRouteLines(
-        routeWithShapes: MapFriendlyRouteResponse.RouteWithSegmentedShapes,
-        route: Route?,
-        stopsById: Map<String, Stop>?,
-        alertsByStop: Map<String, AlertAssociatedStop>?
+    private fun generateRouteLines(
+        routeId: String,
+        routeShapes: List<SegmentedRouteShape>,
+        stopsById: Map<String, Stop>,
+        alertsByStop: Map<String, AlertAssociatedStop>
     ): List<RouteLineData> {
-        return routeWithShapes.segmentedShapes.flatMap { routePatternShape ->
-            routeShapeToLineData(
-                routePatternShape = routePatternShape,
-                route = route,
-                stopsById = stopsById,
-                alertsByStop = alertsByStop
-            )
+        return routeShapes.flatMap { routePatternShape ->
+            routeShapeToLineData(routePatternShape, stopsById, alertsByStop)
         }
     }
 
     private fun routeShapeToLineData(
         routePatternShape: SegmentedRouteShape,
-        route: Route?,
         stopsById: Map<String, Stop>?,
         alertsByStop: Map<String, AlertAssociatedStop>?
     ): List<RouteLineData> {
@@ -191,7 +156,6 @@ object RouteFeaturesBuilder {
         return alertAwareSegments.mapNotNull { segment ->
             routeSegmentToRouteLineData(
                 segment = segment,
-                route = route,
                 fullLineString = fullLineString,
                 stopsById = stopsById
             )
@@ -201,7 +165,6 @@ object RouteFeaturesBuilder {
     @OptIn(ExperimentalTurfApi::class)
     private fun routeSegmentToRouteLineData(
         segment: AlertAwareRouteSegment,
-        route: Route?,
         fullLineString: LineString,
         stopsById: Map<String, Stop>?
     ): RouteLineData? {
@@ -213,9 +176,7 @@ object RouteFeaturesBuilder {
             lineSlice(start = firstStop.position, stop = lastStop.position, line = fullLineString)
         return RouteLineData(
             id = segment.id,
-            routeId = segment.sourceRouteId,
-            route = route,
-            routePatternId = segment.sourceRoutePatternId,
+            sourceRoutePatternId = segment.sourceRoutePatternId,
             line = lineSegment,
             stopIds = segment.stopIds,
             alertState = segment.alertState

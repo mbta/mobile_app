@@ -251,11 +251,13 @@ class TripStopRowTest {
             )
         }
 
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Not accessible").assertIsDisplayed()
+
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
 
         testEntry = entry(accessibleStop)
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
 
         testEntry =
@@ -263,7 +265,8 @@ class TripStopRowTest {
                 accessibleStop,
                 listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) })
             )
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("1 elevator closed").assertIsDisplayed()
     }
 }

@@ -879,7 +879,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
-    func testDisplaysWheelchairAccessibility() throws {
+    func testDisplaysWheelchairNotAccessibile() throws {
         let nearbyVM = NearbyViewModel()
         nearbyVM.showStationAccessibility = true
         nearbyVM.alerts = AlertsStreamDataResponse(alerts: [:])
@@ -898,7 +898,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didLoadData) { view in
             XCTAssertThrowsError(try view.find(text: "1 elevator closed"))
-            XCTAssertNotNil(try view.find(viewWithTag: "wheelchair_accessible"))
+            XCTAssertNotNil(try view.find(viewWithTag: "wheelchair_not_accessible"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)

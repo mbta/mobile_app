@@ -26,11 +26,10 @@ import kotlinx.datetime.Clock
 @OptIn(ExperimentalTurfApi::class)
 class RouteFeaturesBuilderTest {
     @Test
-    fun `creates route feature collection`() = runBlocking {
-        val collection =
-            RouteFeaturesBuilder.buildCollection(
+    fun `creates route source data`() = runBlocking {
+        val routeSources =
+            RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                routesById = MapTestDataHelper.routesById,
                 stopsById =
                     mapOf(
                         MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
@@ -44,22 +43,21 @@ class RouteFeaturesBuilderTest {
                 alertsByStop = emptyMap()
             )
 
-        assertEquals(3, collection.features.size) // 2 red, 1 orange
+        assertEquals(2, routeSources.size) // red, orange
         assertEquals(
             2,
-            collection.features
-                .filter {
-                    it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
-                }
+            routeSources
+                .first { it.routeId == MapTestDataHelper.routeRed.id }
+                .features
+                .features
                 .size
         )
         assertEquals(
             1,
-            collection.features
-                .filter {
-                    it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        MapTestDataHelper.routeOrange.id
-                }
+            routeSources
+                .first { it.routeId == MapTestDataHelper.routeOrange.id }
+                .features
+                .features
                 .size
         )
 
@@ -69,10 +67,11 @@ class RouteFeaturesBuilderTest {
                 stop = MapTestDataHelper.stopDavis.position,
                 line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC2.polyline!!))
             ),
-            collection.features
-                .first {
-                    it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
-                }
+            routeSources
+                .first { it.routeId == MapTestDataHelper.routeRed.id }
+                .features
+                .features
+                .first()
                 .geometry
         )
 
@@ -82,43 +81,13 @@ class RouteFeaturesBuilderTest {
                 stop = MapTestDataHelper.stopSullivan.position,
                 line = LineString(Polyline.decode(MapTestDataHelper.shapeOrangeC1.polyline!!))
             ),
-            collection.features
-                .first {
-                    it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        MapTestDataHelper.routeOrange.id
-                }
+            routeSources
+                .first { it.routeId == MapTestDataHelper.routeOrange.id }
+                .features
+                .features
+                .first()
                 .geometry
         )
-    }
-
-    @Test
-    fun `preserves route properties`() = runBlocking {
-        val collection =
-            RouteFeaturesBuilder.buildCollection(
-                routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                routesById = MapTestDataHelper.routesById,
-                stopsById =
-                    mapOf(
-                        MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
-                        MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
-                        MapTestDataHelper.stopPorter.id to MapTestDataHelper.stopPorter,
-                        MapTestDataHelper.stopHarvard.id to MapTestDataHelper.stopHarvard,
-                        MapTestDataHelper.stopCentral.id to MapTestDataHelper.stopCentral,
-                        MapTestDataHelper.stopAssembly.id to MapTestDataHelper.stopAssembly,
-                        MapTestDataHelper.stopSullivan.id to MapTestDataHelper.stopSullivan
-                    ),
-                alertsByStop = emptyMap()
-            )
-
-        val firstRedFeature =
-            collection.features
-                .filter {
-                    it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
-                }[0]
-
-        assertEquals("#DA291C", firstRedFeature.properties[RouteFeaturesBuilder.propRouteColor])
-        assertEquals("HEAVY_RAIL", firstRedFeature.properties[RouteFeaturesBuilder.propRouteType])
-        assertEquals(-10010.0, firstRedFeature.properties[RouteFeaturesBuilder.propRouteSortKey])
     }
 
     @Test
@@ -161,10 +130,9 @@ class RouteFeaturesBuilderTest {
                     ),
             )
 
-        val collection =
-            RouteFeaturesBuilder.buildCollection(
+        val routeSources =
+            RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                routesById = MapTestDataHelper.routesById,
                 stopsById =
                     mapOf(
                         MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
@@ -176,10 +144,8 @@ class RouteFeaturesBuilderTest {
                 alertsByStop = alertsByStop
             )
 
-        val redFeatures =
-            collection.features.filter {
-                it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
-            }
+        val redSource = routeSources.first { it.routeId == MapTestDataHelper.routeRed.id }
+        val redFeatures = redSource.features.features
 
         assertEquals(3, redFeatures.size)
         assertEquals(

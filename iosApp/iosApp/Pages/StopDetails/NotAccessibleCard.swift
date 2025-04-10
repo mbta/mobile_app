@@ -11,10 +11,13 @@ import SwiftUI
 struct NotAccessibleCard: View {
     var body: some View {
         VStack {
-            Text("This stop is not accessible")
-                .foregroundColor(Color.text.opacity(0.6))
-                .font(Typography.bodySemibold)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack {
+                Image(.accessibilityIconNotAccessible)
+                    .accessibilityHidden(true)
+                    .tag("wheelchair_not_accessible")
+                Text("This stop is not accessible")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 12)

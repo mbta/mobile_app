@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -42,10 +41,8 @@ fun NearbyStopView(
     showStationAccessibility: Boolean = false
 ) {
     val isWheelchairAccessible = patternsAtStop.stop.isWheelchairAccessible
-    val showAccessible = showStationAccessibility && isWheelchairAccessible
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible
     val showElevatorAlerts = showStationAccessibility && patternsAtStop.elevatorAlerts.isNotEmpty()
-
     Row(
         Modifier.background(colorResource(id = R.color.fill2))
             .fillMaxWidth()
@@ -54,64 +51,61 @@ fun NearbyStopView(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
-            modifier = Modifier.height(IntrinsicSize.Min),
+            modifier = Modifier.height(IntrinsicSize.Min).padding(start = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (showElevatorAlerts) {
-                    Image(
-                        painterResource(R.drawable.elevator_alert),
-                        null,
-                        modifier =
-                            Modifier.height(24.dp)
-                                .placeholderIfLoading()
-                                .testTag("elevator_alert")
-                                .clearAndSetSemantics {}
-                    )
-                } else if (showAccessible) {
-                    Image(
-                        painterResource(R.drawable.wheelchair_accessible),
-                        null,
-                        modifier =
-                            Modifier.height(24.dp)
-                                .placeholderIfLoading()
-                                .testTag("wheelchair_accessible")
-                                .clearAndSetSemantics {}
+            Text(
+                text = patternsAtStop.stop.name,
+                modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
+                overflow = TextOverflow.Visible,
+                style = Typography.callout
+            )
+
+            if (showInaccessible || showElevatorAlerts) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    if (showElevatorAlerts) {
+                        Image(
+                            painterResource(R.drawable.accessibility_icon_alert),
+                            null,
+                            modifier =
+                                Modifier.height(18.dp)
+                                    .placeholderIfLoading()
+                                    .testTag("elevator_alert")
+                                    .clearAndSetSemantics {}
+                        )
+                    } else if (showInaccessible) {
+                        Image(
+                            painterResource(R.drawable.accessibility_icon_not_accessible),
+                            null,
+                            modifier =
+                                Modifier.height(18.dp)
+                                    .placeholderIfLoading()
+                                    .testTag("wheelchair_not_accessible")
+                                    .clearAndSetSemantics {}
+                        )
+                    }
+                    Text(
+                        text =
+                            if (showInaccessible) stringResource(R.string.not_accessible)
+                            else
+                                pluralStringResource(
+                                    R.plurals.elevator_closure_count,
+                                    patternsAtStop.elevatorAlerts.size,
+                                    patternsAtStop.elevatorAlerts.size
+                                ),
+                        modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        overflow = TextOverflow.Visible,
+                        style =
+                            Typography.footnoteSemibold.merge(
+                                color = colorResource(R.color.accessibility)
+                            ),
                     )
                 }
-                Text(
-                    text = patternsAtStop.stop.name,
-                    modifier =
-                        Modifier.placeholderIfLoading()
-                            .padding(start = if (showAccessible) 0.dp else 8.dp)
-                            .fillMaxWidth(),
-                    overflow = TextOverflow.Visible,
-                    style = Typography.callout
-                )
-            }
-            if (showInaccessible || showElevatorAlerts) {
-                Text(
-                    text =
-                        if (showInaccessible) stringResource(R.string.not_accessible)
-                        else
-                            pluralStringResource(
-                                R.plurals.elevator_closure_count,
-                                patternsAtStop.elevatorAlerts.size,
-                                patternsAtStop.elevatorAlerts.size
-                            ),
-                    modifier =
-                        Modifier.placeholderIfLoading()
-                            .alpha(0.5f)
-                            .padding(start = 8.dp)
-                            .fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Visible,
-                    style = Typography.footnoteSemibold
-                )
             }
         }
     }
