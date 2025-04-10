@@ -89,10 +89,10 @@ fun UpcomingTripView(
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
                     WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
-                        Text(
+                        TightWrapText(
                             state.trip.text,
                             modifier = Modifier.placeholderIfLoading(),
-                            textAlign = TextAlign.End
+                            style = Typography.footnote.merge(textAlign = TextAlign.End)
                         )
                     }
                 is TripInstantDisplay.Hidden -> {}

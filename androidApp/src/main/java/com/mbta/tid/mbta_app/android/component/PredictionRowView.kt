@@ -4,11 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -73,9 +71,14 @@ fun PredictionRowView(
             )
         }
 
+        // The behavior that we’d really like is for both the destination and the prediction to get
+        // their full intrinsic max width if that can be done with no text wrapping, and to only
+        // apply these weights if the text won’t just all fit on one line. Unfortunately, it’s not
+        // clear how to do this, so we’re just applying the weights and accepting the unnecessary
+        // text wrapping.
         Column(modifier = Modifier.weight(1f)) { destination() }
         Row(
-            modifier = Modifier.width(IntrinsicSize.Max),
+            modifier = Modifier.weight(0.5f),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
