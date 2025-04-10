@@ -8686,6 +8686,7 @@
     },
     "Hide maps" : {
       "comment" : "Onboarding button text for setting maps to hidden",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8733,6 +8734,7 @@
     },
     "Hide Maps" : {
       "comment" : "A setting on the More page to remove the app component from the app",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -10069,6 +10071,9 @@
           }
         }
       }
+    },
+    "Map Display" : {
+      "comment" : "A setting on the More page to show / hide maps from the app"
     },
     "MBTA Go" : {
       "localizations" : {
@@ -13947,8 +13952,12 @@
         }
       }
     },
+    "Set map display preference" : {
+      "comment" : "Onboarding screen header for asking VoiceOver users if they want to hide maps"
+    },
     "Set map preference" : {
       "comment" : "Onboarding screen header for asking VoiceOver users if they want to hide maps",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -14183,6 +14192,7 @@
     },
     "Show maps" : {
       "comment" : "Onboarding button text for setting maps to shown",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -18894,7 +18904,11 @@
         }
       }
     },
+    "When using VoiceOver, we can hide maps to make the app easier to navigate." : {
+
+    },
     "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
