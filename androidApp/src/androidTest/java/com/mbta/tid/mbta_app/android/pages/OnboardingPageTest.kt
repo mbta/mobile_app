@@ -42,7 +42,7 @@ class OnboardingPageTest {
         composeTestRule.waitUntil { completedScreens.size == 2 }
         assertEquals(2, completedScreens.size)
 
-        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.onNodeWithText("Show maps").performClick()
         composeTestRule.waitUntil { completedScreens.size == 3 }
         assertEquals(3, completedScreens.size)
 
