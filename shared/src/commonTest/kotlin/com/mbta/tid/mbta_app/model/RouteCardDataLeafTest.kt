@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.RouteCardDataLeafTest.RedLine.route
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
@@ -773,9 +774,98 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    @Ignore // TODO once alerts are added
     fun `formats Red Line southbound as non-branching if one branch is closed`() = parametricTest {
-        TODO("⚠ Southbound to Ashmont 3 min 12 min")
+        // ⚠ Southbound to Ashmont 3 min 12 min
+        val objects = RedLine.objects()
+        val now = Clock.System.now()
+
+        val northQuincy = objects.stop()
+        val wollaston = objects.stop()
+        val quincyCenter = objects.stop()
+        val quincyAdams = objects.stop()
+        val braintree = objects.stop()
+
+        val stopsBraintreeBranch =
+            listOf(
+                RedLine.jfkUmass.south2,
+                northQuincy,
+                wollaston,
+                quincyCenter,
+                quincyAdams,
+                braintree
+            )
+        val prediction1 =
+            objects.prediction {
+                arrivalTime = now + 3.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
+
+        val prediction2 =
+            objects.prediction {
+                arrivalTime = now + 12.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity =
+                    stopsBraintreeBranch
+                        .map {
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = "Red",
+                                routeType = RouteType.HEAVY_RAIL,
+                                stop = it.id,
+                                trip = null
+                            )
+                        }
+                        .toMutableList()
+            }
+
+        val mapStopRoute = MapStopRoute.matching(RedLine.route)
+
+        assertEquals(
+            LeafFormat.Single(
+                "Ashmont",
+                UpcomingFormat.Some(
+                    listOf(
+                        UpcomingFormat.Some.FormattedTrip(
+                            objects.upcomingTrip(prediction1),
+                            RouteType.HEAVY_RAIL,
+                            TripInstantDisplay.Minutes(3)
+                        ),
+                        UpcomingFormat.Some.FormattedTrip(
+                            objects.upcomingTrip(prediction2),
+                            RouteType.HEAVY_RAIL,
+                            TripInstantDisplay.Minutes(12)
+                        )
+                    ),
+                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                )
+            ),
+            RouteCardData.Leaf(
+                    0,
+                    listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                    setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                    listOf(objects.upcomingTrip(prediction1), objects.upcomingTrip(prediction2)),
+                    listOf(alert),
+                    allDataLoaded = true,
+                    hasSchedulesToday = true,
+                    emptyList(),
+                )
+                .format(
+                    now,
+                    RedLine.route,
+                    RedLine.global,
+                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                )
+        )
     }
 
     @Test
