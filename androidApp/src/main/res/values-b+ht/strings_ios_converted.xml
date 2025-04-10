@@ -209,6 +209,8 @@
     <string name="onboarding_location_body">Nou itilize pozisyon w pou montre w opsyon transpò piblik ki toupre yo.</string>
     <string name="onboarding_location_footer">Ou ka toujou chanje paramèt pozisyon yo apre nan paramèt aplikasyon an.</string>
     <string name="onboarding_location_header">Gade transpò piblik toupre w</string>
+    <string name="onboarding_map_display_body">Lè w ap itilize TalkBack, nou ka kache kat pou fè aplikasyon an pi fasil pou navige.</string>
+    <string name="onboarding_map_display_header">Mete preferans pou montre kat la</string>
     <string name="onboarding_station_accessibility_body">Lè nou patisipe, nou ka montre w ki estasyon ki pa aksesib oswa ki fèmen asansè.</string>
     <string name="onboarding_station_accessibility_header">Enfòmasyon sou Aksè Estasyon</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
@@ -260,6 +262,7 @@
     <string name="service_ended">Sèvis ki fini</string>
     <string name="service_suspended">Sèvis ki kanpe</string>
     <string name="setting_station_accessibility">Enfòmasyon sou Aksè Estasyon</string>
+    <string name="setting_toggle_map_display">Ekspozisyon kat la</string>
     <string name="settings_link">Paramèt</string>
     <string name="severe_weather">Move Tan</string>
     <string name="severe_weather_lowercase">move tan</string>

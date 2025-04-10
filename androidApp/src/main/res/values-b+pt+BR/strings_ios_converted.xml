@@ -203,6 +203,8 @@
     <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
     <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
     <string name="onboarding_location_header">Ver transporte perto de você</string>
+    <string name="onboarding_map_display_body">Ao usar o TalkBack, podemos ocultar mapas para facilitar a navegação no aplicativo.</string>
+    <string name="onboarding_map_display_header">Definir preferência de exibição do mapa</string>
     <string name="onboarding_station_accessibility_body">Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados.</string>
     <string name="onboarding_station_accessibility_header">Informações de acessibilidade da estação</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
@@ -254,6 +256,7 @@
     <string name="service_ended">Serviço encerrado</string>
     <string name="service_suspended">Serviço suspenso</string>
     <string name="setting_station_accessibility">Informações de acessibilidade da estação</string>
+    <string name="setting_toggle_map_display">Exibição do mapa</string>
     <string name="settings_link">Configurações</string>
     <string name="severe_weather">Tempo ruim</string>
     <string name="severe_weather_lowercase">clima severo</string>

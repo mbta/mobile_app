@@ -199,6 +199,8 @@
     <string name="onboarding_location_body">Chúng tôi sử dụng vị trí của bạn để hiển thị cho bạn các lựa chọn phương tiện công cộng ở gần.</string>
     <string name="onboarding_location_footer">Bạn luôn có thể thay đổi cài đặt vị trí sau trong ứng dụng Cài đặt.</string>
     <string name="onboarding_location_header">Xem phương tiện công cộng gần bạn</string>
+    <string name="onboarding_map_display_body">Khi sử dụng TalkBack, chúng ta có thể ẩn bản đồ để điều hướng ứng dụng dễ dàng hơn.</string>
+    <string name="onboarding_map_display_header">Đặt tùy chọn hiển thị bản đồ</string>
     <string name="onboarding_station_accessibility_body">Bằng cách chọn tham gia, chúng tôi có thể cho bạn biết trạm nào không thể tiếp cận được hoặc thang máy bị đóng.</string>
     <string name="onboarding_station_accessibility_header">Thông tin về khả năng tiếp cận trạm</string>
     <string name="open_for_more_arrivals">Mở cửa đón thêm khách đến</string>
@@ -250,6 +252,7 @@
     <string name="service_ended">Dịch vụ đã kết thúc</string>
     <string name="service_suspended">Dịch vụ bị đình chỉ</string>
     <string name="setting_station_accessibility">Thông tin về khả năng tiếp cận trạm</string>
+    <string name="setting_toggle_map_display">Hiển thị bản đồ</string>
     <string name="settings_link">Cài đặt</string>
     <string name="severe_weather">Thời tiết khắc nghiệt</string>
     <string name="severe_weather_lowercase">thời tiết khắc nghiệt</string>

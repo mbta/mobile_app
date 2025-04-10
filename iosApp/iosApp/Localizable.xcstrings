@@ -8684,102 +8684,6 @@
         }
       }
     },
-    "Hide maps" : {
-      "comment" : "Onboarding button text for setting maps to hidden",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar mapas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masquer le plan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kache kat yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar mapas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ẩn bản đồ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐藏地图"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隱藏地圖"
-          }
-        }
-      }
-    },
-    "Hide Maps" : {
-      "comment" : "A setting on the More page to remove the app component from the app",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar Mapas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masquer le plan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kache Kat yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar mapas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ẩn bản đồ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐藏地图"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隱藏地圖"
-          }
-        }
-      }
-    },
     "Hides remaining stops" : {
       "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected when it's already open (closes the accordion listing those stops)",
       "localizations" : {
@@ -10073,7 +9977,51 @@
       }
     },
     "Map Display" : {
-      "comment" : "A setting on the More page to show / hide maps from the app"
+      "comment" : "A setting on the More page to show / hide maps from the app",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Visualización del mapa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Affichage de la carte"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ekspozisyon kat la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exibição do mapa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hiển thị bản đồ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "地图显示"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "地圖顯示"
+          }
+        }
+      }
     },
     "MBTA Go" : {
       "localizations" : {
@@ -13953,52 +13901,48 @@
       }
     },
     "Set map display preference" : {
-      "comment" : "Onboarding screen header for asking VoiceOver users if they want to hide maps"
-    },
-    "Set map preference" : {
       "comment" : "Onboarding screen header for asking VoiceOver users if they want to hide maps",
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Establecer preferencia de mapa"
+            "state" : "needs_review",
+            "value" : "Establecer preferencia de visualización del mapa"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configurer les préférences de la carte"
+            "state" : "needs_review",
+            "value" : "Définir les préférences d’affichage de la carte"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Defini preferans kat la"
+            "state" : "needs_review",
+            "value" : "Mete preferans pou montre kat la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Definir preferência de mapas"
+            "state" : "needs_review",
+            "value" : "Definir preferência de exibição do mapa"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đặt tùy chọn bản đồ"
+            "state" : "needs_review",
+            "value" : "Đặt tùy chọn hiển thị bản đồ"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置地图偏好"
+            "state" : "needs_review",
+            "value" : "设置地图显示首选项"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定地圖偏好"
+            "state" : "needs_review",
+            "value" : "設定地圖顯示首選項"
           }
         }
       }
@@ -14186,54 +14130,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "惡劣天氣"
-          }
-        }
-      }
-    },
-    "Show maps" : {
-      "comment" : "Onboarding button text for setting maps to shown",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar mapas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher la carte"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Montre kat yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exibir mapas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị bản đồ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示地图"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "顯示地圖"
           }
         }
       }
@@ -18857,99 +18753,95 @@
         }
       }
     },
-    "When using TalkBack, we can skip reading out maps to keep you focused on transit information." : {
+    "When using TalkBack, we can hide maps to make the app easier to navigate." : {
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al usar TalkBack, podemos omitir la lectura de mapas para que usted se concentre en la información del tránsito."
+            "state" : "needs_review",
+            "value" : "Al usar TalkBack, podemos ocultar mapas para que la aplicación sea más fácil de navegar."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lorsque vous utilisez TalkBack, nous pouvons ignorer la lecture des cartes pour vous permettre de rester concentré sur les informations de transport."
+            "state" : "needs_review",
+            "value" : "Lorsque vous utilisez TalkBack, nous pouvons masquer les cartes pour faciliter la navigation dans l’application."
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lè w ap itilize TalkBack, nou ka sote opsyon pou li kat yo pou kenbe w konsantre sou enfòmasyon transpò piblik."
+            "state" : "needs_review",
+            "value" : "Lè w ap itilize TalkBack, nou ka kache kat pou fè aplikasyon an pi fasil pou navige."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ao usar o TalkBack, podemos pular a leitura de mapas para manter o foco nas informações de trânsito."
+            "state" : "needs_review",
+            "value" : "Ao usar o TalkBack, podemos ocultar mapas para facilitar a navegação no aplicativo."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Khi sử dụng TalkBack, chúng ta có thể bỏ qua việc đọc bản đồ để bạn tập trung vào thông tin giao thông."
+            "state" : "needs_review",
+            "value" : "Khi sử dụng TalkBack, chúng ta có thể ẩn bản đồ để điều hướng ứng dụng dễ dàng hơn."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用对讲模式时，我们可以跳过朗读地图，让您专注于交通信息。"
+            "state" : "needs_review",
+            "value" : "使用 TalkBack 时，我们可以隐藏地图以使应用程序更易于导航。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用TalkBack時，我們可以跳過朗讀地圖，讓您專注於交通資訊。"
+            "state" : "needs_review",
+            "value" : "使用 TalkBack 時，我們可以隱藏地圖以使應用程式更易於導航。"
           }
         }
       }
     },
     "When using VoiceOver, we can hide maps to make the app easier to navigate." : {
-
-    },
-    "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuando utilice VoiceOver, podemos saltarnos la lectura de mapas para mantenerlo enfocado en la información del tráfico."
+            "state" : "needs_review",
+            "value" : "Al usar VoiceOver, podemos ocultar mapas para que la aplicación sea más fácil de navegar."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lorsque vous utilisez VoiceOver, nous pouvons ignorer la lecture des cartes pour vous permettre de rester concentré sur les informations de transport."
+            "state" : "needs_review",
+            "value" : "Lorsque nous utilisons VoiceOver, nous pouvons masquer les cartes pour faciliter la navigation dans l’application."
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lè w ap tilize VoiceOver, nou ka sote opsyon pou li kat yo pou nou kenbe w konsantre sou enfòmasyon transpò piblik la."
+            "state" : "needs_review",
+            "value" : "Lè w ap itilize VoiceOver, nou ka kache kat pou fè aplikasyon an pi fasil pou navige."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando você usa o VoiceOver, pode ignorar a leitura dos mapas para se manter focado nas informações do trânsito."
+            "state" : "needs_review",
+            "value" : "Ao usar o VoiceOver, podemos ocultar mapas para facilitar a navegação no aplicativo."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Khi sử dụng VoiceOver (Thuyết minh), chúng ta có thể bỏ qua việc đọc bản đồ để bạn tập trung vào thông tin về phương tiện công cộng."
+            "state" : "needs_review",
+            "value" : "Khi sử dụng VoiceOver, chúng ta có thể ẩn bản đồ để điều hướng ứng dụng dễ dàng hơn."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用朗读模式时，我们可以跳过朗读地图，让您专注于交通信息。"
+            "state" : "needs_review",
+            "value" : "使用 VoiceOver 时，我们可以隐藏地图以使应用程序更易于导航。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用朗讀模式時，我們可以跳過朗讀地圖，讓您專注於交通資訊。"
+            "state" : "needs_review",
+            "value" : "使用 VoiceOver 時，我們可以隱藏地圖以使應用程式更易於導航。"
           }
         }
       }

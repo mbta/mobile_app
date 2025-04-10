@@ -203,6 +203,8 @@
     <string name="onboarding_location_body">Nous utilisons votre position pour afficher les options de transport à proximité.</string>
     <string name="onboarding_location_footer">Vous pourrez changer les paramètres de localisation dans les paramètres de l’application.</string>
     <string name="onboarding_location_header">Voir les transports près de votre position</string>
+    <string name="onboarding_map_display_body">Lorsque vous utilisez TalkBack, nous pouvons masquer les cartes pour faciliter la navigation dans l’application.</string>
+    <string name="onboarding_map_display_header">Définir les préférences d’affichage de la carte</string>
     <string name="onboarding_station_accessibility_body">En vous inscrivant, nous pouvons vous montrer quelles stations sont inaccessibles ou dont les ascenseurs sont fermés.</string>
     <string name="onboarding_station_accessibility_header">Informations sur l’accessibilité de la gare</string>
     <string name="open_for_more_arrivals">Ouvert pour plus d’arrivées</string>
@@ -254,6 +256,7 @@
     <string name="service_ended">Fin de service</string>
     <string name="service_suspended">Service interrompu</string>
     <string name="setting_station_accessibility">Informations sur l’accessibilité de la gare</string>
+    <string name="setting_toggle_map_display">Affichage de la carte</string>
     <string name="settings_link">Paramètres</string>
     <string name="severe_weather">Temps violents</string>
     <string name="severe_weather_lowercase">temps violent</string>
