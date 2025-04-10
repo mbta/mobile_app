@@ -55,8 +55,8 @@ class OnboardingScreenViewTest {
         val settingsRepo =
             MockSettingsRepository(
                 settings = mapOf(Settings.StationAccessibility to false),
-                onSaveSetting = { _, value ->
-                    assertTrue(value)
+                onSaveSettings = { settings ->
+                    assertTrue(settings.getValue(Settings.StationAccessibility))
                     savedSetting = true
                 }
             )

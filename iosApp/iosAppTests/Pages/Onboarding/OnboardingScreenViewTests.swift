@@ -38,7 +38,7 @@ final class OnboardingScreenViewTests: XCTestCase {
 
     @MainActor func testStationAccessibilityFlow() throws {
         let saveSettingsExp = expectation(description: "saves station accessibility setting")
-        let settingsRepo = MockSettingsRepository(settings: [.stationAccessibility: false], onSaveSettings: { _ in
+        let settingsRepo = MockSettingsRepository(settings: [.stationAccessibility: false], onSaveSettings: {
             XCTAssertEqual($0, [.stationAccessibility: true])
             saveSettingsExp.fulfill()
         })
