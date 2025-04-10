@@ -175,7 +175,7 @@ data class AlertSummary(
                                 directionStops.map { (earlier, branched) ->
                                     Pair(
                                         RoutePattern(
-                                            "",
+                                            branched.joinToString("-"),
                                             directionId,
                                             "",
                                             0,
@@ -201,9 +201,8 @@ data class AlertSummary(
                                 }
                                 ?.mapNotNull { global.stops[it]?.resolveParent(global)?.id }
 
-                        if (stopIdsOnPattern != null) pattern to stopIdsOnPattern else null
+                        if (!stopIdsOnPattern.isNullOrEmpty()) pattern to stopIdsOnPattern else null
                     }
-                    .filter { (_, affectedStopsOnPattern) -> affectedStopsOnPattern.isNotEmpty() }
                     .toMap()
 
             // On the D branch, there are patterns that terminate at Reservoir and Riverside, this
