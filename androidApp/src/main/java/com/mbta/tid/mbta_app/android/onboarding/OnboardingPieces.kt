@@ -127,9 +127,10 @@ object OnboardingPieces {
 
     @Composable
     fun SettingsToggle(currentSetting: Boolean, toggleSetting: () -> Unit, label: String) {
-
         LabeledSwitch(
-            modifier = Modifier.background(colorResource(R.color.fill3)).padding(4.dp),
+            modifier =
+                Modifier.background(colorResource(R.color.fill3))
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
             label = label,
             value = currentSetting
         ) {

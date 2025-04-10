@@ -149,11 +149,16 @@ fun OnboardingScreenView(
                 }
             }
         }
-        OnboardingScreen.HideMaps -> {
+        OnboardingScreen.MapDisplay -> {
+
+            LaunchedEffect(Unit) {
+                // If we are displaying the MapDisplay screen, then HideMaps should be on by default
+                toggleSetting(Settings.HideMaps)
+            }
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
                 OnboardingPieces.PageDescription(
-                    R.string.onboarding_hide_maps_header,
-                    R.string.onboarding_hide_maps_body,
+                    R.string.onboarding_map_display_header,
+                    R.string.onboarding_map_display_body,
                     Modifier.align(Alignment.Center)
                         .offset(y = haloOffset)
                         .padding(horizontal = 32.dp)
@@ -161,13 +166,14 @@ fun OnboardingScreenView(
                         .padding(32.dp)
                 )
                 OnboardingContentColumn {
-                    OnboardingPieces.KeyButton(
-                        R.string.onboarding_hide_maps_hide,
-                        onClick = { hideMaps(true) },
+                    OnboardingPieces.SettingsToggle(
+                        currentSetting = !settings.getOrDefault(Settings.HideMaps, false),
+                        toggleSetting = { toggleSetting(Settings.HideMaps) },
+                        label = stringResource(R.string.setting_toggle_map_display)
                     )
-                    OnboardingPieces.SecondaryButton(
-                        R.string.onboarding_hide_maps_show,
-                        onClick = { hideMaps(false) },
+                    OnboardingPieces.KeyButton(
+                        R.string.onboarding_continue,
+                        onClick = { advance() },
                     )
                 }
             }
@@ -223,7 +229,7 @@ fun OnboardingScreenView(
                     )
 
                     OnboardingPieces.KeyButton(
-                        R.string.onboarding_station_accessibility_continue,
+                        R.string.onboarding_continue,
                         onClick = { advance() }
                     )
                 }
@@ -250,7 +256,7 @@ private fun OnboardingScreenViewFeedbackPreview() {
 private fun OnboardingScreenViewHideMapsPreview() {
     MyApplicationTheme {
         OnboardingScreenView(
-            OnboardingScreen.HideMaps,
+            OnboardingScreen.MapDisplay,
             advance = {},
             locationDataManager = LocationDataManager(),
             settingsRepository = MockSettingsRepository()

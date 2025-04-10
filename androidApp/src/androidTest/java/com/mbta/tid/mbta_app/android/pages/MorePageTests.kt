@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -35,7 +37,7 @@ class MorePageTests : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testSettings() {
-        var hideMapToggleCalled = false
+        var hideMapValue = false
 
         val koinApplication = koinApplication {
             modules(
@@ -44,7 +46,7 @@ class MorePageTests : KoinTest {
                         MockSettingsRepository(
                             onSaveSettings = { settings ->
                                 if (settings.size == 1 && settings.containsKey(Settings.HideMaps)) {
-                                    hideMapToggleCalled = true
+                                    hideMapValue = settings.getValue(Settings.HideMaps)
                                 }
                             }
                         )
@@ -60,12 +62,13 @@ class MorePageTests : KoinTest {
         composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
         composeTestRule.onNodeWithText("Settings").performScrollTo()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Hide Maps").performClick()
+        composeTestRule.onNodeWithText("Map Display").assertIsOn().performClick()
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { hideMapToggleCalled }
+        composeTestRule.waitUntil { hideMapValue }
 
-        assertTrue { hideMapToggleCalled }
+        assertTrue { hideMapValue }
+        composeTestRule.onNodeWithText("Map Display").assertIsOff()
     }
 
     @OptIn(ExperimentalTestApi::class)

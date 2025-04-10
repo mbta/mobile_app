@@ -47,7 +47,7 @@ class OnboardingRepositoryTest : KoinTest {
             listOf(
                 OnboardingScreen.Location,
                 OnboardingScreen.StationAccessibility,
-                OnboardingScreen.HideMaps,
+                OnboardingScreen.MapDisplay,
                 OnboardingScreen.Feedback
             ),
             repo.getPendingOnboarding()
@@ -82,7 +82,7 @@ class OnboardingRepositoryTest : KoinTest {
         assertEquals(
             listOf(
                 OnboardingScreen.StationAccessibility,
-                OnboardingScreen.HideMaps,
+                OnboardingScreen.MapDisplay,
                 OnboardingScreen.Feedback
             ),
             repo.getPendingOnboarding()
