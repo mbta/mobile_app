@@ -95,15 +95,15 @@ data class FormattedAlert(
                             it.startStopName,
                             it.endStopName
                         )
-                    is AlertSummary.Location.StopToBranch ->
+                    is AlertSummary.Location.StopToDirection ->
                         stringResource(
-                            R.string.alert_summary_location_stop_to_branch,
+                            R.string.alert_summary_location_stop_to_direction,
                             it.startStopName,
                             stringResource(directionNameFormatted(it.direction))
                         )
-                    is AlertSummary.Location.BranchToStop ->
+                    is AlertSummary.Location.DirectionToStop ->
                         stringResource(
-                            R.string.alert_summary_location_branch_to_stop,
+                            R.string.alert_summary_location_direction_to_stop,
                             stringResource(directionNameFormatted(it.direction)),
                             it.endStopName,
                         )
