@@ -13,9 +13,9 @@
     <string name="alert_details">Chi tiết cảnh báo</string>
     <string name="alert_ended">Cảnh báo không còn hiệu lực</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
-    <string name="alert_summary_location_branch_to_stop">\u0020từ các điểm dừng &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_location_direction_to_stop">\u0020từ các điểm dừng &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020tại &lt;b>%1$s&lt;/b></string>
-    <string name="alert_summary_location_stop_to_branch">\u0020từ &lt;b>%1$s&lt;/b> đến các điểm dừng &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_location_stop_to_direction">\u0020từ &lt;b>%1$s&lt;/b> đến các điểm dừng &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_successive">\u0020từ &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_end_of_service">\u0020đến cuối dịch vụ</string>
     <string name="alert_summary_timeframe_later_date">\u0020đến ngày %1$s</string>

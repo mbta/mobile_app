@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
@@ -195,6 +196,7 @@ fun StopDetailsFilteredDeparturesView(
         global,
         alertsHere,
         downstreamAlerts,
+        stopId,
         stopFilter.directionId,
         patternsHere,
         now
@@ -202,7 +204,7 @@ fun StopDetailsFilteredDeparturesView(
         if (global == null) return@LaunchedEffect
         viewModel.setAlertSummaries(
             (alertsHere + downstreamAlerts).associate {
-                it.id to it.summary(stopFilter.directionId, patternsHere, now, global)
+                it.id to it.summary(stopId, stopFilter.directionId, patternsHere, now, global)
             }
         )
     }
@@ -259,7 +261,7 @@ fun StopDetailsFilteredDeparturesView(
                 }
 
                 @Composable
-                fun AlertCard(alert: Alert, spec: AlertCardSpec? = null) {
+                fun AlertCard(alert: Alert, summary: AlertSummary?, spec: AlertCardSpec? = null) {
                     val spec =
                         spec
                             ?: if (alert.significance == AlertSignificance.Major) {
@@ -274,7 +276,7 @@ fun StopDetailsFilteredDeparturesView(
                             }
                     AlertCard(
                         alert,
-                        alertSummaries[alert.id],
+                        summary,
                         spec,
                         color = routeColor,
                         textColor = routeTextColor,
@@ -315,11 +317,26 @@ fun StopDetailsFilteredDeparturesView(
                         Modifier.padding(horizontal = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        alertsHere.forEach { AlertCard(it) }
-                        downstreamAlerts.forEach { AlertCard(it, AlertCardSpec.Downstream) }
+                        alertsHere.forEach {
+                            AlertCard(
+                                it,
+                                if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                                else return@forEach
+                            )
+                        }
+                        downstreamAlerts.forEach {
+                            AlertCard(
+                                it,
+                                if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                                else return@forEach,
+                                AlertCardSpec.Downstream
+                            )
+                        }
                         if (showElevatorAccessibility && hasAccessibilityWarning) {
                             if (elevatorAlerts.isNotEmpty()) {
-                                elevatorAlerts.forEach { AlertCard(it, AlertCardSpec.Elevator) }
+                                elevatorAlerts.forEach {
+                                    AlertCard(it, null, AlertCardSpec.Elevator)
+                                }
                             } else {
                                 NotAccessibleCard()
                             }
