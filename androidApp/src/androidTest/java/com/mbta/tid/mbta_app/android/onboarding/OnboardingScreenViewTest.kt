@@ -101,7 +101,7 @@ class OnboardingScreenViewTest {
             MockSettingsRepository(
                 settings = mapOf(Settings.HideMaps to false),
                 onSaveSettings = {
-                    assertEquals(mapOf(Settings.HideMaps to true), it)
+                    assertEquals(mapOf(Settings.HideMaps to false), it)
                     savedSetting = true
                 }
             )
@@ -129,11 +129,11 @@ class OnboardingScreenViewTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertTrue(savedSetting)
 
         composeTestRule.onNodeWithText("Map Display").assertIsOn()
 
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed().performClick()
+        assertTrue(savedSetting)
         assertTrue(advanced)
     }
 

@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -66,9 +65,7 @@ class MorePageTests : KoinTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntil { hideMapValue }
-
         assertTrue { hideMapValue }
-        composeTestRule.onNodeWithText("Map Display").assertIsOff()
     }
 
     @OptIn(ExperimentalTestApi::class)

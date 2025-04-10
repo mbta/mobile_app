@@ -88,11 +88,15 @@ fun OnboardingScreenView(
         }
     }
 
-    fun toggleSetting(setting: Settings) {
+    fun setSetting(setting: Settings, value: Boolean) {
         coroutineScope.launch {
-            settingsRepository.setSettings(mapOf(setting to !settings.getOrDefault(setting, false)))
+            settingsRepository.setSettings(mapOf(setting to value))
             settings = settingsRepository.getSettings()
         }
+    }
+
+    fun toggleSetting(setting: Settings) {
+        setSetting(setting, !settings.getOrDefault(setting, false))
     }
 
     val configuration = LocalConfiguration.current
@@ -150,11 +154,8 @@ fun OnboardingScreenView(
             }
         }
         OnboardingScreen.MapDisplay -> {
+            var localHideMapsSetting by rememberSaveable { mutableStateOf(true) }
 
-            LaunchedEffect(Unit) {
-                // If we are displaying the MapDisplay screen, then HideMaps should be on by default
-                toggleSetting(Settings.HideMaps)
-            }
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
                 OnboardingPieces.PageDescription(
                     R.string.onboarding_map_display_header,
@@ -167,13 +168,16 @@ fun OnboardingScreenView(
                 )
                 OnboardingContentColumn {
                     OnboardingPieces.SettingsToggle(
-                        currentSetting = !settings.getOrDefault(Settings.HideMaps, false),
-                        toggleSetting = { toggleSetting(Settings.HideMaps) },
+                        currentSetting = !localHideMapsSetting,
+                        toggleSetting = { localHideMapsSetting = !localHideMapsSetting },
                         label = stringResource(R.string.setting_toggle_map_display)
                     )
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
-                        onClick = { advance() },
+                        onClick = {
+                            setSetting(Settings.HideMaps, localHideMapsSetting)
+                            advance()
+                        },
                     )
                 }
             }

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 
 object OnboardingPieces {
     @Composable
@@ -129,7 +130,8 @@ object OnboardingPieces {
     fun SettingsToggle(currentSetting: Boolean, toggleSetting: () -> Unit, label: String) {
         LabeledSwitch(
             modifier =
-                Modifier.background(colorResource(R.color.fill3))
+                Modifier.haloContainer(1.dp)
+                    .background(colorResource(R.color.fill3))
                     .padding(horizontal = 16.dp, vertical = 10.dp),
             label = label,
             value = currentSetting
