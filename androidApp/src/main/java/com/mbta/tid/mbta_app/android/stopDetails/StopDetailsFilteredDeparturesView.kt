@@ -320,17 +320,15 @@ fun StopDetailsFilteredDeparturesView(
                         alertsHere.forEach {
                             AlertCard(
                                 it,
-                                alertSummaries.getOrElse(it.id) {
-                                    return@forEach
-                                }
+                                if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                                else return@forEach
                             )
                         }
                         downstreamAlerts.forEach {
                             AlertCard(
                                 it,
-                                alertSummaries.getOrElse(it.id) {
-                                    return@forEach
-                                },
+                                if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                                else return@forEach,
                                 AlertCardSpec.Downstream
                             )
                         }
