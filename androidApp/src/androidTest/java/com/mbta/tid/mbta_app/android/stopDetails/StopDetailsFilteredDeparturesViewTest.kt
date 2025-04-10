@@ -691,7 +691,9 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             )
         }
 
-        composeTestRule.onNodeWithText("Service suspended", true).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Service suspended at ${stop.name}", true)
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("View details").assertHasClickAction()
     }
 
