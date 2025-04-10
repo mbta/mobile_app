@@ -1,20 +1,25 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 @Composable
 fun NotAccessibleCard() {
@@ -28,12 +33,21 @@ fun NotAccessibleCard() {
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
+            Image(
+                painterResource(R.drawable.accessibility_icon_alert),
+                null,
+                modifier =
+                    Modifier.size(36.dp)
+                        .placeholderIfLoading()
+                        .testTag("elevator_alert")
+                        .clearAndSetSemantics {}
+            )
             Text(
                 stringResource(R.string.not_accessible_stop_card),
-                Modifier.weight(1f).alpha(0.6f),
-                style = Typography.bodySemibold
+                Modifier.weight(1f),
+                style = Typography.body
             )
         }
     }

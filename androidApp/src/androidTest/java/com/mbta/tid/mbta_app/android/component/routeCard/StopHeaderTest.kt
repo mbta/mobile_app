@@ -34,7 +34,7 @@ class StopHeaderTest {
             StopHeader(RouteCardData.RouteStopData(stop, emptyList(), emptyList()), true)
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
     }
 
     @Test
@@ -47,7 +47,7 @@ class StopHeaderTest {
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("wheelchair_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
     }
 
     @Test
