@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 
 object MapTestDataHelper {
@@ -348,4 +349,6 @@ object MapTestDataHelper {
                 ),
             )
         )
+
+    val global = GlobalResponse(objects)
 }
