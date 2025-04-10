@@ -55,6 +55,54 @@
         }
       }
     },
+    " from **%1$@** stops to **%2$@**" : {
+      "comment" : "Alert summary location for branching routes in the format of \" from [direction] stops to [Stop name]\" ex. \" from [Westbound] stops to [Kenmore]\" or \" from [Eastbound] stops to [Government Center]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " desde paradas en **%1$@** hasta **%2$@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** arrêts à **%2$@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " soti nan **%1$@** sispann rive nan **%2$@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%1$@** paradas a **%2$@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " từ các điểm dừng **%1$@** đến **%2$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从 **%1$@** 站到 **%2$@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從 **%1$@** 站到 **%2$@**"
+          }
+        }
+      }
+    },
     " from **%1$@** to **%2$@**" : {
       "comment" : "Alert summary location for consecutive stops in the format of \" from [Stop name] to [Other stop name]\" ex. \" from [Alewife] to [Harvard]\" or \" from [Lechmere] to [Park Street]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
       "extractionState" : "manual",
@@ -146,7 +194,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : " từ *%1$@** đến các điểm dừng **%2$@**"
+            "value" : " từ **%1$@** đến các điểm dừng **%2$@**"
           }
         },
         "zh-Hans-CN" : {

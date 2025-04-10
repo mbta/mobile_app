@@ -185,8 +185,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             )
                             view.scrollTo(tileData.id)
                         },
-                        pillDecoration: patternsByStop
-                            .line != nil ? .onPrediction(route: tileData.route) : .none,
+                        pillDecoration: pillDecoration(tileData: tileData),
                         showHeadsign: showTileHeadsigns,
                         isSelected: tileData.id == tripFilter?.tripId
                     )
@@ -198,6 +197,10 @@ struct StopDetailsFilteredDepartureDetails: View {
             .padding(.vertical, 1)
             .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    private func pillDecoration(tileData: TileData) -> DepartureTile.PillDecoration {
+        if patternsByStop.line != nil, let route = tileData.route { .onPrediction(route: route) } else { .none }
     }
 
     func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {

@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -153,6 +154,9 @@ class StopDetailsViewModel(
     private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
     val routeCardData = _routeCardData.asStateFlow()
 
+    private val _alertSummaries = MutableStateFlow<Map<String, AlertSummary?>>(emptyMap())
+    val alertSummaries = _alertSummaries.asStateFlow()
+
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
             predictionsRepository,
@@ -285,6 +289,10 @@ class StopDetailsViewModel(
 
     fun rejoinTripChannels() {
         tripData.value?.let { joinTripChannels(it.tripFilter) }
+    }
+
+    fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>) {
+        _alertSummaries.value = alertSummaries
     }
 
     fun setDepartures(departures: StopDetailsDepartures?) {
@@ -613,8 +621,10 @@ fun stopDetailsManagedVM(
                             alertData,
                             now,
                             pinnedRoutes,
-                            // TODO do something about filtered stop details
-                            context = RouteCardData.Context.StopDetailsUnfiltered
+                            context =
+                                if (filters.stopFilter != null)
+                                    RouteCardData.Context.StopDetailsFiltered
+                                else RouteCardData.Context.StopDetailsUnfiltered
                         )
                     } else null
                 )
