@@ -8356,6 +8356,9 @@
         }
       }
     },
+    "Group by Direction" : {
+      "comment" : "A setting on the More page to group departures by direction (only visible for developers)"
+    },
     "hazmat condition" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
