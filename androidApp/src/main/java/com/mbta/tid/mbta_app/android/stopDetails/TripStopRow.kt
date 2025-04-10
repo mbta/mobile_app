@@ -29,11 +29,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
@@ -76,31 +79,45 @@ fun TripStopRow(
                 HaloSeparator()
             }
             Row(
-                Modifier.fillMaxHeight(),
+                Modifier.fillMaxHeight().semantics { isTraversalGroup = true },
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
-                    Modifier.padding(start = 6.dp).width(28.dp),
+                    Modifier.padding(start = 6.dp).width(28.dp).semantics {
+                        isTraversalGroup = true
+                        traversalIndex = 1F
+                    },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (showElevatorAccessibility && stop.activeElevatorAlerts(now).isNotEmpty()) {
+                    val activeElevatorAlerts = stop.activeElevatorAlerts(now)
+                    if (showElevatorAccessibility && activeElevatorAlerts.isNotEmpty()) {
                         Image(
-                            modifier = Modifier.height(24.dp).testTag("elevator_alert"),
-                            painter = painterResource(R.drawable.elevator_alert),
-                            contentDescription = null
+                            modifier = Modifier.height(18.dp).testTag("elevator_alert"),
+                            painter = painterResource(R.drawable.accessibility_icon_alert),
+                            contentDescription =
+                                pluralStringResource(
+                                    R.plurals.elevator_closure_count,
+                                    activeElevatorAlerts.size,
+                                    activeElevatorAlerts.size
+                                )
                         )
-                    } else if (showElevatorAccessibility && stop.stop.isWheelchairAccessible) {
+                    } else if (showElevatorAccessibility && !stop.stop.isWheelchairAccessible) {
                         Image(
-                            modifier = Modifier.height(24.dp).testTag("wheelchair_accessible"),
-                            painter = painterResource(R.drawable.wheelchair_accessible),
-                            contentDescription = null
+                            modifier = Modifier.height(18.dp).testTag("wheelchair_not_accessible"),
+                            painter = painterResource(R.drawable.accessibility_icon_not_accessible),
+                            contentDescription = stringResource(R.string.not_accessible)
                         )
                     }
                 }
                 RouteLine(routeAccents.color, firstStop, lastStop, routeAccents, targeted)
-                Column(Modifier.padding(vertical = 12.dp).padding(start = 16.dp)) {
+                Column(
+                    Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {
+                        isTraversalGroup = true
+                        traversalIndex = 0F
+                    }
+                ) {
                     Row(
                         Modifier.semantics(mergeDescendants = true) {
                                 if (targeted) {

@@ -101,6 +101,7 @@ final class TripStopsTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            showElevatorAccessibility: false,
             global: .init(objects: objects)
         )
 
@@ -181,6 +182,7 @@ final class TripStopsTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            showElevatorAccessibility: false,
             global: .init(objects: objects)
         )
 
@@ -257,6 +259,7 @@ final class TripStopsTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            showElevatorAccessibility: false,
             global: .init(objects: objects)
         )
 
@@ -339,6 +342,7 @@ final class TripStopsTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            showElevatorAccessibility: false,
             global: .init(objects: objects)
         )
 

@@ -50,12 +50,14 @@ fun AlertCard(
     modifier: Modifier = Modifier
 ) {
     val formattedAlert = FormattedAlert(alert, alertSummary)
+
     val iconSize =
         when (spec) {
             AlertCardSpec.Major -> 48.dp
-            AlertCardSpec.Elevator -> 28.dp
+            AlertCardSpec.Elevator -> 36.dp
             else -> 20.dp
         }
+
     Column(
         modifier =
             modifier

@@ -88,10 +88,9 @@ fun AlertDetailsPage(
         ) {
             if (alert?.effect == Alert.Effect.ElevatorClosure) {
                 Image(
-                    painterResource(R.drawable.elevator_alert_monochrome),
+                    painterResource(R.drawable.accessibility_icon_alert),
                     null,
-                    Modifier.height(24.dp),
-                    colorFilter = ColorFilter.tint(headerTextColor)
+                    Modifier.height(18.dp),
                 )
             } else if (firstRoute != null) {
                 val (icon, description) = routeIcon(firstRoute)

@@ -14,6 +14,7 @@ struct TripStopRow: View {
     var now: Instant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var routeAccents: TripRouteAccents
+    var showElevatorAccessibility: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
     var lastStop: Bool = false
@@ -36,6 +37,29 @@ struct TripStopRow: View {
                 HaloSeparator()
             }
             HStack(alignment: .center, spacing: 0) {
+                HStack(alignment: .center) {
+                    let activeElevatorAlerts = stop.activeElevatorAlerts(now: now)
+                    if showElevatorAccessibility, !activeElevatorAlerts.isEmpty {
+                        Image(.accessibilityIconAlert)
+                            .accessibilityLabel(Text(
+                                "\(activeElevatorAlerts.count, specifier: "%ld") elevators closed",
+                                comment: "Icon alt text for elevator alert"
+                            ))
+                            // lowest sort priority means this will be read last
+                            .accessibilitySortPriority(0)
+                            .tag("elevator_alert")
+                    } else if showElevatorAccessibility, !stop.stop.isWheelchairAccessible {
+                        Image(.accessibilityIconNotAccessible)
+                            .accessibilityLabel(Text("Not accessible"))
+                            .accessibilitySortPriority(0)
+                            .tag("wheelchair_not_accessible")
+                    } else {
+                        EmptyView().accessibilityHidden(true)
+                    }
+                }
+
+                .frame(minWidth: 28, maxWidth: 28)
+                .padding(.leading, 6)
                 routeLine
                 VStack(alignment: .leading, spacing: 8) {
                     Button(
@@ -76,12 +100,13 @@ struct TripStopRow: View {
                             .accessibilityLabel(scrollRoutesAccessibilityLabel)
                     }
                 }
+                .accessibilitySortPriority(1)
                 .padding(.leading, 8)
                 .padding(.vertical, 12)
                 .padding(.trailing, 8)
                 .padding(.bottom, lastStop ? 0 : 1)
                 .frame(minHeight: 56)
-            }
+            }.accessibilityElement(children: .contain)
         }
     }
 
@@ -103,7 +128,7 @@ struct TripStopRow: View {
             }
             StopDot(routeAccents: routeAccents, targeted: targeted)
         }
-        .padding(.leading, 37)
+        .padding(.leading, 3)
         .padding(.trailing, 8)
     }
 
@@ -187,6 +212,39 @@ struct TripStopRow: View {
 
 #Preview {
     let objects = ObjectCollectionBuilder()
+
+    TripStopRow(
+        stop: .init(
+            stop: objects.stop {
+                $0.name = "ABC"
+                $0.wheelchairBoarding = .accessible
+            },
+            stopSequence: 10,
+            disruption: nil,
+            schedule: nil,
+            prediction: nil,
+            predictionStop: nil,
+            vehicle: nil,
+            routes: [
+                objects.route {
+                    $0.longName = "Red Line"
+                    $0.color = "#DA291C"
+                    $0.textColor = "#ffffff"
+                },
+                objects.route {
+                    $0.longName = "Green Line"
+                    $0.color = "#00843D"
+                    $0.textColor = "#ffffff"
+                },
+            ],
+            elevatorAlerts: []
+        ),
+        now: Date.now.toKotlinInstant(),
+        onTapLink: { _ in },
+        routeAccents: TripRouteAccents(type: .lightRail),
+        showElevatorAccessibility: true
+    ).font(Typography.body)
+
     TripStopRow(
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
@@ -212,6 +270,41 @@ struct TripStopRow: View {
         ),
         now: Date.now.toKotlinInstant(),
         onTapLink: { _ in },
-        routeAccents: TripRouteAccents(type: .lightRail)
+        routeAccents: TripRouteAccents(type: .lightRail),
+        showElevatorAccessibility: true
+    ).font(Typography.body)
+
+    TripStopRow(
+        stop: .init(
+            stop: objects.stop { $0.name = "ABC" },
+            stopSequence: 10,
+            disruption: nil,
+            schedule: nil,
+            prediction: nil,
+            predictionStop: nil,
+            vehicle: nil,
+            routes: [
+                objects.route {
+                    $0.longName = "Red Line"
+                    $0.color = "#DA291C"
+                    $0.textColor = "#ffffff"
+                },
+                objects.route {
+                    $0.longName = "Green Line"
+                    $0.color = "#00843D"
+                    $0.textColor = "#ffffff"
+                },
+            ],
+            elevatorAlerts: [objects.alert {
+                $0.activePeriod(
+                    start: Date.now.addingTimeInterval(-20 * 60).toKotlinInstant(),
+                    end: Date.now.addingTimeInterval(20 * 60).toKotlinInstant()
+                )
+            }]
+        ),
+        now: Date.now.toKotlinInstant(),
+        onTapLink: { _ in },
+        routeAccents: TripRouteAccents(type: .lightRail),
+        showElevatorAccessibility: true
     ).font(Typography.body)
 }
