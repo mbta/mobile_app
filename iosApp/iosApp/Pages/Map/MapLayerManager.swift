@@ -139,7 +139,7 @@ class MapLayerManager: IMapLayerManager {
                         try map.removeLayer(withId: layer.id)
                     } else {
                         // Skip attempting to add layer if it already exists
-                        return
+                        continue
                     }
                 }
 
@@ -156,8 +156,7 @@ class MapLayerManager: IMapLayerManager {
                         try map.removeLayer(withId: layer.id)
                     } else {
                         // Skip attempting to add layer if it already exists
-                        // TODO: prevent layer order misery
-                        return
+                        continue
                     }
                 }
 

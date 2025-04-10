@@ -64,7 +64,7 @@ extension HomeMapView {
     }
 
     func addLayers(_ layerManager: IMapLayerManager, recreate: Bool = false) {
-        guard let railRouteShapes, let globalData = mapVM.globalData else { return }
+        guard let globalData = mapVM.globalData else { return }
         layerManager.addLayers(
             routes: mapVM.routeSourceData,
             globalResponse: globalData,
