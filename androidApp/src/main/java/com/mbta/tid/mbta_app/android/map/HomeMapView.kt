@@ -104,7 +104,7 @@ fun HomeMapView(
     val railRouteShapes by viewModel.railRouteShapes.collectAsState(initial = null)
     val stopSourceData by viewModel.stopSourceData.collectAsState(initial = null)
     val globalResponse by viewModel.globalResponse.collectAsState(initial = null)
-    val railRouteLineData by viewModel.railRouteLineData.collectAsState(initial = null)
+    val railRouteSourceData by viewModel.railRouteSourceData.collectAsState(initial = null)
     val showRecenterButton by viewModel.showRecenterButton.collectAsState(initial = false)
     val showTripCenterButton by viewModel.showTripCenterButton.collectAsState(initial = false)
     val selectedVehicle =
@@ -183,16 +183,26 @@ fun HomeMapView(
                 )
             }
         val newRailData =
-            RouteFeaturesBuilder.generateRouteLines(filteredRoutes, globalResponse, globalMapData)
+            RouteFeaturesBuilder.generateRouteSources(filteredRoutes, globalResponse, globalMapData)
         layerManager.run {
-            updateRouteSourceData(RouteFeaturesBuilder.buildCollection(newRailData).toMapbox())
+            updateRouteSourceData(newRailData)
+            addLayers(
+                filteredRoutes,
+                globalResponse,
+                if (isDarkMode) ColorPalette.dark else ColorPalette.light
+            )
         }
     }
 
     suspend fun refreshRouteLineSource() {
-        val routeData = railRouteLineData ?: return
+        val routeData = railRouteSourceData ?: return
         layerManager.run {
-            updateRouteSourceData(RouteFeaturesBuilder.buildCollection(routeData).toMapbox())
+            updateRouteSourceData(routeData)
+            addLayers(
+                railRouteShapes ?: return@run,
+                globalResponse ?: return@run,
+                if (isDarkMode) ColorPalette.dark else ColorPalette.light
+            )
         }
     }
 
@@ -257,7 +267,11 @@ fun HomeMapView(
     LaunchedEffect(Unit) {
         mapState.styleLoadedEvents.collect {
             layerManager.run {
-                addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
+                addLayers(
+                    railRouteShapes ?: return@run,
+                    globalResponse ?: return@run,
+                    if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                )
             }
         }
     }
@@ -308,7 +322,7 @@ fun HomeMapView(
                 LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
                     viewModel.refreshRouteLineData(globalMapData)
                 }
-                LaunchedEffect(railRouteLineData) {
+                LaunchedEffect(railRouteSourceData) {
                     refreshRouteLineSource()
                     viewModel.refreshStopFeatures(selectedStop, globalMapData)
                 }
