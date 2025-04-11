@@ -20,6 +20,7 @@ struct OnboardingScreenView: View {
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
     @State private var settings: [Settings: Bool] = [:]
+    @State private var localHideMaps = true
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.dynamicTypeSize) var typeSize
@@ -92,15 +93,16 @@ struct OnboardingScreenView: View {
                 })
 
             case .hideMaps:
+
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
                     OnboardingPieces.PageDescription(
                         headerText: Text(
-                            "Set map preference",
+                            "Set map display preference",
                             comment: "Onboarding screen header for asking VoiceOver users if they want to hide maps"
                         ),
                         bodyText: Text(
-                            "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
+                            "When using VoiceOver, we can hide maps to make the app easier to navigate."
                         ),
                         focusBinding: $focusHeader,
                         focusValue: .hideMaps
@@ -111,13 +113,17 @@ struct OnboardingScreenView: View {
                     .shadow(radius: 16)
                     .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                     Spacer()
-                    OnboardingPieces.KeyButton(
-                        text: Text("Hide maps", comment: "Onboarding button text for setting maps to hidden"),
-                        action: { hideMaps(true) }
+                    OnboardingPieces.SettingsToggle(
+                        getSetting: { !localHideMaps },
+                        toggleSetting: { localHideMaps = !localHideMaps },
+                        label: Text("Map Display")
                     )
-                    OnboardingPieces.SecondaryButton(
-                        text: Text("Show maps", comment: "Onboarding button text for setting maps to shown"),
-                        action: { hideMaps(false) }
+                    OnboardingPieces.KeyButton(
+                        text: Text("Continue"),
+                        action: {
+                            setSetting(.hideMaps, localHideMaps)
+                            advance()
+                        }
                     )
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
@@ -204,13 +210,6 @@ struct OnboardingScreenView: View {
         }
     }
 
-    func hideMaps(_ hide: Bool) {
-        Task {
-            try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: hide)])
-            advance()
-        }
-    }
-
     func shareLocation() {
         // short circuit for OnboardingPageView integration testing
         if skipLocationDialogue {
@@ -223,9 +222,12 @@ struct OnboardingScreenView: View {
     }
 
     func toggleSetting(_ setting: Settings) {
+        setSetting(setting, !settings.getSafe(setting))
+    }
+
+    func setSetting(_ setting: Settings, _ value: Bool) {
         Task {
-            try await settingsRepository
-                .setSettings(settings: [setting: KotlinBoolean(bool: !settings.getSafe(setting))])
+            try await settingsRepository.setSettings(settings: [setting: KotlinBoolean(bool: value)])
             loadSettings()
         }
     }
@@ -261,7 +263,7 @@ struct OnboardingScreenView: View {
                          settingsRepository: MockSettingsRepository())
 }
 
-#Preview("Hide Maps") {
+#Preview("Map Display") {
     OnboardingScreenView(screen: .hideMaps, advance: {},
                          settingsRepository: MockSettingsRepository())
 }

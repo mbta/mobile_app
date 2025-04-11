@@ -4,9 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -74,11 +76,38 @@ fun PredictionRowView(
         // The behavior that we’d really like is for both the destination and the prediction to get
         // their full intrinsic max width if that can be done with no text wrapping, and to only
         // apply these weights if the text won’t just all fit on one line. Unfortunately, it’s not
-        // clear how to do this, so we’re just applying the weights and accepting the unnecessary
-        // text wrapping.
+        // clear how to do this, but we can get reasonably close by giving the predictions the full
+        // width they want as long as they don’t contain arbitrary or long fixed text.
+        val predictionContainsWrappableText =
+            when (predictions) {
+                is UpcomingFormat.Some ->
+                    predictions.trips.any {
+                        when (it.format) {
+                            is TripInstantDisplay.Overridden -> true
+                            TripInstantDisplay.Hidden -> false
+                            TripInstantDisplay.Boarding -> false
+                            TripInstantDisplay.Arriving -> false
+                            TripInstantDisplay.Approaching -> false
+                            TripInstantDisplay.Now -> false
+                            is TripInstantDisplay.Time -> false
+                            is TripInstantDisplay.TimeWithStatus -> true
+                            is TripInstantDisplay.Minutes -> false
+                            is TripInstantDisplay.ScheduleTime -> false
+                            is TripInstantDisplay.ScheduleMinutes -> false
+                            is TripInstantDisplay.Skipped -> false
+                            is TripInstantDisplay.Cancelled -> false
+                        }
+                    }
+                is UpcomingFormat.NoTrips -> true
+                is UpcomingFormat.Disruption -> false
+                is UpcomingFormat.Loading -> false
+            }
+        val predictionsWidthModifier =
+            if (predictionContainsWrappableText) Modifier.weight(0.5f)
+            else Modifier.width(IntrinsicSize.Max)
         Column(modifier = Modifier.weight(1f)) { destination() }
         Row(
-            modifier = Modifier.weight(0.5f),
+            modifier = predictionsWidthModifier,
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
