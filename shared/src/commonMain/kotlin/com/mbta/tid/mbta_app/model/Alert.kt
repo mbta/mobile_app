@@ -62,7 +62,13 @@ data class Alert(
             Effect.ElevatorClosure -> AlertSignificance.Accessibility
             Effect.TrackChange -> AlertSignificance.Minor
             Effect.Delay ->
-                if (severity >= 3 && informedEntity.any { it.routeType?.isSubway() == true }) {
+                if (
+                    severity >= 3 &&
+                        informedEntity.any {
+                            it.routeType?.isSubway() == true ||
+                                it.routeType == RouteType.COMMUTER_RAIL
+                        }
+                ) {
                     AlertSignificance.Minor
                 } else {
                     AlertSignificance.None
