@@ -153,7 +153,7 @@ fun OnboardingScreenView(
                 }
             }
         }
-        OnboardingScreen.MapDisplay -> {
+        OnboardingScreen.HideMaps -> {
             var localHideMapsSetting by rememberSaveable { mutableStateOf(true) }
 
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
@@ -198,7 +198,7 @@ fun OnboardingScreenView(
                         R.string.onboarding_location_body
                     )
                     OnboardingPieces.KeyButton(
-                        R.string.onboarding_location_advance,
+                        R.string.onboarding_continue,
                         onClick = ::shareLocation,
                     )
                     Text(
@@ -260,7 +260,7 @@ private fun OnboardingScreenViewFeedbackPreview() {
 private fun OnboardingScreenViewHideMapsPreview() {
     MyApplicationTheme {
         OnboardingScreenView(
-            OnboardingScreen.MapDisplay,
+            OnboardingScreen.HideMaps,
             advance = {},
             locationDataManager = LocationDataManager(),
             settingsRepository = MockSettingsRepository()

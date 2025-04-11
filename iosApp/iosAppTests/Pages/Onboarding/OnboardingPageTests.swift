@@ -52,7 +52,7 @@ final class OnboardingPageTests: XCTestCase {
             for: [locationExp, stationAccessibilityExp, hideMapsExp, hideMapsContExp, feedbackExp, finishExp],
             timeout: 1
         )
-        XCTAssertEqual(onboardingRepository.finished, [.location, .stationAccessibility, .mapDisplay, .feedback])
+        XCTAssertEqual(onboardingRepository.finished, [.location, .stationAccessibility, .hideMaps, .feedback])
     }
 
     private class MockOnboardingRepository: IOnboardingRepository {

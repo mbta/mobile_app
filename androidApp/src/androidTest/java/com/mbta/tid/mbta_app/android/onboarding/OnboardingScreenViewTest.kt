@@ -108,7 +108,7 @@ class OnboardingScreenViewTest {
         var advanced = false
         composeTestRule.setContent {
             OnboardingScreenView(
-                screen = OnboardingScreen.MapDisplay,
+                screen = OnboardingScreen.HideMaps,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
                 settingsRepository = settingsRepo

@@ -22,12 +22,12 @@ class OnboardingScreenTest {
     @Test
     fun `HideMaps checks accessibility status`() {
         assertTrue(
-            OnboardingScreen.MapDisplay.applies(
+            OnboardingScreen.HideMaps.applies(
                 MockAccessibilityStatusRepository(isScreenReaderEnabled = true)
             )
         )
         assertFalse(
-            OnboardingScreen.MapDisplay.applies(
+            OnboardingScreen.HideMaps.applies(
                 MockAccessibilityStatusRepository(isScreenReaderEnabled = false)
             )
         )

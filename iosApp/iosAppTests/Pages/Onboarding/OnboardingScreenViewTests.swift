@@ -62,26 +62,31 @@ final class OnboardingScreenViewTests: XCTestCase {
     @MainActor
     func testMapDisplayFlow() throws {
         let saveSettingExp = expectation(description: "saves hide maps setting")
-        let settingsRepo = MockSettingsRepository(settings: [.hideMaps: false], onSaveSettings: { _ in
-            //    XCTAssertEqual($0, [.hideMaps: false])
-            //    assertion fails, seemingly because of the use of localHideMaps as local state for the view
+        let settingsRepo = MockSettingsRepository(settings: [.hideMaps: false], onSaveSettings: {
+            XCTAssertEqual($0, [.hideMaps: false])
             saveSettingExp.fulfill()
         })
         let advanceExp = expectation(description: "calls advance()")
 
         let sut = OnboardingScreenView(
-            screen: .mapDisplay,
+            screen: .hideMaps,
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
+
         XCTAssertNotNil(try sut.inspect().find(
             text: "When using VoiceOver, we can hide maps to make the app easier to navigate."
         ))
-
         XCTAssertNotNil(try sut.inspect().find(ViewType.Toggle.self))
 
-        try sut.inspect().find(ViewType.Toggle.self).tap()
-        try sut.inspect().find(button: "Continue").tap()
+        let exp = sut.inspection.inspect { view in
+
+            try view.find(ViewType.Toggle.self).tap()
+            try view.find(button: "Continue").tap()
+        }
+
+        ViewHosting.host(view: sut)
+
         wait(for: [saveSettingExp, advanceExp], timeout: 1)
     }
 

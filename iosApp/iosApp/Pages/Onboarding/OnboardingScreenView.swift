@@ -92,7 +92,7 @@ struct OnboardingScreenView: View {
                     }
                 })
 
-            case .mapDisplay:
+            case .hideMaps:
 
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
@@ -105,7 +105,7 @@ struct OnboardingScreenView: View {
                             "When using VoiceOver, we can hide maps to make the app easier to navigate."
                         ),
                         focusBinding: $focusHeader,
-                        focusValue: .mapDisplay
+                        focusValue: .hideMaps
                     )
                     .padding(32)
                     .background(Color.fill2)
@@ -264,7 +264,7 @@ struct OnboardingScreenView: View {
 }
 
 #Preview("Map Display") {
-    OnboardingScreenView(screen: .mapDisplay, advance: {},
+    OnboardingScreenView(screen: .hideMaps, advance: {},
                          settingsRepository: MockSettingsRepository())
 }
 
