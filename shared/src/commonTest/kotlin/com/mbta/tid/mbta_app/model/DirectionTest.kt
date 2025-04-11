@@ -230,10 +230,14 @@ class DirectionTest {
         val bc = objects.stop { id = "place-lake" }
         val southSt = objects.stop { id = "place-sougr" }
 
+        // C West
+        val cc = objects.stop { id = "place-clmnl" }
+
         // E West
         val heath = objects.stop { id = "place-hsmnl" }
 
         // Shared Trunk
+        val kenmore = objects.stop { id = "place-kencl" }
         val hynes = objects.stop { id = "place-hymnl" }
         val arlington = objects.stop { id = "place-armnl" }
         val boylston = objects.stop { id = "place-boyls" }
@@ -257,7 +261,16 @@ class DirectionTest {
             objects.routePattern(routeB) {
                 representativeTrip {
                     headsign = "B"
-                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, southSt.id, bc.id)
+                    stopIds =
+                        listOf(
+                            gov.id,
+                            boylston.id,
+                            arlington.id,
+                            hynes.id,
+                            kenmore.id,
+                            southSt.id,
+                            bc.id
+                        )
                 }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
@@ -266,7 +279,43 @@ class DirectionTest {
             objects.routePattern(routeB) {
                 representativeTrip {
                     headsign = "B"
-                    stopIds = listOf(bc.id, southSt.id, hynes.id, arlington.id, boylston.id, gov.id)
+                    stopIds =
+                        listOf(
+                            bc.id,
+                            southSt.id,
+                            kenmore.id,
+                            hynes.id,
+                            arlington.id,
+                            boylston.id,
+                            gov.id
+                        )
+                }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val routeC =
+            objects.route {
+                id = "Green-C"
+                sortOrder = 2
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Cleveland Circle", "Government Center")
+            }
+        val routePatternC1 =
+            objects.routePattern(routeC) {
+                representativeTrip {
+                    headsign = "C"
+                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, kenmore.id, cc.id)
+                }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternC2 =
+            objects.routePattern(routeC) {
+                representativeTrip {
+                    headsign = "C"
+                    stopIds = listOf(cc.id, kenmore.id, hynes.id, arlington.id, boylston.id, gov.id)
                 }
                 directionId = 1
                 typicality = RoutePattern.Typicality.Typical
@@ -328,13 +377,30 @@ class DirectionTest {
             Direction.getDirectionsForLine(global, southSt, listOf(routePatternB1, routePatternB2))
         )
 
+        // at Kenmore
+        assertEquals(
+            listOf(Direction("West", null, 0), Direction("East", "Park St & North", 1)),
+            Direction.getDirectionsForLine(
+                global,
+                kenmore,
+                listOf(routePatternB1, routePatternB2, routePatternC1, routePatternC2)
+            )
+        )
+
         // on shard trunk
         assertEquals(
             listOf(Direction("West", "Kenmore & West", 0), Direction("East", "Park St & North", 1)),
             Direction.getDirectionsForLine(
                 global,
                 hynes,
-                listOf(routePatternB1, routePatternB2, routePatternE1, routePatternE2)
+                listOf(
+                    routePatternB1,
+                    routePatternB2,
+                    routePatternC1,
+                    routePatternC2,
+                    routePatternE1,
+                    routePatternE2
+                )
             )
         )
 
@@ -347,7 +413,14 @@ class DirectionTest {
             Direction.getDirectionsForLine(
                 global,
                 gov,
-                listOf(routePatternB1, routePatternB2, routePatternE1, routePatternE2)
+                listOf(
+                    routePatternB1,
+                    routePatternB2,
+                    routePatternC1,
+                    routePatternC2,
+                    routePatternE1,
+                    routePatternE2
+                )
             )
         )
 
