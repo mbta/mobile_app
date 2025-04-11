@@ -1,10 +1,15 @@
 package com.mbta.tid.mbta_app.android.onboarding
 
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
+import com.mbta.tid.mbta_app.android.hasRole
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -51,9 +56,9 @@ class OnboardingScreenViewTest {
         var savedSetting = false
         val settingsRepo =
             MockSettingsRepository(
-                settings = mapOf(Settings.ElevatorAccessibility to false),
-                onSaveSettings = {
-                    assertEquals(mapOf(Settings.ElevatorAccessibility to true), it)
+                settings = mapOf(Settings.StationAccessibility to false),
+                onSaveSettings = { settings ->
+                    assertTrue(settings.getValue(Settings.StationAccessibility))
                     savedSetting = true
                 }
             )
@@ -67,26 +72,36 @@ class OnboardingScreenViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Know about elevator closures").assertIsDisplayed()
         composeTestRule
-            .onNodeWithText("We can tell you when elevators are closed at a station.")
+            .onNode(hasText("Station Accessibility Info") and !hasRole(Role.Switch))
             .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Skip").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Show elevator closures").performClick()
+        composeTestRule
+            .onNodeWithText(
+                " we can show you which stations are inaccessible or have elevator closures.",
+                substring = true
+            )
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Continue").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasText("Station Accessibility Info") and hasRole(Role.Switch))
+            .performClick()
 
         composeTestRule.waitForIdle()
         assertTrue(savedSetting)
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitForIdle()
+
         assertTrue(advanced)
     }
 
     @Test
-    fun testHideMapsFlow() {
+    fun testMapDisplayFlow() {
         var savedSetting = false
         val settingsRepo =
             MockSettingsRepository(
                 settings = mapOf(Settings.HideMaps to false),
                 onSaveSettings = {
-                    assertEquals(mapOf(Settings.HideMaps to true), it)
+                    assertEquals(mapOf(Settings.HideMaps to false), it)
                     savedSetting = true
                 }
             )
@@ -101,13 +116,23 @@ class OnboardingScreenViewTest {
         }
         composeTestRule
             .onNodeWithText(
-                "When using TalkBack, we can skip reading out maps to keep you focused on transit information."
+                "When using TalkBack, we can hide maps to make the app easier to navigate."
             )
             .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Show maps").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Hide maps").performClick()
 
         composeTestRule.waitForIdle()
+
+        composeTestRule
+            .onNodeWithText("Map Display")
+            .assertIsDisplayed()
+            .assertIsOff()
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Map Display").assertIsOn()
+
+        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().performClick()
         assertTrue(savedSetting)
         assertTrue(advanced)
     }

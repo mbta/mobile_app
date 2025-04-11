@@ -88,14 +88,15 @@ class MoreViewModel(
                 items =
                     listOf(
                         MoreItem.Toggle(
-                            label = context.resources.getString(R.string.setting_toggle_hide_maps),
+                            label =
+                                context.resources.getString(R.string.setting_toggle_map_display),
                             settings = Settings.HideMaps,
                             value = settings[Settings.HideMaps] ?: false
                         ),
                         MoreItem.Toggle(
-                            label = context.getString(R.string.setting_elevator_accessibility),
-                            settings = Settings.ElevatorAccessibility,
-                            value = settings[Settings.ElevatorAccessibility] ?: false
+                            label = context.getString(R.string.setting_station_accessibility),
+                            settings = Settings.StationAccessibility,
+                            value = settings[Settings.StationAccessibility] ?: false
                         )
                     )
             ),

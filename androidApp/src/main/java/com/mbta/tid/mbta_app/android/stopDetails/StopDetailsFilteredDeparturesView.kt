@@ -128,9 +128,11 @@ fun StopDetailsFilteredDeparturesView(
         }
 
     val expectedDirection = stopFilter.directionId
+
     val alertSummaries by viewModel.alertSummaries.collectAsState()
+
     val hideMaps by viewModel.hideMaps.collectAsState()
-    val showElevatorAccessibility by viewModel.showElevatorAccessibility.collectAsState()
+    val showStationAccessibility by viewModel.showStationAccessibility.collectAsState()
 
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
 
@@ -311,7 +313,7 @@ fun StopDetailsFilteredDeparturesView(
                 if (
                     alertsHere.isNotEmpty() ||
                         downstreamAlerts.isNotEmpty() ||
-                        (showElevatorAccessibility && hasAccessibilityWarning)
+                        (showStationAccessibility && hasAccessibilityWarning)
                 ) {
                     Column(
                         Modifier.padding(horizontal = 10.dp),
@@ -332,7 +334,7 @@ fun StopDetailsFilteredDeparturesView(
                                 AlertCardSpec.Downstream
                             )
                         }
-                        if (showElevatorAccessibility && hasAccessibilityWarning) {
+                        if (showStationAccessibility && hasAccessibilityWarning) {
                             if (elevatorAlerts.isNotEmpty()) {
                                 elevatorAlerts.forEach {
                                     AlertCard(it, null, AlertCardSpec.Elevator)

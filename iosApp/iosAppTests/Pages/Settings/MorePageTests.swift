@@ -13,44 +13,14 @@ import ViewInspector
 import XCTest
 
 final class MorePageTests: XCTestCase {
-    class FakeSettingsRepository: ISettingsRepository {
-        var settings: [Settings: Bool]
-        let onGet: (() -> Void)?
-        let onSet: (([Settings: Bool]) -> Void)?
-
-        init(
-            devDebugMode: Bool,
-            searchRouteResults: Bool,
-            onGet: (() -> Void)? = nil,
-            onSet: (([Settings: Bool]) -> Void)? = nil
-        ) {
-            settings = [
-                .devDebugMode: devDebugMode,
-                .searchRouteResults: searchRouteResults,
-            ]
-            self.onGet = onGet
-            self.onSet = onSet
-        }
-
-        func __getSettings() async throws -> [Settings: KotlinBoolean] {
-            onGet?()
-            return settings.mapValues { KotlinBoolean(bool: $0) }
-        }
-
-        func __setSettings(settings: [Settings: KotlinBoolean]) async throws {
-            let settingsUnboxed = settings.mapValues { $0.boolValue }
-            onSet?(settingsUnboxed)
-            self.settings = settingsUnboxed
-        }
-    }
-
     @MainActor func testLoadsState() async throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
 
-        let settingsRepository = FakeSettingsRepository(
-            devDebugMode: true,
-            searchRouteResults: false,
-            onGet: { loadedPublisher.send(()) }
+        let settingsRepository = MockSettingsRepository(
+            settings: [.devDebugMode: true,
+                       .searchRouteResults: false,
+                       .hideMaps: false],
+            onGetSettings: { loadedPublisher.send(()) }
         )
         let viewModel = SettingsViewModel(settingsRepository: settingsRepository)
 
@@ -59,23 +29,27 @@ final class MorePageTests: XCTestCase {
             XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
         }
 
+        let mapDisplayTrueByDefault = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
+            XCTAssertTrue(try view.find(text: "Map Display").parent().parent().find(ViewType.Toggle.self).isOn())
+        }
+
         ViewHosting.host(view: sut)
         await viewModel.getSections()
 
-        await fulfillment(of: [exp], timeout: 2)
+        await fulfillment(of: [exp, mapDisplayTrueByDefault], timeout: 2)
     }
 
     @MainActor func testSavesState() async throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
         let savedExp = expectation(description: "saved state")
 
-        let settingsRepository = FakeSettingsRepository(
-            devDebugMode: false,
-            searchRouteResults: false,
-            onGet: { loadedPublisher.send(()) },
-            onSet: {
+        let settingsRepository = MockSettingsRepository(
+            settings: [.devDebugMode: false,
+                       .searchRouteResults: false],
+            onGetSettings: { loadedPublisher.send(()) },
+            onSaveSettings: {
                 let devDebugModeSetting = $0[.devDebugMode] ?? false
-                XCTAssertTrue(devDebugModeSetting)
+                XCTAssertTrue(devDebugModeSetting.boolValue)
                 savedExp.fulfill()
             }
         )
@@ -95,10 +69,10 @@ final class MorePageTests: XCTestCase {
     @MainActor func testLinksExist() async throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
 
-        let settingsRepository = FakeSettingsRepository(
-            devDebugMode: false,
-            searchRouteResults: false,
-            onGet: { loadedPublisher.send(()) }
+        let settingsRepository = MockSettingsRepository(
+            settings: [.devDebugMode: false,
+                       .searchRouteResults: false],
+            onGetSettings: { loadedPublisher.send(()) }
         )
         let viewModel = SettingsViewModel(settingsRepository: settingsRepository)
 

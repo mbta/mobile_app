@@ -99,7 +99,7 @@ class StopDetailsViewTest {
         }
 
     val settingsRepository =
-        MockSettingsRepository(settings = mapOf(Pair(Settings.ElevatorAccessibility, true)))
+        MockSettingsRepository(settings = mapOf(Pair(Settings.StationAccessibility, true)))
 
     val koinApplication = testKoinApplication(builder) { settings = settingsRepository }
 
@@ -273,7 +273,7 @@ class StopDetailsViewTest {
             StopDetailsViewModel.mocked(
                 settingsRepository =
                     MockSettingsRepository(
-                        settings = mapOf(Pair(Settings.ElevatorAccessibility, true))
+                        settings = mapOf(Pair(Settings.StationAccessibility, true))
                     )
             )
 

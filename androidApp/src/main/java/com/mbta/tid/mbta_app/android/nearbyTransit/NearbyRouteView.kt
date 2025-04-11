@@ -13,7 +13,7 @@ fun NearbyRouteView(
     onPin: (String) -> Unit,
     now: Instant,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
-    showElevatorAccessibility: Boolean = false
+    showStationAccessibility: Boolean = false
 ) {
     LegacyRouteCard(nearbyRoute.route, pinned, onPin) {
         for (patternsAtStop in nearbyRoute.patternsByStop) {
@@ -22,7 +22,7 @@ fun NearbyRouteView(
                 now = now,
                 pinned = pinned,
                 onOpenStopDetails = onOpenStopDetails,
-                showElevatorAccessibility = showElevatorAccessibility
+                showStationAccessibility = showStationAccessibility
             )
         }
     }

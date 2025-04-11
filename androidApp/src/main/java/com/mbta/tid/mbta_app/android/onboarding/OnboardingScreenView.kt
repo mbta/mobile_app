@@ -6,14 +6,19 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,6 +68,10 @@ fun OnboardingScreenView(
             }
         )
 
+    var settings: Map<Settings, Boolean> by rememberSaveable { mutableStateOf(emptyMap()) }
+
+    LaunchedEffect(Unit) { settings = settingsRepository.getSettings() }
+
     fun hideMaps(hide: Boolean) {
         coroutineScope.launch {
             settingsRepository.setSettings(mapOf(Settings.HideMaps to hide))
@@ -79,11 +88,15 @@ fun OnboardingScreenView(
         }
     }
 
-    fun showStationAccessibility(show: Boolean) {
+    fun setSetting(setting: Settings, value: Boolean) {
         coroutineScope.launch {
-            settingsRepository.setSettings(mapOf(Settings.ElevatorAccessibility to show))
-            advance()
+            settingsRepository.setSettings(mapOf(setting to value))
+            settings = settingsRepository.getSettings()
         }
+    }
+
+    fun toggleSetting(setting: Settings) {
+        setSetting(setting, !settings.getOrDefault(setting, false))
     }
 
     val configuration = LocalConfiguration.current
@@ -141,10 +154,12 @@ fun OnboardingScreenView(
             }
         }
         OnboardingScreen.HideMaps -> {
+            var localHideMapsSetting by rememberSaveable { mutableStateOf(true) }
+
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
                 OnboardingPieces.PageDescription(
-                    R.string.onboarding_hide_maps_header,
-                    R.string.onboarding_hide_maps_body,
+                    R.string.onboarding_map_display_header,
+                    R.string.onboarding_map_display_body,
                     Modifier.align(Alignment.Center)
                         .offset(y = haloOffset)
                         .padding(horizontal = 32.dp)
@@ -152,13 +167,17 @@ fun OnboardingScreenView(
                         .padding(32.dp)
                 )
                 OnboardingContentColumn {
-                    OnboardingPieces.KeyButton(
-                        R.string.onboarding_hide_maps_hide,
-                        onClick = { hideMaps(true) },
+                    OnboardingPieces.SettingsToggle(
+                        currentSetting = !localHideMapsSetting,
+                        toggleSetting = { localHideMapsSetting = !localHideMapsSetting },
+                        label = stringResource(R.string.setting_toggle_map_display)
                     )
-                    OnboardingPieces.SecondaryButton(
-                        R.string.onboarding_hide_maps_show,
-                        onClick = { hideMaps(false) },
+                    OnboardingPieces.KeyButton(
+                        R.string.onboarding_continue,
+                        onClick = {
+                            setSetting(Settings.HideMaps, localHideMapsSetting)
+                            advance()
+                        },
                     )
                 }
             }
@@ -179,7 +198,7 @@ fun OnboardingScreenView(
                         R.string.onboarding_location_body
                     )
                     OnboardingPieces.KeyButton(
-                        R.string.onboarding_location_advance,
+                        R.string.onboarding_continue,
                         onClick = ::shareLocation,
                     )
                     Text(
@@ -191,25 +210,31 @@ fun OnboardingScreenView(
         }
         OnboardingScreen.StationAccessibility -> {
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
-                if (textScale < 2f) {
-                    OnboardingImage(
-                        R.drawable.accessibility_icon_accessible,
-                        size = 192.dp,
-                        offsetY = haloOffset
-                    )
-                }
                 OnboardingContentColumn {
+                    if (textScale < 1.5f) {
+                        Row(horizontalArrangement = Arrangement.Center) {
+                            Image(
+                                painterResource(R.drawable.accessibility_icon_accessible),
+                                modifier = Modifier.size(192.dp).weight(1f),
+                                contentDescription = null
+                            )
+                        }
+                    }
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_station_accessibility_header,
                         R.string.onboarding_station_accessibility_body
                     )
-                    OnboardingPieces.KeyButton(
-                        R.string.onboarding_station_accessibility_show,
-                        onClick = { showStationAccessibility(true) }
+
+                    OnboardingPieces.SettingsToggle(
+                        currentSetting =
+                            settings.getOrDefault(Settings.StationAccessibility, false),
+                        toggleSetting = { toggleSetting(Settings.StationAccessibility) },
+                        label = stringResource(R.string.setting_station_accessibility)
                     )
-                    OnboardingPieces.SecondaryButton(
-                        R.string.onboarding_station_accessibility_hide,
-                        onClick = { showStationAccessibility(false) },
+
+                    OnboardingPieces.KeyButton(
+                        R.string.onboarding_continue,
+                        onClick = { advance() }
                     )
                 }
             }
@@ -258,7 +283,7 @@ private fun OnboardingScreenViewLocationPreview() {
 
 @Preview(name = "StationAccessibility")
 @Composable
-private fun OnboardingScreenViewStationAccessibilityPreview() {
+private fun OnboardingScreenViewStationAccessibiityPreview() {
     MyApplicationTheme {
         OnboardingScreenView(
             OnboardingScreen.StationAccessibility,

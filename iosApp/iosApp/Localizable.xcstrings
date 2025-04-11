@@ -4396,6 +4396,52 @@
         }
       }
     },
+    "By opting in, we can show you which stations are inaccessible or have elevator closures." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Al suscribirse, podemos mostrarle qué estaciones son inaccesibles o tienen cierres de ascensores."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En vous inscrivant, nous pouvons vous montrer quelles stations sont inaccessibles ou dont les ascenseurs sont fermés."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lè nou patisipe, nou ka montre w ki estasyon ki pa aksesib oswa ki fèmen asansè."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bằng cách chọn tham gia, chúng tôi có thể cho bạn biết trạm nào không thể tiếp cận được hoặc thang máy bị đóng."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "通过选择加入，我们可以向您显示哪些车站无法到达或电梯关闭。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "透過選擇加入，我們可以向您顯示哪些車站無法到達或電梯關閉。"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Cancel searching, clears the search term and closes the search page",
       "localizations" : {
@@ -5250,6 +5296,7 @@
       }
     },
     "Continue" : {
+      "comment" : "Button to advance to next scren in onboarding flow",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8637,100 +8684,6 @@
         }
       }
     },
-    "Hide maps" : {
-      "comment" : "Onboarding button text for setting maps to hidden",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar mapas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masquer le plan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kache kat yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar mapas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ẩn bản đồ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐藏地图"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隱藏地圖"
-          }
-        }
-      }
-    },
-    "Hide Maps" : {
-      "comment" : "A setting on the More page to remove the app component from the app",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar Mapas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masquer le plan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kache Kat yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar mapas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ẩn bản đồ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐藏地图"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隱藏地圖"
-          }
-        }
-      }
-    },
     "Hides remaining stops" : {
       "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected when it's already open (closes the accordion listing those stops)",
       "localizations" : {
@@ -9557,52 +9510,6 @@
         }
       }
     },
-    "Know about elevator closures" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avisar cierres de ascensores"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soyez informé des fermetures des ascenseurs"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konnen lè asansè yo fèmen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saiba mais sobre fechamentos de elevadores"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tìm hiểu về việc đóng cửa thang máy"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "了解电梯关停情况"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "了解電梯關閉"
-          }
-        }
-      }
-    },
     "later today" : {
       "comment" : "Used when an alert ends at an indeterminite time later the same day",
       "localizations" : {
@@ -10065,6 +9972,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "維護"
+          }
+        }
+      }
+    },
+    "Map Display" : {
+      "comment" : "A setting on the More page to show / hide maps from the app",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Visualización del mapa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Affichage de la carte"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ekspozisyon kat la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exibição do mapa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hiển thị bản đồ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "地图显示"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "地圖顯示"
           }
         }
       }
@@ -13946,49 +13900,95 @@
         }
       }
     },
-    "Set map preference" : {
+    "Set map display preference" : {
       "comment" : "Onboarding screen header for asking VoiceOver users if they want to hide maps",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Establecer preferencia de mapa"
+            "state" : "needs_review",
+            "value" : "Establecer preferencia de visualización del mapa"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configurer les préférences de la carte"
+            "state" : "needs_review",
+            "value" : "Définir les préférences d’affichage de la carte"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Defini preferans kat la"
+            "state" : "needs_review",
+            "value" : "Mete preferans pou montre kat la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Definir preferência de mapas"
+            "state" : "needs_review",
+            "value" : "Definir preferência de exibição do mapa"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đặt tùy chọn bản đồ"
+            "state" : "needs_review",
+            "value" : "Đặt tùy chọn hiển thị bản đồ"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置地图偏好"
+            "state" : "needs_review",
+            "value" : "设置地图显示首选项"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定地圖偏好"
+            "state" : "needs_review",
+            "value" : "設定地圖顯示首選項"
+          }
+        }
+      }
+    },
+    "Set station accessibility info preference" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Establecer preferencia de información de accesibilidad de la estación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Définir les préférences d’informations sur l’accessibilité de la station"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mete preferans enfòmasyon sou aksè estasyon an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Definir preferência de informações de acessibilidade da estação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đặt tùy chọn thông tin khả năng tiếp cận trạm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "设置车站可访问性信息首选项"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "設定車站可訪問性資訊首選項"
           }
         }
       }
@@ -14130,147 +14130,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "惡劣天氣"
-          }
-        }
-      }
-    },
-    "Show elevator accessibility" : {
-      "comment" : "A setting on the More page to display elevator accessibility",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar accesibilidad del ascensor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher l’accessibilité des ascenseurs"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Montre kote asansè a ye"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar acessibilidade do elevador"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị khả năng tiếp cận thang máy"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示电梯可用情况"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "顯示電梯可及性"
-          }
-        }
-      }
-    },
-    "Show elevator closures" : {
-      "comment" : "Onboarding button text for setting station accessibility to shown",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar cierres del ascensor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher les fermetures des ascenseurs"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Montre asansè ki fèmen yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar fechamentos de elevadores"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị thang máy đóng cửa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示电梯关停情况"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "顯示電梯關閉"
-          }
-        }
-      }
-    },
-    "Show maps" : {
-      "comment" : "Onboarding button text for setting maps to shown",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar mapas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher la carte"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Montre kat yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exibir mapas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị bản đồ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示地图"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "顯示地圖"
           }
         }
       }
@@ -14741,53 +14600,6 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "單次追蹤"
-          }
-        }
-      }
-    },
-    "Skip" : {
-      "comment" : "Onboarding button text for setting station accessibility to hidden",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Omitir"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passer"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sote"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pular"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bỏ qua"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "跳过"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "跳過"
           }
         }
       }
@@ -15493,6 +15305,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "服務開始"
+          }
+        }
+      }
+    },
+    "Station Accessibility Info" : {
+      "comment" : "A setting on the More page to toggle displaying station accessibility info",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Información de accesibilidad de la estación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informations sur l’accessibilité de la gare"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enfòmasyon sou Aksè Estasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informações de acessibilidade da estação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thông tin về khả năng tiếp cận trạm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "车站无障碍信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "車站無障礙訊息"
           }
         }
       }
@@ -18614,52 +18473,6 @@
         }
       }
     },
-    "We can tell you when elevators are closed at a station." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podemos informarle cuando los ascensores están cerrados en una estación."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous pouvons vous informer lorsque des ascenseurs sont fermés dans une station."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nou ka di w lè asansè yo fèmen nan yon estasyon."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podemos dizer quando os elevadores estão fechados em uma estação."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chúng tôi có thể cho bạn biết khi nào thang máy đóng cửa tại một nhà ga."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我们可以告诉您车站电梯的关停时间。"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我們可以告訴您車站的電梯何時關閉。"
-          }
-        }
-      }
-    },
     "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
       "localizations" : {
         "es" : {
@@ -18940,95 +18753,95 @@
         }
       }
     },
-    "When using TalkBack, we can skip reading out maps to keep you focused on transit information." : {
+    "When using TalkBack, we can hide maps to make the app easier to navigate." : {
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al usar TalkBack, podemos omitir la lectura de mapas para que usted se concentre en la información del tránsito."
+            "state" : "needs_review",
+            "value" : "Al usar TalkBack, podemos ocultar mapas para que la aplicación sea más fácil de navegar."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lorsque vous utilisez TalkBack, nous pouvons ignorer la lecture des cartes pour vous permettre de rester concentré sur les informations de transport."
+            "state" : "needs_review",
+            "value" : "Lorsque vous utilisez TalkBack, nous pouvons masquer les cartes pour faciliter la navigation dans l’application."
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lè w ap itilize TalkBack, nou ka sote opsyon pou li kat yo pou kenbe w konsantre sou enfòmasyon transpò piblik."
+            "state" : "needs_review",
+            "value" : "Lè w ap itilize TalkBack, nou ka kache kat pou fè aplikasyon an pi fasil pou navige."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ao usar o TalkBack, podemos pular a leitura de mapas para manter o foco nas informações de trânsito."
+            "state" : "needs_review",
+            "value" : "Ao usar o TalkBack, podemos ocultar mapas para facilitar a navegação no aplicativo."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Khi sử dụng TalkBack, chúng ta có thể bỏ qua việc đọc bản đồ để bạn tập trung vào thông tin giao thông."
+            "state" : "needs_review",
+            "value" : "Khi sử dụng TalkBack, chúng ta có thể ẩn bản đồ để điều hướng ứng dụng dễ dàng hơn."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用对讲模式时，我们可以跳过朗读地图，让您专注于交通信息。"
+            "state" : "needs_review",
+            "value" : "使用 TalkBack 时，我们可以隐藏地图以使应用程序更易于导航。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用TalkBack時，我們可以跳過朗讀地圖，讓您專注於交通資訊。"
+            "state" : "needs_review",
+            "value" : "使用 TalkBack 時，我們可以隱藏地圖以使應用程式更易於導航。"
           }
         }
       }
     },
-    "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
+    "When using VoiceOver, we can hide maps to make the app easier to navigate." : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuando utilice VoiceOver, podemos saltarnos la lectura de mapas para mantenerlo enfocado en la información del tráfico."
+            "state" : "needs_review",
+            "value" : "Al usar VoiceOver, podemos ocultar mapas para que la aplicación sea más fácil de navegar."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lorsque vous utilisez VoiceOver, nous pouvons ignorer la lecture des cartes pour vous permettre de rester concentré sur les informations de transport."
+            "state" : "needs_review",
+            "value" : "Lorsque nous utilisons VoiceOver, nous pouvons masquer les cartes pour faciliter la navigation dans l’application."
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lè w ap tilize VoiceOver, nou ka sote opsyon pou li kat yo pou nou kenbe w konsantre sou enfòmasyon transpò piblik la."
+            "state" : "needs_review",
+            "value" : "Lè w ap itilize VoiceOver, nou ka kache kat pou fè aplikasyon an pi fasil pou navige."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando você usa o VoiceOver, pode ignorar a leitura dos mapas para se manter focado nas informações do trânsito."
+            "state" : "needs_review",
+            "value" : "Ao usar o VoiceOver, podemos ocultar mapas para facilitar a navegação no aplicativo."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Khi sử dụng VoiceOver (Thuyết minh), chúng ta có thể bỏ qua việc đọc bản đồ để bạn tập trung vào thông tin về phương tiện công cộng."
+            "state" : "needs_review",
+            "value" : "Khi sử dụng VoiceOver, chúng ta có thể ẩn bản đồ để điều hướng ứng dụng dễ dàng hơn."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用朗读模式时，我们可以跳过朗读地图，让您专注于交通信息。"
+            "state" : "needs_review",
+            "value" : "使用 VoiceOver 时，我们可以隐藏地图以使应用程序更易于导航。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用朗讀模式時，我們可以跳過朗讀地圖，讓您專注於交通資訊。"
+            "state" : "needs_review",
+            "value" : "使用 VoiceOver 時，我們可以隱藏地圖以使應用程式更易於導航。"
           }
         }
       }

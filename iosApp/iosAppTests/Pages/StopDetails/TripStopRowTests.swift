@@ -229,7 +229,7 @@ final class TripStopRowTests: XCTestCase {
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
-            showElevatorAccessibility: true
+            showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
         XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "Not accessible"))
@@ -266,7 +266,7 @@ final class TripStopRowTests: XCTestCase {
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             routeAccents: TripRouteAccents(route: route),
-            showElevatorAccessibility: true
+            showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
         XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "1 elevator closed"))
