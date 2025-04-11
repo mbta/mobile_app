@@ -552,7 +552,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showElevatorAccessibility = true
+        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -601,7 +601,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showElevatorAccessibility = true
+        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,

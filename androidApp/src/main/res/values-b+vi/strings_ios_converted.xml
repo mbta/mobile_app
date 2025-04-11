@@ -202,10 +202,9 @@
     <string name="onboarding_location_body">Chúng tôi sử dụng vị trí của bạn để hiển thị cho bạn các lựa chọn phương tiện công cộng ở gần.</string>
     <string name="onboarding_location_footer">Bạn luôn có thể thay đổi cài đặt vị trí sau trong ứng dụng Cài đặt.</string>
     <string name="onboarding_location_header">Xem phương tiện công cộng gần bạn</string>
-    <string name="onboarding_station_accessibility_body">Chúng tôi có thể cho bạn biết khi nào thang máy đóng cửa tại một nhà ga.</string>
-    <string name="onboarding_station_accessibility_header">Tìm hiểu về việc đóng cửa thang máy</string>
-    <string name="onboarding_station_accessibility_hide">Bỏ qua</string>
-    <string name="onboarding_station_accessibility_show">Hiển thị thang máy đóng cửa</string>
+    <string name="onboarding_station_accessibility_body">Bằng cách chọn tham gia, chúng tôi có thể cho bạn biết trạm nào không thể tiếp cận được hoặc thang máy bị đóng.</string>
+    <string name="onboarding_station_accessibility_continue">Tiếp tục</string>
+    <string name="onboarding_station_accessibility_header">Thông tin về khả năng tiếp cận trạm</string>
     <string name="open_for_more_arrivals">Mở cửa đón thêm khách đến</string>
     <string name="other_link_privacy_policy">Chính sách bảo mật</string>
     <string name="other_link_source_code">Xem nguồn trên GitHub</string>
@@ -254,7 +253,7 @@
     <string name="service_change_sentence_case">Thay đổi dịch vụ</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
     <string name="service_suspended">Dịch vụ bị đình chỉ</string>
-    <string name="setting_elevator_accessibility">Hiển thị khả năng tiếp cận thang máy</string>
+    <string name="setting_station_accessibility">Thông tin về khả năng tiếp cận trạm</string>
     <string name="setting_toggle_hide_maps">Ẩn bản đồ</string>
     <string name="settings_link">Cài đặt</string>
     <string name="severe_weather">Thời tiết khắc nghiệt</string>

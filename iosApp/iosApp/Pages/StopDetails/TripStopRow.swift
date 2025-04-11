@@ -14,7 +14,7 @@ struct TripStopRow: View {
     var now: Instant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var routeAccents: TripRouteAccents
-    var showElevatorAccessibility: Bool = false
+    var showStationAccessibility: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
     var lastStop: Bool = false
@@ -39,7 +39,7 @@ struct TripStopRow: View {
             HStack(alignment: .center, spacing: 0) {
                 HStack(alignment: .center) {
                     let activeElevatorAlerts = stop.activeElevatorAlerts(now: now)
-                    if showElevatorAccessibility, !activeElevatorAlerts.isEmpty {
+                    if showStationAccessibility, !activeElevatorAlerts.isEmpty {
                         Image(.accessibilityIconAlert)
                             .accessibilityLabel(Text(
                                 "\(activeElevatorAlerts.count, specifier: "%ld") elevators closed",
@@ -48,7 +48,7 @@ struct TripStopRow: View {
                             // lowest sort priority means this will be read last
                             .accessibilitySortPriority(0)
                             .tag("elevator_alert")
-                    } else if showElevatorAccessibility, !stop.stop.isWheelchairAccessible {
+                    } else if showStationAccessibility, !stop.stop.isWheelchairAccessible {
                         Image(.accessibilityIconNotAccessible)
                             .accessibilityLabel(Text("Not accessible"))
                             .accessibilitySortPriority(0)
@@ -242,7 +242,7 @@ struct TripStopRow: View {
         now: Date.now.toKotlinInstant(),
         onTapLink: { _ in },
         routeAccents: TripRouteAccents(type: .lightRail),
-        showElevatorAccessibility: true
+        showStationAccessibility: true
     ).font(Typography.body)
 
     TripStopRow(
@@ -271,7 +271,7 @@ struct TripStopRow: View {
         now: Date.now.toKotlinInstant(),
         onTapLink: { _ in },
         routeAccents: TripRouteAccents(type: .lightRail),
-        showElevatorAccessibility: true
+        showStationAccessibility: true
     ).font(Typography.body)
 
     TripStopRow(
@@ -305,6 +305,6 @@ struct TripStopRow: View {
         now: Date.now.toKotlinInstant(),
         onTapLink: { _ in },
         routeAccents: TripRouteAccents(type: .lightRail),
-        showElevatorAccessibility: true
+        showStationAccessibility: true
     ).font(Typography.body)
 }

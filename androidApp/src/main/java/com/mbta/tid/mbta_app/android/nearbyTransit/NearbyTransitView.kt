@@ -78,7 +78,7 @@ fun NearbyTransitView(
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
     val groupByDirection by nearbyVM.groupByDirection.collectAsState(false)
-    val showElevatorAccessibility by nearbyVM.showElevatorAccessibility.collectAsState(false)
+    val showStationAccessibility by nearbyVM.showStationAccessibility.collectAsState(false)
 
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
@@ -161,7 +161,7 @@ fun NearbyTransitView(
                             now,
                             pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
                             ::togglePinnedRoute,
-                            showElevatorAccessibility,
+                            showStationAccessibility,
                             onOpenStopDetails
                         )
                     }
@@ -224,7 +224,7 @@ fun NearbyTransitView(
                                     ::togglePinnedRoute,
                                     now,
                                     onOpenStopDetails,
-                                    showElevatorAccessibility
+                                    showStationAccessibility
                                 )
                             is StopsAssociated.WithLine ->
                                 NearbyLineView(
@@ -233,7 +233,7 @@ fun NearbyTransitView(
                                     ::togglePinnedRoute,
                                     now,
                                     onOpenStopDetails,
-                                    showElevatorAccessibility
+                                    showStationAccessibility
                                 )
                         }
                     }

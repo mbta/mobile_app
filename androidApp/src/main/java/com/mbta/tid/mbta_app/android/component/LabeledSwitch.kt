@@ -32,10 +32,7 @@ fun LabeledSwitch(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = label,
-            style = Typography.body,
-        )
+        Text(text = label, style = Typography.body, modifier = Modifier.weight(1f))
 
         Switch(checked = value, onCheckedChange = null)
     }

@@ -212,10 +212,9 @@
     <string name="onboarding_location_body">Nou itilize pozisyon w pou montre w opsyon transpò piblik ki toupre yo.</string>
     <string name="onboarding_location_footer">Ou ka toujou chanje paramèt pozisyon yo apre nan paramèt aplikasyon an.</string>
     <string name="onboarding_location_header">Gade transpò piblik toupre w</string>
-    <string name="onboarding_station_accessibility_body">Nou ka di w lè asansè yo fèmen nan yon estasyon.</string>
-    <string name="onboarding_station_accessibility_header">Konnen lè asansè yo fèmen</string>
-    <string name="onboarding_station_accessibility_hide">Sote</string>
-    <string name="onboarding_station_accessibility_show">Montre asansè ki fèmen yo</string>
+    <string name="onboarding_station_accessibility_body">Lè nou patisipe, nou ka montre w ki estasyon ki pa aksesib oswa ki fèmen asansè.</string>
+    <string name="onboarding_station_accessibility_continue">Kontinye</string>
+    <string name="onboarding_station_accessibility_header">Enfòmasyon sou Aksè Estasyon</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
     <string name="other_link_privacy_policy">Règleman sou Vi Prive</string>
     <string name="other_link_source_code">Gade sous sou GitHub</string>
@@ -264,7 +263,7 @@
     <string name="service_change_sentence_case">Chanjman sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
     <string name="service_suspended">Sèvis ki kanpe</string>
-    <string name="setting_elevator_accessibility">Montre kote asansè a ye</string>
+    <string name="setting_station_accessibility">Enfòmasyon sou Aksè Estasyon</string>
     <string name="setting_toggle_hide_maps">Kache Kat yo</string>
     <string name="settings_link">Paramèt</string>
     <string name="severe_weather">Move Tan</string>

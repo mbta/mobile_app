@@ -83,11 +83,11 @@ class SettingsViewModel: ObservableObject {
                     ),
                     .toggle(
                         label: NSLocalizedString(
-                            "Show elevator accessibility",
-                            comment: "A setting on the More page to display elevator accessibility"
+                            "Station Accessibility Info",
+                            comment: "A setting on the More page to toggle displaying station accessibility info"
                         ),
-                        setting: .elevatorAccessibility,
-                        value: settings[.elevatorAccessibility] ?? false
+                        setting: .stationAccessibility,
+                        value: settings[.stationAccessibility] ?? false
                     ),
                 ]),
                 MoreSection(id: .featureFlags, items: [

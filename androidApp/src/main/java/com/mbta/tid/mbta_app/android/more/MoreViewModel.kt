@@ -93,9 +93,9 @@ class MoreViewModel(
                             value = settings[Settings.HideMaps] ?: false
                         ),
                         MoreItem.Toggle(
-                            label = context.getString(R.string.setting_elevator_accessibility),
-                            settings = Settings.ElevatorAccessibility,
-                            value = settings[Settings.ElevatorAccessibility] ?: false
+                            label = context.getString(R.string.setting_station_accessibility),
+                            settings = Settings.StationAccessibility,
+                            value = settings[Settings.StationAccessibility] ?: false
                         )
                     )
             ),

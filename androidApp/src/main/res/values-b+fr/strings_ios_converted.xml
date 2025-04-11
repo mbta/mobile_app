@@ -206,10 +206,9 @@
     <string name="onboarding_location_body">Nous utilisons votre position pour afficher les options de transport à proximité.</string>
     <string name="onboarding_location_footer">Vous pourrez changer les paramètres de localisation dans les paramètres de l’application.</string>
     <string name="onboarding_location_header">Voir les transports près de votre position</string>
-    <string name="onboarding_station_accessibility_body">Nous pouvons vous informer lorsque des ascenseurs sont fermés dans une station.</string>
-    <string name="onboarding_station_accessibility_header">Soyez informé des fermetures des ascenseurs</string>
-    <string name="onboarding_station_accessibility_hide">Passer</string>
-    <string name="onboarding_station_accessibility_show">Afficher les fermetures des ascenseurs</string>
+    <string name="onboarding_station_accessibility_body">En vous inscrivant, nous pouvons vous montrer quelles stations sont inaccessibles ou dont les ascenseurs sont fermés.</string>
+    <string name="onboarding_station_accessibility_continue">Continuer</string>
+    <string name="onboarding_station_accessibility_header">Informations sur l’accessibilité de la gare</string>
     <string name="open_for_more_arrivals">Ouvert pour plus d’arrivées</string>
     <string name="other_link_privacy_policy">Politique de confidentialité</string>
     <string name="other_link_source_code">Voir la source dans GitHub</string>
@@ -258,7 +257,7 @@
     <string name="service_change_sentence_case">Changement de service</string>
     <string name="service_ended">Fin de service</string>
     <string name="service_suspended">Service interrompu</string>
-    <string name="setting_elevator_accessibility">Afficher l’accessibilité des ascenseurs</string>
+    <string name="setting_station_accessibility">Informations sur l’accessibilité de la gare</string>
     <string name="setting_toggle_hide_maps">Masquer le plan</string>
     <string name="settings_link">Paramètres</string>
     <string name="severe_weather">Temps violents</string>

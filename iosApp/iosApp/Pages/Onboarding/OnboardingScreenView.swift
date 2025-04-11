@@ -19,6 +19,7 @@ struct OnboardingScreenView: View {
     let settingsRepository: ISettingsRepository
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
+    @State private var settings: [Settings: Bool] = [:]
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.dynamicTypeSize) var typeSize
@@ -150,31 +151,33 @@ struct OnboardingScreenView: View {
             case .stationAccessibility:
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
+                    if typeSize < .xxxLarge {
+                        HStack {
+                            Image(.accessibilityIconAccessible)
+                                .resizable()
+                                .frame(width: 196, height: 196)
+                                .accessibilityHidden(true)
+                        }.frame(maxWidth: .infinity, alignment: .center)
+                    }
                     OnboardingPieces.PageDescription(
-                        headerText: Text("Know about elevator closures"),
-                        bodyText: Text("We can tell you when elevators are closed at a station."),
+                        headerText: Text("Set station accessibility info preference"),
+                        bodyText: Text(
+                            "By opting in, we can show you which stations are inaccessible or have elevator closures."
+                        ),
                         focusBinding: $focusHeader,
                         focusValue: .stationAccessibility
                     )
                     .padding(.bottom, 8)
+                    OnboardingPieces.SettingsToggle(getSetting: { settings.getSafe(.stationAccessibility) },
+                                                    toggleSetting: { toggleSetting(.stationAccessibility) },
+                                                    label: Text("Station Accessibility Info"))
                     OnboardingPieces.KeyButton(text: Text(
-                        "Show elevator closures",
-                        comment: "Onboarding button text for setting station accessibility to shown"
-                    ), action: { showStationAccessibility(true) })
-                    OnboardingPieces.SecondaryButton(
-                        text: Text("Skip",
-                                   comment: "Onboarding button text for setting station accessibility to hidden"),
-                        action: { showStationAccessibility(false) }
-                    )
+                        "Continue",
+                        comment: "Button to advance to next scren in onboarding flow"
+                    ), action: { advance() })
+
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
-                    if typeSize < .xxxLarge {
-                        Image(.accessibilityIconAccessible)
-                            .resizable()
-                            .frame(width: 196, height: 196)
-                            .offset(x: 0, y: haloOffset)
-                            .accessibilityHidden(true)
-                    }
                 })
                 .foregroundStyle(Color.text)
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
@@ -195,6 +198,12 @@ struct OnboardingScreenView: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
+    func loadSettings() {
+        Task {
+            settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
+        }
+    }
+
     func hideMaps(_ hide: Bool) {
         Task {
             try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: hide)])
@@ -213,11 +222,11 @@ struct OnboardingScreenView: View {
         }
     }
 
-    func showStationAccessibility(_ stationAccessibility: Bool) {
+    func toggleSetting(_ setting: Settings) {
         Task {
             try await settingsRepository
-                .setSettings(settings: [.elevatorAccessibility: KotlinBoolean(bool: stationAccessibility)])
-            advance()
+                .setSettings(settings: [setting: KotlinBoolean(bool: !settings.getSafe(setting))])
+            loadSettings()
         }
     }
 
