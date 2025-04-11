@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +26,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -59,12 +67,21 @@ fun RouteCard(
 }
 
 class Previews() {
-    val now = Clock.System.now()
+    fun LocalDateTime.toInstant(): Instant = toInstant(TimeZone.currentSystemDefault())
+
+    val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val now: Instant = today.atTime(11, 30).toInstant()
     val objects = ObjectCollectionBuilder()
     val greenLine =
         objects.line {
             color = "00843D"
             longName = "Green Line"
+            textColor = "FFFFFF"
+        }
+    val slWaterfront =
+        objects.line {
+            color = "7C878E"
+            longName = "Silver Line SL1/SL2/SL3"
             textColor = "FFFFFF"
         }
     val orangeLine =
@@ -123,17 +140,60 @@ class Previews() {
             textColor = greenLine.textColor
             type = RouteType.LIGHT_RAIL
         }
-    val greenLineE =
+    val sl1 =
         objects.route {
-            id = "Green-E"
-            color = greenLine.color
-            directionDestinations = listOf("Heath Street", "Medford/Tufts")
-            directionNames = listOf("West", "East")
-            lineId = greenLine.id
-            longName = "Green Line E"
-            shortName = "E"
-            textColor = greenLine.textColor
-            type = RouteType.LIGHT_RAIL
+            color = slWaterfront.color
+            directionNames = listOf("Outbound", "Inbound")
+            lineId = slWaterfront.id
+            shortName = "SL1"
+            textColor = slWaterfront.textColor
+            type = RouteType.BUS
+        }
+    val sl2 =
+        objects.route {
+            color = slWaterfront.color
+            directionNames = listOf("Outbound", "Inbound")
+            lineId = slWaterfront.id
+            shortName = "SL2"
+            textColor = slWaterfront.textColor
+            type = RouteType.BUS
+        }
+    val sl3 =
+        objects.route {
+            color = slWaterfront.color
+            directionNames = listOf("Outbound", "Inbound")
+            lineId = slWaterfront.id
+            shortName = "SL3"
+            textColor = slWaterfront.textColor
+            type = RouteType.BUS
+        }
+    val providenceLine =
+        objects.route {
+            color = "80276C"
+            directionDestinations = listOf("Stoughton or Wickford Junction", "South Station")
+            directionNames = listOf("Outbound", "Inbound")
+            longName = "Providence/Stoughton Line"
+            textColor = "FFFFFF"
+            type = RouteType.COMMUTER_RAIL
+        }
+    val bus87 =
+        objects.route {
+            color = "FFC72C"
+            directionDestinations = listOf("Clarendon Hill or Arlington Center", "Lechmere Station")
+            directionNames = listOf("Outbound", "Inbound")
+            shortName = "87"
+            textColor = "000000"
+            type = RouteType.BUS
+        }
+    val bus15 =
+        objects.route {
+            color = "FFC72C"
+            directionDestinations =
+                listOf("Fields Corner Station or St Peter's Square", "Ruggles Station")
+            directionNames = listOf("Outbound", "Inbound")
+            shortName = "15"
+            textColor = "000000"
+            type = RouteType.BUS
         }
     val orangeLineSouthbound =
         objects.routePattern(orangeLine) {
@@ -207,14 +267,29 @@ class Previews() {
             typicality = RoutePattern.Typicality.Typical
             representativeTrip { headsign = "Union Square" }
         }
+    val arlingtonOutbound =
+        objects.routePattern(bus87) {
+            directionId = 0
+            representativeTrip { headsign = "Arlington Center" }
+        }
+    val arlingtonInbound =
+        objects.routePattern(bus87) {
+            directionId = 1
+            representativeTrip { headsign = "Lechmere" }
+        }
+    val clarendonOutbound =
+        objects.routePattern(bus87) {
+            directionId = 0
+            representativeTrip { headsign = "Clarendon Hill" }
+        }
+    val clarendonInbound =
+        objects.routePattern(bus87) {
+            directionId = 1
+            representativeTrip { headsign = "Lechmere" }
+        }
     val ruggles =
         objects.stop {
             name = "Ruggles"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
-    val stonyBrook =
-        objects.stop {
-            name = "Stony Brook"
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
         }
     val jfkUmass =
@@ -227,12 +302,60 @@ class Previews() {
             name = "Boylston"
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
         }
+    val somervilleAtCarlton =
+        objects.stop {
+            name = "Somerville Ave @ Carlton St"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
+    val bowAtWarren =
+        objects.stop {
+            name = "Bow St @ Warren Ave"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
     val shuttleAlert = objects.alert { effect = Alert.Effect.Shuttle }
     val suspensionAlert = objects.alert { effect = Alert.Effect.Suspension }
     val global = GlobalResponse(objects)
     val context = RouteCardData.Context.NearbyTransit
 
     val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
+
+    fun cardStop(
+        lineOrRoute: RouteCardData.LineOrRoute,
+        stop: Stop,
+        patterns: List<RoutePattern>,
+        trips: List<UpcomingTrip>,
+        alertHere: Map<Int, Alert>,
+        alertDownstream: Map<Int, Alert>
+    ) =
+        RouteCardData.RouteStopData(
+            stop,
+            lineOrRoute,
+            listOfNotNull(
+                RouteCardData.Leaf(
+                        0,
+                        patterns.filter { it.directionId == 0 },
+                        setOf(stop.id),
+                        trips.filter { it.trip.directionId == 0 },
+                        listOfNotNull(alertHere[0]),
+                        true,
+                        true,
+                        listOfNotNull(alertDownstream[0])
+                    )
+                    .takeUnless { it.routePatterns.isEmpty() },
+                RouteCardData.Leaf(
+                        1,
+                        patterns.filter { it.directionId == 1 },
+                        setOf(stop.id),
+                        trips.filter { it.trip.directionId == 1 },
+                        listOfNotNull(alertHere[1]),
+                        true,
+                        true,
+                        listOfNotNull(alertDownstream[1])
+                    )
+                    .takeUnless { it.routePatterns.isEmpty() }
+            ),
+            global
+        )
 
     fun card(
         lineOrRoute: RouteCardData.LineOrRoute,
@@ -244,35 +367,7 @@ class Previews() {
     ) =
         RouteCardData(
             lineOrRoute,
-            listOf(
-                RouteCardData.RouteStopData(
-                    stop,
-                    lineOrRoute,
-                    listOf(
-                        RouteCardData.Leaf(
-                            0,
-                            patterns.filter { it.directionId == 0 },
-                            setOf(stop.id),
-                            trips.filter { it.trip.directionId == 0 },
-                            listOfNotNull(alertHere[0]),
-                            true,
-                            true,
-                            listOfNotNull(alertDownstream[0])
-                        ),
-                        RouteCardData.Leaf(
-                            1,
-                            patterns.filter { it.directionId == 1 },
-                            setOf(stop.id),
-                            trips.filter { it.trip.directionId == 1 },
-                            listOfNotNull(alertHere[1]),
-                            true,
-                            true,
-                            listOfNotNull(alertDownstream[1])
-                        )
-                    ),
-                    global
-                )
-            ),
+            listOf(cardStop(lineOrRoute, stop, patterns, trips, alertHere, alertDownstream)),
             context,
             now
         )
@@ -315,12 +410,16 @@ class Previews() {
 
     @Composable
     fun CardForPreview(card: RouteCardData) {
-        KoinContext(koin.koin) { RouteCard(card, global, now, false, {}, true, { _, _ -> }) }
+        KoinContext(koin.koin) {
+            Box(Modifier.width(358.dp)) {
+                RouteCard(card, global, now, false, {}, true, { _, _ -> })
+            }
+        }
     }
 
-    @Preview(group = "Orange Line disruption")
+    @Preview(name = "Downstream disruption", group = "1. Orange Line disruption")
     @Composable
-    fun DownstreamDisruption() {
+    fun OL1() {
         CardForPreview(
             card(
                 orangeLine,
@@ -358,17 +457,28 @@ class Previews() {
         )
     }
 
-    @Preview(group = "Orange Line disruption")
+    @Preview(name = "Disrupted stop", group = "1. Orange Line disruption")
     @Composable
-    fun DisruptedStop() {
+    fun OL2() {
         CardForPreview(
-            card(orangeLine, stonyBrook, listOf(), mapOf(0 to shuttleAlert, 1 to shuttleAlert))
+            card(
+                orangeLine,
+                objects.stop {
+                    name = "Stony Brook"
+                    wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                },
+                listOf(),
+                mapOf(0 to shuttleAlert, 1 to shuttleAlert)
+            )
         )
     }
 
-    @Preview(group = "Red Line branching")
+    @Preview(
+        name = "Show up to the next three trips in the branching direction",
+        group = "2. Red Line branching"
+    )
     @Composable
-    fun NextThreeTrips() {
+    fun RL1() {
         CardForPreview(
             card(
                 redLine,
@@ -409,9 +519,148 @@ class Previews() {
         )
     }
 
-    @Preview(group = "Red Line branching")
+    @Preview(name = "Next three trips go to the same destination", group = "2. Red Line branching")
     @Composable
-    fun DisruptedDownstream() {
+    fun RL2() {
+        CardForPreview(
+            card(
+                redLine,
+                jfkUmass,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 2.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 9.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineBraintreeSouthbound)
+                            departureTime = now + 15.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontNorthbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineBraintreeNorthbound)
+                            departureTime = now + 12.minutes
+                        }
+                    )
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Predictions unavailable for a branch", group = "2. Red Line branching")
+    @Composable
+    fun RL3() {
+        CardForPreview(
+            card(
+                redLine,
+                jfkUmass,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 2.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 9.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontNorthbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineBraintreeNorthbound)
+                            departureTime = now + 12.minutes
+                        }
+                    )
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Service not running on a branch downstream", group = "2. Red Line branching")
+    @Composable
+    fun RL4() {
+        CardForPreview(
+            card(
+                redLine,
+                objects.stop {
+                    name = "Park Street"
+                    wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                },
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 2.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 9.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontNorthbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineBraintreeNorthbound)
+                            departureTime = now + 12.minutes
+                        }
+                    )
+                ),
+                alertDownstream = mapOf(0 to shuttleAlert)
+            )
+        )
+    }
+
+    @Preview(name = "Service disrupted on a branch downstream", group = "2. Red Line branching")
+    @Composable
+    fun RL5() {
         CardForPreview(
             card(
                 redLine,
@@ -454,9 +703,9 @@ class Previews() {
         )
     }
 
-    @Preview(group = "Green Line branching")
+    @Preview(name = "Branching in both directions", group = "3. Green Line branching")
     @Composable
-    fun BranchingInBothDirections() {
+    fun GL1() {
         CardForPreview(
             card(
                 greenLine,
@@ -503,9 +752,9 @@ class Previews() {
         )
     }
 
-    @Preview(group = "Green Line branching")
+    @Preview(name = "Downstream disruption", group = "3. Green Line branching")
     @Composable
-    fun GLDownstreamDisruption() {
+    fun GL2() {
         CardForPreview(
             card(
                 greenLine,
@@ -549,6 +798,650 @@ class Previews() {
                     ),
                 ),
                 alertDownstream = mapOf(0 to suspensionAlert)
+            )
+        )
+    }
+
+    @Preview(name = "Branching in one direction", group = "4. Silver Line branching")
+    @Composable
+    fun SL1() {
+        CardForPreview(
+            card(
+                slWaterfront,
+                objects.stop {
+                    name = "World Trade Center"
+                    wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                },
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(sl1) {
+                                        directionId = 1
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "South Station" }
+                                    }
+                                )
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(sl2) {
+                                        directionId = 1
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "South Station" }
+                                    }
+                                )
+                            departureTime = now + 7.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(sl1) {
+                                        directionId = 0
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "Logan Airport" }
+                                    }
+                                )
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(sl2) {
+                                        directionId = 0
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "Design Center" }
+                                    }
+                                )
+                            departureTime = now + 7.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(sl3) {
+                                        directionId = 0
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "Chelsea" }
+                                    }
+                                )
+                            departureTime = now + 9.minutes
+                        }
+                    ),
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Branching in one direction", group = "5. CR branching")
+    @Composable
+    fun CR1() {
+        CardForPreview(
+            card(
+                providenceLine,
+                ruggles,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(providenceLine) {
+                                        directionId = 0
+                                        typicality = RoutePattern.Typicality.CanonicalOnly
+                                        representativeTrip { headsign = "Stoughton" }
+                                    }
+                                )
+                            departureTime = today.atTime(12, 5).toInstant()
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(providenceLine) {
+                                        directionId = 0
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "Providence" }
+                                    }
+                                )
+                            departureTime = today.atTime(15, 28).toInstant()
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(providenceLine) {
+                                        directionId = 0
+                                        typicality = RoutePattern.Typicality.CanonicalOnly
+                                        representativeTrip { headsign = "Wickford Junction" }
+                                    }
+                                )
+                            departureTime = today.atTime(16, 1).toInstant()
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(providenceLine) {
+                                        directionId = 1
+                                        typicality = RoutePattern.Typicality.CanonicalOnly
+                                        representativeTrip { headsign = "South Station" }
+                                    }
+                                )
+                            departureTime = today.atTime(15, 31).toInstant()
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(providenceLine) {
+                                        directionId = 1
+                                        typicality = RoutePattern.Typicality.Typical
+                                        representativeTrip { headsign = "South Station" }
+                                    }
+                                )
+                            departureTime = today.atTime(15, 53).toInstant()
+                        }
+                    ),
+                )
+            )
+        )
+    }
+
+    @Preview(
+        name = "Next two trips go to the same destination",
+        group = "6. Bus route single direction"
+    )
+    @Composable
+    fun Bus1() {
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(bus87)
+        CardForPreview(
+            RouteCardData(
+                lineOrRoute,
+                listOf(
+                    cardStop(
+                        lineOrRoute,
+                        somervilleAtCarlton,
+                        listOf(arlingtonInbound, clarendonInbound),
+                        listOf(
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(arlingtonInbound)
+                                    departureTime = now + 16.minutes
+                                }
+                            ),
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(clarendonInbound)
+                                    departureTime = now + 42.minutes
+                                }
+                            )
+                        ),
+                        emptyMap(),
+                        emptyMap()
+                    ),
+                    cardStop(
+                        lineOrRoute,
+                        bowAtWarren,
+                        listOf(arlingtonOutbound, clarendonOutbound),
+                        listOf(
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(arlingtonOutbound)
+                                    departureTime = now + 3.minutes
+                                }
+                            ),
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(arlingtonOutbound)
+                                    departureTime = now + 12.minutes
+                                }
+                            ),
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(clarendonOutbound)
+                                    departureTime = now + 45.minutes
+                                }
+                            )
+                        ),
+                        emptyMap(),
+                        emptyMap()
+                    )
+                ),
+                context,
+                now
+            )
+        )
+    }
+
+    @Preview(
+        name = "Next two trips go to different destinations",
+        group = "6. Bus route single direction"
+    )
+    @Composable
+    fun Bus2() {
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(bus87)
+        CardForPreview(
+            RouteCardData(
+                lineOrRoute,
+                listOf(
+                    cardStop(
+                        lineOrRoute,
+                        somervilleAtCarlton,
+                        listOf(arlingtonInbound, clarendonInbound),
+                        listOf(
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(arlingtonInbound)
+                                    departureTime = now + 16.minutes
+                                }
+                            ),
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(clarendonInbound)
+                                    departureTime = now + 42.minutes
+                                }
+                            )
+                        ),
+                        emptyMap(),
+                        emptyMap()
+                    ),
+                    cardStop(
+                        lineOrRoute,
+                        bowAtWarren,
+                        listOf(arlingtonOutbound, clarendonOutbound),
+                        listOf(
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(arlingtonOutbound)
+                                    departureTime = now + 1.minutes
+                                }
+                            ),
+                            objects.upcomingTrip(
+                                objects.prediction {
+                                    trip = objects.trip(clarendonOutbound)
+                                    departureTime = now + 32.minutes
+                                }
+                            )
+                        ),
+                        emptyMap(),
+                        emptyMap()
+                    )
+                ),
+                context,
+                now
+            )
+        )
+    }
+
+    @Preview(
+        name = "Next two trips go to different destinations",
+        group = "7. Bus route both directions"
+    )
+    @Composable
+    fun Bus3() {
+        CardForPreview(
+            card(
+                bus15,
+                objects.stop {
+                    name = "Nubian"
+                    wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                },
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(bus15) {
+                                        directionId = 0
+                                        representativeTrip { headsign = "St Peter's Square" }
+                                    }
+                                )
+                            departureTime = now + 8.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(bus15) {
+                                        directionId = 0
+                                        representativeTrip { headsign = "Kane Square" }
+                                    }
+                                )
+                            departureTime = now + 12.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(bus15) {
+                                        directionId = 1
+                                        representativeTrip { headsign = "Ruggles" }
+                                    }
+                                )
+                            departureTime = now + 15.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip =
+                                objects.trip(
+                                    objects.routePattern(bus15) {
+                                        directionId = 1
+                                        representativeTrip { headsign = "Ruggles" }
+                                    }
+                                )
+                            departureTime = now + 23.minutes
+                        }
+                    ),
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Service ended on a branch", group = "8. Service ended")
+    @Composable
+    fun RL6() {
+        CardForPreview(
+            card(
+                redLine,
+                jfkUmass,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 1.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontSouthbound)
+                            departureTime = now + 2.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontNorthbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineBraintreeNorthbound)
+                            departureTime = now + 12.minutes
+                        }
+                    )
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Service ended on all branches", group = "8. Service ended")
+    @Composable
+    fun RL7() {
+        CardForPreview(
+            card(
+                redLine,
+                jfkUmass,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineAshmontNorthbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(redLineBraintreeNorthbound)
+                            departureTime = now + 12.minutes
+                        }
+                    )
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Predictions unavailable on a branch", group = "9. Predictions unavailable")
+    @Composable
+    fun GL3() {
+        CardForPreview(
+            card(
+                greenLine,
+                boylston,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCWestbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBWestbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBWestbound)
+                            departureTime = now + 10.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip = objects.trip(greenLineDWestbound)
+                            departureTime = now + 2.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineDEastbound)
+                            departureTime = now + 1.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBEastbound)
+                            departureTime = now + 6.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCEastbound)
+                            departureTime = now + 12.minutes
+                        }
+                    ),
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Predictions unavailable on all branches", group = "9. Predictions unavailable")
+    @Composable
+    fun GL4() {
+        CardForPreview(
+            card(
+                greenLine,
+                boylston,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip = objects.trip(greenLineCWestbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip = objects.trip(greenLineBWestbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip = objects.trip(greenLineDWestbound)
+                            departureTime = now + 10.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineDEastbound)
+                            departureTime = now + 1.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBEastbound)
+                            departureTime = now + 6.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCEastbound)
+                            departureTime = now + 12.minutes
+                        }
+                    ),
+                )
+            )
+        )
+    }
+
+    @Preview(name = "Disruption on a branch", group = "A. Disruption")
+    @Composable
+    fun GL5() {
+        CardForPreview(
+            card(
+                greenLine,
+                objects.stop {
+                    name = "Kenmore"
+                    wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                },
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCWestbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBWestbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineDEastbound)
+                            departureTime = now + 1.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBEastbound)
+                            departureTime = now + 6.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCEastbound)
+                            departureTime = now + 12.minutes
+                        }
+                    ),
+                ),
+                alertHere = mapOf(0 to shuttleAlert)
+            )
+        )
+    }
+
+    @Preview(
+        name = "Disruption on a branch, predictions unavailable for other branches",
+        group = "A. Disruption"
+    )
+    @Composable
+    fun GL6() {
+        CardForPreview(
+            card(
+                greenLine,
+                boylston,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip = objects.trip(greenLineCWestbound)
+                            departureTime = now + 3.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.schedule {
+                            trip = objects.trip(greenLineBWestbound)
+                            departureTime = now + 5.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineDEastbound)
+                            departureTime = now + 1.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBEastbound)
+                            departureTime = now + 6.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCEastbound)
+                            departureTime = now + 12.minutes
+                        }
+                    ),
+                ),
+                alertHere = mapOf(0 to shuttleAlert)
+            )
+        )
+    }
+
+    @Preview(name = "Disruption on all branches", group = "A. Disruption")
+    @Composable
+    fun GL7() {
+        CardForPreview(
+            card(
+                greenLine,
+                boylston,
+                listOf(
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineDEastbound)
+                            departureTime = now + 1.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineBEastbound)
+                            departureTime = now + 6.minutes
+                        }
+                    ),
+                    objects.upcomingTrip(
+                        objects.prediction {
+                            trip = objects.trip(greenLineCEastbound)
+                            departureTime = now + 12.minutes
+                        }
+                    ),
+                ),
+                alertHere = mapOf(0 to shuttleAlert)
             )
         )
     }
