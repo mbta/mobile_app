@@ -78,6 +78,13 @@ class AlertTest {
                 informedEntity(emptyList(), stop = "stop", routeType = RouteType.COMMUTER_RAIL)
             }
 
+        val ferryDelaySevere =
+            ObjectCollectionBuilder.Single.alert {
+                effect = Alert.Effect.Delay
+                severity = 10
+                informedEntity(emptyList(), stop = "stop", routeType = RouteType.FERRY)
+            }
+
         val subwayDelayNotSevere =
             ObjectCollectionBuilder.Single.alert {
                 this.effect = Alert.Effect.Delay
@@ -94,6 +101,7 @@ class AlertTest {
 
         assertEquals(subwayDelaySevere.significance, AlertSignificance.Minor)
         assertEquals(crDelaySevere.significance, AlertSignificance.Minor)
+        assertEquals(ferryDelaySevere.significance, AlertSignificance.Minor)
         assertEquals(subwayDelayNotSevere.significance, AlertSignificance.None)
         assertEquals(busDelaySevere.significance, AlertSignificance.None)
     }
