@@ -35,14 +35,23 @@ final class OnboardingPageTests: XCTestCase {
         let stationAccessibilityExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(), after: 0.1) { view in
             try view.find(button: "Continue").tap()
         }
+        // TODO: Switch?
+
         let hideMapsExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(2), after: 0.1) { view in
-            try view.find(button: "Show maps").tap()
+            try view.find(ViewType.Toggle.self).tap()
+        }
+
+        let hideMapsContExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(2), after: 0.1) { view in
+            try view.find(button: "Continue").tap()
         }
         let feedbackExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(3), after: 0.1) { view in
             try view.find(button: "Get started").tap()
         }
         stepChannel.send()
-        wait(for: [locationExp, stationAccessibilityExp, hideMapsExp, feedbackExp, finishExp], timeout: 1)
+        wait(
+            for: [locationExp, stationAccessibilityExp, hideMapsExp, hideMapsContExp, feedbackExp, finishExp],
+            timeout: 1
+        )
         XCTAssertEqual(onboardingRepository.finished, [.location, .stationAccessibility, .hideMaps, .feedback])
     }
 

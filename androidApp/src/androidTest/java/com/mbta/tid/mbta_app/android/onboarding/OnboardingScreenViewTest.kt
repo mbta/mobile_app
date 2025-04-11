@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.android.onboarding
 
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -93,13 +95,13 @@ class OnboardingScreenViewTest {
     }
 
     @Test
-    fun testHideMapsFlow() {
+    fun testMapDisplayFlow() {
         var savedSetting = false
         val settingsRepo =
             MockSettingsRepository(
                 settings = mapOf(Settings.HideMaps to false),
                 onSaveSettings = {
-                    assertEquals(mapOf(Settings.HideMaps to true), it)
+                    assertEquals(mapOf(Settings.HideMaps to false), it)
                     savedSetting = true
                 }
             )
@@ -114,13 +116,23 @@ class OnboardingScreenViewTest {
         }
         composeTestRule
             .onNodeWithText(
-                "When using TalkBack, we can skip reading out maps to keep you focused on transit information."
+                "When using TalkBack, we can hide maps to make the app easier to navigate."
             )
             .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Show maps").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Hide maps").performClick()
 
         composeTestRule.waitForIdle()
+
+        composeTestRule
+            .onNodeWithText("Map Display")
+            .assertIsDisplayed()
+            .assertIsOff()
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Map Display").assertIsOn()
+
+        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().performClick()
         assertTrue(savedSetting)
         assertTrue(advanced)
     }
