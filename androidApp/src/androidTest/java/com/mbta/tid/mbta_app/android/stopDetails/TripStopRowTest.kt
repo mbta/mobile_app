@@ -210,7 +210,7 @@ class TripStopRowTest {
     }
 
     @Test
-    fun testElevatorAccessibility() {
+    fun testStationAccessibility() {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val accessibleStop =
@@ -247,7 +247,7 @@ class TripStopRowTest {
                 now,
                 onTapLink = {},
                 TripRouteAccents(route),
-                showElevatorAccessibility = true
+                showStationAccessibility = true
             )
         }
 

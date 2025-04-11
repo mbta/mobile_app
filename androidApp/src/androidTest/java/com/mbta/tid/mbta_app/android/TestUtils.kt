@@ -2,9 +2,11 @@ package com.mbta.tid.mbta_app.android
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
@@ -36,6 +38,11 @@ fun hasTextMatching(regex: Regex): SemanticsMatcher {
         isInEditableTextValue || isInTextValue
     }
 }
+
+fun hasRole(role: Role) =
+    SemanticsMatcher("has role $role") { node ->
+        node.config.getOrNull(SemanticsProperties.Role) == role
+    }
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun colorToHex(color: Color): String {

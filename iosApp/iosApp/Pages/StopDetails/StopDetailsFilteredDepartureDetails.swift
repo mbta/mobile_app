@@ -245,7 +245,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var alertCards: some View {
         if !alerts.isEmpty ||
             !downstreamAlerts.isEmpty ||
-            (stopDetailsVM.showElevatorAccessibility && hasAccessibilityWarning) {
+            (stopDetailsVM.showStationAccessibility && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     alertCard(alert)
@@ -253,7 +253,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 ForEach(downstreamAlerts, id: \.id) { alert in
                     alertCard(alert, .downstream)
                 }
-                if stopDetailsVM.showElevatorAccessibility, hasAccessibilityWarning {
+                if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
                     if !patternsByStop.elevatorAlerts.isEmpty {
                         ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
                             alertCard(alert, .elevator)

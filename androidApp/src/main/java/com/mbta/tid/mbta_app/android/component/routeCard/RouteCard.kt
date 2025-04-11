@@ -43,7 +43,7 @@ fun RouteCard(
     now: Instant,
     pinned: Boolean,
     onPin: (String) -> Unit,
-    showElevatorAccessibility: Boolean = false,
+    showStationAccessibility: Boolean = false,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit
 ) {
     Column(Modifier.haloContainer(1.dp)) {
@@ -53,7 +53,7 @@ fun RouteCard(
 
         data.stopData.forEach {
             if (data.context == RouteCardData.Context.NearbyTransit) {
-                StopHeader(it, showElevatorAccessibility)
+                StopHeader(it, showStationAccessibility)
             }
 
             Departures(it, data, globalData, now, pinned) { leaf ->

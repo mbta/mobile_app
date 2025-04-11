@@ -142,8 +142,8 @@ class StopDetailsViewModel(
     private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
 
-    private val _showElevatorAccessibility = MutableStateFlow(false)
-    val showElevatorAccessibility: StateFlow<Boolean> = _showElevatorAccessibility
+    private val _showStationAccessibility = MutableStateFlow(false)
+    val showStationAccessibility: StateFlow<Boolean> = _showStationAccessibility
 
     private val _hideMaps = MutableStateFlow(false)
     val hideMaps: StateFlow<Boolean> = _hideMaps
@@ -168,7 +168,7 @@ class StopDetailsViewModel(
     fun loadSettings() {
         CoroutineScope(Dispatchers.IO).launch {
             val data = settingsRepository.getSettings()
-            _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false
+            _showStationAccessibility.value = data[Settings.StationAccessibility] ?: false
             _hideMaps.value = data[Settings.HideMaps] ?: false
             _groupByDirection.value = data[Settings.GroupByDirection] ?: false
         }

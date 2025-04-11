@@ -94,7 +94,7 @@ struct StopDetailsUnfilteredView: View {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             if let departures {
-                                if stopDetailsVM.showElevatorAccessibility, hasAccessibilityWarning {
+                                if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
                                     if !departures.elevatorAlerts.isEmpty {
                                         ForEach(departures.elevatorAlerts, id: \.id) { alert in
                                             AlertCard(

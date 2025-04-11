@@ -40,7 +40,7 @@ class SettingsRepositoryTest : KoinTest {
                 Settings.DevDebugMode to true,
                 Settings.GroupByDirection to false,
                 Settings.SearchRouteResults to false,
-                Settings.ElevatorAccessibility to false,
+                Settings.StationAccessibility to false,
                 Settings.HideMaps to false,
             ),
             repo.getSettings()
