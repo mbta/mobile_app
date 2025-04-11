@@ -88,7 +88,8 @@ class MoreViewModel(
                 items =
                     listOf(
                         MoreItem.Toggle(
-                            label = context.resources.getString(R.string.setting_toggle_hide_maps),
+                            label =
+                                context.resources.getString(R.string.setting_toggle_map_display),
                             settings = Settings.HideMaps,
                             value = settings[Settings.HideMaps] ?: false
                         ),

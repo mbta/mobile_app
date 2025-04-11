@@ -18,7 +18,8 @@ final class MorePageTests: XCTestCase {
 
         let settingsRepository = MockSettingsRepository(
             settings: [.devDebugMode: true,
-                       .searchRouteResults: false],
+                       .searchRouteResults: false,
+                       .hideMaps: false],
             onGetSettings: { loadedPublisher.send(()) }
         )
         let viewModel = SettingsViewModel(settingsRepository: settingsRepository)
@@ -28,10 +29,14 @@ final class MorePageTests: XCTestCase {
             XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
         }
 
+        let mapDisplayTrueByDefault = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
+            XCTAssertTrue(try view.find(text: "Map Display").parent().parent().find(ViewType.Toggle.self).isOn())
+        }
+
         ViewHosting.host(view: sut)
         await viewModel.getSections()
 
-        await fulfillment(of: [exp], timeout: 2)
+        await fulfillment(of: [exp, mapDisplayTrueByDefault], timeout: 2)
     }
 
     @MainActor func testSavesState() async throws {

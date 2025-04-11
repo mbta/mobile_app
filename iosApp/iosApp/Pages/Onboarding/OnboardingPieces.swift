@@ -175,10 +175,15 @@ enum OnboardingPieces {
                 get: getSetting,
                 set: { _ in toggleSetting() }
             )) { label }
-                .padding(.vertical, 6)
+                .padding(.vertical, 10)
                 .padding(.horizontal, 16)
                 .frame(minHeight: 44)
                 .background(Color.fill3)
+                .clipShape(.rect(cornerRadius: 8.0))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8.0)
+                        .stroke(Color.halo, lineWidth: 1.0)
+                )
         }
     }
 }
