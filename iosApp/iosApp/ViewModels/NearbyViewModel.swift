@@ -13,10 +13,17 @@ import SwiftUI
 
 class NearbyViewModel: ObservableObject {
     private static let logger = Logger()
-    struct NearbyTransitState: Equatable {
+    struct NearbyTransitState: Equatable, Hashable {
         var loadedLocation: CLLocationCoordinate2D?
         var loading: Bool = false
-        var nearbyByRouteAndStop: NearbyStaticData?
+        var stopIds: [String]?
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(loading)
+            hasher.combine(stopIds)
+            hasher.combine(loadedLocation?.latitude)
+            hasher.combine(loadedLocation?.longitude)
+        }
     }
 
     @Published var departures: StopDetailsDepartures?
@@ -36,11 +43,15 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
+    @Published var groupByDirection: Bool = false
     @Published var showDebugMessages: Bool = false
     @Published var showStationAccessibility: Bool = false
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
+    @Published var nearbyStaticData: NearbyStaticData?
+    @Published var routeCardData: [RouteCardData]?
+
     @Published var selectingLocation = false
 
     private let alertsRepository: IAlertsRepository
@@ -54,6 +65,7 @@ class NearbyViewModel: ObservableObject {
     init(
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
+        groupByDirection: Bool = false,
         showDebugMessages: Bool = false,
         showStationAccessibility: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
@@ -66,6 +78,7 @@ class NearbyViewModel: ObservableObject {
         self.departures = departures
         self.navigationStack = navigationStack
 
+        self.groupByDirection = groupByDirection
         self.showDebugMessages = showDebugMessages
         self.showStationAccessibility = showStationAccessibility
 
@@ -77,9 +90,16 @@ class NearbyViewModel: ObservableObject {
         self.settingsRepository = settingsRepository
     }
 
+    func clearNearbyData() {
+        nearbyState = .init()
+        routeCardData = nil
+        nearbyStaticData = nil
+    }
+
     func loadSettings() async {
-        let loaded = await settingsRepository.load([.devDebugMode, .stationAccessibility])
+        let loaded = await settingsRepository.load([.devDebugMode, .groupByDirection, .stationAccessibility])
         Task { @MainActor in
+            groupByDirection = loaded.getSafe(.groupByDirection)
             showDebugMessages = loaded.getSafe(.devDebugMode)
             showStationAccessibility = loaded.getSafe(.stationAccessibility)
         }
@@ -176,7 +196,7 @@ class NearbyViewModel: ObservableObject {
         _ = navigationStack.popLast()
     }
 
-    func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
+    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D) {
         guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
             return
         }
@@ -188,21 +208,62 @@ class NearbyViewModel: ObservableObject {
             if nearbyState.loadedLocation != nil {
                 analytics.refetchedNearbyTransit()
             }
-            nearbyState.loading = true
-            defer {
-                self.nearbyState.loading = false
-                self.selectingLocation = false
+            nearbyState = NearbyTransitState(loading: true)
+            nearbyStaticData = nil
+            routeCardData = nil
+
+            let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
+            if groupByDirection {
+                nearbyState.stopIds = stopIds
+                nearbyState.loadedLocation = location
+                nearbyState.loading = false
+                selectingLocation = false
+            } else {
+                defer {
+                    self.nearbyState.loading = false
+                    self.selectingLocation = false
+                }
+                await fetchApi(
+                    errorBannerRepository,
+                    errorKey: "NearbyViewModel.getNearby",
+                    getData: { try await self.nearbyRepository.getNearby(global: global, stopIds: stopIds) },
+                    onSuccess: {
+                        self.nearbyStaticData = $0
+                        self.nearbyState.stopIds = stopIds
+                        self.nearbyState.loadedLocation = location
+                    },
+                    onRefreshAfterError: { self.getNearbyStops(global: global, location: location) }
+                )
             }
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "NearbyViewModel.getNearby",
-                getData: { try await self.nearbyRepository.getNearby(global: global, location: location.positionKt) },
-                onSuccess: {
-                    self.nearbyState.nearbyByRouteAndStop = $0
-                    self.nearbyState.loadedLocation = location
-                },
-                onRefreshAfterError: { self.getNearby(global: global, location: location) }
+        }
+    }
+
+    func loadRouteCardData(
+        state: NearbyTransitState,
+        global: GlobalResponse?,
+        schedules: ScheduleResponse?,
+        predictions: PredictionsStreamDataResponse?,
+        alerts: AlertsStreamDataResponse?,
+        now: Date,
+        pinnedRoutes: Set<String>
+    ) {
+        Task {
+            guard let global, let stopIds = state.stopIds, let location = state.loadedLocation else {
+                Task { @MainActor in routeCardData = nil }
+                return
+            }
+            let cardData = try await RouteCardData.companion.routeCardsForStopList(
+                stopIds: stopIds,
+                globalData: global,
+                sortByDistanceFrom: location.positionKt,
+                schedules: schedules,
+                predictions: predictions,
+                alerts: alerts,
+                now: now.toKotlinInstant(),
+                pinnedRoutes: pinnedRoutes,
+                context: .nearbyTransit
             )
+            Task { @MainActor in routeCardData = cardData }
         }
     }
 

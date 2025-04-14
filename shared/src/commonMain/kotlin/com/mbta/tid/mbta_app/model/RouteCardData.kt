@@ -50,6 +50,8 @@ data class RouteCardData(
     val context: Context,
     val at: Instant,
 ) {
+    val id = lineOrRoute.id
+
     enum class Context {
         NearbyTransit,
         StopDetailsFiltered,
@@ -65,6 +67,8 @@ data class RouteCardData(
         val directions: List<Direction>,
         val data: List<Leaf>
     ) {
+        val id = stop.id
+
         // convenience constructors for when directions are not directly under test
         constructor(
             stop: Stop,
@@ -112,6 +116,8 @@ data class RouteCardData(
         override val hasSchedulesToday: Boolean,
         val alertsDownstream: List<Alert>
     ) : ILeafData {
+        val id = directionId
+
         override val hasMajorAlerts: Boolean
             get() = run {
                 this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }

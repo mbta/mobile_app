@@ -42,7 +42,8 @@ sealed class LeafFormat {
              */
             val route: Route?,
             val headsign: String,
-            val format: UpcomingFormat
+            val format: UpcomingFormat,
+            val id: String = "$headsign-$format"
         )
 
         override fun tileData(): List<TileData> {

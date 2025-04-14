@@ -11,6 +11,12 @@ import SwiftUI
 
 struct DirectionLabel: View {
     let direction: Direction
+    let showDestination: Bool
+
+    init(direction: Direction, showDestination: Bool = true) {
+        self.direction = direction
+        self.showDestination = showDestination
+    }
 
     private let localizedDirectionNames: [String: String] = [
         "North": NSLocalizedString("Northbound", comment: "A route direction label"),
@@ -25,26 +31,35 @@ struct DirectionLabel: View {
         localizedDirectionNames[direction.name] ?? NSLocalizedString("Heading", comment: "A route direction label")
     }
 
+    @ViewBuilder
+    func directionTo(_ direction: Direction) -> some View {
+        Text("\(directionNameFormatted(direction)) to",
+             comment: """
+             Label the direction a list of arrivals is for.
+             Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
+             For example, "[Northbound] to [Alewife]"
+             """)
+             .font(Typography.footnote)
+             .textCase(.none)
+    }
+
+    @ViewBuilder
+    func destinationLabel(_ destination: String) -> some View {
+        Text(destination)
+            .font(Typography.bodySemibold)
+            .multilineTextAlignment(.leading)
+            .textCase(.none)
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
-            if let destination = direction.destination {
-                Text("\(directionNameFormatted(direction)) to",
-                     comment: """
-                     Label the direction a list of arrivals is for.
-                     Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
-                     For example, "[Northbound] to [Alewife]
-                     """)
-                     .font(Typography.footnote)
-                     .textCase(.none)
-                Text(destination)
-                    .font(Typography.bodySemibold)
-                    .multilineTextAlignment(.leading)
-                    .textCase(.none)
+            if !showDestination {
+                directionTo(direction)
+            } else if let destination = direction.destination {
+                directionTo(direction)
+                destinationLabel(destination)
             } else {
-                Text(directionNameFormatted(direction))
-                    .font(Typography.bodySemibold)
-                    .textCase(.none)
-                    .frame(maxHeight: .infinity, alignment: .leading)
+                destinationLabel(directionNameFormatted(direction))
             }
         }
     }
