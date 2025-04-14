@@ -195,7 +195,6 @@
     <string name="onboarding_feedback_advance">Bắt đầu</string>
     <string name="onboarding_feedback_body">MBTA Go đang trong giai đoạn đầu! Chúng tôi muốn nghe ý kiến đóng góp của bạn để tiếp tục cải thiện và bổ sung các tính năng mới.</string>
     <string name="onboarding_feedback_header">Giúp chúng tôi cải thiện</string>
-    <string name="onboarding_location_advance">Tiếp tục</string>
     <string name="onboarding_location_body">Chúng tôi sử dụng vị trí của bạn để hiển thị cho bạn các lựa chọn phương tiện công cộng ở gần.</string>
     <string name="onboarding_location_footer">Bạn luôn có thể thay đổi cài đặt vị trí sau trong ứng dụng Cài đặt.</string>
     <string name="onboarding_location_header">Xem phương tiện công cộng gần bạn</string>

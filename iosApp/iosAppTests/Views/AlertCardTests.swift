@@ -27,6 +27,7 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Detail button pressed")
         let sut = AlertCard(
             alert: alert,
+            alertSummary: nil,
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -54,6 +55,7 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
+            alertSummary: nil,
             spec: .secondary,
             color: Color.pink,
             textColor: Color.orange,
@@ -81,6 +83,7 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
+            alertSummary: nil,
             spec: .downstream,
             color: Color.pink,
             textColor: Color.orange,
@@ -109,6 +112,7 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
+            alertSummary: nil,
             spec: .elevator,
             color: Color.pink,
             textColor: Color.orange,
@@ -137,6 +141,7 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
+            alertSummary: nil,
             spec: .delay,
             color: Color.pink,
             textColor: Color.orange,
@@ -159,6 +164,7 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
+            alertSummary: nil,
             spec: .delay,
             color: Color.pink,
             textColor: Color.orange,

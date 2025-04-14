@@ -199,7 +199,6 @@
     <string name="onboarding_feedback_advance">Empezar</string>
     <string name="onboarding_feedback_body">MBTA Go está en su etapa inicial. Queremos recibir sus comentarios mientras seguimos realizando mejoras y agregando nuevas características.</string>
     <string name="onboarding_feedback_header">Ayúdenos a mejorar</string>
-    <string name="onboarding_location_advance">Continuar</string>
     <string name="onboarding_location_body">Usamos su ubicación para mostrarle opciones de tráfico cercanas.</string>
     <string name="onboarding_location_footer">Puede cambiar la configuración de ubicación en la aplicación de Configuración.</string>
     <string name="onboarding_location_header">Ver tráfico cerca de usted</string>

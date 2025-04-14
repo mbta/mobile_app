@@ -63,6 +63,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         !patternsByStop.elevatorAlerts.isEmpty || !patternsByStop.stop.isWheelchairAccessible
     }
 
+    // TODO: viewModel?
+    @State var patternsHere: [RoutePattern]? = nil
+
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
 
@@ -140,7 +143,26 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
+        .onChange(of: patternsByStop) { patternsByStop in
+            patternsHere = patternsHere(patternsByStop)
+        }
+        .onAppear { setAlertSummaries() }
+        .onChange(of: stopDetailsVM.global) { _ in setAlertSummaries() }
+        .onChange(of: alerts) { _ in setAlertSummaries() }
+        .onChange(of: downstreamAlerts) { _ in setAlertSummaries() }
+        .onChange(of: stopId) { _ in setAlertSummaries() }
+        .onChange(of: stopFilter.directionId) { _ in setAlertSummaries() }
+        .onChange(of: patternsHere) { _ in setAlertSummaries() }
+        .onChange(of: now) { _ in setAlertSummaries() }
         .ignoresSafeArea(.all)
+    }
+
+    func patternsHere(_ patternsByStop: PatternsByStop) -> [RoutePattern] {
+        // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
+        patternsByStop.patterns.flatMap { $0.patterns
+            .compactMap { pattern in pattern as? RoutePattern }
+        }
+        .filter { $0.directionId == stopFilter.directionId }
     }
 
     func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
@@ -193,10 +215,35 @@ struct StopDetailsFilteredDepartureDetails: View {
                     .padding(.horizontal, 4)
                 }
             }
+
             .padding(.horizontal, 12)
             .padding(.vertical, 1)
             .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    private func setAlertSummaries() {
+        Task {
+            let summaries = await alertSummaries()
+            stopDetailsVM.setAlertSummaries(summaries)
+        }
+    }
+
+    private func alertSummaries() async -> [String: AlertSummary?] {
+        let allAlerts = alerts + downstreamAlerts
+        var alertMap: [String: AlertSummary?] = [:]
+
+        if let global = stopDetailsVM.global, let patternsHere {
+            for alert in allAlerts {
+                let summary = try? await alert.summary(stopId: stopId,
+                                                       directionId: stopFilter.directionId,
+                                                       patterns: patternsHere,
+                                                       atTime: now.toKotlinInstant(),
+                                                       global: global)
+                alertMap[alert.id] = summary
+            }
+        }
+        return alertMap
     }
 
     private func pillDecoration(tileData: TileData) -> DepartureTile.PillDecoration {
@@ -221,7 +268,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     @ViewBuilder
-    func alertCard(_ alert: Shared.Alert, _ spec: AlertCardSpec? = nil) -> some View {
+    func alertCard(_ alert: Shared.Alert, _ summary: AlertSummary?, _ spec: AlertCardSpec? = nil) -> some View {
         let spec: AlertCardSpec = if let spec {
             spec
         } else if alert.significance == .major {
@@ -234,6 +281,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
         AlertCard(
             alert: alert,
+            alertSummary: summary,
             spec: spec,
             color: routeColor,
             textColor: routeTextColor,
@@ -248,15 +296,19 @@ struct StopDetailsFilteredDepartureDetails: View {
             (stopDetailsVM.showStationAccessibility && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
-                    alertCard(alert)
+                    if stopDetailsVM.alertSummaries.keys.contains(alert.id) {
+                        alertCard(alert, stopDetailsVM.alertSummaries[alert.id] ?? nil)
+                    }
                 }
                 ForEach(downstreamAlerts, id: \.id) { alert in
-                    alertCard(alert, .downstream)
+                    if stopDetailsVM.alertSummaries.keys.contains(alert.id) {
+                        alertCard(alert, stopDetailsVM.alertSummaries[alert.id] ?? nil, .downstream)
+                    }
                 }
                 if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
                     if !patternsByStop.elevatorAlerts.isEmpty {
                         ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
-                            alertCard(alert, .elevator)
+                            alertCard(alert, nil, .elevator)
                         }
                     } else {
                         NotAccessibleCard()

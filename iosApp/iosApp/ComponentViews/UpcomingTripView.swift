@@ -185,6 +185,13 @@ func makeTimeFormatter() -> DateFormatter {
     return formatter
 }
 
+func makeDateFormatter() -> DateFormatter {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .none
+    return formatter
+}
+
 struct DisruptionView: View {
     let spec: FormattedAlert.PredictionReplacement
     let iconName: String

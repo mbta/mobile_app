@@ -57,11 +57,7 @@ struct PromoScreenView: View {
         )
 
         var promoDetailsString: AttributedString {
-            do {
-                return try AttributedString(markdown: promoDetailsKey)
-            } catch {
-                return AttributedString(promoDetailsKey.filter { $0 != "*" })
-            }
+            AttributedString.boldOrDefault(promoDetailsKey)
         }
         OnboardingPieces.PageColumn(content: {
             if typeSize < .accessibility2 {
