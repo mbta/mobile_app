@@ -59,7 +59,7 @@ fun StopDetailsUnfilteredRoutesView(
     departures: StopDetailsDepartures,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
-    showElevatorAccessibility: Boolean,
+    showStationAccessibility: Boolean,
     now: Instant,
     pinRoute: (String) -> Unit,
     pinnedRoutes: Set<String>,
@@ -73,7 +73,7 @@ fun StopDetailsUnfilteredRoutesView(
         departures.elevatorAlerts,
         servedRoutes,
         errorBannerViewModel,
-        showElevatorAccessibility,
+        showStationAccessibility,
         onClose,
         onTapRoutePill,
         updateStopFilter,
@@ -97,7 +97,7 @@ fun StopDetailsUnfilteredRoutesView(
     routeCardData: List<RouteCardData>,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
-    showElevatorAccessibility: Boolean,
+    showStationAccessibility: Boolean,
     now: Instant,
     globalData: GlobalResponse,
     pinnedRoutes: Set<String>,
@@ -112,7 +112,7 @@ fun StopDetailsUnfilteredRoutesView(
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct(),
         servedRoutes,
         errorBannerViewModel,
-        showElevatorAccessibility,
+        showStationAccessibility,
         onClose,
         onTapRoutePill,
         updateStopFilter,
@@ -125,7 +125,7 @@ fun StopDetailsUnfilteredRoutesView(
                 now,
                 pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
                 onPin = pinRoute,
-                showElevatorAccessibility,
+                showStationAccessibility,
                 onOpenStopDetails = { _, stopDetailsFilter -> updateStopFilter(stopDetailsFilter) }
             )
         }
@@ -138,7 +138,7 @@ private fun Layout(
     elevatorAlerts: List<Alert>,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
-    showElevatorAccessibility: Boolean,
+    showStationAccessibility: Boolean,
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
@@ -173,7 +173,7 @@ private fun Layout(
                 verticalArrangement = Arrangement.spacedBy(0.dp),
                 contentPadding = PaddingValues(top = 16.dp)
             ) {
-                if (showElevatorAccessibility && hasAccessibilityWarning) {
+                if (showStationAccessibility && hasAccessibilityWarning) {
                     item {
                         Column(
                             Modifier.padding(bottom = 14.dp, start = 14.dp, end = 14.dp),
@@ -318,7 +318,7 @@ private fun StopDetailsRoutesViewPreview() {
                     MockErrorBannerStateRepository(),
                     MockSettingsRepository()
                 ),
-                showElevatorAccessibility = true,
+                showStationAccessibility = true,
                 now = Clock.System.now(),
                 pinRoute = {},
                 pinnedRoutes = emptySet(),

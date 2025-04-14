@@ -33,8 +33,8 @@ class NearbyTransitViewModel(
     private val errorBannerRepository: IErrorBannerStateRepository,
     private val analytics: Analytics,
 ) : KoinComponent, ViewModel() {
-    private val _showElevatorAccessibility: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showElevatorAccessibility: StateFlow<Boolean> = _showElevatorAccessibility
+    private val _showStationAccessibility: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showStationAccessibility: StateFlow<Boolean> = _showStationAccessibility
     private val _groupByDirection: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val groupByDirection: StateFlow<Boolean> = _groupByDirection
 
@@ -48,7 +48,7 @@ class NearbyTransitViewModel(
     fun loadSettings() {
         CoroutineScope(Dispatchers.IO).launch {
             val data = settingsRepository.getSettings()
-            _showElevatorAccessibility.value = data[Settings.ElevatorAccessibility] ?: false
+            _showStationAccessibility.value = data[Settings.StationAccessibility] ?: false
             _groupByDirection.value = data[Settings.GroupByDirection] ?: false
         }
     }

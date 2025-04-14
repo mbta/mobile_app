@@ -39,7 +39,9 @@ struct MoreSectionView: View {
                             switch row {
                             case let .toggle(label: label, setting: setting, value: value):
                                 Toggle(isOn: Binding<Bool>(
-                                    get: { value },
+                                    // Setting is hide maps, but label is "Map Display" - invert the
+                                    // value of hide maps to match the label
+                                    get: { setting == .hideMaps ? !value : value },
                                     set: { _ in toggleSetting(setting) }
                                 )) { Text(label) }
                                     .padding(.vertical, 6)

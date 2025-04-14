@@ -63,7 +63,7 @@ fun TripStops(
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
-    showElevatorAccessibility: Boolean = false,
+    showStationAccessibility: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -109,7 +109,7 @@ fun TripStops(
                         onTapLink,
                         routeAccents,
                         firstStop = true,
-                        showElevatorAccessibility = showElevatorAccessibility
+                        showStationAccessibility = showStationAccessibility
                     )
                 }
             }
@@ -188,7 +188,7 @@ fun TripStops(
                             now,
                             onTapLink,
                             routeAccents,
-                            showElevatorAccessibility
+                            showStationAccessibility
                         )
                     }
                 }
@@ -215,7 +215,7 @@ fun TripStops(
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
-                    showElevatorAccessibility = showElevatorAccessibility
+                    showStationAccessibility = showStationAccessibility
                 )
 
                 HaloUnderRouteLine(routeAccents.color)
@@ -227,7 +227,7 @@ fun TripStops(
                 now,
                 onTapLink,
                 routeAccents,
-                showElevatorAccessibility
+                showStationAccessibility
             )
         } else {
             StopList(
@@ -236,7 +236,7 @@ fun TripStops(
                 now,
                 onTapLink,
                 routeAccents,
-                showElevatorAccessibility
+                showStationAccessibility
             )
         }
     }
@@ -259,7 +259,7 @@ private fun StopList(
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     routeAccents: TripRouteAccents,
-    showElevatorAccessibility: Boolean
+    showStationAccessibility: Boolean
 ) {
     for (stop in list) {
         TripStopRow(
@@ -268,7 +268,7 @@ private fun StopList(
             onTapLink,
             routeAccents,
             lastStop = stop.stopSequence == lastStopSequence,
-            showElevatorAccessibility = showElevatorAccessibility
+            showStationAccessibility = showStationAccessibility
         )
     }
 }
@@ -313,7 +313,7 @@ private fun TripStopsPreview() {
             GlobalResponse(objects),
             onTapLink = {},
             TripRouteAccents(route),
-            showElevatorAccessibility = true
+            showStationAccessibility = true
         )
     }
 }
