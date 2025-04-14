@@ -74,6 +74,7 @@ class Previews() {
     val objects = ObjectCollectionBuilder()
     val greenLine =
         objects.line {
+            id = "line-Green"
             color = "00843D"
             longName = "Green Line"
             textColor = "FFFFFF"
@@ -235,7 +236,11 @@ class Previews() {
         objects.routePattern(greenLineB) {
             directionId = 0
             typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Boston College" }
+            representativeTrip {
+                headsign = "Boston College"
+                // only the stops required to correctly apply the direction special casing
+                stopIds = listOf("place-boyls", "place-armnl", "place-kencl", "place-lake")
+            }
         }
     val greenLineBEastbound =
         objects.routePattern(greenLineB) {
@@ -247,7 +252,11 @@ class Previews() {
         objects.routePattern(greenLineC) {
             directionId = 0
             typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Cleveland Circle" }
+            representativeTrip {
+                headsign = "Cleveland Circle"
+                // only the stops required to correctly apply the direction special casing
+                stopIds = listOf("place-boyls", "place-armnl", "place-kencl", "place-clmnl")
+            }
         }
     val greenLineCEastbound =
         objects.routePattern(greenLineC) {
@@ -259,7 +268,11 @@ class Previews() {
         objects.routePattern(greenLineD) {
             directionId = 0
             typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Riverside" }
+            representativeTrip {
+                headsign = "Riverside"
+                // only the stops required to correctly apply the direction special casing
+                stopIds = listOf("place-boyls", "place-armnl", "place-kencl", "place-river")
+            }
         }
     val greenLineDEastbound =
         objects.routePattern(greenLineD) {
@@ -299,6 +312,7 @@ class Previews() {
         }
     val boylston =
         objects.stop {
+            id = "place-boyls"
             name = "Boylston"
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
         }
@@ -1327,6 +1341,7 @@ class Previews() {
             card(
                 greenLine,
                 objects.stop {
+                    id = "place-kencl"
                     name = "Kenmore"
                     wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
                 },
