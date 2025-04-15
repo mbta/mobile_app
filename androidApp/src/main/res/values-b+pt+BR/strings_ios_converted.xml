@@ -199,7 +199,6 @@
     <string name="onboarding_feedback_advance">Comece aqui</string>
     <string name="onboarding_feedback_body">O MBTA Go está no estágio inicial! Queremos seus comentários enquanto continuamos a fazer melhorias e adicionar novos recursos.</string>
     <string name="onboarding_feedback_header">Ajude-nos a melhorar</string>
-    <string name="onboarding_location_advance">Continuar</string>
     <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
     <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
     <string name="onboarding_location_header">Ver transporte perto de você</string>
