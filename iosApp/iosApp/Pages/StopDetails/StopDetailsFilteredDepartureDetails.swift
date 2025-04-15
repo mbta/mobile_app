@@ -32,6 +32,8 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
+    let inspection = Inspection<Self>()
+
     var analytics: Analytics = AnalyticsProvider.shared
 
     var showTileHeadsigns: Bool {
@@ -64,7 +66,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     // TODO: viewModel?
-    @State var patternsHere: [RoutePattern]? = nil
+    @State var patternsHere: [RoutePattern]?
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
@@ -143,10 +145,13 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
+        .onAppear {
+            patternsHere = patternsHere(patternsByStop)
+            setAlertSummaries()
+        }
         .onChange(of: patternsByStop) { patternsByStop in
             patternsHere = patternsHere(patternsByStop)
         }
-        .onAppear { setAlertSummaries() }
         .onChange(of: stopDetailsVM.global) { _ in setAlertSummaries() }
         .onChange(of: alerts) { _ in setAlertSummaries() }
         .onChange(of: downstreamAlerts) { _ in setAlertSummaries() }
@@ -154,6 +159,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: stopFilter.directionId) { _ in setAlertSummaries() }
         .onChange(of: patternsHere) { _ in setAlertSummaries() }
         .onChange(of: now) { _ in setAlertSummaries() }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
     }
 
