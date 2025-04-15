@@ -13,13 +13,13 @@ import os
 import Shared
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct NearbyTransitView: View {
     var analytics: Analytics = AnalyticsProvider.shared
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
-    @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
     @Binding var isReturningFromBackground: Bool
     var globalRepository = RepositoryDI().global
@@ -39,7 +39,7 @@ struct NearbyTransitView: View {
     var routeCardParams: Int {
         var hasher = Hasher()
 
-        hasher.combine(state)
+        hasher.combine(nearbyVM.nearbyState)
         hasher.combine(globalData)
         hasher.combine(scheduleResponse)
         hasher.combine(predictionsByStop)
@@ -98,7 +98,7 @@ struct NearbyTransitView: View {
             DispatchQueue.main.async {
                 if !nearbyVM.groupByDirection { return }
                 nearbyVM.loadRouteCardData(
-                    state: state,
+                    state: nearbyVM.nearbyState,
                     global: globalData,
                     schedules: scheduleResponse,
                     predictions: predictionsByStop?.toPredictionsStreamDataResponse(),
@@ -127,7 +127,7 @@ struct NearbyTransitView: View {
                    .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
                     self.predictionsByStop = nil
                 }
-                joinPredictions(state.stopIds)
+                joinPredictions(nearbyVM.nearbyState.stopIds)
             },
             onInactive: leavePredictions,
             onBackground: {
@@ -240,7 +240,7 @@ struct NearbyTransitView: View {
     private func loadEverything() {
         getGlobal()
         getNearby(location: location, globalData: globalData)
-        joinPredictions(state.stopIds)
+        joinPredictions(nearbyVM.nearbyState.stopIds)
         updateNearbyRoutes()
         updatePinnedRoutes()
         getSchedule()
@@ -286,7 +286,7 @@ struct NearbyTransitView: View {
 
     func getSchedule() {
         Task {
-            guard let stopIds = state.stopIds else { return }
+            guard let stopIds = nearbyVM.nearbyState.stopIds else { return }
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "NearbyTransitView.getSchedule",
@@ -372,7 +372,7 @@ struct NearbyTransitView: View {
                 ),
                 action: {
                     leavePredictions()
-                    joinPredictions(state.stopIds)
+                    joinPredictions(nearbyVM.nearbyState.stopIds)
                 }
             )
         }
@@ -409,7 +409,7 @@ struct NearbyTransitView: View {
         filterAtTime: Instant,
         pinnedRoutes: Set<String>
     ) async -> [StopsAssociated]? {
-        guard let loadedLocation = state.loadedLocation else { return nil }
+        guard let loadedLocation = nearbyVM.nearbyState.loadedLocation else { return nil }
         return try? await nearbyVM.nearbyStaticData?.withRealtimeInfo(
             globalData: globalData,
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),

@@ -51,7 +51,6 @@ struct NearbyTransitPageView: View {
                     }.padding(.horizontal, 16).padding(.bottom, 16)
                 } else {
                     NearbyTransitView(
-                        state: $nearbyVM.nearbyState,
                         location: $location,
                         isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
                         nearbyVM: nearbyVM,
