@@ -44,9 +44,13 @@ import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlin.time.Duration.Companion.minutes
@@ -60,8 +64,10 @@ fun TripStops(
     stopSequence: Int?,
     headerSpec: TripHeaderSpec?,
     now: Instant,
+    alertSummaries: Map<String, AlertSummary?>,
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
+    onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
     showStationAccessibility: Boolean = false,
 ) {
@@ -69,7 +75,7 @@ fun TripStops(
 
     val splitStops: TripDetailsStopList.TargetSplit =
         remember(targetId, stops, stopSequence, global) {
-            stops.splitForTarget(targetId, stopSequence, global)
+            stops.splitForTarget(targetId, stopSequence, global, truncateForDisruptions = true)
         }
 
     var stopsExpanded by rememberSaveable { mutableStateOf(false) }
@@ -92,147 +98,161 @@ fun TripStops(
 
     val lastStopSequence = stops.stops.lastOrNull()?.stopSequence
 
-    Column(
-        Modifier.haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
-            .padding(top = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        if (showFirstStopSeparately) {
-            val firstStop = splitStops.firstStop
-            if (firstStop != null) {
-                TripStopRow(
-                    stop = firstStop,
-                    now,
-                    onTapLink,
-                    routeAccents,
-                    firstStop = true,
-                    showStationAccessibility = showStationAccessibility
-                )
-            }
-        }
-        if (!collapsedStops.isNullOrEmpty() && stopsAway != null && target != null) {
-            Row(
-                Modifier.height(IntrinsicSize.Min)
-                    .clickable(
-                        onClickLabel =
-                            if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
-                            else stringResource(R.string.expand_remaining_stops)
-                    ) {
-                        stopsExpanded = !stopsExpanded
-                    }
-                    .clearAndSetSemantics {
-                        contentDescription =
-                            context.getString(
-                                R.string.is_stops_away_from,
-                                routeTypeText,
-                                stopsAway,
-                                target.stop.name
-                            )
-                    }
-                    .padding(horizontal = 8.dp)
-                    .defaultMinSize(minHeight = 48.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AnimatedContent(
-                    stopsExpanded,
-                    transitionSpec = {
-                        fadeIn(animationSpec = tween(500)) togetherWith
-                            fadeOut(animationSpec = tween(500))
-                    }
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
-                        if (it) {
-                            Icon(
-                                painterResource(R.drawable.fa_caret_right),
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp).rotate(90f),
-                                tint = colorResource(R.color.deemphasized)
-                            )
-                            ColoredRouteLine(
-                                routeAccents.color,
-                                Modifier.padding(start = 14.dp, end = 18.dp).fillMaxHeight()
-                            )
-                        } else {
-                            Icon(
-                                painterResource(R.drawable.fa_caret_right),
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp),
-                                tint = colorResource(R.color.deemphasized)
-                            )
-                            RouteLineTwist(
-                                routeAccents.color,
-                                Modifier.padding(start = 4.dp, end = 6.dp)
-                            )
-                        }
-                    }
-                }
-                Text(
-                    pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
-                    color = colorResource(R.color.text),
-                    style = Typography.body,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            if (stopsExpanded) {
-                Column {
-                    HaloUnderRouteLine(routeAccents.color)
-                    StopList(
-                        list = collapsedStops,
-                        lastStopSequence,
+    Box {
+        Box(
+            Modifier.matchParentSize()
+                .padding(4.dp)
+                .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
+        )
+        Column(
+            Modifier.padding(top = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            if (showFirstStopSeparately) {
+                val firstStop = splitStops.firstStop
+                if (firstStop != null) {
+                    TripStopRow(
+                        stop = firstStop,
                         now,
                         onTapLink,
+                        onOpenAlertDetails,
                         routeAccents,
-                        showStationAccessibility
+                        alertSummaries,
+                        showStationAccessibility = showStationAccessibility,
+                        firstStop = true
                     )
                 }
             }
-        }
-        // If the target is the first stop and there's no vehicle, it's already displayed in the
-        // trip header
-        if (target != null && !hideTarget) {
-            if (
-                !collapsedStops.isNullOrEmpty() ||
-                    (showFirstStopSeparately && splitStops.firstStop != null)
-            ) {
-                // We want a double halo above and below the selected stop
-                if (!stopsExpanded) {
-                    // Expanded stops are adding an extra separator and I'm not sure where from
+            if (!collapsedStops.isNullOrEmpty() && stopsAway != null && target != null) {
+                Row(
+                    Modifier.height(IntrinsicSize.Min)
+                        .clickable(
+                            onClickLabel =
+                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
+                                else stringResource(R.string.expand_remaining_stops)
+                        ) {
+                            stopsExpanded = !stopsExpanded
+                        }
+                        .clearAndSetSemantics {
+                            contentDescription =
+                                context.getString(
+                                    R.string.is_stops_away_from,
+                                    routeTypeText,
+                                    stopsAway,
+                                    target.stop.name
+                                )
+                        }
+                        .padding(horizontal = 12.dp)
+                        .defaultMinSize(minHeight = 48.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AnimatedContent(
+                        stopsExpanded,
+                        transitionSpec = {
+                            fadeIn(animationSpec = tween(500)) togetherWith
+                                fadeOut(animationSpec = tween(500))
+                        }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        ) {
+                            if (it) {
+                                Icon(
+                                    painterResource(R.drawable.fa_caret_right),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp).rotate(90f),
+                                    tint = colorResource(R.color.deemphasized)
+                                )
+                                ColoredRouteLine(
+                                    routeAccents.color,
+                                    Modifier.padding(start = 16.dp, end = 18.dp).fillMaxHeight()
+                                )
+                            } else {
+                                Icon(
+                                    painterResource(R.drawable.fa_caret_right),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp),
+                                    tint = colorResource(R.color.deemphasized)
+                                )
+                                RouteLineTwist(
+                                    routeAccents.color,
+                                    Modifier.padding(start = 6.dp, end = 6.dp)
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
+                        color = colorResource(R.color.text),
+                        style = Typography.body,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                if (stopsExpanded) {
+                    Column {
+                        HaloUnderRouteLine(routeAccents.color)
+                        StopList(
+                            list = collapsedStops,
+                            lastStopSequence,
+                            now,
+                            onTapLink,
+                            onOpenAlertDetails,
+                            routeAccents,
+                            alertSummaries,
+                            showStationAccessibility
+                        )
+                    }
+                }
+            }
+            // If the target is the first stop and there's no vehicle, it's already displayed in the
+            // trip header
+            if (target != null && !hideTarget) {
+                if (
+                    !collapsedStops.isNullOrEmpty() ||
+                        (showFirstStopSeparately && splitStops.firstStop != null)
+                ) {
+                    // We want a double halo above and below the selected stop
+                    if (!stopsExpanded) {
+                        // Expanded stops are adding an extra separator and I'm not sure where from
+                        HaloUnderRouteLine(routeAccents.color)
+                    }
                     HaloUnderRouteLine(routeAccents.color)
                 }
+                TripStopRow(
+                    stop = target,
+                    now,
+                    onTapLink,
+                    onOpenAlertDetails,
+                    routeAccents,
+                    alertSummaries,
+                    targeted = true,
+                    firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
+                    modifier = Modifier.background(colorResource(R.color.fill3)),
+                    showStationAccessibility = showStationAccessibility
+                )
+
+                HaloUnderRouteLine(routeAccents.color)
                 HaloUnderRouteLine(routeAccents.color)
             }
-            TripStopRow(
-                stop = target,
+            StopList(
+                splitStops.followingStops,
+                lastStopSequence?.plus(if (splitStops.isTruncatedByLastAlert) 1 else 0),
                 now,
                 onTapLink,
+                onOpenAlertDetails,
                 routeAccents,
-                targeted = true,
-                firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
-                modifier = Modifier.background(colorResource(R.color.fill3)),
-                showStationAccessibility = showStationAccessibility
+                alertSummaries,
+                showStationAccessibility
             )
-
-            HaloUnderRouteLine(routeAccents.color)
-            HaloUnderRouteLine(routeAccents.color)
         }
-        StopList(
-            splitStops.followingStops,
-            lastStopSequence,
-            now,
-            onTapLink,
-            routeAccents,
-            showStationAccessibility
-        )
     }
 }
 
 @Composable
 private fun HaloUnderRouteLine(color: Color) {
-    Box(Modifier.height(IntrinsicSize.Min)) {
+    Box(Modifier.padding(horizontal = 6.dp).height(IntrinsicSize.Min)) {
         HaloSeparator()
         // Lil 1x4 pt route color bar to maintain an unbroken route color line
         // over the separator
@@ -246,7 +266,9 @@ private fun StopList(
     lastStopSequence: Int?,
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
+    onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
+    alertSummaries: Map<String, AlertSummary?>,
     showStationAccessibility: Boolean
 ) {
     for (stop in list) {
@@ -254,9 +276,11 @@ private fun StopList(
             stop,
             now,
             onTapLink,
+            onOpenAlertDetails,
             routeAccents,
-            lastStop = stop.stopSequence == lastStopSequence,
-            showStationAccessibility = showStationAccessibility
+            alertSummaries,
+            showStationAccessibility = showStationAccessibility,
+            lastStop = stop.stopSequence == lastStopSequence
         )
     }
 }
@@ -272,9 +296,17 @@ private fun TripStopsPreview() {
             textColor = "000000"
             type = RouteType.BUS
         }
-    val stops = (1..10).map { objects.stop { name = "Stop $it" } }
+    val stops =
+        (1..10).map {
+            objects.stop {
+                name = "Stop $it"
+                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+            }
+        }
     val trip = objects.trip()
     val now = Clock.System.now()
+    val alertStartIndex = 7
+    val alert = objects.alert { effect = Alert.Effect.Shuttle }
     val stopList =
         TripDetailsStopList(
             trip.id,
@@ -282,7 +314,10 @@ private fun TripStopsPreview() {
                 TripDetailsStopList.Entry(
                     stop,
                     stopSequence = index,
-                    disruption = null,
+                    disruption =
+                        if (index >= alertStartIndex)
+                            UpcomingFormat.Disruption(alert, "alert-borderless-suspension")
+                        else null,
                     schedule = null,
                     prediction = objects.prediction { departureTime = now + (2 * index).minutes },
                     predictionStop = null,
@@ -298,8 +333,10 @@ private fun TripStopsPreview() {
             4,
             TripHeaderSpec.NoVehicle,
             Clock.System.now(),
+            emptyMap(),
             GlobalResponse(objects),
             onTapLink = {},
+            onOpenAlertDetails = {},
             TripRouteAccents(route),
             showStationAccessibility = true
         )

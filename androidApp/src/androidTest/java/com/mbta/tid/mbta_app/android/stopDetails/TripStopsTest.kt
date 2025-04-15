@@ -133,7 +133,9 @@ class TripStopsTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
                 now,
                 onTapLink = {},
+                onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
+                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects)
             )
         }
@@ -232,7 +234,9 @@ class TripStopsTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
                 now,
                 onTapLink = {},
+                onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
+                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects)
             )
         }
@@ -320,7 +324,9 @@ class TripStopsTest {
                 TripHeaderSpec.Scheduled(stop1, firstStop),
                 now,
                 onTapLink = {},
+                onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
+                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects)
             )
         }
@@ -419,7 +425,9 @@ class TripStopsTest {
                 TripHeaderSpec.FinishingAnotherTrip,
                 now,
                 onTapLink = {},
+                onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
+                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects)
             )
         }
