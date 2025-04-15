@@ -15,7 +15,7 @@ struct NearbyRouteView: View {
     let onPin: (String) -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
-    let showElevatorAccessibility: Bool
+    let showStationAccessibility: Bool
 
     var body: some View {
         RouteCard(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
@@ -23,7 +23,7 @@ struct NearbyRouteView: View {
                 VStack(spacing: 0) {
                     NearbyStopView(
                         patternsAtStop: patternsAtStop,
-                        showElevatorAccessibility: showElevatorAccessibility,
+                        showStationAccessibility: showStationAccessibility,
                         now: now,
                         pushNavEntry: pushNavEntry,
                         pinned: pinned

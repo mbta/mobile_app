@@ -37,7 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.LabeledSwitch
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 
 object OnboardingPieces {
     @Composable
@@ -121,6 +123,20 @@ object OnboardingPieces {
                 )
         ) {
             Text(stringResource(textId), textAlign = TextAlign.Center, style = Typography.body)
+        }
+    }
+
+    @Composable
+    fun SettingsToggle(currentSetting: Boolean, toggleSetting: () -> Unit, label: String) {
+        LabeledSwitch(
+            modifier =
+                Modifier.haloContainer(1.dp)
+                    .background(colorResource(R.color.fill3))
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+            label = label,
+            value = currentSetting
+        ) {
+            toggleSetting()
         }
     }
 }

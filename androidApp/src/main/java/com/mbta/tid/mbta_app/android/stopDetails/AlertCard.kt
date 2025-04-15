@@ -86,7 +86,13 @@ fun AlertCard(
             Text(
                 formattedAlert.alertCardHeader(spec),
                 Modifier.weight(1f),
-                style = if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.body
+                style =
+                    if (
+                        spec == AlertCardSpec.Major ||
+                            (alertSummary == null && spec != AlertCardSpec.Elevator)
+                    )
+                        Typography.title2Bold
+                    else Typography.body
             )
             if (spec != AlertCardSpec.Major) {
                 InfoCircle()

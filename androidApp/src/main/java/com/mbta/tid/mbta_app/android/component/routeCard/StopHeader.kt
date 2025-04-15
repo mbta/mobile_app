@@ -28,12 +28,11 @@ import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.RouteCardData
 
 @Composable
-fun StopHeader(data: RouteCardData.RouteStopData, showElevatorAccessibility: Boolean) {
+fun StopHeader(data: RouteCardData.RouteStopData, showStationAccessibility: Boolean) {
 
     val isWheelchairAccessible = data.stop.isWheelchairAccessible
-
-    val showInaccessible = showElevatorAccessibility && !isWheelchairAccessible
-    val showElevatorAlerts = showElevatorAccessibility && data.hasElevatorAlerts
+    val showInaccessible = showStationAccessibility && !isWheelchairAccessible
+    val showElevatorAlerts = showStationAccessibility && data.hasElevatorAlerts
 
     Row(
         Modifier.background(colorResource(id = R.color.fill2))

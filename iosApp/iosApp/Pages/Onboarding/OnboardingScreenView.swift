@@ -19,6 +19,8 @@ struct OnboardingScreenView: View {
     let settingsRepository: ISettingsRepository
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
+    @State private var settings: [Settings: Bool] = [:]
+    @State private var localHideMaps = true
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.dynamicTypeSize) var typeSize
@@ -91,15 +93,16 @@ struct OnboardingScreenView: View {
                 })
 
             case .hideMaps:
+
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
                     OnboardingPieces.PageDescription(
                         headerText: Text(
-                            "Set map preference",
+                            "Set map display preference",
                             comment: "Onboarding screen header for asking VoiceOver users if they want to hide maps"
                         ),
                         bodyText: Text(
-                            "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
+                            "When using VoiceOver, we can hide maps to make the app easier to navigate."
                         ),
                         focusBinding: $focusHeader,
                         focusValue: .hideMaps
@@ -110,13 +113,17 @@ struct OnboardingScreenView: View {
                     .shadow(radius: 16)
                     .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                     Spacer()
-                    OnboardingPieces.KeyButton(
-                        text: Text("Hide maps", comment: "Onboarding button text for setting maps to hidden"),
-                        action: { hideMaps(true) }
+                    OnboardingPieces.SettingsToggle(
+                        getSetting: { !localHideMaps },
+                        toggleSetting: { localHideMaps = !localHideMaps },
+                        label: Text("Map Display")
                     )
-                    OnboardingPieces.SecondaryButton(
-                        text: Text("Show maps", comment: "Onboarding button text for setting maps to shown"),
-                        action: { hideMaps(false) }
+                    OnboardingPieces.KeyButton(
+                        text: Text("Continue"),
+                        action: {
+                            setSetting(.hideMaps, localHideMaps)
+                            advance()
+                        }
                     )
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
@@ -150,31 +157,33 @@ struct OnboardingScreenView: View {
             case .stationAccessibility:
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
+                    if typeSize < .xxxLarge {
+                        HStack {
+                            Image(.accessibilityIconAccessible)
+                                .resizable()
+                                .frame(width: 196, height: 196)
+                                .accessibilityHidden(true)
+                        }.frame(maxWidth: .infinity, alignment: .center)
+                    }
                     OnboardingPieces.PageDescription(
-                        headerText: Text("Know about elevator closures"),
-                        bodyText: Text("We can tell you when elevators are closed at a station."),
+                        headerText: Text("Set station accessibility info preference"),
+                        bodyText: Text(
+                            "By opting in, we can show you which stations are inaccessible or have elevator closures."
+                        ),
                         focusBinding: $focusHeader,
                         focusValue: .stationAccessibility
                     )
                     .padding(.bottom, 8)
+                    OnboardingPieces.SettingsToggle(getSetting: { settings.getSafe(.stationAccessibility) },
+                                                    toggleSetting: { toggleSetting(.stationAccessibility) },
+                                                    label: Text("Station Accessibility Info"))
                     OnboardingPieces.KeyButton(text: Text(
-                        "Show elevator closures",
-                        comment: "Onboarding button text for setting station accessibility to shown"
-                    ), action: { showStationAccessibility(true) })
-                    OnboardingPieces.SecondaryButton(
-                        text: Text("Skip",
-                                   comment: "Onboarding button text for setting station accessibility to hidden"),
-                        action: { showStationAccessibility(false) }
-                    )
+                        "Continue",
+                        comment: "Button to advance to next scren in onboarding flow"
+                    ), action: { advance() })
+
                 }, background: {
                     OnboardingPieces.BackgroundImage(.onboardingBackgroundMap)
-                    if typeSize < .xxxLarge {
-                        Image(.accessibilityIconAccessible)
-                            .resizable()
-                            .frame(width: 196, height: 196)
-                            .offset(x: 0, y: haloOffset)
-                            .accessibilityHidden(true)
-                    }
                 })
                 .foregroundStyle(Color.text)
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
@@ -195,10 +204,9 @@ struct OnboardingScreenView: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
-    func hideMaps(_ hide: Bool) {
+    func loadSettings() {
         Task {
-            try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: hide)])
-            advance()
+            settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
         }
     }
 
@@ -213,11 +221,14 @@ struct OnboardingScreenView: View {
         }
     }
 
-    func showStationAccessibility(_ stationAccessibility: Bool) {
+    func toggleSetting(_ setting: Settings) {
+        setSetting(setting, !settings.getSafe(setting))
+    }
+
+    func setSetting(_ setting: Settings, _ value: Bool) {
         Task {
-            try await settingsRepository
-                .setSettings(settings: [.elevatorAccessibility: KotlinBoolean(bool: stationAccessibility)])
-            advance()
+            try await settingsRepository.setSettings(settings: [setting: KotlinBoolean(bool: value)])
+            loadSettings()
         }
     }
 
@@ -252,7 +263,7 @@ struct OnboardingScreenView: View {
                          settingsRepository: MockSettingsRepository())
 }
 
-#Preview("Hide Maps") {
+#Preview("Map Display") {
     OnboardingScreenView(screen: .hideMaps, advance: {},
                          settingsRepository: MockSettingsRepository())
 }

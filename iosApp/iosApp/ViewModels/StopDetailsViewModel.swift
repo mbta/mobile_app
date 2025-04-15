@@ -50,7 +50,7 @@ struct TripRouteAccents: Hashable {
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
     @Published var hideMaps: Bool = false
-    @Published var showElevatorAccessibility: Bool = false
+    @Published var showStationAccessibility: Bool = false
     @Published var pinnedRoutes: Set<String> = []
 
     @Published var stopData: StopData?
@@ -360,10 +360,10 @@ class StopDetailsViewModel: ObservableObject {
 
     func loadSettings() {
         Task {
-            let loaded = await settingsRepository.load([.hideMaps, .elevatorAccessibility])
+            let loaded = await settingsRepository.load([.hideMaps, .stationAccessibility])
             Task { @MainActor in
                 hideMaps = loaded.getSafe(.hideMaps)
-                showElevatorAccessibility = loaded.getSafe(.elevatorAccessibility)
+                showStationAccessibility = loaded.getSafe(.stationAccessibility)
             }
         }
     }

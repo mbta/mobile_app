@@ -179,20 +179,6 @@ data class Direction(
                         return@map specialCase
                     }
 
-                    val specialCasePattern =
-                        patterns.firstOrNull {
-                            specialCases.containsKey(idOverrides[it.routeId] ?: it.routeId)
-                        }
-                    if (specialCasePattern != null) {
-                        val route = global.routes[specialCasePattern.routeId]
-                        val stopListByDirection = getTypicalStopListByDirection(patterns, global)
-                        return listOf(0, 1).mapNotNull { directionId ->
-                            route?.let {
-                                Direction(directionId, it, stop, stopListByDirection[directionId])
-                            }
-                        }
-                    }
-
                     // When multiple destinations are served in one direction, we don't want to
                     // display any destination label, so it's set to null.
                     val representativeDirection = directionsByDestination.values.first()

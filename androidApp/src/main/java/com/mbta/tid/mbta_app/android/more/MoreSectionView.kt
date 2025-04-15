@@ -65,7 +65,11 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
                             LabeledSwitch(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                                 label = item.label,
-                                value = item.value
+                                // Setting is hide maps, but label is "Map Display" - invert the
+                                // value of hide maps to match the label
+                                value =
+                                    if (item.settings == Settings.HideMaps) !item.value
+                                    else item.value
                             ) {
                                 toggleSetting(item.settings)
                             }

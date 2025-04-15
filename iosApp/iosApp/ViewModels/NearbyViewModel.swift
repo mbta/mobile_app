@@ -37,7 +37,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     @Published var showDebugMessages: Bool = false
-    @Published var showElevatorAccessibility: Bool = false
+    @Published var showStationAccessibility: Bool = false
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
@@ -55,7 +55,7 @@ class NearbyViewModel: ObservableObject {
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         showDebugMessages: Bool = false,
-        showElevatorAccessibility: Bool = false,
+        showStationAccessibility: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
@@ -67,7 +67,7 @@ class NearbyViewModel: ObservableObject {
         self.navigationStack = navigationStack
 
         self.showDebugMessages = showDebugMessages
-        self.showElevatorAccessibility = showElevatorAccessibility
+        self.showStationAccessibility = showStationAccessibility
 
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
@@ -78,10 +78,10 @@ class NearbyViewModel: ObservableObject {
     }
 
     func loadSettings() async {
-        let loaded = await settingsRepository.load([.devDebugMode, .elevatorAccessibility])
+        let loaded = await settingsRepository.load([.devDebugMode, .stationAccessibility])
         Task { @MainActor in
             showDebugMessages = loaded.getSafe(.devDebugMode)
-            showElevatorAccessibility = loaded.getSafe(.elevatorAccessibility)
+            showStationAccessibility = loaded.getSafe(.stationAccessibility)
         }
     }
 

@@ -126,7 +126,7 @@ struct NearbyTransitView: View {
                                     onPin: { id in toggledPinnedRoute(id) },
                                     pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                     now: now.toKotlinInstant(),
-                                    showElevatorAccessibility: nearbyVM.showElevatorAccessibility
+                                    showStationAccessibility: nearbyVM.showStationAccessibility
                                 )
                             case let .withLine(nearbyLine):
                                 NearbyLineView(
@@ -135,7 +135,7 @@ struct NearbyTransitView: View {
                                     onPin: { id in toggledPinnedRoute(id) },
                                     pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                     now: now.toKotlinInstant(),
-                                    showElevatorAccessibility: nearbyVM.showElevatorAccessibility
+                                    showStationAccessibility: nearbyVM.showStationAccessibility
                                 )
                             }
                         }
@@ -160,7 +160,7 @@ struct NearbyTransitView: View {
                         onPin: { _ in },
                         pushNavEntry: { _ in },
                         now: now.toKotlinInstant(),
-                        showElevatorAccessibility: false
+                        showStationAccessibility: false
                     )
                     .loadingPlaceholder()
                 }
@@ -536,7 +536,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 onPin: { _ in },
                 pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant(),
-                showElevatorAccessibility: true
+                showStationAccessibility: true
             )
             NearbyRouteView(
                 nearbyRoute: StopsAssociated.WithRoute(
@@ -565,7 +565,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 onPin: { _ in },
                 pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant(),
-                showElevatorAccessibility: true
+                showStationAccessibility: true
             )
         }.font(Typography.body).previewDisplayName("NearbyRouteView")
     }

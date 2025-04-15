@@ -824,7 +824,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     MockSettingsRepository(
                         mapOf(
                             Settings.GroupByDirection to groupByDirection,
-                            Settings.ElevatorAccessibility to true
+                            Settings.StationAccessibility to true
                         )
                     )
             )
@@ -1042,10 +1042,11 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     MockSettingsRepository(
                         mapOf(
                             Settings.GroupByDirection to groupByDirection,
-                            Settings.ElevatorAccessibility to true
+                            Settings.StationAccessibility to true
                         )
                     )
             )
+
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?

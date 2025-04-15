@@ -38,8 +38,8 @@ final class OnboardingScreenViewTests: XCTestCase {
 
     @MainActor func testStationAccessibilityFlow() throws {
         let saveSettingsExp = expectation(description: "saves station accessibility setting")
-        let settingsRepo = MockSettingsRepository(settings: [.elevatorAccessibility: false], onSaveSettings: {
-            XCTAssertEqual($0, [.elevatorAccessibility: true])
+        let settingsRepo = MockSettingsRepository(settings: [.stationAccessibility: false], onSaveSettings: {
+            XCTAssertEqual($0, [.stationAccessibility: true])
             saveSettingsExp.fulfill()
         })
         let advanceExp = expectation(description: "calls advance()")
@@ -48,29 +48,45 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "We can tell you when elevators are closed at a station."))
-        XCTAssertNotNil(try sut.inspect().find(button: "Skip"))
-        try sut.inspect().find(button: "Show elevator closures").tap()
-        wait(for: [saveSettingsExp, advanceExp], timeout: 1)
+        XCTAssertNotNil(try sut.inspect().find(where: { view in
+            try view.text().string()
+                .contains("we can show you which stations are inaccessible or have elevator closures.")
+        }))
+        XCTAssertNotNil(try sut.inspect().find(button: "Continue"))
+        try sut.inspect().find(ViewType.Toggle.self).tap()
+        wait(for: [saveSettingsExp], timeout: 1)
+        try sut.inspect().find(button: "Continue").tap()
+        wait(for: [advanceExp], timeout: 1)
     }
 
-    func testHideMapsFlow() throws {
+    @MainActor
+    func testMapDisplayFlow() throws {
         let saveSettingExp = expectation(description: "saves hide maps setting")
         let settingsRepo = MockSettingsRepository(settings: [.hideMaps: false], onSaveSettings: {
-            XCTAssertEqual($0, [.hideMaps: true])
+            XCTAssertEqual($0, [.hideMaps: false])
             saveSettingExp.fulfill()
         })
         let advanceExp = expectation(description: "calls advance()")
+
         let sut = OnboardingScreenView(
             screen: .hideMaps,
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
+
         XCTAssertNotNil(try sut.inspect().find(
-            text: "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
+            text: "When using VoiceOver, we can hide maps to make the app easier to navigate."
         ))
-        XCTAssertNotNil(try sut.inspect().find(button: "Show maps"))
-        try sut.inspect().find(button: "Hide maps").tap()
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Toggle.self))
+
+        let exp = sut.inspection.inspect { view in
+
+            try view.find(ViewType.Toggle.self).tap()
+            try view.find(button: "Continue").tap()
+        }
+
+        ViewHosting.host(view: sut)
+
         wait(for: [saveSettingExp, advanceExp], timeout: 1)
     }
 
