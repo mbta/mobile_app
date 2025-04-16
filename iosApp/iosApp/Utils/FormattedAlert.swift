@@ -143,7 +143,7 @@ struct FormattedAlert: Equatable {
                                       because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert
                                       summary template which may or may not include a location fragment.
                                       """),
-                    location.direction,
+                    DirectionLabel.directionNameFormatted(location.direction),
                     location.endStopName)
 
             case let .singleStop(location):
@@ -169,7 +169,7 @@ struct FormattedAlert: Equatable {
                                       summary template which may or may not include a location fragment.
                                       """),
                     location.startStopName,
-                    location.direction)
+                    DirectionLabel.directionNameFormatted(location.direction))
 
             case let .successiveStops(location):
                 String(format:
@@ -227,7 +227,7 @@ struct FormattedAlert: Equatable {
                                                  in the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
                                                  which may or may not include a timeframe fragment.
                                                  """), Date(instant: timeframe.time.coerceInServiceDay())
-                        .formatted(Date.FormatStyle().weekday()))
+                        .formatted(Date.FormatStyle().weekday(.wide)))
             case let .time(timeframe):
                 String(format:
                     NSLocalizedString("key/alert_summary_timeframe_time",

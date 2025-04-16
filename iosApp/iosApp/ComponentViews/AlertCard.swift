@@ -72,6 +72,7 @@ struct AlertCard: View {
                 color.opacity(0.25).frame(height: 2)
                 Text(formattedAlert.alertCardMajorBody)
                     .font(Typography.callout)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if let onViewDetails {
                     Button(
@@ -116,7 +117,6 @@ struct AlertCard: View {
                 alert.header = "Orange Line suspended from point A to point B"
                 alert.effect = .suspension
             },
-            // TODO: revisit previews
             alertSummary: nil,
             spec: .major,
             color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
@@ -146,5 +146,28 @@ struct AlertCard: View {
         )
         .padding(32)
         .background(Color.fill2)
+
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.header = "Test header"
+        }
+
+        AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .shuttle,
+                                       location: .some(AlertSummary.LocationSuccessiveStops(
+                                           startStopName: "Start",
+                                           endStopName: "End"
+                                       )),
+                                       timeframe: .some(AlertSummary
+                                           .TimeframeTime(time: ISO8601DateFormatter()
+                                               .date(from: "2025-04-16T20:00:00Z")!
+                                               .toKotlinInstant()))),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
     }
 }

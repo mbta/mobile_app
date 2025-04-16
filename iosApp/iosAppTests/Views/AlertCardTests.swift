@@ -46,6 +46,129 @@ final class AlertCardTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    func testMajorAlertCardSummaryThroughTomorrow() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.header = "Test header"
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .shuttle,
+                                       location: .some(AlertSummary.LocationSuccessiveStops(
+                                           startStopName: "Start Stop",
+                                           endStopName: "End Stop"
+                                       )),
+                                       timeframe: .some(AlertSummary.TimeframeTomorrow())),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to End Stop through tomorrow"))
+    }
+
+    func testMajorAlertCardSummaryThroughEndOfService() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .stopClosure
+            alert.header = "Test header"
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .stopClosure,
+                                       location: .some(AlertSummary.LocationSingleStop(stopName: "Single Stop")),
+                                       timeframe: .some(AlertSummary.TimeframeEndOfService())),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Stop closed at Single Stop through end of service"))
+    }
+
+    func testMajorAlertCardSummaryThroughLaterDate() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.header = "Test header"
+        }
+
+        let exp = XCTestExpectation(description: "Detail button pressed")
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .shuttle,
+                                       location: .some(AlertSummary.LocationStopToDirection(
+                                           startStopName: "Start Stop",
+                                           direction: Direction(name: "West", destination: "Destination", id: 0)
+                                       )),
+                                       timeframe: .some(AlertSummary
+                                           .TimeframeLaterDate(time: ISO8601DateFormatter()
+                                               .date(from: "2025-04-16T20:00:00Z")!.toKotlinInstant()))),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to Westbound stops through Apr 16"))
+    }
+
+    func testMajorAlertCardSummaryThroughThisWeek() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.header = "Test header"
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .shuttle,
+                                       location: .some(AlertSummary.LocationDirectionToStop(
+                                           direction: Direction(name: "West", destination: "Destination", id: 0),
+                                           endStopName: "End Stop"
+                                       )),
+                                       timeframe: .some(AlertSummary
+                                           .TimeframeThisWeek(time: ISO8601DateFormatter()
+                                               .date(from: "2025-04-16T20:00:00Z")!.toKotlinInstant()))),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "Shuttle buses from Westbound stops to End Stop through Wednesday"))
+    }
+
+    func testMajorAlertCardSummaryThroughTime() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.header = "Test header"
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .shuttle,
+                                       location: .some(AlertSummary.LocationSuccessiveStops(
+                                           startStopName: "Start Stop",
+                                           endStopName: "End Stop"
+                                       )),
+                                       timeframe: .some(AlertSummary
+                                           .TimeframeTime(time: ISO8601DateFormatter()
+                                               .date(from: "2025-04-16T20:00:00Z")!
+                                               .toKotlinInstant()))),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to End Stop through 4:00 PM"))
+    }
+
     func testSecondaryAlertCard() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
@@ -72,6 +195,27 @@ final class AlertCardTests: XCTestCase {
         }))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
+    }
+
+    func testSecondaryAlertCardSummary() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .detour
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(
+                effect: alert.effect,
+                location: nil,
+                timeframe: AlertSummary.TimeframeTomorrow()
+            ),
+            spec: .secondary,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Detour through tomorrow"))
     }
 
     func testDownstreamAlertCard() throws {
