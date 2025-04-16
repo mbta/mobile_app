@@ -26,5 +26,6 @@ struct NotAccessibleCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .padding(1)
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
+        .padding(.top, 1)
     }
 }
