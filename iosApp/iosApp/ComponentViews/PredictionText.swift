@@ -37,7 +37,7 @@ struct PredictionText: View {
     }
 
     var predictionString: AttributedString {
-        return AttributedString.boldOrDefault(predictionKey)
+        AttributedString.boldOrDefault(predictionKey)
     }
 
     var accessibilityString: String {
