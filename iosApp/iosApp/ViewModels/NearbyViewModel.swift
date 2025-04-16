@@ -13,17 +13,10 @@ import SwiftUI
 
 class NearbyViewModel: ObservableObject {
     private static let logger = Logger()
-    struct NearbyTransitState: Equatable, Hashable {
+    struct NearbyTransitState: Equatable {
         var loadedLocation: CLLocationCoordinate2D?
         var loading: Bool = false
         var stopIds: [String]?
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(loading)
-            hasher.combine(stopIds)
-            hasher.combine(loadedLocation?.latitude)
-            hasher.combine(loadedLocation?.longitude)
-        }
     }
 
     @Published var departures: StopDetailsDepartures?
@@ -242,7 +235,7 @@ class NearbyViewModel: ObservableObject {
         state: NearbyTransitState,
         global: GlobalResponse?,
         schedules: ScheduleResponse?,
-        predictions: PredictionsStreamDataResponse?,
+        predictions: PredictionsByStopJoinResponse?,
         alerts: AlertsStreamDataResponse?,
         now: Date,
         pinnedRoutes: Set<String>
@@ -257,7 +250,7 @@ class NearbyViewModel: ObservableObject {
                 globalData: global,
                 sortByDistanceFrom: location.positionKt,
                 schedules: schedules,
-                predictions: predictions,
+                predictions: predictions?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 now: now.toKotlinInstant(),
                 pinnedRoutes: pinnedRoutes,

@@ -36,18 +36,14 @@ struct NearbyTransitView: View {
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
-    var routeCardParams: Int {
-        var hasher = Hasher()
-
-        hasher.combine(nearbyVM.nearbyState)
-        hasher.combine(globalData)
-        hasher.combine(scheduleResponse)
-        hasher.combine(predictionsByStop)
-        hasher.combine(nearbyVM.alerts)
-        hasher.combine(now)
-        hasher.combine(pinnedRoutes)
-
-        return hasher.finalize()
+    struct RouteCardParams: Equatable {
+        let state: NearbyViewModel.NearbyTransitState
+        let global: GlobalResponse?
+        let schedules: ScheduleResponse?
+        let predictions: PredictionsByStopJoinResponse?
+        let alerts: AlertsStreamDataResponse?
+        let now: Date
+        let pinnedRoutes: Set<String>
     }
 
     var body: some View {
@@ -94,17 +90,25 @@ struct NearbyTransitView: View {
         .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
-        .onChange(of: routeCardParams) { _ in
+        .onChange(of: RouteCardParams(
+            state: nearbyVM.nearbyState,
+            global: globalData,
+            schedules: scheduleResponse,
+            predictions: predictionsByStop,
+            alerts: nearbyVM.alerts,
+            now: now,
+            pinnedRoutes: pinnedRoutes
+        )) { newParams in
             DispatchQueue.main.async {
                 if !nearbyVM.groupByDirection { return }
                 nearbyVM.loadRouteCardData(
-                    state: nearbyVM.nearbyState,
-                    global: globalData,
-                    schedules: scheduleResponse,
-                    predictions: predictionsByStop?.toPredictionsStreamDataResponse(),
-                    alerts: nearbyVM.alerts,
-                    now: now,
-                    pinnedRoutes: pinnedRoutes
+                    state: newParams.state,
+                    global: newParams.global,
+                    schedules: newParams.schedules,
+                    predictions: newParams.predictions,
+                    alerts: newParams.alerts,
+                    now: newParams.now,
+                    pinnedRoutes: newParams.pinnedRoutes
                 )
             }
         }
