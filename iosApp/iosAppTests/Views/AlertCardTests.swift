@@ -143,13 +143,13 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testMajorAlertCardSummaryThroughTime() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .shuttle
             alert.header = "Test header"
         }
+
+        let date = ISO8601DateFormatter().date(from: "2025-04-16T20:00:00Z")!
 
         let sut = AlertCard(
             alert: alert,
@@ -159,8 +159,7 @@ final class AlertCardTests: XCTestCase {
                                            endStopName: "End Stop"
                                        )),
                                        timeframe: .some(AlertSummary
-                                           .TimeframeTime(time: ISO8601DateFormatter()
-                                               .date(from: "2025-04-16T20:00:00Z")!
+                                           .TimeframeTime(time: date
                                                .toKotlinInstant()))),
             spec: .major,
             color: Color.pink,
@@ -168,7 +167,10 @@ final class AlertCardTests: XCTestCase {
             onViewDetails: {}
         )
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to End Stop through 4:00 PM"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(
+                text: "Shuttle buses from Start Stop to End Stop through \(date.formatted(date: .omitted, time: .shortened))"
+            ))
     }
 
     func testSecondaryAlertCard() throws {
