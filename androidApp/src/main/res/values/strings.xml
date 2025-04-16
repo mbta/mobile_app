@@ -114,7 +114,7 @@
     <string name="facility_issue_sentence_case">Facility issue</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
-    <string name="feedback_link_form">Send app feedback</string>
+    <string name="feedback_link_form">Send App Feedback</string>
     <string name="ferries">ferries</string>
     <string name="ferry">ferry</string>
     <string name="filterShowAll">All</string>
@@ -205,10 +205,10 @@
     <string name="onboarding_map_display_body">When using TalkBack, we can hide maps to make the app easier to navigate.</string>
     <string name="onboarding_map_display_header">Set map display preference</string>
     <string name="onboarding_station_accessibility_body">By opting in, we can show you which stations are inaccessible or have elevator closures.</string>
-    <string name="onboarding_station_accessibility_header">Station Accessibility Info</string>
+    <string name="onboarding_station_accessibility_header">Set station accessibility info preference</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
-    <string name="other_link_source_code">View source on GitHub</string>
+    <string name="other_link_source_code">View Source on GitHub</string>
     <string name="other_link_tos">Terms of Use</string>
     <string name="outbound">Outbound</string>
     <string name="parade">Parade</string>
@@ -236,7 +236,7 @@
     <string name="refresh_predictions">Refresh predictions</string>
     <string name="reload_data">Reload data</string>
     <string name="resources_link_fare_info">Fare Information</string>
-    <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
+    <string name="resources_link_mticket">Commuter Rail and Ferry Tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
