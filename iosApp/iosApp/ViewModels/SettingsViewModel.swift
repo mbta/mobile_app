@@ -68,7 +68,7 @@ class SettingsViewModel: ObservableObject {
                         url: "https://apps.apple.com/us/app/mbta-mticket/id560487958",
                         note: NSLocalizedString(
                             "mTicket App",
-                            comment: "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app"
+                            comment: "Footnote underneath the \"Commuter Rail and Ferry Tickets\" label on the More page link to the MBTA mTicket app"
                         )
                     ),
                 ]),
