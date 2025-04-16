@@ -61,6 +61,12 @@ struct AlertCard: View {
 
     @ViewBuilder
     var card: some View {
+        let font = switch spec {
+        case .major: Typography.title2Bold
+        case .elevator: Typography.callout
+        default: Typography.calloutSemibold
+        }
+
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 HStack(alignment: .top, spacing: 16) {
@@ -68,7 +74,7 @@ struct AlertCard: View {
                         .scaledToFit()
                         .frame(width: iconSize, height: iconSize, alignment: .top)
                     Text(headerString)
-                        .font(spec == .major ? Typography.title2Bold : Typography.bodySemibold)
+                        .font(font)
                         .multilineTextAlignment(.leading)
                 }
                 if spec != .major {
