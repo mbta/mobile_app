@@ -1,5 +1,5 @@
 //
-//  NearbyTransitViewTests.swift
+//  NearbyTransitViewLegacyTests.swift
 //  iosAppTests
 //
 //  Created by Horn, Melody on 2024-01-22.
