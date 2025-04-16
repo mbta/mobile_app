@@ -65,11 +65,20 @@ struct StopDetailsFilteredDepartureDetails: View {
         !patternsByStop.elevatorAlerts.isEmpty || !patternsByStop.stop.isWheelchairAccessible
     }
 
-    // TODO: viewModel?
     @State var patternsHere: [RoutePattern]?
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
+
+    struct AlertSummaryParams: Equatable {
+        let global: GlobalResponse?
+        let alerts: [Shared.Alert]
+        let downstreamAlerts: [Shared.Alert]
+        let stopId: String
+        let directionId: Int32
+        let patternsHere: [RoutePattern]?
+        let now: Date
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -147,18 +156,26 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
         .onAppear {
             patternsHere = patternsHere(patternsByStop)
-            setAlertSummaries()
+            setAlertSummaries(AlertSummaryParams(global: stopDetailsVM.global,
+                                                 alerts: alerts,
+                                                 downstreamAlerts: downstreamAlerts,
+                                                 stopId: stopId,
+                                                 directionId: stopFilter.directionId,
+                                                 patternsHere: patternsHere,
+                                                 now: now))
         }
         .onChange(of: patternsByStop) { patternsByStop in
             patternsHere = patternsHere(patternsByStop)
         }
-        .onChange(of: stopDetailsVM.global) { _ in setAlertSummaries() }
-        .onChange(of: alerts) { _ in setAlertSummaries() }
-        .onChange(of: downstreamAlerts) { _ in setAlertSummaries() }
-        .onChange(of: stopId) { _ in setAlertSummaries() }
-        .onChange(of: stopFilter.directionId) { _ in setAlertSummaries() }
-        .onChange(of: patternsHere) { _ in setAlertSummaries() }
-        .onChange(of: now) { _ in setAlertSummaries() }
+        .onChange(of: AlertSummaryParams(global: stopDetailsVM.global,
+                                         alerts: alerts,
+                                         downstreamAlerts: downstreamAlerts,
+                                         stopId: stopId,
+                                         directionId: stopFilter.directionId,
+                                         patternsHere: patternsHere,
+                                         now: now)) { newParams in
+            setAlertSummaries(newParams)
+        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
     }
@@ -228,23 +245,23 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    private func setAlertSummaries() {
+    private func setAlertSummaries(_ alertSummaryParams: AlertSummaryParams) {
         Task {
-            let summaries = await alertSummaries()
+            let summaries = await alertSummaries(alertSummaryParams)
             stopDetailsVM.setAlertSummaries(summaries)
         }
     }
 
-    private func alertSummaries() async -> [String: AlertSummary?] {
-        let allAlerts = alerts + downstreamAlerts
+    private func alertSummaries(_ alertSummaryParams: AlertSummaryParams) async -> [String: AlertSummary?] {
+        let allAlerts = alertSummaryParams.alerts + alertSummaryParams.downstreamAlerts
         var alertMap: [String: AlertSummary?] = [:]
 
-        if let global = stopDetailsVM.global, let patternsHere {
+        if let global = alertSummaryParams.global, let patternsHere = alertSummaryParams.patternsHere {
             for alert in allAlerts {
-                let summary = try? await alert.summary(stopId: stopId,
-                                                       directionId: stopFilter.directionId,
+                let summary = try? await alert.summary(stopId: alertSummaryParams.stopId,
+                                                       directionId: alertSummaryParams.directionId,
                                                        patterns: patternsHere,
-                                                       atTime: now.toKotlinInstant(),
+                                                       atTime: alertSummaryParams.now.toKotlinInstant(),
                                                        global: global)
                 alertMap[alert.id] = summary
             }
