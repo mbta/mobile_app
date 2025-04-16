@@ -143,6 +143,8 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testMajorAlertCardSummaryThroughTime() throws {
+        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .shuttle
