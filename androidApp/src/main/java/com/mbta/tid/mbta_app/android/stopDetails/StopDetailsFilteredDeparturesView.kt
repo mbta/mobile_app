@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -184,7 +183,7 @@ fun StopDetailsFilteredDeparturesView(
     val bringIntoViewRequesters = remember { mutableStateMapOf<String, BringIntoViewRequester>() }
 
     val patternsHere =
-        rememberSaveable(data) {
+        remember(data) {
             when (data) {
                     is FilteredDeparturesData.PreGroupByDirection ->
                         data.patternsByStop.patterns.flatMap { it.patterns }
