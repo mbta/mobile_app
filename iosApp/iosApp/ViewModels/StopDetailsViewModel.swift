@@ -56,6 +56,7 @@ class StopDetailsViewModel: ObservableObject {
     @Published var stopData: StopData?
     @Published var tripData: TripData?
     @Published var explainer: Explainer?
+    @Published var alertSummaries: [String: AlertSummary?] = [:]
 
     private let errorBannerRepository: IErrorBannerStateRepository
     private let globalRepository: IGlobalRepository
@@ -114,6 +115,10 @@ class StopDetailsViewModel: ObservableObject {
                 )
             }
         }
+    }
+
+    func setAlertSummaries(_ alertSumamries: [String: AlertSummary?]) {
+        alertSummaries = alertSumamries
     }
 
     @MainActor func clearStopDetails() {
