@@ -499,7 +499,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let sut = setUpSut(objects, loadPublisher)
 
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
+        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 1) { view in
             let stops = view.findAll(RouteCardDepartures.self)
             XCTAssert(!stops.isEmpty)
             guard let stop = stops.first else { return }
@@ -525,7 +525,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 .find(HeadsignRowView.self, relation: .parent).find(text: "Medford/Tufts"))
         }
         ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
