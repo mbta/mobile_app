@@ -1770,7 +1770,7 @@
       }
     },
     "%ld elevators closed" : {
-      "comment" : "Header displayed when elevators are not working at a station\nIcon alt text for elevator alert",
+      "comment" : "Header displayed when elevators are not working at a station",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -16764,6 +16764,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如果尚未分配車輛，%@位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。"
+          }
+        }
+      }
+    },
+    "This stop has %ld elevators closed" : {
+      "comment" : "Describe an elevator outage at the stop in the list of all stops on the trip",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "This stop has %ld elevator closed"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This stop has %ld elevators closed"
+                }
+              }
+            }
           }
         }
       }
