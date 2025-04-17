@@ -6,7 +6,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
@@ -913,10 +912,18 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `splitForTarget returns null if target not found`() = test {
+    fun `splitForTarget dumps everything into followingStops if target not found`() = test {
         val list = stopListOf(entry("A", 10), entry("B", 20), entry("C", 30))
         stop("D")
 
-        assertNull(list.splitForTarget("D", 40, globalData()))
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                firstStop = null,
+                collapsedStops = null,
+                targetStop = null,
+                followingStops = list.stops
+            ),
+            list.splitForTarget("D", 40, globalData())
+        )
     }
 }

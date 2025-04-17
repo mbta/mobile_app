@@ -47,48 +47,52 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     /**
      * Splits these stops around the given target stop, counting parent/child/sibling stops as
      * equivalent. If no exact match can be found by stop ID and stop sequence, matches only on stop
-     * ID, picking the last copy if there are duplicates. Returns null if no match at all can be
-     * found.
+     * ID, picking the last copy if there are duplicates. Returns all entries in
+     * [TargetSplit.followingStops] if no match at all can be found.
      */
     fun splitForTarget(
         targetStopId: String,
-        targetStopSequence: Int,
-        globalData: GlobalResponse
-    ): TargetSplit? {
-        var targetStopIndex =
-            stops.indexOfFirst {
-                Stop.equalOrFamily(targetStopId, it.stop.id, globalData.stops) &&
-                    it.stopSequence == targetStopSequence
-            }
-        if (targetStopIndex == -1) {
-            targetStopIndex =
-                stops.indexOfLast { Stop.equalOrFamily(targetStopId, it.stop.id, globalData.stops) }
-        }
-        if (targetStopIndex == -1) {
-            return null
-        }
+        targetStopSequence: Int?,
+        globalData: GlobalResponse?
+    ): TargetSplit {
+        val targetStopIndex =
+            stops
+                .indexOfFirst {
+                    Stop.equalOrFamily(targetStopId, it.stop.id, globalData?.stops.orEmpty()) &&
+                        it.stopSequence == targetStopSequence
+                }
+                .takeUnless { it == -1 }
+                ?: stops
+                    .indexOfLast {
+                        Stop.equalOrFamily(targetStopId, it.stop.id, globalData?.stops.orEmpty())
+                    }
+                    .takeUnless { it == -1 }
 
         var firstStop: Entry? = null
-        var collapsedStops = stops.subList(fromIndex = 0, toIndex = targetStopIndex)
-        val firstCollapsed = collapsedStops.firstOrNull()
+        var collapsedStops =
+            if (targetStopIndex != null) stops.subList(fromIndex = 0, toIndex = targetStopIndex)
+            else null
+        val firstCollapsed = collapsedStops?.firstOrNull()
         if (
             firstCollapsed == startTerminalEntry &&
                 (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.tripId)
         ) {
-            collapsedStops = collapsedStops.drop(1)
+            collapsedStops = collapsedStops?.drop(1)
             firstStop = firstCollapsed
         }
-        val targetStop = stops[targetStopIndex]
+        val targetStop = targetStopIndex?.let { stops[it] }
         val followingStops =
-            stops.subList(fromIndex = targetStopIndex + 1, toIndex = stops.lastIndex + 1)
+            if (targetStopIndex != null)
+                stops.subList(fromIndex = targetStopIndex + 1, toIndex = stops.lastIndex + 1)
+            else stops
 
         return TargetSplit(firstStop, collapsedStops, targetStop, followingStops)
     }
 
     data class TargetSplit(
         val firstStop: Entry? = null,
-        val collapsedStops: List<Entry>,
-        val targetStop: Entry,
+        val collapsedStops: List<Entry>?,
+        val targetStop: Entry?,
         val followingStops: List<Entry>
     )
 
