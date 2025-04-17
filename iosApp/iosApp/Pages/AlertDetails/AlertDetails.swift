@@ -106,7 +106,7 @@ struct AlertDetails: View {
     }
 
     private var affectedStopsLabel: AttributedString {
-        AttributedString.boldOrDefault(String(format: NSLocalizedString(
+        AttributedString.tryMarkdown(String(format: NSLocalizedString(
             "**%ld** affected stops",
             comment: "The number of stops affected by an alert"
         ), affectedStops.count))

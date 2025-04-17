@@ -71,7 +71,7 @@ struct StopDetailsFilteredHeader: View {
             The station name between the asterisks is bolded
             """
         ), stop.name)
-        return AttributedString.boldOrDefault(text)
+        return AttributedString.tryMarkdown(text)
     }
 }
 

@@ -246,7 +246,7 @@ struct FormattedAlert: Equatable {
 
     var summary: AttributedString? {
         if alertSummary != nil {
-            AttributedString.boldOrDefault(String(format:
+            AttributedString.tryMarkdown(String(format:
                 NSLocalizedString("**%1$@**%2$@%3$@",
                                   comment: """
                                   Alert summary in the format of "[Alert effect][at location][through timeframe]", \

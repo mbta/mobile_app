@@ -43,14 +43,6 @@ struct AlertCard: View {
         }
     }
 
-    var headerFont: Typography {
-        switch spec {
-        case .major: Typography.title2Bold
-        case .secondary: Typography.calloutSemibold
-        default: .callout
-        }
-    }
-
     @ViewBuilder
     var card: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -60,7 +52,7 @@ struct AlertCard: View {
                         .scaledToFit()
                         .frame(width: iconSize, height: iconSize, alignment: .top)
                     Text(formattedAlert.alertCardHeader(spec: spec))
-                        .font(headerFont)
+                        .font(spec == .major ? Typography.title2Bold : Typography.callout)
                         .multilineTextAlignment(.leading)
                 }
                 if spec != .major {

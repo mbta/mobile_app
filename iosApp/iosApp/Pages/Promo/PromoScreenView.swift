@@ -57,7 +57,7 @@ struct PromoScreenView: View {
         )
 
         var promoDetailsString: AttributedString {
-            AttributedString.boldOrDefault(promoDetailsKey)
+            AttributedString.tryMarkdown(promoDetailsKey)
         }
         OnboardingPieces.PageColumn(content: {
             if typeSize < .accessibility2 {

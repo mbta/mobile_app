@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension AttributedString {
-    static func boldOrDefault(_ stringWithMarkdown: String) -> AttributedString {
+    static func tryMarkdown(_ stringWithMarkdown: String) -> AttributedString {
         do {
             return try AttributedString(markdown: stringWithMarkdown)
         } catch {
