@@ -81,6 +81,7 @@ class GreenLineTestHelper {
                 representativeTrip {
                     headsign = "Boston College"
                     directionId = 0
+                    stopIds = listOf(stopWestbound.id)
                 }
             }
 
@@ -93,6 +94,7 @@ class GreenLineTestHelper {
                 representativeTrip {
                     headsign = "Government Center"
                     directionId = 1
+                    stopIds = listOf(stopEastbound.id)
                 }
             }
 
@@ -105,6 +107,7 @@ class GreenLineTestHelper {
                 representativeTrip {
                     headsign = "Cleveland Circle"
                     directionId = 0
+                    stopIds = listOf(stopWestbound.id)
                 }
             }
 
@@ -117,6 +120,7 @@ class GreenLineTestHelper {
                 representativeTrip {
                     headsign = "Government Center"
                     directionId = 1
+                    stopIds = listOf(stopEastbound.id)
                 }
             }
 
@@ -129,6 +133,7 @@ class GreenLineTestHelper {
                 representativeTrip {
                     headsign = "Heath Street"
                     directionId = 0
+                    stopIds = listOf(stopWestbound.id)
                 }
             }
 
@@ -141,6 +146,7 @@ class GreenLineTestHelper {
                 representativeTrip {
                     headsign = "Medford/Tufts"
                     directionId = 1
+                    stopIds = listOf(stopEastbound.id)
                 }
             }
 

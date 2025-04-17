@@ -383,7 +383,9 @@ struct NearbyTransitView: View {
     }
 
     private func scrollToTop() {
-        guard let id = nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
+        guard let id = nearbyVM.groupByDirection ?
+            nearbyVM.routeCardData?.first?.lineOrRoute.id :
+            nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
         scrollSubject.send(id)
     }
 

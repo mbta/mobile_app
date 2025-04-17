@@ -44,7 +44,7 @@ struct RouteCardDepartures: View {
                         },
                         showChevron: true
                     ) {
-                        departuresInDirection(direction: direction, formatted: formatted)
+                        RouteCardDirection(direction: direction, formatted: formatted)
                     }
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
@@ -56,35 +56,6 @@ struct RouteCardDepartures: View {
                     EmptyView()
                 }
             }
-        }
-    }
-
-    @ViewBuilder
-    func departuresInDirection(direction: Direction, formatted: LeafFormat) -> some View {
-        switch onEnum(of: formatted) {
-        case let .branched(branched):
-            VStack(alignment: .leading, spacing: 0) {
-                DirectionLabel(direction: direction, showDestination: false).foregroundStyle(Color.text)
-                ForEach(branched.branches) { branch in
-                    let pillDecoration: PredictionRowView.PillDecoration = if let route = branch
-                        .route { .onRow(route: route) } else { .none }
-                    HeadsignRowView(
-                        headsign: branch.headsign,
-                        predictions: branch.format,
-                        pillDecoration: pillDecoration
-                    )
-                }
-            }
-
-        case let .single(single):
-            DirectionRowView(
-                direction: .init(
-                    name: direction.name,
-                    destination: single.headsign ?? direction.destination,
-                    id: direction.id
-                ),
-                predictions: single.format
-            )
         }
     }
 

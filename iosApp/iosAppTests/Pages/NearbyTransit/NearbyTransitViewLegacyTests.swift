@@ -17,7 +17,7 @@ import ViewInspector
 import XCTest
 
 // swiftlint:disable:next type_body_length
-final class NearbyTransitViewTests: XCTestCase {
+final class NearbyTransitViewLegacyTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
     private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
@@ -664,11 +664,11 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let predictionsLoaded = PassthroughSubject<Void, Never>()
 
-        let exp1 = sut.inspection.inspect(onReceive: predictionsLoaded, after: 0.1) { view in
+        let exp1 = sut.inspection.inspect(onReceive: predictionsLoaded, after: 0.5) { view in
             XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "2 min"))
         }
 
-        let exp2 = sut.inspection.inspect(onReceive: predictionsLoaded.dropFirst(), after: 0.1) { view in
+        let exp2 = sut.inspection.inspect(onReceive: predictionsLoaded.dropFirst(), after: 0.5) { view in
             XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "3 min"))
         }
 
