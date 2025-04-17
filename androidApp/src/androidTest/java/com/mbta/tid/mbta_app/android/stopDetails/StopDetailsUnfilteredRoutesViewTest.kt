@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.Alert
@@ -191,6 +192,7 @@ class StopDetailsUnfilteredRoutesViewTest {
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
     }
 
     @Test
