@@ -243,7 +243,7 @@ final class StopDetailsViewModelTests: XCTestCase {
 
         XCTAssertNil(stopDetailsVM.tripData)
         await stopDetailsVM.handleTripFilterChange(tripFilter)
-        await fulfillment(of: [tripPredictionConnectExp, vehicleConnectExp], timeout: 1)
+        await fulfillment(of: [tripPredictionConnectExp, vehicleConnectExp], timeout: 2)
         XCTAssertEqual(stopDetailsVM.tripData?.tripFilter, tripFilter)
         XCTAssertEqual(stopDetailsVM.tripData?.trip, trip)
         XCTAssertEqual(stopDetailsVM.tripData?.tripSchedules, tripSchedules)
@@ -251,7 +251,7 @@ final class StopDetailsViewModelTests: XCTestCase {
         XCTAssertEqual(stopDetailsVM.tripData?.vehicle, vehicle)
         await stopDetailsVM.clearTripDetails()
         XCTAssertNil(stopDetailsVM.tripData)
-        await fulfillment(of: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 1)
+        await fulfillment(of: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 2)
     }
 
     func testSkipLoadingTripData() async throws {

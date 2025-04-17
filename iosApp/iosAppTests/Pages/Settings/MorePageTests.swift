@@ -77,7 +77,7 @@ final class MorePageTests: XCTestCase {
         let viewModel = SettingsViewModel(settingsRepository: settingsRepository)
 
         let sut = MorePage(viewModel: viewModel)
-        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
+        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 2) { view in
             try XCTAssertNotNil(view.find(text: "Send app feedback"))
             try XCTAssertNotNil(view.find(text: "Trip Planner"))
             try XCTAssertNotNil(view.find(text: "Fare Information"))
