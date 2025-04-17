@@ -33,7 +33,7 @@ fun NotAccessibleCard() {
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painterResource(R.drawable.accessibility_icon_not_accessible),

@@ -11,7 +11,7 @@ import SwiftUI
 struct NotAccessibleCard: View {
     var body: some View {
         VStack {
-            HStack {
+            HStack(alignment: .center) {
                 Image(.accessibilityIconNotAccessible)
                     .accessibilityHidden(true)
                     .tag("wheelchair_not_accessible")
