@@ -24,6 +24,8 @@ struct MoreLink: View {
                     Text(label)
                         .foregroundStyle(isKey ? Color.fill3 : Color.text)
                         .font(Typography.body)
+                        .multilineTextAlignment(.leading)
+
                     if let note {
                         Text(note)
                             .foregroundStyle(isKey ? Color.fill3 : Color.text)

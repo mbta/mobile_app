@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -71,13 +70,6 @@ fun OnboardingScreenView(
     var settings: Map<Settings, Boolean> by rememberSaveable { mutableStateOf(emptyMap()) }
 
     LaunchedEffect(Unit) { settings = settingsRepository.getSettings() }
-
-    fun hideMaps(hide: Boolean) {
-        coroutineScope.launch {
-            settingsRepository.setSettings(mapOf(Settings.HideMaps to hide))
-            advance()
-        }
-    }
 
     fun shareLocation() {
         if (skipLocationDialogue || permissions.permissions.any { it.status.isGranted }) {
@@ -155,13 +147,11 @@ fun OnboardingScreenView(
         }
         OnboardingScreen.HideMaps -> {
             var localHideMapsSetting by rememberSaveable { mutableStateOf(true) }
-
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
                 OnboardingPieces.PageDescription(
                     R.string.onboarding_map_display_header,
                     R.string.onboarding_map_display_body,
                     Modifier.align(Alignment.Center)
-                        .offset(y = haloOffset)
                         .padding(horizontal = 32.dp)
                         .background(colorResource(R.color.fill2), shape = RoundedCornerShape(32.dp))
                         .padding(32.dp)
@@ -195,7 +185,7 @@ fun OnboardingScreenView(
                 OnboardingContentColumn {
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_location_header,
-                        R.string.onboarding_location_body
+                        R.string.onboarding_location_body,
                     )
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
@@ -222,7 +212,7 @@ fun OnboardingScreenView(
                     }
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_station_accessibility_header,
-                        R.string.onboarding_station_accessibility_body
+                        R.string.onboarding_station_accessibility_body,
                     )
 
                     OnboardingPieces.SettingsToggle(
@@ -234,7 +224,7 @@ fun OnboardingScreenView(
 
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
-                        onClick = { advance() }
+                        onClick = { advance() },
                     )
                 }
             }

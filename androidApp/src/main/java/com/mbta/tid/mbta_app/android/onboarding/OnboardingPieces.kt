@@ -32,6 +32,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -48,7 +49,14 @@ object OnboardingPieces {
         @StringRes bodyId: Int,
         modifier: Modifier = Modifier
     ) {
-        Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        val pane = stringResource(headerId)
+        // setting explicit paneTitle resets focus to the text rather than the continue button
+        // when navigating to the next screen
+        // https://issuetracker.google.com/issues/272065229#comment8
+        Column(
+            modifier.semantics { paneTitle = pane },
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             Text(
                 stringResource(headerId),
                 modifier = Modifier.semantics { heading() },
