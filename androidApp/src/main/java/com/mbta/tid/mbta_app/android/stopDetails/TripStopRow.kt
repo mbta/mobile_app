@@ -101,7 +101,10 @@ fun TripStopRow(
                         )
                     } else if (showStationAccessibility && !stop.stop.isWheelchairAccessible) {
                         Image(
-                            modifier = Modifier.height(18.dp).testTag("wheelchair_not_accessible"),
+                            modifier =
+                                Modifier.height(18.dp)
+                                    .testTag("wheelchair_not_accessible")
+                                    .placeholderIfLoading(),
                             painter = painterResource(R.drawable.accessibility_icon_not_accessible),
                             contentDescription = null
                         )
