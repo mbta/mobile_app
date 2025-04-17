@@ -115,7 +115,7 @@
     <string name="facility_issue_sentence_case">Problema nas instalações</string>
     <string name="feature_flag_debug_mode">Modo de depuração</string>
     <string name="feature_flag_route_search">Pesquisa de rotas</string>
-    <string name="feedback_link_form">Enviar comentário no aplicativo</string>
+    <string name="feedback_link_form">Enviar feedback sobre o aplicativo</string>
     <string name="ferries">balsas</string>
     <string name="ferry">balsa</string>
     <string name="filterShowAll">Tudo</string>
@@ -205,7 +205,7 @@
     <string name="onboarding_map_display_body">Ao usar o TalkBack, podemos ocultar mapas para facilitar a navegação no aplicativo.</string>
     <string name="onboarding_map_display_header">Definir preferência de exibição do mapa</string>
     <string name="onboarding_station_accessibility_body">Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados.</string>
-    <string name="onboarding_station_accessibility_header">Informações de acessibilidade da estação</string>
+    <string name="onboarding_station_accessibility_header">Definir preferência de informações de acessibilidade da estação</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>

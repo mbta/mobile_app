@@ -39,7 +39,7 @@ class SettingsViewModel: ObservableObject {
                 MoreSection(id: .feedback, items: [
                     .link(
                         label: NSLocalizedString(
-                            "Send app feedback",
+                            "Send App Feedback",
                             comment: "Label for a More page link to a form to provide feedback on the app itself"
                         ),
                         url: feedbackFormUrl
@@ -62,13 +62,13 @@ class SettingsViewModel: ObservableObject {
                     ),
                     .link(
                         label: NSLocalizedString(
-                            "Commuter Rail and Ferry tickets",
+                            "Commuter Rail and Ferry Tickets",
                             comment: "Label for a More page link to the MBTA mTicket app"
                         ),
                         url: "https://apps.apple.com/us/app/mbta-mticket/id560487958",
                         note: NSLocalizedString(
                             "mTicket App",
-                            comment: "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app"
+                            comment: "Footnote underneath the \"Commuter Rail and Ferry Tickets\" label on the More page link to the MBTA mTicket app"
                         )
                     ),
                 ]),
@@ -132,7 +132,7 @@ class SettingsViewModel: ObservableObject {
                     ),
                     .link(
                         label: NSLocalizedString(
-                            "View source on GitHub",
+                            "View Source on GitHub",
                             comment: "Label for a More page link to the MBTA Go source code"
                         ),
                         url: "https://github.com/mbta/mobile_app"

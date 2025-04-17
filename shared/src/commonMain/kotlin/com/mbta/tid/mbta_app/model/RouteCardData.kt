@@ -146,6 +146,7 @@ data class RouteCardData(
                 }
                 potentialHeadsigns
             }
+
             val isBranching = potentialHeadsigns.size > 1
             val needsRoutesInBranching = routePatterns.distinctBy { it.routeId }.size > 1
             val count =
@@ -166,11 +167,7 @@ data class RouteCardData(
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
             val routeType = representativeRoute.type
             val majorAlert = alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
-            if (majorAlert != null)
-                return LeafFormat.Single(
-                    potentialHeadsigns.singleOrNull(),
-                    UpcomingFormat.Disruption(majorAlert, mapStopRoute)
-                )
+
             val secondaryAlertToDisplay =
                 alertsHere.firstOrNull { it.significance >= AlertSignificance.Secondary }
                     ?: alertsDownstream.firstOrNull()
@@ -189,6 +186,51 @@ data class RouteCardData(
                         Pair(it, format)
                     }
                     .run { if (count != null) take(count) else this }
+
+            if (
+                majorAlert != null &&
+                    isBranching &&
+                    upcomingTrips.map { it.headsign }.distinct().count() == 1
+            ) {
+                /**
+                 * If there's upcoming trips all with the same headsign and there's a major alert
+                 * assume one branch is closed and collapse to LeafFormat.Single
+                 */
+                return LeafFormat.Single(
+                    upcomingTrips.first().headsign,
+                    UpcomingFormat.Some(
+                        tripsToShow.map { it.second },
+                        UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                    )
+                )
+            } else if (majorAlert != null && isBranching) {
+                /**
+                 * If there's upcoming trips with different headsigns and there's a major alert
+                 * assume service is disrupted on a branch but show any trips we have with the
+                 * downstream alert treatment.
+                 */
+                return LeafFormat.Branched(
+                    tripsToShow.map { (trip, format) ->
+                        val route =
+                            if (needsRoutesInBranching) globalData?.getRoute(trip.trip.routeId)
+                            else null
+                        LeafFormat.Branched.Branch(
+                            route,
+                            trip.headsign,
+                            UpcomingFormat.Some(
+                                format,
+                                UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                            )
+                        )
+                    }
+                )
+            } else if (majorAlert != null) {
+                // No branches, no trips, all service is disrupted here
+                return LeafFormat.Single(
+                    potentialHeadsigns.singleOrNull(),
+                    UpcomingFormat.Disruption(majorAlert, mapStopRoute)
+                )
+            }
 
             return when {
                 tripsToShow.isNotEmpty() ->

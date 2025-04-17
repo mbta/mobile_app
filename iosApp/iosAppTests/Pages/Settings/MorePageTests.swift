@@ -78,13 +78,13 @@ final class MorePageTests: XCTestCase {
 
         let sut = MorePage(viewModel: viewModel)
         let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 2) { view in
-            try XCTAssertNotNil(view.find(text: "Send app feedback"))
+            try XCTAssertNotNil(view.find(text: "Send App Feedback"))
             try XCTAssertNotNil(view.find(text: "Trip Planner"))
             try XCTAssertNotNil(view.find(text: "Fare Information"))
-            try XCTAssertNotNil(view.find(text: "Commuter Rail and Ferry tickets"))
+            try XCTAssertNotNil(view.find(text: "Commuter Rail and Ferry Tickets"))
             try XCTAssertNotNil(view.find(text: "Terms of Use"))
             try XCTAssertNotNil(view.find(text: "Privacy Policy"))
-            try XCTAssertNotNil(view.find(text: "View source on GitHub"))
+            try XCTAssertNotNil(view.find(text: "View Source on GitHub"))
             try XCTAssertNotNil(view.find(text: "617-222-3200"))
         }
 

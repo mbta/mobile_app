@@ -111,7 +111,7 @@
     <string name="facility_issue_sentence_case">設施問題</string>
     <string name="feature_flag_debug_mode">調試模式</string>
     <string name="feature_flag_route_search">線路搜尋</string>
-    <string name="feedback_link_form">傳送應用程式回饋</string>
+    <string name="feedback_link_form">發送應用程式回饋</string>
     <string name="ferries">輪渡</string>
     <string name="ferry">輪渡</string>
     <string name="filterShowAll">全部</string>
@@ -201,10 +201,10 @@
     <string name="onboarding_map_display_body">使用 TalkBack 時，我們可以隱藏地圖以使應用程式更易於導航。</string>
     <string name="onboarding_map_display_header">設定地圖顯示首選項</string>
     <string name="onboarding_station_accessibility_body">透過選擇加入，我們可以向您顯示哪些車站無法到達或電梯關閉。</string>
-    <string name="onboarding_station_accessibility_header">車站無障礙訊息</string>
+    <string name="onboarding_station_accessibility_header">設定車站可訪問性資訊首選項</string>
     <string name="open_for_more_arrivals">開啟獲得更多到站資訊</string>
     <string name="other_link_privacy_policy">隱私政策</string>
-    <string name="other_link_source_code">在GitHub上查看原始程式碼</string>
+    <string name="other_link_source_code">在 Github 上查看原始碼</string>
     <string name="other_link_tos">使用條款</string>
     <string name="outbound">出站</string>
     <string name="parade">遊行</string>
@@ -232,7 +232,7 @@
     <string name="refresh_predictions">重新整理預測</string>
     <string name="reload_data">重新載入資料</string>
     <string name="resources_link_fare_info">票價資訊</string>
-    <string name="resources_link_mticket">通勤列車和輪渡票</string>
+    <string name="resources_link_mticket">通勤鐵路和渡輪票</string>
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>

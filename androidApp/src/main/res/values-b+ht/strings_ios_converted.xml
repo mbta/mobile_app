@@ -121,7 +121,7 @@
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
     <string name="feature_flag_debug_mode">Mòd Debogaj</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
-    <string name="feedback_link_form">Voye kòmantè sou aplikasyon</string>
+    <string name="feedback_link_form">Voye Feedback sou aplikasyon an</string>
     <string name="ferries">bato yo</string>
     <string name="ferry">bato</string>
     <string name="filterShowAll">Tout</string>
@@ -211,10 +211,10 @@
     <string name="onboarding_map_display_body">Lè w ap itilize TalkBack, nou ka kache kat pou fè aplikasyon an pi fasil pou navige.</string>
     <string name="onboarding_map_display_header">Mete preferans pou montre kat la</string>
     <string name="onboarding_station_accessibility_body">Lè nou patisipe, nou ka montre w ki estasyon ki pa aksesib oswa ki fèmen asansè.</string>
-    <string name="onboarding_station_accessibility_header">Enfòmasyon sou Aksè Estasyon</string>
+    <string name="onboarding_station_accessibility_header">Mete preferans enfòmasyon sou aksè estasyon an</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
     <string name="other_link_privacy_policy">Règleman sou Vi Prive</string>
-    <string name="other_link_source_code">Gade sous sou GitHub</string>
+    <string name="other_link_source_code">Gade sous sou Github</string>
     <string name="other_link_tos">Kondisyon itilizasyon</string>
     <string name="outbound">Soti</string>
     <string name="parade">Parad</string>

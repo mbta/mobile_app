@@ -73,7 +73,7 @@ class OnboardingScreenViewTest {
         }
 
         composeTestRule
-            .onNode(hasText("Station Accessibility Info") and !hasRole(Role.Switch))
+            .onNodeWithText("Set station accessibility info preference")
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithText(

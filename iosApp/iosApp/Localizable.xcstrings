@@ -4960,49 +4960,49 @@
         }
       }
     },
-    "Commuter Rail and Ferry tickets" : {
+    "Commuter Rail and Ferry Tickets" : {
       "comment" : "Label for a More page link to the MBTA mTicket app",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Boletos de tren de cercanías y ferri"
+            "state" : "needs_review",
+            "value" : "Billetes de tren de cercanías y ferri"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Titres pour train de banlieue et ferry"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tikè Tren Vil la ak Bato"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Bilhetes de transporte diário por trem e balsa"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vé phà vé đường sắt ngoại ô (Commuter Rail)"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "通勤列车和轮渡票"
+            "state" : "needs_review",
+            "value" : "通勤铁路和渡轮票"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "通勤列車和輪渡票"
+            "state" : "needs_review",
+            "value" : "通勤鐵路和渡輪票"
           }
         }
       }
@@ -10679,7 +10679,7 @@
       }
     },
     "mTicket App" : {
-      "comment" : "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app",
+      "comment" : "Footnote underneath the \"Commuter Rail and Ferry Tickets\" label on the More page link to the MBTA mTicket app",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13517,49 +13517,49 @@
         }
       }
     },
-    "Send app feedback" : {
+    "Send App Feedback" : {
       "comment" : "Label for a More page link to a form to provide feedback on the app itself",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Enviar comentarios sobre la aplicación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer un commentaire sur l’application"
+            "value" : "Envoyer des commentaires sur l’application"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voye kòmantè sou aplikasyon"
+            "state" : "needs_review",
+            "value" : "Voye Feedback sou aplikasyon an"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar comentário no aplicativo"
+            "state" : "needs_review",
+            "value" : "Enviar feedback sobre o aplicativo"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gửi ý phản hồi về ứng dụng"
+            "state" : "needs_review",
+            "value" : "Gửi phản hồi về ứng dụng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "发送应用程序反馈"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "傳送應用程式回饋"
+            "state" : "needs_review",
+            "value" : "發送應用程式回饋"
           }
         }
       }
@@ -18333,49 +18333,49 @@
         }
       }
     },
-    "View source on GitHub" : {
+    "View Source on GitHub" : {
       "comment" : "Label for a More page link to the MBTA Go source code",
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver código fuente en GitHub"
+            "state" : "needs_review",
+            "value" : "Ver código fuente en Github"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voir la source dans GitHub"
+            "state" : "needs_review",
+            "value" : "Voir la source sur Github"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gade sous sou GitHub"
+            "state" : "needs_review",
+            "value" : "Gade sous sou Github"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Exibir origem no GitHub"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xem nguồn trên GitHub"
+            "state" : "needs_review",
+            "value" : "Xem nguồn trên Github"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "在GitHub上查看源代码"
+            "state" : "needs_review",
+            "value" : "在 Github 上查看源代码"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "在GitHub上查看原始程式碼"
+            "state" : "needs_review",
+            "value" : "在 Github 上查看原始碼"
           }
         }
       }

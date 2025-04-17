@@ -201,10 +201,10 @@
     <string name="onboarding_map_display_body">使用 TalkBack 时，我们可以隐藏地图以使应用程序更易于导航。</string>
     <string name="onboarding_map_display_header">设置地图显示首选项</string>
     <string name="onboarding_station_accessibility_body">通过选择加入，我们可以向您显示哪些车站无法到达或电梯关闭。</string>
-    <string name="onboarding_station_accessibility_header">车站无障碍信息</string>
+    <string name="onboarding_station_accessibility_header">设置车站可访问性信息首选项</string>
     <string name="open_for_more_arrivals">开启获得更多到站信息</string>
     <string name="other_link_privacy_policy">隐私政策</string>
-    <string name="other_link_source_code">在GitHub上查看源代码</string>
+    <string name="other_link_source_code">在 Github 上查看源代码</string>
     <string name="other_link_tos">使用条款</string>
     <string name="outbound">出站</string>
     <string name="parade">游行</string>
@@ -232,7 +232,7 @@
     <string name="refresh_predictions">刷新预测</string>
     <string name="reload_data">重新加载数据</string>
     <string name="resources_link_fare_info">票价信息</string>
-    <string name="resources_link_mticket">通勤列车和轮渡票</string>
+    <string name="resources_link_mticket">通勤铁路和渡轮票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>

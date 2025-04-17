@@ -67,18 +67,17 @@ fun TripStops(
 ) {
     val context = LocalContext.current
 
-    val splitStops: TripDetailsStopList.TargetSplit? =
+    val splitStops: TripDetailsStopList.TargetSplit =
         remember(targetId, stops, stopSequence, global) {
-            if (stopSequence != null && global != null) {
-                stops.splitForTarget(targetId, stopSequence, global)
-            } else null
+            stops.splitForTarget(targetId, stopSequence, global)
         }
 
     var stopsExpanded by rememberSaveable { mutableStateOf(false) }
 
     val routeTypeText = routeAccents.type.typeText(context, isOnly = true)
-    val stopsAway = splitStops?.collapsedStops?.size
-    val target = splitStops?.targetStop
+    val collapsedStops = splitStops.collapsedStops
+    val stopsAway = collapsedStops?.size
+    val target = splitStops.targetStop
     val hideTarget =
         headerSpec is TripHeaderSpec.Scheduled &&
             target != null &&
@@ -99,146 +98,135 @@ fun TripStops(
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        if (splitStops != null && target != null) {
-            if (showFirstStopSeparately) {
-                val firstStop = splitStops.firstStop
-                if (firstStop != null) {
-                    TripStopRow(
-                        stop = firstStop,
-                        now,
-                        onTapLink,
-                        routeAccents,
-                        firstStop = true,
-                        showStationAccessibility = showStationAccessibility
-                    )
-                }
-            }
-            if (splitStops.collapsedStops.isNotEmpty() && stopsAway != null) {
-                Row(
-                    Modifier.height(IntrinsicSize.Min)
-                        .clickable(
-                            onClickLabel =
-                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
-                                else stringResource(R.string.expand_remaining_stops)
-                        ) {
-                            stopsExpanded = !stopsExpanded
-                        }
-                        .clearAndSetSemantics {
-                            contentDescription =
-                                context.getString(
-                                    R.string.is_stops_away_from,
-                                    routeTypeText,
-                                    stopsAway,
-                                    target.stop.name
-                                )
-                        }
-                        .padding(horizontal = 8.dp)
-                        .defaultMinSize(minHeight = 48.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AnimatedContent(
-                        stopsExpanded,
-                        transitionSpec = {
-                            fadeIn(animationSpec = tween(500)) togetherWith
-                                fadeOut(animationSpec = tween(500))
-                        }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        ) {
-                            if (it) {
-                                Icon(
-                                    painterResource(R.drawable.fa_caret_right),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(12.dp).rotate(90f),
-                                    tint = colorResource(R.color.deemphasized)
-                                )
-                                ColoredRouteLine(
-                                    routeAccents.color,
-                                    Modifier.padding(start = 14.dp, end = 18.dp).fillMaxHeight()
-                                )
-                            } else {
-                                Icon(
-                                    painterResource(R.drawable.fa_caret_right),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(12.dp),
-                                    tint = colorResource(R.color.deemphasized)
-                                )
-                                RouteLineTwist(
-                                    routeAccents.color,
-                                    Modifier.padding(start = 4.dp, end = 6.dp)
-                                )
-                            }
-                        }
-                    }
-                    Text(
-                        pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
-                        color = colorResource(R.color.text),
-                        style = Typography.body,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                if (stopsExpanded) {
-                    Column {
-                        HaloUnderRouteLine(routeAccents.color)
-                        StopList(
-                            list = splitStops.collapsedStops,
-                            lastStopSequence,
-                            now,
-                            onTapLink,
-                            routeAccents,
-                            showStationAccessibility
-                        )
-                    }
-                }
-            }
-            // If the target is the first stop and there's no vehicle,
-            // it's already displayed in the trip header
-            if (!hideTarget) {
-                if (
-                    splitStops.collapsedStops.isNotEmpty() ||
-                        (showFirstStopSeparately && splitStops.firstStop != null)
-                ) {
-                    // We want a double halo above and below the selected stop
-                    if (!stopsExpanded) {
-                        // Expanded stops are adding an extra separator and I'm not sure where from
-                        HaloUnderRouteLine(routeAccents.color)
-                    }
-                    HaloUnderRouteLine(routeAccents.color)
-                }
+        if (showFirstStopSeparately) {
+            val firstStop = splitStops.firstStop
+            if (firstStop != null) {
                 TripStopRow(
-                    stop = target,
+                    stop = firstStop,
                     now,
                     onTapLink,
                     routeAccents,
-                    targeted = true,
-                    firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
-                    modifier = Modifier.background(colorResource(R.color.fill3)),
+                    firstStop = true,
                     showStationAccessibility = showStationAccessibility
                 )
-
-                HaloUnderRouteLine(routeAccents.color)
+            }
+        }
+        if (!collapsedStops.isNullOrEmpty() && stopsAway != null && target != null) {
+            Row(
+                Modifier.height(IntrinsicSize.Min)
+                    .clickable(
+                        onClickLabel =
+                            if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
+                            else stringResource(R.string.expand_remaining_stops)
+                    ) {
+                        stopsExpanded = !stopsExpanded
+                    }
+                    .clearAndSetSemantics {
+                        contentDescription =
+                            context.getString(
+                                R.string.is_stops_away_from,
+                                routeTypeText,
+                                stopsAway,
+                                target.stop.name
+                            )
+                    }
+                    .padding(horizontal = 8.dp)
+                    .defaultMinSize(minHeight = 48.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnimatedContent(
+                    stopsExpanded,
+                    transitionSpec = {
+                        fadeIn(animationSpec = tween(500)) togetherWith
+                            fadeOut(animationSpec = tween(500))
+                    }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    ) {
+                        if (it) {
+                            Icon(
+                                painterResource(R.drawable.fa_caret_right),
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp).rotate(90f),
+                                tint = colorResource(R.color.deemphasized)
+                            )
+                            ColoredRouteLine(
+                                routeAccents.color,
+                                Modifier.padding(start = 14.dp, end = 18.dp).fillMaxHeight()
+                            )
+                        } else {
+                            Icon(
+                                painterResource(R.drawable.fa_caret_right),
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = colorResource(R.color.deemphasized)
+                            )
+                            RouteLineTwist(
+                                routeAccents.color,
+                                Modifier.padding(start = 4.dp, end = 6.dp)
+                            )
+                        }
+                    }
+                }
+                Text(
+                    pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
+                    color = colorResource(R.color.text),
+                    style = Typography.body,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            if (stopsExpanded) {
+                Column {
+                    HaloUnderRouteLine(routeAccents.color)
+                    StopList(
+                        list = collapsedStops,
+                        lastStopSequence,
+                        now,
+                        onTapLink,
+                        routeAccents,
+                        showStationAccessibility
+                    )
+                }
+            }
+        }
+        // If the target is the first stop and there's no vehicle, it's already displayed in the
+        // trip header
+        if (target != null && !hideTarget) {
+            if (
+                !collapsedStops.isNullOrEmpty() ||
+                    (showFirstStopSeparately && splitStops.firstStop != null)
+            ) {
+                // We want a double halo above and below the selected stop
+                if (!stopsExpanded) {
+                    // Expanded stops are adding an extra separator and I'm not sure where from
+                    HaloUnderRouteLine(routeAccents.color)
+                }
                 HaloUnderRouteLine(routeAccents.color)
             }
-            StopList(
-                splitStops.followingStops,
-                lastStopSequence,
+            TripStopRow(
+                stop = target,
                 now,
                 onTapLink,
                 routeAccents,
-                showStationAccessibility
+                targeted = true,
+                firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
+                modifier = Modifier.background(colorResource(R.color.fill3)),
+                showStationAccessibility = showStationAccessibility
             )
-        } else {
-            StopList(
-                stops.stops,
-                lastStopSequence,
-                now,
-                onTapLink,
-                routeAccents,
-                showStationAccessibility
-            )
+
+            HaloUnderRouteLine(routeAccents.color)
+            HaloUnderRouteLine(routeAccents.color)
         }
+        StopList(
+            splitStops.followingStops,
+            lastStopSequence,
+            now,
+            onTapLink,
+            routeAccents,
+            showStationAccessibility
+        )
     }
 }
 
