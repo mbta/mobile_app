@@ -419,57 +419,58 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testLineGrouping() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let distantInstant = Date.now.addingTimeInterval(10 * 60)
+        let now = Date.now
+        let distantInstant = now.addingTimeInterval(10 * 60)
             .toKotlinInstant()
 
         typealias Green = GreenLineTestHelper.Companion
         let objects = Green.shared.objects
 
         objects.schedule { schedule in
-            schedule.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
-            schedule.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
+            schedule.arrivalTime = now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
+            schedule.departureTime = now.addingTimeInterval(2 * 60).toKotlinInstant()
             schedule.stopId = Green.shared.stopWestbound.id
             schedule.trip = objects.trip(routePattern: Green.shared.rpB0)
         }
         objects.schedule { schedule in
-            schedule.arrivalTime = Date.now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
-            schedule.departureTime = Date.now.addingTimeInterval(3 * 60).toKotlinInstant()
+            schedule.arrivalTime = now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
+            schedule.departureTime = now.addingTimeInterval(3 * 60).toKotlinInstant()
             schedule.stopId = Green.shared.stopEastbound.id
             schedule.trip = objects.trip(routePattern: Green.shared.rpB1)
         }
 
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(2 * 60).toKotlinInstant()
             prediction.routeId = Green.shared.routeB.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpB0).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(3 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(3 * 60).toKotlinInstant()
             prediction.routeId = Green.shared.routeB.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpB1).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(3 * 60).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(4 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(3 * 60).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(4 * 60).toKotlinInstant()
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpC0).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(11 * 60).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(11 * 60).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(15 * 60).toKotlinInstant()
             prediction.status = "Overridden"
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpC0).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(4 * 60).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(4 * 60).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpC1).id
@@ -481,15 +482,15 @@ final class NearbyTransitViewTests: XCTestCase {
             prediction.tripId = objects.trip(routePattern: Green.shared.rpC1).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(5 * 60).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(6 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(6 * 60).toKotlinInstant()
             prediction.routeId = Green.shared.routeE.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpE0).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = Date.now.addingTimeInterval(6 * 60).toKotlinInstant()
-            prediction.departureTime = Date.now.addingTimeInterval(7 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.addingTimeInterval(6 * 60).toKotlinInstant()
+            prediction.departureTime = now.addingTimeInterval(7 * 60).toKotlinInstant()
             prediction.routeId = Green.shared.routeE.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpE1).id
@@ -497,7 +498,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()
 
-        let sut = setUpSut(objects, loadPublisher)
+        let sut = setUpSut(objects, loadPublisher, now: now)
 
         let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 1) { view in
             let stops = view.findAll(RouteCardDepartures.self)
