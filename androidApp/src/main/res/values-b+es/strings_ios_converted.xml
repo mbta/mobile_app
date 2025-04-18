@@ -96,6 +96,11 @@
         <item quantity="many">%1$d ascensores cerrados</item>
         <item quantity="other">%1$d ascensores cerrados</item>
     </plurals>
+    <plurals name="elevator_closure_count_accessibility_description">
+        <item quantity="one">Esta parada tiene %1$d ascensor cerrado.</item>
+        <item quantity="many">Esta parada tiene %1$d ascensores cerrados.</item>
+        <item quantity="other">Esta parada tiene %1$d ascensores cerrados.</item>
+    </plurals>
     <string name="end">Fin</string>
     <string name="end_of_service">fin del servicio</string>
     <string name="error_loading_data">Error al cargar datos</string>
