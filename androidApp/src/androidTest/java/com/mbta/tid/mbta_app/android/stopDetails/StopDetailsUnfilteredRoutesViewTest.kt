@@ -192,7 +192,7 @@ class StopDetailsUnfilteredRoutesViewTest {
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertExists()
     }
 
     @Test
