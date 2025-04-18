@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -62,9 +63,11 @@ fun AlertCard(
         modifier =
             modifier
                 .haloContainer(2.dp)
-                .clickable {
-                    if (spec != AlertCardSpec.Major && onViewDetails != null) onViewDetails()
-                }
+                .then(
+                    if (spec != AlertCardSpec.Major && onViewDetails != null)
+                        Modifier.clickable { onViewDetails() }
+                    else Modifier
+                )
                 .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start
@@ -77,7 +80,8 @@ fun AlertCard(
                 alertState = alert.alertState,
                 color = color,
                 modifier =
-                    Modifier.size(iconSize)
+                    Modifier.clearAndSetSemantics {}
+                        .size(iconSize)
                         .align(
                             if (spec == AlertCardSpec.Elevator) Alignment.Top
                             else Alignment.CenterVertically

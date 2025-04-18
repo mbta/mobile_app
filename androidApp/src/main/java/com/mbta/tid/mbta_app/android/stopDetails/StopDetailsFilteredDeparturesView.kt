@@ -193,21 +193,21 @@ fun StopDetailsFilteredDeparturesView(
                 .filter { it.directionId == stopFilter.directionId }
         }
 
-    LaunchedEffect(
-        global,
-        alertsHere,
-        downstreamAlerts,
-        stopId,
-        stopFilter.directionId,
-        patternsHere,
-        now
-    ) {
-        if (global == null) return@LaunchedEffect
+    suspend fun updateAlertSummaries(clearExisting: Boolean = false) {
+        if (global == null) return
+        if (clearExisting) {
+            viewModel.setAlertSummaries(emptyMap())
+        }
         viewModel.setAlertSummaries(
             (alertsHere + downstreamAlerts).associate {
                 it.id to it.summary(stopId, stopFilter.directionId, patternsHere, now, global)
             }
         )
+    }
+
+    LaunchedEffect(stopId, stopFilter.directionId) { updateAlertSummaries(clearExisting = true) }
+    LaunchedEffect(global, alertsHere, downstreamAlerts, patternsHere, now) {
+        updateAlertSummaries()
     }
 
     LaunchedEffect(tripFilter) {
