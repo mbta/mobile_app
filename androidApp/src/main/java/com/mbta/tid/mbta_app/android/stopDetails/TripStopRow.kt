@@ -222,8 +222,23 @@ fun TripStopRow(
         }
         if (disruption != null) {
             Box(Modifier.height(IntrinsicSize.Min)) {
-                Column(Modifier.align(Alignment.CenterStart).padding(start = 48.5.dp)) {
-                    ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
+                // Trying to get this spacing to look right in Android Studio previews at any device
+                // DPI requires both layers of padding; moving all 40 DP to one side or the other
+                // makes things stop lining up properly. Causality is a superstition.
+                Row(Modifier.padding(start = 6.dp).height(IntrinsicSize.Min).matchParentSize()) {
+                    Column(
+                        Modifier.fillMaxHeight().padding(start = 34.dp).width(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
+                        if (stop.isTruncating()) {
+                            ColoredRouteLine(
+                                routeAccents.color,
+                                Modifier.weight(1f),
+                                RouteLineState.Empty
+                            )
+                        }
+                    }
                 }
                 AlertCard(
                     disruption.alert,
