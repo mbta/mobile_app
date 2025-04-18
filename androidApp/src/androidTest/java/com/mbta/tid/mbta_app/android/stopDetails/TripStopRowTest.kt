@@ -252,7 +252,9 @@ class TripStopRowTest {
         }
 
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Not accessible").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("This stop is not accessible", useUnmergedTree = true)
+            .assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
 
@@ -267,6 +269,8 @@ class TripStopRowTest {
             )
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("1 elevator closed").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("This stop has 1 elevator closed", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 }

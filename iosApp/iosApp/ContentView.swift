@@ -233,7 +233,7 @@ struct ContentView: View {
                 }
             }
         }
-        .background(Color.fill1)
+        .background(Color.sheetBackground)
         .onAppear {
             Task { await errorBannerVM.activate() }
             Task { await contentVM.loadHideMaps() }

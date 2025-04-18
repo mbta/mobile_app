@@ -96,6 +96,11 @@
         <item quantity="many">Ascenseurs %1$d fermés</item>
         <item quantity="other">Ascenseurs %1$d fermés</item>
     </plurals>
+    <plurals name="elevator_closure_count_accessibility_description">
+        <item quantity="one">Cet arrêt a %1$d ascenseur fermé</item>
+        <item quantity="many">Cet arrêt a %1$d ascenseurs fermés</item>
+        <item quantity="other">Cet arrêt a %1$d ascenseurs fermés</item>
+    </plurals>
     <string name="end">Fin</string>
     <string name="end_of_service">fin de service</string>
     <string name="error_loading_data">Erreur dans le chargement des données</string>

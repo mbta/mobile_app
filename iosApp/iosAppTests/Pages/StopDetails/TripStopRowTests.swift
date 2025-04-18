@@ -203,7 +203,7 @@ final class TripStopRowTests: XCTestCase {
         ))
     }
 
-    func testWheelchairNotAccessibile() throws {
+    func testWheelchairNotAccessible() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in
@@ -232,7 +232,7 @@ final class TripStopRowTests: XCTestCase {
             showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
-        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "Not accessible"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "This stop is not accessible"))
     }
 
     func testElevatorAccessibilityAlert() throws {
@@ -269,6 +269,6 @@ final class TripStopRowTests: XCTestCase {
             showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
-        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "1 elevator closed"))
+        XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "This stop has 1 elevator closed"))
     }
 }

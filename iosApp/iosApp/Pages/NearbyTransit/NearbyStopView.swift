@@ -77,7 +77,7 @@ struct NearbyStopView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.vertical, showInaccessible || showElevatorAlerts ? 8 : 11)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.fill2)
         StopDeparturesSummaryList(

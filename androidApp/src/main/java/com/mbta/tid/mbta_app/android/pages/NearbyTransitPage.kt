@@ -514,7 +514,7 @@ fun NearbyTransitPage(
                 },
                 sheetContainerColor =
                     when (currentNavEntry) {
-                        SheetRoutes.NearbyTransit -> colorResource(R.color.fill1)
+                        SheetRoutes.NearbyTransit -> colorResource(R.color.sheet_background)
                         is SheetRoutes.StopDetails -> colorResource(R.color.fill2)
                         else -> colorResource(R.color.fill1)
                     },

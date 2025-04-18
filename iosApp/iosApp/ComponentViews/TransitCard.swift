@@ -21,7 +21,11 @@ struct TransitCard<Header: View, Content: View>: View {
             content()
         }
         .background(Color.fill3)
-        .withRoundedBorder()
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.halo, lineWidth: 1)
+        )
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
     }
