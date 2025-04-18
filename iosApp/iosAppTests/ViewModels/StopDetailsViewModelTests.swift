@@ -187,7 +187,8 @@ final class StopDetailsViewModelTests: XCTestCase {
         )]), departures)
     }
 
-    func testLoadTripData() async throws {
+    @MainActor
+    func testLoadTripData() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route()
@@ -219,6 +220,7 @@ final class StopDetailsViewModelTests: XCTestCase {
         vehicleDisconnectExp.expectedFulfillmentCount = 3
 
         let predictionsSetExp = expectation(description: "Predictions field populated with expected data")
+        let vehiclesSetExp = expectation(description: "Vehicle field populated with expected data")
 
         let tripPredictions = PredictionsStreamDataResponse(objects: objects)
         let tripSchedules = TripSchedulesResponse.Schedules(schedules: [schedule])
@@ -247,26 +249,30 @@ final class StopDetailsViewModelTests: XCTestCase {
         )
 
         XCTAssertNil(stopDetailsVM.tripData)
-        await stopDetailsVM.handleTripFilterChange(tripFilter)
-        await fulfillment(of: [tripPredictionConnectExp, vehicleConnectExp], timeout: 1)
-        stopDetailsVM.$tripData
+        stopDetailsVM.handleTripFilterChange(tripFilter)
+        wait(for: [tripPredictionConnectExp, vehicleConnectExp], timeout: 1)
+        let cancelSink = stopDetailsVM.$tripData
             .sink {
                 if $0?.tripPredictions == tripPredictions {
                     predictionsSetExp.fulfill()
                 }
+                if $0?.vehicle == vehicle {
+                    vehiclesSetExp.fulfill()
+                }
             }
-            .store(in: &cancellables)
-        await fulfillment(of: [predictionsSetExp], timeout: 2)
+        wait(for: [predictionsSetExp, vehiclesSetExp], timeout: 2)
+
         XCTAssertEqual(stopDetailsVM.tripData?.tripFilter, tripFilter)
         XCTAssertEqual(stopDetailsVM.tripData?.trip, trip)
         XCTAssertEqual(stopDetailsVM.tripData?.tripSchedules, tripSchedules)
 
-        XCTAssertEqual(stopDetailsVM.tripData?.vehicle, vehicle)
-
-        await stopDetailsVM.clearTripDetails()
+        stopDetailsVM.clearTripDetails()
 
         XCTAssertNil(stopDetailsVM.tripData)
-        await fulfillment(of: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 1)
+        wait(for: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 1)
+        addTeardownBlock {
+            cancelSink.cancel()
+        }
     }
 
     func testSkipLoadingTripData() async throws {
