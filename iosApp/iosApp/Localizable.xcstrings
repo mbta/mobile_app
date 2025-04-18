@@ -2409,7 +2409,7 @@
       }
     },
     "Alert" : {
-      "comment" : "Possible alert effect",
+      "comment" : "Possible alert\nPossible alert effect",
       "localizations" : {
         "es" : {
           "stringUnit" : {

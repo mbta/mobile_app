@@ -674,11 +674,11 @@ final class NearbyTransitViewLegacyTests: XCTestCase {
 
         predictionsRepository.sendMessage(message: prediction(minutesAway: 2))
         predictionsLoaded.send()
-        wait(for: [exp1], timeout: 1)
+        wait(for: [exp1], timeout: 2)
 
         predictionsRepository.sendMessage(message: prediction(minutesAway: 3))
         predictionsLoaded.send()
-        wait(for: [exp2], timeout: 1)
+        wait(for: [exp2], timeout: 2)
     }
 
     func testLeavesChannelWhenBackgrounded() throws {

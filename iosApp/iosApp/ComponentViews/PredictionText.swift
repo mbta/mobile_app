@@ -37,11 +37,7 @@ struct PredictionText: View {
     }
 
     var predictionString: AttributedString {
-        do {
-            return try AttributedString(markdown: predictionKey)
-        } catch {
-            return AttributedString(predictionKey.filter { $0 != "*" })
-        }
+        AttributedString.tryMarkdown(predictionKey)
     }
 
     var accessibilityString: String {
