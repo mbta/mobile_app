@@ -6,12 +6,15 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import Foundation
 @testable import iosApp
 import Shared
 import XCTest
 
 final class StopDetailsViewModelTests: XCTestCase {
+    private var cancellables = Set<AnyCancellable>()
+
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -243,13 +246,17 @@ final class StopDetailsViewModelTests: XCTestCase {
 
         XCTAssertNil(stopDetailsVM.tripData)
         await stopDetailsVM.handleTripFilterChange(tripFilter)
+        try await Task.sleep(for: .seconds(1))
         await fulfillment(of: [tripPredictionConnectExp, vehicleConnectExp], timeout: 1)
+
         XCTAssertEqual(stopDetailsVM.tripData?.tripFilter, tripFilter)
         XCTAssertEqual(stopDetailsVM.tripData?.trip, trip)
         XCTAssertEqual(stopDetailsVM.tripData?.tripSchedules, tripSchedules)
         XCTAssertEqual(stopDetailsVM.tripData?.tripPredictions, tripPredictions)
         XCTAssertEqual(stopDetailsVM.tripData?.vehicle, vehicle)
+
         await stopDetailsVM.clearTripDetails()
+
         XCTAssertNil(stopDetailsVM.tripData)
         await fulfillment(of: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 1)
     }
@@ -330,6 +337,7 @@ final class StopDetailsViewModelTests: XCTestCase {
             selectionLock: false
         )
         await stopDetailsVM.handleTripFilterChange(newTripFilter)
+
         XCTAssertEqual(stopDetailsVM.tripData?.tripFilter, newTripFilter)
         XCTAssertEqual(stopDetailsVM.tripData?.trip, trip)
         XCTAssertEqual(stopDetailsVM.tripData?.tripSchedules, tripSchedules)

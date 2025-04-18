@@ -1,22 +1,12 @@
 package com.mbta.tid.mbta_app.android.util
 
 import android.icu.text.DateFormat
-import com.mbta.tid.mbta_app.utils.serviceDate
-import com.mbta.tid.mbta_app.utils.toBostonTime
+import com.mbta.tid.mbta_app.utils.coerceInServiceDay
 import java.util.Date
-import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Instant
 
 /** Converts this [Instant] into a [Date]. For use with [android.icu.text.DateFormat]. */
 fun Instant.toJavaDate() = Date(toEpochMilliseconds())
-
-/** The time component becomes irrelevant after this coercion and should be ignored */
-fun Instant.coerceInServiceDay(): Instant {
-    val localTime = this.toBostonTime()
-    val serviceDate = localTime.serviceDate
-    if (localTime.date == serviceDate) return this
-    return this.minus(24.hours)
-}
 
 /** Formats the [Instant] using [DateFormat.getInstanceForSkeleton] */
 fun Instant.dateFormat(skeleton: String): String =

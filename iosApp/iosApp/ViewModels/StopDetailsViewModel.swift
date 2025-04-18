@@ -52,6 +52,7 @@ class StopDetailsViewModel: ObservableObject {
     @Published var hideMaps: Bool = false
     @Published var showStationAccessibility: Bool = false
     @Published var pinnedRoutes: Set<String> = []
+    @Published var alertSummaries: [String: AlertSummary?] = [:]
 
     @Published var stopData: StopData?
     @Published var tripData: TripData?
@@ -114,6 +115,10 @@ class StopDetailsViewModel: ObservableObject {
                 )
             }
         }
+    }
+
+    func setAlertSummaries(_ alertSumamries: [String: AlertSummary?]) {
+        alertSummaries = alertSumamries
     }
 
     @MainActor func clearStopDetails() {

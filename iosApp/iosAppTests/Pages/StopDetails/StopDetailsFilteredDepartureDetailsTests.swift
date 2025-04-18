@@ -427,7 +427,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
     }
 
-    func testShowsSuspension() throws {
+    @MainActor
+    func testShowsSuspensionFallback() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
@@ -450,6 +451,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
 
+        let stopDetailsVM: StopDetailsViewModel = .init()
+        stopDetailsVM.global = GlobalResponse(objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
@@ -466,21 +470,30 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: .init()
-        ).environmentObject(ViewportProvider())
-
-        XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
-        XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
-        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
-        try sut.inspect().find(button: "View details").tap()
-        XCTAssertEqual(
-            nearbyVM.navigationStack.last,
-            .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
+            stopDetailsVM: stopDetailsVM
         )
+
+        let departureTileExp = sut.inspection.inspect { _ in
+            XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
+        }
+
+        let alertCardExp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(AlertCard.self))
+            XCTAssertNotNil(try view.find(text: "Suspension"))
+            XCTAssertNotNil(try view.find(text: alert.header!))
+            try sut.inspect().find(button: "View details").tap()
+            XCTAssertEqual(
+                nearbyVM.navigationStack.last,
+                .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
+            )
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
-    func testShowsDownstreamAlert() throws {
+    @MainActor
+    func testShowsDownstreamAlertFallback() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
@@ -501,6 +514,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
 
+        let stopDetailsVM: StopDetailsViewModel = .init()
+        stopDetailsVM.global = GlobalResponse(objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
@@ -517,18 +533,26 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: .init()
-        ).environmentObject(ViewportProvider())
-
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
-        XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "Service suspended ahead"))
-        XCTAssertThrowsError(try sut.inspect().find(text: alert.header!))
-        try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
-        XCTAssertEqual(
-            nearbyVM.navigationStack.last,
-            .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
+            stopDetailsVM: stopDetailsVM
         )
+
+        let departureTileExp = sut.inspection.inspect { view in
+            XCTAssertNotNil(try view.find(DepartureTile.self))
+        }
+
+        let alertCardExp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(AlertCard.self))
+            XCTAssertNotNil(try view.find(text: "Service suspended ahead"))
+            XCTAssertThrowsError(try view.find(text: alert.header!))
+            try view.find(AlertCard.self).implicitAnyView().button().tap()
+            XCTAssertEqual(
+                nearbyVM.navigationStack.last,
+                .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
+            )
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
     func testShowsElevatorAlert() throws {
@@ -625,7 +649,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
 
-    func testShowsSubwayDelayAlert() throws {
+    @MainActor
+    func testShowsSubwayDelayAlertFallback() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
@@ -653,6 +678,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             upcoming: trip
         )
         let nearbyVM = NearbyViewModel()
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.showStationAccessibility = true
+        stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -670,11 +698,19 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: .init()
-        ).environmentObject(ViewportProvider())
+            stopDetailsVM: stopDetailsVM
+        )
 
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
-        XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
+        let departureTileExp = sut.inspection.inspect { view in
+            XCTAssertNotNil(try view.find(DepartureTile.self))
+        }
+
+        let alertCardExp = sut.inspection.inspect(after: 1) { _ in
+            XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
+            XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 }
