@@ -1,5 +1,5 @@
 //
-//  RouteCardTests.swift
+//  LegacyRouteCardTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/13/24.
@@ -13,7 +13,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class RouteCardTests: XCTestCase {
+final class LegacyRouteCardTests: XCTestCase {
     func testRouteContents() throws {
         let route = ObjectCollectionBuilder.Single().route { route in
             route.longName = "Red"

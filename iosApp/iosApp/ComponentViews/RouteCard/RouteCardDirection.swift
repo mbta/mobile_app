@@ -33,7 +33,9 @@ struct RouteCardDirection: View {
             DirectionRowView(
                 direction: .init(
                     name: direction.name,
-                    destination: single.headsign ?? direction.destination,
+                    destination: single.headsign == nil || single.headsign?.isEmpty == true
+                        ? direction.destination
+                        : single.headsign,
                     id: direction.id
                 ),
                 predictions: single.format
