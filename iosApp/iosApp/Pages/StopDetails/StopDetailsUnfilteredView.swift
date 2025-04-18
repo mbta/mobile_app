@@ -99,6 +99,7 @@ struct StopDetailsUnfilteredView: View {
                                         ForEach(departures.elevatorAlerts, id: \.id) { alert in
                                             AlertCard(
                                                 alert: alert,
+                                                alertSummary: nil,
                                                 spec: .elevator,
                                                 color: Color.clear,
                                                 textColor: Color.text,

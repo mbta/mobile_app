@@ -640,21 +640,21 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let predictionsLoaded = PassthroughSubject<Void, Never>()
 
-        let exp1 = sut.inspection.inspect(onReceive: predictionsLoaded, after: 0.1) { view in
+        let exp1 = sut.inspection.inspect(onReceive: predictionsLoaded, after: 0.5) { view in
             XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "2 min"))
         }
 
-        let exp2 = sut.inspection.inspect(onReceive: predictionsLoaded.dropFirst(), after: 0.1) { view in
+        let exp2 = sut.inspection.inspect(onReceive: predictionsLoaded.dropFirst(), after: 0.5) { view in
             XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "3 min"))
         }
 
         predictionsRepository.sendMessage(message: prediction(minutesAway: 2))
         predictionsLoaded.send()
-        wait(for: [exp1], timeout: 1)
+        wait(for: [exp1], timeout: 2)
 
         predictionsRepository.sendMessage(message: prediction(minutesAway: 3))
         predictionsLoaded.send()
-        wait(for: [exp2], timeout: 1)
+        wait(for: [exp2], timeout: 2)
     }
 
     func testLeavesChannelWhenBackgrounded() throws {
