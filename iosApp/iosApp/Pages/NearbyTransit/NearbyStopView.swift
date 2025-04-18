@@ -36,7 +36,6 @@ struct NearbyStopView: View {
 
     var elevatorAlerts: Int { patternsAtStop.elevatorAlerts.count }
     var isWheelchairAccessible: Bool { patternsAtStop.stop.isWheelchairAccessible }
-    var showAccessible: Bool { showStationAccessibility && isWheelchairAccessible }
     var showInaccessible: Bool { showStationAccessibility && !isWheelchairAccessible }
     var showElevatorAlerts: Bool { showStationAccessibility && !patternsAtStop.elevatorAlerts.isEmpty }
 
@@ -46,16 +45,17 @@ struct NearbyStopView: View {
                 .font(Typography.callout)
                 .foregroundStyle(Color.text)
 
-            HStack(spacing: 5) {
-                if showElevatorAlerts {
-                    Image(.accessibilityIconAlert)
-                        .accessibilityHidden(true)
-                } else if showInaccessible {
-                    Image(.accessibilityIconNotAccessible)
-                        .accessibilityHidden(true)
-                        .tag("wheelchair_not_accessible")
-                }
-                if showInaccessible || showElevatorAlerts {
+            if showInaccessible || showElevatorAlerts {
+                HStack(spacing: 5) {
+                    if showElevatorAlerts {
+                        Image(.accessibilityIconAlert)
+                            .accessibilityHidden(true)
+                    } else if showInaccessible {
+                        Image(.accessibilityIconNotAccessible)
+                            .accessibilityHidden(true)
+                            .tag("wheelchair_not_accessible")
+                    }
+
                     Group {
                         if showInaccessible {
                             Text(

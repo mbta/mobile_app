@@ -10,6 +10,6 @@ import SwiftUI
 
 struct HaloSeparator: View {
     var body: some View {
-        Divider().frame(height: 1).background(Color.halo)
+        Color.halo.frame(height: 1)
     }
 }

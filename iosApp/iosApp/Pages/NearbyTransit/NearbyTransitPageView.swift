@@ -51,16 +51,11 @@ struct NearbyTransitPageView: View {
                     }.padding(.horizontal, 16).padding(.bottom, 16)
                 } else {
                     NearbyTransitView(
-                        getNearby: { global, location in
-                            nearbyVM.getNearby(global: global, location: location)
-                        },
-                        state: $nearbyVM.nearbyState,
                         location: $location,
                         isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
                         nearbyVM: nearbyVM,
                         noNearbyStops: noNearbyStops
                     )
-
                     .onReceive(
                         viewportProvider.cameraStatePublisher
                             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -76,14 +71,14 @@ struct NearbyTransitPageView: View {
                 if isManuallyCentering {
                     // The user is manually moving the map, clear the nearby state and
                     // reload it once the've stopped manipulating the map
-                    nearbyVM.nearbyState = .init()
+                    nearbyVM.clearNearbyData()
                     location = nil
                 }
             }
             .onChange(of: viewportProvider.isFollowingPuck) { isFollowingPuck in
                 if isFollowingPuck {
                     // The user just recentered the map, clear the nearby state
-                    nearbyVM.nearbyState = .init()
+                    nearbyVM.clearNearbyData()
                     location = nil
                 }
             }

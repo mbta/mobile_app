@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.fail
 import org.junit.Rule
 import org.junit.Test
 
@@ -48,6 +49,13 @@ class NearbyTransitViewModelTest {
                     global: GlobalResponse,
                     location: Position
                 ): List<String> = emptyList()
+
+                override suspend fun getNearby(
+                    global: GlobalResponse,
+                    stopIds: List<String>
+                ): ApiResult<NearbyStaticData> {
+                    fail("getNearby should be called with location")
+                }
 
                 override suspend fun getNearby(
                     global: GlobalResponse,

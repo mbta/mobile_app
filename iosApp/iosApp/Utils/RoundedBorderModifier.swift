@@ -12,13 +12,16 @@ import SwiftUI
 struct RoundedBorderModifier: ViewModifier {
     var radius: CGFloat = 8
     var color: Color = .halo
-    var opacity: CGFloat = 0.1
+    var opacity: CGFloat = 1
     var width: CGFloat = 1
 
     func body(content: Content) -> some View {
         content
-            .clipShape(.rect(cornerRadius: radius))
-            .border(color.opacity(opacity), width: width)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
+            .background(RoundedRectangle(cornerRadius: radius)
+                // Strokes are drawn centered on the component border,
+                // so the width is doubled to get the visible width to match the desired value.
+                .stroke(color.opacity(opacity), lineWidth: width * 2))
     }
 }
 
@@ -26,7 +29,7 @@ public extension View {
     func withRoundedBorder(
         radius: CGFloat = 8,
         color: Color? = nil,
-        opacity: CGFloat = 0.1,
+        opacity: CGFloat = 1,
         width: CGFloat = 1
     ) -> some View {
         if let color {

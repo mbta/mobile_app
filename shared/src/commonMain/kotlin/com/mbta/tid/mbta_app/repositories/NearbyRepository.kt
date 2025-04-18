@@ -13,6 +13,11 @@ interface INearbyRepository {
     fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String>
 
     suspend fun getNearby(global: GlobalResponse, location: Position): ApiResult<NearbyStaticData>
+
+    suspend fun getNearby(
+        global: GlobalResponse,
+        stopIds: List<String>
+    ): ApiResult<NearbyStaticData>
 }
 
 class NearbyRepository : KoinComponent, INearbyRepository {
@@ -56,9 +61,13 @@ class NearbyRepository : KoinComponent, INearbyRepository {
     }
 
     override suspend fun getNearby(global: GlobalResponse, location: Position) =
-        ApiResult.runCatching {
-            NearbyStaticData(global, NearbyResponse(getStopIdsNearby(global, location)))
-        }
+        getNearby(global, getStopIdsNearby(global, location))
+
+    override suspend fun getNearby(
+        global: GlobalResponse,
+        stopIds: List<String>
+    ): ApiResult<NearbyStaticData> =
+        ApiResult.runCatching { NearbyStaticData(global, NearbyResponse(stopIds)) }
 }
 
 class MockNearbyRepository(val response: NearbyResponse, val stopIds: List<String> = emptyList()) :
@@ -72,6 +81,13 @@ class MockNearbyRepository(val response: NearbyResponse, val stopIds: List<Strin
     ): ApiResult<NearbyStaticData> {
         return ApiResult.Ok(NearbyStaticData(global, response))
     }
+
+    override suspend fun getNearby(
+        global: GlobalResponse,
+        stopIds: List<String>
+    ): ApiResult<NearbyStaticData> {
+        return ApiResult.Ok(NearbyStaticData(global, response))
+    }
 }
 
 class IdleNearbyRepository : INearbyRepository {
@@ -81,6 +97,13 @@ class IdleNearbyRepository : INearbyRepository {
     override suspend fun getNearby(
         global: GlobalResponse,
         location: Position
+    ): ApiResult<NearbyStaticData> {
+        return suspendCancellableCoroutine {}
+    }
+
+    override suspend fun getNearby(
+        global: GlobalResponse,
+        stopIds: List<String>
     ): ApiResult<NearbyStaticData> {
         return suspendCancellableCoroutine {}
     }
