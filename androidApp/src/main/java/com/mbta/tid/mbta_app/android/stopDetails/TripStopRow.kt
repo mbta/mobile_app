@@ -118,11 +118,7 @@ fun TripStopRow(
                     }
                 ) {
                     Row(
-                        Modifier.semantics(mergeDescendants = true) {
-                                if (targeted) {
-                                    heading()
-                                }
-                            }
+                        Modifier.semantics(mergeDescendants = true) { heading() }
                             .clickable { onTapLink(stop) },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
