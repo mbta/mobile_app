@@ -33,6 +33,9 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
 
+        fun isTruncating() =
+            disruption?.alert?.effect in setOf(Alert.Effect.Shuttle, Alert.Effect.Suspension)
+
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
                 prediction,
@@ -53,7 +56,8 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int?,
-        globalData: GlobalResponse?
+        globalData: GlobalResponse?,
+        truncateForDisruptions: Boolean
     ): TargetSplit {
         val targetStopIndex =
             stops
@@ -86,14 +90,32 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                 stops.subList(fromIndex = targetStopIndex + 1, toIndex = stops.lastIndex + 1)
             else stops
 
-        return TargetSplit(firstStop, collapsedStops, targetStop, followingStops)
+        val truncatedStopIndex =
+            followingStops
+                .indexOfFirst { it.isTruncating() }
+                .takeUnless { it == -1 || it == followingStops.lastIndex }
+                .takeIf { truncateForDisruptions }
+        val isTruncated = truncatedStopIndex != null
+        val truncatedFollowingStops =
+            if (truncatedStopIndex != null)
+                followingStops.subList(fromIndex = 0, toIndex = truncatedStopIndex + 1)
+            else followingStops
+
+        return TargetSplit(
+            firstStop,
+            collapsedStops,
+            targetStop,
+            truncatedFollowingStops,
+            isTruncated
+        )
     }
 
     data class TargetSplit(
         val firstStop: Entry? = null,
         val collapsedStops: List<Entry>?,
         val targetStop: Entry?,
-        val followingStops: List<Entry>
+        val followingStops: List<Entry>,
+        val isTruncatedByLastAlert: Boolean = false
     )
 
     private data class WorkingEntry(
@@ -206,6 +228,10 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                 }
 
                 val sortedEntries = entries.entries.sortedBy { it.key }
+                val fallbackTime =
+                    sortedEntries
+                        .mapNotNull { it.value.prediction?.stopTime ?: it.value.schedule?.stopTime }
+                        .lastOrNull()
                 val allElevatorAlerts =
                     alertsData.alerts.values.filter { it.effect == Alert.Effect.ElevatorClosure }
 
@@ -214,10 +240,12 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                     val stop = globalData.stops[working.stopId] ?: return null
                     val parent = stop.resolveParent(globalData.stops)
                     val parentAndChildStopIds = setOf(parent.id) + parent.childStopIds
+                    val disruption =
+                        getDisruption(working, fallbackTime, alertsData, route, tripId, directionId)
                     return Entry(
                         stop,
                         working.stopSequence,
-                        getDisruption(working, alertsData, route, tripId, directionId),
+                        disruption,
                         working.schedule,
                         working.prediction,
                         globalData.stops[working.prediction?.stopId],
@@ -418,18 +446,19 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         private fun getDisruption(
             entry: WorkingEntry,
+            fallbackTime: Instant?,
             alertsData: AlertsStreamDataResponse?,
             route: Route?,
             tripId: String,
             directionId: Int
         ): UpcomingFormat.Disruption? {
-            val entryTime = (entry.prediction ?: entry.schedule)?.stopTime
+            val entryTime = (entry.prediction ?: entry.schedule)?.stopTime ?: fallbackTime
             val entryRouteType = route?.type
 
-            if (entryTime == null) return null
             val alert =
                 alertsData?.alerts?.values?.find { alert ->
-                    alert.isActive(entryTime) &&
+                    (entryTime?.let { alert.isActive(it) }
+                        ?: true) &&
                         alert.anyInformedEntity {
                             it.appliesTo(
                                 directionId = directionId,

@@ -11,10 +11,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -52,7 +55,9 @@ class TripStopRowTest {
                 ),
                 now,
                 onTapLink = {},
-                TripRouteAccents(route)
+                onOpenAlertDetails = {},
+                TripRouteAccents(route),
+                alertSummaries = emptyMap()
             )
         }
 
@@ -83,7 +88,9 @@ class TripStopRowTest {
                 ),
                 now,
                 onTapLink = {},
-                TripRouteAccents(route)
+                onOpenAlertDetails = {},
+                TripRouteAccents(route),
+                alertSummaries = emptyMap()
             )
         }
 
@@ -120,7 +127,9 @@ class TripStopRowTest {
                 ),
                 now,
                 onTapLink = {},
-                TripRouteAccents(route)
+                onOpenAlertDetails = {},
+                TripRouteAccents(route),
+                alertSummaries = emptyMap()
             )
         }
 
@@ -157,7 +166,9 @@ class TripStopRowTest {
                 stopEntry,
                 now,
                 onTapLink = {},
+                onOpenAlertDetails = {},
                 TripRouteAccents(route),
+                alertSummaries = emptyMap(),
                 targeted = selected,
                 firstStop = first
             )
@@ -202,7 +213,14 @@ class TripStopRowTest {
         var linkTappedWith: TripDetailsStopList.Entry? = null
 
         composeTestRule.setContent {
-            TripStopRow(entry, now, onTapLink = { linkTappedWith = it }, TripRouteAccents(route))
+            TripStopRow(
+                entry,
+                now,
+                onTapLink = { linkTappedWith = it },
+                onOpenAlertDetails = {},
+                TripRouteAccents(route),
+                alertSummaries = emptyMap()
+            )
         }
 
         composeTestRule.onNodeWithText(stop.name).performClick()
@@ -246,7 +264,9 @@ class TripStopRowTest {
                 testEntry,
                 now,
                 onTapLink = {},
+                onOpenAlertDetails = {},
                 TripRouteAccents(route),
+                alertSummaries = emptyMap(),
                 showStationAccessibility = true
             )
         }
@@ -268,5 +288,48 @@ class TripStopRowTest {
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("1 elevator closed").assertIsDisplayed()
+    }
+
+    @Test
+    fun testAlertCard() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route()
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val summary =
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.SuccessiveStops("Roxbury Crossing", "Green Street"),
+                AlertSummary.Timeframe.Tomorrow
+            )
+
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                0,
+                UpcomingFormat.Disruption(alert, MapStopRoute.ORANGE),
+                schedule = null,
+                prediction = null,
+                predictionStop = null,
+                vehicle = null,
+                routes = emptyList()
+            )
+
+        composeTestRule.setContent {
+            TripStopRow(
+                entry,
+                now,
+                {},
+                {},
+                TripRouteAccents(route),
+                mapOf(alert.id to summary),
+                showDownstreamAlert = true
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("Shuttle buses from Roxbury Crossing to Green Street through tomorrow")
+            .assertIsDisplayed()
     }
 }

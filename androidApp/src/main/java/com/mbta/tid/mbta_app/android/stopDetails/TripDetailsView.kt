@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -18,6 +17,8 @@ import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -37,7 +38,9 @@ fun TripDetailsView(
     tripFilter: TripDetailsFilter?,
     stopId: String,
     allAlerts: AlertsStreamDataResponse?,
+    alertSummaries: Map<String, AlertSummary?>,
     stopDetailsVM: StopDetailsViewModel,
+    onOpenAlertDetails: (Alert) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     now: Instant,
@@ -105,11 +108,13 @@ fun TripDetailsView(
             headerSpec,
             onHeaderTap,
             ::onTapStop,
+            onOpenAlertDetails,
             routeAccents,
             stopId,
             stops,
             tripFilter,
             now,
+            alertSummaries,
             globalResponse,
             showStationAccessibility,
             modifier
@@ -136,11 +141,13 @@ fun TripDetailsView(
                     placeholderHeaderSpec,
                     null,
                     onTapStop = {},
+                    onOpenAlertDetails = {},
                     placeholderRouteAccents,
                     stopId,
                     placeholderTripStops,
                     tripFilter,
                     now,
+                    emptyMap(),
                     globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
                     showStationAccessibility
                 )
@@ -155,11 +162,13 @@ private fun TripDetailsView(
     headerSpec: TripHeaderSpec?,
     onHeaderTap: (() -> Unit)?,
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
+    onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
     stopId: String,
     stops: TripDetailsStopList,
     tripFilter: TripDetailsFilter?,
     now: Instant,
+    alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
     showStationAccessibility: Boolean,
     modifier: Modifier = Modifier
@@ -177,15 +186,17 @@ private fun TripDetailsView(
         Column(Modifier.zIndex(1F)) {
             TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         }
-        Column(Modifier.offset(y = (-16).dp).padding(horizontal = 4.dp)) {
+        Column(Modifier.offset(y = (-16).dp)) {
             TripStops(
                 stopId,
                 stops,
                 tripFilter?.stopSequence,
                 headerSpec,
                 now,
+                alertSummaries,
                 globalResponse,
                 onTapStop,
+                onOpenAlertDetails,
                 routeAccents,
                 showStationAccessibility
             )

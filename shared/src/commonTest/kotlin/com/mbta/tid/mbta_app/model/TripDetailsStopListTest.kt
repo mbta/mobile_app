@@ -79,7 +79,10 @@ class TripDetailsStopListTest {
                 this.typicality = typicality
             }
 
-        fun alert(effect: Alert.Effect, block: ObjectCollectionBuilder.AlertBuilder.() -> Unit) =
+        fun alert(
+            effect: Alert.Effect,
+            block: ObjectCollectionBuilder.AlertBuilder.() -> Unit = {}
+        ) =
             objects.alert {
                 this.effect = effect
                 this.activePeriod(Instant.DISTANT_PAST, null)
@@ -101,6 +104,7 @@ class TripDetailsStopListTest {
             stopId: String,
             stopSequence: Int,
             disruption: UpcomingFormat.Disruption? = null,
+            alert: Alert? = null,
             schedule: Schedule? = null,
             prediction: Prediction? = null,
             predictionStop: Stop? = null,
@@ -110,7 +114,7 @@ class TripDetailsStopListTest {
             TripDetailsStopList.Entry(
                 stop(stopId),
                 stopSequence,
-                disruption,
+                disruption ?: alert?.let { UpcomingFormat.Disruption(it, null) },
                 schedule,
                 prediction,
                 predictionStop ?: objects.stops[prediction?.stopId],
@@ -824,7 +828,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("A", 10),
                 followingStops = listOf(entry("B", 20), entry("C", 30), entry("A", 40))
             ),
-            list.splitForTarget("A", 10, globalData())
+            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = true)
         )
         assertEquals(
             TripDetailsStopList.TargetSplit(
@@ -833,7 +837,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("A", 40),
                 followingStops = emptyList()
             ),
-            list.splitForTarget("A", 40, globalData())
+            list.splitForTarget("A", 40, globalData(), truncateForDisruptions = true)
         )
     }
 
@@ -848,7 +852,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("A", 998),
                 followingStops = listOf(entry("B", 999))
             ),
-            list.splitForTarget("A", 3, globalData())
+            list.splitForTarget("A", 3, globalData(), truncateForDisruptions = true)
         )
     }
 
@@ -864,7 +868,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("B1", 20),
                 followingStops = listOf(entry("C1", 30)),
             ),
-            list.splitForTarget("B2", 20, globalData())
+            list.splitForTarget("B2", 20, globalData(), truncateForDisruptions = true)
         )
     }
 
@@ -879,7 +883,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30),
                 followingStops = listOf(entry("D", 40)),
             ),
-            list.splitForTarget("C", 30, globalData())
+            list.splitForTarget("C", 30, globalData(), truncateForDisruptions = true)
         )
     }
 
@@ -907,7 +911,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30, vehicle = vehicle),
                 followingStops = listOf(entry("D", 40, vehicle = vehicle)),
             ),
-            list.splitForTarget("C", 30, globalData())
+            list.splitForTarget("C", 30, globalData(), truncateForDisruptions = true)
         )
     }
 
@@ -923,7 +927,78 @@ class TripDetailsStopListTest {
                 targetStop = null,
                 followingStops = list.stops
             ),
-            list.splitForTarget("D", 40, globalData())
+            list.splitForTarget("D", 40, globalData(), truncateForDisruptions = true)
+        )
+    }
+
+    @Test
+    fun `splitForTarget truncates for shuttles but not stop closures`() = test {
+        val stopClosureAlert = alert(Alert.Effect.StationClosure)
+        val shuttleAlert = alert(Alert.Effect.Shuttle)
+        val entryA = entry("A", 10)
+        val entryB = entry("B", 20, alert = stopClosureAlert)
+        val entryC = entry("C", 30, alert = shuttleAlert)
+        val entryD = entry("D", 40, alert = shuttleAlert)
+        val list = stopListOf(entryA, entryB, entryC, entryD)
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                firstStop = null,
+                collapsedStops = emptyList(),
+                targetStop = entryA,
+                followingStops = listOf(entryB, entryC),
+                isTruncatedByLastAlert = true
+            ),
+            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = true)
+        )
+    }
+
+    @Test
+    fun `splitForTarget does not truncate if told not to`() = test {
+        val shuttleAlert = alert(Alert.Effect.Shuttle)
+        val entryA = entry("A", 10)
+        val entryB = entry("B", 20)
+        val entryC = entry("C", 30, alert = shuttleAlert)
+        val entryD = entry("D", 40, alert = shuttleAlert)
+        val list = stopListOf(entryA, entryB, entryC, entryD)
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                firstStop = null,
+                collapsedStops = emptyList(),
+                targetStop = entryA,
+                followingStops = listOf(entryB, entryC, entryD),
+                isTruncatedByLastAlert = false
+            ),
+            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = false)
+        )
+    }
+
+    @Test
+    fun `splitForTarget truncates downstream but ignores upstream`() = test {
+        val shuttleAlert = alert(Alert.Effect.Shuttle)
+        val entryA = entry("A", 10)
+        val entryB = entry("B", 20, alert = shuttleAlert)
+        val entryC = entry("C", 30, alert = shuttleAlert)
+        val entryD = entry("D", 40)
+        val entryE = entry("E", 50)
+        val list = stopListOf(entryA, entryB, entryC, entryD, entryE)
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                firstStop = null,
+                collapsedStops = emptyList(),
+                targetStop = entryA,
+                followingStops = listOf(entryB),
+                isTruncatedByLastAlert = true
+            ),
+            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = true)
+        )
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                firstStop = entryA,
+                collapsedStops = listOf(entryB, entryC),
+                targetStop = entryD,
+                followingStops = listOf(entryE)
+            ),
+            list.splitForTarget("D", 40, globalData(), truncateForDisruptions = true)
         )
     }
 }
