@@ -221,15 +221,20 @@ fun TripStopRow(
             }
         }
         if (disruption != null) {
-            AlertCard(
-                disruption.alert,
-                alertSummaries[disruption.alert.id],
-                AlertCardSpec.Downstream,
-                routeAccents.color,
-                routeAccents.textColor,
-                onViewDetails = { onOpenAlertDetails(disruption.alert) },
-                interiorPadding = PaddingValues(start = 26.dp)
-            )
+            Box(Modifier.height(IntrinsicSize.Min)) {
+                Column(Modifier.align(Alignment.CenterStart).padding(start = 48.5.dp)) {
+                    ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
+                }
+                AlertCard(
+                    disruption.alert,
+                    alertSummaries[disruption.alert.id],
+                    AlertCardSpec.Downstream,
+                    routeAccents.color,
+                    routeAccents.textColor,
+                    onViewDetails = { onOpenAlertDetails(disruption.alert) },
+                    interiorPadding = PaddingValues(start = 26.dp)
+                )
+            }
         }
     }
 }
