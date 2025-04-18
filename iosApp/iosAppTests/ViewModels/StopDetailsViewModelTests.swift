@@ -6,12 +6,15 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import Foundation
 @testable import iosApp
 import Shared
 import XCTest
 
 final class StopDetailsViewModelTests: XCTestCase {
+    private var cancellables = Set<AnyCancellable>()
+
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -215,6 +218,8 @@ final class StopDetailsViewModelTests: XCTestCase {
         let vehicleDisconnectExp = expectation(description: "disconnected from vehicle channel")
         vehicleDisconnectExp.expectedFulfillmentCount = 3
 
+        let predictionsSetExp = expectation(description: "Predictions field populated with expected data")
+
         let tripPredictions = PredictionsStreamDataResponse(objects: objects)
         let tripSchedules = TripSchedulesResponse.Schedules(schedules: [schedule])
         let stopDetailsVM = StopDetailsViewModel(
@@ -243,15 +248,25 @@ final class StopDetailsViewModelTests: XCTestCase {
 
         XCTAssertNil(stopDetailsVM.tripData)
         await stopDetailsVM.handleTripFilterChange(tripFilter)
-        await fulfillment(of: [tripPredictionConnectExp, vehicleConnectExp], timeout: 2)
+        await fulfillment(of: [tripPredictionConnectExp, vehicleConnectExp], timeout: 1)
+        stopDetailsVM.$tripData
+            .sink {
+                if $0?.tripPredictions == tripPredictions {
+                    predictionsSetExp.fulfill()
+                }
+            }
+            .store(in: &cancellables)
+        await fulfillment(of: [predictionsSetExp], timeout: 2)
         XCTAssertEqual(stopDetailsVM.tripData?.tripFilter, tripFilter)
         XCTAssertEqual(stopDetailsVM.tripData?.trip, trip)
         XCTAssertEqual(stopDetailsVM.tripData?.tripSchedules, tripSchedules)
-        XCTAssertEqual(stopDetailsVM.tripData?.tripPredictions, tripPredictions)
+
         XCTAssertEqual(stopDetailsVM.tripData?.vehicle, vehicle)
+
         await stopDetailsVM.clearTripDetails()
+
         XCTAssertNil(stopDetailsVM.tripData)
-        await fulfillment(of: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 2)
+        await fulfillment(of: [tripPredictionDisconnectExp, vehicleDisconnectExp], timeout: 1)
     }
 
     func testSkipLoadingTripData() async throws {
