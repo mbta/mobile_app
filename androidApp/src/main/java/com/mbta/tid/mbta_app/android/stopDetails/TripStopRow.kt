@@ -103,11 +103,10 @@ fun TripStopRow(
             Modifier.padding(horizontal = 6.dp)
                 .then(modifier)
                 .height(IntrinsicSize.Min)
-                .defaultMinSize(minHeight = 48.dp),
-            contentAlignment = Alignment.BottomCenter
+                .defaultMinSize(minHeight = 48.dp)
         ) {
             if (!lastStop && !targeted && disruption == null) {
-                HaloSeparator()
+                HaloSeparator(Modifier.align(Alignment.BottomCenter))
             }
             Row(
                 Modifier.fillMaxHeight().semantics { isTraversalGroup = true },
