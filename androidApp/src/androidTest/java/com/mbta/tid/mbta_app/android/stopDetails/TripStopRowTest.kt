@@ -317,7 +317,15 @@ class TripStopRowTest {
             )
 
         composeTestRule.setContent {
-            TripStopRow(entry, now, {}, {}, TripRouteAccents(route), mapOf(alert.id to summary))
+            TripStopRow(
+                entry,
+                now,
+                {},
+                {},
+                TripRouteAccents(route),
+                mapOf(alert.id to summary),
+                showDownstreamAlert = true
+            )
         }
 
         composeTestRule

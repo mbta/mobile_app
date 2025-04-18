@@ -244,7 +244,8 @@ fun TripStops(
                 onOpenAlertDetails,
                 routeAccents,
                 alertSummaries,
-                showStationAccessibility
+                showStationAccessibility,
+                showDownstreamAlerts = true
             )
         }
     }
@@ -269,7 +270,8 @@ private fun StopList(
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
-    showStationAccessibility: Boolean
+    showStationAccessibility: Boolean,
+    showDownstreamAlerts: Boolean = false
 ) {
     for (stop in list) {
         TripStopRow(
@@ -280,6 +282,7 @@ private fun StopList(
             routeAccents,
             alertSummaries,
             showStationAccessibility = showStationAccessibility,
+            showDownstreamAlert = showDownstreamAlerts,
             lastStop = stop.stopSequence == lastStopSequence
         )
     }

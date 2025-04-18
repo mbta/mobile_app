@@ -76,6 +76,7 @@ fun TripStopRow(
     alertSummaries: Map<String, AlertSummary?>,
     modifier: Modifier = Modifier,
     showStationAccessibility: Boolean = false,
+    showDownstreamAlert: Boolean = false,
     targeted: Boolean = false,
     firstStop: Boolean = false,
     lastStop: Boolean = false
@@ -89,10 +90,14 @@ fun TripStopRow(
     val stateAfter =
         when {
             lastStop -> RouteLineState.Empty
-            stop.disruption?.alert?.effect == Alert.Effect.Shuttle -> RouteLineState.Shuttle
+            showDownstreamAlert && stop.disruption?.alert?.effect == Alert.Effect.Shuttle ->
+                RouteLineState.Shuttle
             else -> RouteLineState.Regular
         }
-    val disruption = stop.disruption?.takeIf { it.alert.significance >= AlertSignificance.Major }
+    val disruption =
+        stop.disruption?.takeIf {
+            it.alert.significance >= AlertSignificance.Major && showDownstreamAlert
+        }
     Column {
         Box(
             Modifier.padding(horizontal = 6.dp)
@@ -440,10 +445,7 @@ private fun TripStopRowDisruptionsPreview() {
                 TripStopRow(
                     stop =
                         TripDetailsStopList.Entry(
-                            objects.stop {
-                                name = "Charles/MGH"
-                                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-                            },
+                            objects.stop { name = "Charles/MGH" },
                             stopSequence = 10,
                             disruption =
                                 UpcomingFormat.Disruption(
@@ -476,7 +478,7 @@ private fun TripStopRowDisruptionsPreview() {
                         color = Color.fromHex("DA291C")
                     ),
                     alertSummaries = emptyMap(),
-                    showStationAccessibility = true,
+                    showDownstreamAlert = true
                 )
                 TripStopRow(
                     stop =
@@ -510,7 +512,7 @@ private fun TripStopRowDisruptionsPreview() {
                         color = Color.fromHex("DA291C")
                     ),
                     alertSummaries = emptyMap(),
-                    showStationAccessibility = true
+                    showDownstreamAlert = true
                 )
                 TripStopRow(
                     stop =
@@ -542,7 +544,7 @@ private fun TripStopRowDisruptionsPreview() {
                         color = Color.fromHex("DA291C")
                     ),
                     alertSummaries = emptyMap(),
-                    showStationAccessibility = true
+                    showDownstreamAlert = true
                 )
             }
         }
