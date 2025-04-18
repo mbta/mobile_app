@@ -48,6 +48,7 @@ import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.math.min
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -78,9 +79,15 @@ fun UpcomingTripView(
     routeType: RouteType? = null,
     isFirst: Boolean = true,
     isOnly: Boolean = true,
-    hideRealtimeIndicators: Boolean = false
+    hideRealtimeIndicators: Boolean = false,
+    /**
+     * The most opaque that text within this view is allowed to be. Useful for dimming normal times
+     * without double-dimming disruptions and scheduled times.
+     */
+    maxTextAlpha: Float = 1.0f
 ) {
     val modifier = modifier.widthIn(min = 48.dp).padding(vertical = 2.dp)
+    val maxAlphaModifier = if (maxTextAlpha < 1.0f) Modifier.alpha(maxTextAlpha) else Modifier
     val context = LocalContext.current
     // TODO: actually pull through vehicle type
     val vehicleType = routeType?.typeText(context, isOnly) ?: ""
@@ -88,7 +95,7 @@ fun UpcomingTripView(
         is UpcomingTripViewState.Some ->
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         TightWrapText(
                             state.trip.text,
                             modifier = Modifier.placeholderIfLoading(),
@@ -98,7 +105,7 @@ fun UpcomingTripView(
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
                 is TripInstantDisplay.Boarding ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.boarding_abbr),
                             Modifier.semantics {
@@ -115,7 +122,7 @@ fun UpcomingTripView(
                         )
                     }
                 is TripInstantDisplay.Arriving ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.arriving_abbr),
                             Modifier.semantics {
@@ -132,7 +139,7 @@ fun UpcomingTripView(
                         )
                     }
                 is TripInstantDisplay.Now ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.now),
                             Modifier.semantics {
@@ -149,7 +156,7 @@ fun UpcomingTripView(
                         )
                     }
                 is TripInstantDisplay.Approaching ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             text =
                                 AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
@@ -168,7 +175,7 @@ fun UpcomingTripView(
                         )
                     }
                 is TripInstantDisplay.Time ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             formatTime(state.trip.predictionTime),
                             Modifier.semantics {
@@ -189,7 +196,10 @@ fun UpcomingTripView(
                     }
                 is TripInstantDisplay.TimeWithStatus ->
                     Column(modifier, horizontalAlignment = Alignment.End) {
-                        WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        WithRealtimeIndicator(
+                            modifier.then(maxAlphaModifier),
+                            hideRealtimeIndicators
+                        ) {
                             Text(
                                 formatTime(state.trip.predictionTime),
                                 Modifier.semantics {
@@ -210,7 +220,7 @@ fun UpcomingTripView(
                         }
                         Text(
                             state.trip.status,
-                            color = LocalContentColor.current.copy(alpha = 0.6f),
+                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
                             textAlign = TextAlign.End,
                             style = Typography.footnoteSemibold
                         )
@@ -219,7 +229,7 @@ fun UpcomingTripView(
                     Text(
                         formatTime(state.trip.scheduledTime),
                         modifier
-                            .alpha(0.6F)
+                            .alpha(min(maxTextAlpha, 0.6F))
                             .semantics {
                                 contentDescription =
                                     UpcomingTripAccessibilityFormatters.scheduledTimeLabel(
@@ -236,7 +246,7 @@ fun UpcomingTripView(
                             else Typography.footnoteSemibold
                     )
                 is TripInstantDisplay.Minutes ->
-                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                    WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             text =
                                 AnnotatedString.fromHtml(
@@ -264,7 +274,7 @@ fun UpcomingTripView(
                             ),
                         modifier =
                             modifier
-                                .alpha(0.6F)
+                                .alpha(min(maxTextAlpha, 0.6F))
                                 .semantics {
                                     contentDescription =
                                         UpcomingTripAccessibilityFormatters.scheduledMinutesLabel(
@@ -280,7 +290,7 @@ fun UpcomingTripView(
                 is TripInstantDisplay.Cancelled ->
                     Row(
                         modifier
-                            .alpha(0.6f)
+                            .alpha(min(maxTextAlpha, 0.6f))
                             .semantics {
                                 contentDescription =
                                     UpcomingTripAccessibilityFormatters.cancelledLabel(
@@ -313,28 +323,29 @@ fun UpcomingTripView(
             DisruptionView(
                 state.formattedAlert.predictionReplacement,
                 iconName = state.iconName,
-                modifier
+                modifier,
+                maxTextAlpha
             )
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
                 is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
                     Text(
                         stringResource(R.string.no_predictions),
-                        modifier,
+                        modifier.then(maxAlphaModifier),
                         textAlign = TextAlign.End,
                         style = Typography.footnote
                     )
                 is UpcomingFormat.NoTripsFormat.ServiceEndedToday ->
                     Text(
                         stringResource(R.string.service_ended),
-                        modifier,
+                        modifier.then(maxAlphaModifier),
                         textAlign = TextAlign.End,
                         style = Typography.footnote
                     )
                 is UpcomingFormat.NoTripsFormat.NoSchedulesToday ->
                     Text(
                         stringResource(R.string.no_service_today),
-                        modifier,
+                        modifier.then(maxAlphaModifier),
                         textAlign = TextAlign.End,
                         style = Typography.footnote
                     )
@@ -343,7 +354,7 @@ fun UpcomingTripView(
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
                 UpcomingTripView(
                     UpcomingTripViewState.Some(TripInstantDisplay.Minutes(10)),
-                    modifier.loadingShimmer().placeholderIfLoading(),
+                    modifier.then(maxAlphaModifier).loadingShimmer().placeholderIfLoading(),
                     routeType,
                     isFirst,
                     isOnly,
@@ -372,7 +383,8 @@ fun predictionTextMinutes(context: Context, minutes: Int): String {
 fun DisruptionView(
     spec: FormattedAlert.PredictionReplacement,
     iconName: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxTextAlpha: Float = 1.0f
 ) {
     val icon = painterResource(drawableByName(iconName))
     Row(
@@ -383,7 +395,7 @@ fun DisruptionView(
         Text(
             spec.text,
             modifier =
-                Modifier.alpha(0.6f)
+                Modifier.alpha(min(maxTextAlpha, 0.6f))
                     .then(
                         spec.contentDescription?.let {
                             Modifier.semantics { contentDescription = it }

@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.android.R
 fun WithRealtimeIndicator(
     modifier: Modifier = Modifier,
     hideIndicator: Boolean = false,
+    alignment: Alignment.Horizontal = Alignment.End,
     prediction: @Composable RowScope.() -> Unit
 ) {
     val subjectSpacing = 4.dp
@@ -27,7 +28,7 @@ fun WithRealtimeIndicator(
 
     Row(
         modifier,
-        horizontalArrangement = Arrangement.spacedBy(subjectSpacing),
+        horizontalArrangement = Arrangement.spacedBy(subjectSpacing, alignment),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (!hideIndicator) {
