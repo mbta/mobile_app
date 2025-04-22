@@ -70,11 +70,7 @@ struct StopDetailsFilteredHeader: View {
             The station name between the asterisks is bolded
             """
         ), stop.name)
-        do {
-            return try AttributedString(markdown: text)
-        } catch {
-            return AttributedString(text.filter { $0 != "*" })
-        }
+        return AttributedString.tryMarkdown(text)
     }
 }
 

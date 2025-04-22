@@ -53,7 +53,8 @@ struct TripStops: View {
         splitStops = stops.splitForTarget(
             targetStopId: targetId,
             targetStopSequence: KotlinInt(value: stopSequence),
-            globalData: global
+            globalData: global,
+            truncateForDisruptions: false
         )
     }
 

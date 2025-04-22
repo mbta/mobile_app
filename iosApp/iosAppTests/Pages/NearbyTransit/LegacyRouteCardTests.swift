@@ -1,5 +1,5 @@
 //
-//  RouteCardTests.swift
+//  LegacyRouteCardTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/13/24.
@@ -13,13 +13,13 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class RouteCardTests: XCTestCase {
+final class LegacyRouteCardTests: XCTestCase {
     func testRouteContents() throws {
         let route = ObjectCollectionBuilder.Single().route { route in
             route.longName = "Red"
         }
 
-        let sut = RouteCard(route: route, pinned: false, onPin: { _ in }) {
+        let sut = LegacyRouteCard(route: route, pinned: false, onPin: { _ in }) {
             Text("Route details")
         }
 
@@ -38,7 +38,7 @@ final class RouteCardTests: XCTestCase {
             pinRouteExp.fulfill()
         }
 
-        let sut = RouteCard(route: route, pinned: false, onPin: onPin) {
+        let sut = LegacyRouteCard(route: route, pinned: false, onPin: onPin) {
             Text("Route details")
         }
 

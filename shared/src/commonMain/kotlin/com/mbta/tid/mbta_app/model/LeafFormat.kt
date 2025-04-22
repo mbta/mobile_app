@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /** Represents a [RouteCardData.Leaf] ready to be displayed. */
 sealed class LeafFormat {
@@ -34,7 +36,9 @@ sealed class LeafFormat {
 
     /** A [RouteCardData.Leaf] which has multiple destinations within its direction. */
     data class Branched(val branches: List<Branch>) : LeafFormat() {
-        data class Branch(
+        data class Branch
+        @OptIn(ExperimentalUuidApi::class)
+        constructor(
             /**
              * The route to display next to [headsign] and [format]. Only set if the
              * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
@@ -42,7 +46,8 @@ sealed class LeafFormat {
              */
             val route: Route?,
             val headsign: String,
-            val format: UpcomingFormat
+            val format: UpcomingFormat,
+            val id: String = "$headsign-$format-${Uuid.random()}"
         )
 
         override fun tileData(): List<TileData> {
