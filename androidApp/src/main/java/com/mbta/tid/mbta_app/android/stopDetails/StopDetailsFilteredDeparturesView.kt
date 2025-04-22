@@ -193,6 +193,31 @@ fun StopDetailsFilteredDeparturesView(
                 .filter { it.directionId == stopFilter.directionId }
         }
 
+    fun openAlertDetails(alert: Alert, spec: AlertCardSpec) {
+        val lineId: String?
+        val routeIds: List<String>
+
+        when (lineOrRoute) {
+            is RouteCardData.LineOrRoute.Line -> {
+                lineId = lineOrRoute.id
+                routeIds = lineOrRoute.routes.map { it.id }
+            }
+            is RouteCardData.LineOrRoute.Route -> {
+                lineId = null
+                routeIds = listOf(lineOrRoute.id)
+            }
+        }
+
+        openModal(
+            ModalRoutes.AlertDetails(
+                alertId = alert.id,
+                lineId = if (spec == AlertCardSpec.Elevator) null else lineId,
+                routeIds = if (spec == AlertCardSpec.Elevator) null else routeIds,
+                stopId = stop.id
+            )
+        )
+    }
+
     suspend fun updateAlertSummaries(clearExisting: Boolean = false) {
         if (global == null) return
         if (clearExisting) {
@@ -281,31 +306,7 @@ fun StopDetailsFilteredDeparturesView(
                         spec,
                         color = routeColor,
                         textColor = routeTextColor,
-                        onViewDetails = {
-                            val lineId: String?
-                            val routeIds: List<String>
-
-                            when (lineOrRoute) {
-                                is RouteCardData.LineOrRoute.Line -> {
-                                    lineId = lineOrRoute.id
-                                    routeIds = lineOrRoute.routes.map { it.id }
-                                }
-                                is RouteCardData.LineOrRoute.Route -> {
-                                    lineId = null
-                                    routeIds = listOf(lineOrRoute.id)
-                                }
-                            }
-
-                            openModal(
-                                ModalRoutes.AlertDetails(
-                                    alertId = alert.id,
-                                    lineId = if (spec == AlertCardSpec.Elevator) null else lineId,
-                                    routeIds =
-                                        if (spec == AlertCardSpec.Elevator) null else routeIds,
-                                    stopId = stop.id
-                                )
-                            )
-                        }
+                        onViewDetails = { openAlertDetails(alert, spec) }
                     )
                 }
 
@@ -318,6 +319,9 @@ fun StopDetailsFilteredDeparturesView(
                         Modifier.padding(horizontal = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+                        // for alerts here and downstream, if the alertSummaries are still loading,
+                        // skip the alert completely, so the header doesn’t flicker before the
+                        // summary loads
                         alertsHere.forEach {
                             AlertCard(
                                 it,
@@ -378,7 +382,9 @@ fun StopDetailsFilteredDeparturesView(
                         tripFilter = tripFilter,
                         stopId = stopId,
                         allAlerts = allAlerts,
+                        alertSummaries = alertSummaries,
                         stopDetailsVM = viewModel,
+                        onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
                         openSheetRoute = openSheetRoute,
                         openModal = openModal,
                         now = now,

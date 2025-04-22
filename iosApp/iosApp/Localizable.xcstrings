@@ -1488,7 +1488,7 @@
       }
     },
     "%@ to" : {
-      "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]",
+      "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8402,6 +8402,9 @@
           }
         }
       }
+    },
+    "Group by Direction" : {
+      "comment" : "A setting on the More page to group departures by direction (only visible for developers)"
     },
     "hazmat condition" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",

@@ -56,18 +56,14 @@ struct MoreSectionView: View {
                             case let .navLink(label: label, destination: destination):
                                 MoreNavLink(label: label, destination: destination)
                             }
-                            if index < section.items.count {
+                            if index < section.items.count - 1 {
                                 HaloSeparator().frame(maxWidth: .infinity)
                             }
                         }
                     }
                 }
                 .background(section.id == .feedback ? Color.key : Color.fill3)
-                .clipShape(.rect(cornerRadius: 8.0))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8.0)
-                        .stroke(Color.halo, lineWidth: 1.0)
-                )
+                .withRoundedBorder()
             }
         }
     }

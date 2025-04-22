@@ -38,11 +38,13 @@ final class NearbyTransitPageViewTests: XCTestCase {
     }
 
     func testClearsNearbyStateWhenManuallyCentering() throws {
-        let viewportProvider = ViewportProvider(viewport: nil,
-                                                isManuallyCentering: false)
-        let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0),
-                                     nearbyByRouteAndStop: .init(data: []))
+        let viewportProvider = ViewportProvider(
+            viewport: nil,
+            isManuallyCentering: false
+        )
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0))
+        nearbyVM.nearbyStaticData = .init(data: [])
 
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
@@ -53,7 +55,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: true)
 
         XCTAssertNil(nearbyVM.nearbyState.loadedLocation)
-        XCTAssertNil(nearbyVM.nearbyState.nearbyByRouteAndStop)
+        XCTAssertNil(nearbyVM.nearbyStaticData)
     }
 
     @MainActor func testReloadsWhenLocationChanges() throws {
@@ -67,7 +69,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 super.init()
             }
 
-            override func getNearby(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+            override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
                 debugPrint("ViewModel getting nearby")
                 closure(location)
                 expectation.fulfill()
@@ -122,7 +124,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 super.init(navigationStack: navigationStack)
             }
 
-            override func getNearby(global _: GlobalResponse, location _: CLLocationCoordinate2D) {
+            override func getNearbyStops(global _: GlobalResponse, location _: CLLocationCoordinate2D) {
                 expectation.fulfill()
             }
         }

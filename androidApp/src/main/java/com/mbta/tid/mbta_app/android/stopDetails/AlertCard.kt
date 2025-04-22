@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -48,7 +49,8 @@ fun AlertCard(
     color: Color,
     textColor: Color,
     onViewDetails: (() -> Unit)?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    interiorPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val formattedAlert = FormattedAlert(alert, alertSummary)
 
@@ -68,7 +70,8 @@ fun AlertCard(
                         Modifier.clickable { onViewDetails() }
                     else Modifier
                 )
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .padding(interiorPadding),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start
     ) {
