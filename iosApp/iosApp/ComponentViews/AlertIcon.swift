@@ -12,10 +12,12 @@ import SwiftUI
 struct AlertIcon: View {
     var alertState: StopAlertState
     var color: Color
+    var accessibilityHidden: Bool = false
 
-    init(alertState: StopAlertState, color: Color? = nil) {
+    init(alertState: StopAlertState, color: Color? = nil, accessibilityHidden: Bool = false) {
         self.alertState = alertState
         self.color = color ?? .text
+        self.accessibilityHidden = accessibilityHidden
     }
 
     private var iconName: String? {
@@ -33,5 +35,6 @@ struct AlertIcon: View {
             .resizable()
             .foregroundStyle(color)
             .accessibilityLabel(Text("Alert"))
+            .accessibilityHidden(accessibilityHidden)
     }
 }

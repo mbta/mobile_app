@@ -169,7 +169,6 @@ struct StopDetailsFilteredView: View {
             }
             ErrorBanner(errorBannerVM).padding(.horizontal, 16)
         }
-        .padding(.bottom, 11)
         .fixedSize(horizontal: false, vertical: true)
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }

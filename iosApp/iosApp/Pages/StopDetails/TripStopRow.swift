@@ -32,32 +32,26 @@ struct TripStopRow: View {
 
     @ViewBuilder
     var stopRow: some View {
+        let activeElevatorAlerts = stop.activeElevatorAlerts(now: now)
+
         ZStack(alignment: .bottom) {
             if !lastStop, !targeted {
                 HaloSeparator()
             }
             HStack(alignment: .center, spacing: 0) {
                 HStack(alignment: .center) {
-                    let activeElevatorAlerts = stop.activeElevatorAlerts(now: now)
                     if showStationAccessibility, !activeElevatorAlerts.isEmpty {
                         Image(.accessibilityIconAlert)
-                            .accessibilityLabel(Text(
-                                "\(activeElevatorAlerts.count, specifier: "%ld") elevators closed",
-                                comment: "Icon alt text for elevator alert"
-                            ))
-                            // lowest sort priority means this will be read last
-                            .accessibilitySortPriority(0)
+                            .accessibilityHidden(true)
                             .tag("elevator_alert")
                     } else if showStationAccessibility, !stop.stop.isWheelchairAccessible {
                         Image(.accessibilityIconNotAccessible)
-                            .accessibilityLabel(Text("Not accessible"))
-                            .accessibilitySortPriority(0)
+                            .accessibilityHidden(true)
                             .tag("wheelchair_not_accessible")
                     } else {
                         EmptyView().accessibilityHidden(true)
                     }
                 }
-
                 .frame(minWidth: 28, maxWidth: 28)
                 .padding(.leading, 6)
                 routeLine
@@ -86,6 +80,19 @@ struct TripStopRow: View {
                                     routeType: routeAccents.type,
                                     hideRealtimeIndicators: true
                                 ).foregroundStyle(Color.text).opacity(0.6)
+
+                                // Adding the accessibility description into the stop label rather than on the
+                                // accessibility icon so that it is clear which stop it is associated with
+                                if showStationAccessibility, !activeElevatorAlerts.isEmpty {
+                                    HStack {}
+                                        .accessibilityLabel(Text(
+                                            "This stop has \(activeElevatorAlerts.count, specifier: "%ld") elevators closed",
+                                            comment: "Describe an elevator outage at the stop in the list of all stops on the trip"
+                                        ))
+                                } else if showStationAccessibility, !stop.stop.isWheelchairAccessible {
+                                    HStack {}
+                                        .accessibilityLabel(Text("This stop is not accessible"))
+                                }
                             }
                         }
                     )
