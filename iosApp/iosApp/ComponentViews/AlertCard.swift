@@ -19,6 +19,7 @@ enum AlertCardSpec {
 
 struct AlertCard: View {
     let alert: Shared.Alert
+    let alertSummary: AlertSummary?
     let spec: AlertCardSpec
     let color: Color
     let textColor: Color
@@ -30,32 +31,15 @@ struct AlertCard: View {
     @ScaledMetric var miniIconSize = 20
     @ScaledMetric var infoIconSize = 16
 
+    var formattedAlert: FormattedAlert {
+        FormattedAlert(alert: alert, alertSummary: alertSummary)
+    }
+
     var iconSize: Double {
         switch spec {
         case .major: majorIconSize
         case .elevator: elevatorIconSize
         default: miniIconSize
-        }
-    }
-
-    var headerString: String {
-        let formattedAlert = FormattedAlert(alert: alert)
-        return switch spec {
-        case .downstream: formattedAlert.downstreamLabel
-        case .elevator: alert.header ?? formattedAlert.effect
-        case .delay: delayHeader(formattedAlert)
-        default: formattedAlert.effect
-        }
-    }
-
-    func delayHeader(_ formattedAlert: FormattedAlert) -> String {
-        if let cause = formattedAlert.dueToCause {
-            String(format: NSLocalizedString(
-                "Delays due to %@",
-                comment: "Describes the cause of a delay. Ex: 'Delays due to [traffic]'"
-            ), cause)
-        } else {
-            NSLocalizedString("Delays", comment: "Generic delay alert label when cause is unknown")
         }
     }
 
@@ -67,7 +51,7 @@ struct AlertCard: View {
                     AlertIcon(alertState: alert.alertState, color: color)
                         .scaledToFit()
                         .frame(width: iconSize, height: iconSize, alignment: .center)
-                    Text(headerString)
+                    Text(formattedAlert.alertCardHeader(spec: spec))
                         .font(spec == .major ? Typography.title2Bold : Typography.callout)
                         .multilineTextAlignment(.leading)
                 }
@@ -78,8 +62,9 @@ struct AlertCard: View {
             }
             if spec == .major {
                 color.opacity(0.25).frame(height: 2)
-                Text(alert.header ?? "")
+                Text(formattedAlert.alertCardMajorBody)
                     .font(Typography.callout)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if let onViewDetails {
                     Button(
@@ -124,6 +109,7 @@ struct AlertCard: View {
                 alert.header = "Orange Line suspended from point A to point B"
                 alert.effect = .suspension
             },
+            alertSummary: nil,
             spec: .major,
             color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
         )
@@ -134,6 +120,7 @@ struct AlertCard: View {
             alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                 alert.effect = .serviceChange
             },
+            alertSummary: nil,
             spec: .secondary,
             color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
         )
@@ -145,10 +132,34 @@ struct AlertCard: View {
                 alert.effect = .elevatorClosure
                 alert.header = "Ruggles elevator 321 (Orange Line Platform to lobby) unavailable due to maintenance"
             },
+            alertSummary: nil,
             spec: .elevator,
             color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
         )
         .padding(32)
         .background(Color.fill2)
+
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.header = "Test header"
+        }
+
+        AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(effect: .shuttle,
+                                       location: .some(AlertSummary.LocationSuccessiveStops(
+                                           startStopName: "Start",
+                                           endStopName: "End"
+                                       )),
+                                       timeframe: .some(AlertSummary
+                                           .TimeframeTime(time: ISO8601DateFormatter()
+                                               .date(from: "2025-04-16T20:00:00Z")!
+                                               .toKotlinInstant()))),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
     }
 }

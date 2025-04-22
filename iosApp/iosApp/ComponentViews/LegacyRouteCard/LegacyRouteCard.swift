@@ -1,5 +1,5 @@
 //
-//  RouteCard.swift
+//  LegacyRouteCard.swift
 //  iosApp
 //
 //  Created by Brandon Rodriguez on 4/16/24.
@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-struct RouteCard<Content: View>: View {
+struct LegacyRouteCard<Content: View>: View {
     let route: Route
     let pinned: Bool
     let onPin: (String) -> Void

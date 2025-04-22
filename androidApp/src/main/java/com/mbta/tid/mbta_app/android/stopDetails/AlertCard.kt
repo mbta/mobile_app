@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -47,7 +49,8 @@ fun AlertCard(
     color: Color,
     textColor: Color,
     onViewDetails: (() -> Unit)?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    interiorPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val formattedAlert = FormattedAlert(alert, alertSummary)
 
@@ -62,10 +65,13 @@ fun AlertCard(
         modifier =
             modifier
                 .haloContainer(2.dp)
-                .clickable {
-                    if (spec != AlertCardSpec.Major && onViewDetails != null) onViewDetails()
-                }
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .then(
+                    if (spec != AlertCardSpec.Major && onViewDetails != null)
+                        Modifier.clickable { onViewDetails() }
+                    else Modifier
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .padding(interiorPadding),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start
     ) {
@@ -76,7 +82,10 @@ fun AlertCard(
             AlertIcon(
                 alertState = alert.alertState,
                 color = color,
-                modifier = Modifier.size(iconSize).align(Alignment.CenterVertically)
+                modifier =
+                    Modifier.clearAndSetSemantics {}
+                        .size(iconSize)
+                        .align(Alignment.CenterVertically)
             )
             Text(
                 formattedAlert.alertCardHeader(spec),

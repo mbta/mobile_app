@@ -106,15 +106,10 @@ struct AlertDetails: View {
     }
 
     private var affectedStopsLabel: AttributedString {
-        let text = String(format: NSLocalizedString(
+        AttributedString.tryMarkdown(String(format: NSLocalizedString(
             "**%ld** affected stops",
             comment: "The number of stops affected by an alert"
-        ), affectedStops.count)
-        do {
-            return try AttributedString(markdown: text)
-        } catch {
-            return AttributedString(text.filter { $0 != "*" })
-        }
+        ), affectedStops.count))
     }
 
     @ViewBuilder var effectTitle: some View {

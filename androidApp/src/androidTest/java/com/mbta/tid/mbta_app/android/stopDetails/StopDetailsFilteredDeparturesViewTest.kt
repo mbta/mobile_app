@@ -1,8 +1,10 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -580,6 +582,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsSuspension(): Unit = runBlocking {
         val now = Clock.System.now()
@@ -691,9 +694,10 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             )
         }
 
-        composeTestRule
-            .onNodeWithText("Service suspended at ${stop.name}", true)
-            .assertIsDisplayed()
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExists(
+            hasText("Service suspended at ${stop.name}", true)
+        )
         composeTestRule.onNodeWithText("View details").assertHasClickAction()
     }
 
