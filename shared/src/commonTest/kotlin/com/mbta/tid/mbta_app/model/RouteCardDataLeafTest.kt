@@ -18,6 +18,23 @@ class RouteCardDataLeafTest {
     private fun ParametricTest.anyNonScheduleBasedRouteType() =
         anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.FERRY)
 
+    /**
+     * Helper function to get rid of auto generated UUIDs in the branch format IDs in generated
+     * format objects. These are required for SwiftUI ForEach views, but when we're generating
+     * separate expected and actual objects in tests, they get in the way.
+     */
+    private fun wipeBranchUUID(format: LeafFormat): LeafFormat {
+        return when (format) {
+            is LeafFormat.Single -> format
+            is LeafFormat.Branched ->
+                format.copy(
+                    format.branches.map {
+                        it.copy(id = it.id.split("-").subList(0, 2).joinToString("-"))
+                    }
+                )
+        }
+    }
+
     @Test
     fun `formats as alert with no trips and major alert`() = parametricTest {
         val now = Clock.System.now()
@@ -566,62 +583,66 @@ class RouteCardDataLeafTest {
             }
 
         assertEquals(
-            LeafFormat.branched {
-                branch(
-                    "Ashmont",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
+            wipeBranchUUID(
+                LeafFormat.branched {
+                    branch(
+                        "Ashmont",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction1),
+                                RouteType.HEAVY_RAIL,
+                                TripInstantDisplay.Approaching
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Braintree",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction2),
+                                RouteType.HEAVY_RAIL,
+                                TripInstantDisplay.Minutes(2)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Ashmont",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction3),
+                                RouteType.HEAVY_RAIL,
+                                TripInstantDisplay.Minutes(9)
+                            ),
+                            null
+                        )
+                    )
+                }
+            ),
+            wipeBranchUUID(
+                RouteCardData.Leaf(
+                        0,
+                        listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                        setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                        listOf(
                             objects.upcomingTrip(prediction1),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Approaching
-                        ),
-                        null
-                    )
-                )
-                branch(
-                    "Braintree",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction2),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(2)
-                        ),
-                        null
-                    )
-                )
-                branch(
-                    "Ashmont",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction3),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(9)
+                            objects.upcomingTrip(prediction4)
                         ),
-                        null
+                        emptyList(),
+                        allDataLoaded = true,
+                        hasSchedulesToday = true,
+                        emptyList()
                     )
-                )
-            },
-            RouteCardData.Leaf(
-                    0,
-                    listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
-                    setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
-                    listOf(
-                        objects.upcomingTrip(prediction1),
-                        objects.upcomingTrip(prediction2),
-                        objects.upcomingTrip(prediction3),
-                        objects.upcomingTrip(prediction4)
-                    ),
-                    emptyList(),
-                    allDataLoaded = true,
-                    hasSchedulesToday = true,
-                    emptyList()
-                )
-                .format(
-                    now,
-                    RedLine.route,
-                    RedLine.global,
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                )
+                    .format(
+                        now,
+                        RedLine.route,
+                        RedLine.global,
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                    )
+            )
         )
     }
 
@@ -720,56 +741,60 @@ class RouteCardDataLeafTest {
             }
 
         assertEquals(
-            LeafFormat.branched {
-                branch(
-                    "Ashmont",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
+            wipeBranchUUID(
+                LeafFormat.branched {
+                    branch(
+                        "Ashmont",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction1),
+                                RouteType.HEAVY_RAIL,
+                                TripInstantDisplay.Minutes(2)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Ashmont",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction2),
+                                RouteType.HEAVY_RAIL,
+                                TripInstantDisplay.Minutes(5)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Ashmont",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction3),
+                                RouteType.HEAVY_RAIL,
+                                TripInstantDisplay.Minutes(9)
+                            ),
+                            null
+                        )
+                    )
+                }
+            ),
+            wipeBranchUUID(
+                RouteCardData.Leaf(
+                        0,
+                        listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                        setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                        listOf(
                             objects.upcomingTrip(prediction1),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(2)
-                        ),
-                        null
-                    )
-                )
-                branch(
-                    "Ashmont",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction2),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(5)
+                            objects.upcomingTrip(prediction3)
                         ),
-                        null
+                        emptyList(),
+                        allDataLoaded = true,
+                        hasSchedulesToday = true,
+                        emptyList()
                     )
-                )
-                branch(
-                    "Ashmont",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
-                            objects.upcomingTrip(prediction3),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(9)
-                        ),
-                        null
-                    )
-                )
-            },
-            RouteCardData.Leaf(
-                    0,
-                    listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
-                    setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
-                    listOf(
-                        objects.upcomingTrip(prediction1),
-                        objects.upcomingTrip(prediction2),
-                        objects.upcomingTrip(prediction3)
-                    ),
-                    emptyList(),
-                    allDataLoaded = true,
-                    hasSchedulesToday = true,
-                    emptyList()
-                )
-                .format(now, RedLine.route, RedLine.global, anyEnumValue())
+                    .format(now, RedLine.route, RedLine.global, anyEnumValue())
+            )
         )
     }
 
@@ -953,70 +978,74 @@ class RouteCardDataLeafTest {
             }
 
         assertEquals(
-            LeafFormat.branched {
-                branch(
-                    GreenLine.c,
-                    "Cleveland Circle",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
+            wipeBranchUUID(
+                LeafFormat.branched {
+                    branch(
+                        GreenLine.c,
+                        "Cleveland Circle",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction1),
+                                RouteType.LIGHT_RAIL,
+                                TripInstantDisplay.Minutes(3)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        GreenLine.b,
+                        "Boston College",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction2),
+                                RouteType.LIGHT_RAIL,
+                                TripInstantDisplay.Minutes(5)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        GreenLine.d,
+                        "Riverside",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction3),
+                                RouteType.LIGHT_RAIL,
+                                TripInstantDisplay.Minutes(10)
+                            ),
+                            null
+                        )
+                    )
+                }
+            ),
+            wipeBranchUUID(
+                RouteCardData.Leaf(
+                        0,
+                        listOf(
+                            GreenLine.bWestbound,
+                            GreenLine.cWestbound,
+                            GreenLine.dWestbound,
+                            GreenLine.eWestbound
+                        ),
+                        emptySet(),
+                        listOf(
                             objects.upcomingTrip(prediction1),
-                            RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(3)
-                        ),
-                        null
-                    )
-                )
-                branch(
-                    GreenLine.b,
-                    "Boston College",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction2),
-                            RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(5)
-                        ),
-                        null
-                    )
-                )
-                branch(
-                    GreenLine.d,
-                    "Riverside",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction3),
-                            RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(10)
+                            objects.upcomingTrip(prediction4)
                         ),
-                        null
+                        emptyList(),
+                        allDataLoaded = true,
+                        hasSchedulesToday = true,
+                        emptyList()
                     )
-                )
-            },
-            RouteCardData.Leaf(
-                    0,
-                    listOf(
-                        GreenLine.bWestbound,
-                        GreenLine.cWestbound,
-                        GreenLine.dWestbound,
-                        GreenLine.eWestbound
-                    ),
-                    emptySet(),
-                    listOf(
-                        objects.upcomingTrip(prediction1),
-                        objects.upcomingTrip(prediction2),
-                        objects.upcomingTrip(prediction3),
-                        objects.upcomingTrip(prediction4)
-                    ),
-                    emptyList(),
-                    allDataLoaded = true,
-                    hasSchedulesToday = true,
-                    emptyList()
-                )
-                .format(
-                    now,
-                    GreenLine.b,
-                    GreenLine.global,
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                )
+                    .format(
+                        now,
+                        GreenLine.b,
+                        GreenLine.global,
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                    )
+            )
         )
     }
 
@@ -1097,65 +1126,69 @@ class RouteCardDataLeafTest {
             }
 
         assertEquals(
-            LeafFormat.branched {
-                branch(
-                    "Stoughton",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
+            wipeBranchUUID(
+                LeafFormat.branched {
+                    branch(
+                        "Stoughton",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction1),
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.Time(prediction1.departureTime!!, true)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Providence",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(schedule2),
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.ScheduleTime(schedule2.departureTime!!, true)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Wickford Junction",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(schedule3),
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.ScheduleTime(schedule3.departureTime!!, true)
+                            ),
+                            null
+                        )
+                    )
+                }
+            ),
+            wipeBranchUUID(
+                RouteCardData.Leaf(
+                        0,
+                        listOf(
+                            ProvidenceStoughtonLine.toProvidence,
+                            ProvidenceStoughtonLine.toStoughton,
+                            ProvidenceStoughtonLine.toWickford
+                        ),
+                        emptySet(),
+                        listOf(
                             objects.upcomingTrip(prediction1),
-                            RouteType.COMMUTER_RAIL,
-                            TripInstantDisplay.Time(prediction1.departureTime!!, true)
-                        ),
-                        null
-                    )
-                )
-                branch(
-                    "Providence",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(schedule2),
-                            RouteType.COMMUTER_RAIL,
-                            TripInstantDisplay.ScheduleTime(schedule2.departureTime!!, true)
+                            objects.upcomingTrip(schedule3)
                         ),
-                        null
+                        emptyList(),
+                        true,
+                        true,
+                        emptyList()
                     )
-                )
-                branch(
-                    "Wickford Junction",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
-                            objects.upcomingTrip(schedule3),
-                            RouteType.COMMUTER_RAIL,
-                            TripInstantDisplay.ScheduleTime(schedule3.departureTime!!, true)
-                        ),
-                        null
+                    .format(
+                        now,
+                        ProvidenceStoughtonLine.route,
+                        ProvidenceStoughtonLine.global,
+                        anyEnumValue()
                     )
-                )
-            },
-            RouteCardData.Leaf(
-                    0,
-                    listOf(
-                        ProvidenceStoughtonLine.toProvidence,
-                        ProvidenceStoughtonLine.toStoughton,
-                        ProvidenceStoughtonLine.toWickford
-                    ),
-                    emptySet(),
-                    listOf(
-                        objects.upcomingTrip(prediction1),
-                        objects.upcomingTrip(schedule2),
-                        objects.upcomingTrip(schedule3)
-                    ),
-                    emptyList(),
-                    true,
-                    true,
-                    emptyList()
-                )
-                .format(
-                    now,
-                    ProvidenceStoughtonLine.route,
-                    ProvidenceStoughtonLine.global,
-                    anyEnumValue()
-                )
+            )
         )
     }
 
@@ -1336,41 +1369,48 @@ class RouteCardDataLeafTest {
             }
 
         assertEquals(
-            LeafFormat.branched {
-                branch(
-                    "Arlington Center",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
+            wipeBranchUUID(
+                LeafFormat.branched {
+                    branch(
+                        "Arlington Center",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction1),
+                                RouteType.BUS,
+                                TripInstantDisplay.Minutes(1)
+                            ),
+                            null
+                        )
+                    )
+                    branch(
+                        "Clarendon Hill",
+                        UpcomingFormat.Some(
+                            UpcomingFormat.Some.FormattedTrip(
+                                objects.upcomingTrip(prediction2),
+                                RouteType.BUS,
+                                TripInstantDisplay.Minutes(32)
+                            ),
+                            null
+                        )
+                    )
+                }
+            ),
+            wipeBranchUUID(
+                RouteCardData.Leaf(
+                        0,
+                        listOf(`87`.outboundTypical, `87`.outboundDeviation),
+                        emptySet(),
+                        listOf(
                             objects.upcomingTrip(prediction1),
-                            RouteType.BUS,
-                            TripInstantDisplay.Minutes(1)
+                            objects.upcomingTrip(prediction2)
                         ),
-                        null
+                        emptyList(),
+                        allDataLoaded = true,
+                        hasSchedulesToday = true,
+                        emptyList()
                     )
-                )
-                branch(
-                    "Clarendon Hill",
-                    UpcomingFormat.Some(
-                        UpcomingFormat.Some.FormattedTrip(
-                            objects.upcomingTrip(prediction2),
-                            RouteType.BUS,
-                            TripInstantDisplay.Minutes(32)
-                        ),
-                        null
-                    )
-                )
-            },
-            RouteCardData.Leaf(
-                    0,
-                    listOf(`87`.outboundTypical, `87`.outboundDeviation),
-                    emptySet(),
-                    listOf(objects.upcomingTrip(prediction1), objects.upcomingTrip(prediction2)),
-                    emptyList(),
-                    allDataLoaded = true,
-                    hasSchedulesToday = true,
-                    emptyList()
-                )
-                .format(now, `87`.route, `87`.global, anyEnumValue())
+                    .format(now, `87`.route, `87`.global, anyEnumValue())
+            )
         )
     }
 
@@ -1392,44 +1432,48 @@ class RouteCardDataLeafTest {
                 }
 
             assertEquals(
-                LeafFormat.branched {
-                    branch(
-                        "Ashmont",
-                        UpcomingFormat.Some(
-                            UpcomingFormat.Some.FormattedTrip(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        branch(
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Approaching
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction2),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(2)
+                                ),
+                                null
+                            )
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                            emptySet(),
+                            listOf(
                                 objects.upcomingTrip(prediction1),
-                                RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Approaching
+                                objects.upcomingTrip(prediction2)
                             ),
-                            null
+                            emptyList(),
+                            allDataLoaded = true,
+                            hasSchedulesToday = true,
+                            emptyList()
                         )
-                    )
-                    branch(
-                        "Ashmont",
-                        UpcomingFormat.Some(
-                            UpcomingFormat.Some.FormattedTrip(
-                                objects.upcomingTrip(prediction2),
-                                RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(2)
-                            ),
-                            null
-                        )
-                    )
-                },
-                RouteCardData.Leaf(
-                        0,
-                        listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
-                        emptySet(),
-                        listOf(
-                            objects.upcomingTrip(prediction1),
-                            objects.upcomingTrip(prediction2)
-                        ),
-                        emptyList(),
-                        allDataLoaded = true,
-                        hasSchedulesToday = true,
-                        emptyList()
-                    )
-                    .format(now, RedLine.route, RedLine.global, anyEnumValue())
+                        .format(now, RedLine.route, RedLine.global, anyEnumValue())
+                )
             )
         }
 
@@ -1480,64 +1524,68 @@ class RouteCardDataLeafTest {
                 }
 
             assertEquals(
-                LeafFormat.branched {
-                    branch(
-                        GreenLine.c,
-                        "Cleveland Circle",
-                        UpcomingFormat.Some(
-                            UpcomingFormat.Some.FormattedTrip(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        branch(
+                            GreenLine.c,
+                            "Cleveland Circle",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.LIGHT_RAIL,
+                                    TripInstantDisplay.Minutes(3)
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.b,
+                            "Boston College",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction2),
+                                    RouteType.LIGHT_RAIL,
+                                    TripInstantDisplay.Minutes(5)
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.b,
+                            "Boston College",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction3),
+                                    RouteType.LIGHT_RAIL,
+                                    TripInstantDisplay.Minutes(10)
+                                ),
+                                null
+                            )
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(
+                                GreenLine.bWestbound,
+                                GreenLine.cWestbound,
+                                GreenLine.dWestbound,
+                                GreenLine.eWestbound
+                            ),
+                            emptySet(),
+                            listOf(
                                 objects.upcomingTrip(prediction1),
-                                RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(3)
-                            ),
-                            null
-                        )
-                    )
-                    branch(
-                        GreenLine.b,
-                        "Boston College",
-                        UpcomingFormat.Some(
-                            UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction2),
-                                RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(5)
+                                objects.upcomingTrip(prediction3)
                             ),
-                            null
+                            emptyList(),
+                            true,
+                            true,
+                            emptyList()
                         )
-                    )
-                    branch(
-                        GreenLine.b,
-                        "Boston College",
-                        UpcomingFormat.Some(
-                            UpcomingFormat.Some.FormattedTrip(
-                                objects.upcomingTrip(prediction3),
-                                RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(10)
-                            ),
-                            null
-                        )
-                    )
-                },
-                RouteCardData.Leaf(
-                        0,
-                        listOf(
-                            GreenLine.bWestbound,
-                            GreenLine.cWestbound,
-                            GreenLine.dWestbound,
-                            GreenLine.eWestbound
-                        ),
-                        emptySet(),
-                        listOf(
-                            objects.upcomingTrip(prediction1),
-                            objects.upcomingTrip(prediction2),
-                            objects.upcomingTrip(prediction3)
-                        ),
-                        emptyList(),
-                        true,
-                        true,
-                        emptyList()
-                    )
-                    .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
+                        .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
+                )
             )
         }
 
