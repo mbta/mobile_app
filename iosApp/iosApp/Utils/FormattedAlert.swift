@@ -22,7 +22,7 @@ struct FormattedAlert: Equatable {
     // swiftlint:disable:next cyclomatic_complexity
     init(alert: Alert, alertSummary: AlertSummary? = nil) {
         self.alert = alert
-        effect = switch alert.effect {
+        let effect = switch alert.effect {
         case .accessIssue: NSLocalizedString("Access Issue", comment: "Possible alert effect")
         case .additionalService: NSLocalizedString("Additional Service", comment: "Possible alert effect")
         case .amberAlert: NSLocalizedString("Amber Alert", comment: "Possible alert effect")
@@ -55,6 +55,7 @@ struct FormattedAlert: Equatable {
         case .trackChange: NSLocalizedString("Track Change", comment: "Possible alert effect")
         case .otherEffect, .unknownEffect: NSLocalizedString("Alert", comment: "Possible alert")
         }
+        self.effect = "**\(effect)**"
 
         sentenceCaseEffect = switch alert.effect {
         case .accessIssue: NSLocalizedString("Access issue", comment: "Possible alert effect")
@@ -112,7 +113,7 @@ struct FormattedAlert: Equatable {
     }
 
     var downstreamLabel: String {
-        String(format: NSLocalizedString("%@ ahead", comment: """
+        String(format: NSLocalizedString("**%@** ahead", comment: """
         Label for an alert that exists on a future stop along the selected route,
         the interpolated value can be any alert effect,
         ex. "[Detour] ahead", "[Shuttle buses] ahead"
@@ -122,11 +123,11 @@ struct FormattedAlert: Equatable {
     var delaysDueToCause: String {
         if let cause = dueToCause {
             String(format: NSLocalizedString(
-                "Delays due to %@",
+                "**Delays** due to %@",
                 comment: "Describes the cause of a delay. Ex: 'Delays due to [traffic]'"
             ), cause)
         } else {
-            NSLocalizedString("Delays", comment: "Generic delay alert label when cause is unknown")
+            NSLocalizedString("**Delays**", comment: "Generic delay alert label when cause is unknown")
         }
     }
 
@@ -258,17 +259,17 @@ struct FormattedAlert: Equatable {
 
     func alertCardHeader(spec: AlertCardSpec) -> AttributedString {
         switch spec {
-        case .downstream: summary ?? AttributedString(downstreamLabel)
+        case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
         case .elevator:
             if let header = alert.header {
-                AttributedString(header)
+                AttributedString.tryMarkdown(header)
             } else {
-                AttributedString(effect)
+                AttributedString.tryMarkdown(effect)
             }
-        case .delay: AttributedString(delaysDueToCause)
+        case .delay: AttributedString.tryMarkdown(delaysDueToCause)
         // TODO: confirm this is desired
-        case .secondary: summary ?? AttributedString(effect)
-        default: AttributedString(effect)
+        case .secondary: summary ?? AttributedString.tryMarkdown(effect)
+        default: AttributedString.tryMarkdown(effect)
         }
     }
 

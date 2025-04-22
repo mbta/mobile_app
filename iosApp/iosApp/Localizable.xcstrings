@@ -307,6 +307,9 @@
         }
       }
     },
+    "**%@** ahead" : {
+      "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\""
+    },
     "**%1$@**%2$@%3$@" : {
       "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe]\", ex \"[Stop closed][ at Haymarket][ through this Friday]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service]\"",
       "extractionState" : "manual",
@@ -663,6 +666,12 @@
         }
       }
     },
+    "**Delays**" : {
+      "comment" : "Generic delay alert label when cause is unknown"
+    },
+    "**Delays** due to %@" : {
+      "comment" : "Describes the cause of a delay. Ex: 'Delays due to [traffic]'"
+    },
     "%@ %@" : {
       "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels\nFirst value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
       "localizations" : {
@@ -771,6 +780,7 @@
     },
     "%@ ahead" : {
       "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5674,6 +5684,7 @@
     },
     "Delays" : {
       "comment" : "Generic delay alert label when cause is unknown",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5721,6 +5732,7 @@
     },
     "Delays due to %@" : {
       "comment" : "Describes the cause of a delay. Ex: 'Delays due to [traffic]'",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

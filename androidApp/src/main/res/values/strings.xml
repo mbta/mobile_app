@@ -63,8 +63,8 @@
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="crossing_malfunction_lowercase">crossing malfunction</string>
     <string name="delay">Delay</string>
-    <string name="delays_due_to_cause">Delays due to %1$s</string>
-    <string name="delays_unknown_reason">Delays</string>
+    <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
+    <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -86,7 +86,8 @@
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
     <string name="eastbound">Eastbound</string>
-    <string name="effect_ahead">%1$s ahead</string>
+    <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
+    <string name="effect_ahead">&lt;b&gt;%1$s&lt;/b&gt; ahead</string>
     <string name="electrical_work">Electrical Work</string>
     <string name="electrical_work_lowercase">electrical work</string>
     <string name="elevator_closed_sentence_case">Elevator closed</string>

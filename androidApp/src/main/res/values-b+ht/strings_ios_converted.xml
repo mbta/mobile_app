@@ -66,8 +66,6 @@
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="crossing_malfunction_lowercase">travèse malfonksyònman</string>
     <string name="delay">Reta</string>
-    <string name="delays_due_to_cause">Reta akòz %1$s</string>
-    <string name="delays_unknown_reason">Reta</string>
     <string name="demonstration">Demonstrasyon</string>
     <string name="demonstration_lowercase">demonstrasyon</string>
     <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
@@ -89,7 +87,6 @@
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
     <string name="eastbound">Pran direksyon lès</string>
-    <string name="effect_ahead">%1$s devan</string>
     <string name="electrical_work">Travay Elektrik</string>
     <string name="electrical_work_lowercase">travay elektrik</string>
     <string name="elevator_closed_sentence_case">Asansè a fèmen</string>

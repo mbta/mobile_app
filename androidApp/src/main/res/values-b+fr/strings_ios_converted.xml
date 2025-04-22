@@ -63,8 +63,6 @@
     <string name="crossing_malfunction">Dysfonctionnement du passage à niveau</string>
     <string name="crossing_malfunction_lowercase">dysfonctionnement du passage à niveau</string>
     <string name="delay">Retard</string>
-    <string name="delays_due_to_cause">Retards dus à %1$s</string>
-    <string name="delays_unknown_reason">Retards</string>
     <string name="demonstration">Manifestation</string>
     <string name="demonstration_lowercase">démonstration</string>
     <string name="departure_tile_on_click_label">afficher plus d’informations sur ce trajet</string>
@@ -86,7 +84,6 @@
     <string name="drawbridge_being_raised">Élévation du pont</string>
     <string name="drawbridge_being_raised_lowercase">le pont-levis est relevé</string>
     <string name="eastbound">En direction de l’est</string>
-    <string name="effect_ahead">%1$s à venir</string>
     <string name="electrical_work">Travaux électriques</string>
     <string name="electrical_work_lowercase">travaux électriques</string>
     <string name="elevator_closed_sentence_case">Ascenseur fermé</string>
