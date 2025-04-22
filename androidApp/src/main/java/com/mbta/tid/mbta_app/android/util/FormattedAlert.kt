@@ -73,9 +73,7 @@ data class FormattedAlert(
             AlertCardSpec.Elevator -> alert.header?.let { AnnotatedString(it) }
                     ?: AnnotatedString(effect)
             AlertCardSpec.Delay -> AnnotatedString(delaysDueToCause)
-            AlertCardSpec.Secondary ->
-                if (alert.effect == Alert.Effect.ServiceChange) AnnotatedString(effect)
-                else summary ?: AnnotatedString(effect)
+            AlertCardSpec.Secondary -> summary ?: AnnotatedString(effect)
             else -> AnnotatedString(effect)
         }
 
