@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,6 +53,8 @@ import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.containsWrappableText
+import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -114,7 +117,7 @@ fun TripHeaderCard(
                                 targetId,
                                 routeAccents,
                                 clickable,
-                                Modifier.weight(1f)
+                                DestinationPredictionBalance.destinationWidth()
                             )
                             TripIndicator(spec, routeAccents, now, clickable)
                         }
@@ -392,13 +395,20 @@ private fun VehiclePuck(
 }
 
 @Composable
-private fun TripIndicator(
+private fun RowScope.TripIndicator(
     spec: TripHeaderSpec,
     routeAccents: TripRouteAccents,
     now: Instant,
     clickable: Boolean = false
 ) {
-    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.End) {
+    val upcomingTripViewState = upcomingTripViewState(spec, routeAccents, now)
+    Column(
+        DestinationPredictionBalance.predictionWidth(
+            upcomingTripViewState?.containsWrappableText() ?: false
+        ),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.End
+    ) {
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> {
@@ -410,7 +420,6 @@ private fun TripIndicator(
             is TripHeaderSpec.Scheduled -> {}
         }
 
-        val upcomingTripViewState = upcomingTripViewState(spec, routeAccents, now)
         if (upcomingTripViewState != null) {
             UpcomingTripView(
                 upcomingTripViewState,

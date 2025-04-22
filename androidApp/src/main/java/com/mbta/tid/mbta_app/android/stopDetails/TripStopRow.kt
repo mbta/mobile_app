@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -49,7 +48,9 @@ import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.containsWrappableText
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
@@ -159,7 +160,7 @@ fun TripStopRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Column(
-                            Modifier.weight(1f),
+                            DestinationPredictionBalance.destinationWidth(),
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
@@ -198,11 +199,18 @@ fun TripStopRow(
                         CompositionLocalProvider(
                             LocalContentColor provides colorResource(R.color.text)
                         ) {
+                            val state = upcomingTripViewState(stop, now, routeAccents)
                             UpcomingTripView(
-                                upcomingTripViewState(stop, now, routeAccents),
-                                Modifier.alpha(0.6f).padding(end = 12.dp).width(IntrinsicSize.Min),
+                                state,
+                                Modifier.padding(end = 12.dp)
+                                    .then(
+                                        DestinationPredictionBalance.predictionWidth(
+                                            state.containsWrappableText()
+                                        )
+                                    ),
                                 routeType = routeAccents.type,
-                                hideRealtimeIndicators = true
+                                hideRealtimeIndicators = true,
+                                maxTextAlpha = 0.6f
                             )
                         }
                     }
