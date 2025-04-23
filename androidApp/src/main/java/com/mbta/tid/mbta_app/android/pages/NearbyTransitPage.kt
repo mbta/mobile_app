@@ -203,7 +203,7 @@ fun NearbyTransitPage(
         }
     }
 
-    var vehiclesData: List<Vehicle> =
+    val vehiclesData: List<Vehicle> =
         subscribeToVehicles(
             routeDirection =
                 when (currentNavEntry) {
@@ -403,11 +403,23 @@ fun NearbyTransitPage(
                 }
 
                 var targetLocation by remember { mutableStateOf<Position?>(null) }
+                LaunchedEffect(nearbyTransit.locationDataManager) {
+                    nearbyTransit.locationDataManager.currentLocation.collect { location ->
+                        if (
+                            nearbyTransit.viewportProvider.isFollowingPuck &&
+                                !nearbyTransit.viewportProvider.isManuallyCentering
+                        ) {
+                            targetLocation = location?.let { Position(it.longitude, it.latitude) }
+                        }
+                    }
+                }
                 LaunchedEffect(nearbyTransit.viewportProvider) {
                     nearbyTransit.viewportProvider.cameraStateFlow.debounce(0.5.seconds).collect {
                         // since this LaunchedEffect is cancelled when not on the nearby transit
                         // page, we don't need to check
-                        targetLocation = it.center.toPosition()
+                        if (!nearbyTransit.viewportProvider.isFollowingPuck) {
+                            targetLocation = it.center.toPosition()
+                        }
                     }
                 }
                 LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
@@ -419,7 +431,10 @@ fun NearbyTransitPage(
                 LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {
                     if (nearbyTransit.viewportProvider.isFollowingPuck) {
                         nearbyViewModel.reset()
-                        targetLocation = null
+                        targetLocation =
+                            nearbyTransit.locationDataManager.currentLocation.value?.let {
+                                Position(it.longitude, it.latitude)
+                            }
                     }
                 }
 
