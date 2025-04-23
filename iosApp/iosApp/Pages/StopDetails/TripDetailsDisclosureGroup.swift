@@ -22,7 +22,7 @@ struct TripDetailsDisclosureGroup: DisclosureGroupStyle {
                             .rotationEffect(caretRotation)
                             .foregroundStyle(Color.deemphasized)
                             .frame(width: 24, height: 24)
-                            .padding(.leading, 8)
+                            .padding(.leading, 14)
                         configuration.label
                     }.frame(maxWidth: .infinity)
                 }

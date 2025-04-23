@@ -45,6 +45,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -75,7 +76,7 @@ fun TripStops(
 
     val splitStops: TripDetailsStopList.TargetSplit =
         remember(targetId, stops, stopSequence, global) {
-            stops.splitForTarget(targetId, stopSequence, global, truncateForDisruptions = true)
+            stops.splitForTarget(targetId, stopSequence, global)
         }
 
     var stopsExpanded by rememberSaveable { mutableStateOf(false) }
@@ -101,7 +102,16 @@ fun TripStops(
     Box {
         Box(
             Modifier.matchParentSize()
-                .padding(4.dp)
+                .padding(horizontal = 4.dp)
+                .padding(
+                    bottom =
+                        if (
+                            stops.stops.lastOrNull()?.disruption?.alert?.significance ==
+                                AlertSignificance.Major
+                        )
+                            4.dp
+                        else 0.dp
+                )
                 .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
         )
         Column(
@@ -238,7 +248,7 @@ fun TripStops(
             }
             StopList(
                 splitStops.followingStops,
-                lastStopSequence?.plus(if (splitStops.isTruncatedByLastAlert) 1 else 0),
+                lastStopSequence,
                 now,
                 onTapLink,
                 onOpenAlertDetails,

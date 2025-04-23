@@ -37,7 +37,9 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
-            routeAccents: TripRouteAccents(route: route)
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:]
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: stop.name))
@@ -63,7 +65,9 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
-            routeAccents: TripRouteAccents(route: route)
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:]
         )
 
         XCTAssertNotNil(try sut.inspect().find(UpcomingTripView.self))
@@ -95,7 +99,9 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
-            routeAccents: .init(route: route)
+            onOpenAlertDetails: { _ in },
+            routeAccents: .init(route: route),
+            alertSummaries: [:]
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Track 7"))
@@ -122,7 +128,9 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:],
             targeted: true
         )
 
@@ -138,7 +146,9 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
-            routeAccents: TripRouteAccents(route: route)
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:]
         )
 
         XCTAssertThrowsError(try notTargeted.inspect().find(ViewType.Image.self, where: { image in
@@ -168,7 +178,9 @@ final class TripStopRowTests: XCTestCase {
             stop: stopEntry,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
-            routeAccents: TripRouteAccents(route: route)
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:]
         )
         XCTAssertNotNil(try basicRow.inspect().find(viewWithAccessibilityLabel: "stop"))
 
@@ -176,7 +188,9 @@ final class TripStopRowTests: XCTestCase {
             stop: stopEntry,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:],
             targeted: true
         )
         XCTAssertNotNil(try selectedRow.inspect().find(viewWithAccessibilityLabel: "stop, selected stop"))
@@ -185,7 +199,9 @@ final class TripStopRowTests: XCTestCase {
             stop: stopEntry,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:],
             firstStop: true
         )
         XCTAssertNotNil(try firstRow.inspect().find(viewWithAccessibilityLabel: "stop, first stop"))
@@ -194,7 +210,9 @@ final class TripStopRowTests: XCTestCase {
             stop: stopEntry,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:],
             targeted: true,
             firstStop: true
         )
@@ -228,7 +246,9 @@ final class TripStopRowTests: XCTestCase {
             stop: stopEntry,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:],
             showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
@@ -265,10 +285,50 @@ final class TripStopRowTests: XCTestCase {
             stop: stopEntry,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
+            alertSummaries: [:],
             showStationAccessibility: true
         )
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
         XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "This stop has 1 elevator closed"))
+    }
+
+    func testAlertCard() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let alert = objects.alert { $0.effect = .shuttle }
+        let summary = AlertSummary(
+            effect: alert.effect,
+            location: AlertSummary
+                .LocationSuccessiveStops(startStopName: "Roxbury Crossing", endStopName: "Green Street"),
+            timeframe: AlertSummary.TimeframeTomorrow.shared
+        )
+
+        let entry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 0,
+            disruption: .init(alert: alert, mapStopRoute: .orange),
+            schedule: nil,
+            prediction: nil,
+            predictionStop: nil,
+            vehicle: nil,
+            routes: []
+        )
+
+        let sut = TripStopRow(
+            stop: entry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
+            routeAccents: .init(route: route),
+            alertSummaries: [alert.id: summary],
+            showDownstreamAlert: true
+        )
+
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "Shuttle buses from Roxbury Crossing to Green Street through tomorrow"))
     }
 }

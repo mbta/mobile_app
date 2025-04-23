@@ -79,7 +79,8 @@ final class TripDetailsViewTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            onOpenAlertDetails: { _ in }
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -144,7 +145,8 @@ final class TripDetailsViewTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            onOpenAlertDetails: { _ in }
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -224,7 +226,8 @@ final class TripDetailsViewTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            onOpenAlertDetails: { _ in }
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -302,7 +305,8 @@ final class TripDetailsViewTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            onOpenAlertDetails: { _ in }
         )
 
         let newNavEntry: SheetNavigationStackEntry = .stopDetails(
