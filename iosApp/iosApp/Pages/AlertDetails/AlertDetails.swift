@@ -37,8 +37,9 @@ struct AlertDetails: View {
         alert.effect == .elevatorClosure
     }
 
-    private var effectLabel: AttributedString {
-        AttributedString.tryMarkdown(FormattedAlert(alert: alert).effect)
+    private var effectLabel: String {
+        // Hack to strip formatting
+        String(AttributedString.tryMarkdown(FormattedAlert(alert: alert).effect).characters)
     }
 
     private var causeLabel: String? {
