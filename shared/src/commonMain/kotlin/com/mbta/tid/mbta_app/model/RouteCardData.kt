@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.map.style.Color
-import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -59,6 +58,14 @@ data class RouteCardData(
 
         fun isStopDetails(): Boolean {
             return this == StopDetailsFiltered || this == StopDetailsUnfiltered
+        }
+
+        fun toTripInstantDisplayContext(): TripInstantDisplay.Context {
+            return when (this) {
+                NearbyTransit -> TripInstantDisplay.Context.NearbyTransit
+                StopDetailsFiltered -> TripInstantDisplay.Context.StopDetailsFiltered
+                StopDetailsUnfiltered -> TripInstantDisplay.Context.StopDetailsUnfiltered
+            }
         }
     }
 
@@ -123,81 +130,66 @@ data class RouteCardData(
                 this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
             }
 
-        fun format(
+        private val majorAlert =
+            alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
+
+        private val secondaryAlertToDisplay =
+            alertsHere.firstOrNull { it.significance >= AlertSignificance.Secondary }
+                ?: alertsDownstream.firstOrNull()
+
+        /**
+         * Get all headsigns that might be shown for this leaf. For bus, the only headsigns that
+         * could be shown would be of the next two upcoming trips. For all other modes, headsigns
+         * for all of the upcoming trips **and** any other typical headsigns that are not reflected
+         * in the upcoming trips (may have already ended for the day, be disrupted, etc. but should
+         * still be considered) could be shown
+         */
+        fun potentialHeadsigns(
             now: Instant,
             representativeRoute: Route,
-            globalData: GlobalResponse?,
-            context: Context
-        ): LeafFormat {
-            val potentialHeadsigns = run {
-                val potentialHeadsigns = mutableSetOf<String>()
-                val cutoffTime = now + 120.minutes
-                val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
-                val isBus = representativeRoute.type == RouteType.BUS
-                val tripsToConsider = if (isBus) tripsUpcoming.take(2) else tripsUpcoming
-                for (trip in tripsToConsider) {
-                    if (trip.isUpcomingWithin(now, cutoffTime)) {
-                        potentialHeadsigns.add(trip.headsign)
-                    }
+            globalData: GlobalResponse?
+        ): Set<String> {
+            val potentialHeadsigns = mutableSetOf<String>()
+            val cutoffTime = now + 120.minutes
+            val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
+            val isBus = representativeRoute.type == RouteType.BUS
+            val tripsToConsider = if (isBus) tripsUpcoming.take(2) else tripsUpcoming
+            for (trip in tripsToConsider) {
+                if (trip.isUpcomingWithin(now, cutoffTime)) {
+                    potentialHeadsigns.add(trip.headsign)
                 }
-                if (!isBus) {
-                    for (routePattern in routePatterns) {
-                        if (routePattern.isTypical()) {
-                            val headsign =
-                                globalData?.trips?.get(routePattern.representativeTripId)?.headsign
-                                    ?: continue
-                            potentialHeadsigns.add(headsign)
-                        }
-                    }
-                }
-                potentialHeadsigns
             }
-
-            val isBranching = potentialHeadsigns.size > 1
-            val needsRoutesInBranching = routePatterns.distinctBy { it.routeId }.size > 1
-            val count =
-                when {
-                    context == Context.StopDetailsFiltered -> null
-                    isBranching -> 3
-                    else -> 2
-                }
-
-            val translatedContext =
-                when (context) {
-                    Context.NearbyTransit -> TripInstantDisplay.Context.NearbyTransit
-                    Context.StopDetailsFiltered -> TripInstantDisplay.Context.StopDetailsFiltered
-                    Context.StopDetailsUnfiltered ->
-                        TripInstantDisplay.Context.StopDetailsUnfiltered
-                }
-
-            val mapStopRoute = MapStopRoute.matching(representativeRoute)
-            val routeType = representativeRoute.type
-            val majorAlert = alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
-
-            val secondaryAlertToDisplay =
-                alertsHere.firstOrNull { it.significance >= AlertSignificance.Secondary }
-                    ?: alertsDownstream.firstOrNull()
-
-            val secondaryAlert =
-                secondaryAlertToDisplay?.let {
-                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
-                }
-
-            val tripsToShow =
-                upcomingTrips
-                    .mapNotNull {
-                        val format =
-                            formatUpcomingTrip(now, it, routeType, translatedContext)
-                                ?: return@mapNotNull null
-                        Pair(it, format)
+            if (!isBus) {
+                for (routePattern in routePatterns) {
+                    if (routePattern.isTypical()) {
+                        val headsign =
+                            globalData?.trips?.get(routePattern.representativeTripId)?.headsign
+                                ?: continue
+                        potentialHeadsigns.add(headsign)
                     }
-                    .run { if (count != null) take(count) else this }
+                }
+            }
+            return potentialHeadsigns
+        }
 
-            if (
-                majorAlert != null &&
-                    isBranching &&
-                    upcomingTrips.map { it.headsign }.distinct().count() == 1
-            ) {
+        /**
+         * For a Leaf that is already determined to represent branched service, produce the
+         * appropriate [LeafFormat]. If there is a major alert affecting all branches, this will
+         * return a [LeafFormat.Single]. Otherwise, this will return a [LeafFormat.Branched]
+         */
+        private fun formatForBranchedService(
+            potentialHeadsigns: Set<String>,
+            tripsWithFormat: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>>,
+            mapStopRoute: MapStopRoute?,
+            secondaryAlert: UpcomingFormat.SecondaryAlert?,
+            globalData: GlobalResponse?
+        ): LeafFormat {
+
+            // If there is more than 1 route id, then we are dealing with a line and should
+            // show the route alongside the UpcomingTripFormat
+            val needsRoutesInBranching = routePatterns.distinctBy { it.routeId }.size > 1
+
+            if (majorAlert != null && upcomingTrips.map { it.headsign }.distinct().count() == 1) {
                 /**
                  * If there's upcoming trips all with the same headsign and there's a major alert
                  * assume one branch is closed and collapse to LeafFormat.Single
@@ -205,18 +197,18 @@ data class RouteCardData(
                 return LeafFormat.Single(
                     upcomingTrips.first().headsign,
                     UpcomingFormat.Some(
-                        tripsToShow.map { it.second },
+                        tripsWithFormat.map { it.second },
                         UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
                     )
                 )
-            } else if (majorAlert != null && isBranching) {
+            } else if (majorAlert != null) {
                 /**
                  * If there's upcoming trips with different headsigns and there's a major alert
                  * assume service is disrupted on a branch but show any trips we have with the
                  * downstream alert treatment.
                  */
                 return LeafFormat.Branched(
-                    tripsToShow.map { (trip, format) ->
+                    tripsWithFormat.map { (trip, format) ->
                         val route =
                             if (needsRoutesInBranching) globalData?.getRoute(trip.trip.routeId)
                             else null
@@ -230,46 +222,104 @@ data class RouteCardData(
                         )
                     }
                 )
-            } else if (majorAlert != null) {
-                // No branches, no trips, all service is disrupted here
-                return LeafFormat.Single(
-                    potentialHeadsigns.singleOrNull(),
-                    UpcomingFormat.Disruption(majorAlert, mapStopRoute)
-                )
+            }
+            return LeafFormat.Branched(
+                tripsWithFormat.map { (trip, format) ->
+                    val route =
+                        if (needsRoutesInBranching) globalData?.getRoute(trip.trip.routeId)
+                        else null
+                    LeafFormat.Branched.Branch(
+                        route,
+                        trip.headsign,
+                        UpcomingFormat.Some(format, secondaryAlert)
+                    )
+                }
+            )
+        }
+
+        /**
+         * For a Leaf that is already determined should be formatted as a single headsign, produce
+         * the appropriate [LeafFormat.Single].
+         */
+        private fun formatForSingleHeadsignService(
+            headsign: String?,
+            formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
+            mapStopRoute: MapStopRoute?,
+            secondaryAlert: UpcomingFormat.SecondaryAlert?
+        ): LeafFormat.Single {
+
+            return if (majorAlert != null) {
+                LeafFormat.Single(headsign, UpcomingFormat.Disruption(majorAlert, mapStopRoute))
+            } else {
+                LeafFormat.Single(headsign, UpcomingFormat.Some(formattedTrips, secondaryAlert))
+            }
+        }
+
+        fun format(
+            now: Instant,
+            representativeRoute: Route,
+            globalData: GlobalResponse?,
+            context: Context
+        ): LeafFormat {
+            val potentialHeadsigns = potentialHeadsigns(now, representativeRoute, globalData)
+
+            val isBranching = potentialHeadsigns.size > 1
+
+            val routeType = representativeRoute.type
+            val translatedContext = context.toTripInstantDisplayContext()
+            val countTripsToDisplay =
+                when {
+                    context == Context.StopDetailsFiltered -> null
+                    isBranching -> 3
+                    else -> 2
+                }
+
+            val tripsToShow =
+                upcomingTrips.withFormat(now, routeType, translatedContext, countTripsToDisplay)
+
+            val mapStopRoute = MapStopRoute.matching(representativeRoute)
+
+            val secondaryAlert =
+                secondaryAlertToDisplay?.let {
+                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                }
+
+            if (majorAlert == null && tripsToShow.isEmpty()) {
+                // base case is the same for branched & non-branched routes:
+                // if there is no alert & no trips to show, use the single format
+                val headsign = if (isBranching) null else potentialHeadsigns.firstOrNull()
+                return when {
+                    !allDataLoaded -> LeafFormat.Single(headsign, UpcomingFormat.Loading)
+                    else ->
+                        LeafFormat.Single(
+                            headsign,
+                            UpcomingFormat.NoTrips(
+                                NoTripsFormat.fromUpcomingTrips(
+                                    upcomingTrips,
+                                    hasSchedulesToday,
+                                    now
+                                ),
+                                secondaryAlert
+                            )
+                        )
+                }
             }
 
-            return when {
-                tripsToShow.isNotEmpty() ->
-                    if (isBranching) {
-                        LeafFormat.Branched(
-                            tripsToShow.map { (trip, format) ->
-                                val route =
-                                    if (needsRoutesInBranching)
-                                        globalData?.getRoute(trip.trip.routeId)
-                                    else null
-                                LeafFormat.Branched.Branch(
-                                    route,
-                                    trip.headsign,
-                                    UpcomingFormat.Some(format, secondaryAlert)
-                                )
-                            }
-                        )
-                    } else {
-                        LeafFormat.Single(
-                            potentialHeadsigns.singleOrNull(),
-                            UpcomingFormat.Some(tripsToShow.map { it.second }, secondaryAlert)
-                        )
-                    }
-                !allDataLoaded ->
-                    LeafFormat.Single(potentialHeadsigns.singleOrNull(), UpcomingFormat.Loading)
-                else ->
-                    LeafFormat.Single(
-                        potentialHeadsigns.singleOrNull(),
-                        UpcomingFormat.NoTrips(
-                            NoTripsFormat.fromUpcomingTrips(upcomingTrips, hasSchedulesToday, now),
-                            secondaryAlert
-                        )
-                    )
+            return if (isBranching) {
+                formatForBranchedService(
+                    potentialHeadsigns,
+                    tripsToShow,
+                    mapStopRoute,
+                    secondaryAlert,
+                    globalData
+                )
+            } else {
+                formatForSingleHeadsignService(
+                    potentialHeadsigns.singleOrNull(),
+                    tripsToShow.map { it.second },
+                    mapStopRoute,
+                    secondaryAlert
+                )
             }
         }
     }
