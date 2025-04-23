@@ -28,7 +28,7 @@ on:
 
 concurrency:
   # non-deploy builds shouldn’t conflict, but builds for deployment can’t overlap or they’ll claim the same version number
-  group: build-ios-${{ inputs.scheme }}${{ inputs.deploy && '' || github.run_id }}
+  group: build-ios-${{ inputs.scheme }}${{ inputs.deploy && '-deployment' || github.run_id }}
   cancel-in-progress: false
 
 jobs:
