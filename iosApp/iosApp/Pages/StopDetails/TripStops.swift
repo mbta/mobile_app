@@ -102,9 +102,8 @@ struct TripStops: View {
     var body: some View {
         ZStack {
             Color.fill2
-                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .padding(1)
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
+                .withRoundedBorder(color: Color.halo, width: 2)
                 .padding(.horizontal, 6)
                 .padding(.bottom, splitStops.followingStops.last?.disruption?.alert.significance == .major ? 6 : 0)
             VStack(alignment: .center, spacing: 0) {
