@@ -75,7 +75,7 @@ fun TripStops(
 
     val splitStops: TripDetailsStopList.TargetSplit =
         remember(targetId, stops, stopSequence, global) {
-            stops.splitForTarget(targetId, stopSequence, global, truncateForDisruptions = true)
+            stops.splitForTarget(targetId, stopSequence, global, truncateForDisruptions = false)
         }
 
     var stopsExpanded by rememberSaveable { mutableStateOf(false) }
@@ -101,7 +101,7 @@ fun TripStops(
     Box {
         Box(
             Modifier.matchParentSize()
-                .padding(4.dp)
+                .padding(horizontal = 4.dp)
                 .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
         )
         Column(
@@ -245,7 +245,7 @@ fun TripStops(
                 routeAccents,
                 alertSummaries,
                 showStationAccessibility,
-                showDownstreamAlerts = true
+                showDownstreamAlerts = false
             )
         }
     }

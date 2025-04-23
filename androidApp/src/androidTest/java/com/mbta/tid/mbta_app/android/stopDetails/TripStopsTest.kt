@@ -546,7 +546,7 @@ class TripStopsTest {
 
         composeTestRule
             .onNodeWithText("Stop closed at Stop C through end of service")
-            .assertIsDisplayed()
+            .assertDoesNotExist()
     }
 
     @Test
