@@ -129,8 +129,9 @@ struct TripStopRow: View {
                                 UpcomingTripView(
                                     prediction: upcomingTripViewState,
                                     routeType: routeAccents.type,
-                                    hideRealtimeIndicators: true
-                                ).foregroundStyle(Color.text).opacity(0.6)
+                                    hideRealtimeIndicators: true,
+                                    maxTextAlpha: 0.6
+                                ).foregroundStyle(Color.text)
 
                                 // Adding the accessibility description into the stop label rather than on the
                                 // accessibility icon so that it is clear which stop it is associated with

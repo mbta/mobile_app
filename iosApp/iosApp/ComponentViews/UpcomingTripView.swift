@@ -23,6 +23,7 @@ struct UpcomingTripView: View {
     var hideRealtimeIndicators: Bool = false
     var isFirst: Bool = true
     var isOnly: Bool = true
+    var maxTextAlpha: Double = 1.0
 
     let accessibilityFormatters = UpcomingTripAccessibilityFormatters()
 
@@ -49,6 +50,7 @@ struct UpcomingTripView: View {
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
                 Text(overridden.textWithLocale()).realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
             case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")
@@ -56,6 +58,7 @@ struct UpcomingTripView: View {
                 Text("Now", comment: "Label for a trip that's arriving right now")
                     .font(Typography.headlineBold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
@@ -64,6 +67,7 @@ struct UpcomingTripView: View {
                 Text("BRD", comment: "Shorthand for boarding")
                     .font(Typography.headlineBold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .boardingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
@@ -72,16 +76,20 @@ struct UpcomingTripView: View {
                 Text("ARR", comment: "Shorthand for arriving")
                     .font(Typography.headlineBold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
-                PredictionText(minutes: 1).realtime(hideIndicator: hideRealtimeIndicators)
+                PredictionText(minutes: 1)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
             case let .time(format):
                 Text(Date(instant: format.predictionTime), style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
                             date: format.predictionTime.toNSDate(),
@@ -94,6 +102,7 @@ struct UpcomingTripView: View {
                     Text(Date(instant: format.predictionTime), style: .time)
                         .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                         .realtime(hideIndicator: hideRealtimeIndicators)
+                        .opacity(min(1.0, maxTextAlpha))
                         .accessibilityLabel(isFirst
                             ? accessibilityFormatters.distantFutureFirst(
                                 date: format.predictionTime.toNSDate(),
@@ -103,12 +112,13 @@ struct UpcomingTripView: View {
                             .distantFutureOther(date: format.predictionTime.toNSDate()))
                     Text(format.status)
                         .font(Typography.footnoteSemibold)
-                        .opacity(0.6)
+                        .opacity(min(0.6, maxTextAlpha))
                         .multilineTextAlignment(.trailing)
                 }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
                     .realtime(hideIndicator: hideRealtimeIndicators)
+                    .opacity(min(1.0, maxTextAlpha))
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.predictionMinutesFirst(
                             minutes: format.minutes,
@@ -117,7 +127,7 @@ struct UpcomingTripView: View {
                         : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
             case let .scheduleTime(format):
                 Text(format.scheduledTime.toNSDate(), style: .time)
-                    .opacity(0.6)
+                    .opacity(min(0.6, maxTextAlpha))
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.scheduleTimeFirst(
@@ -127,7 +137,7 @@ struct UpcomingTripView: View {
                         : accessibilityFormatters.scheduleTimeOther(date: format.scheduledTime.toNSDate()))
             case let .scheduleMinutes(format):
                 PredictionText(minutes: format.minutes)
-                    .opacity(0.6)
+                    .opacity(min(0.6, maxTextAlpha))
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.scheduleMinutesFirst(
                             minutes: format.minutes,
@@ -138,11 +148,11 @@ struct UpcomingTripView: View {
                 HStack(spacing: Self.subjectSpacing) {
                     Text("Cancelled", comment: "The status label for a cancelled trip")
                         .font(Typography.footnote)
-                        .opacity(0.6)
+                        .opacity(min(0.6, maxTextAlpha))
                     Text(format.scheduledTime.toNSDate(), style: .time)
                         .font(Typography.footnoteSemibold)
                         .strikethrough()
-                        .opacity(0.6)
+                        .opacity(min(0.6, maxTextAlpha))
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(isFirst
@@ -153,7 +163,7 @@ struct UpcomingTripView: View {
                     : accessibilityFormatters.cancelledOther(date: format.scheduledTime.toNSDate()))
             }
         case let .disruption(formattedAlert, iconName: iconName):
-            DisruptionView(spec: formattedAlert.predictionReplacement, iconName: iconName)
+            DisruptionView(spec: formattedAlert.predictionReplacement, iconName: iconName, maxTextAlpha: maxTextAlpha)
         case let .noTrips(format):
             switch onEnum(of: format) {
             case .predictionsUnavailable:
@@ -188,6 +198,7 @@ func makeTimeFormatter() -> DateFormatter {
 struct DisruptionView: View {
     let spec: FormattedAlert.PredictionReplacement
     let iconName: String
+    let maxTextAlpha: Double
 
     @ScaledMetric private var iconSize: CGFloat = 20
 
@@ -221,7 +232,7 @@ struct DisruptionView: View {
     var fullText: some View {
         rawText
             .font(Typography.footnoteSemibold)
-            .opacity(0.6)
+            .opacity(min(0.6, maxTextAlpha))
     }
 
     var fullImage: some View {
