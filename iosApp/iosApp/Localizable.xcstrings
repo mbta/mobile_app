@@ -307,8 +307,55 @@
         }
       }
     },
+    "**%@**" : {
+
+    },
     "**%@** ahead" : {
-      "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\""
+      "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%@** adelantado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%@** à venir"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%@** devan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%@** à frente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%@** phía trước"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%@**提前到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提前**%@**"
+          }
+        }
+      }
     },
     "**%1$@**%2$@%3$@" : {
       "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe]\", ex \"[Stop closed][ at Haymarket][ through this Friday]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service]\"",
@@ -667,10 +714,98 @@
       }
     },
     "**Delays**" : {
-      "comment" : "Generic delay alert label when cause is unknown"
+      "comment" : "Generic delay alert label when cause is unknown",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Retrasos**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Retards**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Reta**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Atrasos**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Sự chậm trễ**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**延误**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**延誤**"
+          }
+        }
+      }
     },
     "**Delays** due to %@" : {
-      "comment" : "Describes the cause of a delay. Ex: 'Delays due to [traffic]'"
+      "comment" : "Describes the cause of a delay. Ex: 'Delays due to [traffic]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retrasos debido a **%@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retards dus à **%@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reta akòz **%@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrasos devido a **%@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trì hoãn do **%@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由于 **%@** 造成延误"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "因 **%@** 造成延誤"
+          }
+        }
+      }
     },
     "%@ %@" : {
       "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels\nFirst value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
@@ -774,54 +909,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@於%3$@"
-          }
-        }
-      }
-    },
-    "%@ ahead" : {
-      "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ adelantado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ à venir"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ devan"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ à frente"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ phía trước"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@提前到站"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提前%@"
           }
         }
       }
@@ -5678,102 +5765,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "延誤"
-          }
-        }
-      }
-    },
-    "Delays" : {
-      "comment" : "Generic delay alert label when cause is unknown",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retrasos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retards"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reta"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atrasos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sự chậm trễ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "延误"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "延誤"
-          }
-        }
-      }
-    },
-    "Delays due to %@" : {
-      "comment" : "Describes the cause of a delay. Ex: 'Delays due to [traffic]'",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Retrasos debido a %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Retards dus à %@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Reta akòz %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Atrasos devido a %@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Trì hoãn do %@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "由于 %@ 造成延误"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "因 %@ 造成延誤"
           }
         }
       }

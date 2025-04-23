@@ -61,6 +61,8 @@
     <string name="crossing_malfunction">交通信號燈故障</string>
     <string name="crossing_malfunction_lowercase">道口故障</string>
     <string name="delay">延誤</string>
+    <string name="delays_due_to_cause">因 &lt;b>%1$s&lt;/b> 造成延誤</string>
+    <string name="delays_unknown_reason">&lt;b>延誤&lt;/b></string>
     <string name="demonstration">示威</string>
     <string name="demonstration_lowercase">示範</string>
     <string name="departure_tile_on_click_label">顯示有關此行程的更多信息</string>
@@ -82,6 +84,7 @@
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="drawbridge_being_raised_lowercase">吊橋正在升起</string>
     <string name="eastbound">東行</string>
+    <string name="effect_ahead">提前&lt;b>%1$s&lt;/b></string>
     <string name="electrical_work">電力作業</string>
     <string name="electrical_work_lowercase">電力工作</string>
     <string name="elevator_closed_sentence_case">直梯已關閉</string>

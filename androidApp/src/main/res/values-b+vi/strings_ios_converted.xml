@@ -61,6 +61,8 @@
     <string name="crossing_malfunction">Sự cố giao cắt</string>
     <string name="crossing_malfunction_lowercase">sự cố băng qua</string>
     <string name="delay">Trễ</string>
+    <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
+    <string name="delays_unknown_reason">&lt;b>Sự chậm trễ&lt;/b></string>
     <string name="demonstration">Biểu tình</string>
     <string name="demonstration_lowercase">cuộc biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>
@@ -82,6 +84,7 @@
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="drawbridge_being_raised_lowercase">cầu kéo đang được nâng lên</string>
     <string name="eastbound">Về hướng đông</string>
+    <string name="effect_ahead">&lt;b>%1$s&lt;/b> phía trước</string>
     <string name="electrical_work">Thi công điện</string>
     <string name="electrical_work_lowercase">công việc điện</string>
     <string name="elevator_closed_sentence_case">Thang máy đóng cửa</string>

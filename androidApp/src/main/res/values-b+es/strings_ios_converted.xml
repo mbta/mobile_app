@@ -63,6 +63,8 @@
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="crossing_malfunction_lowercase">mal funcionamiento del cruce</string>
     <string name="delay">Demora</string>
+    <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
+    <string name="delays_unknown_reason">&lt;b>Retrasos&lt;/b></string>
     <string name="demonstration">Demostración</string>
     <string name="demonstration_lowercase">demostración</string>
     <string name="departure_tile_on_click_label">mostrar más información sobre este viaje</string>
@@ -84,6 +86,7 @@
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="drawbridge_being_raised_lowercase">puente levadizo levantado</string>
     <string name="eastbound">En dirección este</string>
+    <string name="effect_ahead">&lt;b>%1$s&lt;/b> adelantado</string>
     <string name="electrical_work">Trabajo eléctrico</string>
     <string name="electrical_work_lowercase">trabajo electrico</string>
     <string name="elevator_closed_sentence_case">Ascensor fuera de servicio</string>
