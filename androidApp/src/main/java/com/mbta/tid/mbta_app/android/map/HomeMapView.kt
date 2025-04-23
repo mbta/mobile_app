@@ -112,7 +112,7 @@ fun HomeMapView(
             currentNavEntry is SheetRoutes.StopDetails
         }
     val previousSelectedVehicleId = rememberPrevious(current = selectedVehicle?.id)
-    val currentLocation = locationDataManager.currentLocation.collectAsState(initial = null).value
+    val currentLocation by locationDataManager.currentLocation.collectAsState(initial = null)
     val now = timer(updateInterval = 300.seconds)
     val globalMapData by viewModel.globalMapData.collectAsState(null)
     val isDarkMode = isSystemInDarkTheme()
@@ -388,6 +388,9 @@ fun HomeMapView(
                             locationProvider.sendLocation(
                                 Point.fromLngLat(location.longitude, location.latitude)
                             )
+                            if (viewportProvider.isFollowingPuck) {
+                                viewportProvider.follow()
+                            }
                         }
                     }
                 }
