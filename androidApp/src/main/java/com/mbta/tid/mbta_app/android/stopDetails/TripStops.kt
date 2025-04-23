@@ -255,7 +255,7 @@ fun TripStops(
                 routeAccents,
                 alertSummaries,
                 showStationAccessibility,
-                showDownstreamAlerts = false
+                showDownstreamAlerts = true
             )
         }
     }
