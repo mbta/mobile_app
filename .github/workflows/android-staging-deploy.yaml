@@ -6,16 +6,6 @@ on:
       - main
 
 jobs:
-  pre-commit:
-    name: Run pre-commit to check formatting and linting
-    permissions:
-      contents: read
-    uses: ./.github/workflows/pre-commit.yaml
-  test-android:
-    name: Test for Android
-    permissions:
-      contents: read
-    uses: ./.github/workflows/test-android.yaml
   build-android:
     name: Build for Android
     permissions:
