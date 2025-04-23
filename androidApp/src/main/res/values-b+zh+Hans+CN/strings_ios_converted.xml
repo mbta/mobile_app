@@ -89,6 +89,9 @@
     <plurals name="elevator_closure_count">
         <item quantity="other">%1$d部电梯已关停</item>
     </plurals>
+    <plurals name="elevator_closure_count_accessibility_description">
+        <item quantity="other">该站有%1$d电梯关闭</item>
+    </plurals>
     <string name="end">结束日期</string>
     <string name="end_of_service">服务结束</string>
     <string name="error_loading_data">加载数据时出错</string>

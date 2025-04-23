@@ -1780,7 +1780,7 @@
       }
     },
     "%ld elevators closed" : {
-      "comment" : "Header displayed when elevators are not working at a station\nIcon alt text for elevator alert",
+      "comment" : "Header displayed when elevators are not working at a station",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -16779,6 +16779,155 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如果尚未分配車輛，%@位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。"
+          }
+        }
+      }
+    },
+    "This stop has %ld elevators closed" : {
+      "comment" : "Describe an elevator outage at the stop in the list of all stops on the trip",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "This stop has %ld elevator closed"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This stop has %ld elevators closed"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Esta parada tiene %ld ascensor cerrado."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Esta parada tiene %ld ascensores cerrados."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Cet arrêt a %ld ascenseur fermé"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Cet arrêt a %ld ascenseurs fermés"
+                }
+              }
+            }
+          }
+        },
+        "ht" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
+                }
+              },
+              "two" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Esta parada tem %ld elevador fechado"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Esta parada tem %ld elevadores fechados"
+                }
+              }
+            }
+          }
+        },
+        "vi" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Điểm dừng này có %ld thang máy đóng cửa"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans-CN" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "该站有%ld电梯关闭"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hant-TW" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "該站有%ld電梯關閉"
+                }
+              }
+            }
           }
         }
       }

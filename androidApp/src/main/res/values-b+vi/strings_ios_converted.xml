@@ -89,6 +89,9 @@
     <plurals name="elevator_closure_count">
         <item quantity="other">%1$d thang máy đã đóng cửa</item>
     </plurals>
+    <plurals name="elevator_closure_count_accessibility_description">
+        <item quantity="other">Điểm dừng này có %1$d thang máy đóng cửa</item>
+    </plurals>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>

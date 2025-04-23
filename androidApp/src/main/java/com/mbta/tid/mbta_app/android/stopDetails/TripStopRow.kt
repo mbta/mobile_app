@@ -83,6 +83,8 @@ fun TripStopRow(
     lastStop: Boolean = false
 ) {
     val context = LocalContext.current
+    val activeElevatorAlerts = stop.activeElevatorAlerts(now)
+
     val stateBefore =
         when {
             firstStop -> RouteLineState.Empty
@@ -122,23 +124,20 @@ fun TripStopRow(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    val activeElevatorAlerts = stop.activeElevatorAlerts(now)
                     if (showStationAccessibility && activeElevatorAlerts.isNotEmpty()) {
                         Image(
                             modifier = Modifier.height(18.dp).testTag("elevator_alert"),
                             painter = painterResource(R.drawable.accessibility_icon_alert),
-                            contentDescription =
-                                pluralStringResource(
-                                    R.plurals.elevator_closure_count,
-                                    activeElevatorAlerts.size,
-                                    activeElevatorAlerts.size
-                                )
+                            contentDescription = null
                         )
                     } else if (showStationAccessibility && !stop.stop.isWheelchairAccessible) {
                         Image(
-                            modifier = Modifier.height(18.dp).testTag("wheelchair_not_accessible"),
+                            modifier =
+                                Modifier.height(18.dp)
+                                    .testTag("wheelchair_not_accessible")
+                                    .placeholderIfLoading(),
                             painter = painterResource(R.drawable.accessibility_icon_not_accessible),
-                            contentDescription = stringResource(R.string.not_accessible)
+                            contentDescription = null
                         )
                     }
                 }
@@ -150,11 +149,7 @@ fun TripStopRow(
                     }
                 ) {
                     Row(
-                        Modifier.semantics(mergeDescendants = true) {
-                                if (targeted) {
-                                    heading()
-                                }
-                            }
+                        Modifier.semantics(mergeDescendants = true) { heading() }
                             .clickable { onTapLink(stop) },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -213,6 +208,41 @@ fun TripStopRow(
                                 maxTextAlpha = 0.6f
                             )
                         }
+                        // Adding the accessibility description into the stop label rather than on
+                        // the accessibility icon so that it is clear which stop it is associated
+                        // with. Empty Rows, Canvas, Text that don't take up size, etc. do not have
+                        // their content descriptions read.
+                        val stopNotAccessibleContentDescription =
+                            stringResource(R.string.not_accessible_stop_card)
+                        val elevatorAlertContentDescription =
+                            pluralStringResource(
+                                R.plurals.elevator_closure_count_accessibility_description,
+                                activeElevatorAlerts.size,
+                                activeElevatorAlerts.size
+                            )
+
+                        Text(
+                            "",
+                            modifier =
+                                Modifier.semantics {
+                                        contentDescription =
+                                            if (
+                                                showStationAccessibility &&
+                                                    !stop.stop.isWheelchairAccessible
+                                            ) {
+                                                stopNotAccessibleContentDescription
+                                            } else if (
+                                                showStationAccessibility &&
+                                                    activeElevatorAlerts.isNotEmpty()
+                                            ) {
+                                                elevatorAlertContentDescription
+                                            } else {
+                                                ""
+                                            }
+                                    }
+                                    .width(1.dp)
+                                    .height(1.dp)
+                        )
                     }
 
                     if (stop.routes.isNotEmpty()) {

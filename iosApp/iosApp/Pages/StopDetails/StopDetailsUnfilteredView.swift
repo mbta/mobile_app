@@ -87,7 +87,7 @@ struct StopDetailsUnfilteredView: View {
                         )
                     }
                 }
-                .padding(.bottom, 16)
+                .padding(.bottom, 6)
                 .border(Color.halo.opacity(0.15), width: 2)
                 ZStack {
                     Color.fill1.ignoresSafeArea(.all)

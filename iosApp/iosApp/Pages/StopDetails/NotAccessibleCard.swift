@@ -11,7 +11,7 @@ import SwiftUI
 struct NotAccessibleCard: View {
     var body: some View {
         VStack {
-            HStack {
+            HStack(alignment: .center) {
                 Image(.accessibilityIconNotAccessible)
                     .accessibilityHidden(true)
                     .tag("wheelchair_not_accessible")
@@ -27,5 +27,6 @@ struct NotAccessibleCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .padding(1)
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
+        .padding(.top, 1)
     }
 }

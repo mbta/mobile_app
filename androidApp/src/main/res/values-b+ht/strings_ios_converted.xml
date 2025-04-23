@@ -99,6 +99,13 @@
         <item quantity="many">%1$d asansè yo fèmen</item>
         <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
+    <plurals name="elevator_closure_count_accessibility_description">
+        <item quantity="one">Estasyon sa a gen %1$d asansè fèmen</item>
+        <item quantity="two">Estasyon sa a gen %1$d asansè fèmen</item>
+        <item quantity="few">Estasyon sa a gen %1$d asansè fèmen</item>
+        <item quantity="many">Estasyon sa a gen %1$d asansè fèmen</item>
+        <item quantity="other">Estasyon sa a gen %1$d asansè fèmen</item>
+    </plurals>
     <string name="end">Fen</string>
     <string name="end_of_service">fen sèvis</string>
     <string name="error_loading_data">Erè nan chajman done</string>

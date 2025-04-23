@@ -96,6 +96,10 @@
         <item quantity="one">%1$d elevator closed</item>
         <item quantity="other">%1$d elevators closed</item>
     </plurals>
+    <plurals name="elevator_closure_count_accessibility_description">
+        <item quantity="one">This stop has %1$d elevator closed</item>
+        <item quantity="other">This stop has %1$d elevators closed</item>
+    </plurals>
     <string name="end">End</string>
     <string name="end_of_service">end of service</string>
     <string name="error_loading_data">Error loading data</string>

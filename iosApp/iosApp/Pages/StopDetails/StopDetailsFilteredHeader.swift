@@ -57,9 +57,8 @@ struct StopDetailsFilteredHeader: View {
                 ActionButton(kind: .close, action: onClose)
             }
         }
-        .frame(minHeight: 64)
         .padding(.horizontal, 16)
-        .padding(.top, 11)
+        .padding(.vertical, 16)
     }
 
     func stopLabel(_ stop: Stop) -> AttributedString {

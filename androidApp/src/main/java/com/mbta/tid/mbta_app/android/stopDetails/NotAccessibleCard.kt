@@ -36,12 +36,12 @@ fun NotAccessibleCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painterResource(R.drawable.accessibility_icon_alert),
+                painterResource(R.drawable.accessibility_icon_not_accessible),
                 null,
                 modifier =
                     Modifier.size(36.dp)
                         .placeholderIfLoading()
-                        .testTag("elevator_alert")
+                        .testTag("wheelchair_not_accessible")
                         .clearAndSetSemantics {}
             )
             Text(
