@@ -124,7 +124,7 @@ private fun AlertTitle(
     isElevatorAlert: Boolean = false,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        val effectLabel = formattedAlert.effect
+        val effectLabel = AnnotatedString.fromHtml(formattedAlert.effect)
         val causeLabel = formattedAlert.cause
 
         if (routeLabel != null) {

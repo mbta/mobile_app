@@ -37,8 +37,8 @@ struct AlertDetails: View {
         alert.effect == .elevatorClosure
     }
 
-    private var effectLabel: String {
-        FormattedAlert(alert: alert).effect
+    private var effectLabel: AttributedString {
+        AttributedString.tryMarkdown(FormattedAlert(alert: alert).effect)
     }
 
     private var causeLabel: String? {
