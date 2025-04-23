@@ -38,7 +38,8 @@ struct AlertDetails: View {
     }
 
     private var effectLabel: String {
-        FormattedAlert(alert: alert).effect
+        // Hack to strip formatting
+        String(AttributedString.tryMarkdown(FormattedAlert(alert: alert).effect).characters)
     }
 
     private var causeLabel: String? {

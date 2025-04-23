@@ -41,7 +41,7 @@ data class FormattedAlert(
         @Composable get() = causeRes?.let { stringResource(it) }
 
     val effect
-        @Composable get() = stringResource(effectRes)
+        @Composable get() = stringResource(R.string.effect, stringResource(effectRes))
 
     private val downstreamEffect
         @Composable get() = stringResource(R.string.effect_ahead, stringResource(sentenceEffectRes))
@@ -69,12 +69,12 @@ data class FormattedAlert(
     @Composable
     fun alertCardHeader(spec: AlertCardSpec) =
         when (spec) {
-            AlertCardSpec.Downstream -> summary ?: AnnotatedString(downstreamEffect)
+            AlertCardSpec.Downstream -> summary ?: AnnotatedString.fromHtml(downstreamEffect)
             AlertCardSpec.Elevator -> alert.header?.let { AnnotatedString(it) }
                     ?: AnnotatedString(effect)
-            AlertCardSpec.Delay -> AnnotatedString(delaysDueToCause)
-            AlertCardSpec.Secondary -> summary ?: AnnotatedString(effect)
-            else -> AnnotatedString(effect)
+            AlertCardSpec.Delay -> AnnotatedString.fromHtml(delaysDueToCause)
+            AlertCardSpec.Secondary -> summary ?: AnnotatedString.fromHtml(effect)
+            else -> AnnotatedString.fromHtml(effect)
         }
 
     val alertCardMajorBody

@@ -17,6 +17,7 @@ struct NotAccessibleCard: View {
                     .tag("wheelchair_not_accessible")
                 Text("This stop is not accessible")
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(Typography.callout)
             }
         }
         .frame(maxWidth: .infinity)

@@ -85,21 +85,13 @@ fun AlertCard(
                 modifier =
                     Modifier.clearAndSetSemantics {}
                         .size(iconSize)
-                        .align(
-                            if (spec == AlertCardSpec.Elevator) Alignment.Top
-                            else Alignment.CenterVertically
-                        )
+                        .align(Alignment.CenterVertically)
             )
             Text(
                 formattedAlert.alertCardHeader(spec),
                 Modifier.weight(1f),
                 style =
-                    if (
-                        spec == AlertCardSpec.Major ||
-                            (alertSummary == null && spec != AlertCardSpec.Elevator)
-                    )
-                        Typography.title2Bold
-                    else Typography.body
+                    if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.callout
             )
             if (spec != AlertCardSpec.Major) {
                 InfoCircle()

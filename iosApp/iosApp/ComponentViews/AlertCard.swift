@@ -47,10 +47,10 @@ struct AlertCard: View {
     var card: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                HStack(alignment: .top, spacing: 16) {
+                HStack(alignment: .center, spacing: 16) {
                     AlertIcon(alertState: alert.alertState, color: color)
                         .scaledToFit()
-                        .frame(width: iconSize, height: iconSize, alignment: .top)
+                        .frame(width: iconSize, height: iconSize, alignment: .center)
                     Text(formattedAlert.alertCardHeader(spec: spec))
                         .font(spec == .major ? Typography.title2Bold : Typography.callout)
                         .multilineTextAlignment(.leading)

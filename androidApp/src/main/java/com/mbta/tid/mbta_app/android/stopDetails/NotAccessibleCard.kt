@@ -47,7 +47,7 @@ fun NotAccessibleCard() {
             Text(
                 stringResource(R.string.not_accessible_stop_card),
                 Modifier.weight(1f),
-                style = Typography.body
+                style = Typography.callout
             )
         }
     }
