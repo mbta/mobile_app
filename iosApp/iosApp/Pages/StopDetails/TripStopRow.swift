@@ -293,10 +293,10 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(
                 color: Color(hex: "DA291C"),
-                type: .heavyRail,
+                type: .heavyRail
             ),
             alertSummaries: [:],
-            showStationAccessibility: true,
+            showStationAccessibility: true
         )
         TripStopRow(
             stop: .init(
@@ -325,7 +325,7 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(
                 color: Color(hex: "DA291C"),
-                type: .heavyRail,
+                type: .heavyRail
             ),
             alertSummaries: [:],
             showStationAccessibility: true
@@ -354,7 +354,7 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(
                 color: Color(hex: "DA291C"),
-                type: .heavyRail,
+                type: .heavyRail
             ),
             alertSummaries: [:],
             showStationAccessibility: true
