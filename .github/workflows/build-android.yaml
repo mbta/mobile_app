@@ -34,6 +34,11 @@ on:
       SENTRY_DSN_ANDROID:
         required: true
 
+concurrency:
+  # non-deploy builds shouldn’t conflict, but builds for deployment can’t overlap or they’ll claim the same version number
+  group: build-android-${{ inputs.flavor }}${{ inputs.deploy && '' || github.run_id }}
+  cancel-in-progress: false
+
 jobs:
   build-android:
     name: Build for Android
@@ -84,9 +89,6 @@ jobs:
   deploy-android:
     name: Upload to Google Play
     if: ${{ inputs.deploy }}
-    concurrency:
-      group: deploy-android-${{ inputs.flavor }}
-      cancel-in-progress: false
     needs:
       - build-android
     runs-on: ubuntu-latest
