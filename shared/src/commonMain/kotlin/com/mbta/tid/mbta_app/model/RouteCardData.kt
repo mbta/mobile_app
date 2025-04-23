@@ -185,9 +185,60 @@ data class RouteCardData(
             globalData: GlobalResponse?
         ): LeafFormat {
 
+            data class ByHeadsignData(
+                val stopIds: Set<String>,
+                val hasUpcomingTripsToShow: Boolean,
+                val majorAlert: Alert?
+            )
+
+            // TODO: move into calculated field?
+            val dataByHeadsign =
+                potentialHeadsigns
+                    .map { headsign ->
+                        val routePatterns =
+                            routePatterns.filter {
+                                globalData?.trips?.get(it.representativeTripId)?.headsign ==
+                                    headsign
+                            }
+
+                        val stopIds =
+                            globalData
+                                ?.let {
+                                    NearbyStaticData.filterStopsByPatterns(
+                                        routePatterns,
+                                        it,
+                                        this.stopIds
+                                    )
+                                }
+                                .orEmpty()
+                        val majorAlert =
+                            Alert.applicableAlerts(
+                                alertsHere.filter { it.significance >= AlertSignificance.Major },
+                                directionId,
+                                routePatterns.map { it.routeId },
+                                stopIds,
+                                null
+                            )
+                        val hasUpcomingTripsToShow =
+                            tripsWithFormat.any { it.first.headsign == headsign }
+                        headsign to
+                            ByHeadsignData(
+                                stopIds,
+                                hasUpcomingTripsToShow,
+                                majorAlert.firstOrNull()
+                            )
+                    }
+                    .toMap()
+
             // If there is more than 1 route id, then we are dealing with a line and should
             // show the route alongside the UpcomingTripFormat
             val needsRoutesInBranching = routePatterns.distinctBy { it.routeId }.size > 1
+
+            // TODO:
+            // if all headsigns have the same alert, show collapsed as single
+            // else: pick which combo of departures and headsigns to show
+            // split the map on disrupted or not disrupted, order by priority
+            // take max 2 from not disrupted, take remainder from disrupted
 
             if (majorAlert != null && upcomingTrips.map { it.headsign }.distinct().count() == 1) {
                 /**
