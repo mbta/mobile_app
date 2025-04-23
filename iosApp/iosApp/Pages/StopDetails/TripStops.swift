@@ -106,7 +106,7 @@ struct TripStops: View {
                 .padding(1)
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
                 .padding(.horizontal, 6)
-                .padding(.bottom, stops.stops.last?.disruption?.alert.significance == .major ? 6 : 0)
+                .padding(.bottom, splitStops.followingStops.last?.disruption?.alert.significance == .major ? 6 : 0)
             VStack(alignment: .center, spacing: 0) {
                 if showFirstStopSeparately, let firstStop = splitStops.firstStop {
                     TripStopRow(

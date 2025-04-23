@@ -106,8 +106,11 @@ fun TripStops(
                 .padding(
                     bottom =
                         if (
-                            stops.stops.lastOrNull()?.disruption?.alert?.significance ==
-                                AlertSignificance.Major
+                            splitStops.followingStops
+                                .lastOrNull()
+                                ?.disruption
+                                ?.alert
+                                ?.significance == AlertSignificance.Major
                         )
                             4.dp
                         else 0.dp
