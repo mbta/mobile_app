@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -45,7 +46,7 @@ class TimerViewModel(tickInterval: Duration) : ViewModel() {
 }
 
 @Composable
-fun timer(updateInterval: Duration = 5.seconds): Instant {
+fun timer(updateInterval: Duration = 5.seconds): State<Instant> {
     val viewModel: TimerViewModel = remember { TimerViewModel(updateInterval) }
-    return viewModel.timerFlow.collectAsState(initial = Clock.System.now()).value
+    return viewModel.timerFlow.collectAsState(initial = Clock.System.now())
 }

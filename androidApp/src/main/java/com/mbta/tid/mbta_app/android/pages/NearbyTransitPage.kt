@@ -148,7 +148,7 @@ fun NearbyTransitPage(
 
     val (pinnedRoutes) = managePinnedRoutes()
 
-    val now = timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds)
 
     fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
         viewModel.setStopFilter(

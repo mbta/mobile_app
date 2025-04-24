@@ -35,7 +35,7 @@ fun StopDetailsView(
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    val now = timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
 
     val departures by viewModel.stopDepartures.collectAsState()
