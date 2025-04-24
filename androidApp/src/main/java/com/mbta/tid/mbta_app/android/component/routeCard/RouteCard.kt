@@ -316,6 +316,13 @@ class Previews() {
             name = "Boylston"
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
         }
+
+    val kenmore =
+        objects.stop {
+            id = "place-kencl"
+            name = "Kenmore"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
     val somervilleAtCarlton =
         objects.stop {
             name = "Somerville Ave @ Carlton St"
@@ -1337,14 +1344,27 @@ class Previews() {
     @Preview(name = "Disruption on a branch", group = "A. Disruption")
     @Composable
     fun GL5() {
+
+        val kenmoreShuttleToRiverside =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = greenLineD.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = kenmore.id,
+                            trip = null
+                        )
+                    )
+            }
+
         CardForPreview(
             card(
                 greenLine,
-                objects.stop {
-                    id = "place-kencl"
-                    name = "Kenmore"
-                    wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-                },
+                kenmore,
                 listOf(
                     objects.upcomingTrip(
                         objects.prediction {
@@ -1360,12 +1380,6 @@ class Previews() {
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
-                            trip = objects.trip(greenLineDEastbound)
-                            departureTime = now + 1.minutes
-                        }
-                    ),
-                    objects.upcomingTrip(
-                        objects.prediction {
                             trip = objects.trip(greenLineBEastbound)
                             departureTime = now + 6.minutes
                         }
@@ -1377,7 +1391,7 @@ class Previews() {
                         }
                     ),
                 ),
-                alertHere = mapOf(0 to shuttleAlert)
+                alertHere = mapOf(0 to kenmoreShuttleToRiverside)
             )
         )
     }
@@ -1388,6 +1402,22 @@ class Previews() {
     )
     @Composable
     fun GL6() {
+
+        val boylstonShuttleToRiverside =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = greenLineD.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = boylston.id,
+                            trip = null
+                        )
+                    )
+            }
         CardForPreview(
             card(
                 greenLine,
@@ -1407,12 +1437,6 @@ class Previews() {
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
-                            trip = objects.trip(greenLineDEastbound)
-                            departureTime = now + 1.minutes
-                        }
-                    ),
-                    objects.upcomingTrip(
-                        objects.prediction {
                             trip = objects.trip(greenLineBEastbound)
                             departureTime = now + 6.minutes
                         }
@@ -1424,7 +1448,7 @@ class Previews() {
                         }
                     ),
                 ),
-                alertHere = mapOf(0 to shuttleAlert)
+                alertHere = mapOf(0 to boylstonShuttleToRiverside)
             )
         )
     }
@@ -1432,31 +1456,64 @@ class Previews() {
     @Preview(name = "Disruption on all branches", group = "A. Disruption")
     @Composable
     fun GL7() {
+
+        val shuttleAllBranches =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = greenLineB.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = boylston.id,
+                            trip = null
+                        ),
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = greenLineC.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = boylston.id,
+                            trip = null
+                        ),
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = greenLineD.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = boylston.id,
+                            trip = null
+                        )
+                    )
+            }
+
         CardForPreview(
             card(
                 greenLine,
                 boylston,
                 listOf(
                     objects.upcomingTrip(
-                        objects.prediction {
+                        objects.schedule {
                             trip = objects.trip(greenLineDEastbound)
                             departureTime = now + 1.minutes
                         }
                     ),
                     objects.upcomingTrip(
-                        objects.prediction {
+                        objects.schedule {
                             trip = objects.trip(greenLineBEastbound)
                             departureTime = now + 6.minutes
                         }
                     ),
                     objects.upcomingTrip(
-                        objects.prediction {
+                        objects.schedule {
                             trip = objects.trip(greenLineCEastbound)
                             departureTime = now + 12.minutes
                         }
                     ),
                 ),
-                alertHere = mapOf(0 to shuttleAlert)
+                alertHere = mapOf(0 to shuttleAllBranches)
             )
         )
     }

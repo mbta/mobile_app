@@ -143,7 +143,8 @@ data class RouteCardData(
             upcomingTrips,
             alertsHere,
             allDataLoaded,
-            mapOf((routePatterns.firstOrNull()?.id ?: "fakeId") to hasSchedulesToday),
+            if (routePatterns.isEmpty()) mapOf("fakeId" to hasSchedulesToday)
+            else routePatterns.associate { it.id to hasSchedulesToday },
             alertsDownstream
         )
 
