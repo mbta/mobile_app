@@ -142,7 +142,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM
+                            stopDetailsVM: stopDetailsVM,
+                            onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() }
                         )
                     }
                 }

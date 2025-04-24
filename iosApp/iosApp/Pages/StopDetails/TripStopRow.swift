@@ -13,21 +13,72 @@ struct TripStopRow: View {
     var stop: TripDetailsStopList.Entry
     var now: Instant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
+    var onOpenAlertDetails: (Shared.Alert) -> Void
     var routeAccents: TripRouteAccents
+    var alertSummaries: [String: AlertSummary?]
     var showStationAccessibility: Bool = false
+    var showDownstreamAlert: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
     var lastStop: Bool = false
+    var background: Color? = nil
+
+    var disruption: UpcomingFormat.Disruption? {
+        if let disruption = stop.disruption, disruption.alert.significance == .major, showDownstreamAlert {
+            disruption
+        } else {
+            nil
+        }
+    }
+
+    var stateBefore: ColoredRouteLine.State {
+        if firstStop {
+            .empty
+        } else {
+            .regular
+        }
+    }
+
+    var stateAfter: ColoredRouteLine.State {
+        if lastStop {
+            .empty
+        } else if disruption?.alert.effect == .shuttle {
+            .shuttle
+        } else {
+            .regular
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            stopRow.overlay {
+            stopRow.background(background).overlay {
                 if targeted {
                     Rectangle().inset(by: -1).stroke(Color.halo, lineWidth: 2)
                 }
             }
+            if let disruption {
+                ZStack(alignment: .leading) {
+                    VStack(spacing: 0) {
+                        ColoredRouteLine(routeAccents.color, state: stateAfter)
+                        if stop.isTruncating() {
+                            ColoredRouteLine(routeAccents.color, state: .empty)
+                        }
+                    }
+                    .padding(.leading, 42)
+                    AlertCard(
+                        alert: disruption.alert,
+                        alertSummary: alertSummaries[disruption.alert.id] ?? nil,
+                        spec: .downstream,
+                        color: routeAccents.color,
+                        textColor: routeAccents.textColor,
+                        onViewDetails: { onOpenAlertDetails(disruption.alert) },
+                        internalPadding: .init(top: 0, leading: 21, bottom: 0, trailing: 0)
+                    )
+                    .padding(.horizontal, -4)
+                }
+            }
         }
-        .fixedSize(horizontal: false, vertical: true)
+        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, 6)
     }
 
     @ViewBuilder
@@ -35,7 +86,7 @@ struct TripStopRow: View {
         let activeElevatorAlerts = stop.activeElevatorAlerts(now: now)
 
         ZStack(alignment: .bottom) {
-            if !lastStop, !targeted {
+            if !lastStop, !targeted, disruption == nil {
                 HaloSeparator()
             }
             HStack(alignment: .center, spacing: 0) {
@@ -122,17 +173,8 @@ struct TripStopRow: View {
     var routeLine: some View {
         ZStack(alignment: .center) {
             VStack(spacing: 0) {
-                if firstStop {
-                    // Use a clear rectangle as a spacer, the Spacer() view doesn't
-                    // take up enough space, this is always exactly half
-                    ColoredRouteLine(Color.clear)
-                }
-                ColoredRouteLine(routeAccents.color)
-                if lastStop {
-                    // Use a clear rectangle as a spacer, the Spacer() view doesn't
-                    // take up enough space, this is always exactly half
-                    ColoredRouteLine(Color.clear)
-                }
+                ColoredRouteLine(routeAccents.color, state: stateBefore)
+                ColoredRouteLine(routeAccents.color, state: stateAfter)
             }
             StopDot(routeAccents: routeAccents, targeted: targeted)
         }
@@ -220,99 +262,208 @@ struct TripStopRow: View {
 
 #Preview {
     let objects = ObjectCollectionBuilder()
+    let now = Date.now
+    VStack {
+        TripStopRow(
+            stop: .init(
+                stop: objects.stop { stop in
+                    stop.name = "Charles/MGH"
+                    stop.wheelchairBoarding = .accessible
+                },
+                stopSequence: 10,
+                disruption: nil,
+                schedule: nil,
+                prediction: objects.prediction { $0.status = "Stopped 5 stops away" },
+                predictionStop: nil,
+                vehicle: nil,
+                routes: [
+                    objects.route { route in
+                        route.longName = "Red Line"
+                        route.color = "DA291C"
+                        route.textColor = "FFFFFF"
+                    },
+                    objects.route { route in
+                        route.longName = "Green Line"
+                        route.color = "00843D"
+                        route.textColor = "FFFFFF"
+                    },
+                ]
+            ),
+            now: now.toKotlinInstant(),
+            onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(
+                color: Color(hex: "DA291C"),
+                type: .heavyRail
+            ),
+            alertSummaries: [:],
+            showStationAccessibility: true
+        )
+        TripStopRow(
+            stop: .init(
+                stop: objects.stop { $0.name = "Park Street" },
+                stopSequence: 10,
+                disruption: nil,
+                schedule: nil,
+                prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                predictionStop: nil,
+                vehicle: nil,
+                routes: [
+                    objects.route { route in
+                        route.longName = "Red Line"
+                        route.color = "DA291C"
+                        route.textColor = "FFFFFF"
+                    },
+                    objects.route { route in
+                        route.longName = "Green Line"
+                        route.color = "00843D"
+                        route.textColor = "FFFFFF"
+                    },
+                ]
+            ),
+            now: now.toKotlinInstant(),
+            onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(
+                color: Color(hex: "DA291C"),
+                type: .heavyRail
+            ),
+            alertSummaries: [:],
+            showStationAccessibility: true
+        )
+        TripStopRow(
+            stop: .init(
+                stop: objects.stop { $0.name = "South Station" },
+                stopSequence: 10,
+                disruption: nil,
+                schedule: nil,
+                prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                predictionStop: objects.stop { $0.platformCode = "1" },
+                vehicle: nil,
+                routes: [],
+                elevatorAlerts: [
+                    objects.alert {
+                        $0.activePeriod(
+                            start: (now - 20 * 60).toKotlinInstant(),
+                            end: (now + 20 * 60).toKotlinInstant()
+                        )
+                    },
+                ]
+            ),
+            now: now.toKotlinInstant(),
+            onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
+            routeAccents: TripRouteAccents(
+                color: Color(hex: "DA291C"),
+                type: .heavyRail
+            ),
+            alertSummaries: [:],
+            showStationAccessibility: true
+        )
+    }
+    .font(Typography.body)
+    .background(Color.fill3)
+}
 
-    TripStopRow(
-        stop: .init(
-            stop: objects.stop {
-                $0.name = "ABC"
-                $0.wheelchairBoarding = .accessible
-            },
-            stopSequence: 10,
-            disruption: nil,
-            schedule: nil,
-            prediction: nil,
-            predictionStop: nil,
-            vehicle: nil,
-            routes: [
-                objects.route {
-                    $0.longName = "Red Line"
-                    $0.color = "#DA291C"
-                    $0.textColor = "#ffffff"
-                },
-                objects.route {
-                    $0.longName = "Green Line"
-                    $0.color = "#00843D"
-                    $0.textColor = "#ffffff"
-                },
-            ],
-            elevatorAlerts: []
-        ),
-        now: Date.now.toKotlinInstant(),
-        onTapLink: { _ in },
-        routeAccents: TripRouteAccents(type: .lightRail),
-        showStationAccessibility: true
-    ).font(Typography.body)
-
-    TripStopRow(
-        stop: .init(
-            stop: objects.stop { $0.name = "ABC" },
-            stopSequence: 10,
-            disruption: nil,
-            schedule: nil,
-            prediction: nil,
-            predictionStop: nil,
-            vehicle: nil,
-            routes: [
-                objects.route {
-                    $0.longName = "Red Line"
-                    $0.color = "#DA291C"
-                    $0.textColor = "#ffffff"
-                },
-                objects.route {
-                    $0.longName = "Green Line"
-                    $0.color = "#00843D"
-                    $0.textColor = "#ffffff"
-                },
-            ],
-            elevatorAlerts: []
-        ),
-        now: Date.now.toKotlinInstant(),
-        onTapLink: { _ in },
-        routeAccents: TripRouteAccents(type: .lightRail),
-        showStationAccessibility: true
-    ).font(Typography.body)
-
-    TripStopRow(
-        stop: .init(
-            stop: objects.stop { $0.name = "ABC" },
-            stopSequence: 10,
-            disruption: nil,
-            schedule: nil,
-            prediction: nil,
-            predictionStop: nil,
-            vehicle: nil,
-            routes: [
-                objects.route {
-                    $0.longName = "Red Line"
-                    $0.color = "#DA291C"
-                    $0.textColor = "#ffffff"
-                },
-                objects.route {
-                    $0.longName = "Green Line"
-                    $0.color = "#00843D"
-                    $0.textColor = "#ffffff"
-                },
-            ],
-            elevatorAlerts: [objects.alert {
-                $0.activePeriod(
-                    start: Date.now.addingTimeInterval(-20 * 60).toKotlinInstant(),
-                    end: Date.now.addingTimeInterval(20 * 60).toKotlinInstant()
-                )
-            }]
-        ),
-        now: Date.now.toKotlinInstant(),
-        onTapLink: { _ in },
-        routeAccents: TripRouteAccents(type: .lightRail),
-        showStationAccessibility: true
-    ).font(Typography.body)
+#Preview("Disruptions") {
+    let objects = ObjectCollectionBuilder()
+    let now = Date.now
+    ZStack {
+        Color.fill3.padding(6)
+        VStack {
+            TripStopRow(
+                stop:
+                .init(
+                    stop: objects.stop { $0.name = "Charles/MGH" },
+                    stopSequence: 10,
+                    disruption: .init(
+                        alert: objects.alert { $0.effect = .stopClosure },
+                        mapStopRoute: .red
+                    ),
+                    schedule: nil,
+                    prediction: objects.prediction { $0.status = "Stopped 5 stops away" },
+                    predictionStop: nil,
+                    vehicle: nil,
+                    routes: [
+                        objects.route { route in
+                            route.longName = "Red Line"
+                            route.color = "DA291C"
+                            route.textColor = "FFFFFF"
+                        },
+                        objects.route { route in
+                            route.longName = "Green Line"
+                            route.color = "00843D"
+                            route.textColor = "FFFFFF"
+                        },
+                    ]
+                ),
+                now: now.toKotlinInstant(),
+                onTapLink: { _ in },
+                onOpenAlertDetails: { _ in },
+                routeAccents: TripRouteAccents(
+                    color: Color(hex: "DA291C"),
+                    type: .heavyRail
+                ),
+                alertSummaries: [:],
+                showDownstreamAlert: true
+            )
+            TripStopRow(
+                stop:
+                .init(
+                    stop: objects.stop { $0.name = "Park Street" },
+                    stopSequence: 10,
+                    disruption: nil,
+                    schedule: nil,
+                    prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                    predictionStop: nil,
+                    vehicle: nil,
+                    routes: [
+                        objects.route { route in
+                            route.longName = "Red Line"
+                            route.color = "DA291C"
+                            route.textColor = "FFFFFF"
+                        },
+                        objects.route { route in
+                            route.longName = "Green Line"
+                            route.color = "00843D"
+                            route.textColor = "FFFFFF"
+                        },
+                    ]
+                ),
+                now: now.toKotlinInstant(),
+                onTapLink: { _ in },
+                onOpenAlertDetails: { _ in },
+                routeAccents: TripRouteAccents(
+                    color: Color(hex: "DA291C"),
+                    type: .heavyRail
+                ),
+                alertSummaries: [:],
+                showDownstreamAlert: true
+            )
+            TripStopRow(
+                stop:
+                .init(
+                    stop: objects.stop { $0.name = "South Station" },
+                    stopSequence: 10,
+                    disruption: .init(alert: objects.alert { $0.effect = .shuttle },
+                                      mapStopRoute: .red),
+                    schedule: nil,
+                    prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                    predictionStop: objects.stop { $0.platformCode = "1" },
+                    vehicle: nil,
+                    routes: [],
+                    elevatorAlerts: []
+                ),
+                now: now.toKotlinInstant(),
+                onTapLink: { _ in },
+                onOpenAlertDetails: { _ in },
+                routeAccents: TripRouteAccents(
+                    color: Color(hex: "DA291C"),
+                    type: .heavyRail
+                ),
+                alertSummaries: [:],
+                showDownstreamAlert: true
+            )
+        }
+    }.padding(6)
 }

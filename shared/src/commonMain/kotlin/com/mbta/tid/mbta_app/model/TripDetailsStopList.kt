@@ -56,8 +56,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int?,
-        globalData: GlobalResponse?,
-        truncateForDisruptions: Boolean
+        globalData: GlobalResponse?
     ): TargetSplit {
         val targetStopIndex =
             stops
@@ -94,7 +93,6 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             followingStops
                 .indexOfFirst { it.isTruncating() }
                 .takeUnless { it == -1 || it == followingStops.lastIndex }
-                .takeIf { truncateForDisruptions }
         val isTruncated = truncatedStopIndex != null
         val truncatedFollowingStops =
             if (truncatedStopIndex != null)

@@ -24,6 +24,8 @@ struct TripDetailsView: View {
 
     @State var stops: TripDetailsStopList?
 
+    let onOpenAlertDetails: (Shared.Alert) -> Void
+
     let analytics: Analytics
     var didLoadData: ((Self) -> Void)?
     let inspection = Inspection<Self>()
@@ -36,6 +38,7 @@ struct TripDetailsView: View {
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel,
+        onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.tripFilter = tripFilter
@@ -45,6 +48,7 @@ struct TripDetailsView: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
+        self.onOpenAlertDetails = onOpenAlertDetails
 
         self.analytics = analytics
     }
@@ -93,6 +97,7 @@ struct TripDetailsView: View {
                         Text(verbatim: "vehicle id: \(tripFilter?.vehicleId ?? "nil")")
                     }
                 }
+                .padding(.horizontal, 6)
             }
             let vehicle = stopDetailsVM.tripData?.vehicle
             if let tripFilter,
@@ -111,7 +116,6 @@ struct TripDetailsView: View {
                 loadingBody()
             }
         }
-        .padding(.horizontal, 6)
     }
 
     @ViewBuilder private func tripDetails(
@@ -151,13 +155,16 @@ struct TripDetailsView: View {
 
         VStack(spacing: 0) {
             tripHeaderCard(tripId, headerSpec, onHeaderTap, routeAccents).zIndex(1)
+                .padding(.horizontal, 6)
             TripStops(
                 targetId: stopId,
                 stops: stops,
                 stopSequence: tripFilter?.stopSequence?.intValue,
                 headerSpec: headerSpec,
                 now: now,
+                alertSummaries: stopDetailsVM.alertSummaries,
                 onTapLink: onTapStop,
+                onOpenAlertDetails: onOpenAlertDetails,
                 routeAccents: routeAccents,
                 showStationAccessibility: stopDetailsVM.showStationAccessibility,
                 global: stopDetailsVM.global
