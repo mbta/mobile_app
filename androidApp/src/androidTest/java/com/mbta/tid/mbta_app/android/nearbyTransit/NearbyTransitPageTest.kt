@@ -16,8 +16,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraState
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
@@ -32,6 +38,8 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.android.util.isFollowingPuck
+import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
@@ -46,6 +54,10 @@ import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -398,5 +410,103 @@ class NearbyTransitPageTest : KoinTest {
         }
 
         composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertDoesNotExist()
+    }
+
+    @Test
+    fun testResetAfter1hour() {
+        val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
+        val mockClock =
+            object : Clock {
+                var time: Instant = Clock.System.now()
+
+                fun plus(duration: Duration) {
+                    time = time.plus(duration)
+                }
+
+                override fun now(): Instant = time
+            }
+
+        val startLocation = Position(0.0, 0.0)
+
+        val koinApplication = testKoinApplication(builder, clock = mockClock)
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                CompositionLocalProvider(
+                    LocalActivity provides (LocalContext.current as Activity),
+                    LocalLocationClient provides MockFusedLocationProviderClient(),
+                    LocalLifecycleOwner provides lifecycleOwner
+                ) {
+                    NearbyTransitPage(
+                        Modifier,
+                        NearbyTransit(
+                            alertData = AlertsStreamDataResponse(builder.alerts),
+                            globalResponse = globalResponse,
+                            hideMaps = false,
+                            lastNearbyTransitLocationState =
+                                remember { mutableStateOf(Position(0.0, 0.0)) },
+                            nearbyTransitSelectingLocationState =
+                                remember { mutableStateOf(false) },
+                            scaffoldState = rememberBottomSheetScaffoldState(),
+                            locationDataManager = MockLocationDataManager(startLocation),
+                            viewportProvider = viewportProvider,
+                        ),
+                        false,
+                        {},
+                        {},
+                        searchResultsViewModel =
+                            SearchResultsViewModel(
+                                MockAnalytics(),
+                                MockSearchResultRepository(),
+                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                            ),
+                        bottomBar = {},
+                        clock = mockClock
+                    )
+                }
+            }
+        }
+
+        val updatedCamera =
+            CameraState(Point.fromLngLat(1.1, 1.1), EdgeInsets(0.0, 0.0, 0.0, 0.0), 1.0, 0.0, 0.0)
+        viewportProvider.setIsManuallyCentering(true)
+        viewportProvider.updateCameraState(updatedCamera)
+        viewportProvider.viewport.setCameraOptions {
+            center(updatedCamera.center)
+            zoom(updatedCamera.zoom)
+        }
+        viewportProvider.setIsManuallyCentering(false)
+
+        composeTestRule.waitForIdle()
+
+        assertTrue(
+            updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
+        )
+        assertFalse(viewportProvider.isFollowingPuck)
+
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+
+        mockClock.plus(30.minutes)
+
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
+        composeTestRule.waitForIdle()
+
+        assertTrue(
+            updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
+        )
+        assertFalse(viewportProvider.isFollowingPuck)
+
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+
+        mockClock.plus(2.hours)
+
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
+        composeTestRule.waitForIdle()
+
+        assertFalse(
+            updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
+        )
+        assertTrue(viewportProvider.viewport.isFollowingPuck)
+        assertTrue(viewportProvider.isFollowingPuck)
     }
 }

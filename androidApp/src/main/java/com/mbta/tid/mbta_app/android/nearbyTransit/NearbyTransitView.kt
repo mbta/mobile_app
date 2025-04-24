@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -57,7 +58,8 @@ fun NearbyTransitView(
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     noNearbyStopsView: @Composable () -> Unit,
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
+    clock: Clock = koinInject()
 ) {
     LaunchedEffect(null) { nearbyVM.loadSettings() }
 
@@ -71,7 +73,7 @@ fun NearbyTransitView(
             )
         }
     }
-    val now by timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds, clock)
     val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)

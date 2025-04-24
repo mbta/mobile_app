@@ -132,7 +132,8 @@ fun NearbyTransitPage(
                     settingsRepository = koinInject()
                 )
         ),
-    visitHistoryUsecase: VisitHistoryUsecase = koinInject()
+    visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
+    clock: Clock = koinInject()
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
@@ -148,7 +149,7 @@ fun NearbyTransitPage(
 
     val (pinnedRoutes) = managePinnedRoutes()
 
-    val now by timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds, clock)
 
     fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
         viewModel.setStopFilter(
@@ -290,7 +291,7 @@ fun NearbyTransitPage(
     var backgroundTimestamp: Long? by rememberSaveable { mutableStateOf(null) }
     LifecycleResumeEffect(null) {
         backgroundTimestamp?.let {
-            val timeSinceBackground = Clock.System.now().minus(Instant.fromEpochMilliseconds(it))
+            val timeSinceBackground = clock.now().minus(Instant.fromEpochMilliseconds(it))
             if (timeSinceBackground > 1.hours) {
                 navController.navigate(SheetRoutes.NearbyTransit) {
                     popUpTo(navController.graph.id) { inclusive = true }
@@ -299,7 +300,7 @@ fun NearbyTransitPage(
             }
         }
         backgroundTimestamp = null
-        onPauseOrDispose { backgroundTimestamp = Clock.System.now().toEpochMilliseconds() }
+        onPauseOrDispose { backgroundTimestamp = clock.now().toEpochMilliseconds() }
     }
 
     LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {

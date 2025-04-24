@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.state
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 
@@ -162,14 +164,15 @@ fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject(),
     errorBannerViewModel: ErrorBannerViewModel,
-    checkPredictionsStaleInterval: Duration = 5.seconds
+    checkPredictionsStaleInterval: Duration = 5.seconds,
+    clock: Clock = koinInject()
 ): PredictionsViewModel {
     val viewModel: PredictionsViewModel =
         viewModel(
             factory = PredictionsViewModel.Factory(predictionsRepository, errorBannerViewModel)
         )
 
-    val timer = timer(checkPredictionsStaleInterval)
+    val timer by timer(checkPredictionsStaleInterval, clock)
 
     LifecycleResumeEffect(key1 = stopIds) {
         CoroutineScope(Dispatchers.IO).launch {

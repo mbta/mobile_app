@@ -40,6 +40,8 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Clock
+import org.koin.compose.koinInject
 
 @Composable
 fun AlertDetailsPage(
@@ -48,11 +50,12 @@ fun AlertDetailsPage(
     routeIds: List<String>?,
     stopId: String?,
     alerts: AlertsStreamDataResponse?,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    clock: Clock = koinInject()
 ) {
     val alert = getAlert(alerts, alertId, goBack)
     val globalResponse = getGlobalData("AlertDetailsPage.loadGlobal")
-    val now by timer(5.seconds)
+    val now by timer(5.seconds, clock)
 
     val line = globalResponse?.getLine(lineId)
     val routes = routeIds?.mapNotNull { globalResponse?.getRoute(it) }

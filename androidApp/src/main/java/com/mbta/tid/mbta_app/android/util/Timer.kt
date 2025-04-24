@@ -23,12 +23,12 @@ class ClockTickHandler {
         private val _clockFlow = MutableSharedFlow<Instant>(replay = 0)
         var job: Job? = null
 
-        fun getClockFlow(): SharedFlow<Instant> {
+        fun getClockFlow(clock: Clock): SharedFlow<Instant> {
             if (job == null) {
                 job =
                     CoroutineScope(Dispatchers.IO).launch {
                         while (true) {
-                            _clockFlow.emit(Clock.System.now())
+                            _clockFlow.emit(clock.now())
                             delay(500)
                         }
                     }
@@ -38,15 +38,15 @@ class ClockTickHandler {
     }
 }
 
-class TimerViewModel(tickInterval: Duration) : ViewModel() {
+class TimerViewModel(tickInterval: Duration, clock: Clock) : ViewModel() {
     val timerFlow =
-        ClockTickHandler.getClockFlow().filter {
+        ClockTickHandler.getClockFlow(clock).filter {
             it.toEpochMilliseconds().seconds.inWholeSeconds % tickInterval.inWholeSeconds == 0L
         }
 }
 
 @Composable
-fun timer(updateInterval: Duration = 5.seconds): State<Instant> {
-    val viewModel: TimerViewModel = remember { TimerViewModel(updateInterval) }
-    return viewModel.timerFlow.collectAsState(initial = Clock.System.now())
+fun timer(updateInterval: Duration = 5.seconds, clock: Clock): State<Instant> {
+    val viewModel: TimerViewModel = remember { TimerViewModel(updateInterval, clock) }
+    return viewModel.timerFlow.collectAsState(initial = clock.now())
 }

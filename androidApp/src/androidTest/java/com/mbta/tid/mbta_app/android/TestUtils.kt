@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import kotlin.math.abs
+import kotlinx.datetime.Clock
 import org.junit.Assert.fail
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -104,12 +105,14 @@ fun testKoinApplication(
     objects: ObjectCollectionBuilder = ObjectCollectionBuilder(),
     analytics: Analytics = MockAnalytics(),
     socket: PhoenixSocket = MockPhoenixSocket(),
+    clock: Clock = Clock.System,
     repositoryOverrides: MockRepositories.() -> Unit = {},
 ) = koinApplication {
     modules(
         module {
             single<Analytics> { analytics }
             single<PhoenixSocket> { socket }
+            single<Clock> { clock }
         },
         repositoriesModule(
             MockRepositories().apply {

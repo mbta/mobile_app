@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Clock
 import org.koin.compose.koinInject
 
 @Composable
@@ -33,9 +34,10 @@ fun StopDetailsView(
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
+    clock: Clock = koinInject()
 ) {
-    val now by timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds, clock)
     val analytics: Analytics = koinInject()
 
     val departures by viewModel.stopDepartures.collectAsState()
