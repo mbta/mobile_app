@@ -77,7 +77,8 @@ fun StopDetailsUnfilteredRoutesView(
         onClose,
         onTapRoutePill,
         updateStopFilter,
-        openModal
+        openModal,
+        groupByDirection = false
     ) {
         items(departures.routes, key = { it.routeIdentifier }) { patternsByStop ->
             StopDetailsRouteView(
@@ -116,7 +117,8 @@ fun StopDetailsUnfilteredRoutesView(
         onClose,
         onTapRoutePill,
         updateStopFilter,
-        openModal
+        openModal,
+        groupByDirection = true
     ) {
         items(routeCardData, key = { it.lineOrRoute.id }) { routeCardData ->
             RouteCard(
@@ -143,12 +145,13 @@ private fun Layout(
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
-    body: LazyListScope.() -> Unit,
+    groupByDirection: Boolean,
+    body: LazyListScope.() -> Unit
 ) {
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
     Column(
         Modifier.background(colorResource(R.color.fill2)),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
+        verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         Column(Modifier.heightIn(min = 48.dp)) {
             SheetHeader(onClose = onClose, title = stop.name)
@@ -170,13 +173,19 @@ private fun Layout(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(0.dp),
-                contentPadding = PaddingValues(top = 16.dp)
+                verticalArrangement =
+                    if (groupByDirection) Arrangement.spacedBy(14.dp)
+                    else Arrangement.spacedBy(0.dp),
+                contentPadding =
+                    if (groupByDirection)
+                        PaddingValues(start = 15.dp, top = 17.dp, end = 15.dp, bottom = 16.dp)
+                    else PaddingValues(top = 16.dp)
             ) {
                 if (showStationAccessibility && hasAccessibilityWarning) {
                     item {
                         Column(
-                            Modifier.padding(bottom = 14.dp, start = 14.dp, end = 14.dp),
+                            if (groupByDirection) Modifier
+                            else Modifier.padding(bottom = 14.dp, start = 14.dp, end = 14.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             if (elevatorAlerts.isNotEmpty()) {
