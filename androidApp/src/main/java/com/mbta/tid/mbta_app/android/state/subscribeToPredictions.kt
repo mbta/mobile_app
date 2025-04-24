@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 
@@ -164,15 +163,14 @@ fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject(),
     errorBannerViewModel: ErrorBannerViewModel,
-    checkPredictionsStaleInterval: Duration = 5.seconds,
-    clock: Clock = koinInject()
+    checkPredictionsStaleInterval: Duration = 5.seconds
 ): PredictionsViewModel {
     val viewModel: PredictionsViewModel =
         viewModel(
             factory = PredictionsViewModel.Factory(predictionsRepository, errorBannerViewModel)
         )
 
-    val timer by timer(checkPredictionsStaleInterval, clock)
+    val timer by timer(checkPredictionsStaleInterval)
 
     LifecycleResumeEffect(key1 = stopIds) {
         CoroutineScope(Dispatchers.IO).launch {

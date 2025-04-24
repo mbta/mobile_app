@@ -541,7 +541,7 @@ fun stopDetailsManagedVM(
 ): StopDetailsViewModel {
     val now = now ?: clock.now()
     val stopId = filters?.stopId
-    val timer by timer(checkPredictionsStaleInterval, clock)
+    val timer by timer(checkPredictionsStaleInterval)
 
     val stopData by viewModel.stopData.collectAsState()
 

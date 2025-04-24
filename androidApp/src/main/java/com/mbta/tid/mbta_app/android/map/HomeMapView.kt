@@ -76,7 +76,6 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
 import org.koin.compose.koinInject
 
 @Composable
@@ -92,8 +91,7 @@ fun HomeMapView(
     vehiclesData: List<Vehicle>,
     stopDetailsDepartures: StopDetailsDepartures?,
     viewModel: IMapViewModel,
-    searchResultsViewModel: SearchResultsViewModel,
-    clock: Clock = koinInject()
+    searchResultsViewModel: SearchResultsViewModel
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -115,7 +113,7 @@ fun HomeMapView(
         }
     val previousSelectedVehicleId = rememberPrevious(current = selectedVehicle?.id)
     val currentLocation by locationDataManager.currentLocation.collectAsState(initial = null)
-    val now by timer(updateInterval = 300.seconds, clock)
+    val now by timer(updateInterval = 300.seconds)
     val globalMapData by viewModel.globalMapData.collectAsState(null)
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }

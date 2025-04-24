@@ -460,8 +460,7 @@ class NearbyTransitPageTest : KoinTest {
                                 MockSearchResultRepository(),
                                 VisitHistoryUsecase(MockVisitHistoryRepository())
                             ),
-                        bottomBar = {},
-                        clock = mockClock
+                        bottomBar = {}
                     )
                 }
             }

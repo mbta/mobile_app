@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.koin.compose.koinInject
 
 class ClockTickHandler {
     companion object {
@@ -46,7 +47,7 @@ class TimerViewModel(tickInterval: Duration, clock: Clock) : ViewModel() {
 }
 
 @Composable
-fun timer(updateInterval: Duration = 5.seconds, clock: Clock): State<Instant> {
+fun timer(updateInterval: Duration = 5.seconds, clock: Clock = koinInject()): State<Instant> {
     val viewModel: TimerViewModel = remember { TimerViewModel(updateInterval, clock) }
     return viewModel.timerFlow.collectAsState(initial = clock.now())
 }
