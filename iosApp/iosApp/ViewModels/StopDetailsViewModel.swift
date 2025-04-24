@@ -172,7 +172,7 @@ class StopDetailsViewModel: ObservableObject {
     ) async -> [RouteCardData]? {
         if let global, let schedules = stopData?.schedules {
             try? await RouteCardData.companion.routeCardsForStopList(
-                stopIds: [stopId] + global.getStop(stopId: stopId)?.childStopIds ?? [],
+                stopIds: [stopId] + (global.getStop(stopId: stopId)?.childStopIds ?? []),
                 globalData: global,
                 sortByDistanceFrom: nil,
                 schedules: schedules,
