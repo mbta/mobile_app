@@ -1136,7 +1136,8 @@ class RouteCardDataTest {
                                                 upcomingTrips =
                                                     listOf(objects.upcomingTrip(futureSchedule)),
                                                 allDataLoaded = true,
-                                                hasSchedulesToday = true
+                                                hasSchedulesTodayByPattern =
+                                                    mapOf(pattern1.id to true)
                                             )
                                     ),
                                     global
@@ -1153,7 +1154,8 @@ class RouteCardDataTest {
                                                 stopIds = setOf(stop2.id),
                                                 upcomingTrips = null,
                                                 allDataLoaded = true,
-                                                hasSchedulesToday = true
+                                                hasSchedulesTodayByPattern =
+                                                    mapOf(pattern2.id to true)
                                             )
                                     ),
                                     global
@@ -1170,7 +1172,8 @@ class RouteCardDataTest {
                                                 stopIds = setOf(stop3.id),
                                                 upcomingTrips = null,
                                                 allDataLoaded = true,
-                                                hasSchedulesToday = false
+                                                hasSchedulesTodayByPattern =
+                                                    mapOf(pattern3.id to false)
                                             )
                                     ),
                                     global
@@ -3287,7 +3290,12 @@ class RouteCardDataTest {
                                             ),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = true,
+                                        hasSchedulesTodayByPattern =
+                                            mapOf(
+                                                routePatternB1.id to true,
+                                                routePatternC1.id to true,
+                                                routePatternE1.id to true
+                                            ),
                                         alertsDownstream = emptyList()
                                     ),
                                     RouteCardData.Leaf(
@@ -3312,7 +3320,12 @@ class RouteCardDataTest {
                                             ),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = true,
+                                        hasSchedulesTodayByPattern =
+                                            mapOf(
+                                                routePatternB2.id to true,
+                                                routePatternC2.id to true,
+                                                routePatternE2.id to true
+                                            ),
                                         alertsDownstream = emptyList()
                                     )
                                 )
@@ -3818,7 +3831,11 @@ class RouteCardDataTest {
                                             ),
                                         allDataLoaded = true,
                                         alertsHere = emptyList(),
-                                        hasSchedulesToday = true,
+                                        hasSchedulesTodayByPattern =
+                                            mapOf(
+                                                orangeSouthboundDiversion.id to true,
+                                                orangeSouthboundTypical.id to false
+                                            ),
                                         alertsDownstream = emptyList()
                                     ),
                                     RouteCardData.Leaf(
@@ -3832,7 +3849,11 @@ class RouteCardDataTest {
                                         upcomingTrips = listOf(),
                                         allDataLoaded = true,
                                         alertsHere = listOf(alert),
-                                        hasSchedulesToday = true,
+                                        hasSchedulesTodayByPattern =
+                                            mapOf(
+                                                orangeNorthboundDiversion.id to true,
+                                                orangeNorthboundTypical.id to false
+                                            ),
                                         alertsDownstream = emptyList()
                                     )
                                 ),
@@ -4237,7 +4258,11 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             alertsHere =
                                                 listOf(parkShuttleAlert, parkElevatorAlert),
-                                            hasSchedulesToday = true,
+                                            hasSchedulesTodayByPattern =
+                                                mapOf(
+                                                    routePatternAshmont.id to true,
+                                                    routePatternBraintree.id to true
+                                                ),
                                             alertsDownstream = southboundDownstreamAlerts
                                         )
                                     ),
