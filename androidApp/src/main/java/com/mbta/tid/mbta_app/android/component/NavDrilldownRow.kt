@@ -29,11 +29,11 @@ fun NavDrilldownRow(
     content: @Composable RowScope.(Modifier) -> Unit
 ) {
     Row(
-        modifier
-            .background(color = MaterialTheme.colorScheme.background)
+        Modifier.background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .minimumInteractiveComponentSize()
-            .clickable(onClickLabel = onClickLabel, onClick = onClick),
+            .clickable(onClickLabel = onClickLabel, onClick = onClick)
+            .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
