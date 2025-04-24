@@ -17,6 +17,7 @@ struct StopDetailsUnfilteredView: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
 
     var departures: StopDetailsDepartures?
+    var routeCardData: [RouteCardData]?
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
@@ -30,6 +31,7 @@ struct StopDetailsUnfilteredView: View {
         stopId: String,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
+        routeCardData: [RouteCardData]?,
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -38,12 +40,20 @@ struct StopDetailsUnfilteredView: View {
         self.stopId = stopId
         self.setStopFilter = setStopFilter
         self.departures = departures
+        self.routeCardData = routeCardData
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.stopDetailsVM = stopDetailsVM
         self.now = now
 
-        if let departures {
+        if nearbyVM.groupByDirection, let routeCardData {
+            servedRoutes = routeCardData.map { routeCardData in
+                switch onEnum(of: routeCardData.lineOrRoute) {
+                case let .line(line): .line(line.line)
+                case let .route(route): .route(route.route)
+                }
+            }
+        } else if !nearbyVM.groupByDirection, let departures {
             servedRoutes = departures.routes.map { patterns in
                 if let line = patterns.line {
                     return .line(line)
@@ -59,8 +69,18 @@ struct StopDetailsUnfilteredView: View {
         stopDetailsVM.global?.getStop(stopId: stopId)
     }
 
+    var elevatorAlerts: [Shared.Alert]? {
+        if nearbyVM.groupByDirection, let routeCardData {
+            routeCardData.flatMap { $0.stopData.flatMap(\.elevatorAlerts) }.removingDuplicates()
+        } else if !nearbyVM.groupByDirection, let departures {
+            departures.elevatorAlerts
+        } else {
+            nil
+        }
+    }
+
     var hasAccessibilityWarning: Bool {
-        departures?.elevatorAlerts.isEmpty == false || stop?.isWheelchairAccessible == false
+        elevatorAlerts?.isEmpty == false || stop?.isWheelchairAccessible == false
     }
 
     var body: some View {
@@ -93,41 +113,55 @@ struct StopDetailsUnfilteredView: View {
                     Color.fill1.ignoresSafeArea(.all)
                     ScrollView {
                         LazyVStack(spacing: 0) {
-                            if let departures {
-                                if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
-                                    if !departures.elevatorAlerts.isEmpty {
-                                        ForEach(departures.elevatorAlerts, id: \.id) { alert in
-                                            AlertCard(
-                                                alert: alert,
-                                                alertSummary: nil,
-                                                spec: .elevator,
-                                                color: Color.clear,
-                                                textColor: Color.text,
-                                                onViewDetails: {
-                                                    nearbyVM.pushNavEntry(.alertDetails(
-                                                        alertId: alert.id,
-                                                        line: nil,
-                                                        routes: nil,
-                                                        stop: stop
-                                                    ))
-                                                    analytics.tappedAlertDetails(
-                                                        routeId: "",
-                                                        stopId: stopId,
-                                                        alertId: alert.id,
-                                                        elevator: true
-                                                    )
-                                                }
-                                            )
-                                            .padding(.horizontal, 16)
-                                            .padding(.bottom, 16)
-                                        }
-                                    } else {
-                                        NotAccessibleCard()
-                                            .padding(.horizontal, 16)
-                                            .padding(.bottom, 16)
+                            if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
+                                if !elevatorAlerts.isEmpty {
+                                    ForEach(elevatorAlerts, id: \.id) { alert in
+                                        AlertCard(
+                                            alert: alert,
+                                            alertSummary: nil,
+                                            spec: .elevator,
+                                            color: Color.clear,
+                                            textColor: Color.text,
+                                            onViewDetails: {
+                                                nearbyVM.pushNavEntry(.alertDetails(
+                                                    alertId: alert.id,
+                                                    line: nil,
+                                                    routes: nil,
+                                                    stop: stop
+                                                ))
+                                                analytics.tappedAlertDetails(
+                                                    routeId: "",
+                                                    stopId: stopId,
+                                                    alertId: alert.id,
+                                                    elevator: true
+                                                )
+                                            }
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.bottom, 16)
                                     }
+                                } else {
+                                    NotAccessibleCard()
+                                        .padding(.horizontal, 16)
+                                        .padding(.bottom, 16)
                                 }
+                            }
 
+                            if nearbyVM.groupByDirection, let routeCardData, let global = stopDetailsVM.global {
+                                ForEach(routeCardData, id: \.lineOrRoute.id) { routeCardData in
+                                    RouteCard(
+                                        cardData: routeCardData,
+                                        global: global,
+                                        now: now,
+                                        onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } },
+                                        pinned: stopDetailsVM.pinnedRoutes.contains(routeCardData.lineOrRoute.id),
+                                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
+                                        showStationAccessibility: stopDetailsVM.showStationAccessibility
+                                    )
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 16)
+                                }
+                            } else if !nearbyVM.groupByDirection, let departures {
                                 ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                                     StopDetailsRouteView(
                                         patternsByStop: patternsByStop,

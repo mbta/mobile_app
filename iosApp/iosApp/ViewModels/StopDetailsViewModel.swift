@@ -164,6 +164,29 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
+    func getRouteCardData(
+        stopId: String,
+        alerts: AlertsStreamDataResponse?,
+        now: Date,
+        isFiltered: Bool
+    ) async -> [RouteCardData]? {
+        if let global, let schedules = stopData?.schedules {
+            try? await RouteCardData.companion.routeCardsForStopList(
+                stopIds: [stopId] + global.getStop(stopId: stopId)?.childStopIds ?? [],
+                globalData: global,
+                sortByDistanceFrom: nil,
+                schedules: schedules,
+                predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                alerts: alerts,
+                now: now.toKotlinInstant(),
+                pinnedRoutes: pinnedRoutes,
+                context: isFiltered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+            )
+        } else {
+            nil
+        }
+    }
+
     func getTripRouteAccents() -> TripRouteAccents {
         guard let routeId = tripData?.trip.routeId,
               let route = global?.getRoute(routeId: routeId)

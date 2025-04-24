@@ -107,6 +107,15 @@ class NearbyViewModel: ObservableObject {
         }
     }
 
+    /**
+     Set the route card data from the given stop if it is the last stop in the stack.
+     */
+    func setRouteCardData(_ stopId: String, _ newRouteCardData: [RouteCardData]?) {
+        if stopId == navigationStack.lastStopId {
+            routeCardData = newRouteCardData
+        }
+    }
+
     func isNearbyVisible() -> Bool {
         navigationStack.lastSafe() == .nearby
     }

@@ -613,7 +613,7 @@ fun stopDetailsManagedVM(
                             stopData?.predictionsLoaded == true
                     ) {
                         RouteCardData.routeCardsForStopList(
-                            globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
+                            listOf(stopId) + globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
                             globalResponse,
                             sortByDistanceFrom = null,
                             schedules,

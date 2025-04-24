@@ -41,9 +41,64 @@ final class StopDetailsViewTests: XCTestCase {
                 .init(route: routeDefaultSort1, stop: stop, patterns: [], elevatorAlerts: []),
                 .init(route: routeDefaultSort0, stop: stop, patterns: [], elevatorAlerts: []),
             ]),
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: .init(
+                globalRepository: MockGlobalRepository(response: .init(objects: objects))
+            )
+        )
+
+        ViewHosting.host(view: sut)
+        let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
+        XCTAssertEqual(2, routePills.count)
+        XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
+        XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
+    }
+
+    @MainActor func testFiltersInSameOrderAsRouteCardData() throws {
+        let objects = ObjectCollectionBuilder()
+        let routeDefaultSort0 = objects.route { route in
+            route.sortOrder = 0
+            route.type = .bus
+            route.shortName = "Should be second"
+        }
+        let routeDefaultSort1 = objects.route { route in
+            route.sortOrder = 1
+            route.type = .bus
+            route.shortName = "Should be first"
+        }
+        let stop = objects.stop { _ in }
+
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.groupByDirection = true
+
+        let sut = StopDetailsView(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            departures: nil,
+            routeCardData: [
+                .init(
+                    lineOrRoute: RouteCardDataLineOrRouteRoute(route: routeDefaultSort1),
+                    stopData: [],
+                    context: .stopDetailsUnfiltered,
+                    at: Date.now.toKotlinInstant()
+                ),
+                .init(
+                    lineOrRoute: RouteCardDataLineOrRouteRoute(route: routeDefaultSort0),
+                    stopData: [],
+                    context: .stopDetailsUnfiltered,
+                    at: Date.now.toKotlinInstant()
+                ),
+            ],
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: .init(
                 globalRepository: MockGlobalRepository(response: .init(objects: objects))
@@ -73,6 +128,7 @@ final class StopDetailsViewTests: XCTestCase {
             departures: .init(routes: [
                 .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             ]),
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -105,6 +161,7 @@ final class StopDetailsViewTests: XCTestCase {
             departures: .init(routes: [
                 .init(route: route, stop: stop, patterns: [], elevatorAlerts: [alert]),
             ]),
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -139,6 +196,7 @@ final class StopDetailsViewTests: XCTestCase {
             departures: .init(routes: [
                 .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
             ]),
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -166,6 +224,7 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -195,6 +254,7 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -223,6 +283,7 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
+            routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
