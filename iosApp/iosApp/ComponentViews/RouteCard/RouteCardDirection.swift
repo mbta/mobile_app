@@ -17,7 +17,14 @@ struct RouteCardDirection: View {
         switch onEnum(of: formatted) {
         case let .branched(branched):
             VStack(alignment: .leading, spacing: 0) {
-                DirectionLabel(direction: direction, showDestination: false).foregroundStyle(Color.text)
+                HStack(alignment: .center) {
+                    if let secondaryAlert = branched.secondaryAlert {
+                        Image(secondaryAlert.iconName)
+                            .accessibilityLabel("Alert")
+                            .frame(width: 18, height: 18)
+                    }
+                    DirectionLabel(direction: direction, showDestination: false).foregroundStyle(Color.text)
+                }
                 ForEach(branched.branches) { branch in
                     let pillDecoration: PredictionRowView.PillDecoration = if let route = branch
                         .route { .onRow(route: route) } else { .none }
