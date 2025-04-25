@@ -427,6 +427,8 @@ class NearbyTransitPageTest : KoinTest {
             }
 
         val startLocation = Position(0.0, 0.0)
+        val locationDataManager = MockLocationDataManager(startLocation)
+        locationDataManager.hasPermission = true
 
         val koinApplication = testKoinApplication(builder, clock = mockClock)
 
@@ -448,7 +450,7 @@ class NearbyTransitPageTest : KoinTest {
                             nearbyTransitSelectingLocationState =
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(startLocation),
+                            locationDataManager = locationDataManager,
                             viewportProvider = viewportProvider,
                         ),
                         false,
