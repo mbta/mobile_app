@@ -221,7 +221,6 @@ data class RouteCardData(
             val routePatterns: List<RoutePattern>,
             val hasSchedulesToday: Boolean,
             val allUpcomingTrips: List<UpcomingTrip>,
-            val upcomingTripsToShow: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>>,
             val majorAlert: Alert?
         )
 
@@ -231,7 +230,6 @@ data class RouteCardData(
          */
         private fun dataByHeadsign(
             potentialHeadsigns: Set<String>,
-            tripsWithFormat: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>>,
             globalData: GlobalResponse?
         ): Map<String, ByHeadsignData> {
             return potentialHeadsigns
@@ -270,7 +268,6 @@ data class RouteCardData(
                                 .filterKeys { it in routePatternIds }
                                 .any { it.value },
                             upcomingTrips.filter { it.headsign == headsign },
-                            tripsWithFormat.filter { it.first.headsign == headsign },
                             majorAlert.firstOrNull()
                         )
                 }
@@ -302,7 +299,7 @@ data class RouteCardData(
             // show the route alongside the UpcomingTripFormat
             val shouldIncludeRoute = routePatterns.distinctBy { it.routeId }.size > 1
 
-            val dataByHeadsign = dataByHeadsign(potentialHeadsigns, tripsWithFormat, globalData)
+            val dataByHeadsign = dataByHeadsign(potentialHeadsigns, globalData)
             val (nonDisruptedHeadsigns, disruptedHeadsigns) =
                 dataByHeadsign.entries.partition { it.value.majorAlert == null }
 
@@ -374,8 +371,6 @@ data class RouteCardData(
                 if (remainingRowsToShow > 0) {
                     nonDisruptedHeadsigns
                         .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
-                        .filter { it.value.upcomingTripsToShow.isEmpty() }
-                        .take(remainingRowsToShow)
                         .mapNotNull { (headsign, groupedData) ->
                             val route =
                                 if (shouldIncludeRoute)
@@ -400,6 +395,7 @@ data class RouteCardData(
                                 null
                             }
                         }
+                        .take(remainingRowsToShow)
                 } else {
                     emptyList()
                 }
