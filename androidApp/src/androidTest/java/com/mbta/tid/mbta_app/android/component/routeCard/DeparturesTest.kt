@@ -2,10 +2,12 @@ package com.mbta.tid.mbta_app.android.component.routeCard
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -28,6 +30,8 @@ class DeparturesTest {
     fun testDepartures() {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
+
+        val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
         val stop = objects.stop {}
         val route =
             objects.route {
@@ -71,7 +75,7 @@ class DeparturesTest {
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        listOf(downstreamAlert)
                     )
                 )
             )
@@ -92,6 +96,9 @@ class DeparturesTest {
 
         composeTestRule.onNodeWithText("20 min").assertIsDisplayed()
         composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
     }
 
     @Test

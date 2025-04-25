@@ -1,14 +1,18 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
@@ -21,6 +25,8 @@ import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.NavDrilldownRow
 import com.mbta.tid.mbta_app.android.component.PillDecoration
+import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -88,7 +94,17 @@ fun Departures(
                             )
                         }
                         is LeafFormat.Branched -> {
-                            DirectionLabel(direction, showDestination = false)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                formatted.secondaryAlert?.let { secondaryAlert ->
+                                    Image(
+                                        painterResource(drawableByName(secondaryAlert.iconName)),
+                                        stringResource(R.string.alert),
+                                        modifier =
+                                            Modifier.placeholderIfLoading().padding(end = 8.dp)
+                                    )
+                                }
+                                DirectionLabel(direction, showDestination = false)
+                            }
                             for (branch in formatted.branches) {
                                 HeadsignRowView(
                                     branch.headsign,
