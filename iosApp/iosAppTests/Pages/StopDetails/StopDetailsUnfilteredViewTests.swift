@@ -105,7 +105,6 @@ import XCTest
 
     private let errorBannerViewModel = ErrorBannerViewModel(
         errorRepository: MockErrorBannerStateRepository(),
-        settingsRepository: MockSettingsRepository(),
         initialLoadingWhenPredictionsStale: false
     )
 
@@ -134,7 +133,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Sample Route"))
         XCTAssertNotNil(try sut.inspect().find(text: "Sample Headsign"))
@@ -156,10 +155,8 @@ import XCTest
         )
 
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showStationAccessibility = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsUnfilteredView(
             stopId: inaccessibleStop!.id,
@@ -169,7 +166,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
@@ -202,10 +199,8 @@ import XCTest
         )
 
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showStationAccessibility = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsUnfilteredView(
             stopId: stop!.id,
@@ -215,7 +210,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "Elevator alert"))
     }
 }

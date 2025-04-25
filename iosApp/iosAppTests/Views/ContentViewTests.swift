@@ -154,8 +154,8 @@ final class ContentViewTests: XCTestCase {
 
     @MainActor func testHidesMap() throws {
         let contentVM = FakeContentVM()
-        contentVM.hideMaps = true
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM), settings: [.hideMaps: true])
 
         XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
     }
@@ -163,7 +163,6 @@ final class ContentViewTests: XCTestCase {
     @MainActor func testHiddenMapUpdatesLocation() throws {
         let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
         let contentVM = FakeContentVM()
-        contentVM.hideMaps = true
 
         let locationFetcher = MockLocationFetcher()
         locationFetcher.authorizationStatus = .authorizedAlways
@@ -173,7 +172,8 @@ final class ContentViewTests: XCTestCase {
 
         let sutWithEnv = withDefaultEnvironmentObjects(
             sut: ContentView(contentVM: contentVM),
-            locationDataManager: locationDataManager
+            locationDataManager: locationDataManager,
+            settings: [.hideMaps: true]
         )
         let sut = try sutWithEnv.inspect().implicitAnyView().view(ContentView.self).actualView()
 
@@ -271,11 +271,13 @@ final class ContentViewTests: XCTestCase {
         sut: some View,
         locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher()),
         socketProvider: SocketProvider = SocketProvider(socket: FakeSocket()),
-        viewportProvider: ViewportProvider = .init()
+        viewportProvider: ViewportProvider = .init(),
+        settings: [Settings: Bool] = [:]
     ) -> some View {
         sut
             .environmentObject(locationDataManager)
             .environmentObject(socketProvider)
             .environmentObject(viewportProvider)
+            .withFixedSettings(settings)
     }
 }

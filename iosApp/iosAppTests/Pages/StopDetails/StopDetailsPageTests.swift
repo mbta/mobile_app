@@ -66,7 +66,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         sut.updateDepartures()
 
         try await Task.sleep(for: .seconds(1))
@@ -102,7 +102,7 @@ final class StopDetailsPageTests: XCTestCase {
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
-        )
+        ).withFixedSettings([:])
 
         XCTAssertEqual(3, nearbyVM.navigationStack.count)
 
@@ -146,7 +146,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         try sut.inspect().findAndCallOnChange(newValue: ScenePhase.background)
         wait(for: [leaveExpectation], timeout: 1)
@@ -198,7 +198,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         XCTAssertNil(nearbyVM.routeCardData)
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         stopDetailsVM.stopData = .init(
             stopId: stop.id,
             schedules: .init(objects: objects),
@@ -297,7 +297,7 @@ final class StopDetailsPageTests: XCTestCase {
             XCTAssertEqual([], nearbyVM.routeCardData)
             try XCTAssertEqual(view.actualView().internalRouteCardData, [])
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
     }
 
     @MainActor
@@ -360,7 +360,7 @@ final class StopDetailsPageTests: XCTestCase {
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         sut.updateDepartures()
 
@@ -433,7 +433,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         sut.updateDepartures()
         try await Task.sleep(for: .seconds(1))
 

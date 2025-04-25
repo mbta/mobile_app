@@ -32,7 +32,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             locationFetcher.locationFetcherDelegate?.locationFetcherDidChangeAuthorization(locationFetcher)
             await self.fulfillment(of: [advanceExp], timeout: 1)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 5)
     }
 
@@ -45,9 +45,11 @@ final class OnboardingScreenViewTests: XCTestCase {
         let advanceExp = expectation(description: "calls advance()")
         let sut = OnboardingScreenView(
             screen: .stationAccessibility,
-            advance: { advanceExp.fulfill() },
-            settingsRepository: settingsRepo
+            advance: { advanceExp.fulfill() }
         )
+
+        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
+
         XCTAssertNotNil(try sut.inspect().find(where: { view in
             try view.text().string()
                 .contains("we can show you which stations are inaccessible or have elevator closures.")
@@ -70,9 +72,10 @@ final class OnboardingScreenViewTests: XCTestCase {
 
         let sut = OnboardingScreenView(
             screen: .hideMaps,
-            advance: { advanceExp.fulfill() },
-            settingsRepository: settingsRepo
+            advance: { advanceExp.fulfill() }
         )
+
+        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
 
         XCTAssertNotNil(try sut.inspect().find(
             text: "When using VoiceOver, we can hide maps to make the app easier to navigate."
@@ -95,7 +98,7 @@ final class OnboardingScreenViewTests: XCTestCase {
         let sut = OnboardingScreenView(
             screen: .feedback,
             advance: { advanceExp.fulfill() }
-        )
+        ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(
             text: "MBTA Go is in the early stages! We want your feedback" +
                 " as we continue making improvements and adding new features."

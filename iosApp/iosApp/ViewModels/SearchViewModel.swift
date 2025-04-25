@@ -13,9 +13,17 @@ class SearchViewModel: ObservableObject {
     enum ResultsState: Equatable {
         case loading
         case recentStops(stops: [Result])
-        case results(stops: [Result], routes: [RouteResult], includeRoutes: Bool)
-        case empty
+        case results(stops: [Result], routes: [RouteResult])
         case error
+
+        func isEmpty(includeRoutes: Bool) -> Bool {
+            switch self {
+            case .loading: false
+            case .recentStops: false
+            case let .results(stops: stops, routes: routes): stops.isEmpty && (!includeRoutes || routes.isEmpty)
+            case .error: false
+            }
+        }
     }
 
     struct Result: Identifiable, Equatable {
@@ -27,28 +35,22 @@ class SearchViewModel: ObservableObject {
 
     @Published var resultsState: ResultsState?
 
-    private let settingsRepo: ISettingsRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private let searchResultsRepository: ISearchResultRepository
     private let globalRepository: IGlobalRepository
 
     private let analytics: Analytics
 
-    private var routeResultsEnabled: Bool
     private var globalResponse: GlobalResponse?
     private var latestVisits: [Result]?
     private var fetchResultsTask: Task<Void, Never>?
 
     init(
-        routeResultsEnabled: Bool = false,
-        settingsRepo: ISettingsRepository = RepositoryDI().settings,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
         analytics: Analytics = AnalyticsProvider.shared
     ) {
-        self.routeResultsEnabled = routeResultsEnabled
-        self.settingsRepo = settingsRepo
         self.globalRepository = globalRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.searchResultsRepository = searchResultsRepository
@@ -73,15 +75,6 @@ class SearchViewModel: ObservableObject {
 
     func loadGlobalDataAndHistory() async {
         await getGlobalData()
-    }
-
-    func loadSettings() async {
-        do {
-            let settings = try await settingsRepo.getSettings()
-            await MainActor.run { [settings] in
-                routeResultsEnabled = settings[.searchRouteResults]?.boolValue ?? false
-            }
-        } catch {}
     }
 
     @MainActor
@@ -128,17 +121,11 @@ class SearchViewModel: ObservableObject {
             resultsState = .loading
             switch try await onEnum(of: searchResultsRepository.getSearchResults(query: query)) {
             case let .ok(result):
-                let showRoutes = routeResultsEnabled
                 let results = result.data
-                resultsState = if results.stops.isEmpty, !showRoutes || results.routes.isEmpty {
-                    .empty
-                } else {
-                    .results(
-                        stops: results.stops.compactMap { mapStopIdToResult(id: $0.id) },
-                        routes: results.routes,
-                        includeRoutes: showRoutes
-                    )
-                }
+                resultsState = .results(
+                    stops: results.stops.compactMap { mapStopIdToResult(id: $0.id) },
+                    routes: results.routes
+                )
             case nil: resultsState = .error
             case let .error(error):
                 resultsState = .error

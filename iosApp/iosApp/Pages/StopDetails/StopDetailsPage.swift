@@ -36,6 +36,8 @@ struct StopDetailsPage: View {
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
     let inspection = Inspection<Self>()
 
     var stopId: String { filters.stopId }
