@@ -91,7 +91,7 @@ fun HomeMapView(
     vehiclesData: List<Vehicle>,
     stopDetailsDepartures: StopDetailsDepartures?,
     viewModel: IMapViewModel,
-    searchResultsViewModel: SearchResultsViewModel,
+    searchResultsViewModel: SearchResultsViewModel
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -113,7 +113,7 @@ fun HomeMapView(
         }
     val previousSelectedVehicleId = rememberPrevious(current = selectedVehicle?.id)
     val currentLocation by locationDataManager.currentLocation.collectAsState(initial = null)
-    val now = timer(updateInterval = 300.seconds)
+    val now by timer(updateInterval = 300.seconds)
     val globalMapData by viewModel.globalMapData.collectAsState(null)
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }

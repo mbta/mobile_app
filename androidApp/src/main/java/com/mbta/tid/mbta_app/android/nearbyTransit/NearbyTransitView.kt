@@ -71,7 +71,7 @@ fun NearbyTransitView(
             )
         }
     }
-    val now = timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds)
     val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)

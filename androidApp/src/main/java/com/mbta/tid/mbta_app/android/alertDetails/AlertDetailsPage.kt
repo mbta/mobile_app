@@ -52,7 +52,7 @@ fun AlertDetailsPage(
 ) {
     val alert = getAlert(alerts, alertId, goBack)
     val globalResponse = getGlobalData("AlertDetailsPage.loadGlobal")
-    val now = timer(5.seconds)
+    val now by timer(5.seconds)
 
     val line = globalResponse?.getLine(lineId)
     val routes = routeIds?.mapNotNull { globalResponse?.getRoute(it) }

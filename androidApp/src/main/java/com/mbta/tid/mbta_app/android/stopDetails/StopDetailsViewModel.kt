@@ -65,6 +65,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 class StopDetailsViewModel(
     private val errorBannerRepository: IErrorBannerStateRepository,
@@ -532,13 +533,15 @@ fun stopDetailsManagedVM(
     updateStopFilter: (String, StopDetailsFilter?) -> Unit,
     updateTripFilter: (String, TripDetailsFilter?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    now: Instant = Clock.System.now(),
+    now: Instant? = null,
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    clock: Clock = koinInject()
 ): StopDetailsViewModel {
+    val now = now ?: clock.now()
     val stopId = filters?.stopId
-    val timer = timer(checkPredictionsStaleInterval)
+    val timer by timer(checkPredictionsStaleInterval)
 
     val stopData by viewModel.stopData.collectAsState()
 

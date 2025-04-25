@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.state
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -169,7 +170,7 @@ fun subscribeToPredictions(
             factory = PredictionsViewModel.Factory(predictionsRepository, errorBannerViewModel)
         )
 
-    val timer = timer(checkPredictionsStaleInterval)
+    val timer by timer(checkPredictionsStaleInterval)
 
     LifecycleResumeEffect(key1 = stopIds) {
         CoroutineScope(Dispatchers.IO).launch {

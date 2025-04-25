@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -81,13 +82,15 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.typeOf
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -129,7 +132,8 @@ fun NearbyTransitPage(
                     settingsRepository = koinInject()
                 )
         ),
-    visitHistoryUsecase: VisitHistoryUsecase = koinInject()
+    visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
+    clock: Clock = koinInject()
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
@@ -145,7 +149,7 @@ fun NearbyTransitPage(
 
     val (pinnedRoutes) = managePinnedRoutes()
 
-    val now = timer(updateInterval = 5.seconds)
+    val now by timer(updateInterval = 5.seconds)
 
     fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
         viewModel.setStopFilter(
@@ -282,6 +286,23 @@ fun NearbyTransitPage(
 
     fun openSearch() {
         searchFocusRequester.requestFocus()
+    }
+
+    var backgroundTimestamp: Long? by rememberSaveable { mutableStateOf(null) }
+    LifecycleResumeEffect(null) {
+        backgroundTimestamp?.let {
+            val timeSinceBackground = clock.now().minus(Instant.fromEpochMilliseconds(it))
+            if (timeSinceBackground > 1.hours) {
+                navController.navigate(SheetRoutes.NearbyTransit) {
+                    popUpTo(navController.graph.id) { inclusive = true }
+                }
+                if (nearbyTransit.locationDataManager.hasPermission) {
+                    nearbyTransit.viewportProvider.follow()
+                }
+            }
+        }
+        backgroundTimestamp = null
+        onPauseOrDispose { backgroundTimestamp = clock.now().toEpochMilliseconds() }
     }
 
     LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
