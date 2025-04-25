@@ -40,6 +40,7 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
@@ -54,6 +55,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
@@ -130,8 +132,8 @@ fun StopDetailsFilteredDeparturesView(
 
     val alertSummaries by viewModel.alertSummaries.collectAsState()
 
-    val hideMaps by viewModel.hideMaps.collectAsState()
-    val showStationAccessibility by viewModel.showStationAccessibility.collectAsState()
+    val hideMaps = SettingsCache.get(Settings.HideMaps)
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
 

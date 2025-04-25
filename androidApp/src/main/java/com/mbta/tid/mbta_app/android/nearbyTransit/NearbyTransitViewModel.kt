@@ -15,43 +15,25 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 
 class NearbyTransitViewModel(
     private val nearbyRepository: INearbyRepository,
-    private val settingsRepository: ISettingsRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
     private val analytics: Analytics,
 ) : KoinComponent, ViewModel() {
-    private val _showStationAccessibility: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showStationAccessibility: StateFlow<Boolean> = _showStationAccessibility
-    private val _groupByDirection: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val groupByDirection: StateFlow<Boolean> = _groupByDirection
-
     var loadedLocation by mutableStateOf<Position?>(null)
     var loading by mutableStateOf(false)
     var nearby by mutableStateOf<NearbyStaticData?>(null)
     var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
 
     private var fetchNearbyTask: Job? = null
-
-    fun loadSettings() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val data = settingsRepository.getSettings()
-            _showStationAccessibility.value = data[Settings.StationAccessibility] ?: false
-            _groupByDirection.value = data[Settings.GroupByDirection] ?: false
-        }
-    }
 
     fun getNearby(
         globalResponse: GlobalResponse,

@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -30,6 +31,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -47,7 +49,7 @@ fun TripDetailsView(
     analytics: Analytics = koinInject(),
     modifier: Modifier = Modifier
 ) {
-    val showStationAccessibility = stopDetailsVM.showStationAccessibility.collectAsState().value
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
     val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
     val vehicle = tripData?.vehicle

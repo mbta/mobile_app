@@ -45,7 +45,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -325,7 +324,6 @@ private fun StopDetailsRoutesViewPreview() {
                 ErrorBannerViewModel(
                     false,
                     MockErrorBannerStateRepository(),
-                    MockSettingsRepository()
                 ),
                 showStationAccessibility = true,
                 now = Clock.System.now(),

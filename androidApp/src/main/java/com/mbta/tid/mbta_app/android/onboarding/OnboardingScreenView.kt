@@ -17,10 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,12 +36,10 @@ import com.google.accompanist.permissions.isGranted
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.OnboardingScreen
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -53,9 +49,8 @@ fun OnboardingScreenView(
     advance: () -> Unit,
     locationDataManager: LocationDataManager,
     skipLocationDialogue: Boolean = false,
-    settingsRepository: ISettingsRepository = koinInject()
+    settingsCache: SettingsCache = koinInject()
 ) {
-    val coroutineScope = rememberCoroutineScope()
     var sharingLocation by rememberSaveable { mutableStateOf(false) }
     val permissions =
         locationDataManager.rememberPermissions(
@@ -67,10 +62,6 @@ fun OnboardingScreenView(
             }
         )
 
-    var settings: Map<Settings, Boolean> by rememberSaveable { mutableStateOf(emptyMap()) }
-
-    LaunchedEffect(Unit) { settings = settingsRepository.getSettings() }
-
     fun shareLocation() {
         if (skipLocationDialogue || permissions.permissions.any { it.status.isGranted }) {
             advance()
@@ -78,17 +69,6 @@ fun OnboardingScreenView(
             sharingLocation = true
             permissions.launchMultiplePermissionRequest()
         }
-    }
-
-    fun setSetting(setting: Settings, value: Boolean) {
-        coroutineScope.launch {
-            settingsRepository.setSettings(mapOf(setting to value))
-            settings = settingsRepository.getSettings()
-        }
-    }
-
-    fun toggleSetting(setting: Settings) {
-        setSetting(setting, !settings.getOrDefault(setting, false))
     }
 
     val configuration = LocalConfiguration.current
@@ -165,7 +145,7 @@ fun OnboardingScreenView(
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
                         onClick = {
-                            setSetting(Settings.HideMaps, localHideMapsSetting)
+                            settingsCache.set(Settings.HideMaps, localHideMapsSetting)
                             advance()
                         },
                     )
@@ -215,10 +195,12 @@ fun OnboardingScreenView(
                         R.string.onboarding_station_accessibility_body,
                     )
 
+                    val stationAccessibility = settingsCache.get(Settings.StationAccessibility)
                     OnboardingPieces.SettingsToggle(
-                        currentSetting =
-                            settings.getOrDefault(Settings.StationAccessibility, false),
-                        toggleSetting = { toggleSetting(Settings.StationAccessibility) },
+                        currentSetting = stationAccessibility,
+                        toggleSetting = {
+                            settingsCache.set(Settings.StationAccessibility, !stationAccessibility)
+                        },
                         label = stringResource(R.string.setting_station_accessibility)
                     )
 
@@ -239,8 +221,7 @@ private fun OnboardingScreenViewFeedbackPreview() {
         OnboardingScreenView(
             OnboardingScreen.Feedback,
             advance = {},
-            locationDataManager = LocationDataManager(),
-            settingsRepository = MockSettingsRepository()
+            locationDataManager = LocationDataManager()
         )
     }
 }
@@ -252,8 +233,7 @@ private fun OnboardingScreenViewHideMapsPreview() {
         OnboardingScreenView(
             OnboardingScreen.HideMaps,
             advance = {},
-            locationDataManager = LocationDataManager(),
-            settingsRepository = MockSettingsRepository()
+            locationDataManager = LocationDataManager()
         )
     }
 }
@@ -265,8 +245,7 @@ private fun OnboardingScreenViewLocationPreview() {
         OnboardingScreenView(
             OnboardingScreen.Location,
             advance = {},
-            locationDataManager = LocationDataManager(),
-            settingsRepository = MockSettingsRepository()
+            locationDataManager = LocationDataManager()
         )
     }
 }
@@ -278,8 +257,7 @@ private fun OnboardingScreenViewStationAccessibiityPreview() {
         OnboardingScreenView(
             OnboardingScreen.StationAccessibility,
             advance = {},
-            locationDataManager = LocationDataManager(),
-            settingsRepository = MockSettingsRepository()
+            locationDataManager = LocationDataManager()
         )
     }
 }

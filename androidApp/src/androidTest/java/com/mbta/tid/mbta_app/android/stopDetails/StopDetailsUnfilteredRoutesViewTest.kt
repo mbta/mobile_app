@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
@@ -112,8 +111,7 @@ class StopDetailsUnfilteredRoutesViewTest {
             )
         )
 
-    private val errorBannerViewModel =
-        ErrorBannerViewModel(false, MockErrorBannerStateRepository(), MockSettingsRepository())
+    private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
     @get:Rule val composeTestRule = createComposeRule()
 

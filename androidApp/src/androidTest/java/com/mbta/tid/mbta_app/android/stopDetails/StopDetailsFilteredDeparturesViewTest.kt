@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -28,8 +29,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -37,10 +38,12 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.koin.compose.KoinContext
 
 @RunWith(Parameterized::class)
 class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolean) {
@@ -137,8 +140,17 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             )
         )
 
-    private val errorBannerViewModel =
-        ErrorBannerViewModel(false, MockErrorBannerStateRepository(), MockSettingsRepository())
+    private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
+    private val settings = mutableMapOf<Settings, Boolean>()
+    private val settingsRepository =
+        object : ISettingsRepository {
+            override suspend fun getSettings() = settings
+
+            override suspend fun setSettings(settings: Map<Settings, Boolean>) {}
+        }
+
+    private val koinApplication = testKoinApplication { settings = settingsRepository }
 
     companion object {
         @JvmStatic
@@ -148,14 +160,16 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @Before
+    fun resetSettings() {
+        settings.clear()
+        settings[Settings.GroupByDirection] = groupByDirection
+    }
+
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to groupByDirection))
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
@@ -178,7 +192,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
             data =
                 FilteredDeparturesData.PostGroupByDirection(
@@ -214,28 +227,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {}
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {}
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
@@ -247,11 +262,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         var tripFilter: TripDetailsFilter? = null
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to groupByDirection))
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
@@ -275,7 +286,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
             data =
                 FilteredDeparturesData.PostGroupByDirection(
@@ -311,28 +321,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = { tripFilter = it },
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {}
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = { tripFilter = it },
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {}
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
@@ -394,18 +406,12 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                 )
             )
 
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to groupByDirection))
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         if (groupByDirection) {
-            viewModel.loadSettings()
-
             val leaf =
                 RouteCardData.Leaf(
                     trip.directionId,
@@ -465,28 +471,31 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
-                tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {}
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter =
+                        StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
+                    tripFilter = TripDetailsFilter(trip.id, null, null, false),
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {}
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Trip cancelled").assertIsDisplayed()
@@ -555,28 +564,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = StopDetailsFilter(route.id, 0),
-                tripFilter = null,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                tileData = listOf(),
-                noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                allAlerts = null,
-                elevatorAlerts = listOf(),
-                data = data,
-                global = globalResponse,
-                now = now,
-                viewModel = StopDetailsViewModel.mocked(),
-                errorBannerViewModel = errorBannerViewModel,
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {}
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = StopDetailsFilter(route.id, 0),
+                    tripFilter = null,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    tileData = listOf(),
+                    noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+                    allAlerts = null,
+                    elevatorAlerts = listOf(),
+                    data = data,
+                    global = globalResponse,
+                    now = now,
+                    viewModel = StopDetailsViewModel.mocked(),
+                    errorBannerViewModel = errorBannerViewModel,
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {}
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
@@ -606,11 +617,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to groupByDirection))
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
@@ -634,7 +641,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
             data =
                 FilteredDeparturesData.PostGroupByDirection(
@@ -670,28 +676,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {},
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {},
+                )
+            }
         }
 
         composeTestRule.waitForIdle()
@@ -722,11 +730,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to groupByDirection))
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
@@ -750,7 +754,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
             data =
                 FilteredDeparturesData.PostGroupByDirection(
@@ -786,28 +789,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = alertResponse,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {},
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = alertResponse,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Service suspended", true).assertIsDisplayed()
@@ -815,6 +820,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
 
     @Test
     fun testShowsElevatorAlert(): Unit = runBlocking {
+        settings[Settings.StationAccessibility] = true
         val alert =
             builder.alert {
                 effect = Alert.Effect.ElevatorClosure
@@ -822,16 +828,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(
-                        mapOf(
-                            Settings.GroupByDirection to groupByDirection,
-                            Settings.StationAccessibility to true
-                        )
-                    )
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
@@ -855,7 +852,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
             data =
                 FilteredDeparturesData.PostGroupByDirection(
@@ -879,7 +875,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     )
                 )
             viewModel.setDepartures(departures)
-            viewModel.loadSettings()
             data =
                 FilteredDeparturesData.PreGroupByDirection(
                     patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
@@ -892,28 +887,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = listOf(alert),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {},
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = listOf(alert),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
@@ -945,11 +942,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to groupByDirection))
-            )
+        val viewModel = StopDetailsViewModel.mocked()
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
@@ -973,7 +966,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
 
             data =
@@ -1010,28 +1002,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {},
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
@@ -1039,17 +1033,9 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
 
     @Test
     fun testShowsNotAccessibleAlert(): Unit = runBlocking {
+        settings[Settings.StationAccessibility] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(
-                        mapOf(
-                            Settings.GroupByDirection to groupByDirection,
-                            Settings.StationAccessibility to true
-                        )
-                    )
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         val data: FilteredDeparturesData
         val tileData: List<TileData>
@@ -1074,7 +1060,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             val leaf = routeStopData.data.first { it.directionId == 0 }
             val leafFormat =
                 leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.loadSettings()
             viewModel.setRouteCardData(routeCardData)
 
             data =
@@ -1099,7 +1084,6 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     )
                 )
             viewModel.setDepartures(departures)
-            viewModel.loadSettings()
             data =
                 FilteredDeparturesData.PreGroupByDirection(
                     patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
@@ -1112,28 +1096,30 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         }
 
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = inaccessibleStop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                data = data,
-                tileData = tileData,
-                noPredictionsStatus = noPredictionsStatus,
-                allAlerts = null,
-                elevatorAlerts = emptyList(),
-                global = globalResponse,
-                now = now,
-                viewModel = viewModel,
-                errorBannerViewModel = errorBannerViewModel,
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = {},
-                openModal = {},
-                openSheetRoute = {},
-            )
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = inaccessibleStop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data = data,
+                    tileData = tileData,
+                    noPredictionsStatus = noPredictionsStatus,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()

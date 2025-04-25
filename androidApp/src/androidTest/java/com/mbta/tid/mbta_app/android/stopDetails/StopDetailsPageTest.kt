@@ -13,7 +13,6 @@ import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -39,7 +38,6 @@ class StopDetailsPageTest : KoinTest {
                     ErrorBannerViewModel(
                         false,
                         MockErrorBannerStateRepository(),
-                        MockSettingsRepository()
                     )
 
                 StopDetailsPage(

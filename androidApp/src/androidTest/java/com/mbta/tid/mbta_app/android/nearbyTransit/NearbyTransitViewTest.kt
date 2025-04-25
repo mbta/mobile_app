@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -178,7 +177,6 @@ class NearbyTransitViewTest : KoinTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         )
                 )
             }
@@ -214,7 +212,6 @@ class NearbyTransitViewTest : KoinTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         )
                 )
             }

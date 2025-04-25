@@ -35,8 +35,6 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
@@ -169,17 +167,16 @@ private fun RefreshButton(
 @Composable
 private fun ErrorBannerPreviews() {
     val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-    val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo, MockSettingsRepository())
+    val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo)
     val dataErrorRepo =
         MockErrorBannerStateRepository(
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
-    val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo, MockSettingsRepository())
+    val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
     val dataErrorDebugVM =
         ErrorBannerViewModel(
             false,
             dataErrorRepo,
-            MockSettingsRepository(mapOf(Settings.DevDebugMode to true))
         )
     val staleRepo =
         MockErrorBannerStateRepository(
@@ -189,8 +186,8 @@ private fun ErrorBannerPreviews() {
                     action = {}
                 )
         )
-    val staleVM = ErrorBannerViewModel(false, staleRepo, MockSettingsRepository())
-    val staleLoadingVM = ErrorBannerViewModel(true, staleRepo, MockSettingsRepository())
+    val staleVM = ErrorBannerViewModel(false, staleRepo)
+    val staleLoadingVM = ErrorBannerViewModel(true, staleRepo)
     LaunchedEffect(null) { networkErrorVM.activate() }
     LaunchedEffect(null) { dataErrorVM.activate() }
     LaunchedEffect(null) { dataErrorDebugVM.activate() }

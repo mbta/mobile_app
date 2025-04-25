@@ -13,7 +13,7 @@ sealed class MoreItem {
 
     data class Phone(val label: String, val phoneNumber: String) : MoreItem()
 
-    data class Toggle(val label: String, val settings: Settings, val value: Boolean) : MoreItem()
+    data class Toggle(val label: String, val settings: Settings) : MoreItem()
 
     fun id() {
         when (this) {

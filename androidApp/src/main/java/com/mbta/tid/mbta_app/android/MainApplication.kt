@@ -10,11 +10,13 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
+import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -42,17 +44,20 @@ class MainApplication : Application() {
                         else MockAnalytics()
                     }
                 } +
-                koinViewModelModule,
+                koinViewModelModule(),
             this
         )
     }
 
     companion object {
-        val koinViewModelModule = module {
+        fun koinViewModelModule() = module {
+            single { SettingsCache(get()) }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
             viewModelOf(::SearchResultsViewModel)
-            viewModel { StopDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+            viewModel {
+                StopDetailsViewModel(get(), get(), get(), get(), get(), get(), Dispatchers.Default)
+            }
         }
     }
 }
