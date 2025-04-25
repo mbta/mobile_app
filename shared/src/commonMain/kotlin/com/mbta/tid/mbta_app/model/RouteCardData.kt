@@ -1033,7 +1033,8 @@ data class RouteCardData(
                 this.upcomingTrips ?: emptyList(),
                 checkNotNull(alertsHere),
                 allDataLoaded ?: false,
-                hasSchedulesTodayByPattern ?: routePatterns!!.associate { it.id to false },
+                hasSchedulesTodayByPattern
+                    ?: checkNotNull(routePatterns).associate { it.id to false },
                 checkNotNull(alertsDownstream)
             )
         }
