@@ -16,7 +16,8 @@ struct RouteCard: View {
     let onPin: (String) -> Void
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
-    let showStationAccessibility: Bool
+
+    @GetSetting(.stationAccessibility) var showStationAccessibility: Bool
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 

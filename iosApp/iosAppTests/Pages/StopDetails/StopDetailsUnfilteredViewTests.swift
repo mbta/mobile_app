@@ -105,7 +105,6 @@ import XCTest
 
     private let errorBannerViewModel = ErrorBannerViewModel(
         errorRepository: MockErrorBannerStateRepository(),
-        settingsRepository: MockSettingsRepository(),
         initialLoadingWhenPredictionsStale: false
     )
 
@@ -151,11 +150,12 @@ import XCTest
             filterAtTime: now!.toKotlinInstant()
         )
 
+        DefaultSettings.set([.stationAccessibility: true])
+        defer { DefaultSettings.reset() }
+
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showStationAccessibility = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsUnfilteredView(
             stopId: inaccessibleStop!.id,
@@ -185,8 +185,10 @@ import XCTest
             context: .stopDetailsUnfiltered
         )
 
+        DefaultSettings.set([.groupByDirection: true])
+        defer { DefaultSettings.reset() }
+
         let nearbyVM = NearbyViewModel()
-        nearbyVM.groupByDirection = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
 
@@ -220,12 +222,12 @@ import XCTest
             context: .stopDetailsUnfiltered
         )
 
+        DefaultSettings.set([.stationAccessibility: true, .groupByDirection: true])
+        defer { DefaultSettings.reset() }
+
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showStationAccessibility = true
-        nearbyVM.groupByDirection = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsUnfilteredView(
             stopId: inaccessibleStop!.id,
@@ -268,12 +270,12 @@ import XCTest
             context: .stopDetailsUnfiltered
         )
 
+        DefaultSettings.set([.stationAccessibility: true, .groupByDirection: true])
+        defer { DefaultSettings.reset() }
+
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showStationAccessibility = true
-        nearbyVM.groupByDirection = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsUnfilteredView(
             stopId: stop!.id,

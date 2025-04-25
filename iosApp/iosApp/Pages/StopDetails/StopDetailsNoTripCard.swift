@@ -13,7 +13,8 @@ struct StopDetailsNoTripCard: View {
     var status: UpcomingFormat.NoTripsFormat
     var accentColor: Color
     var routeType: RouteType
-    var hideMaps: Bool
+
+    @GetSetting(.hideMaps) var hideMaps: Bool
 
     var body: some View {
         StopDetailsIconCard(

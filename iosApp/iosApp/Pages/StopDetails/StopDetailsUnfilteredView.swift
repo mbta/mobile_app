@@ -24,6 +24,10 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @GetSetting(.groupByDirection) var groupByDirection
+    @GetSetting(.devDebugMode) var debugMode
+    @GetSetting(.stationAccessibility) var showStationAccessibility
+
     var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
@@ -46,14 +50,14 @@ struct StopDetailsUnfilteredView: View {
         self.stopDetailsVM = stopDetailsVM
         self.now = now
 
-        if nearbyVM.groupByDirection, let routeCardData {
+        if groupByDirection, let routeCardData {
             servedRoutes = routeCardData.map { routeCardData in
                 switch onEnum(of: routeCardData.lineOrRoute) {
                 case let .line(line): .line(line.line)
                 case let .route(route): .route(route.route)
                 }
             }
-        } else if !nearbyVM.groupByDirection, let departures {
+        } else if !groupByDirection, let departures {
             servedRoutes = departures.routes.map { patterns in
                 if let line = patterns.line {
                     return .line(line)
@@ -70,9 +74,9 @@ struct StopDetailsUnfilteredView: View {
     }
 
     var elevatorAlerts: [Shared.Alert]? {
-        if nearbyVM.groupByDirection, let routeCardData {
+        if groupByDirection, let routeCardData {
             routeCardData.flatMap { $0.stopData.flatMap(\.elevatorAlerts) }.removingDuplicates()
-        } else if !nearbyVM.groupByDirection, let departures {
+        } else if !groupByDirection, let departures {
             departures.elevatorAlerts
         } else {
             nil
@@ -92,7 +96,7 @@ struct StopDetailsUnfilteredView: View {
                         title: stop?.name ?? "Invalid Stop",
                         onClose: { nearbyVM.goBack() }
                     )
-                    if nearbyVM.showDebugMessages {
+                    if debugMode {
                         DebugView {
                             Text(verbatim: "stop id: \(stopId)")
                         }
@@ -113,7 +117,7 @@ struct StopDetailsUnfilteredView: View {
                     Color.fill1.ignoresSafeArea(.all)
                     ScrollView {
                         LazyVStack(spacing: 0) {
-                            if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
+                            if showStationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
                                 if !elevatorAlerts.isEmpty {
                                     ForEach(elevatorAlerts, id: \.id) { alert in
                                         AlertCard(
@@ -147,7 +151,7 @@ struct StopDetailsUnfilteredView: View {
                                 }
                             }
 
-                            if nearbyVM.groupByDirection, let routeCardData, let global = stopDetailsVM.global {
+                            if groupByDirection, let routeCardData, let global = stopDetailsVM.global {
                                 ForEach(routeCardData, id: \.lineOrRoute.id) { routeCardData in
                                     RouteCard(
                                         cardData: routeCardData,
@@ -155,13 +159,12 @@ struct StopDetailsUnfilteredView: View {
                                         now: now,
                                         onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } },
                                         pinned: stopDetailsVM.pinnedRoutes.contains(routeCardData.lineOrRoute.id),
-                                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                        showStationAccessibility: stopDetailsVM.showStationAccessibility
+                                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) }
                                     )
                                     .padding(.horizontal, 16)
                                     .padding(.bottom, 16)
                                 }
-                            } else if !nearbyVM.groupByDirection, let departures {
+                            } else if !groupByDirection, let departures {
                                 ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                                     StopDetailsRouteView(
                                         patternsByStop: patternsByStop,

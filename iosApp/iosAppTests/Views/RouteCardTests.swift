@@ -34,8 +34,7 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in },
-            showStationAccessibility: false
+            pushNavEntry: { _ in }
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "66"))
@@ -67,8 +66,7 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in },
-            showStationAccessibility: false
+            pushNavEntry: { _ in }
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Green Line"))
@@ -102,8 +100,7 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: onPin,
             pinned: false,
-            pushNavEntry: { _ in },
-            showStationAccessibility: false
+            pushNavEntry: { _ in }
         )
 
         let button =
@@ -135,8 +132,7 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in },
-            showStationAccessibility: false
+            pushNavEntry: { _ in }
         )
         XCTAssertNotNil(try nearbySut.inspect().find(text: stop.name))
 
@@ -151,8 +147,7 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in },
-            showStationAccessibility: false
+            pushNavEntry: { _ in }
         )
         XCTAssertThrowsError(try stopDetailsSut.inspect().find(text: stop.name))
     }
@@ -188,8 +183,7 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in },
-            showStationAccessibility: false
+            pushNavEntry: { _ in }
         )
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
         XCTAssertNotNil(try sut.inspect().find(text: "Inbound to"))

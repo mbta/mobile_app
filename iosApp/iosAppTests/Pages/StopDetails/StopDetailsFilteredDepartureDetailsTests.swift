@@ -576,7 +576,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
+
+        DefaultSettings.set([.stationAccessibility: true])
+        defer { DefaultSettings.reset() }
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -625,7 +627,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
+
+        DefaultSettings.set([.stationAccessibility: true])
+        defer { DefaultSettings.reset() }
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -679,7 +683,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
+        // TODO: stationAccessibility
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(

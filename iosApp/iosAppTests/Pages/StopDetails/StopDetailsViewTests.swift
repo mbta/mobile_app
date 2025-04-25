@@ -73,9 +73,8 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let nearbyVM = NearbyViewModel()
-        nearbyVM.groupByDirection = true
 
-        let sut = StopDetailsView(
+        var sut = StopDetailsView(
             stopId: stop.id,
             stopFilter: nil,
             tripFilter: nil,
@@ -105,11 +104,20 @@ final class StopDetailsViewTests: XCTestCase {
             )
         )
 
-        ViewHosting.host(view: sut)
-        let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
-        XCTAssertEqual(2, routePills.count)
-        XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
-        XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
+        DefaultSettings.set([.groupByDirection: true])
+        defer { DefaultSettings.reset() }
+
+        let exp = sut.on(\.didAppear) { view in
+//        let exp = sut.inspection.inspect(after: 0.1) { view in
+            let routePills = try view.find(StopDetailsFilterPills.self).findAll(RoutePill.self)
+            XCTAssertEqual(2, routePills.count)
+            XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
+            XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
+        defer { ViewHosting.expel() }
+        wait(for: [exp], timeout: 1)
     }
 
     func testSkipsPillsIfOneRoute() throws {
@@ -244,8 +252,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            showDebugMessages: false
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         let sut = StopDetailsView(
             stopId: stop.id,
@@ -273,8 +280,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            showDebugMessages: true
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         let sut = StopDetailsView(
             stopId: stop.id,
@@ -290,6 +296,9 @@ final class StopDetailsViewTests: XCTestCase {
             mapVM: .init(),
             stopDetailsVM: .init()
         )
+
+        DefaultSettings.set([.devDebugMode: true])
+        defer { DefaultSettings.reset() }
 
         ViewHosting.host(view: sut)
         try sut.inspect().findAll(ViewType.Text.self).forEach { view in try print(view.string()) }

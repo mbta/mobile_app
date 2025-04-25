@@ -33,6 +33,7 @@ struct NearbyTransitView: View {
     var errorBannerRepository = RepositoryDI().errorBanner
     let noNearbyStops: () -> NoNearbyStopsView
 
+    @GetSetting(.groupByDirection) var groupByDirection: Bool
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
@@ -48,7 +49,7 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if nearbyVM.groupByDirection,
+            if groupByDirection,
                let routeCardData = nearbyVM.routeCardData,
                let global = globalData {
                 nearbyList(routeCardData, global)
@@ -100,7 +101,7 @@ struct NearbyTransitView: View {
             pinnedRoutes: pinnedRoutes
         )) { newParams in
             DispatchQueue.main.async {
-                if !nearbyVM.groupByDirection { return }
+                if !groupByDirection { return }
                 nearbyVM.loadRouteCardData(
                     state: newParams.state,
                     global: newParams.global,
@@ -158,8 +159,7 @@ struct NearbyTransitView: View {
                                 now: now,
                                 onPin: { id in toggledPinnedRoute(id) },
                                 pinned: pinnedRoutes.contains(cardData.lineOrRoute.id),
-                                pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                showStationAccessibility: nearbyVM.showStationAccessibility
+                                pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) }
                             )
                         }
                     }
@@ -195,8 +195,7 @@ struct NearbyTransitView: View {
                                     pinned: pinnedRoutes.contains(nearbyRoute.route.id),
                                     onPin: { id in toggledPinnedRoute(id) },
                                     pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                    now: now.toKotlinInstant(),
-                                    showStationAccessibility: nearbyVM.showStationAccessibility
+                                    now: now.toKotlinInstant()
                                 )
                             case let .withLine(nearbyLine):
                                 NearbyLineView(
@@ -204,8 +203,7 @@ struct NearbyTransitView: View {
                                     pinned: pinnedRoutes.contains(nearbyLine.line.id),
                                     onPin: { id in toggledPinnedRoute(id) },
                                     pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                    now: now.toKotlinInstant(),
-                                    showStationAccessibility: nearbyVM.showStationAccessibility
+                                    now: now.toKotlinInstant()
                                 )
                             }
                         }
@@ -229,8 +227,7 @@ struct NearbyTransitView: View {
                         pinned: false,
                         onPin: { _ in },
                         pushNavEntry: { _ in },
-                        now: now.toKotlinInstant(),
-                        showStationAccessibility: false
+                        now: now.toKotlinInstant()
                     )
                     .loadingPlaceholder()
                 }
@@ -285,7 +282,7 @@ struct NearbyTransitView: View {
             scheduleResponse = nil
             return
         }
-        nearbyVM.getNearbyStops(global: globalData, location: location)
+        nearbyVM.getNearbyStops(global: globalData, location: location, groupByDirection: groupByDirection)
     }
 
     func getSchedule() {
@@ -383,7 +380,7 @@ struct NearbyTransitView: View {
     }
 
     private func scrollToTop() {
-        guard let id = nearbyVM.groupByDirection ?
+        guard let id = groupByDirection ?
             nearbyVM.routeCardData?.first?.lineOrRoute.id :
             nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
         scrollSubject.send(id)
@@ -605,8 +602,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 pinned: false,
                 onPin: { _ in },
                 pushNavEntry: { _ in },
-                now: Date.now.toKotlinInstant(),
-                showStationAccessibility: true
+                now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
                 nearbyRoute: StopsAssociated.WithRoute(
@@ -634,8 +630,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 pinned: true,
                 onPin: { _ in },
                 pushNavEntry: { _ in },
-                now: Date.now.toKotlinInstant(),
-                showStationAccessibility: true
+                now: Date.now.toKotlinInstant()
             )
         }.font(Typography.body).previewDisplayName("NearbyRouteView")
     }

@@ -19,7 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
-    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
+    private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
     override func setUp() {
         executionTimeAllowance = 60
@@ -69,7 +69,11 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 super.init()
             }
 
-            override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+            override func getNearbyStops(
+                global _: GlobalResponse,
+                location: CLLocationCoordinate2D,
+                groupByDirection _: Bool
+            ) {
                 debugPrint("ViewModel getting nearby")
                 closure(location)
                 expectation.fulfill()
@@ -124,7 +128,11 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 super.init(navigationStack: navigationStack)
             }
 
-            override func getNearbyStops(global _: GlobalResponse, location _: CLLocationCoordinate2D) {
+            override func getNearbyStops(
+                global _: GlobalResponse,
+                location _: CLLocationCoordinate2D,
+                groupByDirection _: Bool
+            ) {
                 expectation.fulfill()
             }
         }

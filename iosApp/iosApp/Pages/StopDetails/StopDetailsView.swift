@@ -29,6 +29,7 @@ struct StopDetailsView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    var didAppear: ((Self) -> Void)?
     let inspection = Inspection<Self>()
 
     init(
@@ -74,6 +75,7 @@ struct StopDetailsView: View {
                 mapVM: mapVM,
                 stopDetailsVM: stopDetailsVM
             )
+            .onAppear { didAppear?(self) }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         } else {
             StopDetailsUnfilteredView(
@@ -86,6 +88,7 @@ struct StopDetailsView: View {
                 nearbyVM: nearbyVM,
                 stopDetailsVM: stopDetailsVM
             )
+            .onAppear { didAppear?(self) }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }
     }

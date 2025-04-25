@@ -26,6 +26,8 @@ struct ContentView: View {
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
+    @GetSetting(.hideMaps) var hideMaps
+
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
 
@@ -36,7 +38,7 @@ struct ContentView: View {
     @State private var baseTabBarVisibility = Visibility.hidden
 
     func updateTabBarVisibility(_ tab: SelectedTab) {
-        let shouldShowSheetTabBar = !contentVM.hideMaps
+        let shouldShowSheetTabBar = !hideMaps
             && tab == SelectedTab.nearby
             && nearbyVM.navigationStack.lastSafe() == .nearby
             && !searchObserver.isSearching
@@ -44,7 +46,7 @@ struct ContentView: View {
         sheetTabBarVisibility = shouldShowSheetTabBar ? .visible : .hidden
 
         let shouldShowBaseTabBar = !searchObserver.isSearching && (
-            !contentVM.hideMaps || nearbyVM.navigationStack.lastSafe() == .nearby
+            !hideMaps || nearbyVM.navigationStack.lastSafe() == .nearby
         )
         baseTabBarVisibility = shouldShowBaseTabBar ? .visible : .hidden
     }
@@ -57,10 +59,9 @@ struct ContentView: View {
         .onAppear {
             Task { await contentVM.loadFeaturePromos() }
             Task { await contentVM.loadOnboardingScreens() }
-            Task { await nearbyVM.loadSettings() }
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
-            analytics.recordSession(hideMaps: contentVM.hideMaps)
+            analytics.recordSession(hideMaps: hideMaps)
             updateTabBarVisibility(selectedTab)
         }
         .task {
@@ -71,11 +72,10 @@ struct ContentView: View {
             } catch {}
         }
         .onChange(of: selectedTab) { nextTab in
-            Task { await nearbyVM.loadSettings() }
             updateTabBarVisibility(nextTab)
         }
         .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in updateTabBarVisibility(selectedTab) }
-        .onChange(of: contentVM.hideMaps) { _ in updateTabBarVisibility(selectedTab) }
+        .onChange(of: hideMaps) { _ in updateTabBarVisibility(selectedTab) }
         .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility(selectedTab) }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -92,8 +92,8 @@ struct ContentView: View {
         .onChange(of: voiceOver) { _ in
             analytics.recordSession(voiceOver: voiceOver)
         }
-        .onChange(of: contentVM.hideMaps) { _ in
-            analytics.recordSession(hideMaps: contentVM.hideMaps)
+        .onChange(of: hideMaps) { _ in
+            analytics.recordSession(hideMaps: hideMaps)
         }
         .onChange(of: contentVM.configResponse) { response in
             switch onEnum(of: response) {
@@ -137,7 +137,7 @@ struct ContentView: View {
 
     @ViewBuilder
     var nearbySheetContents: some View {
-        if contentVM.hideMaps {
+        if hideMaps {
             nearbyPage
         } else {
             // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
@@ -165,7 +165,6 @@ struct ContentView: View {
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             noNearbyStops: { NoNearbyStopsView(
-                hideMaps: contentVM.hideMaps,
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
                     viewportProvider.setIsManuallyCentering(true)
@@ -181,7 +180,7 @@ struct ContentView: View {
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            if contentVM.hideMaps {
+            if hideMaps {
                 ZStack(alignment: .top) {
                     searchHeaderBackground
                     VStack {
@@ -236,8 +235,6 @@ struct ContentView: View {
         .background(Color.sheetBackground)
         .onAppear {
             Task { await errorBannerVM.activate() }
-            Task { await contentVM.loadHideMaps() }
-            Task { await settingsVM.getSections() }
         }
     }
 
@@ -256,7 +253,7 @@ struct ContentView: View {
     @ViewBuilder var mapWithSheets: some View {
         let nav = nearbyVM.navigationStack.lastSafe()
         let sheetItemId: String? = nav.sheetItemIdentifiable()?.id
-        if contentVM.hideMaps {
+        if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
                     switch nearbyVM.navigationStack.last {

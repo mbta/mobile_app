@@ -9,9 +9,10 @@
 import SwiftUI
 
 struct NoNearbyStopsView: View {
-    let hideMaps: Bool
     let onOpenSearch: () -> Void
     let onPanToDefaultCenter: () -> Void
+
+    @GetSetting(.hideMaps) var hideMaps: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -67,7 +68,7 @@ struct NoNearbyStopsView: View {
 
 #Preview {
     ZStack {
-        NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {})
+        NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {})
             .padding(16)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -19,7 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
-    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
+    private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
     class FakeNearbyVM: NearbyViewModel {
@@ -30,10 +30,13 @@ final class NearbyTransitViewTests: XCTestCase {
             self.expectation = expectation
             self.closure = closure
             super.init()
-            groupByDirection = true
         }
 
-        override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+        override func getNearbyStops(
+            global _: GlobalResponse,
+            location: CLLocationCoordinate2D,
+            groupByDirection _: Bool
+        ) {
             debugPrint("ViewModel getting nearby")
             closure(location)
             expectation.fulfill()
@@ -42,6 +45,11 @@ final class NearbyTransitViewTests: XCTestCase {
 
     override func setUp() {
         executionTimeAllowance = 60
+        DefaultSettings.set([.groupByDirection: true])
+    }
+
+    override func tearDown() {
+        DefaultSettings.reset()
     }
 
     func testPending() throws {
@@ -52,7 +60,7 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         )
         let cards = try sut.inspect().findAll(NearbyRouteView.self)
@@ -179,7 +187,9 @@ final class NearbyTransitViewTests: XCTestCase {
         showStationAccessibility: Bool = false,
         now: Date? = nil
     ) -> NearbyTransitView {
-        let nearbyVM = NearbyViewModel(groupByDirection: true, showStationAccessibility: showStationAccessibility)
+        DefaultSettings.set([.groupByDirection: true, .stationAccessibility: showStationAccessibility])
+
+        let nearbyVM = NearbyViewModel()
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         nearbyVM.alerts = .init(objects: objects)
 
@@ -511,7 +521,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -543,7 +553,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -578,7 +588,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -633,7 +643,7 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         )
 
@@ -666,7 +676,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Suspension")
                 .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [exp], timeout: 1)
     }
 

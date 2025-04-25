@@ -19,10 +19,10 @@ struct TripStops: View {
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let onOpenAlertDetails: (Shared.Alert) -> Void
     let routeAccents: TripRouteAccents
-    let showStationAccessibility: Bool
     let splitStops: TripDetailsStopList.TargetSplit
 
     @State private var stopsExpanded = false
+    @GetSetting(.stationAccessibility) var showStationAccessibility
 
     private var routeTypeText: String { routeAccents.type.typeText(isOnly: true) }
     private var collapsedStops: [TripDetailsStopList.Entry]? { splitStops.collapsedStops }
@@ -42,7 +42,6 @@ struct TripStops: View {
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         routeAccents: TripRouteAccents,
-        showStationAccessibility: Bool,
         global: GlobalResponse?
     ) {
         self.targetId = targetId
@@ -54,7 +53,6 @@ struct TripStops: View {
         self.onTapLink = onTapLink
         self.onOpenAlertDetails = onOpenAlertDetails
         self.routeAccents = routeAccents
-        self.showStationAccessibility = showStationAccessibility
 
         splitStops = stops.splitForTarget(
             targetStopId: targetId,
@@ -257,7 +255,6 @@ struct TripStops: View {
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: .init(route: route),
-            showStationAccessibility: true,
             global: .init(objects: objects)
         )
     }

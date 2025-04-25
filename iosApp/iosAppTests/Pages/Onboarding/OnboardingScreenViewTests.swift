@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import CoreLocation
 @testable import iosApp
 import Shared
@@ -42,12 +43,14 @@ final class OnboardingScreenViewTests: XCTestCase {
             XCTAssertEqual($0, [.stationAccessibility: true])
             saveSettingsExp.fulfill()
         })
+        DefaultSettings.setRepo(settingsRepo)
+        defer { DefaultSettings.reset() }
         let advanceExp = expectation(description: "calls advance()")
         let sut = OnboardingScreenView(
             screen: .stationAccessibility,
-            advance: { advanceExp.fulfill() },
-            settingsRepository: settingsRepo
+            advance: { advanceExp.fulfill() }
         )
+
         XCTAssertNotNil(try sut.inspect().find(where: { view in
             try view.text().string()
                 .contains("we can show you which stations are inaccessible or have elevator closures.")
@@ -68,10 +71,11 @@ final class OnboardingScreenViewTests: XCTestCase {
         })
         let advanceExp = expectation(description: "calls advance()")
 
+        DefaultSettings.setRepo(settingsRepo)
+        defer { DefaultSettings.reset() }
         let sut = OnboardingScreenView(
             screen: .hideMaps,
-            advance: { advanceExp.fulfill() },
-            settingsRepository: settingsRepo
+            advance: { advanceExp.fulfill() }
         )
 
         XCTAssertNotNil(try sut.inspect().find(

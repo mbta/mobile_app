@@ -15,7 +15,8 @@ struct NearbyRouteView: View {
     let onPin: (String) -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
-    let showStationAccessibility: Bool
+
+    @GetSetting(.stationAccessibility) var showStationAccessibility: Bool
 
     var body: some View {
         LegacyRouteCard(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
