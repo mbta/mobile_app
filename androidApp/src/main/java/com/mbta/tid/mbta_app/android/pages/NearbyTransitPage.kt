@@ -296,7 +296,9 @@ fun NearbyTransitPage(
                 navController.navigate(SheetRoutes.NearbyTransit) {
                     popUpTo(navController.graph.id) { inclusive = true }
                 }
-                nearbyTransit.viewportProvider.follow()
+                if (nearbyTransit.locationDataManager.hasPermission) {
+                    nearbyTransit.viewportProvider.follow()
+                }
             }
         }
         backgroundTimestamp = null
