@@ -17,6 +17,7 @@ struct StopDetailsPage: View {
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective  departures rather than both showing the departures for the newly presented stop.
     @State var internalDepartures: StopDetailsDepartures?
+    @State var internalRouteCardData: [RouteCardData]?
     @State var now = Date.now
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
@@ -59,6 +60,7 @@ struct StopDetailsPage: View {
             setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
             departures: internalDepartures,
+            routeCardData: internalRouteCardData,
             now: now,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
@@ -84,6 +86,7 @@ struct StopDetailsPage: View {
             }
             .onChange(of: stopDetailsVM.global) { _ in updateDepartures() }
             .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures() }
+            .onChange(of: stopFilter) { _ in updateDepartures() }
             .onChange(of: stopDetailsVM.stopData) { stopData in
                 errorBannerVM.loadingWhenPredictionsStale = !(stopData?.predictionsLoaded ?? true)
                 updateDepartures()
@@ -179,6 +182,18 @@ struct StopDetailsPage: View {
     func updateDepartures() {
         Task {
             if stopId != stopDetailsVM.stopData?.stopId { return }
+            if nearbyVM.groupByDirection {
+                let nextRouteCardData = await stopDetailsVM.getRouteCardData(
+                    stopId: stopId,
+                    alerts: nearbyVM.alerts,
+                    now: now,
+                    isFiltered: stopFilter != nil
+                )
+                Task { @MainActor in
+                    nearbyVM.setRouteCardData(stopId, nextRouteCardData)
+                    internalRouteCardData = nextRouteCardData
+                }
+            }
             let nextDepartures = await stopDetailsVM.getDepartures(
                 stopId: stopId,
                 alerts: nearbyVM.alerts,

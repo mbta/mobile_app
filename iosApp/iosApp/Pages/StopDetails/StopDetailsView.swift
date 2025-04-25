@@ -21,8 +21,8 @@ struct StopDetailsView: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var departures: StopDetailsDepartures?
+    var routeCardData: [RouteCardData]?
     var now: Date
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -38,6 +38,7 @@ struct StopDetailsView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
+        routeCardData: [RouteCardData]?,
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -50,22 +51,12 @@ struct StopDetailsView: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.departures = departures
+        self.routeCardData = routeCardData
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
-
-        if let departures {
-            servedRoutes = departures.routes.map { patterns in
-                if let line = patterns.line {
-                    return .line(line)
-                }
-                return .route(
-                    patterns.representativeRoute
-                )
-            }
-        }
     }
 
     var body: some View {
@@ -83,16 +74,19 @@ struct StopDetailsView: View {
                 mapVM: mapVM,
                 stopDetailsVM: stopDetailsVM
             )
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
         } else {
             StopDetailsUnfilteredView(
                 stopId: stopId,
                 setStopFilter: setStopFilter,
                 departures: departures,
+                routeCardData: routeCardData,
                 now: now,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
                 stopDetailsVM: stopDetailsVM
             )
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }
     }
 }

@@ -26,6 +26,11 @@ on:
       SENTRY_DSN_IOS:
         required: true
 
+concurrency:
+  # non-deploy builds shouldn’t conflict, but builds for deployment can’t overlap or they’ll claim the same version number
+  group: build-ios-${{ inputs.scheme }}${{ inputs.deploy && '-deployment' || github.run_id }}
+  cancel-in-progress: false
+
 jobs:
   build-ios:
     name: Build for iOS
@@ -90,9 +95,6 @@ jobs:
   deploy-ios:
     name: Upload to App Store
     if: ${{ inputs.deploy }}
-    concurrency:
-      group: deploy-ios-${{ inputs.scheme }}
-      cancel-in-progress: false
     needs:
       - build-ios
     runs-on: macos-14-xlarge

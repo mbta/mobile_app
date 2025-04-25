@@ -24,12 +24,31 @@ struct AlertCard: View {
     let color: Color
     let textColor: Color
     let onViewDetails: (() -> Void)?
+    let internalPadding: EdgeInsets
 
     @ScaledMetric var majorIconSize = 48
     @ScaledMetric var elevatorIconSize = 36
 
     @ScaledMetric var miniIconSize = 20
     @ScaledMetric var infoIconSize = 16
+
+    init(
+        alert: Shared.Alert,
+        alertSummary: AlertSummary?,
+        spec: AlertCardSpec,
+        color: Color,
+        textColor: Color,
+        onViewDetails: (() -> Void)?,
+        internalPadding: EdgeInsets = .init()
+    ) {
+        self.alert = alert
+        self.alertSummary = alertSummary
+        self.spec = spec
+        self.color = color
+        self.textColor = textColor
+        self.onViewDetails = onViewDetails
+        self.internalPadding = internalPadding
+    }
 
     var formattedAlert: FormattedAlert {
         FormattedAlert(alert: alert, alertSummary: alertSummary)
@@ -83,6 +102,7 @@ struct AlertCard: View {
                 }
             }
         }
+        .padding(internalPadding)
         .padding(16)
         .background(Color.fill3)
         .clipShape(RoundedRectangle(cornerRadius: 8))

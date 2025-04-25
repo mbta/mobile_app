@@ -828,7 +828,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("A", 10),
                 followingStops = listOf(entry("B", 20), entry("C", 30), entry("A", 40))
             ),
-            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("A", 10, globalData())
         )
         assertEquals(
             TripDetailsStopList.TargetSplit(
@@ -837,7 +837,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("A", 40),
                 followingStops = emptyList()
             ),
-            list.splitForTarget("A", 40, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("A", 40, globalData())
         )
     }
 
@@ -852,7 +852,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("A", 998),
                 followingStops = listOf(entry("B", 999))
             ),
-            list.splitForTarget("A", 3, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("A", 3, globalData())
         )
     }
 
@@ -868,7 +868,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("B1", 20),
                 followingStops = listOf(entry("C1", 30)),
             ),
-            list.splitForTarget("B2", 20, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("B2", 20, globalData())
         )
     }
 
@@ -883,7 +883,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30),
                 followingStops = listOf(entry("D", 40)),
             ),
-            list.splitForTarget("C", 30, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("C", 30, globalData())
         )
     }
 
@@ -911,7 +911,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30, vehicle = vehicle),
                 followingStops = listOf(entry("D", 40, vehicle = vehicle)),
             ),
-            list.splitForTarget("C", 30, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("C", 30, globalData())
         )
     }
 
@@ -927,7 +927,7 @@ class TripDetailsStopListTest {
                 targetStop = null,
                 followingStops = list.stops
             ),
-            list.splitForTarget("D", 40, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("D", 40, globalData())
         )
     }
 
@@ -948,27 +948,7 @@ class TripDetailsStopListTest {
                 followingStops = listOf(entryB, entryC),
                 isTruncatedByLastAlert = true
             ),
-            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = true)
-        )
-    }
-
-    @Test
-    fun `splitForTarget does not truncate if told not to`() = test {
-        val shuttleAlert = alert(Alert.Effect.Shuttle)
-        val entryA = entry("A", 10)
-        val entryB = entry("B", 20)
-        val entryC = entry("C", 30, alert = shuttleAlert)
-        val entryD = entry("D", 40, alert = shuttleAlert)
-        val list = stopListOf(entryA, entryB, entryC, entryD)
-        assertEquals(
-            TripDetailsStopList.TargetSplit(
-                firstStop = null,
-                collapsedStops = emptyList(),
-                targetStop = entryA,
-                followingStops = listOf(entryB, entryC, entryD),
-                isTruncatedByLastAlert = false
-            ),
-            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = false)
+            list.splitForTarget("A", 10, globalData())
         )
     }
 
@@ -989,7 +969,7 @@ class TripDetailsStopListTest {
                 followingStops = listOf(entryB),
                 isTruncatedByLastAlert = true
             ),
-            list.splitForTarget("A", 10, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("A", 10, globalData())
         )
         assertEquals(
             TripDetailsStopList.TargetSplit(
@@ -998,7 +978,7 @@ class TripDetailsStopListTest {
                 targetStop = entryD,
                 followingStops = listOf(entryE)
             ),
-            list.splitForTarget("D", 40, globalData(), truncateForDisruptions = true)
+            list.splitForTarget("D", 40, globalData())
         )
     }
 }
