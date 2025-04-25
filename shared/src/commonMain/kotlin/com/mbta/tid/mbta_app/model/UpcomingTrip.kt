@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
@@ -228,4 +229,20 @@ fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
         .let { upcomingTripsArrivalOnly ->
             upcomingTripsArrivalOnly.contains(true) && !upcomingTripsArrivalOnly.contains(false)
         }
+}
+
+/**
+ * Associate each upcoming trip with its format. Omits any upcoming trip that shouldn't be shown.
+ */
+fun List<UpcomingTrip>.withFormat(
+    now: Instant,
+    routeType: RouteType,
+    context: TripInstantDisplay.Context,
+    limit: Int?
+): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>> {
+    return this.mapNotNull {
+            val format = formatUpcomingTrip(now, it, routeType, context) ?: return@mapNotNull null
+            Pair(it, format)
+        }
+        .run { if (limit != null) take(limit) else this }
 }
