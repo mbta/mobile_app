@@ -8,6 +8,8 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.Dispatchers
@@ -120,10 +122,37 @@ data class RouteCardData(
         override val upcomingTrips: List<UpcomingTrip>,
         val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
-        override val hasSchedulesToday: Boolean,
+        val hasSchedulesTodayByPattern: Map<String, Boolean>,
         val alertsDownstream: List<Alert>
     ) : ILeafData {
+
+        /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
+        constructor(
+            directionId: Int,
+            routePatterns: List<RoutePattern>,
+            stopIds: Set<String>,
+            upcomingTrips: List<UpcomingTrip>,
+            alertsHere: List<Alert>,
+            allDataLoaded: Boolean,
+            hasSchedulesToday: Boolean,
+            alertsDownstream: List<Alert>
+        ) : this(
+            directionId,
+            routePatterns,
+            stopIds,
+            upcomingTrips,
+            alertsHere,
+            allDataLoaded,
+            // adding this fakeId will make hasSchedulesToday JustWork for non-branched routes
+            // when routePatterns are not specified in the test
+            if (routePatterns.isEmpty()) mapOf("fakeId" to hasSchedulesToday)
+            else routePatterns.associate { it.id to hasSchedulesToday },
+            alertsDownstream
+        )
+
         val id = directionId
+
+        override val hasSchedulesToday = hasSchedulesTodayByPattern.any { it.value }
 
         override val hasMajorAlerts: Boolean
             get() = run {
@@ -134,7 +163,10 @@ data class RouteCardData(
             alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
 
         private val secondaryAlertToDisplay =
-            alertsHere.firstOrNull { it.significance >= AlertSignificance.Secondary }
+            alertsHere.firstOrNull {
+                it.significance < AlertSignificance.Major &&
+                    it.significance >= AlertSignificance.Secondary
+            }
                 ?: alertsDownstream.firstOrNull()
 
         /**
@@ -173,67 +205,203 @@ data class RouteCardData(
         }
 
         /**
+         * Convenience struct to group together all the data under a single headsign that is
+         * necessary to determine what should be displayed for that headsign on a branched route
+         *
+         * @param stopIds the child stop ids of this Leaf that are served by the [routePatterns]
+         * @param routePatterns all patterns that hvae the matching headsign
+         * @param hasSchedulesToday whether there are schedules today for the headsign. Used to
+         *   determine the appropriate [UpcomingFormat.NoTripsFormat] when needed
+         * @param allUpcomingTrips all the upcoming trips under the headsign. Used to determine the
+         *   appropriate [UpcomingFormat.NoTripsFormat] when needed
+         * @param majorAlert the major alert affecting this headsign, if it exists
+         */
+        private data class ByHeadsignData(
+            val stopIds: Set<String>,
+            val routePatterns: List<RoutePattern>,
+            val hasSchedulesToday: Boolean,
+            val allUpcomingTrips: List<UpcomingTrip>,
+            val majorAlert: Alert?
+        )
+
+        /**
+         * Group the data from this leaf by headsign using the given list of potential headsigns and
+         * the pre-determined list of tripsWithFormat that should be shown for this leaf.
+         */
+        private fun dataByHeadsign(
+            potentialHeadsigns: Set<String>,
+            globalData: GlobalResponse?
+        ): Map<String, ByHeadsignData> {
+            return potentialHeadsigns
+                .map { headsign ->
+                    val routePatterns =
+                        routePatterns.filter {
+                            globalData?.trips?.get(it.representativeTripId)?.headsign == headsign
+                        }
+
+                    val routePatternIds = routePatterns.map { it.id }.toSet()
+
+                    val stopIds =
+                        globalData
+                            ?.let {
+                                NearbyStaticData.filterStopsByPatterns(
+                                    routePatterns,
+                                    it,
+                                    this.stopIds
+                                )
+                            }
+                            .orEmpty()
+                    val majorAlert =
+                        Alert.applicableAlerts(
+                            alertsHere.filter { it.significance >= AlertSignificance.Major },
+                            directionId,
+                            routePatterns.map { it.routeId },
+                            stopIds,
+                            null
+                        )
+
+                    headsign to
+                        ByHeadsignData(
+                            stopIds,
+                            routePatterns,
+                            hasSchedulesTodayByPattern
+                                .filterKeys { it in routePatternIds }
+                                .any { it.value },
+                            upcomingTrips.filter { it.headsign == headsign },
+                            majorAlert.firstOrNull()
+                        )
+                }
+                .toMap()
+        }
+
+        /**
          * For a Leaf that is already determined to represent branched service, produce the
          * appropriate [LeafFormat]. If there is a major alert affecting all branches, this will
-         * return a [LeafFormat.Single]. Otherwise, this will return a [LeafFormat.Branched]
+         * return a [LeafFormat.Single]. Otherwise, this will return a [LeafFormat.Branched].
+         *
+         * The [LeafFormat.Branched] can include up to 4 branches. If there is a disruption on 3 of
+         * the branches, there will be 3 disruption branches and one branch to display an upcoming
+         * trip or [NoTripsFormat.PredictionsUnavailable].
+         *
+         * In all other cases, there will be up to 3 branches, prioritizing showing disruption
+         * branches, then upcoming trips, then [NoTripsFormat.PredictionsUnavailable]
          */
         private fun formatForBranchedService(
             potentialHeadsigns: Set<String>,
             tripsWithFormat: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>>,
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
-            globalData: GlobalResponse?
+            globalData: GlobalResponse?,
+            now: Instant
         ): LeafFormat {
 
             // If there is more than 1 route id, then we are dealing with a line and should
             // show the route alongside the UpcomingTripFormat
-            val needsRoutesInBranching = routePatterns.distinctBy { it.routeId }.size > 1
+            val shouldIncludeRoute = routePatterns.distinctBy { it.routeId }.size > 1
 
-            if (majorAlert != null && upcomingTrips.map { it.headsign }.distinct().count() == 1) {
-                /**
-                 * If there's upcoming trips all with the same headsign and there's a major alert
-                 * assume one branch is closed and collapse to LeafFormat.Single
-                 */
-                return LeafFormat.Single(
-                    upcomingTrips.first().headsign,
-                    UpcomingFormat.Some(
-                        tripsWithFormat.map { it.second },
-                        UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
-                    )
-                )
-            } else if (majorAlert != null) {
-                /**
-                 * If there's upcoming trips with different headsigns and there's a major alert
-                 * assume service is disrupted on a branch but show any trips we have with the
-                 * downstream alert treatment.
-                 */
+            val dataByHeadsign = dataByHeadsign(potentialHeadsigns, globalData)
+            val (nonDisruptedHeadsigns, disruptedHeadsigns) =
+                dataByHeadsign.entries.partition { it.value.majorAlert == null }
+
+            if (disruptedHeadsigns.isEmpty()) {
                 return LeafFormat.Branched(
                     tripsWithFormat.map { (trip, format) ->
                         val route =
-                            if (needsRoutesInBranching) globalData?.getRoute(trip.trip.routeId)
+                            if (shouldIncludeRoute) globalData?.getRoute(trip.trip.routeId)
                             else null
                         LeafFormat.Branched.Branch(
                             route,
                             trip.headsign,
-                            UpcomingFormat.Some(
-                                format,
-                                UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
-                            )
+                            UpcomingFormat.Some(format, secondaryAlert)
                         )
                     }
                 )
             }
-            return LeafFormat.Branched(
-                tripsWithFormat.map { (trip, format) ->
+
+            if (
+                nonDisruptedHeadsigns.isEmpty() &&
+                    disruptedHeadsigns
+                        .map { it.value.majorAlert }
+                        .all { it == disruptedHeadsigns.first().value.majorAlert }
+            ) {
+                return LeafFormat.Single(
+                    null,
+                    UpcomingFormat.Disruption(
+                        disruptedHeadsigns.first().value.majorAlert!!,
+                        mapStopRoute
+                    )
+                )
+            }
+
+            val disruptedHeadsignBranches =
+                disruptedHeadsigns
+                    .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
+                    .take(3)
+                    .map { (headsign, groupedData) ->
+                        val route =
+                            if (shouldIncludeRoute)
+                                globalData?.getRoute(
+                                    groupedData.routePatterns.firstOrNull()?.routeId
+                                )
+                            else null
+                        LeafFormat.Branched.Branch(
+                            route,
+                            headsign,
+                            UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute)
+                        )
+                    }
+
+            var remainingRowsToShow = max(1, 3 - disruptedHeadsignBranches.size)
+
+            val upcomingTripBranches =
+                tripsWithFormat.take(remainingRowsToShow).map { (upcomingTrip, formatted) ->
                     val route =
-                        if (needsRoutesInBranching) globalData?.getRoute(trip.trip.routeId)
+                        if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.trip.routeId)
                         else null
                     LeafFormat.Branched.Branch(
                         route,
-                        trip.headsign,
-                        UpcomingFormat.Some(format, secondaryAlert)
+                        upcomingTrip.trip.headsign,
+                        UpcomingFormat.Some(formatted, secondaryAlert)
                     )
                 }
+
+            remainingRowsToShow = max(0, remainingRowsToShow - upcomingTripBranches.size)
+
+            val predictionsUnavailableBranches =
+                if (remainingRowsToShow > 0) {
+                    nonDisruptedHeadsigns
+                        .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
+                        .mapNotNull { (headsign, groupedData) ->
+                            val route =
+                                if (shouldIncludeRoute)
+                                    globalData?.getRoute(
+                                        groupedData.routePatterns.firstOrNull()?.routeId
+                                    )
+                                else null
+                            val noTripsFormat =
+                                NoTripsFormat.fromUpcomingTrips(
+                                    groupedData.allUpcomingTrips,
+                                    groupedData.hasSchedulesToday,
+                                    now
+                                )
+
+                            if (noTripsFormat == NoTripsFormat.PredictionsUnavailable) {
+                                LeafFormat.Branched.Branch(
+                                    route,
+                                    headsign,
+                                    UpcomingFormat.NoTrips(noTripsFormat, secondaryAlert)
+                                )
+                            } else {
+                                null
+                            }
+                        }
+                        .take(remainingRowsToShow)
+                } else {
+                    emptyList()
+                }
+
+            return LeafFormat.Branched(
+                upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches
             )
         }
 
@@ -311,7 +479,8 @@ data class RouteCardData(
                     tripsToShow,
                     mapStopRoute,
                     secondaryAlert,
-                    globalData
+                    globalData,
+                    now
                 )
             } else {
                 formatForSingleHeadsignService(
@@ -646,12 +815,13 @@ data class RouteCardData(
 
             forEachLeaf { path, leafBuilder ->
                 val upcomingTripsHere = upcomingTripsBySlot[path]
+                val patternIds = (leafBuilder.routePatterns ?: emptyList()).map { it.id }.toSet()
                 leafBuilder.upcomingTrips = upcomingTripsHere
                 leafBuilder.allDataLoaded = schedules != null
-                leafBuilder.hasSchedulesToday =
-                    if (hasSchedulesTodayByPattern != null)
-                        leafBuilder.routePatterns?.any { hasSchedulesTodayByPattern[it.id] == true }
-                    else null
+                leafBuilder.hasSchedulesTodayByPattern =
+                    hasSchedulesTodayByPattern?.let {
+                        patternIds.associateWith { patternId -> it.getOrElse(patternId) { false } }
+                    }
             }
             return this
         }
@@ -851,7 +1021,7 @@ data class RouteCardData(
         var upcomingTrips: List<UpcomingTrip>? = null,
         var alertsHere: List<Alert>? = null,
         var allDataLoaded: Boolean? = null,
-        var hasSchedulesToday: Boolean? = null,
+        var hasSchedulesTodayByPattern: Map<String, Boolean>? = null,
         var alertsDownstream: List<Alert>? = null
     ) {
 
@@ -863,7 +1033,8 @@ data class RouteCardData(
                 this.upcomingTrips ?: emptyList(),
                 checkNotNull(alertsHere),
                 allDataLoaded ?: false,
-                hasSchedulesToday ?: false,
+                hasSchedulesTodayByPattern
+                    ?: checkNotNull(routePatterns).associate { it.id to false },
                 checkNotNull(alertsDownstream)
             )
         }

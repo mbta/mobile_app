@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RouteCardDataLeafTest.RedLine.route
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
@@ -508,42 +507,95 @@ class RouteCardDataLeafTest {
             lateinit var north2: Stop
             val parent =
                 objects.stop {
-                    south1 = childStop()
-                    south2 = childStop()
-                    north1 = childStop()
-                    north2 = childStop()
+                    south1 = childStop { id = "south1" }
+                    south2 = childStop { id = "south2" }
+                    north1 = childStop { id = "north1" }
+                    north2 = childStop { id = "north2" }
                 }
             return Stop4(parent, south1, south2, north1, north2)
         }
 
         val jfkUmass = stop4()
+        // braintree stops
+        val northQuincy = objects.stop()
+        val wollaston = objects.stop()
+        val quincyCenter = objects.stop()
+        val quincyAdams = objects.stop()
+        val braintree = objects.stop()
+
+        val stopsBraintreeBranchSouth =
+            listOf(jfkUmass.south2, northQuincy, wollaston, quincyCenter, quincyAdams, braintree)
+
+        val stopsBraintreeBranchNorth =
+            listOf(
+                braintree,
+                quincyAdams,
+                quincyCenter,
+                wollaston,
+                northQuincy,
+                jfkUmass.north2,
+            )
+
+        // ashmont Stops
+        val savinHill = objects.stop()
+        val fieldsCorner = objects.stop()
+        val shawmut = objects.stop()
+        val ashmont = objects.stop()
+
+        val stopsAshmontBranchSouth =
+            listOf(
+                jfkUmass.south1,
+                savinHill,
+                fieldsCorner,
+                shawmut,
+                ashmont,
+            )
+
+        val stopsAshmontBranchNorth =
+            listOf(ashmont, shawmut, fieldsCorner, savinHill, jfkUmass.north1)
 
         val ashmontSouth =
             objects.routePattern(route) {
                 directionId = 0
+                routeId = route.id
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Ashmont" }
+                representativeTrip {
+                    headsign = "Ashmont"
+                    stopIds = stopsAshmontBranchSouth.map { it.id }
+                }
             }
 
         val braintreeSouth =
             objects.routePattern(route) {
                 directionId = 0
+                routeId = route.id
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Braintree" }
+                representativeTrip {
+                    headsign = "Braintree"
+                    stopIds = stopsBraintreeBranchSouth.map { it.id }
+                }
             }
 
         val ashmontNorth =
             objects.routePattern(route) {
                 directionId = 1
+                routeId = route.id
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Alewife" }
+                representativeTrip {
+                    headsign = "Alewife"
+                    stopIds = stopsAshmontBranchNorth.map { it.id }
+                }
             }
 
         val braintreeNorth =
             objects.routePattern(route) {
                 directionId = 1
+                routeId = route.id
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Alewife" }
+                representativeTrip {
+                    headsign = "Alewife"
+                    stopIds = stopsBraintreeBranchNorth.map { it.id }
+                }
             }
 
         val global = GlobalResponse(objects)
@@ -799,105 +851,114 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats Red Line southbound as non-branching if one branch is closed`() = parametricTest {
-        // ⚠ Southbound to Ashmont 3 min 12 min
-        val objects = RedLine.objects()
-        val now = Clock.System.now()
+    fun `formats Red Line southbound as branching with Braintree suspended from JFK`() =
+        parametricTest {
+            // ⚠ Southbound to Ashmont 3 min 12 min
+            val objects = RedLine.objects()
+            val now = Clock.System.now()
 
-        val northQuincy = objects.stop()
-        val wollaston = objects.stop()
-        val quincyCenter = objects.stop()
-        val quincyAdams = objects.stop()
-        val braintree = objects.stop()
+            val prediction1 =
+                objects.prediction {
+                    arrivalTime = now + 3.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
 
-        val stopsBraintreeBranch =
-            listOf(
-                RedLine.jfkUmass.south2,
-                northQuincy,
-                wollaston,
-                quincyCenter,
-                quincyAdams,
-                braintree
-            )
-        val prediction1 =
-            objects.prediction {
-                arrivalTime = now + 3.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
+            val prediction2 =
+                objects.prediction {
+                    arrivalTime = now + 12.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
 
-        val prediction2 =
-            objects.prediction {
-                arrivalTime = now + 12.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Suspension
+                    informedEntity =
+                        RedLine.stopsBraintreeBranchSouth
+                            .map {
+                                Alert.InformedEntity(
+                                    activities = listOf(Alert.InformedEntity.Activity.Board),
+                                    directionId = 0,
+                                    route = RedLine.route.id,
+                                    routeType = RouteType.HEAVY_RAIL,
+                                    stop = it.id,
+                                    trip = null
+                                )
+                            }
+                            .toMutableList()
+                }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity =
-                    stopsBraintreeBranch
-                        .map {
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = "Red",
-                                routeType = RouteType.HEAVY_RAIL,
-                                stop = it.id,
-                                trip = null
+            val mapStopRoute = MapStopRoute.matching(RedLine.route)
+
+            assertEquals(
+                wipeBranchUUID(
+                    LeafFormat.Branched(
+                        listOf(
+                            LeafFormat.Branched.Branch(
+                                null,
+                                "Ashmont",
+                                UpcomingFormat.Some(
+                                    UpcomingFormat.Some.FormattedTrip(
+                                        objects.upcomingTrip(prediction1),
+                                        RouteType.HEAVY_RAIL,
+                                        TripInstantDisplay.Minutes(3)
+                                    ),
+                                    null
+                                )
+                            ),
+                            LeafFormat.Branched.Branch(
+                                null,
+                                "Ashmont",
+                                UpcomingFormat.Some(
+                                    UpcomingFormat.Some.FormattedTrip(
+                                        objects.upcomingTrip(prediction2),
+                                        RouteType.HEAVY_RAIL,
+                                        TripInstantDisplay.Minutes(12)
+                                    ),
+                                    null
+                                )
+                            ),
+                            LeafFormat.Branched.Branch(
+                                null,
+                                "Braintree",
+                                UpcomingFormat.Disruption(alert, mapStopRoute)
                             )
-                        }
-                        .toMutableList()
-            }
-
-        val mapStopRoute = MapStopRoute.matching(RedLine.route)
-
-        assertEquals(
-            LeafFormat.Single(
-                "Ashmont",
-                UpcomingFormat.Some(
-                    listOf(
-                        UpcomingFormat.Some.FormattedTrip(
-                            objects.upcomingTrip(prediction1),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(3)
-                        ),
-                        UpcomingFormat.Some.FormattedTrip(
-                            objects.upcomingTrip(prediction2),
-                            RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(12)
                         )
-                    ),
-                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+                    )
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                            setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                            listOf(
+                                objects.upcomingTrip(prediction1),
+                                objects.upcomingTrip(prediction2)
+                            ),
+                            listOf(alert),
+                            allDataLoaded = true,
+                            hasSchedulesToday = true,
+                            emptyList(),
+                        )
+                        .format(
+                            now,
+                            RedLine.route,
+                            RedLine.global,
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        )
                 )
-            ),
-            RouteCardData.Leaf(
-                    0,
-                    listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
-                    setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
-                    listOf(objects.upcomingTrip(prediction1), objects.upcomingTrip(prediction2)),
-                    listOf(alert),
-                    allDataLoaded = true,
-                    hasSchedulesToday = true,
-                    emptyList(),
-                )
-                .format(
-                    now,
-                    RedLine.route,
-                    RedLine.global,
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                )
-        )
-    }
+            )
+        }
 
     @Test
     @Ignore // TODO once alerts are added
-    fun `formats Red Line southbound as branching if one branch is disrupted`() = parametricTest {
-        TODO("Southbound to Ashmont 1 min ⚠ Wollaston 2 min Ashmont 9 min")
-    }
+    fun `formats Red Line southbound as branching if one branch is disrupted downstream`() =
+        parametricTest {
+            TODO("Southbound to Ashmont 1 min ⚠ Wollaston 2 min Ashmont 9 min")
+        }
 
     private object GreenLine {
         private val objects = ObjectCollectionBuilder()
@@ -927,25 +988,84 @@ class RouteCardDataLeafTest {
                 lineId = line.id
             }
 
+        val parkSt = objects.stop()
+        val boylston = objects.stop()
+        val arlington = objects.stop()
+        val copley = objects.stop()
+        val hynes = objects.stop()
+        val kenmore = objects.stop()
+
+        val fenway = objects.stop() // D
+        val prudential = objects.stop() // E
+        val stMarys = objects.stop() // C
+        val blanford = objects.stop() // B
+
         val bWestbound =
             objects.routePattern(b) {
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Boston College" }
+                routeId = b.id
+                sortOrder = 1
+                representativeTrip {
+                    headsign = "Boston College"
+                    stopIds =
+                        listOf(
+                            parkSt.id,
+                            boylston.id,
+                            arlington.id,
+                            copley.id,
+                            hynes.id,
+                            kenmore.id,
+                            blanford.id
+                        )
+                }
             }
         val cWestbound =
             objects.routePattern(c) {
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Cleveland Circle" }
+                routeId = c.id
+                sortOrder = 2
+                representativeTrip {
+                    headsign = "Cleveland Circle"
+                    stopIds =
+                        listOf(
+                            parkSt.id,
+                            boylston.id,
+                            arlington.id,
+                            copley.id,
+                            hynes.id,
+                            kenmore.id,
+                            stMarys.id
+                        )
+                }
             }
         val dWestbound =
             objects.routePattern(d) {
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Riverside" }
+                routeId = d.id
+                sortOrder = 3
+                representativeTrip {
+                    headsign = "Riverside"
+                    stopIds =
+                        listOf(
+                            parkSt.id,
+                            boylston.id,
+                            arlington.id,
+                            copley.id,
+                            hynes.id,
+                            kenmore.id,
+                            fenway.id
+                        )
+                }
             }
         val eWestbound =
             objects.routePattern(e) {
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Heath Street" }
+                routeId = e.id
+                sortOrder = 4
+                representativeTrip {
+                    headsign = "Heath Street"
+                    stopIds = listOf(parkSt.id, boylston.id, arlington.id, copley.id, prudential.id)
+                }
             }
 
         val global = GlobalResponse(objects)
@@ -1631,27 +1751,391 @@ class RouteCardDataLeafTest {
         }
 
     @Test
-    @Ignore // TODO once alerts are added
     fun `formats Green Line westbound at Kenmore as branching showing alert if disruption on one branch`() =
         parametricTest {
-            TODO(
-                "Westbound to C Cleveland Circle 3 min B Boston College 5 min D Riverside Shuttle Bus"
+            val objects = GreenLine.objects()
+            val now = Clock.System.now()
+
+            val prediction1 =
+                objects.prediction {
+                    departureTime = now + 3.minutes
+                    trip = objects.trip(GreenLine.cWestbound)
+                    stopId = GreenLine.kenmore.id
+                }
+            val prediction2 =
+                objects.prediction {
+                    departureTime = now + 5.minutes
+                    trip = objects.trip(GreenLine.bWestbound)
+                    stopId = GreenLine.kenmore.id
+                }
+            val prediction3 = // Won't be shown - only 2 predictions shown + shuttle
+                objects.prediction {
+                    departureTime = now + 10.minutes
+                    trip = objects.trip(GreenLine.bWestbound)
+                    stopId = GreenLine.kenmore.id
+                }
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Shuttle
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.d.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.kenmore.id,
+                                trip = null
+                            )
+                        )
+                }
+
+            assertEquals(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        branch(
+                            GreenLine.c,
+                            "Cleveland Circle",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.LIGHT_RAIL,
+                                    TripInstantDisplay.Minutes(3)
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.b,
+                            "Boston College",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction2),
+                                    RouteType.LIGHT_RAIL,
+                                    TripInstantDisplay.Minutes(5)
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.d,
+                            "Riverside",
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(
+                                GreenLine.bWestbound,
+                                GreenLine.cWestbound,
+                                GreenLine.dWestbound,
+                                GreenLine.eWestbound
+                            ),
+                            setOf(GreenLine.kenmore.id),
+                            listOf(
+                                objects.upcomingTrip(prediction1),
+                                objects.upcomingTrip(prediction2),
+                                objects.upcomingTrip(prediction3)
+                            ),
+                            listOf(alert),
+                            true,
+                            true,
+                            emptyList()
+                        )
+                        .format(
+                            now,
+                            GreenLine.b,
+                            GreenLine.global,
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        )
+                )
             )
         }
 
     @Test
-    @Ignore // TODO once alerts are added
+    fun `formats Green Line westbound at Kenmore as branching showing alerts if disruption on 2 branches`() =
+        parametricTest {
+            val objects = GreenLine.objects()
+            val now = Clock.System.now()
+
+            val prediction1 =
+                objects.prediction {
+                    departureTime = now + 3.minutes
+                    trip = objects.trip(GreenLine.cWestbound)
+                    stopId = GreenLine.kenmore.id
+                }
+
+            val prediction2 =
+                objects.prediction {
+                    departureTime = now + 5.minutes
+                    trip = objects.trip(GreenLine.cWestbound)
+                    stopId = GreenLine.kenmore.id
+                }
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Shuttle
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.b.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.kenmore.id,
+                                trip = null
+                            ),
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.d.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.kenmore.id,
+                                trip = null
+                            )
+                        )
+                }
+
+            assertEquals(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        branch(
+                            GreenLine.c,
+                            "Cleveland Circle",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.LIGHT_RAIL,
+                                    TripInstantDisplay.Minutes(3)
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.b,
+                            "Boston College",
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b))
+                        )
+                        branch(
+                            GreenLine.d,
+                            "Riverside",
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(
+                                GreenLine.bWestbound,
+                                GreenLine.cWestbound,
+                                GreenLine.dWestbound,
+                                GreenLine.eWestbound
+                            ),
+                            setOf(GreenLine.kenmore.id),
+                            listOf(
+                                objects.upcomingTrip(prediction1),
+                                objects.upcomingTrip(prediction2)
+                            ),
+                            listOf(alert),
+                            true,
+                            true,
+                            emptyList()
+                        )
+                        .format(
+                            now,
+                            GreenLine.b,
+                            GreenLine.global,
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        )
+                )
+            )
+        }
+
+    @Test
     fun `formats Green Line westbound at Boylston as branching showing no trips if disruption and predictions unavailable`() =
         parametricTest {
-            TODO(
-                "Westbound to B Boston College Predictions unavailable C Cleveland Circle Predictions unavailable D Riverside Shuttle Bus"
+            val objects = GreenLine.objects()
+            val now = Clock.System.now()
+
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Shuttle
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.d.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.boylston.id,
+                                trip = null
+                            )
+                        )
+                }
+
+            val schedB =
+                objects.schedule {
+                    departureTime = now + 3.minutes
+                    trip = objects.trip(GreenLine.bWestbound)
+                    stopId = GreenLine.boylston.id
+                }
+
+            val schedC =
+                objects.schedule {
+                    departureTime = now + 5.minutes
+                    trip = objects.trip(GreenLine.cWestbound)
+                    stopId = GreenLine.boylston.id
+                }
+
+            val schedD =
+                objects.schedule {
+                    departureTime = now + 7.minutes
+                    trip = objects.trip(GreenLine.dWestbound)
+                    stopId = GreenLine.boylston.id
+                }
+
+            val schedE =
+                objects.schedule {
+                    departureTime = now + 9.minutes
+                    trip = objects.trip(GreenLine.dWestbound)
+                    stopId = GreenLine.boylston.id
+                }
+
+            assertEquals(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        branch(
+                            GreenLine.b,
+                            "Boston College",
+                            UpcomingFormat.NoTrips(
+                                UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.c,
+                            "Cleveland Circle",
+                            UpcomingFormat.NoTrips(
+                                UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                                null
+                            )
+                        )
+                        branch(
+                            GreenLine.d,
+                            "Riverside",
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(
+                                GreenLine.bWestbound,
+                                GreenLine.cWestbound,
+                                GreenLine.dWestbound,
+                                GreenLine.eWestbound
+                            ),
+                            setOf(GreenLine.boylston.id),
+                            listOf(
+                                objects.upcomingTrip(schedB),
+                                objects.upcomingTrip(schedC),
+                                objects.upcomingTrip(schedD),
+                                objects.upcomingTrip(schedE)
+                            ),
+                            listOf(alert),
+                            true,
+                            mapOf(
+                                GreenLine.bWestbound.id to true,
+                                GreenLine.cWestbound.id to true,
+                                GreenLine.dWestbound.id to true,
+                                GreenLine.eWestbound.id to true
+                            ),
+                            emptyList()
+                        )
+                        .format(
+                            now,
+                            GreenLine.b,
+                            GreenLine.global,
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        )
+                )
             )
         }
 
     @Test
-    @Ignore // TODO once alerts are added
     fun `formats Green Line westbound at Boylston as non-branching if disruption on all branches`() =
         parametricTest {
-            TODO("Westbound Shuttle Bus")
+            val objects = GreenLine.objects()
+            val now = Clock.System.now()
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Shuttle
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.b.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.boylston.id,
+                                trip = null
+                            ),
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.c.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.boylston.id,
+                                trip = null
+                            ),
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.d.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.boylston.id,
+                                trip = null
+                            ),
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = GreenLine.e.id,
+                                routeType = RouteType.LIGHT_RAIL,
+                                stop = GreenLine.boylston.id,
+                                trip = null
+                            )
+                        )
+                }
+
+            assertEquals(
+                LeafFormat.Single(
+                    null,
+                    UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b))
+                ),
+                RouteCardData.Leaf(
+                        0,
+                        listOf(
+                            GreenLine.bWestbound,
+                            GreenLine.cWestbound,
+                            GreenLine.dWestbound,
+                            GreenLine.eWestbound
+                        ),
+                        setOf(GreenLine.boylston.id),
+                        listOf(),
+                        listOf(alert),
+                        true,
+                        true,
+                        emptyList()
+                    )
+                    .format(
+                        now,
+                        GreenLine.b,
+                        GreenLine.global,
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                    )
+            )
         }
 }
