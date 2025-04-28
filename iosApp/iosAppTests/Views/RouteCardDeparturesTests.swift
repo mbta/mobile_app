@@ -109,6 +109,9 @@ final class RouteCardDeparturesTests: XCTestCase {
         let objects = Green.shared.objects
 
         let stop = objects.stop { _ in }
+        let downstreamAlert = objects.alert { alert in
+            alert.effect = .shuttle
+        }
 
         let tripB0 = objects.trip(routePattern: Green.shared.rpB0)
         let schedB0 = objects.schedule { schedule in
@@ -210,7 +213,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE0, prediction: predE0),
                     .init(trip: tripC02, prediction: predC02),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
+                hasSchedulesToday: true, alertsDownstream: [downstreamAlert]
             ),
             .init(
                 directionId: 1,
@@ -247,6 +250,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let westDirection = try sut.inspect().find(text: "Westbound to")
             .find(RouteCardDirection.self, relation: .parent)
         XCTAssertNotNil(westDirection)
+        XCTAssertNotNil(try westDirection.find(viewWithAccessibilityLabel: "Alert"))
         XCTAssertNotNil(try westDirection.find(text: "1 min")
             .find(HeadsignRowView.self, relation: .parent).find(text: "Boston College"))
         XCTAssertNotNil(try westDirection.find(text: "3 min")

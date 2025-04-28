@@ -34,8 +34,14 @@ sealed class LeafFormat {
         override fun noPredictionsStatus() = (format as? UpcomingFormat.NoTrips)?.noTripsFormat
     }
 
-    /** A [RouteCardData.Leaf] which has multiple destinations within its direction. */
-    data class Branched(val branches: List<Branch>) : LeafFormat() {
+    /**
+     * A [RouteCardData.Leaf] which has multiple destinations within its direction. The secondary
+     * alert will be displayed once for the entire direction
+     */
+    data class Branched(
+        val branches: List<Branch>,
+        val secondaryAlert: UpcomingFormat.SecondaryAlert? = null
+    ) : LeafFormat() {
         data class Branch
         @OptIn(ExperimentalUuidApi::class)
         constructor(
@@ -83,6 +89,7 @@ sealed class LeafFormat {
 
     class BranchedBuilder {
         private val branches = mutableListOf<Branched.Branch>()
+        var secondaryAlert: UpcomingFormat.SecondaryAlert? = null
 
         fun branch(headsign: String, format: UpcomingFormat) = branch(null, headsign, format)
 
@@ -90,7 +97,7 @@ sealed class LeafFormat {
             branches.add(Branched.Branch(route, headsign, format))
         }
 
-        internal fun built() = Branched(branches)
+        internal fun built() = Branched(branches, secondaryAlert)
     }
 
     companion object {

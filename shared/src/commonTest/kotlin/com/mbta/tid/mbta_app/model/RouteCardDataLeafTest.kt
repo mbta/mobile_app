@@ -699,6 +699,107 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats Red Line southbound as branching showing next 3 trips with one secondary alert`() =
+        parametricTest {
+            val objects = RedLine.objects()
+            val now = Clock.System.now()
+
+            val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
+            val prediction1 =
+                objects.prediction {
+                    arrivalTime = now + 1.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+            val prediction2 =
+                objects.prediction {
+                    arrivalTime = now + 2.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.braintreeSouth)
+                    stopId = RedLine.jfkUmass.south2.id
+                }
+            val prediction3 =
+                objects.prediction {
+                    arrivalTime = now + 9.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+            val prediction4 =
+                objects.prediction {
+                    arrivalTime = now + 15.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.braintreeSouth)
+                    stopId = RedLine.jfkUmass.south2.id
+                }
+
+            assertEquals(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        secondaryAlert = UpcomingFormat.SecondaryAlert(StopAlertState.Issue, null)
+                        branch(
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Approaching
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            "Braintree",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction2),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(2)
+                                ),
+                                null
+                            )
+                        )
+                        branch(
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction3),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(9)
+                                ),
+                                null
+                            )
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                            setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                            listOf(
+                                objects.upcomingTrip(prediction1),
+                                objects.upcomingTrip(prediction2),
+                                objects.upcomingTrip(prediction3),
+                                objects.upcomingTrip(prediction4)
+                            ),
+                            emptyList(),
+                            allDataLoaded = true,
+                            hasSchedulesToday = true,
+                            listOf(downstreamAlert)
+                        )
+                        .format(
+                            now,
+                            RedLine.route,
+                            RedLine.global,
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        )
+                )
+            )
+        }
+
+    @Test
     fun `formats Red Line northbound as non-branching showing next 2 trips`() = parametricTest {
         val objects = RedLine.objects()
         val now = Clock.System.now()

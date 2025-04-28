@@ -312,9 +312,10 @@ data class RouteCardData(
                         LeafFormat.Branched.Branch(
                             route,
                             trip.headsign,
-                            UpcomingFormat.Some(format, secondaryAlert)
+                            UpcomingFormat.Some(format, null)
                         )
-                    }
+                    },
+                    secondaryAlert
                 )
             }
 
@@ -361,7 +362,7 @@ data class RouteCardData(
                     LeafFormat.Branched.Branch(
                         route,
                         upcomingTrip.trip.headsign,
-                        UpcomingFormat.Some(formatted, secondaryAlert)
+                        UpcomingFormat.Some(formatted, null)
                     )
                 }
 
@@ -389,7 +390,7 @@ data class RouteCardData(
                                 LeafFormat.Branched.Branch(
                                     route,
                                     headsign,
-                                    UpcomingFormat.NoTrips(noTripsFormat, secondaryAlert)
+                                    UpcomingFormat.NoTrips(noTripsFormat, null)
                                 )
                             } else {
                                 null
@@ -401,7 +402,8 @@ data class RouteCardData(
                 }
 
             return LeafFormat.Branched(
-                upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches
+                upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches,
+                secondaryAlert
             )
         }
 
