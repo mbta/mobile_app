@@ -67,7 +67,7 @@ struct StopDetailsView: View {
                 tripFilter: tripFilter,
                 setStopFilter: setStopFilter,
                 setTripFilter: setTripFilter,
-                departures: departures,
+                routeCardData: routeCardData,
                 now: now,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,

@@ -17,12 +17,16 @@ struct StopDetailsFilteredView: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var departures: StopDetailsDepartures?
+    var routeCardData: [RouteCardData]?
     var now: Date
+
+    var routeData: RouteCardData?
+    var stopData: RouteCardData.RouteStopData?
+    var leafData: RouteCardData.Leaf?
 
     var alerts: [Shared.Alert]
     var downstreamAlerts: [Shared.Alert]
-    var patternsByStop: PatternsByStop?
+
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
@@ -44,7 +48,7 @@ struct StopDetailsFilteredView: View {
         tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        departures: StopDetailsDepartures?,
+        routeCardData: [RouteCardData]?,
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -56,44 +60,31 @@ struct StopDetailsFilteredView: View {
         self.tripFilter = tripFilter
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
-        self.departures = departures
+        self.routeCardData = routeCardData
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        let patternsByStop = departures?.routes.first(where: { $0.routeIdentifier == stopFilter.routeId })
-        self.patternsByStop = patternsByStop
+        routeData = routeCardData?.first { $0.lineOrRoute.id == stopFilter.routeId }
+        stopData = routeData?.stopData.first
+        leafData = stopData?.data.first { $0.directionId == stopFilter.directionId }
 
-        if let departures, let patternsByStop {
-            if let global = stopDetailsVM.global {
-                alerts = patternsByStop.alertsHereFor(
-                    directionId: stopFilter.directionId,
-                    tripId: tripFilter?.tripId,
-                    global: global
-                )
-                downstreamAlerts = patternsByStop.alertsDownstream(directionId: stopFilter.directionId)
-            } else {
-                alerts = []
-                downstreamAlerts = []
-            }
+        alerts = leafData?.alertsHere ?? []
+        downstreamAlerts = leafData?.alertsDownstream ?? []
 
-            tiles = departures.tileData(
-                routeId: patternsByStop.routeIdentifier,
-                directionId: stopFilter.directionId,
-                filterAtTime: nowInstant,
-                globalData: stopDetailsVM.global
+        if let routeData, let leafData {
+            let leafFormat = leafData.format(
+                now: nowInstant,
+                representativeRoute: routeData.lineOrRoute.sortRoute,
+                globalData: stopDetailsVM.global,
+                context: .stopDetailsFiltered
             )
-            let realtimePatterns = patternsByStop.patterns.filter { $0.directionId() == stopFilter.directionId }
-            noPredictionsStatus = tiles.isEmpty ? StopDetailsDepartures.companion.getNoPredictionsStatus(
-                realtimePatterns: realtimePatterns,
-                now: nowInstant
-            ) : nil
 
+            noPredictionsStatus = leafFormat.noPredictionsStatus()
+            tiles = leafFormat.tileData()
         } else {
-            alerts = []
-            downstreamAlerts = []
             noPredictionsStatus = nil
             tiles = []
         }
@@ -105,7 +96,7 @@ struct StopDetailsFilteredView: View {
 
     func toggledPinnedRoute() {
         Task {
-            if let routeId = patternsByStop?.routeIdentifier {
+            if let routeId = routeData?.lineOrRoute.id {
                 let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
                 analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 stopDetailsVM.loadPinnedRoutes()
@@ -121,7 +112,11 @@ struct StopDetailsFilteredView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            if let patternsByStop {
+            if !nearbyVM.groupByDirection {
+                DebugView { Text(String(
+                    stringLiteral: "Turn on the Group by Direction feature toggle, we're dropping support for headsign grouping"
+                )).padding(8) }.padding(16).frame(maxHeight: .infinity)
+            } else if let routeData, let stopData, let leafData {
                 StopDetailsFilteredDepartureDetails(
                     stopId: stopId,
                     stopFilter: stopFilter,
@@ -129,10 +124,10 @@ struct StopDetailsFilteredView: View {
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
                     tiles: tiles,
+                    data: .init(routeData: routeData, stopData: stopData, leaf: leafData),
                     noPredictionsStatus: noPredictionsStatus,
                     alerts: alerts,
                     downstreamAlerts: downstreamAlerts,
-                    patternsByStop: patternsByStop,
                     pinned: pinned,
                     now: now,
                     errorBannerVM: errorBannerVM,
@@ -148,15 +143,14 @@ struct StopDetailsFilteredView: View {
 
     @ViewBuilder
     var header: some View {
-        let route: Route? = if let routeId = patternsByStop?.representativeRoute.id {
-            stopDetailsVM.global?.getRoute(routeId: routeId)
-        } else {
-            nil
+        let line: Line? = switch onEnum(of: routeData?.lineOrRoute) {
+        case let .line(line): line.line
+        default: nil
         }
         VStack(spacing: 8) {
             StopDetailsFilteredHeader(
-                route: route,
-                line: patternsByStop?.line,
+                route: routeData?.lineOrRoute.sortRoute,
+                line: line,
                 stop: stop,
                 pinned: pinned,
                 onPin: toggledPinnedRoute,
@@ -174,18 +168,20 @@ struct StopDetailsFilteredView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        let loadingPatterns = LoadingPlaceholders.shared.patternsByStop(routeId: stopFilter.routeId, trips: 10)
-        let upcomingTrip = loadingPatterns.patterns.first?.upcomingTrips.first
+        let loadingData = LoadingPlaceholders.shared.departureDataBundle(
+            routeId: stopFilter.routeId,
+            trips: 10,
+            context: .stopDetailsFiltered,
+            now: nowInstant
+        )
+        let leafFormat = loadingData.leaf.format(
+            now: nowInstant,
+            representativeRoute: loadingData.routeData.lineOrRoute.sortRoute,
+            globalData: stopDetailsVM.global,
+            context: .stopDetailsFiltered
+        )
+        let tiles = leafFormat.tileData()
 
-        let tiles = (0 ..< 4).map { _ in TileData(
-            route: loadingPatterns.representativeRoute,
-            headsign: "placeholder",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: upcomingTrip!, routeType: .lightRail, format: .Boarding())],
-                secondaryAlert: nil
-            ),
-            upcoming: upcomingTrip!
-        ) }
         StopDetailsFilteredDepartureDetails(
             stopId: stopId,
             stopFilter: stopFilter,
@@ -193,10 +189,10 @@ struct StopDetailsFilteredView: View {
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
             tiles: tiles,
+            data: loadingData,
             noPredictionsStatus: nil,
             alerts: alerts,
             downstreamAlerts: downstreamAlerts,
-            patternsByStop: loadingPatterns,
             pinned: pinned,
             now: now,
             errorBannerVM: errorBannerVM,
