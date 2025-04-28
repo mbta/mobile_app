@@ -99,9 +99,9 @@ sealed class LeafFormat {
         private val branchRows = mutableListOf<Branched.BranchRow>()
         var secondaryAlert: UpcomingFormat.SecondaryAlert? = null
 
-        fun branch(headsign: String, format: UpcomingFormat) = branch(null, headsign, format)
+        fun branchRow(headsign: String, format: UpcomingFormat) = branchRow(null, headsign, format)
 
-        fun branch(route: Route?, headsign: String, format: UpcomingFormat) {
+        fun branchRow(route: Route?, headsign: String, format: UpcomingFormat) {
             branchRows.add(Branched.BranchRow(route, headsign, format))
         }
 
