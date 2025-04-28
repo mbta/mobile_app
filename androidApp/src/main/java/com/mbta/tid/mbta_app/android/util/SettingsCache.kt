@@ -14,15 +14,27 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 
+/**
+ * Stores the state of the [Settings] so that they can be read instantly from anywhere with a hot
+ * cache and loaded transparently with a cold cache. Intended to be used as a Koin singleton.
+ */
 class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinComponent {
     private val cache = MutableStateFlow<Map<Settings, Boolean>?>(null)
 
+    /** Changes the value of a [Settings] both in the cache and in the [settingsRepository]. */
     fun set(setting: Settings, value: Boolean) {
         val newSettings = mapOf(setting to value)
         cache.update { it.orEmpty() + newSettings }
         CoroutineScope(Dispatchers.IO).launch { settingsRepository.setSettings(newSettings) }
     }
 
+    /**
+     * Retrieves the value of a [Settings], updating automatically when this cache is updated, and
+     * loading in the background if the cache is empty.
+     *
+     * Will not automatically see changes made directly to the [settingsRepository]; make sure all
+     * changes are made via [set].
+     */
     @Composable
     fun get(setting: Settings): Boolean {
         val cachedData by cache.collectAsState()
@@ -37,6 +49,7 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
     }
 
     companion object {
+        /** Gets the value of a [setting] from the current Koin context’s [SettingsCache]. */
         @Composable fun get(setting: Settings) = koinInject<SettingsCache>().get(setting)
     }
 }
