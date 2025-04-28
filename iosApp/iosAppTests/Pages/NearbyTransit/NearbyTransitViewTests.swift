@@ -676,7 +676,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Suspension")
                 .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
         }
-        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 

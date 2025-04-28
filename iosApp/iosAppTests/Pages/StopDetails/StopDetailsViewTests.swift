@@ -108,7 +108,6 @@ final class StopDetailsViewTests: XCTestCase {
         defer { DefaultSettings.reset() }
 
         let exp = sut.on(\.didAppear) { view in
-//        let exp = sut.inspection.inspect(after: 0.1) { view in
             let routePills = try view.find(StopDetailsFilterPills.self).findAll(RoutePill.self)
             XCTAssertEqual(2, routePills.count)
             XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
