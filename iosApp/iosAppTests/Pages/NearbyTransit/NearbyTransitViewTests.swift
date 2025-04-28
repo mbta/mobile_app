@@ -436,7 +436,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-lech"])
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: Set(["place-lech"]))
 
         wait(for: [lechmereExpectation], timeout: 1)
     }
@@ -614,7 +614,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }.store(in: &self.cancellables)
             actualView.nearbyVM.nearbyState.stopIds = ["new-stop"]
             try actualView.inspect().implicitAnyView().vStack()
-                .callOnChange(newValue: ["new-stop"])
+                .callOnChange(newValue: Set(["new-stop"]))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp, scrollPositionSetExpectation], timeout: 2)
