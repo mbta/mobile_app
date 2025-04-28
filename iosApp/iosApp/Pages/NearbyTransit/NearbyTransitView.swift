@@ -45,13 +45,6 @@ struct NearbyTransitView: View {
         let pinnedRoutes: Set<String>
     }
 
-    var setOfNearbyStopIds: Set<String>? {
-        guard let stopIds = nearbyVM.nearbyState.stopIds else {
-            return nil
-        }
-        return Set(stopIds)
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             if let routeCardData = nearbyVM.routeCardData,
@@ -72,10 +65,13 @@ struct NearbyTransitView: View {
         .onChange(of: location) { newLocation in
             getNearby(location: newLocation, globalData: globalData)
         }
-        .onChange(of: setOfNearbyStopIds) { nearbyStops in
-            getSchedule()
-            joinPredictions(nearbyStops)
-            scrollToTop()
+        .onChange(of: nearbyVM.nearbyState.stopIds) { [oldValue = nearbyVM.nearbyState.stopIds] newNearbyStops in
+
+            if Set(oldValue ?? []) != Set(newNearbyStops ?? []) {
+                getSchedule()
+                joinPredictions(newNearbyStops)
+                scrollToTop()
+            }
         }
         .onChange(of: predictionsByStop) { newPredictionsByStop in
             if let newPredictionsByStop {
@@ -246,11 +242,6 @@ struct NearbyTransitView: View {
                 onRefreshAfterError: loadEverything
             )
         }
-    }
-
-    func joinPredictions(_ stopIds: Set<String>?) {
-        guard let stopIds else { return }
-        joinPredictions(Array(stopIds))
     }
 
     func joinPredictions(_ stopIds: [String]?) {
