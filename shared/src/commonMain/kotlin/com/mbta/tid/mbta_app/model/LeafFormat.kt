@@ -35,14 +35,22 @@ sealed class LeafFormat {
     }
 
     /**
-     * A [RouteCardData.Leaf] which has multiple destinations within its direction. The secondary
-     * alert will be displayed once for the entire direction
+     * A [RouteCardData.Leaf] which has multiple destinations within its direction.
+     *
+     * @param branchRows The list of rows to display when the route is branched in this direction.
+     *   These rows are not distinct by headsign, ex: "Ashmont" may be the headsign of multiple
+     *   [branchRows] when it has upcoming service. When a branch has
+     *   [UpcomingFormat.NoTripsFormat.PredictionsUnavailable] or [UpcomingFormat.Disruption], it
+     *   should only appear once in [branchRows].
+     * @param secondaryAlert The [UpcomingFormat.SecondaryAlert] affecting this stop to to display
+     *   once for the entire direction. This may be a secondary alert at this stop, or a major alert
+     *   affecting a stop downstream of this one on any of the route patterns it serves.
      */
     data class Branched(
-        val branches: List<Branch>,
+        val branchRows: List<BranchRow>,
         val secondaryAlert: UpcomingFormat.SecondaryAlert? = null
     ) : LeafFormat() {
-        data class Branch
+        data class BranchRow
         @OptIn(ExperimentalUuidApi::class)
         constructor(
             /**
@@ -57,7 +65,7 @@ sealed class LeafFormat {
         )
 
         override fun tileData(): List<TileData> {
-            return branches.mapNotNull { branch ->
+            return branchRows.mapNotNull { branch ->
                 if (branch.format is UpcomingFormat.Some) {
                     val trip = branch.format.trips.singleOrNull() ?: return@mapNotNull null
                     TileData(
@@ -72,7 +80,7 @@ sealed class LeafFormat {
 
         override fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat? {
             var result: UpcomingFormat.NoTripsFormat? = null
-            for (branch in branches) {
+            for (branch in branchRows) {
                 when (branch.format) {
                     is UpcomingFormat.Some -> return null
                     is UpcomingFormat.NoTrips -> {
@@ -88,16 +96,16 @@ sealed class LeafFormat {
     }
 
     class BranchedBuilder {
-        private val branches = mutableListOf<Branched.Branch>()
+        private val branchRows = mutableListOf<Branched.BranchRow>()
         var secondaryAlert: UpcomingFormat.SecondaryAlert? = null
 
         fun branch(headsign: String, format: UpcomingFormat) = branch(null, headsign, format)
 
         fun branch(route: Route?, headsign: String, format: UpcomingFormat) {
-            branches.add(Branched.Branch(route, headsign, format))
+            branchRows.add(Branched.BranchRow(route, headsign, format))
         }
 
-        internal fun built() = Branched(branches, secondaryAlert)
+        internal fun built() = Branched(branchRows, secondaryAlert)
     }
 
     companion object {

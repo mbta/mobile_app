@@ -25,12 +25,12 @@ struct RouteCardDirection: View {
                     }
                     DirectionLabel(direction: direction, showDestination: false).foregroundStyle(Color.text)
                 }
-                ForEach(branched.branches) { branch in
-                    let pillDecoration: PredictionRowView.PillDecoration = if let route = branch
+                ForEach(branched.branchRows) { branchRow in
+                    let pillDecoration: PredictionRowView.PillDecoration = if let route = branchRow
                         .route { .onRow(route: route) } else { .none }
                     HeadsignRowView(
-                        headsign: branch.headsign,
-                        predictions: branch.format,
+                        headsign: branchRow.headsign,
+                        predictions: branchRow.format,
                         pillDecoration: pillDecoration
                     )
                 }

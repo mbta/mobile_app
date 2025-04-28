@@ -105,7 +105,7 @@ fun Departures(
                                 }
                                 DirectionLabel(direction, showDestination = false)
                             }
-                            for (branch in formatted.branches) {
+                            for (branch in formatted.branchRows) {
                                 HeadsignRowView(
                                     branch.headsign,
                                     branch.format,
