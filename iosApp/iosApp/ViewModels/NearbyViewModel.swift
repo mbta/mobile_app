@@ -201,7 +201,7 @@ class NearbyViewModel: ObservableObject {
             if nearbyState.loadedLocation != nil {
                 analytics.refetchedNearbyTransit()
             }
-            nearbyState = NearbyTransitState(loading: true)
+            nearbyState.loading = true
             nearbyStaticData = nil
             routeCardData = nil
 
