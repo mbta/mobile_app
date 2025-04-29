@@ -1120,7 +1120,16 @@ data class RouteCardData(
                 }
             null
 
-            val isUpcoming = upcomingTripsInCutoff?.isNotEmpty() ?: false
+            val hasUnseenUpcomingTrip =
+                upcomingTripsInCutoff?.any { upcomingTrip ->
+                    upcomingTrip.trip.routePatternId?.let {
+                        // If there isn't a route pattern for the trip (rare GL cases), assume it
+                        // hasn't been seen elsewhere and that we should show this leaf.
+                        this.patternsNotSeenAtEarlierStops?.contains(it)
+                    }
+                        ?: true
+                }
+                    ?: false
 
             val shouldBeFilteredAsArrivalOnly =
                 if (isSubway) {
@@ -1134,9 +1143,14 @@ data class RouteCardData(
                     this.upcomingTrips?.isArrivalOnly() ?: false
                 }
 
-            val isTypical = routePatterns?.any { it.isTypical() } ?: false
+            val hasUnseenTypicalPattern =
+                routePatterns?.any {
+                    (this.patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
+                }
+                    ?: false
 
-            return (isTypical || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
+            return (hasUnseenTypicalPattern || hasUnseenUpcomingTrip) &&
+                !(shouldBeFilteredAsArrivalOnly)
         }
 
         private fun isTypicalLastStopOnRoutePattern(
