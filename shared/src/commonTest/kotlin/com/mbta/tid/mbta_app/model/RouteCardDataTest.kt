@@ -149,6 +149,8 @@ class RouteCardDataTest {
                                                 RouteCardData.LeafBuilder(
                                                     directionId = 0,
                                                     routePatterns = listOf(route1rp1, route1rp2),
+                                                    patternsNotSeenAtEarlierStops =
+                                                        setOf(route1rp2.id),
                                                     stopIds = setOf(stop2.id),
                                                     allDataLoaded = true,
                                                 )
