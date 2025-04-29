@@ -41,7 +41,6 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
-import org.koin.compose.koinInject
 
 @Composable
 fun MorePage(
@@ -49,8 +48,7 @@ fun MorePage(
 ) {
 
     val navController = rememberNavController()
-    val viewModel =
-        MoreViewModel(LocalContext.current, { navController.navigate("licenses") }, koinInject())
+    val viewModel = MoreViewModel(LocalContext.current, { navController.navigate("licenses") })
 
     val sections by viewModel.sections.collectAsState()
     val dependencies = Dependency.getAllDependencies()
@@ -85,11 +83,7 @@ fun MorePage(
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            sections.map { section ->
-                                MoreSectionView(section = section) { setting ->
-                                    viewModel.toggleSetting(setting)
-                                }
-                            }
+                            sections.map { section -> MoreSectionView(section = section) }
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 verticalAlignment = Alignment.CenterVertically

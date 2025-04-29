@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -37,14 +38,12 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -71,7 +70,6 @@ class StopDetailsViewModel(
     private val errorBannerRepository: IErrorBannerStateRepository,
     private val predictionsRepository: IPredictionsRepository,
     schedulesRepository: ISchedulesRepository,
-    private val settingsRepository: ISettingsRepository,
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
@@ -83,7 +81,6 @@ class StopDetailsViewModel(
             errorBannerRepo: IErrorBannerStateRepository = MockErrorBannerStateRepository(),
             predictionsRepo: IPredictionsRepository = MockPredictionsRepository(),
             schedulesRepo: ISchedulesRepository = MockScheduleRepository(),
-            settingsRepository: ISettingsRepository = MockSettingsRepository(),
             tripPredictionsRepo: ITripPredictionsRepository = MockTripPredictionsRepository(),
             tripRepo: ITripRepository = MockTripRepository(),
             vehicleRepo: IVehicleRepository = MockVehicleRepository(),
@@ -93,7 +90,6 @@ class StopDetailsViewModel(
                 errorBannerRepo,
                 predictionsRepo,
                 schedulesRepo,
-                settingsRepository,
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
@@ -110,7 +106,6 @@ class StopDetailsViewModel(
                 ),
             schedulesRepo: ISchedulesRepository =
                 MockScheduleRepository(scheduleResponse = ScheduleResponse(objects)),
-            settingsRepository: ISettingsRepository = MockSettingsRepository(),
             tripPredictionsRepo: ITripPredictionsRepository =
                 MockTripPredictionsRepository(response = PredictionsStreamDataResponse(objects)),
             tripRepo: ITripRepository = MockTripRepository(),
@@ -121,7 +116,6 @@ class StopDetailsViewModel(
                 errorBannerRepo,
                 predictionsRepo,
                 schedulesRepo,
-                settingsRepository,
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
@@ -143,15 +137,6 @@ class StopDetailsViewModel(
     private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
     val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
 
-    private val _showStationAccessibility = MutableStateFlow(false)
-    val showStationAccessibility: StateFlow<Boolean> = _showStationAccessibility
-
-    private val _hideMaps = MutableStateFlow(false)
-    val hideMaps: StateFlow<Boolean> = _hideMaps
-
-    private val _groupByDirection = MutableStateFlow(false)
-    val groupByDirection: StateFlow<Boolean> = _groupByDirection
-
     private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
     val routeCardData = _routeCardData.asStateFlow()
 
@@ -165,15 +150,6 @@ class StopDetailsViewModel(
             ::onJoinMessage,
             ::onPushMessage
         )
-
-    fun loadSettings() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val data = settingsRepository.getSettings()
-            _showStationAccessibility.value = data[Settings.StationAccessibility] ?: false
-            _hideMaps.value = data[Settings.HideMaps] ?: false
-            _groupByDirection.value = data[Settings.GroupByDirection] ?: false
-        }
-    }
 
     fun loadStopDetails(stopId: String) {
         _stopData.value = StopData(stopId, null, null, false)
@@ -545,7 +521,7 @@ fun stopDetailsManagedVM(
 
     val stopData by viewModel.stopData.collectAsState()
 
-    val groupByDirection by viewModel.groupByDirection.collectAsState()
+    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
     val departures by viewModel.stopDepartures.collectAsState()
 
     var wasInBackground by rememberSaveable { mutableStateOf(false) }

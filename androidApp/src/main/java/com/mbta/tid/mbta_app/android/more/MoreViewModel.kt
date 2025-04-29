@@ -7,33 +7,23 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.model.morePage.localizedFeedbackFormUrl
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 class MoreViewModel(
     private val context: Context,
     private val licensesCallback: () -> Unit,
-    private val settingsRepository: ISettingsRepository
 ) : ViewModel() {
 
-    private val _settings = MutableStateFlow<Map<Settings, Boolean>>(mapOf())
     private val _sections = MutableStateFlow<List<MoreSection>>(listOf())
     var sections = _sections.asStateFlow()
 
     init {
-        CoroutineScope(Dispatchers.IO).launch { loadSettings() }
+        _sections.value = getSections()
     }
 
-    fun toggleSetting(setting: Settings) {
-        setSettings(mapOf(setting to !(_settings.value[setting] ?: false)))
-    }
-
-    fun getSections(settings: Map<Settings, Boolean>): List<MoreSection> {
+    fun getSections(): List<MoreSection> {
         val feedbackFormUrl = run {
             val locales = AppCompatDelegate.getApplicationLocales()
             val primaryLocale = locales[0] ?: context.resources.configuration.locales[0]
@@ -90,13 +80,11 @@ class MoreViewModel(
                         MoreItem.Toggle(
                             label =
                                 context.resources.getString(R.string.setting_toggle_map_display),
-                            settings = Settings.HideMaps,
-                            value = settings[Settings.HideMaps] ?: false
+                            settings = Settings.HideMaps
                         ),
                         MoreItem.Toggle(
                             label = context.getString(R.string.setting_station_accessibility),
-                            settings = Settings.StationAccessibility,
-                            value = settings[Settings.StationAccessibility] ?: false
+                            settings = Settings.StationAccessibility
                         )
                     )
             ),
@@ -106,18 +94,15 @@ class MoreViewModel(
                     listOf(
                         MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_debug_mode),
-                            settings = Settings.DevDebugMode,
-                            value = settings[Settings.DevDebugMode] ?: false
+                            settings = Settings.DevDebugMode
                         ),
                         MoreItem.Toggle(
                             label = context.getString(R.string.group_by_direction),
-                            settings = Settings.GroupByDirection,
-                            value = settings[Settings.GroupByDirection] ?: false
+                            settings = Settings.GroupByDirection
                         ),
                         MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_route_search),
-                            settings = Settings.SearchRouteResults,
-                            value = settings[Settings.SearchRouteResults] ?: false
+                            settings = Settings.SearchRouteResults
                         )
                     )
             ),
@@ -149,18 +134,5 @@ class MoreViewModel(
                 note = context.resources.getString(R.string.more_section_support_note)
             )
         )
-    }
-
-    private fun setSettings(settings: Map<Settings, Boolean>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            settingsRepository.setSettings(settings)
-            loadSettings()
-        }
-    }
-
-    private suspend fun loadSettings() {
-        val latestSettings = settingsRepository.getSettings()
-        _settings.value = latestSettings
-        _sections.value = getSections(latestSettings)
     }
 }

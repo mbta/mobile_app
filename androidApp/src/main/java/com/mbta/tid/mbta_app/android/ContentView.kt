@@ -15,7 +15,6 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsColorScheme
@@ -33,14 +32,16 @@ import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentView(
     socket: PhoenixSocket = koinInject(),
@@ -50,7 +51,7 @@ fun ContentView(
     val navController = rememberNavController()
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView.getGlobalData")
-    val hideMaps by viewModel.hideMaps.collectAsState()
+    val hideMaps = SettingsCache.get(Settings.HideMaps)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
@@ -97,8 +98,6 @@ fun ContentView(
     val sheetModifier = Modifier.fillMaxSize()
     NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
         composable<Routes.NearbyTransit> {
-            LaunchedEffect(null) { viewModel.loadHideMaps() }
-
             NearbyTransitPage(
                 modifier = sheetModifier,
                 NearbyTransit(

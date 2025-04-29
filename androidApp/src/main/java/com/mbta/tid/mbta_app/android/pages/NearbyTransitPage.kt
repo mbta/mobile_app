@@ -125,13 +125,7 @@ fun NearbyTransitPage(
     mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
     searchResultsViewModel: SearchResultsViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
-        viewModel(
-            factory =
-                ErrorBannerViewModel.Factory(
-                    errorRepository = koinInject(),
-                    settingsRepository = koinInject()
-                )
-        ),
+        viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject()
 ) {

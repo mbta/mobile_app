@@ -10,6 +10,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -43,6 +44,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class StopDetailsViewModelTest {
 
@@ -1382,29 +1384,28 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                objects,
-                settingsRepository =
-                    MockSettingsRepository(mapOf(Settings.GroupByDirection to true))
-            )
-        viewModel.loadSettings()
+        val koinApplication = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.GroupByDirection to true))
+        }
+        val viewModel = StopDetailsViewModel.mocked(objects)
 
         val stopFilters = StopDetailsPageFilters("stop1", null, null)
 
         assertNull(viewModel.routeCardData.value)
 
         composeTestRule.setContent {
-            stopDetailsManagedVM(
-                stopFilters,
-                viewModel = viewModel,
-                globalResponse = GlobalResponse(objects),
-                alertData = AlertsStreamDataResponse(objects),
-                pinnedRoutes = setOf(),
-                updateStopFilter = { _, _ -> },
-                updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {},
-            )
+            KoinContext(koinApplication.koin) {
+                stopDetailsManagedVM(
+                    stopFilters,
+                    viewModel = viewModel,
+                    globalResponse = GlobalResponse(objects),
+                    alertData = AlertsStreamDataResponse(objects),
+                    pinnedRoutes = setOf(),
+                    updateStopFilter = { _, _ -> },
+                    updateTripFilter = { _, _ -> },
+                    setMapSelectedVehicle = {},
+                )
+            }
         }
 
         composeTestRule.waitUntil { viewModel.routeCardData.value != null }

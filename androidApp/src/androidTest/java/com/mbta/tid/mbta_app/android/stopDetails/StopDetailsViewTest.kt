@@ -165,7 +165,6 @@ class StopDetailsViewTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         ),
                     openModal = {},
                     openSheetRoute = {}
@@ -244,7 +243,6 @@ class StopDetailsViewTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         ),
                     openModal = {},
                     openSheetRoute = {}
@@ -269,13 +267,7 @@ class StopDetailsViewTest {
                 header = "Elevator alert header"
             }
 
-        val viewModel =
-            StopDetailsViewModel.mocked(
-                settingsRepository =
-                    MockSettingsRepository(
-                        settings = mapOf(Pair(Settings.StationAccessibility, true))
-                    )
-            )
+        val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setDepartures(
             StopDetailsDepartures(
@@ -333,7 +325,6 @@ class StopDetailsViewTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         ),
                     openModal = {},
                     openSheetRoute = {}
@@ -352,7 +343,7 @@ class StopDetailsViewTest {
                 header = "Elevator alert header"
             }
 
-        val viewModel = StopDetailsViewModel.mocked(settingsRepository = settingsRepository)
+        val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setDepartures(
             StopDetailsDepartures(
@@ -412,7 +403,6 @@ class StopDetailsViewTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         ),
                     openModal = {},
                     openSheetRoute = {}

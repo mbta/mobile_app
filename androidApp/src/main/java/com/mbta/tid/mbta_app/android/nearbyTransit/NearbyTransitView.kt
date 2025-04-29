@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
@@ -41,6 +42,7 @@ import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
+import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.launch
@@ -59,8 +61,6 @@ fun NearbyTransitView(
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    LaunchedEffect(null) { nearbyVM.loadSettings() }
-
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
             nearbyVM.getNearby(
@@ -77,8 +77,8 @@ fun NearbyTransitView(
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
-    val groupByDirection by nearbyVM.groupByDirection.collectAsState(false)
-    val showStationAccessibility by nearbyVM.showStationAccessibility.collectAsState(false)
+    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()

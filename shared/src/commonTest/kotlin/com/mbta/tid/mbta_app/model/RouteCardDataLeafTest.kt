@@ -27,7 +27,7 @@ class RouteCardDataLeafTest {
             is LeafFormat.Single -> format
             is LeafFormat.Branched ->
                 format.copy(
-                    format.branches.map {
+                    format.branchRows.map {
                         it.copy(id = it.id.split("-").subList(0, 2).joinToString("-"))
                     }
                 )
@@ -637,7 +637,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             wipeBranchUUID(
                 LeafFormat.branched {
-                    branch(
+                    branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -648,7 +648,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Braintree",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -659,7 +659,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -697,6 +697,107 @@ class RouteCardDataLeafTest {
             )
         )
     }
+
+    @Test
+    fun `formats Red Line southbound as branching showing next 3 trips with one secondary alert`() =
+        parametricTest {
+            val objects = RedLine.objects()
+            val now = Clock.System.now()
+
+            val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
+            val prediction1 =
+                objects.prediction {
+                    arrivalTime = now + 1.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+            val prediction2 =
+                objects.prediction {
+                    arrivalTime = now + 2.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.braintreeSouth)
+                    stopId = RedLine.jfkUmass.south2.id
+                }
+            val prediction3 =
+                objects.prediction {
+                    arrivalTime = now + 9.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+            val prediction4 =
+                objects.prediction {
+                    arrivalTime = now + 15.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.braintreeSouth)
+                    stopId = RedLine.jfkUmass.south2.id
+                }
+
+            assertEquals(
+                wipeBranchUUID(
+                    LeafFormat.branched {
+                        secondaryAlert = UpcomingFormat.SecondaryAlert(StopAlertState.Issue, null)
+                        branchRow(
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Approaching
+                                ),
+                                null
+                            )
+                        )
+                        branchRow(
+                            "Braintree",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction2),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(2)
+                                ),
+                                null
+                            )
+                        )
+                        branchRow(
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction3),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(9)
+                                ),
+                                null
+                            )
+                        )
+                    }
+                ),
+                wipeBranchUUID(
+                    RouteCardData.Leaf(
+                            0,
+                            listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                            setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                            listOf(
+                                objects.upcomingTrip(prediction1),
+                                objects.upcomingTrip(prediction2),
+                                objects.upcomingTrip(prediction3),
+                                objects.upcomingTrip(prediction4)
+                            ),
+                            emptyList(),
+                            allDataLoaded = true,
+                            hasSchedulesToday = true,
+                            listOf(downstreamAlert)
+                        )
+                        .format(
+                            now,
+                            RedLine.route,
+                            RedLine.global,
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        )
+                )
+            )
+        }
 
     @Test
     fun `formats Red Line northbound as non-branching showing next 2 trips`() = parametricTest {
@@ -795,7 +896,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             wipeBranchUUID(
                 LeafFormat.branched {
-                    branch(
+                    branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -806,7 +907,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -817,7 +918,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -897,7 +998,7 @@ class RouteCardDataLeafTest {
                 wipeBranchUUID(
                     LeafFormat.Branched(
                         listOf(
-                            LeafFormat.Branched.Branch(
+                            LeafFormat.Branched.BranchRow(
                                 null,
                                 "Ashmont",
                                 UpcomingFormat.Some(
@@ -909,7 +1010,7 @@ class RouteCardDataLeafTest {
                                     null
                                 )
                             ),
-                            LeafFormat.Branched.Branch(
+                            LeafFormat.Branched.BranchRow(
                                 null,
                                 "Ashmont",
                                 UpcomingFormat.Some(
@@ -921,7 +1022,7 @@ class RouteCardDataLeafTest {
                                     null
                                 )
                             ),
-                            LeafFormat.Branched.Branch(
+                            LeafFormat.Branched.BranchRow(
                                 null,
                                 "Braintree",
                                 UpcomingFormat.Disruption(alert, mapStopRoute)
@@ -1100,7 +1201,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             wipeBranchUUID(
                 LeafFormat.branched {
-                    branch(
+                    branchRow(
                         GreenLine.c,
                         "Cleveland Circle",
                         UpcomingFormat.Some(
@@ -1112,7 +1213,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         GreenLine.b,
                         "Boston College",
                         UpcomingFormat.Some(
@@ -1124,7 +1225,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         GreenLine.d,
                         "Riverside",
                         UpcomingFormat.Some(
@@ -1248,7 +1349,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             wipeBranchUUID(
                 LeafFormat.branched {
-                    branch(
+                    branchRow(
                         "Stoughton",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -1259,7 +1360,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Providence",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -1270,7 +1371,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Wickford Junction",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -1491,7 +1592,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             wipeBranchUUID(
                 LeafFormat.branched {
-                    branch(
+                    branchRow(
                         "Arlington Center",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -1502,7 +1603,7 @@ class RouteCardDataLeafTest {
                             null
                         )
                     )
-                    branch(
+                    branchRow(
                         "Clarendon Hill",
                         UpcomingFormat.Some(
                             UpcomingFormat.Some.FormattedTrip(
@@ -1554,7 +1655,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 wipeBranchUUID(
                     LeafFormat.branched {
-                        branch(
+                        branchRow(
                             "Ashmont",
                             UpcomingFormat.Some(
                                 UpcomingFormat.Some.FormattedTrip(
@@ -1565,7 +1666,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             "Ashmont",
                             UpcomingFormat.Some(
                                 UpcomingFormat.Some.FormattedTrip(
@@ -1646,7 +1747,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 wipeBranchUUID(
                     LeafFormat.branched {
-                        branch(
+                        branchRow(
                             GreenLine.c,
                             "Cleveland Circle",
                             UpcomingFormat.Some(
@@ -1658,7 +1759,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.b,
                             "Boston College",
                             UpcomingFormat.Some(
@@ -1670,7 +1771,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.b,
                             "Boston College",
                             UpcomingFormat.Some(
@@ -1793,7 +1894,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 wipeBranchUUID(
                     LeafFormat.branched {
-                        branch(
+                        branchRow(
                             GreenLine.c,
                             "Cleveland Circle",
                             UpcomingFormat.Some(
@@ -1805,7 +1906,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.b,
                             "Boston College",
                             UpcomingFormat.Some(
@@ -1817,7 +1918,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.d,
                             "Riverside",
                             UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
@@ -1900,7 +2001,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 wipeBranchUUID(
                     LeafFormat.branched {
-                        branch(
+                        branchRow(
                             GreenLine.c,
                             "Cleveland Circle",
                             UpcomingFormat.Some(
@@ -1912,12 +2013,12 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.b,
                             "Boston College",
                             UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b))
                         )
-                        branch(
+                        branchRow(
                             GreenLine.d,
                             "Riverside",
                             UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
@@ -2006,7 +2107,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 wipeBranchUUID(
                     LeafFormat.branched {
-                        branch(
+                        branchRow(
                             GreenLine.b,
                             "Boston College",
                             UpcomingFormat.NoTrips(
@@ -2014,7 +2115,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.c,
                             "Cleveland Circle",
                             UpcomingFormat.NoTrips(
@@ -2022,7 +2123,7 @@ class RouteCardDataLeafTest {
                                 null
                             )
                         )
-                        branch(
+                        branchRow(
                             GreenLine.d,
                             "Riverside",
                             UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))

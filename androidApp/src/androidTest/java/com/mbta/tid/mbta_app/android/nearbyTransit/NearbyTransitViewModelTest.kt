@@ -13,7 +13,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -73,7 +72,6 @@ class NearbyTransitViewModelTest {
         val nearbyVM =
             NearbyTransitViewModel(
                 nearbyRepository,
-                settingsRepository = MockSettingsRepository(),
                 errorBannerRepository = MockErrorBannerStateRepository(),
                 analytics = MockAnalytics()
             )

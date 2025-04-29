@@ -8,17 +8,15 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
-import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 class MorePageTests : KoinTest {
@@ -38,20 +36,15 @@ class MorePageTests : KoinTest {
     fun testSettings() {
         var hideMapValue = false
 
-        val koinApplication = koinApplication {
-            modules(
-                module {
-                    single<ISettingsRepository> {
-                        MockSettingsRepository(
-                            onSaveSettings = { settings ->
-                                if (settings.size == 1 && settings.containsKey(Settings.HideMaps)) {
-                                    hideMapValue = settings.getValue(Settings.HideMaps)
-                                }
-                            }
-                        )
+        val koinApplication = testKoinApplication {
+            settings =
+                MockSettingsRepository(
+                    onSaveSettings = { settings ->
+                        if (settings.size == 1 && settings.containsKey(Settings.HideMaps)) {
+                            hideMapValue = settings.getValue(Settings.HideMaps)
+                        }
                     }
-                }
-            )
+                )
         }
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
@@ -71,13 +64,7 @@ class MorePageTests : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testLinksExist() {
-        val koinApplication = koinApplication {
-            modules(
-                module {
-                    single<ISettingsRepository> { MockSettingsRepository(onSaveSettings = {}) }
-                }
-            )
-        }
+        val koinApplication = testKoinApplication()
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
@@ -104,13 +91,7 @@ class MorePageTests : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testSoftwareLicenses() {
-        val koinApplication = koinApplication {
-            modules(
-                module {
-                    single<ISettingsRepository> { MockSettingsRepository(onSaveSettings = {}) }
-                }
-            )
-        }
+        val koinApplication = testKoinApplication()
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }

@@ -6,7 +6,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
@@ -120,6 +119,6 @@ fun testKoinApplication(
                 repositoryOverrides()
             }
         ),
-        MainApplication.koinViewModelModule
+        MainApplication.koinViewModelModule()
     )
 }

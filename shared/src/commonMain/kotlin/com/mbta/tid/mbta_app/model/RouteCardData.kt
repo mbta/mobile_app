@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.Dispatchers
@@ -309,12 +308,13 @@ data class RouteCardData(
                         val route =
                             if (shouldIncludeRoute) globalData?.getRoute(trip.trip.routeId)
                             else null
-                        LeafFormat.Branched.Branch(
+                        LeafFormat.Branched.BranchRow(
                             route,
                             trip.headsign,
-                            UpcomingFormat.Some(format, secondaryAlert)
+                            UpcomingFormat.Some(format, null)
                         )
-                    }
+                    },
+                    secondaryAlert
                 )
             }
 
@@ -344,7 +344,7 @@ data class RouteCardData(
                                     groupedData.routePatterns.firstOrNull()?.routeId
                                 )
                             else null
-                        LeafFormat.Branched.Branch(
+                        LeafFormat.Branched.BranchRow(
                             route,
                             headsign,
                             UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute)
@@ -358,10 +358,10 @@ data class RouteCardData(
                     val route =
                         if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.trip.routeId)
                         else null
-                    LeafFormat.Branched.Branch(
+                    LeafFormat.Branched.BranchRow(
                         route,
                         upcomingTrip.trip.headsign,
-                        UpcomingFormat.Some(formatted, secondaryAlert)
+                        UpcomingFormat.Some(formatted, null)
                     )
                 }
 
@@ -386,10 +386,10 @@ data class RouteCardData(
                                 )
 
                             if (noTripsFormat == NoTripsFormat.PredictionsUnavailable) {
-                                LeafFormat.Branched.Branch(
+                                LeafFormat.Branched.BranchRow(
                                     route,
                                     headsign,
-                                    UpcomingFormat.NoTrips(noTripsFormat, secondaryAlert)
+                                    UpcomingFormat.NoTrips(noTripsFormat, null)
                                 )
                             } else {
                                 null
@@ -401,7 +401,8 @@ data class RouteCardData(
                 }
 
             return LeafFormat.Branched(
-                upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches
+                upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches,
+                secondaryAlert
             )
         }
 

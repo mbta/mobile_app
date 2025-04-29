@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.hasRole
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -68,7 +69,7 @@ class OnboardingScreenViewTest {
                 screen = OnboardingScreen.StationAccessibility,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
-                settingsRepository = settingsRepo
+                settingsCache = SettingsCache(settingsRepo)
             )
         }
 
@@ -111,7 +112,7 @@ class OnboardingScreenViewTest {
                 screen = OnboardingScreen.HideMaps,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
-                settingsRepository = settingsRepo
+                settingsCache = SettingsCache(settingsRepo)
             )
         }
         composeTestRule
@@ -133,6 +134,7 @@ class OnboardingScreenViewTest {
         composeTestRule.onNodeWithText("Map Display").assertIsOn()
 
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed().performClick()
+        composeTestRule.waitForIdle()
         assertTrue(savedSetting)
         assertTrue(advanced)
     }
