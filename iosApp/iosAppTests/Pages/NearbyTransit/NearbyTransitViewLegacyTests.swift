@@ -19,7 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewLegacyTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
-    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
+    private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
     class FakeNearbyVM: NearbyViewModel {
@@ -32,7 +32,11 @@ final class NearbyTransitViewLegacyTests: XCTestCase {
             super.init()
         }
 
-        override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+        override func getNearbyStops(
+            global _: GlobalResponse,
+            location: CLLocationCoordinate2D,
+            groupByDirection _: Bool
+        ) {
             debugPrint("ViewModel getting nearby")
             closure(location)
             expectation.fulfill()
@@ -894,7 +898,7 @@ final class NearbyTransitViewLegacyTests: XCTestCase {
         nearbyVM.alerts = .init(objects: objects)
         nearbyVM.nearbyState = route52State
         nearbyVM.nearbyStaticData = route52NearbyData
-        nearbyVM.showStationAccessibility = true
+
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -909,13 +913,12 @@ final class NearbyTransitViewLegacyTests: XCTestCase {
         let exp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(text: "1 elevator closed"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
         wait(for: [exp], timeout: 1)
     }
 
     func testDisplaysWheelchairNotAccessibile() throws {
         let nearbyVM = NearbyViewModel()
-        nearbyVM.showStationAccessibility = true
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = route52State
         nearbyVM.nearbyStaticData = route52NearbyData
@@ -934,7 +937,7 @@ final class NearbyTransitViewLegacyTests: XCTestCase {
             XCTAssertThrowsError(try view.find(text: "1 elevator closed"))
             XCTAssertNotNil(try view.find(viewWithTag: "wheelchair_not_accessible"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
         wait(for: [exp], timeout: 1)
     }
 

@@ -576,7 +576,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -595,7 +594,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM
-        ).environmentObject(ViewportProvider())
+        ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
@@ -625,7 +624,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -644,7 +642,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM
-        ).environmentObject(ViewportProvider())
+        ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
@@ -679,7 +677,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
@@ -710,7 +707,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting
+            .host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 }

@@ -9,9 +9,10 @@
 import SwiftUI
 
 struct NoNearbyStopsView: View {
-    let hideMaps: Bool
     let onOpenSearch: () -> Void
     let onPanToDefaultCenter: () -> Void
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -40,7 +41,7 @@ struct NoNearbyStopsView: View {
                 .background(Color.key)
                 .clipShape(.rect(cornerRadius: 8.0))
             })
-            if !hideMaps {
+            if !settingsCache.get(.hideMaps) {
                 Button(action: onPanToDefaultCenter, label: {
                     HStack {
                         Text("View transit near Boston")
@@ -67,7 +68,7 @@ struct NoNearbyStopsView: View {
 
 #Preview {
     ZStack {
-        NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {})
+        NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {})
             .padding(16)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)

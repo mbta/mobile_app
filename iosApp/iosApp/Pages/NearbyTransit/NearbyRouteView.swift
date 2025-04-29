@@ -15,7 +15,8 @@ struct NearbyRouteView: View {
     let onPin: (String) -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
-    let showStationAccessibility: Bool
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         LegacyRouteCard(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
@@ -23,7 +24,7 @@ struct NearbyRouteView: View {
                 VStack(spacing: 0) {
                     NearbyStopView(
                         patternsAtStop: patternsAtStop,
-                        showStationAccessibility: showStationAccessibility,
+                        showStationAccessibility: settingsCache.get(.stationAccessibility),
                         now: now,
                         pushNavEntry: pushNavEntry,
                         pinned: pinned

@@ -61,7 +61,7 @@ final class HomeMapViewTests: XCTestCase {
         let exp = sut.inspection.inspect { view in
             XCTAssertNotNil(view)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
     }
 

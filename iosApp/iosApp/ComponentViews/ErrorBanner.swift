@@ -30,11 +30,10 @@ struct ErrorBanner: View {
             ErrorCard {
                 VStack {
                     Text("Error loading data", comment: "Displayed when loading necessary information fails")
-                    if errorBannerVM.showDebugMessages {
-                        DebugView {
-                            ForEach(state.messages.sorted(), id: \.self) { errorName in
-                                Text(errorName)
-                            }
+
+                    DebugView {
+                        ForEach(state.messages.sorted(), id: \.self) { errorName in
+                            Text(errorName)
                         }
                     }
                 }

@@ -19,7 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
-    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
+    private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
     class FakeNearbyVM: NearbyViewModel {
@@ -30,10 +30,13 @@ final class NearbyTransitViewTests: XCTestCase {
             self.expectation = expectation
             self.closure = closure
             super.init()
-            groupByDirection = true
         }
 
-        override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+        override func getNearbyStops(
+            global _: GlobalResponse,
+            location: CLLocationCoordinate2D,
+            groupByDirection _: Bool
+        ) {
             debugPrint("ViewModel getting nearby")
             closure(location)
             expectation.fulfill()
@@ -52,9 +55,9 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             noNearbyStops: noNearbyStops
-        )
+        ).withFixedSettings([.groupByDirection: true])
         let cards = try sut.inspect().findAll(NearbyRouteView.self)
         XCTAssertEqual(cards.count, 5)
         for card in cards {
@@ -84,7 +87,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
             }
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [hasAppeared], timeout: 5)
         wait(for: [getNearbyExpectation], timeout: 5)
     }
@@ -176,10 +179,9 @@ final class NearbyTransitViewTests: XCTestCase {
     func setUpSut(
         _ objects: ObjectCollectionBuilder,
         _ loadPublisher: PassthroughSubject<LoadedStops, Never>,
-        showStationAccessibility: Bool = false,
         now: Date? = nil
     ) -> NearbyTransitView {
-        let nearbyVM = NearbyViewModel(groupByDirection: true, showStationAccessibility: showStationAccessibility)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         nearbyVM.alerts = .init(objects: objects)
 
@@ -236,7 +238,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try route.find(text: "Inbound to")
                 .find(RouteCardDepartures.self, relation: .parent).find(text: "Watertown Yard"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -334,7 +336,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 .noTrips(UpcomingFormat.NoTripsFormatServiceEndedToday())
             )
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
 
         wait(for: [exp], timeout: 1)
     }
@@ -350,7 +352,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let sut = setUpSut(objects, loadPublisher)
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [schedulesFetchedExp], timeout: 2)
     }
 
@@ -412,7 +414,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try inboundDirection.find(text: "1 min"))
             XCTAssertNotNil(try inboundDirection.find(text: "10 min"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [exp], timeout: 2)
     }
 
@@ -433,7 +435,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }.store(in: &cancellables)
 
         let sut = setUpSut(route52Objects(), loadPublisher)
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
@@ -449,7 +451,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let objects = route52Objects()
         let sut = setUpSut(objects, loadPublisher)
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
 
         func prediction(minutesAway: Double) -> PredictionsByStopJoinResponse {
             let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
@@ -511,7 +513,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -525,7 +527,7 @@ final class NearbyTransitViewTests: XCTestCase {
             noNearbyStops: noNearbyStops
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
 
         wait(for: [joinExpectation], timeout: 1)
         try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
@@ -543,7 +545,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -557,7 +559,7 @@ final class NearbyTransitViewTests: XCTestCase {
             noNearbyStops: noNearbyStops
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
 
         wait(for: [joinExpectation], timeout: 1)
         try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
@@ -578,7 +580,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -592,7 +594,7 @@ final class NearbyTransitViewTests: XCTestCase {
             noNearbyStops: noNearbyStops
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
 
         try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
@@ -617,7 +619,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try actualView.inspect().implicitAnyView().vStack()
                 .callOnChange(newValue: ["new-stop"])
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [exp, scrollPositionSetExpectation], timeout: 2)
     }
 
@@ -633,7 +635,7 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         )
 
@@ -666,7 +668,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Suspension")
                 .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -686,26 +688,26 @@ final class NearbyTransitViewTests: XCTestCase {
             )
         }
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher, showStationAccessibility: true)
+        let sut = setUpSut(objects, loadPublisher)
 
         let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
             XCTAssertNotNil(try view.find(text: "1 elevator closed"))
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true, .stationAccessibility: true]))
         wait(for: [exp], timeout: 1)
     }
 
     @MainActor func testDisplaysWheelchairNotAccessibile() throws {
         let objects = route52Objects()
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher, showStationAccessibility: true)
+        let sut = setUpSut(objects, loadPublisher)
 
         let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
             XCTAssertThrowsError(try view.find(text: "1 elevator closed"))
             XCTAssertNotNil(try view.find(viewWithTag: "wheelchair_not_accessible"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true, .stationAccessibility: true]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -718,7 +720,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "No nearby stops"))
             XCTAssertNotNil(try view.find(text: "You’re outside the MBTA service area."))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
         wait(for: [hasAppeared], timeout: 2)
     }
 }

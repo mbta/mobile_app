@@ -16,10 +16,9 @@ struct OnboardingScreenView: View {
 
     let createLocationFetcher: () -> any LocationFetcher
     let skipLocationDialogue: Bool
-    let settingsRepository: ISettingsRepository
+    @EnvironmentObject var settingsCache: SettingsCache
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
-    @State private var settings: [Settings: Bool] = [:]
     @State private var localHideMaps = true
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
@@ -52,14 +51,12 @@ struct OnboardingScreenView: View {
         screen: OnboardingScreen,
         advance: @escaping () -> Void,
         createLocationFetcher: @escaping () -> any LocationFetcher = { CLLocationManager() },
-        skipLocationDialogue: Bool = false,
-        settingsRepository: ISettingsRepository = RepositoryDI().settings
+        skipLocationDialogue: Bool = false
     ) {
         self.screen = screen
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
         self.skipLocationDialogue = skipLocationDialogue
-        self.settingsRepository = settingsRepository
         focusHeader = screen
     }
 
@@ -121,7 +118,7 @@ struct OnboardingScreenView: View {
                     OnboardingPieces.KeyButton(
                         text: Text("Continue"),
                         action: {
-                            setSetting(.hideMaps, localHideMaps)
+                            settingsCache.set(.hideMaps, localHideMaps)
                             advance()
                         }
                     )
@@ -174,8 +171,11 @@ struct OnboardingScreenView: View {
                         focusValue: .stationAccessibility
                     )
                     .padding(.bottom, 8)
-                    OnboardingPieces.SettingsToggle(getSetting: { settings.getSafe(.stationAccessibility) },
-                                                    toggleSetting: { toggleSetting(.stationAccessibility) },
+                    OnboardingPieces.SettingsToggle(getSetting: { settingsCache.get(.stationAccessibility) },
+                                                    toggleSetting: { settingsCache.set(
+                                                        .stationAccessibility,
+                                                        !settingsCache.get(.stationAccessibility)
+                                                    ) },
                                                     label: Text("Station Accessibility Info"))
                     OnboardingPieces.KeyButton(text: Text(
                         "Continue",
@@ -204,12 +204,6 @@ struct OnboardingScreenView: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
-    func loadSettings() {
-        Task {
-            settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
-        }
-    }
-
     func shareLocation() {
         // short circuit for OnboardingPageView integration testing
         if skipLocationDialogue {
@@ -218,17 +212,6 @@ struct OnboardingScreenView: View {
             guard let locationPermissionHandler else { return }
             locationFetcher = createLocationFetcher()
             locationFetcher?.locationFetcherDelegate = locationPermissionHandler
-        }
-    }
-
-    func toggleSetting(_ setting: Settings) {
-        setSetting(setting, !settings.getSafe(setting))
-    }
-
-    func setSetting(_ setting: Settings, _ value: Bool) {
-        Task {
-            try await settingsRepository.setSettings(settings: [setting: KotlinBoolean(bool: value)])
-            loadSettings()
         }
     }
 
@@ -259,21 +242,17 @@ struct OnboardingScreenView: View {
 }
 
 #Preview("Feedback") {
-    OnboardingScreenView(screen: .feedback, advance: {},
-                         settingsRepository: MockSettingsRepository())
+    OnboardingScreenView(screen: .feedback, advance: {})
 }
 
 #Preview("Map Display") {
-    OnboardingScreenView(screen: .hideMaps, advance: {},
-                         settingsRepository: MockSettingsRepository())
+    OnboardingScreenView(screen: .hideMaps, advance: {})
 }
 
 #Preview("Location") {
-    OnboardingScreenView(screen: .location, advance: {},
-                         settingsRepository: MockSettingsRepository())
+    OnboardingScreenView(screen: .location, advance: {})
 }
 
 #Preview("Station Accessibility") {
-    OnboardingScreenView(screen: .stationAccessibility, advance: {},
-                         settingsRepository: MockSettingsRepository())
+    OnboardingScreenView(screen: .stationAccessibility, advance: {})
 }

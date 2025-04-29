@@ -49,11 +49,13 @@ struct ProductionAppView: View {
     }
 
     var body: some View {
-        ContentView(contentVM: contentVM)
-            .font(Typography.body)
-            .environmentObject(locationDataManager)
-            .environmentObject(socketProvider)
-            .environmentObject(viewportProvider)
+        SettingsCacheProvider {
+            ContentView(contentVM: contentVM)
+                .font(Typography.body)
+                .environmentObject(locationDataManager)
+                .environmentObject(socketProvider)
+                .environmentObject(viewportProvider)
+        }
     }
 
     private static func initSocket() -> PhoenixSocket {

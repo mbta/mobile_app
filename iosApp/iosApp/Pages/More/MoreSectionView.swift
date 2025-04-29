@@ -11,7 +11,8 @@ import SwiftUI
 
 struct MoreSectionView: View {
     var section: MoreSection
-    var toggleSetting: (Settings) -> Void
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         if !(section.hiddenOnProd && appVariant == .prod) {
@@ -37,16 +38,8 @@ struct MoreSectionView: View {
                     ForEach(Array(section.items.enumerated()), id: \.element.id) { index, row in
                         VStack(alignment: .leading, spacing: 0) {
                             switch row {
-                            case let .toggle(label: label, setting: setting, value: value):
-                                Toggle(isOn: Binding<Bool>(
-                                    // Setting is hide maps, but label is "Map Display" - invert the
-                                    // value of hide maps to match the label
-                                    get: { setting == .hideMaps ? !value : value },
-                                    set: { _ in toggleSetting(setting) }
-                                )) { Text(label) }
-                                    .padding(.vertical, 6)
-                                    .padding(.horizontal, 16)
-                                    .frame(minHeight: 44)
+                            case let .toggle(label: label, setting: setting):
+                                MoreToggle(label: label, setting: setting, settingsCache: settingsCache)
                             case let .link(label: label, url: url, note: note):
                                 MoreLink(label: label, url: url, note: note, isKey: section.id == .feedback)
                                     .accessibilityAddTraits(section.id == .feedback ? [.isHeader] : [])
