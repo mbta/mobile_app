@@ -55,3 +55,82 @@ struct RouteCard: View {
         .withRoundedBorder()
     }
 }
+
+private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPreviewData) -> some View {
+    RouteCard(
+        cardData: card,
+        global: previewData.global,
+        now: previewData.now.toNSDate(),
+        onPin: { _ in },
+        pinned: false,
+        pushNavEntry: { _ in },
+        showStationAccessibility: true
+    )
+}
+
+#Preview {
+    let data = RouteCardPreviewData()
+    ScrollView {
+        VStack {
+            Section("Orange Line disruption") {
+                // Downstream disruption
+                cardForPreview(data.OL1(), data)
+                // Disrupted stop
+                cardForPreview(data.OL2(), data)
+            }
+            Section("Red Line branching") {
+                // Show up to the next three trips in the branching direction
+                cardForPreview(data.RL1(), data)
+                // Next three trips go to the same destination
+                cardForPreview(data.RL2(), data)
+                // Predictions unavailable for a branch
+                cardForPreview(data.RL3(), data)
+                // Service not running on a branch downstream
+                cardForPreview(data.RL4(), data)
+                // Service disrupted on a branch downstream
+                cardForPreview(data.RL5(), data)
+            }
+            Section("Green Line Branching") {
+                // Branching in both directions
+                cardForPreview(data.GL1(), data)
+                // Downstream disruption
+                cardForPreview(data.GL2(), data)
+            }
+            Section("Silver Line Branching") {
+                // Branching in one direction
+                cardForPreview(data.SL1(), data)
+            }
+            Section("CR Branching") {
+                // Branching in one direction
+                cardForPreview(data.CR1(), data)
+            }
+            Section("Bus Route Single Direction") {
+                // "Next two trips go to the same destination"
+                cardForPreview(data.Bus1(), data)
+                // "Next two trips go to different destinations"
+                cardForPreview(data.Bus2(), data)
+                // "Next two trips go to different destinations"
+                cardForPreview(data.Bus3(), data)
+            }
+            Section("Service ended") {
+                // Service ended on a branch
+                cardForPreview(data.RL6(), data)
+                // Service ended on all branches
+                cardForPreview(data.RL7(), data)
+                // Predictions unavailable on a branch
+                cardForPreview(data.GL3(), data)
+                // Predictions unavailable on all branches
+                cardForPreview(data.GL4(), data)
+            }
+            Section("Disruption") {
+                // Disruption on a branch
+                cardForPreview(data.GL5(), data)
+                // "Disruption on a branch, predictions unavailable for other branches"
+                cardForPreview(data.GL6(), data)
+                // "Disruption on all branches"
+                cardForPreview(data.GL7(), data)
+            }
+        }
+        .padding()
+    }
+}

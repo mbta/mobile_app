@@ -194,4 +194,35 @@ final class RouteCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
         XCTAssertNotNil(try sut.inspect().find(text: "Inbound to"))
     }
+
+    func testBranchDisrupted() throws {
+        let data = RouteCardPreviewData()
+        let sut = RouteCard(
+            cardData: data.GL5(),
+            global: data.global,
+            now: data.now.toNSDate(),
+            onPin: { _ in },
+            pinned: false,
+            pushNavEntry: { _ in },
+            showStationAccessibility: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
+        let westDirection = try sut.inspect().find(text: "Westbound to")
+            .find(RouteCardDirection.self, relation: .parent)
+        XCTAssertNotNil(westDirection)
+        XCTAssertNotNil(try westDirection.find(text: "3 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Cleveland Circle"))
+        XCTAssertNotNil(try westDirection.find(text: "5 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Boston College"))
+        XCTAssertNotNil(try westDirection.find(text: "Shuttle Bus")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Riverside"))
+
+        let eastDirection = try sut.inspect().find(text: "Eastbound to")
+            .find(RouteCardDirection.self, relation: .parent)
+        XCTAssertNotNil(eastDirection)
+        XCTAssertNotNil(try eastDirection.find(text: "6 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Government Center"))
+        XCTAssertNotNil(try eastDirection.find(text: "12 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Government Center"))
+    }
 }
