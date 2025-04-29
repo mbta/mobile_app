@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import org.junit.Rule
@@ -18,7 +17,7 @@ class ErrorBannerTests {
     @Test
     fun testRespondsToState() {
         val errorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-        val viewModel = ErrorBannerViewModel(false, errorRepo, MockSettingsRepository())
+        val viewModel = ErrorBannerViewModel(false, errorRepo)
 
         composeTestRule.setContent {
             LaunchedEffect(null) { viewModel.activate() }
@@ -45,7 +44,7 @@ class ErrorBannerTests {
     fun testNetworkError() {
         val networkErrorRepo =
             MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-        val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo, MockSettingsRepository())
+        val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo)
 
         composeTestRule.setContent {
             LaunchedEffect(null) { networkErrorVM.activate() }
@@ -61,7 +60,7 @@ class ErrorBannerTests {
             MockErrorBannerStateRepository(
                 state = ErrorBannerState.DataError(messages = emptySet(), action = {})
             )
-        val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo, MockSettingsRepository())
+        val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
         composeTestRule.setContent {
             LaunchedEffect(null) { dataErrorVM.activate() }
             ErrorBanner(dataErrorVM)
@@ -80,7 +79,7 @@ class ErrorBannerTests {
                         action = {}
                     )
             )
-        val staleVM = ErrorBannerViewModel(false, staleRepo, MockSettingsRepository())
+        val staleVM = ErrorBannerViewModel(false, staleRepo)
         composeTestRule.setContent {
             LaunchedEffect(null) { staleVM.activate() }
             ErrorBanner(staleVM)
@@ -99,7 +98,7 @@ class ErrorBannerTests {
                         action = {}
                     )
             )
-        val staleVM = ErrorBannerViewModel(false, staleRepo, MockSettingsRepository())
+        val staleVM = ErrorBannerViewModel(false, staleRepo)
         composeTestRule.setContent {
             LaunchedEffect(null) { staleVM.activate() }
             ErrorBanner(staleVM)
@@ -118,7 +117,7 @@ class ErrorBannerTests {
                         action = {}
                     )
             )
-        val staleVM = ErrorBannerViewModel(true, staleRepo, MockSettingsRepository())
+        val staleVM = ErrorBannerViewModel(true, staleRepo)
         composeTestRule.setContent {
             LaunchedEffect(null) { staleVM.activate() }
             ErrorBanner(staleVM)

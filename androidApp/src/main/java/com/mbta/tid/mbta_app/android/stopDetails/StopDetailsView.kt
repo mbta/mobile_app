@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -10,10 +9,12 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
 
@@ -40,9 +41,7 @@ fun StopDetailsView(
 
     val departures by viewModel.stopDepartures.collectAsState()
     val routeCardData by viewModel.routeCardData.collectAsState()
-    val groupByDirection by viewModel.groupByDirection.collectAsState()
-
-    LaunchedEffect(null) { viewModel.loadSettings() }
+    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
 
     fun openModalAndRecord(modal: ModalRoutes) {
         openModal(modal)

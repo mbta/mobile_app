@@ -17,7 +17,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -61,7 +60,6 @@ class SubscribeToPredictionsTest {
                     ErrorBannerViewModel(
                         false,
                         MockErrorBannerStateRepository(),
-                        MockSettingsRepository()
                     )
                 )
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
@@ -112,7 +110,6 @@ class SubscribeToPredictionsTest {
                         ErrorBannerViewModel(
                             false,
                             MockErrorBannerStateRepository(),
-                            MockSettingsRepository()
                         )
                     )
                 predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
@@ -156,7 +153,6 @@ class SubscribeToPredictionsTest {
                     ErrorBannerViewModel(
                         false,
                         MockErrorBannerStateRepository(),
-                        MockSettingsRepository()
                     )
                 )
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
@@ -192,7 +188,6 @@ class SubscribeToPredictionsTest {
                 ErrorBannerViewModel(
                     false,
                     mockErrorRepo,
-                    MockSettingsRepository(),
                 ),
                 1.seconds
             )

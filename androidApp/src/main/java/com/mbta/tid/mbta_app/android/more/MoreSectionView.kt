@@ -18,13 +18,15 @@ import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.repositories.Settings
+import org.koin.compose.koinInject
 
 @Composable
-fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
+fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInject()) {
 
     val name: String? =
         when (section.id) {
@@ -61,18 +63,20 @@ fun MoreSectionView(section: MoreSection, toggleSetting: ((Settings) -> Unit)) {
             ) {
                 section.items.mapIndexed { index, item ->
                     when (item) {
-                        is MoreItem.Toggle ->
+                        is MoreItem.Toggle -> {
+                            val settingValue = settingsCache.get(item.settings)
                             LabeledSwitch(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                                 label = item.label,
                                 // Setting is hide maps, but label is "Map Display" - invert the
                                 // value of hide maps to match the label
                                 value =
-                                    if (item.settings == Settings.HideMaps) !item.value
-                                    else item.value
+                                    if (item.settings == Settings.HideMaps) !settingValue
+                                    else settingValue
                             ) {
-                                toggleSetting(item.settings)
+                                settingsCache.set(item.settings, !settingValue)
                             }
+                        }
                         is MoreItem.Link ->
                             MoreLink(
                                 item.label,

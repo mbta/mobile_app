@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
@@ -12,6 +11,7 @@ import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -35,13 +36,13 @@ fun StopDetailsUnfilteredView(
     errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
-    val showStationAccessibility by viewModel.showStationAccessibility.collectAsState()
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()
 
-    val groupByDirection by viewModel.groupByDirection.collectAsState()
+    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
     val departures = viewModel.stopDepartures.collectAsState().value
     val routeCardData = viewModel.routeCardData.collectAsState().value
 

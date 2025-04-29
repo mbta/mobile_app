@@ -4,44 +4,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import java.util.Locale
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
 class MoreViewModelTests {
 
     @get:Rule val composeTestRule = createComposeRule()
-
-    @Test
-    fun testToggleSetting() {
-        var toggledHideMaps = false
-
-        val settingsRepository =
-            MockSettingsRepository(
-                settings = mapOf(Settings.HideMaps to false),
-                onSaveSettings = { settings ->
-                    if (settings.size == 1 && settings.containsKey(Settings.HideMaps)) {
-                        toggledHideMaps = true
-                    }
-                }
-            )
-
-        var vm: MoreViewModel? = null
-        composeTestRule.setContent {
-            vm = MoreViewModel(LocalContext.current, {}, settingsRepository)
-        }
-
-        composeTestRule.waitForIdle()
-        vm!!.toggleSetting(Settings.HideMaps)
-        composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { toggledHideMaps }
-
-        assertTrue { toggledHideMaps }
-    }
 
     @Test
     fun testLocalizedFeedbackLink() {
@@ -55,7 +25,7 @@ class MoreViewModelTests {
             config.setLocale(Locale.forLanguageTag("es-MX"))
             val subContext = context.createConfigurationContext(config)
 
-            vm = MoreViewModel(subContext, {}, MockSettingsRepository())
+            vm = MoreViewModel(subContext, {})
         }
 
         composeTestRule.waitUntil {
