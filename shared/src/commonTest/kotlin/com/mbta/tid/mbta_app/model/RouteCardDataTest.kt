@@ -4115,7 +4115,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList returns alertsHere and downstream alerts `() =
+    fun `RouteCardData routeCardsForStopList returns alertsHere and downstream alerts`() =
         runBlocking() {
             val context = RouteCardData.Context.NearbyTransit
             val objects = ObjectCollectionBuilder()
@@ -4277,6 +4277,159 @@ class RouteCardDataTest {
                     stopIds = listOf(park.id),
                     globalData = global,
                     sortByDistanceFrom = park.position,
+                    schedules = ScheduleResponse(objects),
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(objects),
+                    now = time,
+                    pinnedRoutes = setOf(),
+                    context = context
+                )
+            )
+        }
+
+    @Test
+    fun `RouteCardData routeCardsForStopList suppresses track change alerts at core CR stops`() =
+        runBlocking() {
+            val context = RouteCardData.Context.StopDetailsFiltered
+            val objects = ObjectCollectionBuilder()
+
+            val route = objects.route()
+            val southStation = objects.stop { id = "place-sstat" }
+            val providence = objects.stop { id = "place-NEC-1851" }
+
+            val routePatternPvd =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    directionId = 0
+                    representativeTrip {
+                        directionId = 0
+                        headsign = "Providence"
+                        stopIds = listOf(southStation.id, providence.id)
+                    }
+                }
+
+            val time = Clock.System.now()
+
+            val tripPvd = objects.trip(routePatternPvd)
+            val schedulePvd =
+                objects.schedule {
+                    trip = tripPvd
+                    departureTime = time + 2.minutes
+                }
+            val upcomingTripPvd = objects.upcomingTrip(schedulePvd)
+
+            val southStationTrackChangeAlert =
+                objects.alert {
+                    effect = Alert.Effect.TrackChange
+                    activePeriod(time - 1.seconds, null)
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = southStation.id
+                    )
+                }
+
+            val providenceTrackChangeAlert =
+                objects.alert {
+                    effect = Alert.Effect.TrackChange
+                    activePeriod(time - 1.seconds, null)
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                        route = route.id,
+                        stop = providence.id
+                    )
+                }
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    mapOf(
+                        Pair(southStation.id, listOf(routePatternPvd.id)),
+                        Pair(providence.id, listOf(routePatternPvd.id))
+                    )
+                )
+
+            assertEquals(
+                listOf(
+                    RouteCardData(
+                        lineOrRoute = RouteCardData.LineOrRoute.Route(route),
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    southStation,
+                                    route,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            directionId = 0,
+                                            routePatterns = listOf(routePatternPvd),
+                                            stopIds = setOf(southStation.id),
+                                            upcomingTrips = emptyList(),
+                                            allDataLoaded = true,
+                                            alertsHere = emptyList(),
+                                            hasSchedulesTodayByPattern =
+                                                mapOf(routePatternPvd.id to true),
+                                            alertsDownstream = emptyList()
+                                        )
+                                    ),
+                                    global
+                                )
+                            ),
+                        context,
+                        time
+                    )
+                ),
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(southStation.id),
+                    globalData = global,
+                    sortByDistanceFrom = southStation.position,
+                    schedules = ScheduleResponse(objects),
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(objects),
+                    now = time,
+                    pinnedRoutes = setOf(),
+                    context = context
+                )
+            )
+
+            assertEquals(
+                listOf(
+                    RouteCardData(
+                        lineOrRoute = RouteCardData.LineOrRoute.Route(route),
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    providence,
+                                    route,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            directionId = 0,
+                                            routePatterns = listOf(routePatternPvd),
+                                            stopIds = setOf(providence.id),
+                                            upcomingTrips = emptyList(),
+                                            allDataLoaded = true,
+                                            alertsHere = listOf(providenceTrackChangeAlert),
+                                            hasSchedulesTodayByPattern =
+                                                mapOf(routePatternPvd.id to true),
+                                            alertsDownstream = emptyList()
+                                        )
+                                    ),
+                                    global
+                                )
+                            ),
+                        context,
+                        time
+                    )
+                ),
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(providence.id),
+                    globalData = global,
+                    sortByDistanceFrom = providence.position,
                     schedules = ScheduleResponse(objects),
                     predictions = PredictionsStreamDataResponse(objects),
                     alerts = AlertsStreamDataResponse(objects),
