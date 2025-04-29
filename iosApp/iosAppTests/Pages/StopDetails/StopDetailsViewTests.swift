@@ -175,6 +175,7 @@ final class StopDetailsViewTests: XCTestCase {
     }
 
     func testDisplaysVehicleData() throws {
+        let now = Date.now
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
             route.shortName = "57"
@@ -182,10 +183,36 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
         let routePattern = objects.routePattern(route: route) { _ in }
         let trip = objects.trip(routePattern: routePattern) { _ in }
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(100).toKotlinInstant()
+        }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
             vehicle.currentStatus = .inTransitTo
         }
+
+        let leaf = RouteCardData.Leaf(
+            directionId: 0,
+            routePatterns: [routePattern],
+            stopIds: Set([stop.id]),
+            upcomingTrips: [.init(trip: trip, prediction: prediction)],
+            alertsHere: [], allDataLoaded: true,
+            hasSchedulesToday: true, alertsDownstream: []
+        )
+        let stopData = RouteCardData.RouteStopData(
+            stop: stop,
+            directions: [
+                .init(directionId: 0, route: route),
+                .init(directionId: 1, route: route),
+            ],
+            data: [leaf]
+        )
+        let routeData = RouteCardData(
+            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            stopData: [stopData],
+            context: .stopDetailsFiltered,
+            at: now.toKotlinInstant()
+        )
 
         let sut = StopDetailsView(
             stopId: stop.id,
@@ -193,13 +220,11 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 1, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: .init(routes: [
-                .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
-            ]),
-            routeCardData: nil,
+            departures: nil,
+            routeCardData: [routeData],
             now: Date.now,
             errorBannerVM: .init(),
-            nearbyVM: .init(),
+            nearbyVM: .init(groupByDirection: true),
             mapVM: .init(),
             stopDetailsVM: .init()
         )
