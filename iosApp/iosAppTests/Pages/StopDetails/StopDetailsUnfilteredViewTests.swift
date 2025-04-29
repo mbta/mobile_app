@@ -150,9 +150,6 @@ import XCTest
             filterAtTime: now!.toKotlinInstant()
         )
 
-        DefaultSettings.set([.stationAccessibility: true])
-        defer { DefaultSettings.reset() }
-
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
@@ -166,7 +163,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
         XCTAssertNotNil(try sut.inspect().find(viewWithTag: "wheelchair_not_accessible"))
@@ -185,9 +182,6 @@ import XCTest
             context: .stopDetailsUnfiltered
         )
 
-        DefaultSettings.set([.groupByDirection: true])
-        defer { DefaultSettings.reset() }
-
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
@@ -201,7 +195,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([.groupByDirection: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Sample Route"))
         XCTAssertNotNil(try sut.inspect().find(text: "Sample Headsign"))
@@ -222,9 +216,6 @@ import XCTest
             context: .stopDetailsUnfiltered
         )
 
-        DefaultSettings.set([.stationAccessibility: true, .groupByDirection: true])
-        defer { DefaultSettings.reset() }
-
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
@@ -238,7 +229,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([.stationAccessibility: true, .groupByDirection: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
@@ -270,9 +261,6 @@ import XCTest
             context: .stopDetailsUnfiltered
         )
 
-        DefaultSettings.set([.stationAccessibility: true, .groupByDirection: true])
-        defer { DefaultSettings.reset() }
-
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
@@ -286,7 +274,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        )
+        ).withFixedSettings([.stationAccessibility: true, .groupByDirection: true])
         XCTAssertNotNil(try sut.inspect().find(text: "Elevator alert"))
     }
 }

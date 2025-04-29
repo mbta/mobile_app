@@ -26,7 +26,8 @@ struct ContentView: View {
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
-    @GetSetting(.hideMaps) var hideMaps
+    @EnvironmentObject var settingsCache: SettingsCache
+    var hideMaps: Bool { settingsCache.get(.hideMaps) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared

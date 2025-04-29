@@ -142,9 +142,6 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testFullResults() throws {
-        DefaultSettings.set([.searchRouteResults: true])
-        defer { DefaultSettings.reset() }
-
         let sut = SearchResultsView(
             state: .results(
                 stops: [
@@ -168,15 +165,14 @@ final class SearchResultViewTests: XCTestCase {
             handleStopTap: { _ in }
         )
 
+        ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
+
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
     }
 
     @MainActor func testOnlyRoutes() throws {
-        DefaultSettings.set([.searchRouteResults: true])
-        defer { DefaultSettings.reset() }
-
         let sut = SearchResultsView(
             state: .results(
                 stops: [],
@@ -192,6 +188,8 @@ final class SearchResultViewTests: XCTestCase {
             ),
             handleStopTap: { _ in }
         )
+
+        ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))

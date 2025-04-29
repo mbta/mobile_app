@@ -14,10 +14,6 @@ import XCTest
 
 final class MorePageTests: XCTestCase {
     @MainActor func testLoadsState() async throws {
-        DefaultSettings.set([.devDebugMode: true,
-                             .searchRouteResults: false,
-                             .hideMaps: false])
-        defer { DefaultSettings.reset() }
         let viewModel = SettingsViewModel()
 
         let sut = MorePage(viewModel: viewModel)
@@ -26,7 +22,9 @@ final class MorePageTests: XCTestCase {
             XCTAssertTrue(try view.find(text: "Map Display").parent().parent().find(ViewType.Toggle.self).isOn())
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true,
+                                                      .searchRouteResults: false,
+                                                      .hideMaps: false]))
 
         await fulfillment(of: [exp], timeout: 2)
     }
@@ -41,8 +39,6 @@ final class MorePageTests: XCTestCase {
                 savedExp.fulfill()
             }
         )
-        DefaultSettings.setRepo(settingsRepository)
-        defer { DefaultSettings.reset() }
         let viewModel = SettingsViewModel()
 
         let sut = MorePage(viewModel: viewModel)
@@ -50,7 +46,7 @@ final class MorePageTests: XCTestCase {
             try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepository)))
 
         await fulfillment(of: [tapExp, savedExp], timeout: 5)
     }

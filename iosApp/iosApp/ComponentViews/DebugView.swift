@@ -11,10 +11,11 @@ import SwiftUI
 
 struct DebugView<Content: View>: View {
     let content: () -> Content
-    @GetSetting(.devDebugMode) var debugMode: Bool
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
-        if debugMode {
+        if settingsCache.get(.devDebugMode) {
             ZStack {
                 Rectangle()
                     .strokeBorder(Color(.text), style: .init(lineWidth: 2, dash: [10]))

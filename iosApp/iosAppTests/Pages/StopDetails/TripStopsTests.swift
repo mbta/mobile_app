@@ -104,7 +104,7 @@ final class TripStopsTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "2 stops away"))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
@@ -186,7 +186,7 @@ final class TripStopsTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
-        )
+        ).withFixedSettings([:])
 
         XCTAssertThrowsError(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "stop-pin-indicator"
@@ -264,7 +264,7 @@ final class TripStopsTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
-        )
+        ).withFixedSettings([:])
 
         XCTAssertThrowsError(try sut.inspect().find(text: stop1.name))
         XCTAssertThrowsError(try sut.inspect().find(ViewType.Image.self, where: { image in
@@ -348,7 +348,7 @@ final class TripStopsTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
-        )
+        ).withFixedSettings([:])
 
         let firstRow = try sut.inspect().findAll(TripStopRow.self).first!
         XCTAssertNotNil(try firstRow.find(text: stop1.name))
@@ -449,7 +449,7 @@ final class TripStopsTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: .init(route: route),
             global: .init(objects: objects)
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Stop closed at Stop C through end of service"))
     }
@@ -547,7 +547,7 @@ final class TripStopsTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: .init(route: route),
             global: .init(objects: objects)
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNil(try? sut.inspect().find(textWhere: { text, _ in text.contains("Stop closed") }))
     }

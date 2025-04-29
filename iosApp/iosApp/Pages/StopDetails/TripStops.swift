@@ -22,7 +22,7 @@ struct TripStops: View {
     let splitStops: TripDetailsStopList.TargetSplit
 
     @State private var stopsExpanded = false
-    @GetSetting(.stationAccessibility) var showStationAccessibility
+    @EnvironmentObject var settingsCache: SettingsCache
 
     private var routeTypeText: String { routeAccents.type.typeText(isOnly: true) }
     private var collapsedStops: [TripDetailsStopList.Entry]? { splitStops.collapsedStops }
@@ -78,7 +78,7 @@ struct TripStops: View {
                 onOpenAlertDetails: onOpenAlertDetails,
                 routeAccents: routeAccents,
                 alertSummaries: alertSummaries,
-                showStationAccessibility: showStationAccessibility,
+                showStationAccessibility: settingsCache.get(.stationAccessibility),
                 showDownstreamAlert: showDownstreamAlerts,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence
             )
@@ -113,7 +113,7 @@ struct TripStops: View {
                         onOpenAlertDetails: onOpenAlertDetails,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
-                        showStationAccessibility: showStationAccessibility,
+                        showStationAccessibility: settingsCache.get(.stationAccessibility),
                         firstStop: true
                     )
                 }
@@ -188,7 +188,7 @@ struct TripStops: View {
                         onOpenAlertDetails: onOpenAlertDetails,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
-                        showStationAccessibility: showStationAccessibility,
+                        showStationAccessibility: settingsCache.get(.stationAccessibility),
                         targeted: true,
                         firstStop: showFirstStopSeparately && target == stops.startTerminalEntry,
                         background: Color.fill3

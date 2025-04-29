@@ -24,7 +24,7 @@ struct TripDetailsView: View {
 
     @State var stops: TripDetailsStopList?
 
-    @GetSetting(.devDebugMode) var debugMode
+    @EnvironmentObject var settingsCache: SettingsCache
 
     let onOpenAlertDetails: (Shared.Alert) -> Void
 
@@ -92,7 +92,7 @@ struct TripDetailsView: View {
 
     @ViewBuilder private var content: some View {
         VStack(spacing: 16) {
-            if debugMode {
+            if settingsCache.get(.devDebugMode) {
                 DebugView {
                     VStack {
                         Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")

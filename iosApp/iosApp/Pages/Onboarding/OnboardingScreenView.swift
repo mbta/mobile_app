@@ -16,7 +16,7 @@ struct OnboardingScreenView: View {
 
     let createLocationFetcher: () -> any LocationFetcher
     let skipLocationDialogue: Bool
-    @Environment(\.settingsCache) var settingsCache: SettingsCache
+    @EnvironmentObject var settingsCache: SettingsCache
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
     @State private var localHideMaps = true

@@ -16,7 +16,7 @@ struct NearbyLineView: View {
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
 
-    @GetSetting(.stationAccessibility) var showStationAccessibility: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         LineCard(line: nearbyLine.line, routes: nearbyLine.routes, pinned: pinned, onPin: onPin) {
@@ -25,7 +25,7 @@ struct NearbyLineView: View {
                     NearbyStopView(
                         patternsAtStop: patternsAtStop,
                         condenseHeadsignPredictions: nearbyLine.condensePredictions,
-                        showStationAccessibility: showStationAccessibility,
+                        showStationAccessibility: settingsCache.get(.stationAccessibility),
                         now: now,
                         pushNavEntry: pushNavEntry,
                         pinned: pinned

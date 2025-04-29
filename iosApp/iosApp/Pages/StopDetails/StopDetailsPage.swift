@@ -26,7 +26,7 @@ struct StopDetailsPage: View {
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
-    @GetSetting(.groupByDirection) var groupByDirection: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
 
@@ -184,7 +184,7 @@ struct StopDetailsPage: View {
     func updateDepartures() {
         Task {
             if stopId != stopDetailsVM.stopData?.stopId { return }
-            if groupByDirection {
+            if settingsCache.get(.groupByDirection) {
                 let nextRouteCardData = await stopDetailsVM.getRouteCardData(
                     stopId: stopId,
                     alerts: nearbyVM.alerts,

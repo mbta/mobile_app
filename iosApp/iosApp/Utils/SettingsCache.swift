@@ -41,32 +41,7 @@ class SettingsCache: ObservableObject {
     }
 }
 
-/// Struggling to inject environment values because your unit tests are a house of cards of pointer manipulation?
-/// Simply put them in the default fallback! Nothing could possibly go wrong!
-///
-/// Always call `reset` if you called `set` or `setRepo`. Use `defer`, probably.
-enum DefaultSettings {
-    static let cache = SettingsCache(settingsRepo: MockSettingsRepository(), cache: nil)
-
-    static func setRepo(_ repo: ISettingsRepository) {
-        cache.settingsRepo = repo
-    }
-
-    static func set(_ settings: [Settings: Bool]) {
-        cache.cache = settings
-    }
-
-    static func reset() {
-        cache.settingsRepo = MockSettingsRepository()
-        cache.cache = nil
-    }
-}
-
-extension EnvironmentValues {
-    @Entry var settingsCache: SettingsCache = DefaultSettings.cache
-}
-
-/// Provides the `EnvironmentValues.settingsCache` to the `content` and also loads the cache data.
+/// Provides the `SettingsCache` to the `content` and also loads the cache data.
 struct SettingsCacheProvider<Content: View>: View {
     let content: () -> Content
     @State var cache = SettingsCache()
@@ -74,29 +49,13 @@ struct SettingsCacheProvider<Content: View>: View {
     var body: some View {
         content()
             .task { try? await cache.load() }
-            .environment(\.settingsCache, cache)
-    }
-}
-
-/// Retrieves the value of an individual setting from a `SettingsCache` retrieved from the environment.
-///
-/// May or may not actually update the component when the settings cache finishes loading, but in practice seems to.
-@propertyWrapper struct GetSetting: DynamicProperty {
-    let setting: Settings
-    @Environment(\.settingsCache) var settingsCache: SettingsCache
-
-    @inlinable init(_ setting: Settings) {
-        self.setting = setting
-    }
-
-    @inlinable var wrappedValue: Bool {
-        settingsCache.get(setting)
+            .environmentObject(cache)
     }
 }
 
 extension View {
-    /// Sets the settings within this view to some fixed value. Only works from previews, not ViewInspector tests.
+    /// Sets the settings within this view to some fixed value.
     func withFixedSettings(_ settings: [Settings: Bool]) -> some View {
-        environment(\.settingsCache, SettingsCache(cache: settings))
+        environmentObject(SettingsCache(cache: settings))
     }
 }

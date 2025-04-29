@@ -24,9 +24,11 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    @GetSetting(.groupByDirection) var groupByDirection
-    @GetSetting(.devDebugMode) var debugMode
-    @GetSetting(.stationAccessibility) var showStationAccessibility
+    @EnvironmentObject var settingsCache: SettingsCache
+
+    var groupByDirection: Bool { settingsCache.get(.groupByDirection) }
+    var debugMode: Bool { settingsCache.get(.devDebugMode) }
+    var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
@@ -117,7 +119,7 @@ struct StopDetailsUnfilteredView: View {
                     Color.fill1.ignoresSafeArea(.all)
                     ScrollView {
                         LazyVStack(spacing: 0) {
-                            if showStationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
+                            if settingsCache.get(.stationAccessibility), hasAccessibilityWarning, let elevatorAlerts {
                                 if !elevatorAlerts.isEmpty {
                                     ForEach(elevatorAlerts, id: \.id) { alert in
                                         AlertCard(

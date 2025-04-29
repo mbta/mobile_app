@@ -32,7 +32,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
-    @GetSetting(.stationAccessibility) var showStationAccessibility: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
 
@@ -318,7 +318,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var alertCards: some View {
         if !alerts.isEmpty ||
             !downstreamAlerts.isEmpty ||
-            (showStationAccessibility && hasAccessibilityWarning) {
+            (settingsCache.get(.stationAccessibility) && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     if stopDetailsVM.alertSummaries.keys.contains(alert.id) {
@@ -330,7 +330,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         alertCard(alert, stopDetailsVM.alertSummaries[alert.id] ?? nil, .downstream)
                     }
                 }
-                if showStationAccessibility, hasAccessibilityWarning {
+                if settingsCache.get(.stationAccessibility), hasAccessibilityWarning {
                     if !patternsByStop.elevatorAlerts.isEmpty {
                         ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
                             alertCard(alert, nil, .elevator)

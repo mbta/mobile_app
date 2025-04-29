@@ -17,7 +17,7 @@ struct RouteCard: View {
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
-    @GetSetting(.stationAccessibility) var showStationAccessibility: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
@@ -35,7 +35,7 @@ struct RouteCard: View {
                 if cardData.context == .nearbyTransit {
                     RouteCardStopHeader(
                         data: stopData,
-                        showStationAccessibility: showStationAccessibility
+                        showStationAccessibility: settingsCache.get(.stationAccessibility)
                     )
                 }
                 RouteCardDepartures(

@@ -33,7 +33,8 @@ struct NearbyTransitView: View {
     var errorBannerRepository = RepositoryDI().errorBanner
     let noNearbyStops: () -> NoNearbyStopsView
 
-    @GetSetting(.groupByDirection) var groupByDirection: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
+    var groupByDirection: Bool { settingsCache.get(.groupByDirection) }
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 

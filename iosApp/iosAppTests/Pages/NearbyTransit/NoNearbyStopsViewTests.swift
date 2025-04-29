@@ -37,10 +37,7 @@ final class NoNearbyStopsViewTests: XCTestCase {
     }
 
     func testWithHideMaps() throws {
-        DefaultSettings.set([.hideMaps: true])
-        defer { DefaultSettings.reset() }
-
-        let sut = NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {})
+        let sut = NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}).withFixedSettings([.hideMaps: true])
         XCTAssertThrowsError(try sut.inspect().find(button: "View transit near Boston"))
     }
 }

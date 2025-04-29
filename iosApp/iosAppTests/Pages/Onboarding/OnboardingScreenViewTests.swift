@@ -42,13 +42,13 @@ final class OnboardingScreenViewTests: XCTestCase {
             XCTAssertEqual($0, [.stationAccessibility: true])
             saveSettingsExp.fulfill()
         })
-        DefaultSettings.setRepo(settingsRepo)
-        defer { DefaultSettings.reset() }
         let advanceExp = expectation(description: "calls advance()")
         let sut = OnboardingScreenView(
             screen: .stationAccessibility,
             advance: { advanceExp.fulfill() }
         )
+
+        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
 
         XCTAssertNotNil(try sut.inspect().find(where: { view in
             try view.text().string()
@@ -70,12 +70,12 @@ final class OnboardingScreenViewTests: XCTestCase {
         })
         let advanceExp = expectation(description: "calls advance()")
 
-        DefaultSettings.setRepo(settingsRepo)
-        defer { DefaultSettings.reset() }
         let sut = OnboardingScreenView(
             screen: .hideMaps,
             advance: { advanceExp.fulfill() }
         )
+
+        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
 
         XCTAssertNotNil(try sut.inspect().find(
             text: "When using VoiceOver, we can hide maps to make the app easier to navigate."

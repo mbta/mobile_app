@@ -12,7 +12,7 @@ struct NoNearbyStopsView: View {
     let onOpenSearch: () -> Void
     let onPanToDefaultCenter: () -> Void
 
-    @GetSetting(.hideMaps) var hideMaps: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -41,7 +41,7 @@ struct NoNearbyStopsView: View {
                 .background(Color.key)
                 .clipShape(.rect(cornerRadius: 8.0))
             })
-            if !hideMaps {
+            if !settingsCache.get(.hideMaps) {
                 Button(action: onPanToDefaultCenter, label: {
                     HStack {
                         Text("View transit near Boston")

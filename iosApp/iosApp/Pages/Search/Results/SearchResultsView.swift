@@ -14,7 +14,9 @@ struct SearchResultsView: View {
     private var state: SearchViewModel.ResultsState?
     private var handleStopTap: (String) -> Void
 
-    @GetSetting(.searchRouteResults) var includeRoutes
+    @EnvironmentObject var settingsCache: SettingsCache
+
+    var includeRoutes: Bool { settingsCache.get(.searchRouteResults) }
 
     init(
         state: SearchViewModel.ResultsState?,

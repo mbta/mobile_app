@@ -12,7 +12,7 @@ import SwiftUI
 struct MoreSectionView: View {
     var section: MoreSection
 
-    @Environment(\.settingsCache) var settingsCache
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         if !(section.hiddenOnProd && appVariant == .prod) {

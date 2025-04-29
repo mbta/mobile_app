@@ -577,9 +577,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
 
-        DefaultSettings.set([.stationAccessibility: true])
-        defer { DefaultSettings.reset() }
-
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
@@ -597,7 +594,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM
-        ).environmentObject(ViewportProvider())
+        ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
@@ -628,9 +625,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
 
-        DefaultSettings.set([.stationAccessibility: true])
-        defer { DefaultSettings.reset() }
-
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
@@ -648,7 +642,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM
-        ).environmentObject(ViewportProvider())
+        ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
@@ -685,9 +679,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
-        DefaultSettings.set([.stationAccessibility: true])
-        defer { DefaultSettings.reset() }
-
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
@@ -716,7 +707,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting
+            .host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 }

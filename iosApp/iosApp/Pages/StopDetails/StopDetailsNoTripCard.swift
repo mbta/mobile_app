@@ -14,7 +14,7 @@ struct StopDetailsNoTripCard: View {
     var accentColor: Color
     var routeType: RouteType
 
-    @GetSetting(.hideMaps) var hideMaps: Bool
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         StopDetailsIconCard(
@@ -27,7 +27,8 @@ struct StopDetailsNoTripCard: View {
 
     var detailText: Text? {
         switch onEnum(of: status) {
-        case .predictionsUnavailable: Text(hideMaps ? predictionsUnavailableStringNoMap : predictionsUnavailableString)
+        case .predictionsUnavailable: Text(settingsCache
+                .get(.hideMaps) ? predictionsUnavailableStringNoMap : predictionsUnavailableString)
         default: nil
         }
     }
