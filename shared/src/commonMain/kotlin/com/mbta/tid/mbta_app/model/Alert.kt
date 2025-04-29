@@ -476,3 +476,6 @@ data class Alert(
         }
     }
 }
+
+fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+    if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this

@@ -852,9 +852,6 @@ data class RouteCardData(
             }
         }
 
-        private fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
-            if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
-
         fun addAlerts(
             alerts: AlertsStreamDataResponse?,
             includeMinorAlerts: Boolean,
