@@ -11,4 +11,4 @@ import Shared
 extension RouteCardData: @retroactive Identifiable {}
 extension RouteCardData.RouteStopData: @retroactive Identifiable {}
 extension RouteCardData.Leaf: @retroactive Identifiable {}
-extension LeafFormat.Branched.BranchedBranch: @retroactive Identifiable {}
+extension LeafFormat.Branched.BranchedBranchRow: @retroactive Identifiable {}
