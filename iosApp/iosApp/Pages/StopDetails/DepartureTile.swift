@@ -13,7 +13,6 @@ struct DepartureTile: View {
     var data: TileData
     var onTap: () -> Void
     var pillDecoration: PillDecoration = .none
-    var showHeadsign: Bool = true
     var isSelected: Bool = false
 
     enum PillDecoration {
@@ -24,7 +23,7 @@ struct DepartureTile: View {
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
-                if showHeadsign, let headsign = data.headsign {
+                if let headsign = data.headsign {
                     Text(headsign)
                         .font(Typography.footnoteSemibold)
                         .multilineTextAlignment(.leading)
@@ -86,7 +85,6 @@ struct DepartureTile: View {
                 upcoming: upcomingTrip
             ),
             onTap: {},
-            showHeadsign: false,
             isSelected: true
         )
         DepartureTile(
@@ -99,7 +97,6 @@ struct DepartureTile: View {
                 upcoming: upcomingTrip
             ),
             onTap: {},
-            showHeadsign: true,
             isSelected: false
         )
         DepartureTile(
@@ -113,7 +110,6 @@ struct DepartureTile: View {
             ),
             onTap: {},
             pillDecoration: .onPrediction(route: routeB),
-            showHeadsign: true,
             isSelected: false
         )
     }

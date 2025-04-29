@@ -36,16 +36,6 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var analytics: Analytics = AnalyticsProvider.shared
 
-    var showTileHeadsigns: Bool {
-        let isLine = switch onEnum(of: data.routeData.lineOrRoute) {
-        case .line: true
-        default: false
-        }
-        return isLine || !tiles.allSatisfy { tile in
-            tile.headsign == tiles.first?.headsign
-        }
-    }
-
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
     var routeColor: Color { Color(hex: data.routeData.lineOrRoute.backgroundColor) }
@@ -233,7 +223,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                             view.scrollTo(tileData.id)
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
-                        showHeadsign: showTileHeadsigns,
                         isSelected: tileData.id == tripFilter?.tripId
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
