@@ -212,7 +212,7 @@ final class StopDetailsViewTests: XCTestCase {
         XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
     }
 
-    func testCloseButtonCloses() throws {
+    @MainActor func testCloseButtonCloses() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
@@ -236,8 +236,8 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut.environmentObject(SettingsCache(cache: [:])))
-        try? sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
         XCTAssertEqual([oldEntry], nearbyVM.navigationStack)
     }
 

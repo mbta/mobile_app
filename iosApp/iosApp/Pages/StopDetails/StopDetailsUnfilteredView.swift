@@ -18,7 +18,16 @@ struct StopDetailsUnfilteredView: View {
 
     var departures: StopDetailsDepartures?
     var routeCardData: [RouteCardData]?
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
+    var departuresServedRoutes: [StopDetailsFilterPills.FilterBy] = []
+    var routeCardDataServedRoutes: [StopDetailsFilterPills.FilterBy] = []
+
+    var servedRoutes: [StopDetailsFilterPills.FilterBy] {
+        if groupByDirection {
+            routeCardDataServedRoutes
+        } else {
+            departuresServedRoutes
+        }
+    }
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -52,15 +61,16 @@ struct StopDetailsUnfilteredView: View {
         self.stopDetailsVM = stopDetailsVM
         self.now = now
 
-        if groupByDirection, let routeCardData {
-            servedRoutes = routeCardData.map { routeCardData in
+        if let routeCardData {
+            routeCardDataServedRoutes = routeCardData.map { routeCardData in
                 switch onEnum(of: routeCardData.lineOrRoute) {
                 case let .line(line): .line(line.line)
                 case let .route(route): .route(route.route)
                 }
             }
-        } else if !groupByDirection, let departures {
-            servedRoutes = departures.routes.map { patterns in
+        }
+        if let departures {
+            departuresServedRoutes = departures.routes.map { patterns in
                 if let line = patterns.line {
                     return .line(line)
                 }
