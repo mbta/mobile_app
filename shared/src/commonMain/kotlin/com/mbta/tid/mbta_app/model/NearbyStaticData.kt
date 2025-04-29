@@ -612,9 +612,6 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
         return (isTypical() || isUpcoming) && !(shouldBeFilteredAsArrivalOnly)
     }
 
-    fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
-        if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
-
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
             .sortedWith(PatternSorting.comparePatternsByStop(pinnedRoutes, sortByDistanceFrom))
@@ -726,9 +723,6 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
             }
         return (isTypical() || isUpcoming) && !isArrivalOnly()
     }
-
-    fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
-        if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }

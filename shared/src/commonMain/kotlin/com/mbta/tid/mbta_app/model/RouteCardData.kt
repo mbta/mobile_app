@@ -868,14 +868,16 @@ data class RouteCardData(
                         } else {
                             listOf(path.routeOrLineId)
                         }
+                    val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
                         Alert.applicableAlerts(
-                            activeRelevantAlerts,
-                            path.directionId,
-                            routes,
-                            leafBuilder.stopIds,
-                            null
-                        )
+                                activeRelevantAlerts,
+                                path.directionId,
+                                routes,
+                                leafBuilder.stopIds,
+                                null
+                            )
+                            .discardTrackChangesAtCRCore(isCRCore)
                     val downstreamAlerts =
                         PatternsByStop.alertsDownstream(
                             activeRelevantAlerts,
@@ -918,7 +920,6 @@ data class RouteCardData(
                 for (stopEntry in byStopId.stopData) {
                     val (stopId, byDirectionId) = stopEntry
                     val isSubway = byStopId.lineOrRoute.isSubway
-                    for (directionEntry in byDirectionId.data) {}
 
                     byDirectionId.data =
                         byDirectionId.data
@@ -1116,9 +1117,7 @@ data class RouteCardData(
             globalData: GlobalResponse
         ): Boolean {
             return this.routePatterns
-                ?.filter {
-                    it.typicality == com.mbta.tid.mbta_app.model.RoutePattern.Typicality.Typical
-                }
+                ?.filter { it.typicality == RoutePattern.Typicality.Typical }
                 ?.map { it.representativeTripId }
                 ?.all { representativeTripId ->
                     val representativeTrip = globalData.trips[representativeTripId]
