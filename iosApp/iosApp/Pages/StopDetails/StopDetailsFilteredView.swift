@@ -20,9 +20,7 @@ struct StopDetailsFilteredView: View {
     var routeCardData: [RouteCardData]?
     var now: Date
 
-    var routeData: RouteCardData?
-    var stopData: RouteCardData.RouteStopData?
-    var leafData: RouteCardData.Leaf?
+    var departureData: DepartureDataBundle?
 
     var alerts: [Shared.Alert]
     var downstreamAlerts: [Shared.Alert]
@@ -67,14 +65,14 @@ struct StopDetailsFilteredView: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        routeData = routeCardData?.first { $0.lineOrRoute.id == stopFilter.routeId }
-        stopData = routeData?.stopData.first
-        leafData = stopData?.data.first { $0.directionId == stopFilter.directionId }
+        let routeData = routeCardData?.first { $0.lineOrRoute.id == stopFilter.routeId }
+        let stopData = routeData?.stopData.first { $0.stop.id == stopId }
+        let leafData = stopData?.data.first { $0.directionId == stopFilter.directionId }
 
         alerts = leafData?.alertsHere ?? []
         downstreamAlerts = leafData?.alertsDownstream ?? []
 
-        if let routeData, let leafData {
+        if let routeData, let stopData, let leafData {
             let leafFormat = leafData.format(
                 now: nowInstant,
                 representativeRoute: routeData.lineOrRoute.sortRoute,
@@ -84,9 +82,11 @@ struct StopDetailsFilteredView: View {
 
             noPredictionsStatus = leafFormat.noPredictionsStatus()
             tiles = leafFormat.tileData()
+            departureData = .init(routeData: routeData, stopData: stopData, leaf: leafData)
         } else {
             noPredictionsStatus = nil
             tiles = []
+            departureData = nil
         }
     }
 
@@ -96,7 +96,7 @@ struct StopDetailsFilteredView: View {
 
     func toggledPinnedRoute() {
         Task {
-            if let routeId = routeData?.lineOrRoute.id {
+            if let routeId = departureData?.routeData.lineOrRoute.id {
                 let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
                 analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 stopDetailsVM.loadPinnedRoutes()
@@ -116,7 +116,7 @@ struct StopDetailsFilteredView: View {
                 DebugView { Text(String(
                     stringLiteral: "Turn on the Group by Direction feature toggle, we’re dropping support for headsign grouping"
                 )).padding(8) }.padding(16).frame(maxHeight: .infinity)
-            } else if let routeData, let stopData, let leafData {
+            } else if let departureData {
                 StopDetailsFilteredDepartureDetails(
                     stopId: stopId,
                     stopFilter: stopFilter,
@@ -124,7 +124,7 @@ struct StopDetailsFilteredView: View {
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
                     tiles: tiles,
-                    data: .init(routeData: routeData, stopData: stopData, leaf: leafData),
+                    data: departureData,
                     noPredictionsStatus: noPredictionsStatus,
                     alerts: alerts,
                     downstreamAlerts: downstreamAlerts,
@@ -143,13 +143,13 @@ struct StopDetailsFilteredView: View {
 
     @ViewBuilder
     var header: some View {
-        let line: Line? = switch onEnum(of: routeData?.lineOrRoute) {
+        let line: Line? = switch onEnum(of: departureData?.routeData.lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
         VStack(spacing: 8) {
             StopDetailsFilteredHeader(
-                route: routeData?.lineOrRoute.sortRoute,
+                route: departureData?.routeData.lineOrRoute.sortRoute,
                 line: line,
                 stop: stop,
                 pinned: pinned,
