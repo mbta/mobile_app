@@ -39,6 +39,12 @@ interface ILeafData {
     val hasSchedulesToday: Boolean
 }
 
+data class DepartureDataBundle(
+    val routeData: RouteCardData,
+    val stopData: RouteCardData.RouteStopData,
+    val leaf: RouteCardData.Leaf
+)
+
 /**
  * Contain all data for presentation in a route card. A route card is a snapshot of service for a
  * route at a set of stops. It has the general structure: Route (or Line) => Stop(s) => Direction =>
