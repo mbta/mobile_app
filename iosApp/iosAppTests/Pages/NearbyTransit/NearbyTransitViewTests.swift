@@ -55,7 +55,7 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init(groupByDirection: true),
             noNearbyStops: noNearbyStops
         )
-        let cards = try sut.inspect().findAll(NearbyRouteView.self)
+        let cards = try sut.inspect().findAll(RouteCard.self)
         XCTAssertEqual(cards.count, 5)
         for card in cards {
             XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
@@ -78,7 +78,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            let cards = view.findAll(NearbyRouteView.self)
+            let cards = view.findAll(RouteCard.self)
             XCTAssertEqual(cards.count, 5)
             for card in cards {
                 XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
