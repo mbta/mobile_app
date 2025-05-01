@@ -235,6 +235,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -329,6 +330,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -480,6 +482,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -574,6 +577,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     tileScrollState = rememberScrollState(),
                     tileData = listOf(),
                     noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(),
                     data = data,
@@ -621,6 +625,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
+        val hidePredictions: Boolean
 
         if (groupByDirection) {
             val routeCardData =
@@ -650,6 +655,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                 )
             tileData = leafFormat.tileData()
             noPredictionsStatus = leafFormat.noPredictionsStatus()
+            hidePredictions = leafFormat.hidePredictions
         } else {
             val departures =
                 checkNotNull(
@@ -673,6 +679,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
                     .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
             noPredictionsStatus = null
+            hidePredictions = false
         }
 
         composeTestRule.setContent {
@@ -684,6 +691,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = hidePredictions,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -797,6 +805,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = alertResponse,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -895,6 +904,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(alert),
                     global = globalResponse,
@@ -1010,6 +1020,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -1104,6 +1115,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    hidePredictions = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,

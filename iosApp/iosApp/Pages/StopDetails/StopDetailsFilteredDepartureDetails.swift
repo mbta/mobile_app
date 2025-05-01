@@ -29,6 +29,8 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
+    var testTiles: [TileData]? = nil
+
     let inspection = Inspection<Self>()
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -42,7 +44,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         )
     }
 
-    var tiles: [TileData] { leafFormat.tileData() }
+    var tiles: [TileData] { testTiles ?? leafFormat.tileData() }
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
     var hidePredictions: Bool { leafFormat.hidePredictions }
 
