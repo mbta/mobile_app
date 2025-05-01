@@ -6,6 +6,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 object LoadingPlaceholders {
+
+    fun routeCard(context: RouteCardData.Context): RouteCardData {
+        val departureDataBundle = departureDataBundle(context = context, now = Clock.System.now())
+        return departureDataBundle.routeData
+    }
+
     fun nearbyRoute(): StopsAssociated.WithRoute {
         val patternsByStop = patternsByStop()
         return StopsAssociated.WithRoute(

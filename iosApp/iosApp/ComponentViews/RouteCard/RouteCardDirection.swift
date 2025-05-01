@@ -16,7 +16,7 @@ struct RouteCardDirection: View {
     var body: some View {
         switch onEnum(of: formatted) {
         case let .branched(branched):
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .center) {
                     if let secondaryAlert = branched.secondaryAlert {
                         Image(secondaryAlert.iconName)

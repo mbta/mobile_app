@@ -182,18 +182,21 @@ struct StopDetailsUnfilteredView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        let placeholderDepartures = LoadingPlaceholders.shared.stopDetailsDepartures(filter: nil)
-        VStack(spacing: 0) {
-            ForEach(placeholderDepartures.routes, id: \.routeIdentifier) { patternsByStop in
-                StopDetailsRouteView(
-                    patternsByStop: patternsByStop,
-                    now: now.toKotlinInstant(),
-                    pushNavEntry: { _ in },
+        VStack(spacing: 16) {
+            ForEach(1 ... 5, id: \.self) { _ in
+                RouteCard(
+                    cardData: LoadingPlaceholders.shared.routeCard(context: .stopDetailsUnfiltered),
+                    global: GlobalResponse(objects: ObjectCollectionBuilder()),
+                    now: Date.now,
+                    onPin: { _ in },
                     pinned: false,
-                    onPin: { _ in }
+                    pushNavEntry: { _ in },
+                    showStationAccessibility: false
                 )
+                .loadingPlaceholder()
             }
-        }.loadingPlaceholder()
+        }
+        .padding(.horizontal, 16)
     }
 
     func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {
