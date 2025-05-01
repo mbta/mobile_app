@@ -16,11 +16,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var tiles: [TileData]
     var data: DepartureDataBundle
-    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
-    var alerts: [Shared.Alert]
-    var downstreamAlerts: [Shared.Alert]
+
     var pinned: Bool
 
     var now: Date
@@ -36,6 +33,22 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var analytics: Analytics = AnalyticsProvider.shared
 
+    var leafFormat: LeafFormat {
+        data.leaf.format(
+            now: now.toKotlinInstant(),
+            representativeRoute: data.routeData.lineOrRoute.sortRoute,
+            globalData: stopDetailsVM.global,
+            context: .stopDetailsFiltered
+        )
+    }
+
+    var tiles: [TileData] { leafFormat.tileData() }
+    var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
+    var hidePredictions: Bool { leafFormat.hidePredictions }
+
+    var alerts: [Shared.Alert] { data.leaf.alertsHere }
+    var downstreamAlerts: [Shared.Alert] { data.leaf.alertsDownstream }
+
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
     var routeColor: Color { Color(hex: data.routeData.lineOrRoute.backgroundColor) }
@@ -50,10 +63,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         } else {
             false
         }
-    }
-
-    var hasMajorAlert: Bool {
-        alerts.contains(where: { $0.significance == .major })
     }
 
     var hasAccessibilityWarning: Bool {
@@ -96,7 +105,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .padding(.bottom, 6)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
-                        if !hasMajorAlert, !tiles.isEmpty {
+                        if !hidePredictions, !tiles.isEmpty {
                             departureTiles(view)
                                 .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                                 .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
@@ -104,7 +113,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                     alertCards
 
-                    if hasMajorAlert {
+                    if hidePredictions {
                         EmptyView()
                     } else if let noPredictionsStatus {
                         StopDetailsNoTripCard(
@@ -300,7 +309,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     func alertCard(_ alert: Shared.Alert, _ summary: AlertSummary?, _ spec: AlertCardSpec? = nil) -> some View {
         let spec: AlertCardSpec = if let spec {
             spec
-        } else if alert.significance == .major {
+        } else if alert.significance == .major, hidePredictions {
             .major
         } else if alert.significance == .minor, alert.effect == .delay {
             .delay
