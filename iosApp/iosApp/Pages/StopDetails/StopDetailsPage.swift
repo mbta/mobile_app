@@ -15,7 +15,7 @@ struct StopDetailsPage: View {
 
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
-    // their respective  departures rather than both showing the departures for the newly presented stop.
+    // their respective departures rather than both showing the departures for the newly presented stop.
     @State var internalDepartures: StopDetailsDepartures?
     @State var internalRouteCardData: [RouteCardData]?
     @State var now = Date.now

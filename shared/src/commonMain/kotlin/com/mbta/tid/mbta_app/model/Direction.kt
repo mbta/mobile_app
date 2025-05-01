@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 
 data class Direction(
@@ -19,6 +20,7 @@ data class Direction(
      * in the majority of typical cases. If this doesn't exist for some reason, fall back to null so
      * that the direction label will just display the direction name.
      */
+    @DefaultArgumentInterop.Enabled
     constructor(
         directionId: Int,
         route: Route,

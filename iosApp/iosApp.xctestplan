@@ -43,20 +43,21 @@
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
-        "identifier" : "6EED5E8B2B3DC69F0052A1B8",
+        "identifier" : "EDDC9037D014CD9DDCA653AC",
         "name" : "iosAppTests"
       }
     },
     {
       "parallelizable" : true,
       "skippedTests" : [
+        "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
         "HomeMapViewUITests\/testRecentersToUserLocation()",
         "IosAppUITests\/testMapShown()",
         "IosAppUITestsLaunchTests\/testLaunch()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
-        "identifier" : "6EED5E982B3DC6C10052A1B8",
+        "identifier" : "C6FCE5742C7A4D59A165E213",
         "name" : "iosAppUITests"
       }
     }

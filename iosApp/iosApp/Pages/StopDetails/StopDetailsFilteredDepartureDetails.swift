@@ -17,10 +17,10 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var tiles: [TileData]
+    var data: DepartureDataBundle
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
     var alerts: [Shared.Alert]
     var downstreamAlerts: [Shared.Alert]
-    var patternsByStop: PatternsByStop
     var pinned: Bool
 
     var now: Date
@@ -36,22 +36,17 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var analytics: Analytics = AnalyticsProvider.shared
 
-    var showTileHeadsigns: Bool {
-        patternsByStop.line != nil || !tiles.allSatisfy { tile in
-            tile.headsign == tiles.first?.headsign
-        }
-    }
-
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
-    var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
-    var routeTextColor: Color { Color(hex: patternsByStop.representativeRoute.textColor) }
-    var routeType: RouteType { patternsByStop.representativeRoute.type }
+    var routeColor: Color { Color(hex: data.routeData.lineOrRoute.backgroundColor) }
+    var routeTextColor: Color { Color(hex: data.routeData.lineOrRoute.textColor) }
+    var routeType: RouteType { data.routeData.lineOrRoute.type }
 
     var selectedTripIsCancelled: Bool {
         if let tripFilter {
-            patternsByStop.tripIsCancelled(tripId: tripFilter.tripId)
-
+            data.leaf.upcomingTrips.contains { upcoming in
+                upcoming.trip.id == tripFilter.tripId && upcoming.isCancelled
+            }
         } else {
             false
         }
@@ -62,7 +57,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     var hasAccessibilityWarning: Bool {
-        !patternsByStop.elevatorAlerts.isEmpty || !patternsByStop.stop.isWheelchairAccessible
+        data.stopData.hasElevatorAlerts || !data.stopData.stop.isWheelchairAccessible
     }
 
     @State var patternsHere: [RoutePattern]?
@@ -91,7 +86,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 VStack(spacing: 16) {
                     ScrollViewReader { view in
                         DirectionPicker(
-                            patternsByStop: patternsByStop,
+                            data: data,
                             filter: stopFilter,
                             setFilter: { setStopFilter($0) }
                         )
@@ -148,6 +143,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
             }
+            .highPriorityGesture(DragGesture())
         }
         .onAppear { handleViewportForStatus(noPredictionsStatus) }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
@@ -156,37 +152,33 @@ struct StopDetailsFilteredDepartureDetails: View {
             selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
         .onAppear {
-            patternsHere = patternsHere(patternsByStop)
-            setAlertSummaries(AlertSummaryParams(global: stopDetailsVM.global,
-                                                 alerts: alerts,
-                                                 downstreamAlerts: downstreamAlerts,
-                                                 stopId: stopId,
-                                                 directionId: stopFilter.directionId,
-                                                 patternsHere: patternsHere,
-                                                 now: now))
+            patternsHere = data.leaf.routePatterns
+            setAlertSummaries(AlertSummaryParams(
+                global: stopDetailsVM.global,
+                alerts: alerts,
+                downstreamAlerts: downstreamAlerts,
+                stopId: stopId,
+                directionId: stopFilter.directionId,
+                patternsHere: patternsHere,
+                now: now
+            ))
         }
-        .onChange(of: patternsByStop) { patternsByStop in
-            patternsHere = patternsHere(patternsByStop)
+        .onChange(of: data.leaf) { leaf in
+            patternsHere = leaf.routePatterns
         }
-        .onChange(of: AlertSummaryParams(global: stopDetailsVM.global,
-                                         alerts: alerts,
-                                         downstreamAlerts: downstreamAlerts,
-                                         stopId: stopId,
-                                         directionId: stopFilter.directionId,
-                                         patternsHere: patternsHere,
-                                         now: now)) { newParams in
+        .onChange(of: AlertSummaryParams(
+            global: stopDetailsVM.global,
+            alerts: alerts,
+            downstreamAlerts: downstreamAlerts,
+            stopId: stopId,
+            directionId: stopFilter.directionId,
+            patternsHere: patternsHere,
+            now: now
+        )) { newParams in
             setAlertSummaries(newParams)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
-    }
-
-    func patternsHere(_ patternsByStop: PatternsByStop) -> [RoutePattern] {
-        // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
-        patternsByStop.patterns.flatMap { $0.patterns
-            .compactMap { pattern in pattern as? RoutePattern }
-        }
-        .filter { $0.directionId == stopFilter.directionId }
     }
 
     func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
@@ -222,17 +214,16 @@ struct StopDetailsFilteredDepartureDetails: View {
                                 selectionLock: false
                             )
                             analytics.tappedDeparture(
-                                routeId: patternsByStop.routeIdentifier,
-                                stopId: patternsByStop.stop.id,
+                                routeId: data.routeData.lineOrRoute.id,
+                                stopId: data.stopData.stop.id,
                                 pinned: pinned,
                                 alert: alerts.count > 0,
-                                routeType: patternsByStop.representativeRoute.type,
+                                routeType: data.routeData.lineOrRoute.type,
                                 noTrips: nil
                             )
                             view.scrollTo(tileData.id)
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
-                        showHeadsign: showTileHeadsigns,
                         isSelected: tileData.id == tripFilter?.tripId
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
@@ -259,11 +250,13 @@ struct StopDetailsFilteredDepartureDetails: View {
 
         if let global = alertSummaryParams.global, let patternsHere = alertSummaryParams.patternsHere {
             for alert in allAlerts {
-                let summary = try? await alert.summary(stopId: alertSummaryParams.stopId,
-                                                       directionId: alertSummaryParams.directionId,
-                                                       patterns: patternsHere,
-                                                       atTime: alertSummaryParams.now.toKotlinInstant(),
-                                                       global: global)
+                let summary = try? await alert.summary(
+                    stopId: alertSummaryParams.stopId,
+                    directionId: alertSummaryParams.directionId,
+                    patterns: patternsHere,
+                    atTime: alertSummaryParams.now.toKotlinInstant(),
+                    global: global
+                )
                 alertMap[alert.id] = summary
             }
         }
@@ -271,20 +264,32 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     private func pillDecoration(tileData: TileData) -> DepartureTile.PillDecoration {
-        if patternsByStop.line != nil, let route = tileData.route { .onPrediction(route: route) } else { .none }
+        if case .line = onEnum(of: data.routeData.lineOrRoute), let route = tileData.route {
+            .onPrediction(route: route)
+        } else {
+            .none
+        }
     }
 
     func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {
         {
+            let line: Line? = switch onEnum(of: data.routeData.lineOrRoute) {
+            case let .line(line): line.line
+            default: nil
+            }
+            let routes = switch onEnum(of: data.routeData.lineOrRoute) {
+            case let .line(line): Array(line.routes)
+            case let .route(route): [route.route]
+            }
             nearbyVM.pushNavEntry(.alertDetails(
                 alertId: alertId,
-                line: spec == .elevator ? nil : patternsByStop.line,
-                routes: spec == .elevator ? nil : patternsByStop.routes,
-                stop: patternsByStop.stop
+                line: spec == .elevator ? nil : line,
+                routes: spec == .elevator ? nil : routes,
+                stop: data.stopData.stop
             ))
             analytics.tappedAlertDetails(
-                routeId: patternsByStop.routeIdentifier,
-                stopId: patternsByStop.stop.id,
+                routeId: data.routeData.lineOrRoute.id,
+                stopId: data.stopData.stop.id,
                 alertId: alertId,
                 elevator: spec == .elevator
             )
@@ -330,8 +335,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
                 if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
-                    if !patternsByStop.elevatorAlerts.isEmpty {
-                        ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
+                    if data.stopData.hasElevatorAlerts {
+                        ForEach(data.stopData.elevatorAlerts, id: \.id) { alert in
                             alertCard(alert, nil, .elevator)
                         }
                     } else {

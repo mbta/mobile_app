@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.model
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 object LoadingPlaceholders {
     fun nearbyRoute(): StopsAssociated.WithRoute {
@@ -75,6 +76,87 @@ object LoadingPlaceholders {
                     )
                 )
         )
+    }
+
+    fun departureDataBundle(
+        routeId: String? = null,
+        trips: Int = 2,
+        context: RouteCardData.Context,
+        now: Instant
+    ): DepartureDataBundle {
+        val objects = ObjectCollectionBuilder()
+        val route =
+            objects.route {
+                routeId?.let { id = it }
+                color = "000000"
+                longName = "Loading"
+                shortName = "00"
+                textColor = "FFFFFF"
+                directionNames = listOf("Loading", "Loading")
+                directionDestinations = listOf("Loading", "Loading")
+            }
+        val pattern1 =
+            objects.routePattern(route = route) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+            }
+        val pattern2 =
+            objects.routePattern(route = route) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+            }
+        val stop = objects.stop { name = "Loading" }
+
+        fun newTrip(routePattern: RoutePattern, departsIn: Duration): UpcomingTrip {
+            val trip = objects.trip(routePattern)
+            val prediction =
+                objects.prediction {
+                    this.trip = trip
+                    stopId = stop.id
+                    departureTime = Clock.System.now() + departsIn
+                }
+            return UpcomingTrip(trip, prediction = prediction)
+        }
+
+        val leaf1 =
+            RouteCardData.Leaf(
+                directionId = 0,
+                routePatterns = listOf(pattern1),
+                stopIds = setOf(stop.id),
+                upcomingTrips = (1..trips).map { newTrip(pattern1, (it * 2).minutes) },
+                alertsHere = emptyList(),
+                allDataLoaded = false,
+                hasSchedulesToday = true,
+                alertsDownstream = emptyList(),
+            )
+        val leaf2 =
+            RouteCardData.Leaf(
+                directionId = 1,
+                routePatterns = listOf(pattern2),
+                stopIds = setOf(stop.id),
+                upcomingTrips = (1..trips).map { newTrip(pattern2, (it * 2).minutes) },
+                alertsHere = emptyList(),
+                allDataLoaded = false,
+                hasSchedulesToday = true,
+                alertsDownstream = emptyList(),
+            )
+
+        val stopData =
+            RouteCardData.RouteStopData(
+                stop,
+                listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
+                listOf(leaf1, leaf2),
+            )
+
+        val routeData =
+            RouteCardData(
+                RouteCardData.LineOrRoute.Route(route),
+                stopData = listOf(stopData),
+                context,
+                now
+            )
+
+        return DepartureDataBundle(routeData, stopData, leaf1)
     }
 
     fun stopDetailsDepartures(filter: StopDetailsFilter?) =

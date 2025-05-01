@@ -29,6 +29,19 @@ struct DirectionPicker: View {
         line = patternsByStop.line
     }
 
+    init(data: DepartureDataBundle, filter: StopDetailsFilter?,
+         setFilter: @escaping (StopDetailsFilter?) -> Void) {
+        self.filter = filter
+        self.setFilter = setFilter
+        availableDirections = Set(data.stopData.data.map(\.directionId)).sorted()
+        directions = data.stopData.directions
+        route = data.routeData.lineOrRoute.sortRoute
+        line = switch onEnum(of: data.routeData.lineOrRoute) {
+        case let .line(line): line.line
+        default: nil
+        }
+    }
+
     var body: some View {
         if availableDirections.count > 1 {
             let deselectedBackroundColor = Color.deselectedToggle2.opacity(0.6)

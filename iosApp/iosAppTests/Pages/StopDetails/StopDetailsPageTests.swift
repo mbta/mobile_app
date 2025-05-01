@@ -39,7 +39,7 @@ final class StopDetailsPageTests: XCTestCase {
             directionId: routePattern.directionId
         )
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = NearbyViewModel(groupByDirection: true)
         nearbyVM.alerts = .init(alerts: [:])
 
         let stopDetailsVM = StopDetailsViewModel(
