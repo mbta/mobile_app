@@ -19,14 +19,14 @@ class RouteLayerGeneratorTest {
 
         assertEquals(
             listOf(
-                "route-layer-Red",
                 "route-layer-Orange",
-                "route-layer-Red-alerting-bg",
-                "route-layer-Red-shuttled",
-                "route-layer-Red-suspended",
+                "route-layer-Red",
                 "route-layer-Orange-alerting-bg",
                 "route-layer-Orange-shuttled",
                 "route-layer-Orange-suspended",
+                "route-layer-Red-alerting-bg",
+                "route-layer-Red-shuttled",
+                "route-layer-Red-suspended",
             ),
             routeLayers.map { it.id }
         )
