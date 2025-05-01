@@ -203,7 +203,13 @@ object ProjectUtils {
                         .build()
                 )
                 .addKdoc(
-                    "A snapshot of some real system data, to be referenced in tests and previews that need real data. Owned by the jvmRun project utils.\n\n@see com.mbta.tid.mbta_app.ProjectUtils"
+                    "A snapshot of some real system data, to be referenced in tests and previews " +
+                        "that need real data. Owned by the jvmRun project utils.\n" +
+                        "\nDo not manually edit this file to make changes; if something in here " +
+                        "doesn’t compile and it’s blocking the ProjectUtils themselves from " +
+                        "running to recreate it, delete all the [ObjectCollectionBuilder.put] " +
+                        "calls to unblock ProjectUtils.\n" +
+                        "\n@see com.mbta.tid.mbta_app.ProjectUtils"
                 )
                 .build()
 
