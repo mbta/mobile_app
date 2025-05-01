@@ -47,7 +47,7 @@ object ProjectUtils {
                 "Orange",
                 "Red"
             )
-        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E")
+        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Red")
         val stops =
             setOf(
                 "1432",
