@@ -103,25 +103,6 @@ sealed class RealtimePatterns : ILeafData {
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
-
-        constructor(
-            headsign: NearbyHierarchy.DirectionOrHeadsign.Headsign,
-            leaf: NearbyHierarchy.NearbyLeaf,
-            alertsHere: List<Alert>,
-            alertsDownstream: List<Alert>,
-            hasSchedulesTodayByPattern: Map<String, Boolean>?,
-            allDataLoaded: Boolean,
-        ) : this(
-            headsign.route,
-            headsign.headsign,
-            headsign.line,
-            leaf.routePatterns.sortedWith(nullsLast()),
-            leaf.upcomingTrips.sorted(),
-            alertsHere,
-            alertsDownstream,
-            hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
-            allDataLoaded,
-        )
     }
 
     /**
@@ -181,31 +162,6 @@ sealed class RealtimePatterns : ILeafData {
             alertsHere,
             alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
-            allDataLoaded,
-        )
-
-        constructor(
-            line: NearbyHierarchy.LineOrRoute.Line,
-            direction: NearbyHierarchy.DirectionOrHeadsign.Direction,
-            leaf: NearbyHierarchy.NearbyLeaf,
-            alertsHere: List<Alert>,
-            alertsDownstream: List<Alert>,
-            hasSchedulesTodayByPattern: Map<String, Boolean>?,
-            allDataLoaded: Boolean,
-        ) : this(
-            line.line,
-            // only the routes that are actually represented here, unless there aren't any patterns
-            // left here
-            line.routes
-                .filter { route -> leaf.routePatterns.any { it?.routeId == route.id } }
-                .takeUnless { it.isEmpty() }
-                ?: line.routes.toList(),
-            direction.direction,
-            leaf.routePatterns.sortedWith(nullsLast()),
-            leaf.upcomingTrips.sorted(),
-            alertsHere,
-            alertsDownstream,
-            hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
             allDataLoaded,
         )
     }
