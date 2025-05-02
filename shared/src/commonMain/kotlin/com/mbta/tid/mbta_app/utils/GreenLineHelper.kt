@@ -2,10 +2,7 @@ package com.mbta.tid.mbta_app.utils
 
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.NearbyStaticData
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteSegment
-import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -14,141 +11,22 @@ typealias RouteWithSegmentedShapes = MapFriendlyRouteResponse.RouteWithSegmented
 
 class GreenLineTestHelper {
     companion object {
+        val objects = TestData.clone()
+        val line = objects.getLine("line-Green")
+        val routeB = objects.getRoute("Green-B")
+        val routeC = objects.getRoute("Green-C")
+        val routeE = objects.getRoute("Green-E")
 
-        val objects = ObjectCollectionBuilder()
+        val stopArlington = objects.getStop("place-armnl")
+        val stopEastbound = objects.getStop("70156")
+        val stopWestbound = objects.getStop("70157")
 
-        val line = objects.line { id = "line-Green" }
-
-        val routeB =
-            objects.route {
-                id = "Green-B"
-                type = RouteType.LIGHT_RAIL
-                shortName = "B"
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
-            }
-
-        val routeC =
-            objects.route {
-                id = "Green-C"
-                type = RouteType.LIGHT_RAIL
-                shortName = "C"
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
-            }
-
-        val routeE =
-            objects.route {
-                id = "Green-E"
-                type = RouteType.LIGHT_RAIL
-                shortName = "E"
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath Street", "Park St & North")
-            }
-
-        val stopArlington =
-            objects.stop {
-                id = "place-armnl"
-                name = "Arlington"
-                childStopIds = listOf("70156", "70157")
-            }
-
-        val stopEastbound =
-            objects.stop {
-                id = "70156"
-                name = "Arlington"
-                description = "Arlington - Green Line - Park Street & North"
-                parentStationId = "place-armnl"
-            }
-
-        val stopWestbound =
-            objects.stop {
-                id = "70157"
-                name = "Arlington"
-                description = "Arlington - Green Line - Copley & West"
-                parentStationId = "place-armnl"
-            }
-
-        val rpB0 =
-            objects.routePattern(routeB) {
-                id = "Green-B-812-0"
-                sortOrder = 100_320_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    headsign = "Boston College"
-                    directionId = 0
-                    stopIds = listOf(stopWestbound.id)
-                }
-            }
-
-        val rpB1 =
-            objects.routePattern(routeB) {
-                id = "Green-B-812-1"
-                sortOrder = 100_321_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-                representativeTrip {
-                    headsign = "Government Center"
-                    directionId = 1
-                    stopIds = listOf(stopEastbound.id)
-                }
-            }
-
-        val rpC0 =
-            objects.routePattern(routeC) {
-                id = "Green-C-832-0"
-                sortOrder = 100_330_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    headsign = "Cleveland Circle"
-                    directionId = 0
-                    stopIds = listOf(stopWestbound.id)
-                }
-            }
-
-        val rpC1 =
-            objects.routePattern(routeC) {
-                id = "Green-C-832-1"
-                sortOrder = 100_331_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-                representativeTrip {
-                    headsign = "Government Center"
-                    directionId = 1
-                    stopIds = listOf(stopEastbound.id)
-                }
-            }
-
-        val rpE0 =
-            objects.routePattern(routeE) {
-                id = "Green-E-886-0"
-                sortOrder = 100_350_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    headsign = "Heath Street"
-                    directionId = 0
-                    stopIds = listOf(stopWestbound.id)
-                }
-            }
-
-        val rpE1 =
-            objects.routePattern(routeE) {
-                id = "Green-E-886-1"
-                sortOrder = 100_351_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-                representativeTrip {
-                    headsign = "Medford/Tufts"
-                    directionId = 1
-                    stopIds = listOf(stopEastbound.id)
-                }
-            }
+        val rpB0 = objects.getRoutePattern("Green-B-812-0")
+        val rpB1 = objects.getRoutePattern("Green-B-812-1")
+        val rpC0 = objects.getRoutePattern("Green-C-832-0")
+        val rpC1 = objects.getRoutePattern("Green-C-832-1")
+        val rpE0 = objects.getRoutePattern("Green-E-886-0")
+        val rpE1 = objects.getRoutePattern("Green-E-886-1")
 
         val shapeB0 =
             objects.shape {

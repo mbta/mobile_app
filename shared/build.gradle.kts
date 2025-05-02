@@ -36,6 +36,8 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    jvm { mainRun { mainClass.set("com.mbta.tid.mbta_app.ProjectUtilsKt") } }
+
     cocoapods {
         summary = "Common library for the MBTA mobile app"
         homepage = "https://github.com/mbta/mobile_app"
@@ -95,6 +97,13 @@ kotlin {
             }
         }
         val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
+        val jvmMain by getting {
+            dependencies {
+                implementation(kotlin("reflect"))
+                implementation(libs.kotlinpoet)
+                implementation(libs.ktor.client.java)
+            }
+        }
     }
 }
 
@@ -116,7 +125,8 @@ spotless {
         custom(
             "ban getValue outside tests",
             FormatterFunc.NeedsFile { text, file ->
-                if (file.path.contains("commonTest")) return@NeedsFile text
+                if (file.path.contains("commonTest") || file.name == "ObjectCollectionBuilder.kt")
+                    return@NeedsFile text
                 val lines = text.lines()
                 for (line in lines.withIndex()) {
                     val column = line.value.indexOf("getValue(")
@@ -150,6 +160,15 @@ if (
         DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
 ) {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
+}
+
+tasks.withType<JavaExec> {
+    // https://blog.thecodewhisperer.com/permalink/stdin-gradle-kotlin-dsl
+    // getting the task by name was failing for some reason
+    if (this.name == "jvmRun") {
+        standardInput = System.`in`
+        workingDir = projectDir.parentFile
+    }
 }
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
