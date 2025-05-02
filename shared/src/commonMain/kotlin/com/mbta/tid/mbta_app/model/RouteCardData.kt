@@ -445,7 +445,7 @@ data class RouteCardData(
             val countTripsToDisplay =
                 when {
                     context == Context.StopDetailsFiltered -> null
-                    isBranching -> 3
+                    isBranching && routeType != RouteType.BUS -> 3
                     else -> 2
                 }
 
