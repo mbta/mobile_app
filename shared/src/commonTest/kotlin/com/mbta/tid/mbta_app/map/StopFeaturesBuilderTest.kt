@@ -1,10 +1,9 @@
 package com.mbta.tid.mbta_app.map
 
-import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.utils.TestData
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
@@ -16,57 +15,14 @@ import kotlinx.coroutines.runBlocking
 class StopFeaturesBuilderTest {
     @Test
     fun `stop sources are created`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
+        val objects = TestData.clone()
 
-        val stop1 =
-            objects.stop {
-                id = "place-aqucl"
-                name = "Aquarium"
-                latitude = 42.359784
-                longitude = -71.051652
-                locationType = LocationType.STATION
-            }
-        val stop2 =
-            objects.stop {
-                id = "place-armnl"
-                name = "Arlington"
-                latitude = 42.351902
-                longitude = -71.070893
-                locationType = LocationType.STATION
-            }
-        val stop3 =
-            objects.stop {
-                id = "place-asmnl"
-                name = "Ashmont"
-                latitude = 42.28452
-                longitude = -71.063777
-                locationType = LocationType.STATION
-            }
-        val stop4 =
-            objects.stop {
-                id = "1432"
-                name = "Arsenal St @ Irving St"
-                latitude = 42.364737
-                longitude = -71.178564
-                locationType = LocationType.STOP
-            }
-        val stop5 =
-            objects.stop {
-                id = "14320"
-                name = "Adams St @ Whitwell St"
-                latitude = 42.253069
-                longitude = -71.017292
-                locationType = LocationType.STOP
-            }
-        val stop6 =
-            objects.stop {
-                id = "13"
-                name = "Andrew"
-                latitude = 42.329962
-                longitude = -71.057625
-                locationType = LocationType.STOP
-                parentStationId = "place-andrw"
-            }
+        val stop1 = objects.getStop("place-aqucl")
+        val stop2 = objects.getStop("place-armnl")
+        val stop3 = objects.getStop("place-asmnl")
+        val stop4 = objects.getStop("1432")
+        val stop5 = objects.getStop("14320")
+        val stop6 = objects.getStop("13")
 
         val collection =
             StopFeaturesBuilder.buildCollection(
@@ -168,24 +124,9 @@ class StopFeaturesBuilderTest {
 
     @Test
     fun `selected stop has prop set`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
-        val selectedStop =
-            objects.stop {
-                id = "place-alfcl"
-                name = "Alewife"
-                latitude = 42.39583
-                longitude = -71.141287
-                locationType = LocationType.STATION
-                childStopIds = listOf("70061")
-            }
-
-        val otherStop =
-            objects.stop {
-                id = "place-davis"
-                name = "Davis"
-                locationType = LocationType.STATION
-                childStopIds = emptyList()
-            }
+        val objects = TestData.clone()
+        val selectedStop = objects.getStop("place-alfcl")
+        val otherStop = objects.getStop("place-davis")
 
         val collection =
             StopFeaturesBuilder.buildCollection(
@@ -250,35 +191,7 @@ class StopFeaturesBuilderTest {
     fun `stops features have service status`() = runBlocking {
         val objects = MapTestDataHelper.objects
 
-        val stops =
-            mapOf(
-                "70061" to
-                    objects.stop {
-                        id = "70061"
-                        name = "Alewife"
-                        latitude = 42.396158
-                        longitude = -71.139971
-                        locationType = LocationType.STOP
-                        parentStationId = "place-alfcl"
-                    },
-                "place-alfcl" to
-                    objects.stop {
-                        id = "place-alfcl"
-                        name = "Alewife"
-                        latitude = 42.39583
-                        longitude = -71.141287
-                        locationType = LocationType.STATION
-                        childStopIds = listOf("70061")
-                    },
-                "place-astao" to
-                    objects.stop {
-                        id = "place-astao"
-                        name = "Assembly"
-                        latitude = 42.392811
-                        longitude = -71.077257
-                        locationType = LocationType.STATION
-                    },
-            )
+        val stops = objects.stops.filterKeys { it in setOf("70061", "place-alfcl", "place-astao") }
 
         val collection =
             StopFeaturesBuilder.buildCollection(
