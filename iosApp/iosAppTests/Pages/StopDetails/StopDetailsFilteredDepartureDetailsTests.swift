@@ -681,4 +681,93 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
+
+    @MainActor
+    func testShowsPredictionsAndAlertOnBranchingTrunk() async throws {
+        let now = Date.now
+
+        let objects = Shared.TestData.clone()
+        let stop = objects.getStop(id: "place-kencl")
+        let line = objects.getLine(id: "line-Green")
+        let routeB = objects.getRoute(id: "Green-B")
+        let routeC = objects.getRoute(id: "Green-C")
+        let routeD = objects.getRoute(id: "Green-D")
+
+        let alert =
+            objects.alert { alert in
+                alert.activePeriod(
+                    start: now.addingTimeInterval(-5).toKotlinInstant(),
+                    end: now.addingTimeInterval(100).toKotlinInstant()
+                )
+                alert.effect = .shuttle
+                alert.header = "Green line shuttle on B and C branches"
+                alert.informedEntity(
+                    activities: [.board, .exit, .ride],
+                    directionId: 0, facility: nil,
+                    route: routeB.id, routeType: nil,
+                    stop: "71151", trip: nil
+                )
+                alert.informedEntity(
+                    activities: [.board, .exit, .ride],
+                    directionId: 0, facility: nil,
+                    route: routeC.id, routeType: nil,
+                    stop: "70151", trip: nil
+                )
+            }
+        let alertResponse = AlertsStreamDataResponse(alerts: [alert.id: alert])
+
+        objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(300).toKotlinInstant()
+            prediction.routeId = routeD.id
+            prediction.stopId = stop.id
+            prediction.trip = objects.trip { trip in
+                trip.routeId = routeD.id
+                trip.routePatternId = "Green-D-855-0"
+            }
+        })
+
+        let global = GlobalResponse(objects: objects)
+        let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
+            stopIds: [stop.id] + stop.childStopIds,
+            globalData: global,
+            sortByDistanceFrom: nil,
+            schedules: ScheduleResponse(objects: objects),
+            predictions: PredictionsStreamDataResponse(objects: objects),
+            alerts: alertResponse,
+            now: now.toKotlinInstant(),
+            pinnedRoutes: [],
+            context: .stopDetailsFiltered
+        )!.first!
+        let routeStopData = routeCardData.stopData.first!
+        let leaf = routeStopData.data.first { $0.directionId == 0 }!
+
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.global = GlobalResponse(objects: objects)
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: line.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            data: .init(routeData: routeCardData, stopData: routeStopData, leaf: leaf),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
+        )
+
+        let exp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(ViewType.Text.self) { text in
+                try text.string().starts(with: "Shuttle buses at \(stop.name)")
+            })
+            XCTAssertNotNil(try view.find(text: "5 min"))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        await fulfillment(of: [exp], timeout: 3)
+    }
 }
