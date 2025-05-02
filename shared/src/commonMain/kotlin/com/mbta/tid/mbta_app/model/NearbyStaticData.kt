@@ -462,8 +462,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
  * Removes non-typical route patterns which are not happening either at all or between
  * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext]. Sorts routes by subway
  * first then nearest stop, stops by distance, and headsigns by route pattern sort order.
- *
- * Runs static data and predictions through [TemporaryTerminalFilter].
  */
 fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     globalData: GlobalResponse?,
@@ -491,11 +489,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
 
     val allDataLoaded = schedules != null
 
-    val rewrittenThis =
-        if (globalData == null || schedules == null) this
-        else
-            TemporaryTerminalFilter(this, predictions, globalData, activeRelevantAlerts, schedules)
-                .filtered()
+    val rewrittenThis = this
 
     val globalStops = globalData?.stops.orEmpty()
 
