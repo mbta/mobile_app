@@ -41,16 +41,18 @@ fun StopDetailsUnfilteredView(
 
     val analytics: Analytics = koinInject()
 
-    val departures = viewModel.stopDepartures.collectAsState().value
     val routeCardData = viewModel.routeCardData.collectAsState().value
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)
         val filterId = pillFilter.id
-        val patterns = departures?.routes?.find { it.routeIdentifier == filterId }
-        if (patterns != null) {
+        val routeData = routeCardData?.find { it.lineOrRoute.id == filterId }
+        if (routeData != null) {
             val defaultDirectionId =
-                patterns.patterns.flatMap { it.patterns.mapNotNull { it?.directionId } }.minOrNull()
+                routeData.stopData
+                    .flatMap { it.data }
+                    .flatMap { it.routePatterns }
+                    .minOfOrNull { it.directionId }
                     ?: 0
             updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
         }

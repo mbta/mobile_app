@@ -70,8 +70,10 @@ class NearbyRepository : KoinComponent, INearbyRepository {
         ApiResult.runCatching { NearbyStaticData(global, NearbyResponse(stopIds)) }
 }
 
-class MockNearbyRepository(val response: NearbyResponse, val stopIds: List<String> = emptyList()) :
-    INearbyRepository {
+class MockNearbyRepository(
+    val response: NearbyResponse,
+    val stopIds: List<String> = response.stopIds
+) : INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         stopIds
 

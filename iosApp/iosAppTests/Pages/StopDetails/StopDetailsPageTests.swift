@@ -156,7 +156,7 @@ final class StopDetailsPageTests: XCTestCase {
     }
 
     @MainActor
-    func testUpdatesDeparturesOnPredictionsChange() async throws {
+    func testUpdatesRouteCardDataOnPredictionsChange() async throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -196,7 +196,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        XCTAssertNil(nearbyVM.departures)
+        XCTAssertNil(nearbyVM.routeCardData)
 
         ViewHosting.host(view: sut)
         stopDetailsVM.stopData = .init(
@@ -207,9 +207,9 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let hasSetDepartures = sut.inspection.inspect(after: 1) { view in
-            XCTAssertNotNil(nearbyVM.departures)
+            XCTAssertNotNil(nearbyVM.routeCardData)
             // Keeps internal departures in sync with VM departures
-            XCTAssertEqual(try view.actualView().internalDepartures, nearbyVM.departures)
+            XCTAssertEqual(try view.actualView().internalRouteCardData, nearbyVM.routeCardData)
         }
 
         await fulfillment(of: [hasSetDepartures], timeout: 2)

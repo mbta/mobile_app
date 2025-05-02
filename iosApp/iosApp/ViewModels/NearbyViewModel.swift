@@ -19,7 +19,6 @@ class NearbyViewModel: ObservableObject {
         var stopIds: [String]?
     }
 
-    @Published var departures: StopDetailsDepartures?
     @Published var navigationStack: [SheetNavigationStackEntry] = [] {
         didSet { Task {
             let navEntry = navigationStack.lastSafe()
@@ -55,7 +54,7 @@ class NearbyViewModel: ObservableObject {
     private let settingsRepository: ISettingsRepository
 
     init(
-        departures: StopDetailsDepartures? = nil,
+        routeCardData: [RouteCardData]? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         showDebugMessages: Bool = false,
         showStationAccessibility: Bool = false,
@@ -66,7 +65,7 @@ class NearbyViewModel: ObservableObject {
         analytics: Analytics = AnalyticsProvider.shared,
         settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
-        self.departures = departures
+        self.routeCardData = routeCardData
         self.navigationStack = navigationStack
 
         self.showDebugMessages = showDebugMessages
@@ -91,15 +90,6 @@ class NearbyViewModel: ObservableObject {
         Task { @MainActor in
             showDebugMessages = loaded.getSafe(.devDebugMode)
             showStationAccessibility = loaded.getSafe(.stationAccessibility)
-        }
-    }
-
-    /**
-     Set the departures from the given stop if it is the last stop in the stack.
-     */
-    func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
-        if stopId == navigationStack.lastStopId {
-            departures = newDepartures
         }
     }
 

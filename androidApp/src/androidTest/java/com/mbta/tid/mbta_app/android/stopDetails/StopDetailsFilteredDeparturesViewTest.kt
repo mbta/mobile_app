@@ -40,7 +40,6 @@ import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runners.Parameterized
 import org.koin.compose.KoinContext
 
 class StopDetailsFilteredDeparturesViewTest {
@@ -148,12 +147,6 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
     private val koinApplication = testKoinApplication { settings = settingsRepository }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "groupByDirection = {0}")
-        fun getValues() = listOf(false, true)
-    }
 
     @get:Rule val composeTestRule = createComposeRule()
 
@@ -355,6 +348,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
+
         val leaf =
             RouteCardData.Leaf(
                 trip.directionId,

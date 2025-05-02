@@ -558,6 +558,12 @@ data class RouteCardData(
                 is Line -> Direction.getDirectionsForLine(globalData, stop, patterns)
                 is Route -> Direction.getDirections(globalData, stop, this.route, patterns)
             }
+
+        fun containsRoute(routeId: String?) =
+            when (this) {
+                is Line -> this.routes.any { it.id == routeId }
+                is Route -> this.id == routeId
+            }
     }
 
     /** The distance from the given position to the first stop in this route card. */

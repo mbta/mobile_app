@@ -37,7 +37,6 @@ fun StopDetailsView(
     val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
 
-    val departures by viewModel.stopDepartures.collectAsState()
     val routeCardData by viewModel.routeCardData.collectAsState()
 
     fun openModalAndRecord(modal: ModalRoutes) {

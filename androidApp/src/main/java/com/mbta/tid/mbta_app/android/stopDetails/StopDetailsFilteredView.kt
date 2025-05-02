@@ -14,89 +14,11 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
-
-@Composable
-fun StopDetailsFilteredView(
-    stopId: String,
-    stopFilter: StopDetailsFilter,
-    tripFilter: TripDetailsFilter?,
-    departures: StopDetailsDepartures?,
-    allAlerts: AlertsStreamDataResponse?,
-    now: Instant,
-    viewModel: StopDetailsViewModel,
-    pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
-    onClose: () -> Unit,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
-    tileScrollState: ScrollState,
-    openModal: (ModalRoutes) -> Unit,
-    openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
-) {
-    val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
-    val patternsByStop =
-        departures?.let {
-            it.routes.find { patterns -> patterns.routeIdentifier == stopFilter.routeId }
-        }
-
-    if (patternsByStop != null) {
-        val tileData =
-            departures.tileData(stopFilter.routeId, stopFilter.directionId, now, globalResponse)
-
-        val realtimePatterns =
-            patternsByStop.patterns.filter { it.directionId() == stopFilter.directionId }
-        val noPredictionsStatus =
-            if (tileData.isEmpty()) {
-                StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
-            } else {
-                null
-            }
-
-        StopDetailsFilteredDeparturesView(
-            stopId = stopId,
-            stopFilter = stopFilter,
-            tripFilter = tripFilter,
-            data = FilteredDeparturesData.PreGroupByDirection(patternsByStop),
-            tileData = tileData,
-            noPredictionsStatus = noPredictionsStatus,
-            // This is only used post direction grouping, predictions are still hidden when there is
-            // an active major alert for pre group by direction.
-            isAllServiceDisrupted = false,
-            allAlerts = allAlerts,
-            elevatorAlerts = departures.elevatorAlerts,
-            global = globalResponse,
-            now = now,
-            viewModel = viewModel,
-            errorBannerViewModel = errorBannerViewModel,
-            updateStopFilter = updateStopFilter,
-            updateTripFilter = updateTripDetailsFilter,
-            tileScrollState = tileScrollState,
-            pinnedRoutes = pinnedRoutes,
-            togglePinnedRoute = togglePinnedRoute,
-            onClose = onClose,
-            openModal = openModal,
-            openSheetRoute = openSheetRoute
-        )
-    } else {
-        Loading(
-            stopId,
-            stopFilter,
-            tripFilter,
-            now,
-            viewModel,
-            onClose,
-            errorBannerViewModel,
-            globalResponse
-        )
-    }
-}
 
 @Composable
 fun StopDetailsFilteredView(
