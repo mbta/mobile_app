@@ -13,7 +13,7 @@ struct RouteCardDepartures: View {
     var analytics: Analytics = AnalyticsProvider.shared
     let cardData: RouteCardData
     let stopData: RouteCardData.RouteStopData
-    let global: GlobalResponse
+    let global: GlobalResponse?
     let now: Date
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
