@@ -32,5 +32,6 @@ struct SheetNavigationLink<Label>: View where Label: View {
                 }
             }
         }
+        .simultaneousGesture(TapGesture())
     }
 }

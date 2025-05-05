@@ -55,6 +55,7 @@ struct DirectionPicker: View {
                             .padding(8)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
+                    .simultaneousGesture(TapGesture())
                     .accessibilityAddTraits(isSelected ? [.isSelected, .isHeader] : [])
                     .accessibilityHeading(isSelected ? .h2 : .unspecified)
                     .accessibilitySortPriority(isSelected ? 1 : 0)

@@ -37,6 +37,7 @@ struct DepartureTile: View {
                 }
             }
         }
+        .simultaneousGesture(TapGesture())
         .padding(.horizontal, 10)
         .padding(.vertical, 10)
         .frame(minHeight: 56)

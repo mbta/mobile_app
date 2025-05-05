@@ -176,7 +176,6 @@ struct StopDetailsUnfilteredView: View {
                             }
                         }
                     }
-                    .highPriorityGesture(DragGesture())
                     .padding(.top, 16)
                 }
             }
