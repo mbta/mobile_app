@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -81,8 +80,6 @@ data class RouteCardData(
         val directions: List<Direction>,
         val data: List<Leaf>
     ) {
-        val id = stop.id
-
         // convenience constructors for when directions are not directly under test
         constructor(
             stop: Stop,
@@ -109,6 +106,8 @@ data class RouteCardData(
             lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
             data
         )
+
+        val id = stop.id
 
         val elevatorAlerts: List<Alert>
             get() =
@@ -214,7 +213,7 @@ data class RouteCardData(
          * necessary to determine what should be displayed for that headsign on a branched route
          *
          * @param stopIds the child stop ids of this Leaf that are served by the [routePatterns]
-         * @param routePatterns all patterns that hvae the matching headsign
+         * @param routePatterns all patterns that have the matching headsign
          * @param hasSchedulesToday whether there are schedules today for the headsign. Used to
          *   determine the appropriate [UpcomingFormat.NoTripsFormat] when needed
          * @param allUpcomingTrips all the upcoming trips under the headsign. Used to determine the
@@ -567,14 +566,8 @@ data class RouteCardData(
             }
     }
 
-    @OptIn(ExperimentalTurfApi::class)
     /** The distance from the given position to the first stop in this route card. */
-    fun distanceFrom(position: Position): Double {
-        return io.github.dellisd.spatialk.turf.distance(
-            position,
-            this.stopData.first().stop.position
-        )
-    }
+    fun distanceFrom(position: Position): Double = this.stopData.first().stop.distanceFrom(position)
 
     companion object {
         /**
@@ -630,7 +623,7 @@ data class RouteCardData(
                         now,
                         globalData
                     )
-                    .build()
+                    .build(sortByDistanceFrom)
                     .sort(sortByDistanceFrom, pinnedRoutes)
             }
     }
@@ -975,11 +968,13 @@ data class RouteCardData(
             return this
         }
 
-        fun build(): List<RouteCardData> {
+        fun build(sortByDistanceFrom: Position?): List<RouteCardData> {
             return data.map { routeCardBuilder ->
                 RouteCardData(
                     routeCardBuilder.value.lineOrRoute,
-                    routeCardBuilder.value.stopData.values.map { it.build() },
+                    routeCardBuilder.value.stopData.values
+                        .map { it.build() }
+                        .sort(sortByDistanceFrom),
                     context,
                     now
                 )
@@ -994,8 +989,13 @@ data class RouteCardData(
         val now: Instant
     ) {
 
-        fun build(): RouteCardData {
-            return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() }, context, now)
+        fun build(sortByDistanceFrom: Position?): RouteCardData {
+            return RouteCardData(
+                this.lineOrRoute,
+                stopData.values.map { it.build() }.sort(sortByDistanceFrom),
+                context,
+                now
+            )
         }
     }
 
@@ -1036,11 +1036,7 @@ data class RouteCardData(
         )
 
         fun build(): RouteStopData {
-            return RouteStopData(
-                stop,
-                directions,
-                data.values.map { it.build() }.sortedBy { it.directionId }
-            )
+            return RouteStopData(stop, directions, data.values.map { it.build() }.sort())
         }
     }
 
@@ -1182,6 +1178,13 @@ data class RouteCardData(
 fun List<RouteCardData>.sort(
     distanceFrom: Position?,
     pinnedRoutes: Set<String>
-): List<RouteCardData> {
-    return this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
-}
+): List<RouteCardData> =
+    this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
+
+fun List<RouteCardData.RouteStopData>.sort(
+    distanceFrom: Position?
+): List<RouteCardData.RouteStopData> =
+    this.sortedWith(PatternSorting.compareStopsOnRoute(distanceFrom))
+
+fun List<RouteCardData.Leaf>.sort(): List<RouteCardData.Leaf> =
+    this.sortedWith(PatternSorting.compareLeavesAtStop())

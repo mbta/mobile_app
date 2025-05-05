@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
+import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
+import io.github.dellisd.spatialk.turf.distance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -43,6 +45,11 @@ data class Stop(
     }
 
     fun resolveParent(global: GlobalResponse) = resolveParent(global.stops)
+
+    @OptIn(ExperimentalTurfApi::class)
+    fun distanceFrom(position: Position): Double {
+        return distance(position, this.position)
+    }
 
     companion object {
         /**

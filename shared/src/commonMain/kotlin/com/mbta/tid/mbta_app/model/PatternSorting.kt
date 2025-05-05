@@ -100,4 +100,19 @@ object PatternSorting {
             },
             { it.lineOrRoute.sortRoute },
         )
+
+    fun compareStopsOnRoute(
+        sortByDistanceFrom: Position?
+    ): Comparator<RouteCardData.RouteStopData> =
+        compareBy(
+            { patternServiceBucket(it.data.first()) },
+            if (sortByDistanceFrom != null) {
+                { it.stop.distanceFrom(sortByDistanceFrom) }
+            } else {
+                { 0 }
+            }
+        )
+
+    fun compareLeavesAtStop(): Comparator<RouteCardData.Leaf> =
+        compareBy({ patternServiceBucket(it) }, { it.directionId })
 }
