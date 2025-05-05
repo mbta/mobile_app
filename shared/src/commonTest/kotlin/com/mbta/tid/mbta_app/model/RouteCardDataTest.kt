@@ -1650,122 +1650,122 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`() =
-        runBlocking {
-            val objects = ObjectCollectionBuilder()
+    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`():
+        Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
 
-            val closeBusStop = objects.stop()
-            val midBusStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.2
-                    longitude = closeBusStop.longitude + 0.2
-                }
-            val farBusStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.4
-                    longitude = closeBusStop.longitude + 0.4
-                }
-            val closeSubwayStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.1
-                    longitude = closeBusStop.longitude + 0.1
-                }
-            val midSubwayStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.3
-                    longitude = closeBusStop.longitude + 0.3
-                }
-            val farSubwayStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.5
-                    longitude = closeBusStop.longitude + 0.5
-                }
+        val closeBusStop = objects.stop()
+        val midBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.2
+                longitude = closeBusStop.longitude + 0.2
+            }
+        val farBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.4
+                longitude = closeBusStop.longitude + 0.4
+            }
+        val closeSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.1
+                longitude = closeBusStop.longitude + 0.1
+            }
+        val midSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.3
+                longitude = closeBusStop.longitude + 0.3
+            }
+        val farSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.5
+                longitude = closeBusStop.longitude + 0.5
+            }
 
-            // Unpinned, no schedules
-            val closeBusRoute =
-                objects.route {
-                    id = "close-bus"
-                    type = RouteType.BUS
-                }
-            // Unpinned, with schedules
-            val midBusRoute =
-                objects.route {
-                    id = "mid-bus"
-                    type = RouteType.BUS
-                }
-            // Unpinned, no schedules
-            val farBusRoute =
-                objects.route {
-                    id = "far-bus"
-                    type = RouteType.BUS
-                }
-            // Unpinned, no schedules
-            val closeSubwayRoute =
-                objects.route {
-                    id = "close-subway"
-                    type = RouteType.HEAVY_RAIL
-                }
-            // Pinned, no schedules
-            val midSubwayRoute =
-                objects.route {
-                    id = "mid-subway"
-                    type = RouteType.LIGHT_RAIL
-                }
-            // Pinned, with schedules
-            val farSubwayRoute =
-                objects.route {
-                    id = "far-subway"
-                    type = RouteType.HEAVY_RAIL
-                }
+        // Unpinned, no schedules
+        val closeBusRoute =
+            objects.route {
+                id = "close-bus"
+                type = RouteType.BUS
+            }
+        // Unpinned, with schedules
+        val midBusRoute =
+            objects.route {
+                id = "mid-bus"
+                type = RouteType.BUS
+            }
+        // Unpinned, no schedules
+        val farBusRoute =
+            objects.route {
+                id = "far-bus"
+                type = RouteType.BUS
+            }
+        // Unpinned, no schedules
+        val closeSubwayRoute =
+            objects.route {
+                id = "close-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+        // Pinned, no schedules
+        val midSubwayRoute =
+            objects.route {
+                id = "mid-subway"
+                type = RouteType.LIGHT_RAIL
+            }
+        // Pinned, with schedules
+        val farSubwayRoute =
+            objects.route {
+                id = "far-subway"
+                type = RouteType.HEAVY_RAIL
+            }
 
-            val closeBusPattern =
-                objects.routePattern(closeBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Lincoln Lab" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midBusPattern1 =
-                objects.routePattern(midBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Nubian" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midBusPattern2 =
-                objects.routePattern(midBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Nubian" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farBusPattern1 =
-                objects.routePattern(farBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Malden Center" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farBusPattern2 =
-                objects.routePattern(farBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Malden Center" }
-                    typicality = RoutePattern.Typicality.Atypical
-                }
-            val closeSubwayPattern =
-                objects.routePattern(closeSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Alewife" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midSubwayPattern =
-                objects.routePattern(midSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Medford/Tufts" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farSubwayPattern =
-                objects.routePattern(farSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Oak Grove" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
+        val closeBusPattern =
+            objects.routePattern(closeBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Lincoln Lab" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midBusPattern1 =
+            objects.routePattern(midBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midBusPattern2 =
+            objects.routePattern(midBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farBusPattern1 =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farBusPattern2 =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+                typicality = RoutePattern.Typicality.Atypical
+            }
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midSubwayPattern =
+            objects.routePattern(midSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Medford/Tufts" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Oak Grove" }
+                typicality = RoutePattern.Typicality.Typical
+            }
 
             val time = Instant.parse("2024-02-21T09:30:08-05:00")
             objects.prediction {
@@ -1776,15 +1776,15 @@ class RouteCardDataTest {
                 tripId = midBusPattern1.representativeTripId
             }
 
-            objects.schedule {
-                routeId = midBusRoute.id
-                tripId = midBusPattern1.representativeTripId
-            }
+        objects.schedule {
+            routeId = midBusRoute.id
+            tripId = midBusPattern1.representativeTripId
+        }
 
-            objects.schedule {
-                routeId = farSubwayRoute.id
-                tripId = farSubwayPattern.representativeTripId
-            }
+        objects.schedule {
+            routeId = farSubwayRoute.id
+            tripId = farSubwayPattern.representativeTripId
+        }
 
             val global =
                 GlobalResponse(
@@ -3295,7 +3295,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`() =
+    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`(): Unit =
         runBlocking {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()

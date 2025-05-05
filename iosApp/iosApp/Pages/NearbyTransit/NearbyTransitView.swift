@@ -26,7 +26,6 @@ struct NearbyTransitView: View {
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
-    @State var nearbyWithRealtimeInfo: [StopsAssociated]?
     @State var now = Date.now
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
@@ -67,24 +66,14 @@ struct NearbyTransitView: View {
             getNearby(location: newLocation, globalData: globalData)
         }
         .onChange(of: nearbyVM.nearbyState.stopIds) { nearbyStops in
-            updateNearbyRoutes()
             getSchedule()
             joinPredictions(nearbyStops)
             scrollToTop()
         }
-        .onChange(of: scheduleResponse) { response in
-            updateNearbyRoutes(scheduleResponse: response)
-        }
         .onChange(of: predictionsByStop) { newPredictionsByStop in
             if let newPredictionsByStop {
                 let condensedPredictions = newPredictionsByStop.toPredictionsStreamDataResponse()
-                updateNearbyRoutes(predictions: condensedPredictions)
-            } else {
-                updateNearbyRoutes(predictions: nil)
             }
-        }
-        .onChange(of: nearbyVM.alerts) { alerts in
-            updateNearbyRoutes(alerts: alerts)
         }
         .onChange(of: RouteCardParams(
             state: nearbyVM.nearbyState,
@@ -114,7 +103,6 @@ struct NearbyTransitView: View {
         .task {
             while !Task.isCancelled {
                 now = Date.now
-                updateNearbyRoutes()
                 checkPredictionsStale()
                 try? await Task.sleep(for: .seconds(5))
             }
@@ -198,7 +186,6 @@ struct NearbyTransitView: View {
         getGlobal()
         getNearby(location: location, globalData: globalData)
         joinPredictions(nearbyVM.nearbyState.stopIds)
-        updateNearbyRoutes()
         updatePinnedRoutes()
         getSchedule()
     }
@@ -294,7 +281,6 @@ struct NearbyTransitView: View {
         Task {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
-                updateNearbyRoutes(pinnedRoutes: pinnedRoutes)
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {
@@ -338,43 +324,5 @@ struct NearbyTransitView: View {
     private func scrollToTop() {
         guard let id = nearbyVM.routeCardData?.first?.lineOrRoute.id else { return }
         scrollSubject.send(id)
-    }
-
-    private func updateNearbyRoutes(
-        scheduleResponse: ScheduleResponse? = nil,
-        predictions: PredictionsStreamDataResponse? = nil,
-        alerts: AlertsStreamDataResponse? = nil,
-        pinnedRoutes: Set<String>? = nil
-    ) {
-        let fallbackPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
-
-        Task {
-            nearbyWithRealtimeInfo = await withRealtimeInfo(
-                schedules: scheduleResponse ?? self.scheduleResponse,
-                predictions: predictions ?? fallbackPredictions,
-                alerts: alerts ?? nearbyVM.alerts,
-                filterAtTime: now.toKotlinInstant(),
-                pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
-            )
-        }
-    }
-
-    private func withRealtimeInfo(
-        schedules: ScheduleResponse?,
-        predictions: PredictionsStreamDataResponse?,
-        alerts: AlertsStreamDataResponse?,
-        filterAtTime: Instant,
-        pinnedRoutes: Set<String>
-    ) async -> [StopsAssociated]? {
-        guard let loadedLocation = nearbyVM.nearbyState.loadedLocation else { return nil }
-        return try? await nearbyVM.nearbyStaticData?.withRealtimeInfo(
-            globalData: globalData,
-            sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
-            schedules: schedules,
-            predictions: predictions,
-            alerts: alerts,
-            filterAtTime: filterAtTime,
-            pinnedRoutes: pinnedRoutes
-        )
     }
 }

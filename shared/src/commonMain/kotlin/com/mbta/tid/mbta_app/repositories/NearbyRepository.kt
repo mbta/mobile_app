@@ -1,23 +1,13 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import io.github.dellisd.spatialk.geojson.Position
-import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 
 interface INearbyRepository {
     fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String>
-
-    suspend fun getNearby(global: GlobalResponse, location: Position): ApiResult<NearbyStaticData>
-
-    suspend fun getNearby(
-        global: GlobalResponse,
-        stopIds: List<String>
-    ): ApiResult<NearbyStaticData>
 }
 
 class NearbyRepository : KoinComponent, INearbyRepository {
@@ -59,15 +49,6 @@ class NearbyRepository : KoinComponent, INearbyRepository {
             }
             .toList()
     }
-
-    override suspend fun getNearby(global: GlobalResponse, location: Position) =
-        getNearby(global, getStopIdsNearby(global, location))
-
-    override suspend fun getNearby(
-        global: GlobalResponse,
-        stopIds: List<String>
-    ): ApiResult<NearbyStaticData> =
-        ApiResult.runCatching { NearbyStaticData(global, NearbyResponse(stopIds)) }
 }
 
 class MockNearbyRepository(
@@ -76,37 +57,9 @@ class MockNearbyRepository(
 ) : INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         stopIds
-
-    override suspend fun getNearby(
-        global: GlobalResponse,
-        location: Position
-    ): ApiResult<NearbyStaticData> {
-        return ApiResult.Ok(NearbyStaticData(global, response))
-    }
-
-    override suspend fun getNearby(
-        global: GlobalResponse,
-        stopIds: List<String>
-    ): ApiResult<NearbyStaticData> {
-        return ApiResult.Ok(NearbyStaticData(global, response))
-    }
 }
 
 class IdleNearbyRepository : INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         emptyList()
-
-    override suspend fun getNearby(
-        global: GlobalResponse,
-        location: Position
-    ): ApiResult<NearbyStaticData> {
-        return suspendCancellableCoroutine {}
-    }
-
-    override suspend fun getNearby(
-        global: GlobalResponse,
-        stopIds: List<String>
-    ): ApiResult<NearbyStaticData> {
-        return suspendCancellableCoroutine {}
-    }
 }

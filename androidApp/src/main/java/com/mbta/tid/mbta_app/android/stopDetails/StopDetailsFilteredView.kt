@@ -59,12 +59,9 @@ fun StopDetailsFilteredView(
             stopId = stopId,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = thisRouteCardData,
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                ),
+            routeCardData = routeCardData.single(),
+            routeStopData = routeStopData,
+            leaf = leaf,
             tileData = tileData,
             noPredictionsStatus = noPredictionsStatus,
             isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
@@ -121,12 +118,9 @@ private fun Loading(
                 stopId = stopId,
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
-                data =
-                    FilteredDeparturesData.PostGroupByDirection(
-                        routeCardData = placeholderData.routeData,
-                        routeStopData = placeholderData.stopData,
-                        leaf = placeholderData.leaf
-                    ),
+                routeCardData = placeholderData.routeData,
+                routeStopData = placeholderData.stopData,
+                leaf = placeholderData.leaf,
                 tileData =
                     placeholderData.leaf
                         .format(

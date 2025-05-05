@@ -40,7 +40,6 @@ class NearbyViewModel: ObservableObject {
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
-    @Published var nearbyStaticData: NearbyStaticData?
     @Published var routeCardData: [RouteCardData]?
 
     @Published var selectingLocation = false
@@ -82,7 +81,6 @@ class NearbyViewModel: ObservableObject {
     func clearNearbyData() {
         nearbyState = .init()
         routeCardData = nil
-        nearbyStaticData = nil
     }
 
     func loadSettings() async {
@@ -197,7 +195,6 @@ class NearbyViewModel: ObservableObject {
                 analytics.refetchedNearbyTransit()
             }
             nearbyState.loading = true
-            nearbyStaticData = nil
             routeCardData = nil
 
             let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
