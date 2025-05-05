@@ -13,10 +13,11 @@ import kotlinx.datetime.Clock
 
 class TileDataTest {
     @Test
-    fun `id matches upcoming trip id`() {
+    fun `id matches upcoming trip id + stopSequence`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val upcomingTrip = UpcomingTrip(objects.trip())
+        val prediction = objects.prediction { stopSequence = 1 }
+        val upcomingTrip = UpcomingTrip(objects.trip(), prediction)
         val format =
             UpcomingFormat.Some(
                 UpcomingFormat.Some.FormattedTrip(
@@ -28,7 +29,7 @@ class TileDataTest {
             )
         val tileData = TileData(route, "Headsign", format, upcomingTrip)
 
-        assertEquals(upcomingTrip.trip.id, tileData.id)
+        assertEquals("${upcomingTrip.trip.id}-1", tileData.id)
     }
 
     @Test
