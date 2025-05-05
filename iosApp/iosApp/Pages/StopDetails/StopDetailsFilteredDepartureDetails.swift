@@ -143,7 +143,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
             }
-            .highPriorityGesture(DragGesture())
         }
         .onAppear { handleViewportForStatus(noPredictionsStatus) }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
