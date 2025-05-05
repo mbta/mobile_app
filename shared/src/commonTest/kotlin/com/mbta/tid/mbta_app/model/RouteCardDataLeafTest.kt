@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
+import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.fromBostonTime
 import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlin.test.Ignore
@@ -481,122 +482,25 @@ class RouteCardDataLeafTest {
     }
 
     private object RedLine {
-        private val objects = ObjectCollectionBuilder()
+        private val objects = TestData.clone()
 
         fun objects() = objects.clone()
 
-        val route =
-            objects.route {
-                directionNames = listOf("South", "North")
-                directionDestinations = listOf("Ashmont/Braintree", "Alewife")
-                type = RouteType.HEAVY_RAIL
-            }
+        val route = objects.getRoute("Red")
 
-        data class Stop4(
-            val parent: Stop,
-            val south1: Stop,
-            val south2: Stop,
-            val north1: Stop,
-            val north2: Stop
-        )
-
-        private fun stop4(): Stop4 {
-            lateinit var south1: Stop
-            lateinit var south2: Stop
-            lateinit var north1: Stop
-            lateinit var north2: Stop
-            val parent =
-                objects.stop {
-                    south1 = childStop { id = "south1" }
-                    south2 = childStop { id = "south2" }
-                    north1 = childStop { id = "north1" }
-                    north2 = childStop { id = "north2" }
-                }
-            return Stop4(parent, south1, south2, north1, north2)
+        object jfkUmass {
+            val south1 = objects.getStop("70085")
+            val south2 = objects.getStop("70095")
+            val north1 = objects.getStop("70086")
+            val north2 = objects.getStop("70096")
         }
 
-        val jfkUmass = stop4()
-        // braintree stops
-        val northQuincy = objects.stop()
-        val wollaston = objects.stop()
-        val quincyCenter = objects.stop()
-        val quincyAdams = objects.stop()
-        val braintree = objects.stop()
+        val stopsBraintreeBranchSouth = listOf("70095", "70097", "70099", "70101", "70103", "70103")
 
-        val stopsBraintreeBranchSouth =
-            listOf(jfkUmass.south2, northQuincy, wollaston, quincyCenter, quincyAdams, braintree)
-
-        val stopsBraintreeBranchNorth =
-            listOf(
-                braintree,
-                quincyAdams,
-                quincyCenter,
-                wollaston,
-                northQuincy,
-                jfkUmass.north2,
-            )
-
-        // ashmont Stops
-        val savinHill = objects.stop()
-        val fieldsCorner = objects.stop()
-        val shawmut = objects.stop()
-        val ashmont = objects.stop()
-
-        val stopsAshmontBranchSouth =
-            listOf(
-                jfkUmass.south1,
-                savinHill,
-                fieldsCorner,
-                shawmut,
-                ashmont,
-            )
-
-        val stopsAshmontBranchNorth =
-            listOf(ashmont, shawmut, fieldsCorner, savinHill, jfkUmass.north1)
-
-        val ashmontSouth =
-            objects.routePattern(route) {
-                directionId = 0
-                routeId = route.id
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip {
-                    headsign = "Ashmont"
-                    stopIds = stopsAshmontBranchSouth.map { it.id }
-                }
-            }
-
-        val braintreeSouth =
-            objects.routePattern(route) {
-                directionId = 0
-                routeId = route.id
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip {
-                    headsign = "Braintree"
-                    stopIds = stopsBraintreeBranchSouth.map { it.id }
-                }
-            }
-
-        val ashmontNorth =
-            objects.routePattern(route) {
-                directionId = 1
-                routeId = route.id
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip {
-                    headsign = "Alewife"
-                    stopIds = stopsAshmontBranchNorth.map { it.id }
-                }
-            }
-
-        val braintreeNorth =
-            objects.routePattern(route) {
-                directionId = 1
-                routeId = route.id
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip {
-                    headsign = "Alewife"
-                    stopIds = stopsBraintreeBranchNorth.map { it.id }
-                }
-            }
+        val ashmontSouth = objects.getRoutePattern("Red-1-0")
+        val braintreeSouth = objects.getRoutePattern("Red-3-0")
+        val ashmontNorth = objects.getRoutePattern("Red-1-1")
+        val braintreeNorth = objects.getRoutePattern("Red-3-1")
 
         val global = GlobalResponse(objects)
     }
@@ -737,7 +641,8 @@ class RouteCardDataLeafTest {
             assertEquals(
                 wipeBranchUUID(
                     LeafFormat.branched {
-                        secondaryAlert = UpcomingFormat.SecondaryAlert(StopAlertState.Issue, null)
+                        secondaryAlert =
+                            UpcomingFormat.SecondaryAlert(StopAlertState.Issue, MapStopRoute.RED)
                         branchRow(
                             "Ashmont",
                             UpcomingFormat.Some(
@@ -985,7 +890,7 @@ class RouteCardDataLeafTest {
                                     directionId = 0,
                                     route = RedLine.route.id,
                                     routeType = RouteType.HEAVY_RAIL,
-                                    stop = it.id,
+                                    stop = it,
                                     trip = null
                                 )
                             }
@@ -1062,112 +967,22 @@ class RouteCardDataLeafTest {
         }
 
     private object GreenLine {
-        private val objects = ObjectCollectionBuilder()
+        private val objects = TestData.clone()
 
         fun objects() = objects.clone()
 
-        val line = objects.line { id = "line-Green" }
+        val b = objects.getRoute("Green-B")
+        val c = objects.getRoute("Green-C")
+        val d = objects.getRoute("Green-D")
+        val e = objects.getRoute("Green-E")
 
-        val b =
-            objects.route {
-                type = RouteType.LIGHT_RAIL
-                lineId = line.id
-            }
-        val c =
-            objects.route {
-                type = RouteType.LIGHT_RAIL
-                lineId = line.id
-            }
-        val d =
-            objects.route {
-                type = RouteType.LIGHT_RAIL
-                lineId = line.id
-            }
-        val e =
-            objects.route {
-                type = RouteType.LIGHT_RAIL
-                lineId = line.id
-            }
+        val boylston = objects.getStop("place-boyls")
+        val kenmore = objects.getStop("place-kencl")
 
-        val parkSt = objects.stop()
-        val boylston = objects.stop()
-        val arlington = objects.stop()
-        val copley = objects.stop()
-        val hynes = objects.stop()
-        val kenmore = objects.stop()
-
-        val fenway = objects.stop() // D
-        val prudential = objects.stop() // E
-        val stMarys = objects.stop() // C
-        val blanford = objects.stop() // B
-
-        val bWestbound =
-            objects.routePattern(b) {
-                typicality = RoutePattern.Typicality.Typical
-                routeId = b.id
-                sortOrder = 1
-                representativeTrip {
-                    headsign = "Boston College"
-                    stopIds =
-                        listOf(
-                            parkSt.id,
-                            boylston.id,
-                            arlington.id,
-                            copley.id,
-                            hynes.id,
-                            kenmore.id,
-                            blanford.id
-                        )
-                }
-            }
-        val cWestbound =
-            objects.routePattern(c) {
-                typicality = RoutePattern.Typicality.Typical
-                routeId = c.id
-                sortOrder = 2
-                representativeTrip {
-                    headsign = "Cleveland Circle"
-                    stopIds =
-                        listOf(
-                            parkSt.id,
-                            boylston.id,
-                            arlington.id,
-                            copley.id,
-                            hynes.id,
-                            kenmore.id,
-                            stMarys.id
-                        )
-                }
-            }
-        val dWestbound =
-            objects.routePattern(d) {
-                typicality = RoutePattern.Typicality.Typical
-                routeId = d.id
-                sortOrder = 3
-                representativeTrip {
-                    headsign = "Riverside"
-                    stopIds =
-                        listOf(
-                            parkSt.id,
-                            boylston.id,
-                            arlington.id,
-                            copley.id,
-                            hynes.id,
-                            kenmore.id,
-                            fenway.id
-                        )
-                }
-            }
-        val eWestbound =
-            objects.routePattern(e) {
-                typicality = RoutePattern.Typicality.Typical
-                routeId = e.id
-                sortOrder = 4
-                representativeTrip {
-                    headsign = "Heath Street"
-                    stopIds = listOf(parkSt.id, boylston.id, arlington.id, copley.id, prudential.id)
-                }
-            }
+        val bWestbound = objects.getRoutePattern("Green-B-812-0")
+        val cWestbound = objects.getRoutePattern("Green-C-832-0")
+        val dWestbound = objects.getRoutePattern("Green-D-855-0")
+        val eWestbound = objects.getRoutePattern("Green-E-886-0")
 
         val global = GlobalResponse(objects)
     }
@@ -1277,42 +1092,22 @@ class RouteCardDataLeafTest {
     }
 
     private object ProvidenceStoughtonLine {
-        private val objects = ObjectCollectionBuilder()
+        private val objects = TestData.clone()
 
         fun objects() = objects.clone()
 
-        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val route = objects.getRoute("CR-Providence")
 
-        val toWickford =
-            objects.routePattern(route) {
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Wickford Junction" }
-            }
-        val toStoughton =
-            objects.routePattern(route) {
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Stoughton" }
-            }
+        val toWickford = objects.getRoutePattern("CR-Providence-9cf54fb3-0")
+        val toStoughton = objects.getRoutePattern("CR-Providence-9515a09b-0")
         val toProvidence =
             objects.routePattern(route) {
                 directionId = 0
                 typicality = RoutePattern.Typicality.Deviation
                 representativeTrip { headsign = "Providence" }
             }
-        val fromWickford =
-            objects.routePattern(route) {
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "South Station" }
-            }
-        val fromStoughton =
-            objects.routePattern(route) {
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "South Station" }
-            }
+        val fromWickford = objects.getRoutePattern("CR-Providence-e9395acc-1")
+        val fromStoughton = objects.getRoutePattern("CR-Providence-6cae46be-1")
         val fromProvidence =
             objects.routePattern(route) {
                 directionId = 1
@@ -1483,23 +1278,12 @@ class RouteCardDataLeafTest {
     }
 
     private object `87` {
-        private val objects = ObjectCollectionBuilder()
+        private val objects = TestData.clone()
 
         fun objects() = objects.clone()
 
-        val route =
-            objects.route {
-                type = RouteType.BUS
-                directionNames = listOf("Outbound", "Inbound")
-                directionDestinations =
-                    listOf("Clarendon Hill or Arlington Center", "Lechmere Station")
-            }
-        val outboundTypical =
-            objects.routePattern(route) {
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Arlington Center" }
-            }
+        val route = objects.getRoute("87")
+        val outboundTypical = objects.getRoutePattern("87-2-0")
         val outboundDeviation =
             objects.routePattern(route) {
                 directionId = 0
@@ -1574,7 +1358,7 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats bus as branching if next two trips differ`() = parametricTest {
+    fun `formats bus as branching if next trips differ and only shows 2 trips`() = parametricTest {
         val objects = `87`.objects()
         val now = Clock.System.now()
 
@@ -1587,6 +1371,12 @@ class RouteCardDataLeafTest {
             objects.prediction {
                 departureTime = now + 32.minutes
                 trip = objects.trip(`87`.outboundDeviation)
+            }
+
+        val prediction3 =
+            objects.prediction {
+                departureTime = now + 60.minutes
+                trip = objects.trip(`87`.outboundTypical)
             }
 
         assertEquals(
@@ -1623,14 +1413,20 @@ class RouteCardDataLeafTest {
                         emptySet(),
                         listOf(
                             objects.upcomingTrip(prediction1),
-                            objects.upcomingTrip(prediction2)
+                            objects.upcomingTrip(prediction2),
+                            objects.upcomingTrip(prediction3)
                         ),
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
                         emptyList()
                     )
-                    .format(now, `87`.route, `87`.global, anyEnumValue())
+                    .format(
+                        now,
+                        `87`.route,
+                        `87`.global,
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                    )
             )
         )
     }

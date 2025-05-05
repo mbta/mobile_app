@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,22 +22,11 @@ class DirectionTest {
 
     @Test
     fun `special cases get correct values`() {
-        val objects = ObjectCollectionBuilder()
-        val arlington = objects.stop { id = "place-armnl" }
-        val greenB =
-            objects.route {
-                id = "Green-B"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Boston College", "Government Center")
-            }
+        val arlington = TestData.getStop("place-armnl")
+        val greenB = TestData.getRoute("Green-B")
 
-        val savinHill = objects.stop { id = "place-shmnl" }
-        val red =
-            objects.route {
-                id = "Red"
-                directionNames = listOf("South", "North")
-                directionDestinations = listOf("Ashmont/Braintree", "Alewife")
-            }
+        val savinHill = TestData.getStop("place-shmnl")
+        val red = TestData.getRoute("Red")
 
         val glWest =
             Direction(
@@ -95,51 +85,20 @@ class DirectionTest {
 
     @Test
     fun `both direction helper provides correct values`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop { id = "place-bckhl" }
-        objects.stop {
-            id = "70199"
-            parentStationId = "place-pktrm"
-        }
-        val route =
-            objects.route {
-                id = "Green-E"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath Street", "Medford/Tufts")
-            }
+        val objects = TestData.clone()
+        val stop = objects.getStop("place-bckhl")
+        val route = objects.getRoute("Green-E")
         val routePattern1 =
             objects.routePattern(route) {
                 id = "rp1"
-                representativeTripId = "trp1"
+                representativeTrip {
+                    stopIds = listOf("place-mdftf", "place-armnl", "place-bckhl", "place-hsmnl")
+                }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Atypical
             }
-        val routePattern2 =
-            objects.routePattern(route) {
-                id = "rp2"
-                representativeTripId = "trp2"
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-            }
-        val routePattern3 =
-            objects.routePattern(route) {
-                id = "rp3"
-                representativeTripId = "trp3"
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-            }
-        objects.trip(routePattern1) {
-            id = "trp1"
-            stopIds = listOf("place-mdftf", "place-armnl", "place-bckhl", "place-hsmnl")
-        }
-        objects.trip(routePattern2) {
-            id = "trp2"
-            stopIds = listOf("place-mdftf", "place-prmnl", "place-bckhl", "place-hsmnl")
-        }
-        objects.trip(routePattern3) {
-            id = "trp3"
-            stopIds = listOf("place-hsmnl", "place-bckhl", "70199", "place-mdftf")
-        }
+        val routePattern2 = objects.getRoutePattern("Green-E-886-0")
+        val routePattern3 = objects.getRoutePattern("Green-E-886-1")
 
         val patterns = listOf(routePattern1, routePattern2, routePattern3)
         val globalResponse =
@@ -150,59 +109,26 @@ class DirectionTest {
 
         val directions = Direction.getDirections(globalResponse, stop, route, patterns)
         assertEquals("Heath Street", directions[0].destination)
-        assertEquals("Gov Ctr & North", directions[1].destination)
+        assertEquals("Park St & North", directions[1].destination)
     }
 
     @Test
     fun `atypical headsigns override route destination`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop { id = "place-bckhl" }
-        objects.stop {
-            id = "70199"
-            parentStationId = "place-pktrm"
-        }
-        val route =
-            objects.route {
-                id = "Green-E"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath Street", "Medford/Tufts")
-            }
+        val objects = TestData.clone()
+        val stop = objects.getStop("place-bckhl")
+        val route = objects.getRoute("Green-E")
         val routePattern1 =
             objects.routePattern(route) {
                 id = "rp1"
-                representativeTripId = "trp1"
+                representativeTrip {
+                    headsign = "Other Headsign"
+                    stopIds = listOf("place-mdftf", "place-armnl", "place-bckhl", "place-hsmnl")
+                }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Atypical
             }
-        val routePattern2 =
-            objects.routePattern(route) {
-                id = "rp2"
-                representativeTripId = "trp2"
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-            }
-        val routePattern3 =
-            objects.routePattern(route) {
-                id = "rp3"
-                representativeTripId = "trp3"
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-            }
-        objects.trip(routePattern1) {
-            id = "trp1"
-            headsign = "Other Headsign"
-            stopIds = listOf("place-mdftf", "place-armnl", "place-bckhl", "place-hsmnl")
-        }
-        objects.trip(routePattern2) {
-            id = "trp2"
-            headsign = "Heath Street"
-            stopIds = listOf("place-mdftf", "place-prmnl", "place-bckhl", "place-hsmnl")
-        }
-        objects.trip(routePattern3) {
-            id = "trp3"
-            headsign = "Medford/Tufts"
-            stopIds = listOf("place-hsmnl", "place-bckhl", "70199", "place-mdftf")
-        }
+        val routePattern2 = objects.getRoutePattern("Green-E-886-0")
+        val routePattern3 = objects.getRoutePattern("Green-E-886-1")
 
         val patterns = listOf(routePattern1, routePattern2, routePattern3)
         val globalResponse =
@@ -219,155 +145,32 @@ class DirectionTest {
             Direction.getDirectionForPattern(globalResponse, stop, route, routePattern3)
         assertEquals("Other Headsign", directionRp1.destination)
         assertEquals("Heath Street", directionRp2.destination)
-        assertEquals("Gov Ctr & North", directionRp3.destination)
+        assertEquals("Park St & North", directionRp3.destination)
     }
 
     @Test
     fun `getDirectionsForLine at different stops along the GL`() {
-        val objects = ObjectCollectionBuilder()
+        val objects = TestData.clone()
 
         // B West
-        val bc = objects.stop { id = "place-lake" }
-        val southSt = objects.stop { id = "place-sougr" }
-
-        // C West
-        val cc = objects.stop { id = "place-clmnl" }
-
-        // E West
-        val heath = objects.stop { id = "place-hsmnl" }
+        val southSt = objects.getStop("place-sougr")
 
         // Shared Trunk
-        val kenmore = objects.stop { id = "place-kencl" }
-        val hynes = objects.stop { id = "place-hymnl" }
-        val arlington = objects.stop { id = "place-armnl" }
-        val boylston = objects.stop { id = "place-boyls" }
-        val gov = objects.stop { id = "place-gover" }
+        val kenmore = objects.getStop("place-kencl")
+        val hynes = objects.getStop("place-hymnl")
+        val gov = objects.getStop("place-gover")
 
         // E East / North
-        val haymarket = objects.stop { id = "place-haecl" }
-        val lechmere = objects.stop { id = "place-lech" }
-        val magoun = objects.stop { id = "place-mgngl" }
+        val magoun = objects.getStop("place-mgngl")
 
-        val line = objects.line { id = "line-Green" }
-        val routeB =
-            objects.route {
-                id = "Green-B"
-                sortOrder = 1
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Boston College", "Government Center")
-            }
-        val routePatternB1 =
-            objects.routePattern(routeB) {
-                representativeTrip {
-                    headsign = "B"
-                    stopIds =
-                        listOf(
-                            gov.id,
-                            boylston.id,
-                            arlington.id,
-                            hynes.id,
-                            kenmore.id,
-                            southSt.id,
-                            bc.id
-                        )
-                }
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-            }
-        val routePatternB2 =
-            objects.routePattern(routeB) {
-                representativeTrip {
-                    headsign = "B"
-                    stopIds =
-                        listOf(
-                            bc.id,
-                            southSt.id,
-                            kenmore.id,
-                            hynes.id,
-                            arlington.id,
-                            boylston.id,
-                            gov.id
-                        )
-                }
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-            }
+        val routePatternB1 = objects.getRoutePattern("Green-B-812-0")
+        val routePatternB2 = objects.getRoutePattern("Green-B-812-1")
 
-        val routeC =
-            objects.route {
-                id = "Green-C"
-                sortOrder = 2
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Cleveland Circle", "Government Center")
-            }
-        val routePatternC1 =
-            objects.routePattern(routeC) {
-                representativeTrip {
-                    headsign = "C"
-                    stopIds = listOf(gov.id, boylston.id, arlington.id, hynes.id, kenmore.id, cc.id)
-                }
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-            }
-        val routePatternC2 =
-            objects.routePattern(routeC) {
-                representativeTrip {
-                    headsign = "C"
-                    stopIds = listOf(cc.id, kenmore.id, hynes.id, arlington.id, boylston.id, gov.id)
-                }
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-            }
+        val routePatternC1 = objects.getRoutePattern("Green-C-832-0")
+        val routePatternC2 = objects.getRoutePattern("Green-C-832-1")
 
-        val routeE =
-            objects.route {
-                id = "Green-E"
-                sortOrder = 3
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath St", "Medford/Tufts")
-            }
-        val routePatternE1 =
-            objects.routePattern(routeE) {
-                id = "test-hs"
-                representativeTrip {
-                    headsign = "Heath Street"
-                    stopIds =
-                        listOf(
-                            magoun.id,
-                            lechmere.id,
-                            haymarket.id,
-                            gov.id,
-                            boylston.id,
-                            arlington.id,
-                            hynes.id,
-                            heath.id
-                        )
-                }
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-            }
-        val routePatternE2 =
-            objects.routePattern(routeE) {
-                representativeTrip {
-                    headsign = "Medford/Tufts"
-                    stopIds =
-                        listOf(
-                            heath.id,
-                            hynes.id,
-                            arlington.id,
-                            boylston.id,
-                            gov.id,
-                            haymarket.id,
-                            lechmere.id,
-                            magoun.id
-                        )
-                }
-                directionId = 1
-                typicality = RoutePattern.Typicality.Typical
-            }
+        val routePatternE1 = objects.getRoutePattern("Green-E-886-0")
+        val routePatternE2 = objects.getRoutePattern("Green-E-886-1")
 
         val global = GlobalResponse(objects)
 
@@ -393,14 +196,7 @@ class DirectionTest {
             Direction.getDirectionsForLine(
                 global,
                 hynes,
-                listOf(
-                    routePatternB1,
-                    routePatternB2,
-                    routePatternC1,
-                    routePatternC2,
-                    routePatternE1,
-                    routePatternE2
-                )
+                listOf(routePatternB1, routePatternB2, routePatternC1, routePatternC2)
             )
         )
 

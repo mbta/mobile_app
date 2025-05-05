@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.utils
 
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -26,225 +25,34 @@ open class RouteCardPreviewData {
 
     private val today: LocalDate =
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-    private val objects = ObjectCollectionBuilder()
-    private val greenLine =
-        objects.line {
-            id = "line-Green"
-            color = "00843D"
-            longName = "Green Line"
-            textColor = "FFFFFF"
-        }
-    private val slWaterfront =
-        objects.line {
-            color = "7C878E"
-            longName = "Silver Line SL1/SL2/SL3"
-            textColor = "FFFFFF"
-        }
-    private val orangeLine =
-        objects.route {
-            id = "Orange"
-            color = "ED8B00"
-            directionDestinations = listOf("Forest Hills", "Oak Grove")
-            directionNames = listOf("South", "North")
-            longName = "Orange Line"
-            textColor = "FFFFFF"
-            type = RouteType.HEAVY_RAIL
-        }
-    private val redLine =
-        objects.route {
-            id = "Red"
-            color = "DA291C"
-            directionDestinations = listOf("Ashmont/Braintree", "Alewife")
-            directionNames = listOf("South", "North")
-            longName = "Red Line"
-            textColor = "FFFFFF"
-            type = RouteType.HEAVY_RAIL
-        }
-    private val greenLineB =
-        objects.route {
-            id = "Green-B"
-            color = greenLine.color
-            directionDestinations = listOf("Boston College", "Government Center")
-            directionNames = listOf("West", "East")
-            lineId = greenLine.id
-            longName = "Green Line B"
-            shortName = "B"
-            textColor = greenLine.textColor
-            type = RouteType.LIGHT_RAIL
-        }
-    private val greenLineC =
-        objects.route {
-            id = "Green-C"
-            color = greenLine.color
-            directionDestinations = listOf("Cleveland Circle", "Government Center")
-            directionNames = listOf("West", "East")
-            lineId = greenLine.id
-            longName = "Green Line C"
-            shortName = "C"
-            textColor = greenLine.textColor
-            type = RouteType.LIGHT_RAIL
-        }
-    private val greenLineD =
-        objects.route {
-            id = "Green-D"
-            color = greenLine.color
-            directionDestinations = listOf("Riverside", "Union Square")
-            directionNames = listOf("West", "East")
-            lineId = greenLine.id
-            longName = "Green Line D"
-            shortName = "D"
-            textColor = greenLine.textColor
-            type = RouteType.LIGHT_RAIL
-        }
-    private val sl1 =
-        objects.route {
-            color = slWaterfront.color
-            directionNames = listOf("Outbound", "Inbound")
-            lineId = slWaterfront.id
-            shortName = "SL1"
-            textColor = slWaterfront.textColor
-            type = RouteType.BUS
-        }
-    private val sl2 =
-        objects.route {
-            color = slWaterfront.color
-            directionNames = listOf("Outbound", "Inbound")
-            lineId = slWaterfront.id
-            shortName = "SL2"
-            textColor = slWaterfront.textColor
-            type = RouteType.BUS
-        }
-    private val sl3 =
-        objects.route {
-            color = slWaterfront.color
-            directionNames = listOf("Outbound", "Inbound")
-            lineId = slWaterfront.id
-            shortName = "SL3"
-            textColor = slWaterfront.textColor
-            type = RouteType.BUS
-        }
-    private val providenceLine =
-        objects.route {
-            color = "80276C"
-            directionDestinations = listOf("Stoughton or Wickford Junction", "South Station")
-            directionNames = listOf("Outbound", "Inbound")
-            longName = "Providence/Stoughton Line"
-            textColor = "FFFFFF"
-            type = RouteType.COMMUTER_RAIL
-        }
-    private val bus87 =
-        objects.route {
-            color = "FFC72C"
-            directionDestinations = listOf("Clarendon Hill or Arlington Center", "Lechmere Station")
-            directionNames = listOf("Outbound", "Inbound")
-            shortName = "87"
-            textColor = "000000"
-            type = RouteType.BUS
-        }
-    private val bus15 =
-        objects.route {
-            color = "FFC72C"
-            directionDestinations =
-                listOf("Fields Corner Station or St Peter's Square", "Ruggles Station")
-            directionNames = listOf("Outbound", "Inbound")
-            shortName = "15"
-            textColor = "000000"
-            type = RouteType.BUS
-        }
-    private val orangeLineSouthbound =
-        objects.routePattern(orangeLine) {
-            directionId = 0
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Forest Hills" }
-        }
-    private val orangeLineNorthbound =
-        objects.routePattern(orangeLine) {
-            directionId = 1
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Oak Grove" }
-        }
-    private val redLineAshmontSouthbound =
-        objects.routePattern(redLine) {
-            directionId = 0
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Ashmont" }
-        }
-    private val redLineBraintreeSouthbound =
-        objects.routePattern(redLine) {
-            directionId = 0
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Braintree" }
-        }
-    private val redLineAshmontNorthbound =
-        objects.routePattern(redLine) {
-            directionId = 1
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Alewife" }
-        }
-    private val redLineBraintreeNorthbound =
-        objects.routePattern(redLine) {
-            directionId = 1
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Alewife" }
-        }
-    private val greenLineBWestbound =
-        objects.routePattern(greenLineB) {
-            directionId = 0
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip {
-                headsign = "Boston College"
-                // only the stops required to correctly apply the direction special casing
-                stopIds = listOf("place-boyls", "place-armnl", "place-kencl", "place-lake")
-            }
-        }
-    private val greenLineBEastbound =
-        objects.routePattern(greenLineB) {
-            directionId = 1
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Government Center" }
-        }
-    private val greenLineCWestbound =
-        objects.routePattern(greenLineC) {
-            directionId = 0
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip {
-                headsign = "Cleveland Circle"
-                // only the stops required to correctly apply the direction special casing
-                stopIds = listOf("place-boyls", "place-armnl", "place-kencl", "place-clmnl")
-            }
-        }
-    private val greenLineCEastbound =
-        objects.routePattern(greenLineC) {
-            directionId = 1
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Government Center" }
-        }
-    private val greenLineDWestbound =
-        objects.routePattern(greenLineD) {
-            directionId = 0
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip {
-                headsign = "Riverside"
-                // only the stops required to correctly apply the direction special casing
-                stopIds = listOf("place-boyls", "place-armnl", "place-kencl", "place-river")
-            }
-        }
-    private val greenLineDEastbound =
-        objects.routePattern(greenLineD) {
-            directionId = 1
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { headsign = "Union Square" }
-        }
-    private val arlingtonOutbound =
-        objects.routePattern(bus87) {
-            directionId = 0
-            representativeTrip { headsign = "Arlington Center" }
-        }
-    private val arlingtonInbound =
-        objects.routePattern(bus87) {
-            directionId = 1
-            representativeTrip { headsign = "Lechmere" }
-        }
+    private val objects = TestData.clone()
+    private val greenLine = objects.getLine("line-Green")
+    private val slWaterfront = objects.getLine("line-SLWaterfront")
+    private val orangeLine = objects.getRoute("Orange")
+    private val redLine = objects.getRoute("Red")
+    private val greenLineB = objects.getRoute("Green-B")
+    private val greenLineC = objects.getRoute("Green-C")
+    private val greenLineD = objects.getRoute("Green-D")
+    private val sl1 = objects.getRoute("741")
+    private val sl2 = objects.getRoute("742")
+    private val sl3 = objects.getRoute("743")
+    private val providenceLine = objects.getRoute("CR-Providence")
+    private val bus87 = objects.getRoute("87")
+    private val bus15 = objects.getRoute("15")
+    private val orangeLineSouthbound = objects.getRoutePattern("Orange-3-0")
+    private val orangeLineNorthbound = objects.getRoutePattern("Orange-3-1")
+    private val redLineAshmontSouthbound = objects.getRoutePattern("Red-1-0")
+    private val redLineBraintreeSouthbound = objects.getRoutePattern("Red-3-0")
+    private val redLineAshmontNorthbound = objects.getRoutePattern("Red-1-1")
+    private val redLineBraintreeNorthbound = objects.getRoutePattern("Red-3-1")
+    private val greenLineBWestbound = objects.getRoutePattern("Green-B-812-0")
+    private val greenLineBEastbound = objects.getRoutePattern("Green-B-812-1")
+    private val greenLineCWestbound = objects.getRoutePattern("Green-C-832-0")
+    private val greenLineCEastbound = objects.getRoutePattern("Green-C-832-1")
+    private val greenLineDWestbound = objects.getRoutePattern("Green-D-855-0")
+    private val greenLineDEastbound = objects.getRoutePattern("Green-D-855-1")
+    private val arlingtonOutbound = objects.getRoutePattern("87-2-0")
+    private val arlingtonInbound = objects.getRoutePattern("87-2-1")
     private val clarendonOutbound =
         objects.routePattern(bus87) {
             directionId = 0
@@ -255,39 +63,12 @@ open class RouteCardPreviewData {
             directionId = 1
             representativeTrip { headsign = "Lechmere" }
         }
-    private val ruggles =
-        objects.stop {
-            name = "Ruggles"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
-    private val jfkUmass =
-        objects.stop {
-            name = "JFK/UMass"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
-    private val boylston =
-        objects.stop {
-            id = "place-boyls"
-            name = "Boylston"
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
-        }
-
-    private val kenmore =
-        objects.stop {
-            id = "place-kencl"
-            name = "Kenmore"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
-    private val somervilleAtCarlton =
-        objects.stop {
-            name = "Somerville Ave @ Carlton St"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
-    private val bowAtWarren =
-        objects.stop {
-            name = "Bow St @ Warren Ave"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
+    private val ruggles = objects.getStop("place-rugg")
+    private val jfkUmass = objects.getStop("place-jfk")
+    private val boylston = objects.getStop("place-boyls")
+    private val kenmore = objects.getStop("place-kencl")
+    private val somervilleAtCarlton = objects.getStop("2595")
+    private val bowAtWarren = objects.getStop("26131")
     private val shuttleAlert = objects.alert { effect = Alert.Effect.Shuttle }
     private val suspensionAlert = objects.alert { effect = Alert.Effect.Suspension }
     private val context = RouteCardData.Context.NearbyTransit

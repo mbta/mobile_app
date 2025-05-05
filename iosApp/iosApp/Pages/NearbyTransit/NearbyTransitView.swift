@@ -172,6 +172,7 @@ struct NearbyTransitView: View {
                     }
                 }
             }
+            .highPriorityGesture(DragGesture())
         }
     }
 
