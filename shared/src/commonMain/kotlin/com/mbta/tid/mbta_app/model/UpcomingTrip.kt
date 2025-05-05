@@ -35,6 +35,8 @@ constructor(
         predictionStop: Stop? = null
     ) : this(trip, null, prediction, predictionStop, null)
 
+    val id = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
+
     val time =
         if (
             prediction != null &&
