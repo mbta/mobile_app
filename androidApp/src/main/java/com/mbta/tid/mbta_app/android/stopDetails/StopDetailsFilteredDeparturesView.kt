@@ -79,7 +79,7 @@ fun StopDetailsFilteredDeparturesView(
     data: FilteredDeparturesData,
     tileData: List<TileData>,
     noPredictionsStatus: NoTripsFormat?,
-    hidePredictions: Boolean,
+    isAllServiceDisrupted: Boolean,
     allAlerts: AlertsStreamDataResponse?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
@@ -178,7 +178,7 @@ fun StopDetailsFilteredDeparturesView(
         when (data) {
             is FilteredDeparturesData.PreGroupByDirection ->
                 alertsHere.any { it.significance == AlertSignificance.Major }
-            is FilteredDeparturesData.PostGroupByDirection -> hidePredictions
+            is FilteredDeparturesData.PostGroupByDirection -> isAllServiceDisrupted
         }
 
     val routeHex: String = lineOrRoute.backgroundColor

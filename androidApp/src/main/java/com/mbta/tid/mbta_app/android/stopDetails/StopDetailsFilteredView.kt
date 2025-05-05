@@ -68,7 +68,7 @@ fun StopDetailsFilteredView(
             noPredictionsStatus = noPredictionsStatus,
             // This is only used post direction grouping, predictions are still hidden when there is
             // an active major alert for pre group by direction.
-            hidePredictions = false,
+            isAllServiceDisrupted = false,
             allAlerts = allAlerts,
             elevatorAlerts = departures.elevatorAlerts,
             global = globalResponse,
@@ -145,7 +145,7 @@ fun StopDetailsFilteredView(
                 ),
             tileData = tileData,
             noPredictionsStatus = noPredictionsStatus,
-            hidePredictions = leafFormat.hidePredictions,
+            isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
             allAlerts = allAlerts,
             elevatorAlerts = routeStopData.elevatorAlerts,
             global = globalResponse,
@@ -215,7 +215,7 @@ private fun Loading(
                         )
                         .tileData(),
                 noPredictionsStatus = null,
-                hidePredictions = false,
+                isAllServiceDisrupted = false,
                 allAlerts = null,
                 elevatorAlerts = placeholderData.stopData.elevatorAlerts,
                 global = globalResponse,

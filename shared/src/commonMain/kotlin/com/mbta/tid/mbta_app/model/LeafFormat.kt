@@ -10,7 +10,7 @@ sealed class LeafFormat {
 
     abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
 
-    val hidePredictions: Boolean
+    val isAllServiceDisrupted: Boolean
         get() {
             return when (this) {
                 is Single -> this.format is UpcomingFormat.Disruption
