@@ -99,7 +99,7 @@ fun StopDetailsUnfilteredRoutesView(
     errorBannerViewModel: ErrorBannerViewModel,
     showStationAccessibility: Boolean,
     now: Instant,
-    globalData: GlobalResponse,
+    globalData: GlobalResponse?,
     pinnedRoutes: Set<String>,
     pinRoute: (String) -> Unit,
     onClose: () -> Unit,

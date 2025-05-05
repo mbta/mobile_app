@@ -123,7 +123,7 @@ fun TripDetailsView(
         )
     } else {
         val placeholderTripInfo = LoadingPlaceholders.tripDetailsInfo()
-        val placeholderTripStops = LoadingPlaceholders.tripDetailsStops()
+        val placeholderTripStops = placeholderTripInfo.stops
         val placeholderTripId = placeholderTripInfo.vehicle.tripId ?: ""
 
         val placeholderHeaderSpec =

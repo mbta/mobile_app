@@ -130,13 +130,13 @@ fun NearbyTransitView(
 
             if (routeCardData == null) {
                 CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                    Column(
-                        Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    LazyColumn(
+                        contentPadding =
+                            PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        for (i in 1..5) {
-                            LoadingRouteCard()
-                        }
-                        Spacer(Modifier.weight(1f))
+                        items(5) { LoadingRouteCard() }
                     }
                 }
             } else if (routeCardData.isEmpty()) {
@@ -196,13 +196,13 @@ fun NearbyTransitView(
 
             if (nearbyWithRealtimeInfo == null) {
                 CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                    Column(
-                        Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    LazyColumn(
+                        contentPadding =
+                            PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        for (i in 1..5) {
-                            LoadingRouteCard()
-                        }
-                        Spacer(Modifier.weight(1f))
+                        items(5) { LoadingRouteCard() }
                     }
                 }
             } else if (nearbyWithRealtimeInfo.isEmpty()) {
