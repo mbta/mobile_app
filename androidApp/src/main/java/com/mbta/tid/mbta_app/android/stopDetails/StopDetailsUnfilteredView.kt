@@ -131,23 +131,24 @@ fun StopDetailsUnfilteredView(
     } else {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = Modifier.loadingShimmer()) {
-                val placeholderDepartures = LoadingPlaceholders.stopDetailsDepartures(null)
+                val placeholderData = LoadingPlaceholders.stopDetailsRouteCards()
                 val filterRoutes =
                     if (globalResponse != null) {
-                        getFilterPillRoutes(placeholderDepartures, globalResponse)
+                        getFilterPillRoutes(placeholderData, globalResponse)
                     } else {
                         emptyList()
                     }
 
                 StopDetailsUnfilteredRoutesView(
-                    placeholderDepartures.routes.first().stop,
-                    placeholderDepartures,
+                    placeholderData.first().stopData.first().stop,
+                    placeholderData,
                     filterRoutes,
                     errorBannerViewModel,
                     showStationAccessibility,
                     now,
-                    {},
+                    globalResponse,
                     emptySet(),
+                    {},
                     onClose = onClose,
                     onTapRoutePill = {},
                     updateStopFilter = {},
