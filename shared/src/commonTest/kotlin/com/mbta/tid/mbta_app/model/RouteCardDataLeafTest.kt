@@ -1358,7 +1358,7 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats bus as branching if next two trips differ`() = parametricTest {
+    fun `formats bus as branching if next trips differ and only shows 2 trips`() = parametricTest {
         val objects = `87`.objects()
         val now = Clock.System.now()
 
@@ -1371,6 +1371,12 @@ class RouteCardDataLeafTest {
             objects.prediction {
                 departureTime = now + 32.minutes
                 trip = objects.trip(`87`.outboundDeviation)
+            }
+
+        val prediction3 =
+            objects.prediction {
+                departureTime = now + 60.minutes
+                trip = objects.trip(`87`.outboundTypical)
             }
 
         assertEquals(
@@ -1407,14 +1413,20 @@ class RouteCardDataLeafTest {
                         emptySet(),
                         listOf(
                             objects.upcomingTrip(prediction1),
-                            objects.upcomingTrip(prediction2)
+                            objects.upcomingTrip(prediction2),
+                            objects.upcomingTrip(prediction3)
                         ),
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
                         emptyList()
                     )
-                    .format(now, `87`.route, `87`.global, anyEnumValue())
+                    .format(
+                        now,
+                        `87`.route,
+                        `87`.global,
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                    )
             )
         )
     }
