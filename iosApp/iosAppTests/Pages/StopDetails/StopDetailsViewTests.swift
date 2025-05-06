@@ -17,47 +17,6 @@ final class StopDetailsViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testFiltersInSameOrderAsDepartures() throws {
-        let objects = ObjectCollectionBuilder()
-        let routeDefaultSort0 = objects.route { route in
-            route.sortOrder = 0
-            route.type = .bus
-            route.shortName = "Should be second"
-        }
-        let routeDefaultSort1 = objects.route { route in
-            route.sortOrder = 1
-            route.type = .bus
-            route.shortName = "Should be first"
-        }
-        let stop = objects.stop { _ in }
-
-        let sut = StopDetailsView(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            departures: .init(routes: [
-                .init(route: routeDefaultSort1, stop: stop, patterns: [], elevatorAlerts: []),
-                .init(route: routeDefaultSort0, stop: stop, patterns: [], elevatorAlerts: []),
-            ]),
-            routeCardData: nil,
-            now: Date.now,
-            errorBannerVM: .init(),
-            nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(
-                globalRepository: MockGlobalRepository(response: .init(objects: objects))
-            )
-        )
-
-        ViewHosting.host(view: sut)
-        let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
-        XCTAssertEqual(2, routePills.count)
-        XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
-        XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
-    }
-
     @MainActor func testFiltersInSameOrderAsRouteCardData() throws {
         let objects = ObjectCollectionBuilder()
         let routeDefaultSort0 = objects.route { route in

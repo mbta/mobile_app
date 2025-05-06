@@ -589,10 +589,6 @@ class StopDetailsFilteredDeparturesViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsPredictionsAndAlertOnBranchingTrunk(): Unit = runBlocking {
-        if (!groupByDirection) {
-            // This isn't supported pre direction grouping
-            return@runBlocking
-        }
         val now = Clock.System.now()
 
         val objects = TestData.clone()
