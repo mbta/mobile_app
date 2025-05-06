@@ -270,7 +270,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             view.scrollTo(tileData.id)
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
-                        isSelected: tileData.id == tripFilter?.tripId
+                        isSelected: tileData.upcoming.trip.id == tripFilter?.tripId
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
                     .padding(.horizontal, 4)
