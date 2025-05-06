@@ -523,7 +523,6 @@ fun stopDetailsManagedVM(
     val stopData by viewModel.stopData.collectAsState()
 
     val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
-    val departures by viewModel.stopDepartures.collectAsState()
     val routeCardData by viewModel.routeCardData.collectAsState()
 
     var wasInBackground by rememberSaveable { mutableStateOf(false) }
@@ -618,21 +617,13 @@ fun stopDetailsManagedVM(
     LaunchedEffect(filters) {
         if (filters != null) {
             val autoTripFilter =
-                if (groupByDirection)
-                    StopDetailsUtils.autoTripFilter(
-                        routeCardData,
-                        filters.stopFilter,
-                        filters.tripFilter,
-                        now,
-                        globalResponse
-                    )
-                else
-                    StopDetailsUtils.autoTripFilter(
-                        departures,
-                        filters.stopFilter,
-                        filters.tripFilter,
-                        now
-                    )
+                StopDetailsUtils.autoTripFilter(
+                    routeCardData,
+                    filters.stopFilter,
+                    filters.tripFilter,
+                    now,
+                    globalResponse
+                )
 
             if (autoTripFilter != filters.tripFilter) {
                 updateTripFilter(filters.stopId, autoTripFilter)
@@ -640,14 +631,9 @@ fun stopDetailsManagedVM(
         }
     }
 
-    LaunchedEffect(departures, routeCardData, groupByDirection) {
-        if (
-            filters != null && (if (groupByDirection) routeCardData != null else departures != null)
-        ) {
-            val stopFilter =
-                filters.stopFilter
-                    ?: if (groupByDirection) StopDetailsUtils.autoStopFilter(routeCardData)
-                    else StopDetailsUtils.autoStopFilter(departures)
+    LaunchedEffect(routeCardData, groupByDirection) {
+        if (filters != null && routeCardData != null) {
+            val stopFilter = filters.stopFilter ?: StopDetailsUtils.autoStopFilter(routeCardData)
 
             if (stopFilter != filters.stopFilter) {
                 updateStopFilter(filters.stopId, stopFilter)
@@ -656,21 +642,13 @@ fun stopDetailsManagedVM(
             // to ensure that tripFilter doesn't overwrite the new stopFilter
             if (filters.stopFilter == stopFilter) {
                 val autoTripFilter =
-                    if (groupByDirection)
-                        StopDetailsUtils.autoTripFilter(
-                            routeCardData,
-                            filters.stopFilter,
-                            filters.tripFilter,
-                            now,
-                            globalResponse
-                        )
-                    else
-                        StopDetailsUtils.autoTripFilter(
-                            departures,
-                            filters.stopFilter,
-                            filters.tripFilter,
-                            now
-                        )
+                    StopDetailsUtils.autoTripFilter(
+                        routeCardData,
+                        filters.stopFilter,
+                        filters.tripFilter,
+                        now,
+                        globalResponse
+                    )
 
                 if (autoTripFilter != filters.tripFilter) {
                     updateTripFilter(filters.stopId, autoTripFilter)

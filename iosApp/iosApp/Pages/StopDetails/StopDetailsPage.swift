@@ -119,11 +119,8 @@ struct StopDetailsPage: View {
     }
 
     func announceDeparture(_ previousFilters: StopDetailsPageFilters) {
-        guard let context = nearbyVM.groupByDirection ? StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
+        guard let context = StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
             routeCardData: internalRouteCardData,
-            previousFilters: previousFilters
-        ) : StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
-            departures: internalDepartures,
             previousFilters: previousFilters
         ) else { return }
         let routeType = context.routeType.typeText(isOnly: true)
@@ -162,10 +159,7 @@ struct StopDetailsPage: View {
     }
 
     func setStopFilter() -> StopDetailsFilter? {
-        let nextStopFilter = stopFilter ??
-            (nearbyVM.groupByDirection ? StopDetailsUtils.shared
-                .autoStopFilter(routeCardData: internalRouteCardData) : StopDetailsUtils.shared
-                .autoStopFilter(departures: internalDepartures))
+        let nextStopFilter = stopFilter ?? StopDetailsUtils.shared.autoStopFilter(routeCardData: internalRouteCardData)
         if stopFilter != nextStopFilter {
             nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
         }
@@ -173,17 +167,12 @@ struct StopDetailsPage: View {
     }
 
     func setTripFilter(filters: StopDetailsPageFilters) {
-        let tripFilter = nearbyVM.groupByDirection ? StopDetailsUtils.shared.autoTripFilter(
+        let tripFilter = StopDetailsUtils.shared.autoTripFilter(
             routeCardData: internalRouteCardData,
             stopFilter: filters.stopFilter,
             currentTripFilter: filters.tripFilter,
             filterAtTime: now.toKotlinInstant(),
             globalData: stopDetailsVM.global
-        ) : StopDetailsUtils.shared.autoTripFilter(
-            departures: internalDepartures,
-            stopFilter: filters.stopFilter,
-            currentTripFilter: filters.tripFilter,
-            filterAtTime: now.toKotlinInstant()
         )
 
         if let previousFilter = filters.tripFilter, tripFilter != previousFilter {

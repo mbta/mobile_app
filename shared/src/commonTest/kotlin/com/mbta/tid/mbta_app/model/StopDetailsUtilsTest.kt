@@ -25,38 +25,18 @@ class StopDetailsUtilsTest {
                 }
             val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
-            val global = GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id)))
-
-            val groupByDirection = anyBoolean()
-            val actual: StopDetailsFilter?
-
-            if (groupByDirection) {
-                val routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        global,
-                        sortByDistanceFrom = null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        time,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsUnfiltered
-                    )
-                actual = StopDetailsUtils.autoStopFilter(routeCardData)
-            } else {
-                val departures =
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        global,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        emptySet(),
-                        time,
-                    )
-                actual = StopDetailsUtils.autoStopFilter(departures)
-            }
+            val routeCardData =
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
+                    sortByDistanceFrom = null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    time,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                )
 
             assertEquals(
                 StopDetailsFilter(
@@ -64,7 +44,7 @@ class StopDetailsUtilsTest {
                     directionId = routePattern.directionId,
                     autoFilter = true
                 ),
-                actual
+                StopDetailsUtils.autoStopFilter(routeCardData)
             )
         }
 
@@ -87,44 +67,23 @@ class StopDetailsUtilsTest {
                 }
             val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
-            val global =
-                GlobalResponse(
-                    objects,
-                    mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+            val routeCardData =
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    GlobalResponse(
+                        objects,
+                        mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                    ),
+                    sortByDistanceFrom = null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    time,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsUnfiltered
                 )
 
-            val groupByDirection = anyBoolean()
-            val actual: StopDetailsFilter?
-
-            if (groupByDirection) {
-                val routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        global,
-                        sortByDistanceFrom = null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        time,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsUnfiltered
-                    )
-                actual = StopDetailsUtils.autoStopFilter(checkNotNull(routeCardData))
-            } else {
-                val departures =
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        global,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        emptySet(),
-                        time,
-                    )
-                actual = StopDetailsUtils.autoStopFilter(checkNotNull(departures))
-            }
-
-            assertEquals(null, actual)
+            assertEquals(null, StopDetailsUtils.autoStopFilter(checkNotNull(routeCardData)))
         }
 
     @Test
@@ -184,38 +143,23 @@ class StopDetailsUtilsTest {
 
         val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
 
-        val groupByDirection = anyBoolean()
-        val actual: TripDetailsFilter?
+        val data =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                time,
+                emptySet(),
+                RouteCardData.Context.StopDetailsUnfiltered
+            )
 
-        if (groupByDirection) {
-            val data =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    global,
-                    null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
-                )
-            actual = StopDetailsUtils.autoTripFilter(data, stopFilter, null, time, global)
-        } else {
-            val departures =
-                StopDetailsDepartures.fromData(
-                    stop,
-                    global,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    emptySet(),
-                    time,
-                )
-            actual = StopDetailsUtils.autoTripFilter(departures, stopFilter, null, time)
-        }
-
-        assertEquals(TripDetailsFilter(trip2.id, vehicle.id, 0, false), actual)
+        assertEquals(
+            TripDetailsFilter(trip2.id, vehicle.id, 0, false),
+            StopDetailsUtils.autoTripFilter(data, stopFilter, null, time, global)
+        )
     }
 
     @Test
@@ -239,45 +183,23 @@ class StopDetailsUtilsTest {
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
 
-        val groupByDirection = anyBoolean()
-        val actual: TripDetailsFilter?
+        val routeCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                time,
+                emptySet(),
+                RouteCardData.Context.StopDetailsUnfiltered
+            )
 
-        if (groupByDirection) {
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    global,
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
-                )
-            actual =
-                StopDetailsUtils.autoTripFilter(
-                    checkNotNull(routeCardData),
-                    null,
-                    null,
-                    time,
-                    global
-                )
-        } else {
-            val departures =
-                StopDetailsDepartures.fromData(
-                    stop,
-                    global,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    emptySet(),
-                    time,
-                )
-            actual = StopDetailsUtils.autoTripFilter(checkNotNull(departures), null, null, time)
-        }
-
-        assertEquals(null, actual)
+        assertEquals(
+            null,
+            StopDetailsUtils.autoTripFilter(checkNotNull(routeCardData), null, null, time, global)
+        )
     }
 
     @Test
@@ -302,46 +224,29 @@ class StopDetailsUtilsTest {
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
         val stopFilter = StopDetailsFilter(route1.id, routePattern1.directionId)
 
-        val groupByDirection = anyBoolean()
-        val actual: TripDetailsFilter?
+        val routeCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                time,
+                emptySet(),
+                RouteCardData.Context.StopDetailsFiltered
+            )
 
-        if (groupByDirection) {
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    global,
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    emptySet(),
-                    RouteCardData.Context.StopDetailsFiltered
-                )
-            actual =
-                StopDetailsUtils.autoTripFilter(
-                    checkNotNull(routeCardData),
-                    stopFilter,
-                    null,
-                    time,
-                    global
-                )
-        } else {
-            val departures =
-                StopDetailsDepartures.fromData(
-                    stop,
-                    global,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    emptySet(),
-                    time,
-                )
-            actual =
-                StopDetailsUtils.autoTripFilter(checkNotNull(departures), stopFilter, null, time)
-        }
-
-        assertEquals(null, actual)
+        assertEquals(
+            null,
+            StopDetailsUtils.autoTripFilter(
+                checkNotNull(routeCardData),
+                stopFilter,
+                null,
+                time,
+                global
+            )
+        )
     }
 
     @Test
@@ -418,46 +323,29 @@ class StopDetailsUtilsTest {
             val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
             val currentTripFilter = TripDetailsFilter(trip3.id, vehicle.id, 0, false)
 
-            val groupByDirection = anyBoolean()
-            val actual: TripDetailsFilter?
+            val routeCardData =
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    global,
+                    sortByDistanceFrom = null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    time,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsFiltered
+                )
 
-            if (groupByDirection) {
-                val routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        global,
-                        sortByDistanceFrom = null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        time,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsFiltered
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(
-                        routeCardData,
-                        stopFilter,
-                        currentTripFilter,
-                        time,
-                        global
-                    )
-            } else {
-                val departures =
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        global,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        emptySet(),
-                        time,
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(departures, stopFilter, currentTripFilter, time)
-            }
-
-            assertEquals(currentTripFilter, actual)
+            assertEquals(
+                currentTripFilter,
+                StopDetailsUtils.autoTripFilter(
+                    routeCardData,
+                    stopFilter,
+                    currentTripFilter,
+                    time,
+                    global
+                )
+            )
         }
 
     @Test
@@ -496,46 +384,29 @@ class StopDetailsUtilsTest {
         val stopFilter = StopDetailsFilter(route.id, routePattern.directionId)
         val currentTripFilter = TripDetailsFilter(trip.id, vehicleId = null, 0, false)
 
-        val groupByDirection = anyBoolean()
-        val actual: TripDetailsFilter?
+        val routeCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                time,
+                emptySet(),
+                RouteCardData.Context.StopDetailsFiltered
+            )
 
-        if (groupByDirection) {
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    global,
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    emptySet(),
-                    RouteCardData.Context.StopDetailsFiltered
-                )
-            actual =
-                StopDetailsUtils.autoTripFilter(
-                    routeCardData,
-                    stopFilter,
-                    currentTripFilter,
-                    time,
-                    global
-                )
-        } else {
-            val departures =
-                StopDetailsDepartures.fromData(
-                    stop,
-                    global,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    emptySet(),
-                    time,
-                )
-            actual =
-                StopDetailsUtils.autoTripFilter(departures, stopFilter, currentTripFilter, time)
-        }
-
-        assertEquals(TripDetailsFilter(trip.id, vehicle.id, 0, false), actual)
+        assertEquals(
+            TripDetailsFilter(trip.id, vehicle.id, 0, false),
+            StopDetailsUtils.autoTripFilter(
+                routeCardData,
+                stopFilter,
+                currentTripFilter,
+                time,
+                global
+            )
+        )
     }
 
     @Test
@@ -619,46 +490,29 @@ class StopDetailsUtilsTest {
             val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
             val currentTripFilter = TripDetailsFilter(trip0.id, vehicle0.id, 0, false)
 
-            val groupByDirection = anyBoolean()
-            val actual: TripDetailsFilter?
+            val routeCardData =
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    global,
+                    sortByDistanceFrom = null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    time,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsFiltered
+                )
 
-            if (groupByDirection) {
-                val routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        global,
-                        sortByDistanceFrom = null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        time,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsFiltered
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(
-                        routeCardData,
-                        stopFilter,
-                        currentTripFilter,
-                        time,
-                        global
-                    )
-            } else {
-                val departures =
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        global,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        emptySet(),
-                        time,
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(departures, stopFilter, currentTripFilter, time)
-            }
-
-            assertEquals(TripDetailsFilter(trip2.id, vehicle1.id, 0, false), actual)
+            assertEquals(
+                TripDetailsFilter(trip2.id, vehicle1.id, 0, false),
+                StopDetailsUtils.autoTripFilter(
+                    routeCardData,
+                    stopFilter,
+                    currentTripFilter,
+                    time,
+                    global
+                )
+            )
         }
 
     @Test
@@ -742,46 +596,29 @@ class StopDetailsUtilsTest {
             val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
             val currentTripFilter = TripDetailsFilter(trip0.id, vehicle0.id, 0, true)
 
-            val groupByDirection = anyBoolean()
-            val actual: TripDetailsFilter?
+            val routeCardData =
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    global,
+                    sortByDistanceFrom = null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    time,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsFiltered
+                )
 
-            if (groupByDirection) {
-                val routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        global,
-                        sortByDistanceFrom = null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        time,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsFiltered
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(
-                        routeCardData,
-                        stopFilter,
-                        currentTripFilter,
-                        time,
-                        global
-                    )
-            } else {
-                val departures =
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        global,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        emptySet(),
-                        time,
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(departures, stopFilter, currentTripFilter, time)
-            }
-
-            assertEquals(currentTripFilter, actual)
+            assertEquals(
+                currentTripFilter,
+                StopDetailsUtils.autoTripFilter(
+                    routeCardData,
+                    stopFilter,
+                    currentTripFilter,
+                    time,
+                    global
+                )
+            )
         }
 
     @Test
@@ -854,38 +691,23 @@ class StopDetailsUtilsTest {
         val global = GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id)))
         val stopFilter = StopDetailsFilter(route.id, routePattern.directionId)
 
-        val groupByDirection = anyBoolean()
-        val actual: TripDetailsFilter?
+        val routeCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                time,
+                emptySet(),
+                RouteCardData.Context.StopDetailsFiltered
+            )
 
-        if (groupByDirection) {
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    global,
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    emptySet(),
-                    RouteCardData.Context.StopDetailsFiltered
-                )
-            actual = StopDetailsUtils.autoTripFilter(routeCardData, stopFilter, null, time, global)
-        } else {
-            val departures =
-                StopDetailsDepartures.fromData(
-                    stop,
-                    global,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    emptySet(),
-                    time,
-                )
-            actual = StopDetailsUtils.autoTripFilter(departures, stopFilter, null, time)
-        }
-
-        assertEquals(TripDetailsFilter(trip3.id, vehicle.id, 0, false), actual)
+        assertEquals(
+            TripDetailsFilter(trip3.id, vehicle.id, 0, false),
+            StopDetailsUtils.autoTripFilter(routeCardData, stopFilter, null, time, global)
+        )
     }
 
     @Test
@@ -945,39 +767,23 @@ class StopDetailsUtilsTest {
             val global = GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id)))
             val stopFilter = StopDetailsFilter(route.id, routePattern.directionId)
 
-            val groupByDirection = anyBoolean()
-            val actual: TripDetailsFilter?
+            val routeCardData =
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    global,
+                    sortByDistanceFrom = null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    time,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsFiltered
+                )
 
-            if (groupByDirection) {
-                val routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        global,
-                        sortByDistanceFrom = null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        time,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsFiltered
-                    )
-                actual =
-                    StopDetailsUtils.autoTripFilter(routeCardData, stopFilter, null, time, global)
-            } else {
-                val departures =
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        global,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        emptySet(),
-                        time,
-                    )
-                actual = StopDetailsUtils.autoTripFilter(departures, stopFilter, null, time)
-            }
-
-            assertEquals(TripDetailsFilter(trip1.id, null, 0, false), actual)
+            assertEquals(
+                TripDetailsFilter(trip1.id, null, 0, false),
+                StopDetailsUtils.autoTripFilter(routeCardData, stopFilter, null, time, global)
+            )
         }
 
     @Test
@@ -1115,41 +921,18 @@ class StopDetailsUtilsTest {
                 )
             )
 
-        val groupByDirection = anyBoolean()
-        val actual: Map<String, Vehicle>
-
-        if (groupByDirection) {
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    global,
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    now = time,
-                    setOf(),
-                    RouteCardData.Context.StopDetailsFiltered
-                )
-            actual =
-                StopDetailsUtils.filterVehiclesByUpcoming(
-                    checkNotNull(routeCardData),
-                    vehicleResponse
-                )
-        } else {
-            val departures =
-                StopDetailsDepartures.fromData(
-                    stop,
-                    global,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    setOf(),
-                    filterAtTime = time,
-                )
-            actual =
-                StopDetailsUtils.filterVehiclesByUpcoming(checkNotNull(departures), vehicleResponse)
-        }
+        val routeCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                now = time,
+                setOf(),
+                RouteCardData.Context.StopDetailsFiltered
+            )
 
         assertEquals(
             mapOf(
@@ -1157,7 +940,7 @@ class StopDetailsUtilsTest {
                 vehicleC.id to vehicleC,
                 vehicleE.id to vehicleE,
             ),
-            actual
+            StopDetailsUtils.filterVehiclesByUpcoming(checkNotNull(routeCardData), vehicleResponse)
         )
     }
 }

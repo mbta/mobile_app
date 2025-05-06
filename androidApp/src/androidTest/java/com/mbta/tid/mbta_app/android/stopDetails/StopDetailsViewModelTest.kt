@@ -13,6 +13,7 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -1159,15 +1160,17 @@ class StopDetailsViewModelTest {
             )
 
             LaunchedEffect(null) {
-                viewModel.setDepartures(
-                    StopDetailsDepartures.fromData(
-                        stop,
+                viewModel.setRouteCardData(
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stop.id),
                         GlobalResponse(objects),
+                        null,
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
+                        now,
                         setOf(),
-                        now
+                        RouteCardData.Context.StopDetailsUnfiltered
                     )
                 )
             }
@@ -1232,15 +1235,17 @@ class StopDetailsViewModelTest {
             )
 
             LaunchedEffect(null) {
-                viewModel.setDepartures(
-                    StopDetailsDepartures.fromData(
-                        stop,
+                viewModel.setRouteCardData(
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stop.id),
                         GlobalResponse(objects),
+                        null,
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
+                        now,
                         setOf(),
-                        now
+                        RouteCardData.Context.StopDetailsUnfiltered
                     )
                 )
             }
@@ -1305,15 +1310,17 @@ class StopDetailsViewModelTest {
             )
 
             LaunchedEffect(null) {
-                viewModel.setDepartures(
-                    StopDetailsDepartures.fromData(
-                        stop,
+                viewModel.setRouteCardData(
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stop.id),
                         GlobalResponse(objects),
+                        null,
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
+                        now,
                         setOf(),
-                        now
+                        RouteCardData.Context.StopDetailsUnfiltered
                     )
                 )
 

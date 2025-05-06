@@ -10,23 +10,6 @@ object StopDetailsUtils {
      * If the stop serves only 1 route in a single direction, returns a new filter for that route
      * and direction.
      */
-    fun autoStopFilter(departures: StopDetailsDepartures?): StopDetailsFilter? {
-        if (departures?.routes?.size != 1) {
-            return null
-        }
-        val route = departures.routes.first()
-        val directions = route.patterns.map { it.directionId() }.toSet()
-        if (directions.size != 1) {
-            return null
-        }
-        val direction = directions.first()
-        return StopDetailsFilter(route.routeIdentifier, direction, autoFilter = true)
-    }
-
-    /**
-     * If the stop serves only 1 route in a single direction, returns a new filter for that route
-     * and direction.
-     */
     fun autoStopFilter(routeCardData: List<RouteCardData>?): StopDetailsFilter? {
         val route = routeCardData?.singleOrNull() ?: return null
         val directions = route.stopData.flatMap { it.data }.map { it.directionId }.toSet()
@@ -35,47 +18,6 @@ object StopDetailsUtils {
         }
         val direction = directions.first()
         return StopDetailsFilter(route.lineOrRoute.id, direction, autoFilter = true)
-    }
-
-    fun autoTripFilter(
-        departures: StopDetailsDepartures?,
-        stopFilter: StopDetailsFilter?,
-        currentTripFilter: TripDetailsFilter?,
-        filterAtTime: Instant
-    ): TripDetailsFilter? {
-        if (departures == null || stopFilter == null) {
-            return null
-        }
-
-        if (currentTripFilter?.selectionLock == true) return currentTripFilter
-
-        val relevantTrips =
-            departures
-                .stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, filterAtTime)
-                .map { it.upcoming }
-
-        val alreadySelectedTrip = relevantTrips.find { it.trip.id == currentTripFilter?.tripId }
-
-        if (currentTripFilter != null && alreadySelectedTrip != null) {
-            return currentTripFilter.copy(vehicleId = alreadySelectedTrip.vehicle?.id)
-        }
-
-        var filterTrip: UpcomingTrip = relevantTrips.firstOrNull() ?: return null
-        var cancelIndex = 1
-        while (filterTrip.isCancelled && relevantTrips.size > cancelIndex) {
-            // If the auto trip filter would select a cancelled trip,
-            // select the next uncancelled trip instead
-            val nextTrip = relevantTrips[cancelIndex]
-            if (!nextTrip.isCancelled) {
-                filterTrip = nextTrip
-            }
-            cancelIndex++
-        }
-        return TripDetailsFilter(
-            tripId = filterTrip.trip.id,
-            vehicleId = filterTrip.vehicle?.id,
-            stopSequence = filterTrip.stopSequence
-        )
     }
 
     fun autoTripFilter(
@@ -142,28 +84,6 @@ object StopDetailsUtils {
     )
 
     fun getScreenReaderTripDepartureContext(
-        departures: StopDetailsDepartures?,
-        previousFilters: StopDetailsPageFilters
-    ): ScreenReaderContext? {
-        val stopFilter = previousFilters.stopFilter ?: return null
-        val selectedPattern =
-            departures?.routes?.firstOrNull { it.routeIdentifier == stopFilter.routeId }
-                ?: return null
-        val trip =
-            departures.allUpcomingTrips.firstOrNull {
-                it.trip.id == previousFilters.tripFilter?.tripId
-            }
-        val destination =
-            trip?.trip?.headsign ?: selectedPattern.directions[stopFilter.directionId].destination
-
-        return ScreenReaderContext(
-            selectedPattern.representativeRoute.type,
-            destination,
-            selectedPattern.stop.name
-        )
-    }
-
-    fun getScreenReaderTripDepartureContext(
         routeCardData: List<RouteCardData>?,
         previousFilters: StopDetailsPageFilters
     ): ScreenReaderContext? {
@@ -183,15 +103,6 @@ object StopDetailsUtils {
             destination,
             selectedStop.stop.name
         )
-    }
-
-    fun filterVehiclesByUpcoming(
-        departures: StopDetailsDepartures,
-        vehicles: VehiclesStreamDataResponse
-    ): Map<String, Vehicle> {
-        val routeIds = departures.allUpcomingTrips.map { it.trip.routeId }.toSet()
-        val filtered = vehicles.vehicles.filter { routeIds.contains(it.value.routeId) }
-        return filtered
     }
 
     fun filterVehiclesByUpcoming(
