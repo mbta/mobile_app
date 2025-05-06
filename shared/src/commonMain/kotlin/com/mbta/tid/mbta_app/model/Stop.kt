@@ -64,5 +64,27 @@ data class Stop(
         }
 
         val crCoreStations = setOf("place-north", "place-sstat", "place-bbsta", "place-rugg")
+
+        /**
+         * A map of a stop to itself and any children. for standalone stops, an entry will be
+         * <standaloneStop, [standaloneStopId]>. for stations, an entry will be <station,
+         * [stationId, child1Id, child2Id, etc.]>
+         */
+        fun resolvedParentToAllStops(
+            stopIds: List<String>,
+            globalData: GlobalResponse
+        ): Map<Stop, Set<String>> {
+            return stopIds
+                .mapNotNull { stopId ->
+                    val stop = globalData.stops[stopId]
+                    if (stop != null) {
+                        Pair(stop.resolveParent(globalData), stop)
+                    } else {
+                        null
+                    }
+                }
+                .groupBy({ it.first }, { it.second.id })
+                .mapValues { it.value.toSet().plus(it.key.id) }
+        }
     }
 }

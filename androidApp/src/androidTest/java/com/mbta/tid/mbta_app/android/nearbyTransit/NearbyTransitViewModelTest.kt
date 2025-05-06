@@ -41,6 +41,7 @@ class NearbyTransitViewModelTest {
                 override fun getStopIdsNearby(
                     global: GlobalResponse,
                     location: Position,
+                    excludeRedundantService: Boolean
                 ): List<String> {
                     return if (location === position1) {
                         response1
