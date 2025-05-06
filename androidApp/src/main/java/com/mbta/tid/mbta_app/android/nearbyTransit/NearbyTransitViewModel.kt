@@ -31,6 +31,7 @@ class NearbyTransitViewModel(
     var loadedLocation by mutableStateOf<Position?>(null)
     var loading by mutableStateOf(false)
     var nearby by mutableStateOf<NearbyStaticData?>(null)
+    var nearbyStopIds by mutableStateOf<List<String>?>(null)
     var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
 
     private var fetchNearbyTask: Job? = null
@@ -38,6 +39,7 @@ class NearbyTransitViewModel(
     fun getNearby(
         globalResponse: GlobalResponse,
         location: Position,
+        groupByDirection: Boolean,
         setLastLocation: (Position) -> Unit,
         setSelectingLocation: (Boolean) -> Unit
     ) {
@@ -48,21 +50,37 @@ class NearbyTransitViewModel(
             if (loading) {
                 fetchNearbyTask?.cancel()
             }
-            fetchNearbyTask = launch {
-                analytics.refetchedNearbyTransit()
-                loading = true
-                fetchApi(
-                    errorBannerRepo = errorBannerRepository,
-                    errorKey = "NearbyViewModel.getNearby",
-                    getData = { nearbyRepository.getNearby(globalResponse, location) },
-                    onSuccess = { nearby = it },
-                    onRefreshAfterError = {
-                        getNearby(globalResponse, location, setLastLocation, setSelectingLocation)
-                    }
-                )
-                loading = false
+            if (groupByDirection) {
+                val stopIds = nearbyRepository.getStopIdsNearby(globalResponse, location)
+                nearbyStopIds = stopIds
                 setLastLocation(location)
                 setSelectingLocation(false)
+            } else {
+                fetchNearbyTask = launch {
+                    analytics.refetchedNearbyTransit()
+                    loading = true
+                    fetchApi(
+                        errorBannerRepo = errorBannerRepository,
+                        errorKey = "NearbyViewModel.getNearby",
+                        getData = { nearbyRepository.getNearby(globalResponse, location) },
+                        onSuccess = {
+                            nearby = it
+                            nearbyStopIds = it.stopIds().toList()
+                        },
+                        onRefreshAfterError = {
+                            getNearby(
+                                globalResponse,
+                                location,
+                                groupByDirection,
+                                setLastLocation,
+                                setSelectingLocation
+                            )
+                        }
+                    )
+                    loading = false
+                    setLastLocation(location)
+                    setSelectingLocation(false)
+                }
             }
         }
     }
@@ -76,13 +94,14 @@ class NearbyTransitViewModel(
         now: Instant,
         pinnedRoutes: Set<String>?,
     ) {
-        if (global == null || location == null) {
+        val stopIds = nearbyStopIds
+        if (global == null || location == null || stopIds == null) {
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
             routeCardData =
                 RouteCardData.routeCardsForStopList(
-                    nearbyRepository.getStopIdsNearby(global, location),
+                    stopIds,
                     global,
                     location,
                     schedules,
@@ -99,6 +118,7 @@ class NearbyTransitViewModel(
         loadedLocation = null
         loading = false
         nearby = null
+        nearbyStopIds = null
     }
 
     override fun onCleared() {

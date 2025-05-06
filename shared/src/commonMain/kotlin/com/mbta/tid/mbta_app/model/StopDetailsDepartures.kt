@@ -1,14 +1,12 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -28,12 +26,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
 
     val upcomingPatternIds = allUpcomingTrips.mapNotNull { it.trip.routePatternId }.toSet()
 
-    fun filterVehiclesByUpcoming(vehicles: VehiclesStreamDataResponse): Map<String, Vehicle> {
-        val routeIds = allUpcomingTrips.map { it.trip.routeId }.toSet()
-        val filtered = vehicles.vehicles.filter { routeIds.contains(it.value.routeId) }
-        return filtered
-    }
-
     fun stopDetailsFormattedTrips(
         routeId: String,
         directionId: Int,
@@ -50,7 +42,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         patternsByStop.routes.firstOrNull { route -> it.trip.routeId == route.id }
                             ?: return@mapNotNull null
                     val format =
-                        formatUpcomingTrip(
+                        UpcomingTrip.formatUpcomingTrip(
                             filterAtTime,
                             it,
                             route.type,
@@ -80,90 +72,11 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             }
         }
 
-    /**
-     * If the stop serves only 1 route in a single direction, returns a new filter for that route
-     * and direction.
-     */
-    fun autoStopFilter(): StopDetailsFilter? {
-        if (routes.size != 1) {
-            return null
-        }
-        val route = routes.first()
-        val directions = route.patterns.map { it.directionId() }.toSet()
-        if (directions.size != 1) {
-            return null
-        }
-        val direction = directions.first()
-        return StopDetailsFilter(route.routeIdentifier, direction, autoFilter = true)
-    }
-
-    fun autoTripFilter(
-        stopFilter: StopDetailsFilter?,
-        currentTripFilter: TripDetailsFilter?,
-        filterAtTime: Instant
-    ): TripDetailsFilter? {
-        if (stopFilter == null) {
-            return null
-        }
-
-        if (currentTripFilter?.selectionLock == true) return currentTripFilter
-
-        val relevantTrips =
-            stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, filterAtTime)
-                .map { it.upcoming }
-
-        val alreadySelectedTrip = relevantTrips.find { it.trip.id == currentTripFilter?.tripId }
-
-        if (currentTripFilter != null && alreadySelectedTrip != null) {
-            return currentTripFilter.copy(vehicleId = alreadySelectedTrip.vehicle?.id)
-        }
-
-        var filterTrip: UpcomingTrip = relevantTrips.firstOrNull() ?: return null
-        var cancelIndex = 1
-        while (filterTrip.isCancelled && relevantTrips.size > cancelIndex) {
-            // If the auto trip filter would select a cancelled trip,
-            // select the next uncancelled trip instead
-            val nextTrip = relevantTrips[cancelIndex]
-            if (!nextTrip.isCancelled) {
-                filterTrip = nextTrip
-            }
-            cancelIndex++
-        }
-        return TripDetailsFilter(
-            tripId = filterTrip.trip.id,
-            vehicleId = filterTrip.vehicle?.id,
-            stopSequence = filterTrip.stopSequence
-        )
-    }
-
-    class ScreenReaderContext(
-        val routeType: RouteType,
-        val destination: String?,
-        val stopName: String
-    )
-
     /*
     Whether the upcoming trip with the given id is cancelled in the upcoming departures
      */
     fun tripIsCancelled(tripId: String): Boolean {
         return this.routes.any { it.tripIsCancelled(tripId) }
-    }
-
-    fun getScreenReaderTripDepartureContext(
-        previousFilters: StopDetailsPageFilters
-    ): ScreenReaderContext? {
-        val stopFilter = previousFilters.stopFilter ?: return null
-        val selectedPattern =
-            this.routes.firstOrNull { it.routeIdentifier == stopFilter.routeId } ?: return null
-        val trip = allUpcomingTrips.firstOrNull { it.trip.id == previousFilters.tripFilter?.tripId }
-        val destination =
-            trip?.trip?.headsign ?: selectedPattern.directions[stopFilter.directionId].destination
-
-        return ScreenReaderContext(
-            selectedPattern.representativeRoute.type,
-            destination,
-            selectedPattern.stop.name
-        )
     }
 
     companion object {
@@ -292,7 +205,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 }
             val hasTripsToShow =
                 pattern.upcomingTrips.any {
-                    formatUpcomingTrip(
+                    UpcomingTrip.formatUpcomingTrip(
                         now,
                         it,
                         routeType,

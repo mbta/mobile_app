@@ -479,6 +479,7 @@ class NearbyTransitPageTest : KoinTest {
         viewportProvider.setIsManuallyCentering(false)
 
         composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { viewportProvider.viewport.cameraState != null }
 
         assertTrue(
             updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
@@ -503,6 +504,9 @@ class NearbyTransitPageTest : KoinTest {
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
         composeTestRule.waitForIdle()
+        composeTestRule.waitUntil {
+            !updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState!!.center)
+        }
 
         assertFalse(
             updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)

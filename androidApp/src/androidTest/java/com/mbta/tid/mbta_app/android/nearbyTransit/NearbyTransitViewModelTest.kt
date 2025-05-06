@@ -81,6 +81,7 @@ class NearbyTransitViewModelTest {
                 nearbyVM.getNearby(
                     globalResponse,
                     position,
+                    groupByDirection = false,
                     setLastLocation = {},
                     setSelectingLocation = {}
                 )
@@ -89,9 +90,86 @@ class NearbyTransitViewModelTest {
 
         composeTestRule.waitUntil { nearbyVM.nearby != null }
         assertEquals(response1, nearbyVM.nearby)
+        assertEquals(listOf(stop1.id), nearbyVM.nearbyStopIds)
 
         position = position2
         composeTestRule.waitUntil { nearbyVM.nearby != response1 }
         assertEquals(response2, nearbyVM.nearby)
+        assertEquals(listOf(stop2.id), nearbyVM.nearbyStopIds)
+    }
+
+    @Test
+    fun testNearbyStopIds() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val stop1 = objects.stop()
+        objects.routePattern(route) { representativeTrip { stopIds = listOf(stop1.id) } }
+        val stop2 = objects.stop()
+        objects.routePattern(route) { representativeTrip { stopIds = listOf(stop2.id) } }
+
+        val globalResponse = GlobalResponse(objects)
+
+        val position1 = Position(0.0, 0.0)
+        val position2 = Position(1.0, 1.0)
+
+        val response1 = listOf(stop1.id)
+        val response2 = listOf(stop2.id)
+        assertNotEquals(response1, response2, "not actually testing anything")
+
+        val nearbyRepository =
+            object : INearbyRepository {
+                override fun getStopIdsNearby(
+                    global: GlobalResponse,
+                    location: Position
+                ): List<String> {
+                    return if (location === position1) {
+                        response1
+                    } else {
+                        response2
+                    }
+                }
+
+                override suspend fun getNearby(
+                    global: GlobalResponse,
+                    stopIds: List<String>
+                ): ApiResult<NearbyStaticData> {
+                    fail("getNearby should not be called")
+                }
+
+                override suspend fun getNearby(
+                    global: GlobalResponse,
+                    location: Position
+                ): ApiResult<NearbyStaticData> {
+                    fail("getNearby should not be called")
+                }
+            }
+
+        var position by mutableStateOf(position1)
+        val nearbyVM =
+            NearbyTransitViewModel(
+                nearbyRepository,
+                errorBannerRepository = MockErrorBannerStateRepository(),
+                analytics = MockAnalytics()
+            )
+
+        composeTestRule.setContent {
+            LaunchedEffect(position) {
+                nearbyVM.getNearby(
+                    globalResponse,
+                    position,
+                    groupByDirection = true,
+                    setLastLocation = {},
+                    setSelectingLocation = {}
+                )
+            }
+        }
+
+        composeTestRule.waitUntil { nearbyVM.nearbyStopIds != null }
+        assertEquals(response1, nearbyVM.nearbyStopIds)
+
+        position = position2
+        composeTestRule.waitUntil { nearbyVM.nearbyStopIds != response1 }
+        assertEquals(response2, nearbyVM.nearbyStopIds)
     }
 }

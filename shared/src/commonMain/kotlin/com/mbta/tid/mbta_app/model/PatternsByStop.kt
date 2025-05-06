@@ -55,7 +55,7 @@ data class PatternsByStop(
                                     it.stopIds,
                                     null
                                 ),
-                                alertsDownstream(
+                                Alert.alertsDownstreamForPatterns(
                                     alerts.toList(),
                                     it.patterns,
                                     it.stopIds,
@@ -118,7 +118,7 @@ data class PatternsByStop(
                                     leaf.childStopIds,
                                     null
                                 ),
-                                alertsDownstream(
+                                Alert.alertsDownstreamForPatterns(
                                     alerts.toList(),
                                     leaf.routePatterns.filterNotNull(),
                                     leaf.childStopIds,
@@ -204,28 +204,6 @@ data class PatternsByStop(
     }
 
     companion object {
-        /**
-         * A unique list of all the alerts that are downstream from the target stop for each route
-         * pattern
-         */
-        fun alertsDownstream(
-            alerts: Collection<Alert>,
-            patterns: List<RoutePattern>,
-            targetStopWithChildren: Set<String>,
-            tripsById: Map<String, Trip>
-        ): List<Alert> {
-            return patterns
-                .flatMap {
-                    val trip = tripsById[it.representativeTripId]
-                    if (trip != null) {
-                        Alert.downstreamAlerts(alerts, trip, targetStopWithChildren)
-                    } else {
-                        listOf()
-                    }
-                }
-                .distinct()
-        }
-
         // Even if a direction can serve multiple routes according to the static data, it's possible
         // that only one of those routes is typical, in which case we don't want to display it as a
         // grouped direction in the UI. If there are only predicted trips on a single route, this
@@ -256,7 +234,7 @@ data class PatternsByStop(
                             staticData.stopIds,
                             null
                         ),
-                        alertsDownstream(
+                        Alert.alertsDownstreamForPatterns(
                             alerts.toList(),
                             staticData.patterns,
                             staticData.stopIds,
@@ -306,7 +284,7 @@ data class PatternsByStop(
                             staticData.stopIds,
                             null
                         ),
-                        alertsDownstream(
+                        Alert.alertsDownstreamForPatterns(
                             alerts.toList(),
                             staticData.patterns,
                             staticData.stopIds,
@@ -330,7 +308,7 @@ data class PatternsByStop(
                         staticData.stopIds,
                         null
                     ),
-                    alertsDownstream(
+                    Alert.alertsDownstreamForPatterns(
                         alerts.toList(),
                         staticData.patterns,
                         staticData.stopIds,
@@ -362,7 +340,7 @@ data class PatternsByStop(
                     null
                 )
             val alertsDownstream =
-                alertsDownstream(
+                Alert.alertsDownstreamForPatterns(
                     alerts.toList(),
                     leaf.routePatterns.filterNotNull(),
                     leaf.childStopIds,

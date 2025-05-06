@@ -15,7 +15,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,23 +60,24 @@ fun NearbyTransitView(
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    LaunchedEffect(targetLocation, globalResponse) {
+    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
+    LaunchedEffect(targetLocation, globalResponse, groupByDirection) {
         if (globalResponse != null && targetLocation != null) {
             nearbyVM.getNearby(
                 globalResponse,
                 targetLocation,
+                groupByDirection,
                 setLastLocation,
                 setSelectingLocation
             )
         }
     }
     val now by timer(updateInterval = 5.seconds)
-    val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
+    val stopIds = nearbyVM.nearbyStopIds
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val analytics: Analytics = koinInject()
@@ -106,7 +106,7 @@ fun NearbyTransitView(
         ErrorBanner(errorBannerViewModel)
         if (groupByDirection) {
             LaunchedEffect(
-                nearbyVM.nearby,
+                stopIds,
                 globalResponse,
                 targetLocation,
                 schedules,

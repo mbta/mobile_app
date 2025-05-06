@@ -74,7 +74,8 @@ class NearbyTransitViewTest : KoinTest {
             routeId = "route_1"
             directionId = 0
             headsign = "Sample Headsign"
-            routePatternId = "pattern_2"
+            routePatternId = "pattern_1"
+            stopIds = listOf(stop.id)
         }
     val prediction =
         builder.prediction {
@@ -133,6 +134,7 @@ class NearbyTransitViewTest : KoinTest {
             directionId = 0
             headsign = "Green Line Head Sign"
             routePatternId = "pattern_3"
+            stopIds = listOf(greenLineStop.id)
         }
     val greenLinePrediction =
         builder.prediction {
@@ -147,14 +149,7 @@ class NearbyTransitViewTest : KoinTest {
             departureTime = now.plus(5.5.minutes)
         }
 
-    val globalResponse =
-        GlobalResponse(
-            builder,
-            mutableMapOf(
-                stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-                greenLineStop.id to listOf(greenLineRoutePatternOne.id)
-            )
-        )
+    val globalResponse = GlobalResponse(builder)
 
     val koinApplication = testKoinApplication(builder)
 

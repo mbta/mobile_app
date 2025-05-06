@@ -294,18 +294,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     )
 
     companion object {
-        fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
-            schedules?.let { scheduleResponse ->
-                val scheduledTrips = scheduleResponse.trips
-                val hasSchedules: MutableMap<String, Boolean> = mutableMapOf()
-                for (schedule in scheduleResponse.schedules) {
-                    val trip = scheduledTrips[schedule.tripId]
-                    val patternId = trip?.routePatternId ?: continue
-                    hasSchedules[patternId] = true
-                }
-                hasSchedules
-            }
-
         fun buildStopPatternsForRoute(
             stop: Stop,
             patterns: List<RoutePattern>,
@@ -329,7 +317,11 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                                 checkNotNull(headsign),
                                 null,
                                 routePatterns.sorted(),
-                                filterStopsByPatterns(routePatterns, global, allStopIds)
+                                RouteCardData.filterStopsByPatterns(
+                                    routePatterns,
+                                    global,
+                                    allStopIds
+                                )
                             )
                         }
                         .sortedWith(PatternSorting.compareStaticPatterns()),
@@ -379,7 +371,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                                 checkNotNull(headsign),
                                 line,
                                 patterns.sorted(),
-                                filterStopsByPatterns(patterns, global, allStopIds),
+                                RouteCardData.filterStopsByPatterns(patterns, global, allStopIds),
                                 direction
                             )
                         }
@@ -390,7 +382,11 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                             routes = directionRoutes,
                             direction = direction,
                             patterns = directionPatterns.sorted(),
-                            filterStopsByPatterns(directionPatterns, global, allStopIds)
+                            RouteCardData.filterStopsByPatterns(
+                                directionPatterns,
+                                global,
+                                allStopIds
+                            )
                         )
                     )
                 }
@@ -451,19 +447,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         )
                     },
             )
-        }
-
-        fun filterStopsByPatterns(
-            routePatterns: List<RoutePattern>,
-            global: GlobalResponse,
-            localStops: Set<String>
-        ): Set<String> {
-            val patternsStops =
-                routePatterns.flatMapTo(mutableSetOf()) {
-                    global.trips[it.representativeTripId]?.stopIds.orEmpty()
-                }
-            val relevantStops = patternsStops.intersect(localStops)
-            return relevantStops.ifEmpty { localStops }
         }
 
         fun build(block: NearbyStaticDataBuilder.() -> Unit): NearbyStaticData {
@@ -568,7 +551,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
             .orEmpty()
 
     val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
-    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
+    val hasSchedulesTodayByPattern = RouteCardData.getSchedulesTodayByPattern(schedules)
 
     val upcomingTripsMap: UpcomingTripsMap =
         upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop
@@ -708,7 +691,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
 
     // add predictions and apply filtering
     val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
-    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
+    val hasSchedulesTodayByPattern = RouteCardData.getSchedulesTodayByPattern(schedules)
 
     fun Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>
         .maybeFilterCancellations(isSubway: Boolean) =
