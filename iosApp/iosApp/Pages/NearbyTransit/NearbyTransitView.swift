@@ -170,51 +170,6 @@ struct NearbyTransitView: View {
         }
     }
 
-    @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
-        if transit.isEmpty {
-            ScrollView {
-                noNearbyStops()
-                    .padding(.horizontal, 16)
-                Spacer()
-            }
-        } else {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(transit, id: \.id) { nearbyTransit in
-                            let nearby: StopsAssociated = nearbyTransit
-                            switch onEnum(of: nearby) {
-                            case let .withRoute(nearbyRoute):
-                                NearbyRouteView(
-                                    nearbyRoute: nearbyRoute,
-                                    pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                                    onPin: { id in toggledPinnedRoute(id) },
-                                    pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                    now: now.toKotlinInstant(),
-                                    showStationAccessibility: nearbyVM.showStationAccessibility
-                                )
-                            case let .withLine(nearbyLine):
-                                NearbyLineView(
-                                    nearbyLine: nearbyLine,
-                                    pinned: pinnedRoutes.contains(nearbyLine.line.id),
-                                    onPin: { id in toggledPinnedRoute(id) },
-                                    pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                    now: now.toKotlinInstant(),
-                                    showStationAccessibility: nearbyVM.showStationAccessibility
-                                )
-                            }
-                        }
-                    }.padding(.vertical, 4)
-                }
-                .onReceive(scrollSubject) { id in
-                    withAnimation {
-                        proxy.scrollTo(id, anchor: .top)
-                    }
-                }
-            }
-        }
-    }
-
     @ViewBuilder private func loadingBody() -> some View {
         ScrollView {
             LazyVStack(spacing: 18) {
