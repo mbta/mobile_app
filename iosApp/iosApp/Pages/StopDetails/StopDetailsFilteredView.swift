@@ -22,9 +22,6 @@ struct StopDetailsFilteredView: View {
 
     var departureData: DepartureDataBundle?
 
-    var alerts: [Shared.Alert]
-    var downstreamAlerts: [Shared.Alert]
-
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
@@ -33,9 +30,6 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     var analytics: Analytics = AnalyticsProvider.shared
-
-    var tiles: [TileData] = []
-    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
     var nowInstant: Instant { now.toKotlinInstant() }
@@ -69,23 +63,9 @@ struct StopDetailsFilteredView: View {
         let stopData = routeData?.stopData.first { $0.stop.id == stopId }
         let leafData = stopData?.data.first { $0.directionId == stopFilter.directionId }
 
-        alerts = leafData?.alertsHere ?? []
-        downstreamAlerts = leafData?.alertsDownstream ?? []
-
         if let routeData, let stopData, let leafData {
-            let leafFormat = leafData.format(
-                now: nowInstant,
-                representativeRoute: routeData.lineOrRoute.sortRoute,
-                globalData: stopDetailsVM.global,
-                context: .stopDetailsFiltered
-            )
-
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-            tiles = leafFormat.tileData()
             departureData = .init(routeData: routeData, stopData: stopData, leaf: leafData)
         } else {
-            noPredictionsStatus = nil
-            tiles = []
             departureData = nil
         }
     }
@@ -119,17 +99,14 @@ struct StopDetailsFilteredView: View {
                     tripFilter: tripFilter,
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
-                    tiles: tiles,
                     data: departureData,
-                    noPredictionsStatus: noPredictionsStatus,
-                    alerts: alerts,
-                    downstreamAlerts: downstreamAlerts,
                     pinned: pinned,
                     now: now,
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
-                    stopDetailsVM: stopDetailsVM
+                    stopDetailsVM: stopDetailsVM,
+                    viewportProvider: .init()
                 )
             } else {
                 loadingBody()
@@ -170,13 +147,6 @@ struct StopDetailsFilteredView: View {
             context: .stopDetailsFiltered,
             now: nowInstant
         )
-        let leafFormat = loadingData.leaf.format(
-            now: nowInstant,
-            representativeRoute: loadingData.routeData.lineOrRoute.sortRoute,
-            globalData: stopDetailsVM.global,
-            context: .stopDetailsFiltered
-        )
-        let tiles = leafFormat.tileData()
 
         StopDetailsFilteredDepartureDetails(
             stopId: stopId,
@@ -184,17 +154,14 @@ struct StopDetailsFilteredView: View {
             tripFilter: tripFilter,
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
-            tiles: tiles,
             data: loadingData,
-            noPredictionsStatus: nil,
-            alerts: alerts,
-            downstreamAlerts: downstreamAlerts,
             pinned: pinned,
             now: now,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
         ).loadingPlaceholder()
     }
 }
