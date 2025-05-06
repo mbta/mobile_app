@@ -113,7 +113,10 @@ fun endToEndModule(): Module {
         single<IGlobalRepository> { MockGlobalRepository(globalData) }
         single<ILastLaunchedAppVersionRepository> { MockLastLaunchedAppVersionRepository(null) }
         single<INearbyRepository> {
-            MockNearbyRepository(NearbyResponse(listOf(stopParkStreet.id)))
+            MockNearbyRepository(
+                NearbyResponse(listOf(stopParkStreet.id)),
+                listOf(stopParkStreet.id)
+            )
         }
         single<IOnboardingRepository> { MockOnboardingRepository() }
         single<IPinnedRoutesRepository> {
