@@ -55,8 +55,8 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                 }
                 .toList()
 
-        return if (excludeRedundantService) {
-            RoutePattern.stopsWithoutRedundantPatterns(allNearbyStops, global)
+       return if (excludeRedundantService) {
+             RoutePattern.filterStopsWithRedundantPatterns(allNearbyStops, global)
         } else {
             allNearbyStops
         }

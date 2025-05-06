@@ -649,11 +649,7 @@ data class RouteCardData(
             val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
 
             val patternsGrouped =
-                RoutePattern.patternsGroupedByLineOrRouteAndStop(
-                    stopIds,
-                    parentToAllStops,
-                    globalData
-                )
+                RoutePattern.patternsGroupedByLineOrRouteAndStop(parentToAllStops, globalData)
 
             val builderData =
                 patternsGrouped

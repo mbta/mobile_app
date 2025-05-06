@@ -39,73 +39,37 @@ data class RoutePattern(
     )
 
     companion object {
-        /**
-         * Return the map of LineOrRoute => Stop => Patterns that are served by the given [stopIds].
-         * A stop is only included for a LineOrRoute if it has any patterns that haven't been seen
-         * at an earlier stop for that LineOrRoute.
-         */
-        fun patternsGroupedByLineOrRouteAndStop(
-            stopIds: List<String>,
-            parentToAllStops: Map<Stop, Set<String>>,
-            globalData: GlobalResponse,
-        ): Map<LineOrRoute, Map<Stop, PatternsForStop>> {
-
-            val patternsGrouped = mutableMapOf<LineOrRoute, MutableMap<Stop, PatternsForStop>>()
-            return stopsWithoutRedundantPatterns(
-                stopIds,
-                parentToAllStops,
-                globalData,
-                patternsGrouped
-            ) { lineOrRoute, stop, routePatterns, usedRoutePatternIds ->
-                val routeStops = patternsGrouped.getOrPut(lineOrRoute) { mutableMapOf() }
-                val patternsNotSeenAtEarlierStops =
-                    routePatterns.map { it.id }.toSet().minus(usedRoutePatternIds)
-                routeStops.getOrPut(stop) {
-                    PatternsForStop(
-                        allPatterns = routePatterns,
-                        patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops
-                    )
-                }
-            }
-        }
 
         /**
          * Filter the given list of stopIds to the stops that don't have service redundant to
          * earlier stops in the list; each stop must serve at least one route pattern that is not
          * seen by any earlier stop.
          */
-        fun stopsWithoutRedundantPatterns(
+        fun filterStopsWithRedundantPatterns(
             stopIds: List<String>,
             globalData: GlobalResponse
         ): List<String> {
-            val filteredStopIds: MutableList<String> = mutableListOf()
             val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
 
-            return stopsWithoutRedundantPatterns(
-                    stopIds,
+            return patternsGroupedByLineOrRouteAndStop(
                     parentToAllStops,
                     globalData,
-                    filteredStopIds
-                ) { _, stop, _, _ ->
-                    filteredStopIds.add(stop.id)
-                }
+                )
+                .flatMap { it.value.keys.map { stop -> stop.id } }
                 .distinct()
         }
 
         /**
-         * Determine which stops don't have service for a LineOrRoute that is redundant to an
-         * earlier stop (all patterns served by that earlier stop).
-         *
-         * TODO: Try making this functional for readability
+         * Return the map of LineOrRoute => Stop => Patterns that are served by the given [stopIds].
+         * A stop is only included for a LineOrRoute if it has any patterns that haven't been seen
+         * at an earlier stop for that LineOrRoute.
          */
-        private fun <T> stopsWithoutRedundantPatterns(
-            stopIds: List<String>,
+        fun patternsGroupedByLineOrRouteAndStop(
             parentToAllStops: Map<Stop, Set<String>>,
             globalData: GlobalResponse,
-            mutableAcc: T,
-            process: (LineOrRoute, Stop, List<RoutePattern>, Set<String>) -> Unit
-        ): T {
+        ): Map<LineOrRoute, Map<Stop, PatternsForStop>> {
             val usedPatternIds = mutableSetOf<String>()
+            val patternsGrouped = mutableMapOf<LineOrRoute, MutableMap<Stop, PatternsForStop>>()
 
             globalData.run {
                 parentToAllStops.forEach { (parentStop, allStopsForParent) ->
@@ -117,14 +81,21 @@ data class RoutePattern(
                             }
 
                     for ((lineOrRoute, routePatterns) in patternsByRouteOrLine) {
-                        process(lineOrRoute, parentStop, routePatterns, usedPatternIds)
-
+                        val routeStops = patternsGrouped.getOrPut(lineOrRoute) { mutableMapOf() }
+                        val patternsNotSeenAtEarlierStops =
+                            routePatterns.map { it.id }.toSet().minus(usedPatternIds)
+                        routeStops.getOrPut(parentStop) {
+                            PatternsForStop(
+                                allPatterns = routePatterns,
+                                patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops
+                            )
+                        }
                         usedPatternIds.addAll(routePatterns.map { it.id })
                     }
                 }
             }
 
-            return mutableAcc
+            return patternsGrouped
         }
 
         private fun patternsByRouteOrLine(
