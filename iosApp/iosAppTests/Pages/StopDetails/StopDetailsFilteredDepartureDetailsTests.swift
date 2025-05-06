@@ -23,11 +23,13 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         patterns: [RoutePattern]? = nil,
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
+        alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
     ) -> DepartureDataBundle {
         makeBundle(
             lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-            stop: stop, patterns: patterns, upcomingTrips: upcomingTrips, alerts: alerts, objects: objects
+            stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
+            alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
         )
     }
 
@@ -38,12 +40,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         patterns: [RoutePattern]? = nil,
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
+        alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
     ) -> DepartureDataBundle {
         let routes = routes ?? Set([objects.route { $0.lineId = line.id }])
         return makeBundle(
             lineOrRoute: RouteCardDataLineOrRouteLine(line: line, routes: routes),
-            stop: stop, patterns: patterns, upcomingTrips: upcomingTrips, alerts: alerts, objects: objects
+            stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
+            alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
         )
     }
 
@@ -53,6 +57,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         patterns: [RoutePattern]? = nil,
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
+        alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
     ) -> DepartureDataBundle {
         let route = lineOrRoute.sortRoute
@@ -65,7 +70,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             routePatterns: patterns,
             stopIds: Set([stop.id]).union(Set(stop.childStopIds)),
             upcomingTrips: upcomingTrips,
-            alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true, alertsDownstream: []
+            alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true,
+            alertsDownstream: alertsDownstream
         )
         let stopData = RouteCardData.RouteStopData(
             stop: stop,
@@ -134,18 +140,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile1, tile2, tile3],
             data: makeBundle(route: route, stop: stop, upcomingTrips: [trip1, trip2, trip3], objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile1, tile2, tile3]
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(text: "A"))
@@ -206,7 +209,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile1, tile2, tile3],
             data: makeBundle(
                 line: line,
                 routes: [route],
@@ -214,16 +216,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 upcomingTrips: [trip1, trip2, trip3],
                 objects: objects
             ),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile1, tile2, tile3]
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign!))
@@ -243,6 +243,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             trip.routeId = route.id
             trip.routePatternId = pattern.id
         }
+        let upcoming = UpcomingTrip(trip: trip, prediction: objects.prediction { prediction in
+            prediction.departureTime = Date.now.addingTimeInterval(120).toKotlinInstant()
+        })
 
         let tile1 = TileData(
             route: route,
@@ -251,7 +254,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Arriving())],
                 secondaryAlert: nil
             ),
-            upcoming: .init(trip: trip)
+            upcoming: upcoming
         )
         let tile2 = TileData(
             route: route,
@@ -277,18 +280,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: .init(tripId: trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile1, tile2, tile3],
-            data: makeBundle(line: line, routes: [route], stop: stop, objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [],
+            data: makeBundle(line: line, routes: [route], stop: stop, upcomingTrips: [upcoming], objects: objects),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile1, tile2, tile3]
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(TripDetailsView.self))
@@ -353,7 +353,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile1, tile2],
             data: makeBundle(
                 route: route,
                 stop: stop,
@@ -361,16 +360,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 upcomingTrips: [upcoming1, upcoming2],
                 objects: objects
             ),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile1, tile2]
         ).environmentObject(ViewportProvider())
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
         XCTAssertNotNil(try sut.inspect()
@@ -392,18 +389,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [],
             data: makeBundle(line: line, routes: [route], stop: stop, upcomingTrips: [], objects: objects),
-            noPredictionsStatus: UpcomingFormat.NoTripsFormatServiceEndedToday(),
-            alerts: [],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: []
         ).environmentObject(ViewportProvider())
 
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
@@ -444,18 +438,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile],
-            data: makeBundle(route: route, stop: stop, objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [alert],
-            downstreamAlerts: [],
+            data: makeBundle(route: route, stop: stop, alerts: [alert], objects: objects),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile]
         )
 
         let departureTileExp = sut.inspection.inspect { _ in
@@ -508,18 +499,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile],
-            data: makeBundle(route: route, stop: stop, objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [alert],
+            data: makeBundle(route: route, stop: stop, alertsDownstream: [alert], objects: objects),
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile]
         )
 
         let departureTileExp = sut.inspection.inspect { view in
@@ -570,18 +558,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile],
             data: makeBundle(route: route, stop: stop, patterns: [], alerts: [alert], objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile]
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
@@ -620,18 +605,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile],
             data: makeBundle(route: route, stop: stop, objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile]
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
@@ -676,18 +658,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            tiles: [tile],
             data: makeBundle(route: route, stop: stop, alerts: [alert], objects: objects),
-            noPredictionsStatus: nil,
-            alerts: [alert],
-            downstreamAlerts: [],
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
+            viewportProvider: .init(),
+            testTiles: [tile]
         )
 
         let departureTileExp = sut.inspection.inspect { view in
@@ -701,5 +680,94 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
+    }
+
+    @MainActor
+    func testShowsPredictionsAndAlertOnBranchingTrunk() async throws {
+        let now = Date.now
+
+        let objects = Shared.TestData.clone()
+        let stop = objects.getStop(id: "place-kencl")
+        let line = objects.getLine(id: "line-Green")
+        let routeB = objects.getRoute(id: "Green-B")
+        let routeC = objects.getRoute(id: "Green-C")
+        let routeD = objects.getRoute(id: "Green-D")
+
+        let alert =
+            objects.alert { alert in
+                alert.activePeriod(
+                    start: now.addingTimeInterval(-5).toKotlinInstant(),
+                    end: now.addingTimeInterval(100).toKotlinInstant()
+                )
+                alert.effect = .shuttle
+                alert.header = "Green line shuttle on B and C branches"
+                alert.informedEntity(
+                    activities: [.board, .exit, .ride],
+                    directionId: 0, facility: nil,
+                    route: routeB.id, routeType: nil,
+                    stop: "71151", trip: nil
+                )
+                alert.informedEntity(
+                    activities: [.board, .exit, .ride],
+                    directionId: 0, facility: nil,
+                    route: routeC.id, routeType: nil,
+                    stop: "70151", trip: nil
+                )
+            }
+        let alertResponse = AlertsStreamDataResponse(alerts: [alert.id: alert])
+
+        objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(300).toKotlinInstant()
+            prediction.routeId = routeD.id
+            prediction.stopId = stop.id
+            prediction.trip = objects.trip { trip in
+                trip.routeId = routeD.id
+                trip.routePatternId = "Green-D-855-0"
+            }
+        })
+
+        let global = GlobalResponse(objects: objects)
+        let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
+            stopIds: [stop.id] + stop.childStopIds,
+            globalData: global,
+            sortByDistanceFrom: nil,
+            schedules: ScheduleResponse(objects: objects),
+            predictions: PredictionsStreamDataResponse(objects: objects),
+            alerts: alertResponse,
+            now: now.toKotlinInstant(),
+            pinnedRoutes: [],
+            context: .stopDetailsFiltered
+        )!.first!
+        let routeStopData = routeCardData.stopData.first!
+        let leaf = routeStopData.data.first { $0.directionId == 0 }!
+
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.global = GlobalResponse(objects: objects)
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: line.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            data: .init(routeData: routeCardData, stopData: routeStopData, leaf: leaf),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
+        )
+
+        let exp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(ViewType.Text.self) { text in
+                try text.string().starts(with: "Shuttle buses at \(stop.name)")
+            })
+            XCTAssertNotNil(try view.find(text: "5 min"))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        await fulfillment(of: [exp], timeout: 3)
     }
 }

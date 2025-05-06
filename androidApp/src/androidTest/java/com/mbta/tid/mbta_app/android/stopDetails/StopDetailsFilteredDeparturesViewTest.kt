@@ -28,10 +28,12 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -235,6 +237,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -329,6 +332,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -480,6 +484,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -574,6 +579,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     tileScrollState = rememberScrollState(),
                     tileData = listOf(),
                     noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(),
                     data = data,
@@ -621,6 +627,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
+        val isAllServiceDisrupted: Boolean
 
         if (groupByDirection) {
             val routeCardData =
@@ -650,6 +657,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                 )
             tileData = leafFormat.tileData()
             noPredictionsStatus = leafFormat.noPredictionsStatus()
+            isAllServiceDisrupted = leafFormat.isAllServiceDisrupted
         } else {
             val departures =
                 checkNotNull(
@@ -673,6 +681,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
                     .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
             noPredictionsStatus = null
+            isAllServiceDisrupted = false
         }
 
         composeTestRule.setContent {
@@ -684,6 +693,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = isAllServiceDisrupted,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -707,6 +717,125 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
             hasText("Service suspended at ${stop.name}", true)
         )
         composeTestRule.onNodeWithText("View details").assertHasClickAction()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testShowsPredictionsAndAlertOnBranchingTrunk(): Unit = runBlocking {
+        if (!groupByDirection) {
+            // This isn't supported pre direction grouping
+            return@runBlocking
+        }
+        val now = Clock.System.now()
+
+        val objects = TestData.clone()
+        val stop = objects.getStop("place-kencl")
+        val line = objects.getLine("line-Green")
+        val routeB = objects.getRoute("Green-B")
+        val routeC = objects.getRoute("Green-C")
+        val routeD = objects.getRoute("Green-D")
+
+        val alert =
+            objects.alert {
+                activePeriod(now - 5.seconds, now + 20.minutes)
+                effect = Alert.Effect.Shuttle
+                header = "Green line shuttle on B and C branches"
+                informedEntity(
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                    directionId = 0,
+                    route = routeB.id,
+                    stop = "71151"
+                )
+                informedEntity(
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride
+                        ),
+                    directionId = 0,
+                    route = routeC.id,
+                    stop = "70151"
+                )
+            }
+        val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
+
+        objects.upcomingTrip(
+            objects.prediction {
+                departureTime = now.plus(5.minutes)
+                routeId = routeD.id
+                stopId = stop.id
+                trip =
+                    objects.trip {
+                        routeId = routeD.id
+                        routePatternId = "Green-D-855-0"
+                    }
+            }
+        )
+
+        val filterState = StopDetailsFilter(routeId = line.id, directionId = 0)
+        val viewModel = StopDetailsViewModel.mocked()
+        val global = GlobalResponse(objects)
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id) + stop.childStopIds,
+                    global,
+                    null,
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    alertResponse,
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
+                )
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat = leaf.format(now, routeB, global, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredDeparturesView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    data =
+                        FilteredDeparturesData.PostGroupByDirection(
+                            routeCardData = routeCardData.single(),
+                            routeStopData = routeStopData,
+                            leaf = leaf
+                        ),
+                    tileData = leafFormat.tileData(),
+                    noPredictionsStatus = leafFormat.noPredictionsStatus(),
+                    isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
+                    allAlerts = null,
+                    elevatorAlerts = emptyList(),
+                    global = global,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {},
+                    openModal = {},
+                    openSheetRoute = {},
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExists(hasText("Shuttle buses at ${stop.name}", true))
+        composeTestRule.onNodeWithText("5 min").assertExists()
     }
 
     @Test
@@ -797,6 +926,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = alertResponse,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -895,6 +1025,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(alert),
                     global = globalResponse,
@@ -1010,6 +1141,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
@@ -1104,6 +1236,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
                     data = data,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
+                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
