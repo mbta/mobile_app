@@ -273,7 +273,7 @@ sealed class RealtimePatterns : ILeafData {
                             }
                             .type
                             .isSubway()
-                    UpcomingTrip.formatUpcomingTrip(now, it, routeType, context, isSubway)
+                    it.format(now, routeType, context, isSubway)
                 }
                 .take(count)
         return when {

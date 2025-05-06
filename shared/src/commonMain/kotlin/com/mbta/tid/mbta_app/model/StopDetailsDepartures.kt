@@ -42,9 +42,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         patternsByStop.routes.firstOrNull { route -> it.trip.routeId == route.id }
                             ?: return@mapNotNull null
                     val format =
-                        UpcomingTrip.formatUpcomingTrip(
+                        it.format(
                             filterAtTime,
-                            it,
                             route.type,
                             TripInstantDisplay.Context.StopDetailsFiltered
                         )
@@ -205,12 +204,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 }
             val hasTripsToShow =
                 pattern.upcomingTrips.any {
-                    UpcomingTrip.formatUpcomingTrip(
-                        now,
-                        it,
-                        routeType,
-                        TripInstantDisplay.Context.StopDetailsFiltered
-                    ) != null
+                    it.format(now, routeType, TripInstantDisplay.Context.StopDetailsFiltered) !=
+                        null
                 }
             return if (hasTripsToShow || !pattern.allDataLoaded) {
                 null

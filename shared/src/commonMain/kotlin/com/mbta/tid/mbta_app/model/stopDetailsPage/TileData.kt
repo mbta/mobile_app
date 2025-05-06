@@ -17,9 +17,8 @@ data class TileData(
     companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
             val formattedUpcomingTrip =
-                UpcomingTrip.formatUpcomingTrip(
+                upcoming.format(
                     now,
-                    upcoming,
                     route.type,
                     context = TripInstantDisplay.Context.StopDetailsFiltered
                 )

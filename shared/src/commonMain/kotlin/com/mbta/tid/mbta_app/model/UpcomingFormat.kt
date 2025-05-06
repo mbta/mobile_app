@@ -74,7 +74,7 @@ sealed class UpcomingFormat {
                 routeType: RouteType,
                 now: Instant,
                 context: TripInstantDisplay.Context
-            ) : this(trip, routeType, trip.format(now, routeType, context))
+            ) : this(trip, routeType, trip.display(now, routeType, context))
         }
 
         constructor(

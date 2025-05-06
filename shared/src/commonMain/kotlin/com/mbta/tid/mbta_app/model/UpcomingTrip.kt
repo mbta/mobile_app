@@ -110,8 +110,27 @@ constructor(
         } else !hasDeparture
     }
 
-    fun format(now: Instant, routeType: RouteType?, context: TripInstantDisplay.Context) =
+    fun display(now: Instant, routeType: RouteType?, context: TripInstantDisplay.Context) =
         TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
+
+    fun format(now: Instant, routeType: RouteType, context: TripInstantDisplay.Context) =
+        format(now, routeType, context, routeType.isSubway())
+
+    fun format(
+        now: Instant,
+        routeType: RouteType,
+        context: TripInstantDisplay.Context,
+        isSubway: Boolean
+    ): UpcomingFormat.Some.FormattedTrip? {
+        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context).takeUnless {
+            it.format is TripInstantDisplay.Hidden ||
+                it.format is TripInstantDisplay.Skipped ||
+                // API best practices call for hiding scheduled times on subway
+                (isSubway &&
+                    (it.format is TripInstantDisplay.ScheduleTime ||
+                        it.format is TripInstantDisplay.ScheduleMinutes))
+        }
+    }
 
     companion object {
         fun <Key> tripsMappedBy(
@@ -214,31 +233,6 @@ constructor(
                     scheduleTime >= filterAtTime
                 }
         }
-
-        fun formatUpcomingTrip(
-            now: Instant,
-            upcomingTrip: UpcomingTrip,
-            routeType: RouteType,
-            context: TripInstantDisplay.Context
-        ) = formatUpcomingTrip(now, upcomingTrip, routeType, context, routeType.isSubway())
-
-        fun formatUpcomingTrip(
-            now: Instant,
-            upcomingTrip: UpcomingTrip,
-            routeType: RouteType,
-            context: TripInstantDisplay.Context,
-            isSubway: Boolean
-        ): UpcomingFormat.Some.FormattedTrip? {
-            return UpcomingFormat.Some.FormattedTrip(upcomingTrip, routeType, now, context)
-                .takeUnless {
-                    it.format is TripInstantDisplay.Hidden ||
-                        it.format is TripInstantDisplay.Skipped ||
-                        // API best practices call for hiding scheduled times on subway
-                        (isSubway &&
-                            (it.format is TripInstantDisplay.ScheduleTime ||
-                                it.format is TripInstantDisplay.ScheduleMinutes))
-                }
-        }
     }
 }
 
@@ -267,9 +261,7 @@ fun List<UpcomingTrip>.withFormat(
     limit: Int?
 ): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>> {
     return this.mapNotNull {
-            val format =
-                UpcomingTrip.formatUpcomingTrip(now, it, routeType, context)
-                    ?: return@mapNotNull null
+            val format = it.format(now, routeType, context) ?: return@mapNotNull null
             Pair(it, format)
         }
         .run { if (limit != null) take(limit) else this }
