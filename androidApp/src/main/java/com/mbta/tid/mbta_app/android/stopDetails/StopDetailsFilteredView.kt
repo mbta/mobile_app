@@ -19,7 +19,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import kotlinx.datetime.Instant
 
 @Composable
@@ -67,6 +66,9 @@ fun StopDetailsFilteredView(
             data = FilteredDeparturesData.PreGroupByDirection(patternsByStop),
             tileData = tileData,
             noPredictionsStatus = noPredictionsStatus,
+            // This is only used post direction grouping, predictions are still hidden when there is
+            // an active major alert for pre group by direction.
+            isAllServiceDisrupted = false,
             allAlerts = allAlerts,
             elevatorAlerts = departures.elevatorAlerts,
             global = globalResponse,
@@ -143,6 +145,7 @@ fun StopDetailsFilteredView(
                 ),
             tileData = tileData,
             noPredictionsStatus = noPredictionsStatus,
+            isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
             allAlerts = allAlerts,
             elevatorAlerts = routeStopData.elevatorAlerts,
             global = globalResponse,
@@ -185,28 +188,36 @@ private fun Loading(
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
         Column(modifier = Modifier.loadingShimmer()) {
-            val placeholderDepartures = LoadingPlaceholders.stopDetailsDepartures(stopFilter)
+            val placeholderData =
+                LoadingPlaceholders.departureDataBundle(
+                    stopFilter.routeId,
+                    trips = 10,
+                    RouteCardData.Context.StopDetailsFiltered,
+                    now
+                )
             StopDetailsFilteredDeparturesView(
                 stopId = stopId,
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 data =
-                    FilteredDeparturesData.PreGroupByDirection(
-                        patternsByStop = placeholderDepartures.routes.first()
+                    FilteredDeparturesData.PostGroupByDirection(
+                        routeCardData = placeholderData.routeData,
+                        routeStopData = placeholderData.stopData,
+                        leaf = placeholderData.leaf
                     ),
                 tileData =
-                    placeholderDepartures
-                        .stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, now)
-                        .mapNotNull { tripAndFormat ->
-                            TileData.fromUpcoming(
-                                tripAndFormat.upcoming,
-                                placeholderDepartures.routes.first().representativeRoute,
-                                now
-                            )
-                        },
+                    placeholderData.leaf
+                        .format(
+                            now,
+                            placeholderData.routeData.lineOrRoute.sortRoute,
+                            globalResponse,
+                            RouteCardData.Context.StopDetailsFiltered
+                        )
+                        .tileData(),
                 noPredictionsStatus = null,
+                isAllServiceDisrupted = false,
                 allAlerts = null,
-                elevatorAlerts = placeholderDepartures.elevatorAlerts,
+                elevatorAlerts = placeholderData.stopData.elevatorAlerts,
                 global = globalResponse,
                 now = now,
                 viewModel = viewModel,

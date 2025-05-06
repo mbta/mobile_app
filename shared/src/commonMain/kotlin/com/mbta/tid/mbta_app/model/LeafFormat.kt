@@ -10,6 +10,14 @@ sealed class LeafFormat {
 
     abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
 
+    val isAllServiceDisrupted: Boolean
+        get() {
+            return when (this) {
+                is Single -> this.format is UpcomingFormat.Disruption
+                is Branched -> false
+            }
+        }
+
     /** A [RouteCardData.Leaf] which only has one destination within its direction. */
     data class Single(
         /** The headsign to show next to [format]. Overrides [Direction.destination] if set. */

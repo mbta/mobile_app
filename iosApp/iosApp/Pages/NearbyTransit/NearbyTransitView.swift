@@ -172,7 +172,6 @@ struct NearbyTransitView: View {
                     }
                 }
             }
-            .highPriorityGesture(DragGesture())
         }
     }
 
@@ -223,12 +222,12 @@ struct NearbyTransitView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         ScrollView {
-            LazyVStack(spacing: 16) {
+            LazyVStack(spacing: 18) {
                 ForEach(1 ... 5, id: \.self) { _ in
                     RouteCard(
-                        cardData: LoadingPlaceholders.shared.routeCard(context: .nearbyTransit),
-                        global: GlobalResponse(objects: ObjectCollectionBuilder()),
-                        now: Date.now,
+                        cardData: LoadingPlaceholders.shared.nearbyRoute(),
+                        global: globalData,
+                        now: now,
                         onPin: { _ in },
                         pinned: false,
                         pushNavEntry: { _ in },

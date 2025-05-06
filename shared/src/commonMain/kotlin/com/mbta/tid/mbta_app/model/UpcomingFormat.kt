@@ -67,7 +67,7 @@ sealed class UpcomingFormat {
             val format: TripInstantDisplay
         ) {
             val id: String
-                get() = trip.trip.id
+                get() = trip.id
 
             constructor(
                 trip: UpcomingTrip,

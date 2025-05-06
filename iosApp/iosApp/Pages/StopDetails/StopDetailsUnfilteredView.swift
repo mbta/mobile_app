@@ -176,7 +176,6 @@ struct StopDetailsUnfilteredView: View {
                             }
                         }
                     }
-                    .highPriorityGesture(DragGesture())
                     .padding(.top, 16)
                 }
             }
@@ -184,18 +183,20 @@ struct StopDetailsUnfilteredView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        VStack(spacing: 16) {
-            ForEach(1 ... 5, id: \.self) { _ in
+        let placeholderCards = LoadingPlaceholders.shared.stopDetailsRouteCards()
+        VStack(spacing: 0) {
+            ForEach(placeholderCards, id: \.id) { card in
                 RouteCard(
-                    cardData: LoadingPlaceholders.shared.routeCard(context: .stopDetailsUnfiltered),
-                    global: GlobalResponse(objects: ObjectCollectionBuilder()),
-                    now: Date.now,
+                    cardData: card,
+                    global: stopDetailsVM.global,
+                    now: now,
                     onPin: { _ in },
                     pinned: false,
                     pushNavEntry: { _ in },
                     showStationAccessibility: false
                 )
-                .loadingPlaceholder()
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
         }
         .padding(.horizontal, 16)

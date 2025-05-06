@@ -16,11 +16,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var tiles: [TileData]
     var data: DepartureDataBundle
-    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
-    var alerts: [Shared.Alert]
-    var downstreamAlerts: [Shared.Alert]
+
     var pinned: Bool
 
     var now: Date
@@ -32,9 +29,21 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
+    var testTiles: [TileData]? = nil
+
     let inspection = Inspection<Self>()
 
     var analytics: Analytics = AnalyticsProvider.shared
+
+    @State var leafFormat: LeafFormat
+
+    var tiles: [TileData] { testTiles ?? leafFormat.tileData() }
+    var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
+    var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
+
+    var patternsHere: [RoutePattern] { data.leaf.routePatterns }
+    var alerts: [Shared.Alert] { data.leaf.alertsHere }
+    var downstreamAlerts: [Shared.Alert] { data.leaf.alertsDownstream }
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
@@ -52,15 +61,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    var hasMajorAlert: Bool {
-        alerts.contains(where: { $0.significance == .major })
-    }
-
     var hasAccessibilityWarning: Bool {
         data.stopData.hasElevatorAlerts || !data.stopData.stop.isWheelchairAccessible
     }
-
-    @State var patternsHere: [RoutePattern]?
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
@@ -73,6 +76,49 @@ struct StopDetailsFilteredDepartureDetails: View {
         let directionId: Int32
         let patternsHere: [RoutePattern]?
         let now: Date
+    }
+
+    init(
+        stopId: String,
+        stopFilter: StopDetailsFilter,
+        tripFilter: TripDetailsFilter? = nil,
+        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setTripFilter: @escaping (TripDetailsFilter?) -> Void,
+        data: DepartureDataBundle, pinned: Bool, now: Date,
+        errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
+        stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider,
+        testTiles: [TileData]? = nil
+    ) {
+        self.stopId = stopId
+        self.stopFilter = stopFilter
+        self.tripFilter = tripFilter
+        self.setStopFilter = setStopFilter
+        self.setTripFilter = setTripFilter
+        self.data = data
+        self.pinned = pinned
+        self.now = now
+        self.testTiles = testTiles
+        self.errorBannerVM = errorBannerVM
+        self.nearbyVM = nearbyVM
+        self.mapVM = mapVM
+        self.stopDetailsVM = stopDetailsVM
+
+        leafFormat =
+            data.leaf.format(
+                now: now.toKotlinInstant(),
+                representativeRoute: data.routeData.lineOrRoute.sortRoute,
+                globalData: stopDetailsVM.global,
+                context: .stopDetailsFiltered
+            )
+        setAlertSummaries(AlertSummaryParams(
+            global: stopDetailsVM.global,
+            alerts: alerts,
+            downstreamAlerts: downstreamAlerts,
+            stopId: stopId,
+            directionId: stopFilter.directionId,
+            patternsHere: patternsHere,
+            now: now
+        ))
     }
 
     var body: some View {
@@ -96,7 +142,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .padding(.bottom, 6)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
-                        if !hasMajorAlert, !tiles.isEmpty {
+                        if !isAllServiceDisrupted, !tiles.isEmpty {
                             departureTiles(view)
                                 .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                                 .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
@@ -104,7 +150,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                     alertCards
 
-                    if hasMajorAlert {
+                    if isAllServiceDisrupted {
                         EmptyView()
                     } else if let noPredictionsStatus {
                         StopDetailsNoTripCard(
@@ -143,7 +189,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
             }
-            .highPriorityGesture(DragGesture())
         }
         .onAppear { handleViewportForStatus(noPredictionsStatus) }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
@@ -151,20 +196,13 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
-        .onAppear {
-            patternsHere = data.leaf.routePatterns
-            setAlertSummaries(AlertSummaryParams(
-                global: stopDetailsVM.global,
-                alerts: alerts,
-                downstreamAlerts: downstreamAlerts,
-                stopId: stopId,
-                directionId: stopFilter.directionId,
-                patternsHere: patternsHere,
-                now: now
-            ))
-        }
         .onChange(of: data.leaf) { leaf in
-            patternsHere = leaf.routePatterns
+            leafFormat = leaf.format(
+                now: now.toKotlinInstant(),
+                representativeRoute: data.routeData.lineOrRoute.sortRoute,
+                globalData: stopDetailsVM.global,
+                context: .stopDetailsFiltered
+            )
         }
         .onChange(of: AlertSummaryParams(
             global: stopDetailsVM.global,
@@ -176,6 +214,14 @@ struct StopDetailsFilteredDepartureDetails: View {
             now: now
         )) { newParams in
             setAlertSummaries(newParams)
+        }
+        .onChange(of: stopDetailsVM.global) { global in
+            leafFormat = data.leaf.format(
+                now: now.toKotlinInstant(),
+                representativeRoute: data.routeData.lineOrRoute.sortRoute,
+                globalData: global,
+                context: .stopDetailsFiltered
+            )
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
@@ -300,7 +346,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     func alertCard(_ alert: Shared.Alert, _ summary: AlertSummary?, _ spec: AlertCardSpec? = nil) -> some View {
         let spec: AlertCardSpec = if let spec {
             spec
-        } else if alert.significance == .major {
+        } else if alert.significance == .major, isAllServiceDisrupted {
             .major
         } else if alert.significance == .minor, alert.effect == .delay {
             .delay

@@ -79,6 +79,7 @@ fun StopDetailsFilteredDeparturesView(
     data: FilteredDeparturesData,
     tileData: List<TileData>,
     noPredictionsStatus: NoTripsFormat?,
+    isAllServiceDisrupted: Boolean,
     allAlerts: AlertsStreamDataResponse?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
@@ -173,7 +174,12 @@ fun StopDetailsFilteredDeparturesView(
             }
         else false
 
-    val hasMajorAlert = alertsHere.any { it.significance == AlertSignificance.Major }
+    val hidePredictionsForAlert =
+        when (data) {
+            is FilteredDeparturesData.PreGroupByDirection ->
+                alertsHere.any { it.significance == AlertSignificance.Major }
+            is FilteredDeparturesData.PostGroupByDirection -> isAllServiceDisrupted
+        }
 
     val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
@@ -272,7 +278,7 @@ fun StopDetailsFilteredDeparturesView(
                     updateStopFilter,
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
-                if (!hasMajorAlert && tileData.isNotEmpty()) {
+                if (!hidePredictionsForAlert && tileData.isNotEmpty()) {
                     DepartureTiles(
                         tripFilter,
                         groupByDirection,
@@ -292,7 +298,10 @@ fun StopDetailsFilteredDeparturesView(
                 fun AlertCard(alert: Alert, summary: AlertSummary?, spec: AlertCardSpec? = null) {
                     val spec =
                         spec
-                            ?: if (alert.significance == AlertSignificance.Major) {
+                            ?: if (
+                                alert.significance == AlertSignificance.Major &&
+                                    hidePredictionsForAlert
+                            ) {
                                 AlertCardSpec.Major
                             } else if (
                                 alert.significance == AlertSignificance.Minor &&
@@ -351,7 +360,7 @@ fun StopDetailsFilteredDeparturesView(
                     }
                 }
 
-                if (hasMajorAlert) {
+                if (hidePredictionsForAlert) {
                     Box {}
                 } else if (noPredictionsStatus != null) {
                     Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {

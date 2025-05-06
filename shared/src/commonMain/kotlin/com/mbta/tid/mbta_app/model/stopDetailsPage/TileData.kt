@@ -13,7 +13,7 @@ data class TileData(
     val formatted: UpcomingFormat,
     val upcoming: UpcomingTrip
 ) {
-    val id = upcoming.trip.id
+    val id: String = upcoming.id
 
     companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
