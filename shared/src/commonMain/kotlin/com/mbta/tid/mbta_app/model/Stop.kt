@@ -47,9 +47,7 @@ data class Stop(
     fun resolveParent(global: GlobalResponse) = resolveParent(global.stops)
 
     @OptIn(ExperimentalTurfApi::class)
-    fun distanceFrom(position: Position): Double {
-        return distance(position, this.position)
-    }
+    fun distanceFrom(position: Position): Double = distance(position, this.position)
 
     companion object {
         /**
