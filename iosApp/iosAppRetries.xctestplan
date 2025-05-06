@@ -35,7 +35,6 @@
     },
     {
       "skippedTests" : [
-        "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
         "HomeMapViewUITests\/testRecentersToUserLocation()",
         "IosAppUITests\/testMapShown()"
       ],

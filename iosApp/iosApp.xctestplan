@@ -55,7 +55,6 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
-        "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
         "HomeMapViewUITests\/testRecentersToUserLocation()",
         "IosAppUITests\/testMapShown()",
         "IosAppUITestsLaunchTests\/testLaunch()"
