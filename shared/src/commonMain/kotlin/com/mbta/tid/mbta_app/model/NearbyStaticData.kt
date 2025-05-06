@@ -551,7 +551,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
             .orEmpty()
 
     val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
-    val hasSchedulesTodayByPattern = RouteCardData.getSchedulesTodayByPattern(schedules)
+    val hasSchedulesTodayByPattern = schedules?.getSchedulesTodayByPattern()
 
     val upcomingTripsMap: UpcomingTripsMap =
         upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop
@@ -691,7 +691,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
 
     // add predictions and apply filtering
     val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
-    val hasSchedulesTodayByPattern = RouteCardData.getSchedulesTodayByPattern(schedules)
+    val hasSchedulesTodayByPattern = schedules?.getSchedulesTodayByPattern()
 
     fun Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>
         .maybeFilterCancellations(isSubway: Boolean) =

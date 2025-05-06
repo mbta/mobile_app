@@ -621,18 +621,6 @@ data class RouteCardData(
                     .sort(sortByDistanceFrom, pinnedRoutes)
             }
 
-        fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
-            schedules?.let { scheduleResponse ->
-                val scheduledTrips = scheduleResponse.trips
-                val hasSchedules: MutableMap<String, Boolean> = mutableMapOf()
-                for (schedule in scheduleResponse.schedules) {
-                    val trip = scheduledTrips[schedule.tripId]
-                    val patternId = trip?.routePatternId ?: continue
-                    hasSchedules[patternId] = true
-                }
-                hasSchedules
-            }
-
         fun filterStopsByPatterns(
             routePatterns: List<RoutePattern>,
             global: GlobalResponse,
@@ -852,7 +840,7 @@ data class RouteCardData(
                     .add(upcomingTrip)
             }
 
-            val hasSchedulesTodayByPattern = getSchedulesTodayByPattern(schedules)
+            val hasSchedulesTodayByPattern = schedules?.getSchedulesTodayByPattern()
 
             forEachLeaf { path, leafBuilder ->
                 val upcomingTripsHere = upcomingTripsBySlot[path]
