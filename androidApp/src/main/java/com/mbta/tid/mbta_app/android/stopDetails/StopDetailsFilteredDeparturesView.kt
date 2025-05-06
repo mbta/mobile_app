@@ -109,13 +109,6 @@ fun StopDetailsFilteredDeparturesView(
             leaf.upcomingTrips.any { it.trip.id == tripFilter.tripId && it.isCancelled }
         else false
 
-    val hidePredictionsForAlert =
-        when (data) {
-            is FilteredDeparturesData.PreGroupByDirection ->
-                alertsHere.any { it.significance == AlertSignificance.Major }
-            is FilteredDeparturesData.PostGroupByDirection -> isAllServiceDisrupted
-        }
-
     val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
     val routeType: RouteType = lineOrRoute.sortRoute.type
@@ -205,7 +198,7 @@ fun StopDetailsFilteredDeparturesView(
                     updateStopFilter,
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
-                if (!hidePredictionsForAlert && tileData.isNotEmpty()) {
+                if (!isAllServiceDisrupted && tileData.isNotEmpty()) {
                     DepartureTiles(
                         tripFilter,
                         lineOrRoute,
@@ -226,7 +219,7 @@ fun StopDetailsFilteredDeparturesView(
                         spec
                             ?: if (
                                 alert.significance == AlertSignificance.Major &&
-                                    hidePredictionsForAlert
+                                    isAllServiceDisrupted
                             ) {
                                 AlertCardSpec.Major
                             } else if (
@@ -286,7 +279,7 @@ fun StopDetailsFilteredDeparturesView(
                     }
                 }
 
-                if (hidePredictionsForAlert) {
+                if (isAllServiceDisrupted) {
                     Box {}
                 } else if (noPredictionsStatus != null) {
                     Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {

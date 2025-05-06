@@ -179,9 +179,7 @@ class NearbyTransitViewTest : KoinTest {
                     setLastLocation = {},
                     setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {
-                        throw IllegalStateException("there should be stops nearby")
-                    },
+                    noNearbyStopsView = {},
                     errorBannerViewModel =
                         ErrorBannerViewModel(
                             false,
@@ -192,7 +190,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"), 30_000L)
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()

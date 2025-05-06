@@ -643,12 +643,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data =
-                        FilteredDeparturesData.PostGroupByDirection(
-                            routeCardData = routeCardData.single(),
-                            routeStopData = routeStopData,
-                            leaf = leaf
-                        ),
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = leafFormat.tileData(),
                     noPredictionsStatus = leafFormat.noPredictionsStatus(),
                     isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,

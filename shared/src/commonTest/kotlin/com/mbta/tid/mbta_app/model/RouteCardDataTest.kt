@@ -1767,14 +1767,14 @@ class RouteCardDataTest {
                 typicality = RoutePattern.Typicality.Typical
             }
 
-            val time = Instant.parse("2024-02-21T09:30:08-05:00")
-            objects.prediction {
-                arrivalTime = time
-                departureTime = time
-                routeId = midBusRoute.id
-                stopId = midBusStop.id
-                tripId = midBusPattern1.representativeTripId
-            }
+        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = midBusRoute.id
+            stopId = midBusStop.id
+            tripId = midBusPattern1.representativeTripId
+        }
 
         objects.schedule {
             routeId = midBusRoute.id
@@ -1786,64 +1786,64 @@ class RouteCardDataTest {
             tripId = farSubwayPattern.representativeTripId
         }
 
-            val global =
-                GlobalResponse(
-                    objects,
-                    patternIdsByStop =
-                        mapOf(
-                            farBusStop.id to listOf(farBusPattern1.id, farBusPattern2.id),
-                            midBusStop.id to listOf(midBusPattern1.id, midBusPattern2.id),
-                            closeBusStop.id to listOf(closeBusPattern.id),
-                            farSubwayStop.id to listOf(farSubwayPattern.id),
-                            midSubwayStop.id to listOf(midSubwayPattern.id),
-                            closeSubwayStop.id to listOf(closeSubwayPattern.id)
-                        )
-                )
-
-            val routeCardsSorted =
-                RouteCardData.routeCardsForStopList(
-                    listOf(
-                        farBusStop.id,
-                        farSubwayStop.id,
-                        midSubwayStop.id,
-                        closeBusStop.id,
-                        midBusStop.id,
-                        closeSubwayStop.id
-                    ),
-                    global,
-                    sortByDistanceFrom = closeBusStop.position,
-                    schedules = ScheduleResponse(objects),
-                    predictions = PredictionsStreamDataResponse(objects),
-                    alerts = AlertsStreamDataResponse(objects),
-                    now = time,
-                    pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
-                    context = RouteCardData.Context.NearbyTransit
-                )
-
-            // Routes with no service today should sort below all routes with any service today,
-            // unless they are a pinned route, in which case we want them to sort beneath all other
-            // pinned routes, but above any unpinned ones. Here, the far and mid subway routes are
-            // both pinned, but mid has no scheduled service, so it's sorted below the farther
-            // pinned route. For unpinned routes, mid bus is the only one with any schedules, so
-            // it's sorted above all the other unpinned routes, then the remaining  are ordered with
-            // the usual nearby transit sort order, subway first, then by distance.
-            assertEquals(
-                listOf(
-                    farSubwayRoute,
-                    midSubwayRoute,
-                    midBusRoute,
-                    closeSubwayRoute,
-                    closeBusRoute,
-                    farBusRoute
-                ),
-                checkNotNull(routeCardsSorted).flatMap {
-                    when (val lineOrRoute = it.lineOrRoute) {
-                        is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
-                        is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
-                    }
-                }
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        farBusStop.id to listOf(farBusPattern1.id, farBusPattern2.id),
+                        midBusStop.id to listOf(midBusPattern1.id, midBusPattern2.id),
+                        closeBusStop.id to listOf(closeBusPattern.id),
+                        farSubwayStop.id to listOf(farSubwayPattern.id),
+                        midSubwayStop.id to listOf(midSubwayPattern.id),
+                        closeSubwayStop.id to listOf(closeSubwayPattern.id)
+                    )
             )
-        }
+
+        val routeCardsSorted =
+            RouteCardData.routeCardsForStopList(
+                listOf(
+                    farBusStop.id,
+                    farSubwayStop.id,
+                    midSubwayStop.id,
+                    closeBusStop.id,
+                    midBusStop.id,
+                    closeSubwayStop.id
+                ),
+                global,
+                sortByDistanceFrom = closeBusStop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                now = time,
+                pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
+                context = RouteCardData.Context.NearbyTransit
+            )
+
+        // Routes with no service today should sort below all routes with any service today,
+        // unless they are a pinned route, in which case we want them to sort beneath all other
+        // pinned routes, but above any unpinned ones. Here, the far and mid subway routes are
+        // both pinned, but mid has no scheduled service, so it's sorted below the farther
+        // pinned route. For unpinned routes, mid bus is the only one with any schedules, so
+        // it's sorted above all the other unpinned routes, then the remaining  are ordered with
+        // the usual nearby transit sort order, subway first, then by distance.
+        assertEquals(
+            listOf(
+                farSubwayRoute,
+                midSubwayRoute,
+                midBusRoute,
+                closeSubwayRoute,
+                closeBusRoute,
+                farBusRoute
+            ),
+            checkNotNull(routeCardsSorted).flatMap {
+                when (val lineOrRoute = it.lineOrRoute) {
+                    is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
+                    is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
+                }
+            }
+        )
+    }
 
     @Test
     fun `RouteCardData routeCardsForStopList sorts stops in route card with no service today to the bottom`() =
