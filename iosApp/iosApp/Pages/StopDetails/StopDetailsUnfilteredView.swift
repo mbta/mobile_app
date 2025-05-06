@@ -198,8 +198,7 @@ struct StopDetailsUnfilteredView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
             }
-        }
-        .padding(.horizontal, 16)
+        }.loadingPlaceholder()
     }
 
     func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {
