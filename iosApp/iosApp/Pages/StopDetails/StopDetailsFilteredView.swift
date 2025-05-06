@@ -109,7 +109,8 @@ struct StopDetailsFilteredView: View {
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
-                    stopDetailsVM: stopDetailsVM
+                    stopDetailsVM: stopDetailsVM,
+                    viewportProvider: .init()
                 )
             } else {
                 loadingBody()
@@ -163,7 +164,8 @@ struct StopDetailsFilteredView: View {
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
         ).loadingPlaceholder()
     }
 }
