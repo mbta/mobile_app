@@ -48,13 +48,9 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if nearbyVM.groupByDirection,
-               let routeCardData = nearbyVM.routeCardData,
+            if let routeCardData = nearbyVM.routeCardData,
                let global = globalData {
                 nearbyList(routeCardData, global)
-                    .onAppear { didLoadData?(self) }
-            } else if let nearbyWithRealtimeInfo {
-                nearbyList(nearbyWithRealtimeInfo)
                     .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
@@ -100,7 +96,6 @@ struct NearbyTransitView: View {
             pinnedRoutes: pinnedRoutes
         )) { newParams in
             DispatchQueue.main.async {
-                if !nearbyVM.groupByDirection { return }
                 nearbyVM.loadRouteCardData(
                     state: newParams.state,
                     global: newParams.global,
@@ -386,9 +381,7 @@ struct NearbyTransitView: View {
     }
 
     private func scrollToTop() {
-        guard let id = nearbyVM.groupByDirection ?
-            nearbyVM.routeCardData?.first?.lineOrRoute.id :
-            nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
+        guard let id = nearbyVM.routeCardData?.first?.lineOrRoute.id else { return }
         scrollSubject.send(id)
     }
 

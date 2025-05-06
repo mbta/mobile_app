@@ -18,7 +18,6 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
         continueAfterFailure = false
     }
 
-    // TODO: Re-enable this test once the groupByDirection toggle is removed
     func testOpenStopDetails() throws {
         app.launch()
         let alewifeHeadsign = app.staticTexts["Alewife"]

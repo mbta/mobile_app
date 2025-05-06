@@ -186,7 +186,6 @@ import XCTest
         )
 
         let nearbyVM = NearbyViewModel()
-        nearbyVM.groupByDirection = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
 
@@ -222,7 +221,6 @@ import XCTest
 
         let nearbyVM = NearbyViewModel()
         nearbyVM.showStationAccessibility = true
-        nearbyVM.groupByDirection = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
         stopDetailsVM.showStationAccessibility = true
@@ -270,7 +268,6 @@ import XCTest
 
         let nearbyVM = NearbyViewModel()
         nearbyVM.showStationAccessibility = true
-        nearbyVM.groupByDirection = true
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = globalResponse!
         stopDetailsVM.showStationAccessibility = true

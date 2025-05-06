@@ -14,12 +14,9 @@ import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.Prediction
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat
@@ -41,12 +38,10 @@ import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.koin.compose.KoinContext
 
-@RunWith(Parameterized::class)
-class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolean) {
+class StopDetailsFilteredDeparturesViewTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
@@ -160,11 +155,7 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun resetSettings() {
-        settings.clear()
-        settings[Settings.GroupByDirection] = groupByDirection
-    }
+    @Before fun resetSettings() = settings.clear()
 
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
@@ -173,58 +164,33 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        now,
-                        emptySet(),
-                        context = RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -267,58 +233,33 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        now,
-                        emptySet(),
-                        context = RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -410,65 +351,32 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
+        val leaf =
+            RouteCardData.Leaf(
+                trip.directionId,
+                listOf(routePattern),
+                setOf(stop.id),
+                listOf(UpcomingTrip(trip, schedule, prediction)),
+                alertsHere = emptyList(),
+                allDataLoaded = true,
+                hasSchedulesToday = true,
+                alertsDownstream = emptyList()
+            )
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val routeStopData = RouteCardData.RouteStopData(stop, route, listOf(leaf), globalResponse)
+        val routeCardData =
+            RouteCardData(
+                RouteCardData.LineOrRoute.Route(route),
+                listOf(routeStopData),
+                RouteCardData.Context.StopDetailsFiltered,
+                now
+            )
 
-        if (groupByDirection) {
-            val leaf =
-                RouteCardData.Leaf(
-                    trip.directionId,
-                    listOf(routePattern),
-                    setOf(stop.id),
-                    listOf(UpcomingTrip(trip, schedule, prediction)),
-                    alertsHere = emptyList(),
-                    allDataLoaded = true,
-                    hasSchedulesToday = true,
-                    alertsDownstream = emptyList()
-                )
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            val routeStopData =
-                RouteCardData.RouteStopData(stop, route, listOf(leaf), globalResponse)
-            val routeCardData =
-                RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
-                    listOf(routeStopData),
-                    RouteCardData.Context.StopDetailsFiltered,
-                    now
-                )
-
-            viewModel.setRouteCardData(listOf(routeCardData))
-            data = FilteredDeparturesData.PostGroupByDirection(routeCardData, routeStopData, leaf)
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                StopDetailsDepartures(
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    trip.headsign,
-                                    null,
-                                    listOf(routePattern),
-                                    listOf(UpcomingTrip(trip, schedule, prediction))
-                                )
-                            )
-                        )
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures.stopDetailsFormattedTrips(route.id, trip.directionId, now).mapNotNull {
-                    TileData.fromUpcoming(it.upcoming, route, now)
-                }
-            noPredictionsStatus = null
-        }
+        viewModel.setRouteCardData(listOf(routeCardData))
+        data = FilteredDeparturesData.PostGroupByDirection(routeCardData, routeStopData, leaf)
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -515,53 +423,38 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val line = objects.line { id = "Green" }
 
         val data: FilteredDeparturesData
-        if (groupByDirection) {
-            val leaf =
-                RouteCardData.Leaf(
-                    0,
-                    emptyList(),
-                    setOf(stop.id),
-                    emptyList(),
-                    emptyList(),
-                    true,
-                    true,
-                    emptyList()
-                )
-            val routeStopData =
-                RouteCardData.RouteStopData(
-                    stop,
-                    line,
-                    setOf(route),
-                    listOf(leaf),
-                    GlobalResponse(objects)
-                )
-            val routeCardData =
-                RouteCardData(
-                    RouteCardData.LineOrRoute.Line(line, setOf(route)),
-                    listOf(routeStopData),
-                    RouteCardData.Context.StopDetailsFiltered,
-                    now
-                )
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData,
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-        } else {
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop =
-                        PatternsByStop(
-                            routes = listOf(route),
-                            line = line,
-                            stop = stop,
-                            patterns = listOf(),
-                            directions = listOf(),
-                            elevatorAlerts = listOf()
-                        )
-                )
-        }
+        val leaf =
+            RouteCardData.Leaf(
+                0,
+                emptyList(),
+                setOf(stop.id),
+                emptyList(),
+                emptyList(),
+                true,
+                true,
+                emptyList()
+            )
+        val routeStopData =
+            RouteCardData.RouteStopData(
+                stop,
+                line,
+                setOf(route),
+                listOf(leaf),
+                GlobalResponse(objects)
+            )
+        val routeCardData =
+            RouteCardData(
+                RouteCardData.LineOrRoute.Line(line, setOf(route)),
+                listOf(routeStopData),
+                RouteCardData.Context.StopDetailsFiltered,
+                now
+            )
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData,
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -622,58 +515,33 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        alertResponse,
-                        now,
-                        emptySet(),
-                        context = RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    alertResponse,
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        alertResponse,
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -735,58 +603,33 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        alertResponse,
-                        now,
-                        emptySet(),
-                        context = RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    alertResponse,
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        alertResponse,
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -833,58 +676,33 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        now,
-                        emptySet(),
-                        context = RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -947,59 +765,34 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        alertResponse,
-                        now,
-                        emptySet(),
-                        context = RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    alertResponse,
+                    now,
+                    emptySet(),
+                    context = RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
 
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        alertResponse,
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -1041,59 +834,34 @@ class StopDetailsFilteredDeparturesViewTest(private val groupByDirection: Boolea
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
-        if (groupByDirection) {
-            val routeCardData =
-                checkNotNull(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(inaccessibleStop.id),
-                        globalResponse,
-                        null,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        now,
-                        emptySet(),
-                        RouteCardData.Context.StopDetailsFiltered
-                    )
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(inaccessibleStop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsFiltered
                 )
-            val routeStopData = routeCardData.single().stopData.single()
-            val leaf = routeStopData.data.first { it.directionId == 0 }
-            val leafFormat =
-                leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-            viewModel.setRouteCardData(routeCardData)
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leafFormat =
+            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        viewModel.setRouteCardData(routeCardData)
 
-            data =
-                FilteredDeparturesData.PostGroupByDirection(
-                    routeCardData = routeCardData.single(),
-                    routeStopData = routeStopData,
-                    leaf = leaf
-                )
-            tileData = leafFormat.tileData()
-            noPredictionsStatus = leafFormat.noPredictionsStatus()
-        } else {
-            val departures =
-                checkNotNull(
-                    StopDetailsDepartures.fromData(
-                        inaccessibleStop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        AlertsStreamDataResponse(emptyMap()),
-                        emptySet(),
-                        now,
-                    )
-                )
-            viewModel.setDepartures(departures)
-            data =
-                FilteredDeparturesData.PreGroupByDirection(
-                    patternsByStop = departures.routes.first { it.routeIdentifier == route.id }
-                )
-            tileData =
-                departures
-                    .stopDetailsFormattedTrips(filterState.routeId, filterState.directionId, now)
-                    .mapNotNull { TileData.fromUpcoming(it.upcoming, route, now) }
-            noPredictionsStatus = null
-        }
+        data =
+            FilteredDeparturesData.PostGroupByDirection(
+                routeCardData = routeCardData.single(),
+                routeStopData = routeStopData,
+                leaf = leaf
+            )
+        tileData = leafFormat.tileData()
+        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {

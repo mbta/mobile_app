@@ -112,11 +112,7 @@ struct StopDetailsFilteredView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            if !nearbyVM.groupByDirection {
-                DebugView { Text(String(
-                    stringLiteral: "Turn on the Group by Direction feature toggle, we’re dropping support for headsign grouping"
-                )).padding(8) }.padding(16).frame(maxHeight: .infinity)
-            } else if let departureData {
+            if let departureData {
                 StopDetailsFilteredDepartureDetails(
                     stopId: stopId,
                     stopFilter: stopFilter,

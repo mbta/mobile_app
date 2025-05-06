@@ -73,7 +73,6 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let nearbyVM = NearbyViewModel()
-        nearbyVM.groupByDirection = true
 
         let sut = StopDetailsView(
             stopId: stop.id,
@@ -224,7 +223,7 @@ final class StopDetailsViewTests: XCTestCase {
             routeCardData: [routeData],
             now: Date.now,
             errorBannerVM: .init(),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
         )
