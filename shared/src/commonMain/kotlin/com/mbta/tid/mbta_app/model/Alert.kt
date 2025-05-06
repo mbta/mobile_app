@@ -70,6 +70,8 @@ data class Alert(
             else -> AlertSignificance.None
         }
 
+    val hasNoThroughService = effect in setOf(Effect.Shuttle, Effect.Suspension)
+
     suspend fun summary(
         stopId: String,
         directionId: Int,
