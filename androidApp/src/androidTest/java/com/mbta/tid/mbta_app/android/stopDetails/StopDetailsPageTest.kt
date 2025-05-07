@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.testKoinApplication
@@ -25,7 +24,6 @@ class StopDetailsPageTest : KoinTest {
 
     val koinApplication = testKoinApplication()
 
-    @OptIn(MapboxExperimental::class)
     @Test
     fun testCallsUpdateRouteCardData() {
         val viewModel = StopDetailsViewModel.mocked()
