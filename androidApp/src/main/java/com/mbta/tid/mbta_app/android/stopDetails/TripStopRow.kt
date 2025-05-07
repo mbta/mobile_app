@@ -54,7 +54,6 @@ import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -97,10 +96,7 @@ fun TripStopRow(
                 RouteLineState.Shuttle
             else -> RouteLineState.Regular
         }
-    val disruption =
-        stop.disruption?.takeIf {
-            it.alert.significance >= AlertSignificance.Major && showDownstreamAlert
-        }
+    val disruption = stop.disruption?.takeIf { it.alert.hasNoThroughService && showDownstreamAlert }
     Column {
         Box(
             Modifier.padding(horizontal = 6.dp)
@@ -269,7 +265,7 @@ fun TripStopRow(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
-                        if (stop.isTruncating()) {
+                        if (stop.isTruncating) {
                             ColoredRouteLine(
                                 routeAccents.color,
                                 Modifier.weight(1f),
