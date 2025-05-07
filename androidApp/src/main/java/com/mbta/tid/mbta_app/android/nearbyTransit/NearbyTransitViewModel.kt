@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.util.fetchApi
-import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -28,7 +27,6 @@ class NearbyTransitViewModel(
     private val errorBannerRepository: IErrorBannerStateRepository,
     private val analytics: Analytics,
 ) : KoinComponent, ViewModel() {
-    var loadedLocation by mutableStateOf<Position?>(null)
     var loading by mutableStateOf(false)
     var nearby by mutableStateOf<NearbyStaticData?>(null)
     var nearbyStopIds by mutableStateOf<List<String>?>(null)
@@ -44,9 +42,6 @@ class NearbyTransitViewModel(
         setSelectingLocation: (Boolean) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            if (loadedLocation?.isRoughlyEqualTo(location) == true) {
-                return@launch
-            }
             if (loading) {
                 fetchNearbyTask?.cancel()
             }
@@ -115,7 +110,6 @@ class NearbyTransitViewModel(
     }
 
     fun reset() {
-        loadedLocation = null
         loading = false
         nearby = null
         nearbyStopIds = null
