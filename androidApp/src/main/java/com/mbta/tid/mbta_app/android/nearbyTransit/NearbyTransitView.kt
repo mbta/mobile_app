@@ -15,7 +15,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +68,7 @@ fun NearbyTransitView(
         }
     }
     val now by timer(updateInterval = 5.seconds)
-    val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
+    val stopIds = nearbyVM.nearbyStopIds
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
@@ -101,7 +100,7 @@ fun NearbyTransitView(
         )
         ErrorBanner(errorBannerViewModel)
         LaunchedEffect(
-            nearbyVM.nearby,
+            stopIds,
             globalResponse,
             targetLocation,
             schedules,

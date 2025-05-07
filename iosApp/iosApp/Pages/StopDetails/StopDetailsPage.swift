@@ -119,7 +119,8 @@ struct StopDetailsPage: View {
     }
 
     func announceDeparture(_ previousFilters: StopDetailsPageFilters) {
-        guard let context = internalDepartures?.getScreenReaderTripDepartureContext(
+        guard let context = StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
+            routeCardData: internalRouteCardData,
             previousFilters: previousFilters
         ) else { return }
         let routeType = context.routeType.typeText(isOnly: true)
@@ -158,7 +159,7 @@ struct StopDetailsPage: View {
     }
 
     func setStopFilter() -> StopDetailsFilter? {
-        let nextStopFilter = stopFilter ?? internalDepartures?.autoStopFilter()
+        let nextStopFilter = stopFilter ?? StopDetailsUtils.shared.autoStopFilter(routeCardData: internalRouteCardData)
         if stopFilter != nextStopFilter {
             nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
         }
@@ -166,10 +167,12 @@ struct StopDetailsPage: View {
     }
 
     func setTripFilter(filters: StopDetailsPageFilters) {
-        let tripFilter = internalDepartures?.autoTripFilter(
+        let tripFilter = StopDetailsUtils.shared.autoTripFilter(
+            routeCardData: internalRouteCardData,
             stopFilter: filters.stopFilter,
             currentTripFilter: filters.tripFilter,
-            filterAtTime: now.toKotlinInstant()
+            filterAtTime: now.toKotlinInstant(),
+            globalData: stopDetailsVM.global
         )
 
         if let previousFilter = filters.tripFilter, tripFilter != previousFilter {

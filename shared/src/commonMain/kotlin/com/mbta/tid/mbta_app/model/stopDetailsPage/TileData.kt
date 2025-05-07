@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model.stopDetailsPage
 
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
@@ -18,9 +17,8 @@ data class TileData(
     companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
             val formattedUpcomingTrip =
-                RealtimePatterns.formatUpcomingTrip(
+                upcoming.format(
                     now,
-                    upcoming,
                     route.type,
                     context = TripInstantDisplay.Context.StopDetailsFiltered
                 )

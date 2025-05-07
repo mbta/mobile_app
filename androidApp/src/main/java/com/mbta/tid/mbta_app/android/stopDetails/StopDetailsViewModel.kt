@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
@@ -519,7 +520,7 @@ fun stopDetailsManagedVM(
 
     val stopData by viewModel.stopData.collectAsState()
 
-    val departures by viewModel.stopDepartures.collectAsState()
+    val routeCardData by viewModel.routeCardData.collectAsState()
 
     var wasInBackground by rememberSaveable { mutableStateOf(false) }
 
@@ -602,7 +603,13 @@ fun stopDetailsManagedVM(
     LaunchedEffect(filters) {
         if (filters != null) {
             val autoTripFilter =
-                departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
+                StopDetailsUtils.autoTripFilter(
+                    routeCardData,
+                    filters.stopFilter,
+                    filters.tripFilter,
+                    now,
+                    globalResponse
+                )
 
             if (autoTripFilter != filters.tripFilter) {
                 updateTripFilter(filters.stopId, autoTripFilter)
@@ -610,9 +617,9 @@ fun stopDetailsManagedVM(
         }
     }
 
-    LaunchedEffect(departures) {
-        if (filters != null && departures != null) {
-            val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
+    LaunchedEffect(routeCardData) {
+        if (filters != null && routeCardData != null) {
+            val stopFilter = filters.stopFilter ?: StopDetailsUtils.autoStopFilter(routeCardData)
 
             if (stopFilter != filters.stopFilter) {
                 updateStopFilter(filters.stopId, stopFilter)
@@ -621,7 +628,13 @@ fun stopDetailsManagedVM(
             // to ensure that tripFilter doesn't overwrite the new stopFilter
             if (filters.stopFilter == stopFilter) {
                 val autoTripFilter =
-                    departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
+                    StopDetailsUtils.autoTripFilter(
+                        routeCardData,
+                        filters.stopFilter,
+                        filters.tripFilter,
+                        now,
+                        globalResponse
+                    )
 
                 if (autoTripFilter != filters.tripFilter) {
                     updateTripFilter(filters.stopId, autoTripFilter)
