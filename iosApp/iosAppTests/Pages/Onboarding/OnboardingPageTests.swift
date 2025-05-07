@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class OnboardingPageTests: XCTestCase {
-    @MainActor func testFlow() throws {
+    @MainActor func testFlow() async throws {
         let onboardingRepository = MockOnboardingRepository()
         let finishExp = expectation(description: "calls onFinish")
         let stepChannel = PassthroughSubject<Void, Never>()
@@ -48,8 +48,8 @@ final class OnboardingPageTests: XCTestCase {
             try view.find(button: "Get started").tap()
         }
         stepChannel.send()
-        wait(
-            for: [locationExp, stationAccessibilityExp, hideMapsExp, hideMapsContExp, feedbackExp, finishExp],
+        await fulfillment(
+            of: [locationExp, stationAccessibilityExp, hideMapsExp, hideMapsContExp, feedbackExp, finishExp],
             timeout: 1
         )
         XCTAssertEqual(onboardingRepository.finished, [.location, .stationAccessibility, .hideMaps, .feedback])
