@@ -9,6 +9,7 @@
 import Shared
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct StopDetailsFilteredDepartureDetails: View {
     var stopId: String
     var stopFilter: StopDetailsFilter
