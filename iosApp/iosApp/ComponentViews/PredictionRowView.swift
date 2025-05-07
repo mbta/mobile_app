@@ -44,10 +44,9 @@ struct PredictionRowView: View {
             AnyView(destination())
             Spacer(minLength: 8)
             statuses.foregroundStyle(Color.text)
-                .frame(minHeight: 24)
         }
         .background(Color.fill3)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 24)
     }
 
     @ViewBuilder
