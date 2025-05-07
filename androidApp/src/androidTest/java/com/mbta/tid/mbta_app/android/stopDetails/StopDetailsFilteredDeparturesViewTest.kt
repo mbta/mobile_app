@@ -40,7 +40,6 @@ import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runners.Parameterized
 import org.koin.compose.KoinContext
 
 class StopDetailsFilteredDeparturesViewTest {
@@ -149,12 +148,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
     private val koinApplication = testKoinApplication { settings = settingsRepository }
 
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "groupByDirection = {0}")
-        fun getValues() = listOf(false, true)
-    }
-
     @get:Rule val composeTestRule = createComposeRule()
 
     @Before fun resetSettings() = settings.clear()
@@ -163,7 +156,6 @@ class StopDetailsFilteredDeparturesViewTest {
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
         val routeCardData =
@@ -185,12 +177,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -200,7 +186,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,
@@ -232,7 +220,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
@@ -255,12 +242,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -270,7 +251,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,
@@ -352,9 +335,9 @@ class StopDetailsFilteredDeparturesViewTest {
             )
 
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
+
         val leaf =
             RouteCardData.Leaf(
                 trip.directionId,
@@ -378,7 +361,6 @@ class StopDetailsFilteredDeparturesViewTest {
             )
 
         viewModel.setRouteCardData(listOf(routeCardData))
-        data = FilteredDeparturesData.PostGroupByDirection(routeCardData, routeStopData, leaf)
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -389,7 +371,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter =
                         StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                     tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                    data = data,
+                    routeCardData = routeCardData,
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,
@@ -427,7 +411,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val route = objects.route { id = "Green-B" }
         val line = objects.line { id = "Green" }
 
-        val data: FilteredDeparturesData
         val leaf =
             RouteCardData.Leaf(
                 0,
@@ -454,12 +437,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 RouteCardData.Context.StopDetailsFiltered,
                 now
             )
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData,
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -467,19 +444,21 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = StopDetailsFilter(route.id, 0),
                     tripFilter = null,
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
+                    routeCardData = routeCardData,
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = listOf(),
                     noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                     isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(),
-                    data = data,
                     global = globalResponse,
                     now = now,
                     viewModel = StopDetailsViewModel.mocked(),
                     errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
                     onClose = {},
@@ -517,7 +496,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
         val isAllServiceDisrupted: Boolean
@@ -541,12 +519,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
         isAllServiceDisrupted = leafFormat.isAllServiceDisrupted
@@ -557,7 +529,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = isAllServiceDisrupted,
@@ -669,12 +643,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data =
-                        FilteredDeparturesData.PostGroupByDirection(
-                            routeCardData = routeCardData.single(),
-                            routeStopData = routeStopData,
-                            leaf = leaf
-                        ),
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = leafFormat.tileData(),
                     noPredictionsStatus = leafFormat.noPredictionsStatus(),
                     isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
@@ -723,7 +694,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
@@ -746,12 +716,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -761,7 +725,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,
@@ -797,7 +763,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
@@ -820,12 +785,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -835,7 +794,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,
@@ -887,7 +848,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
@@ -911,12 +871,6 @@ class StopDetailsFilteredDeparturesViewTest {
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
 
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -926,7 +880,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,
@@ -957,7 +913,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
 
-        val data: FilteredDeparturesData
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
@@ -981,12 +936,6 @@ class StopDetailsFilteredDeparturesViewTest {
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
 
-        data =
-            FilteredDeparturesData.PostGroupByDirection(
-                routeCardData = routeCardData.single(),
-                routeStopData = routeStopData,
-                leaf = leaf
-            )
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -996,7 +945,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = inaccessibleStop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    data = data,
+                    routeCardData = routeCardData.single(),
+                    routeStopData = routeStopData,
+                    leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
                     isAllServiceDisrupted = false,

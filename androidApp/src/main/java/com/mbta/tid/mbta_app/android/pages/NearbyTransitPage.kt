@@ -186,7 +186,7 @@ fun NearbyTransitPage(
             now = now
         )
 
-    val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
+    val routeCardData by viewModel.routeCardData.collectAsState()
     val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
@@ -264,15 +264,17 @@ fun NearbyTransitPage(
                 ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
 
-        val patterns =
-            viewModel.stopDetailsDepartures.value?.routes?.firstOrNull {
-                it.routes.firstOrNull { route -> route.id == vehicle.routeId } != null
-            }
+        val routeCard =
+            viewModel.routeCardData.value?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
 
         val upcoming =
-            patterns?.allUpcomingTrips()?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
+            routeCard
+                ?.stopData
+                ?.flatMap { it.data }
+                ?.flatMap { it.upcomingTrips }
+                ?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
         val stopSequence = upcoming?.stopSequence
-        val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: patterns?.routeIdentifier
+        val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id
 
         if (routeId != null) analytics.tappedVehicle(routeId)
         updateTripFilter(stopId, TripDetailsFilter(tripId, vehicle.id, stopSequence, true))
@@ -399,7 +401,7 @@ fun NearbyTransitPage(
                     onClose = { navController.popBackStack() },
                     updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                     updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
-                    updateDepartures = { viewModel.setStopDetailsDepartures(it) },
+                    updateRouteCardData = { viewModel.setRouteCardData(it) },
                     tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
@@ -569,7 +571,7 @@ fun NearbyTransitPage(
                         handleStopNavigation = ::handleStopNavigation,
                         handleVehicleTap = ::handleVehicleTap,
                         vehiclesData = vehiclesData,
-                        stopDetailsDepartures = stopDetailsDepartures,
+                        routeCardData = routeCardData,
                         viewModel = mapViewModel,
                         searchResultsViewModel = searchResultsViewModel,
                     )

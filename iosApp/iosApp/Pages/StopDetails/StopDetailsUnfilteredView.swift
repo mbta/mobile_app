@@ -16,7 +16,6 @@ struct StopDetailsUnfilteredView: View {
     var now: Date
     var setStopFilter: (StopDetailsFilter?) -> Void
 
-    var departures: StopDetailsDepartures?
     var routeCardData: [RouteCardData]?
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
@@ -30,7 +29,6 @@ struct StopDetailsUnfilteredView: View {
     init(
         stopId: String,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
-        departures: StopDetailsDepartures?,
         routeCardData: [RouteCardData]?,
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
@@ -39,7 +37,6 @@ struct StopDetailsUnfilteredView: View {
     ) {
         self.stopId = stopId
         self.setStopFilter = setStopFilter
-        self.departures = departures
         self.routeCardData = routeCardData
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -188,13 +185,11 @@ struct StopDetailsUnfilteredView: View {
             route.id
         }
 
-        guard let departures else { return }
-        guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
-        else { return }
-        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stopId)
-        let defaultDirectionId = patterns.patterns.flatMap { headsign in
-            // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
-            headsign.patterns.compactMap { pattern in (pattern as? RoutePattern)?.directionId }
+        guard let routeCardData,
+              let route = routeCardData.first(where: { $0.lineOrRoute.id == filterId }) else { return }
+        analytics.tappedRouteFilter(routeId: route.lineOrRoute.id, stopId: stopId)
+        let defaultDirectionId = route.stopData.flatMap { stopData in
+            stopData.data.map(\.directionId)
         }.min() ?? 0
         setStopFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }

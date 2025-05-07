@@ -12,9 +12,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -176,14 +174,14 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testSetDepartures() {
+    fun testSetRouteCardData() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        assertNull(viewModel.stopDepartures.value)
+        assertNull(viewModel.routeCardData.value)
 
-        viewModel.setDepartures(StopDetailsDepartures(emptyList()))
+        viewModel.setRouteCardData(emptyList())
 
-        assertEquals(emptyList<PatternsByStop>(), viewModel.stopDepartures.value?.routes)
+        assertEquals(emptyList<RouteCardData>(), viewModel.routeCardData.value)
     }
 
     @Test
@@ -938,7 +936,7 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testManagerSetsDeparturesOnChange() {
+    fun testManagerSetsRouteCardDataOnChange() {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
@@ -946,7 +944,7 @@ class StopDetailsViewModelTest {
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
-        assertNull(viewModel.stopDepartures.value)
+        assertNull(viewModel.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -962,16 +960,15 @@ class StopDetailsViewModelTest {
             )
         }
 
-        while (viewModel.stopDepartures.value == null) {
+        while (viewModel.routeCardData.value == null) {
             composeTestRule.waitForIdle()
         }
 
-        composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
+        composeTestRule.waitUntil { viewModel.routeCardData.value != null }
 
-        assertNotNull(viewModel.stopDepartures.value)
+        assertNotNull(viewModel.routeCardData.value)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testManagerDoesNotSetDeparturesWhenNothingLoaded() {
         val objects = ObjectCollectionBuilder()
@@ -983,7 +980,7 @@ class StopDetailsViewModelTest {
 
         val viewModelNothingLoaded = StopDetailsViewModel.mocked(schedulesRepo = emptySchedulesRepo)
 
-        assertNull(viewModelNothingLoaded.stopDepartures.value)
+        assertNull(viewModelNothingLoaded.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -999,7 +996,7 @@ class StopDetailsViewModelTest {
             )
         }
 
-        assertNull(viewModelNothingLoaded.stopDepartures.value)
+        assertNull(viewModelNothingLoaded.routeCardData.value)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -1015,7 +1012,7 @@ class StopDetailsViewModelTest {
         val viewModelSchedulesLoaded =
             StopDetailsViewModel.mocked(objects, predictionsRepo = emptyPredictionsRepo)
 
-        assertNull(viewModelSchedulesLoaded.stopDepartures.value)
+        assertNull(viewModelSchedulesLoaded.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -1031,7 +1028,7 @@ class StopDetailsViewModelTest {
             )
         }
 
-        assertNull(viewModelSchedulesLoaded.stopDepartures.value)
+        assertNull(viewModelSchedulesLoaded.routeCardData.value)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -1047,7 +1044,7 @@ class StopDetailsViewModelTest {
         val viewModelPredictionsLoaded =
             StopDetailsViewModel.mocked(objects, schedulesRepo = emptySchedulesRepo)
 
-        assertNull(viewModelPredictionsLoaded.stopDepartures.value)
+        assertNull(viewModelPredictionsLoaded.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -1063,7 +1060,7 @@ class StopDetailsViewModelTest {
             )
         }
 
-        assertNull(viewModelPredictionsLoaded.stopDepartures.value)
+        assertNull(viewModelPredictionsLoaded.routeCardData.value)
     }
 
     @Test

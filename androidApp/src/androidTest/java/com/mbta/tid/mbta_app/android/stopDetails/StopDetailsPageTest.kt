@@ -10,7 +10,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.testKoinApplication
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import junit.framework.TestCase.assertTrue
@@ -26,11 +25,11 @@ class StopDetailsPageTest : KoinTest {
     val koinApplication = testKoinApplication()
 
     @Test
-    fun testCallsUpdateDepartures() {
+    fun testCallsUpdateRouteCardData() {
         val viewModel = StopDetailsViewModel.mocked()
         val filters = mutableStateOf(StopDetailsPageFilters("stop", null, null))
 
-        var departuresUpdated = false
+        var routeCardDataUpdated = false
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 var filters by remember { filters }
@@ -47,7 +46,7 @@ class StopDetailsPageTest : KoinTest {
                     onClose = {},
                     updateStopFilter = {},
                     updateTripFilter = {},
-                    updateDepartures = { departuresUpdated = true },
+                    updateRouteCardData = { routeCardDataUpdated = true },
                     tileScrollState = rememberScrollState(),
                     openModal = {},
                     openSheetRoute = {},
@@ -55,11 +54,11 @@ class StopDetailsPageTest : KoinTest {
                 )
             }
 
-            LaunchedEffect(null) { viewModel.setDepartures(StopDetailsDepartures(emptyList())) }
+            LaunchedEffect(null) { viewModel.setRouteCardData(emptyList()) }
         }
 
-        composeTestRule.waitUntil { departuresUpdated == true }
+        composeTestRule.waitUntil { routeCardDataUpdated }
 
-        assertTrue(departuresUpdated)
+        assertTrue(routeCardDataUpdated)
     }
 }

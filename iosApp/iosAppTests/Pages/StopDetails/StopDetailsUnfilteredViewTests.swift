@@ -129,7 +129,6 @@ import XCTest
         let sut = StopDetailsUnfilteredView(
             stopId: stop!.id,
             setStopFilter: { _ in },
-            departures: nil,
             routeCardData: routeCardData,
             now: now!,
             errorBannerVM: errorBannerViewModel,
@@ -165,7 +164,6 @@ import XCTest
         let sut = StopDetailsUnfilteredView(
             stopId: inaccessibleStop!.id,
             setStopFilter: { _ in },
-            departures: nil,
             routeCardData: routeCardData,
             now: now!,
             errorBannerVM: errorBannerViewModel,
@@ -212,7 +210,6 @@ import XCTest
         let sut = StopDetailsUnfilteredView(
             stopId: stop!.id,
             setStopFilter: { _ in },
-            departures: nil,
             routeCardData: routeCardData,
             now: now!,
             errorBannerVM: errorBannerViewModel,

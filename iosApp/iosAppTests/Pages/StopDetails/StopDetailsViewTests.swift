@@ -39,7 +39,6 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: nil,
             routeCardData: [
                 .init(
                     lineOrRoute: RouteCardDataLineOrRouteRoute(route: routeDefaultSort1),
@@ -83,10 +82,12 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: .init(routes: [
-                .init(route: route, stop: stop, patterns: [], elevatorAlerts: []),
-            ]),
-            routeCardData: nil,
+            routeCardData: [.init(
+                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+                stopData: [.init(stop: stop, route: route, data: [], globalData: .init(objects: objects))],
+                context: .stopDetailsUnfiltered,
+                at: Date.now.toKotlinInstant()
+            )],
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -116,10 +117,26 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: .init(routes: [
-                .init(route: route, stop: stop, patterns: [], elevatorAlerts: [alert]),
-            ]),
-            routeCardData: nil,
+            routeCardData: [.init(
+                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+                stopData: [.init(
+                    stop: stop,
+                    route: route,
+                    data: [.init(
+                        directionId: 0,
+                        routePatterns: [],
+                        stopIds: [],
+                        upcomingTrips: [],
+                        alertsHere: [alert],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: []
+                    )],
+                    globalData: .init(objects: objects)
+                )],
+                context: .stopDetailsUnfiltered,
+                at: Date.now.toKotlinInstant()
+            )],
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -178,7 +195,6 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 1, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: nil,
             routeCardData: [routeData],
             now: Date.now,
             errorBannerVM: .init(),
@@ -206,7 +222,6 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: nil,
             routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
@@ -236,7 +251,6 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: nil,
             routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),
@@ -265,7 +279,6 @@ final class StopDetailsViewTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            departures: nil,
             routeCardData: nil,
             now: Date.now,
             errorBannerVM: .init(),

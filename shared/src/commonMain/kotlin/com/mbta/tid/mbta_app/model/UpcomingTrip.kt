@@ -233,6 +233,31 @@ constructor(
                     scheduleTime >= filterAtTime
                 }
         }
+
+        fun formatUpcomingTrip(
+            now: Instant,
+            upcomingTrip: UpcomingTrip,
+            routeType: RouteType,
+            context: TripInstantDisplay.Context
+        ) = formatUpcomingTrip(now, upcomingTrip, routeType, context, routeType.isSubway())
+
+        fun formatUpcomingTrip(
+            now: Instant,
+            upcomingTrip: UpcomingTrip,
+            routeType: RouteType,
+            context: TripInstantDisplay.Context,
+            isSubway: Boolean
+        ): UpcomingFormat.Some.FormattedTrip? {
+            return UpcomingFormat.Some.FormattedTrip(upcomingTrip, routeType, now, context)
+                .takeUnless {
+                    it.format is TripInstantDisplay.Hidden ||
+                        it.format is TripInstantDisplay.Skipped ||
+                        // API best practices call for hiding scheduled times on subway
+                        (isSubway &&
+                            (it.format is TripInstantDisplay.ScheduleTime ||
+                                it.format is TripInstantDisplay.ScheduleMinutes))
+                }
+        }
     }
 }
 

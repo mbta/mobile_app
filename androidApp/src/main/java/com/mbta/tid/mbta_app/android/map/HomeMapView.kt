@@ -70,7 +70,7 @@ import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -89,7 +89,7 @@ fun HomeMapView(
     handleStopNavigation: (String) -> Unit,
     handleVehicleTap: (Vehicle) -> Unit,
     vehiclesData: List<Vehicle>,
-    stopDetailsDepartures: StopDetailsDepartures?,
+    routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
     searchResultsViewModel: SearchResultsViewModel
 ) {
@@ -173,7 +173,7 @@ fun HomeMapView(
                 RouteFeaturesBuilder.filteredRouteShapesForStop(
                     stopMapData,
                     currentNavEntry.stopFilter,
-                    stopDetailsDepartures
+                    routeCardData
                 )
             } else {
                 RouteFeaturesBuilder.forRailAtStop(

@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -23,7 +22,6 @@ class NearbyTransitViewModel(
     private val nearbyRepository: INearbyRepository,
 ) : KoinComponent, ViewModel() {
     var loading by mutableStateOf(false)
-    var nearby by mutableStateOf<NearbyStaticData?>(null)
     var nearbyStopIds by mutableStateOf<List<String>?>(null)
     var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
 
@@ -77,7 +75,6 @@ class NearbyTransitViewModel(
 
     fun reset() {
         loading = false
-        nearby = null
         nearbyStopIds = null
     }
 

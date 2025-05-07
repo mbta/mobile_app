@@ -144,26 +144,6 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func getDepartures(
-        stopId: String,
-        alerts: AlertsStreamDataResponse?,
-        now: Date
-    ) async -> StopDetailsDepartures? {
-        if let global, let schedules = stopData?.schedules {
-            try? await StopDetailsDepartures.companion.fromData(
-                stopId: stopId,
-                global: global,
-                schedules: schedules,
-                predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
-                alerts: alerts,
-                pinnedRoutes: pinnedRoutes,
-                filterAtTime: now.toKotlinInstant()
-            )
-        } else {
-            nil
-        }
-    }
-
     func getRouteCardData(
         stopId: String,
         alerts: AlertsStreamDataResponse?,
