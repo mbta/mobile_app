@@ -3303,17 +3303,26 @@ class RouteCardDataTest {
             val routePatternA =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "A" }
+                    representativeTrip {
+                        headsign = "A"
+                        stopIds = listOf(stop.id)
+                    }
                 }
             val routePatternB =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "B" }
+                    representativeTrip {
+                        headsign = "B"
+                        stopIds = listOf(stop.id)
+                    }
                 }
             val routePatternC =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Deviation
-                    representativeTrip { headsign = "C" }
+                    representativeTrip {
+                        headsign = "C"
+                        stopIds = listOf(stop.id)
+                    }
                 }
             val trip1 = objects.trip(routePatternA)
 
@@ -3325,54 +3334,49 @@ class RouteCardDataTest {
                 stopSequence = 90
                 departureTime = time - 2.hours
             }
-            val staticData =
-                NearbyStaticData.build {
-                    route(route) {
-                        stop(stop) {
-                            headsign("A", listOf(routePatternA))
-                            headsign("B", listOf(routePatternB))
-                            headsign("C", listOf(routePatternC))
-                        }
-                    }
-                }
 
             assertEquals(
                 listOf(
-                    StopsAssociated.WithRoute(
-                        route,
+                    RouteCardData(
+                        RouteCardData.LineOrRoute.Route(route),
                         listOf(
-                            PatternsByStop(
-                                route,
+                            RouteCardData.RouteStopData(
                                 stop,
+                                route,
                                 listOf(
-                                    RealtimePatterns.ByHeadsign(
-                                        route,
-                                        "A",
-                                        null,
-                                        listOf(routePatternA),
-                                        emptyList()
-                                    ),
-                                    RealtimePatterns.ByHeadsign(
-                                        route,
-                                        "B",
-                                        null,
-                                        listOf(routePatternB),
-                                        emptyList(),
-                                        hasSchedulesToday = false
+                                    RouteCardData.Leaf(
+                                        directionId = 0,
+                                        listOf(routePatternA, routePatternB, routePatternC),
+                                        setOf(stop.id),
+                                        upcomingTrips = emptyList(),
+                                        alertsHere = emptyList(),
+                                        allDataLoaded = true,
+                                        hasSchedulesTodayByPattern =
+                                            mapOf(
+                                                routePatternA.id to true,
+                                                routePatternB.id to false,
+                                                routePatternC.id to false
+                                            ),
+                                        alertsDownstream = emptyList()
                                     )
-                                )
+                                ),
+                                globalData = GlobalResponse(objects)
                             )
-                        )
-                    )
+                        ),
+                        RouteCardData.Context.NearbyTransit,
+                        time
+                    ),
                 ),
-                staticData.withRealtimeInfo(
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(stop.id),
                     globalData = GlobalResponse(objects),
                     sortByDistanceFrom = stop.position,
                     schedules = ScheduleResponse(objects),
                     predictions = PredictionsStreamDataResponse(objects),
                     alerts = AlertsStreamDataResponse(emptyMap()),
-                    filterAtTime = time,
                     pinnedRoutes = setOf(),
+                    now = time,
+                    context = RouteCardData.Context.NearbyTransit
                 )
             )
         }
@@ -4680,7 +4684,7 @@ class RouteCardDataTest {
                     mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
                 )
             val southboundDownstreamAlerts =
-                PatternsByStop.alertsDownstream(
+                Alert.alertsDownstreamForPatterns(
                     alerts =
                         listOf(
                             ashmontShuttleAlert,
