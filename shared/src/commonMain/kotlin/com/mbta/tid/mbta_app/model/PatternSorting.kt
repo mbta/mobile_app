@@ -6,7 +6,7 @@ object PatternSorting {
     private fun patternServiceBucket(leafData: RouteCardData.Leaf) =
         when {
             // showing either a trip or an alert
-            leafData.hasMajorAlerts || leafData.upcomingTrips.orEmpty().isNotEmpty() -> 1
+            leafData.hasMajorAlerts || leafData.upcomingTrips.isNotEmpty() -> 1
             // service ended
             leafData.hasSchedulesToday -> 2
             // no service today
