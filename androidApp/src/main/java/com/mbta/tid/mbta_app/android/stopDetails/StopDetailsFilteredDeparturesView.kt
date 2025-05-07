@@ -373,7 +373,7 @@ private fun DepartureTiles(
                 modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
                 showRoutePill = lineOrRoute is RouteCardData.LineOrRoute.Line,
                 showHeadsign = true,
-                isSelected = tileData.id == tripFilter?.tripId
+                isSelected = tileData.isSelected(tripFilter)
             )
         }
     }

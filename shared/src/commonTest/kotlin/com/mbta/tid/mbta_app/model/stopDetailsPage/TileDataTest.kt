@@ -1,12 +1,15 @@
 package com.mbta.tid.mbta_app.model.stopDetailsPage
 
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
@@ -77,5 +80,28 @@ class TileDataTest {
         val upcomingTrip = objects.upcomingTrip(prediction)
 
         assertNull(TileData.fromUpcoming(upcomingTrip, route, now))
+    }
+
+    @Test
+    fun `isSelected is true when the filter matches`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 5.minutes
+                stopSequence = 2
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+        val tileData = TileData.fromUpcoming(upcomingTrip, route, now)!!
+
+        assertFalse(tileData.isSelected(null))
+        assertFalse(tileData.isSelected(TripDetailsFilter("other-trip", null, null)))
+        assertFalse(tileData.isSelected(TripDetailsFilter(trip.id, null, 0)))
+
+        assertTrue(tileData.isSelected(TripDetailsFilter(trip.id, null, null)))
+        assertTrue(tileData.isSelected(TripDetailsFilter(trip.id, null, prediction.stopSequence)))
     }
 }
