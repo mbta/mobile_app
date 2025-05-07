@@ -77,7 +77,7 @@ class NearbyTransitViewTest : KoinTest {
             directionId = 0
             headsign = "Sample Headsign"
             routePatternId = "pattern_1"
-            stopIds = listOf(stop.id)
+            stopIds = listOf(sampleStop.id)
         }
     val prediction =
         builder.prediction {

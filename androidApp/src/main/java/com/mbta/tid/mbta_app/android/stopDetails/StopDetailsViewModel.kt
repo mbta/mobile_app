@@ -617,7 +617,7 @@ fun stopDetailsManagedVM(
         }
     }
 
-    LaunchedEffect(routeCardData, groupByDirection) {
+    LaunchedEffect(routeCardData) {
         if (filters != null && routeCardData != null) {
             val stopFilter = filters.stopFilter ?: StopDetailsUtils.autoStopFilter(routeCardData)
 

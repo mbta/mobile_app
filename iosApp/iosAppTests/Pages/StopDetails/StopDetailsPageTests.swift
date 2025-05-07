@@ -245,7 +245,6 @@ final class StopDetailsPageTests: XCTestCase {
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
-        nearbyVM.groupByDirection = true
 
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),
@@ -321,7 +320,6 @@ final class StopDetailsPageTests: XCTestCase {
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: stopFilter, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
-        nearbyVM.groupByDirection = true
 
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),

@@ -57,13 +57,11 @@ fun NearbyTransitView(
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
-    LaunchedEffect(targetLocation, globalResponse, groupByDirection) {
+    LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
             nearbyVM.getNearby(
                 globalResponse,
                 targetLocation,
-                groupByDirection,
                 setLastLocation,
                 setSelectingLocation
             )
