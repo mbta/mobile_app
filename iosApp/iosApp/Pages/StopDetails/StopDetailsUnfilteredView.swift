@@ -46,21 +46,12 @@ struct StopDetailsUnfilteredView: View {
         self.stopDetailsVM = stopDetailsVM
         self.now = now
 
-        if nearbyVM.groupByDirection, let routeCardData {
+        if let routeCardData {
             servedRoutes = routeCardData.map { routeCardData in
                 switch onEnum(of: routeCardData.lineOrRoute) {
                 case let .line(line): .line(line.line)
                 case let .route(route): .route(route.route)
                 }
-            }
-        } else if !nearbyVM.groupByDirection, let departures {
-            servedRoutes = departures.routes.map { patterns in
-                if let line = patterns.line {
-                    return .line(line)
-                }
-                return .route(
-                    patterns.representativeRoute
-                )
             }
         }
     }
@@ -70,10 +61,8 @@ struct StopDetailsUnfilteredView: View {
     }
 
     var elevatorAlerts: [Shared.Alert]? {
-        if nearbyVM.groupByDirection, let routeCardData {
+        if let routeCardData {
             routeCardData.flatMap { $0.stopData.flatMap(\.elevatorAlerts) }.removingDuplicates()
-        } else if !nearbyVM.groupByDirection, let departures {
-            departures.elevatorAlerts
         } else {
             nil
         }
@@ -147,7 +136,7 @@ struct StopDetailsUnfilteredView: View {
                                 }
                             }
 
-                            if nearbyVM.groupByDirection, let routeCardData, let global = stopDetailsVM.global {
+                            if let routeCardData, let global = stopDetailsVM.global {
                                 ForEach(routeCardData, id: \.lineOrRoute.id) { routeCardData in
                                     RouteCard(
                                         cardData: routeCardData,
@@ -160,16 +149,6 @@ struct StopDetailsUnfilteredView: View {
                                     )
                                     .padding(.horizontal, 16)
                                     .padding(.bottom, 16)
-                                }
-                            } else if !nearbyVM.groupByDirection, let departures {
-                                ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
-                                    StopDetailsRouteView(
-                                        patternsByStop: patternsByStop,
-                                        now: now.toKotlinInstant(),
-                                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                        pinned: stopDetailsVM.pinnedRoutes.contains(patternsByStop.routeIdentifier),
-                                        onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } }
-                                    )
                                 }
                             } else {
                                 loadingBody()

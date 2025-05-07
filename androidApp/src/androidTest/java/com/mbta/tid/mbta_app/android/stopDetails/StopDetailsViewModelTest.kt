@@ -35,7 +35,6 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -1391,9 +1390,7 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
-        val koinApplication = testKoinApplication {
-            settings = MockSettingsRepository(mapOf(Settings.GroupByDirection to true))
-        }
+        val koinApplication = testKoinApplication { settings = MockSettingsRepository() }
         val viewModel = StopDetailsViewModel.mocked(objects)
 
         val stopFilters = StopDetailsPageFilters("stop1", null, null)

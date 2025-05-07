@@ -13,7 +13,9 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -54,7 +56,7 @@ class NearbyTransitViewTest : KoinTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val stop =
+    val sampleStop =
         builder.stop {
             id = "stop_1"
             name = "Sample Stop"
@@ -151,7 +153,17 @@ class NearbyTransitViewTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    val koinApplication = testKoinApplication(builder)
+    val koinApplication =
+        testKoinApplication(
+            builder,
+            repositoryOverrides = {
+                nearby =
+                    MockNearbyRepository(
+                        stopIds = listOf(sampleStop.id, greenLineStop.id),
+                        response = NearbyResponse(builder)
+                    )
+            }
+        )
 
     @get:Rule val composeTestRule = createComposeRule()
 

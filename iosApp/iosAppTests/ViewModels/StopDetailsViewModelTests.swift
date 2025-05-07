@@ -59,8 +59,7 @@ final class StopDetailsViewModelTests: XCTestCase {
 
         await stopDetailsVM.handleStopChange(stop.id)
 
-        wait(for: [leaveExpectation, joinExpectation, scheduleExpectation], timeout: 1)
-        try await Task.sleep(for: .seconds(1))
+        await fulfillment(of: [leaveExpectation, joinExpectation, scheduleExpectation], timeout: 1)
         XCTAssertEqual(
             StopData(
                 stopId: stop.id,

@@ -14,14 +14,12 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -110,42 +108,35 @@ class StopDetailsViewTest {
     fun testStopDetailsViewDisplaysUnfilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
+        viewModel.setRouteCardData(
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            stop,
+                            route,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
+                                RouteCardData.Leaf(
+                                    directionId = 0,
+                                    listOf(routePatternOne),
+                                    setOf(stop.id),
+                                    listOf(UpcomingTrip(trip, prediction)),
                                     alertsHere = emptyList(),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
+                                    allDataLoaded = false,
+                                    hasSchedulesToday = true,
+                                    alertsDownstream = emptyList()
                                 )
-                            )
-                    )
+                            ),
+                            GlobalResponse(builder)
+                        )
+                    ),
+                    RouteCardData.Context.StopDetailsUnfiltered,
+                    now
                 )
             )
         )
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
@@ -186,39 +177,31 @@ class StopDetailsViewTest {
     fun testStopDetailsViewDisplaysFilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
+        viewModel.setRouteCardData(
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            stop,
+                            route,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
+                                RouteCardData.Leaf(
+                                    directionId = 0,
+                                    listOf(routePatternOne),
+                                    setOf(stop.id),
+                                    listOf(UpcomingTrip(trip, prediction)),
                                     alertsHere = emptyList(),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
+                                    allDataLoaded = false,
+                                    hasSchedulesToday = true,
+                                    alertsDownstream = emptyList()
                                 )
-                            )
-                    )
+                            ),
+                            GlobalResponse(builder)
+                        )
+                    ),
+                    RouteCardData.Context.StopDetailsUnfiltered,
+                    now
                 )
             )
         )
@@ -269,40 +252,31 @@ class StopDetailsViewTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
+        viewModel.setRouteCardData(
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            stop,
+                            route,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
-                                    alertsHere = emptyList(),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
+                                RouteCardData.Leaf(
+                                    directionId = 0,
+                                    listOf(routePatternOne),
+                                    setOf(stop.id),
+                                    listOf(UpcomingTrip(trip, prediction)),
+                                    alertsHere = listOf(alert),
+                                    allDataLoaded = false,
+                                    hasSchedulesToday = true,
+                                    alertsDownstream = emptyList()
                                 )
                             ),
-                        listOf(alert)
-                    )
+                            GlobalResponse(builder)
+                        )
+                    ),
+                    RouteCardData.Context.StopDetailsUnfiltered,
+                    now
                 )
             )
         )
@@ -345,40 +319,31 @@ class StopDetailsViewTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
+        viewModel.setRouteCardData(
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            stop,
+                            route,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
-                                    alertsHere = emptyList(),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
+                                RouteCardData.Leaf(
+                                    directionId = 0,
+                                    listOf(routePatternOne),
+                                    setOf(stop.id),
+                                    listOf(UpcomingTrip(trip, prediction)),
+                                    alertsHere = listOf(alert),
+                                    allDataLoaded = false,
+                                    hasSchedulesToday = true,
+                                    alertsDownstream = emptyList()
                                 )
                             ),
-                        listOf(alert)
-                    )
+                            GlobalResponse(builder)
+                        )
+                    ),
+                    RouteCardData.Context.StopDetailsUnfiltered,
+                    now
                 )
             )
         )

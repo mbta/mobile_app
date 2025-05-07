@@ -38,7 +38,6 @@ class SettingsRepository : ISettingsRepository, KoinComponent {
 enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
-    GroupByDirection(booleanPreferencesKey("groupByDirection_featureFlag")),
     HideMaps(booleanPreferencesKey("hide_maps")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
 }

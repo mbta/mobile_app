@@ -185,18 +185,17 @@ struct StopDetailsPage: View {
     func updateDepartures() {
         Task {
             if stopId != stopDetailsVM.stopData?.stopId { return }
-            if nearbyVM.groupByDirection {
-                let nextRouteCardData = await stopDetailsVM.getRouteCardData(
-                    stopId: stopId,
-                    alerts: nearbyVM.alerts,
-                    now: now,
-                    isFiltered: stopFilter != nil
-                )
-                Task { @MainActor in
-                    nearbyVM.setRouteCardData(stopId, nextRouteCardData)
-                    internalRouteCardData = nextRouteCardData
-                }
+            let nextRouteCardData = await stopDetailsVM.getRouteCardData(
+                stopId: stopId,
+                alerts: nearbyVM.alerts,
+                now: now,
+                isFiltered: stopFilter != nil
+            )
+            Task { @MainActor in
+                nearbyVM.setRouteCardData(stopId, nextRouteCardData)
+                internalRouteCardData = nextRouteCardData
             }
+
             let nextDepartures = await stopDetailsVM.getDepartures(
                 stopId: stopId,
                 alerts: nearbyVM.alerts,

@@ -42,7 +42,6 @@ fun StopDetailsUnfilteredView(
 
     val analytics: Analytics = koinInject()
 
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
     val departures = viewModel.stopDepartures.collectAsState().value
     val routeCardData = viewModel.routeCardData.collectAsState().value
 
@@ -85,7 +84,7 @@ fun StopDetailsUnfilteredView(
             }
         }
 
-    if (groupByDirection && routeCardData != null) {
+    if (routeCardData != null) {
         stop?.let {
             val servedRoutes =
                 remember(routeCardData, globalResponse) {
@@ -101,27 +100,6 @@ fun StopDetailsUnfilteredView(
                 globalResponse,
                 pinnedRoutes,
                 togglePinnedRoute,
-                onClose,
-                onTapRoutePill,
-                updateStopFilter,
-                openModal
-            )
-        }
-    } else if (!groupByDirection && departures != null) {
-        stop?.let {
-            val servedRoutes =
-                remember(departures, globalResponse) {
-                    getFilterPillRoutes(departures, globalResponse)
-                }
-            StopDetailsUnfilteredRoutesView(
-                stop,
-                departures,
-                servedRoutes,
-                errorBannerViewModel,
-                showStationAccessibility,
-                now,
-                togglePinnedRoute,
-                pinnedRoutes,
                 onClose,
                 onTapRoutePill,
                 updateStopFilter,

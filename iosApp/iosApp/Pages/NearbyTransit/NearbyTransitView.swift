@@ -48,13 +48,9 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if nearbyVM.groupByDirection,
-               let routeCardData = nearbyVM.routeCardData,
+            if let routeCardData = nearbyVM.routeCardData,
                let global = globalData {
                 nearbyList(routeCardData, global)
-                    .onAppear { didLoadData?(self) }
-            } else if let nearbyWithRealtimeInfo {
-                nearbyList(nearbyWithRealtimeInfo)
                     .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
@@ -100,7 +96,6 @@ struct NearbyTransitView: View {
             pinnedRoutes: pinnedRoutes
         )) { newParams in
             DispatchQueue.main.async {
-                if !nearbyVM.groupByDirection { return }
                 nearbyVM.loadRouteCardData(
                     state: newParams.state,
                     global: newParams.global,
@@ -165,51 +160,6 @@ struct NearbyTransitView: View {
                     }
                     .padding(.vertical, 4)
                     .padding(.horizontal, 16)
-                }
-                .onReceive(scrollSubject) { id in
-                    withAnimation {
-                        proxy.scrollTo(id, anchor: .top)
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
-        if transit.isEmpty {
-            ScrollView {
-                noNearbyStops()
-                    .padding(.horizontal, 16)
-                Spacer()
-            }
-        } else {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(transit, id: \.id) { nearbyTransit in
-                            let nearby: StopsAssociated = nearbyTransit
-                            switch onEnum(of: nearby) {
-                            case let .withRoute(nearbyRoute):
-                                NearbyRouteView(
-                                    nearbyRoute: nearbyRoute,
-                                    pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                                    onPin: { id in toggledPinnedRoute(id) },
-                                    pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                    now: now.toKotlinInstant(),
-                                    showStationAccessibility: nearbyVM.showStationAccessibility
-                                )
-                            case let .withLine(nearbyLine):
-                                NearbyLineView(
-                                    nearbyLine: nearbyLine,
-                                    pinned: pinnedRoutes.contains(nearbyLine.line.id),
-                                    onPin: { id in toggledPinnedRoute(id) },
-                                    pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                    now: now.toKotlinInstant(),
-                                    showStationAccessibility: nearbyVM.showStationAccessibility
-                                )
-                            }
-                        }
-                    }.padding(.vertical, 4)
                 }
                 .onReceive(scrollSubject) { id in
                     withAnimation {
@@ -386,9 +336,7 @@ struct NearbyTransitView: View {
     }
 
     private func scrollToTop() {
-        guard let id = nearbyVM.groupByDirection ?
-            nearbyVM.routeCardData?.first?.lineOrRoute.id :
-            nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
+        guard let id = nearbyVM.routeCardData?.first?.lineOrRoute.id else { return }
         scrollSubject.send(id)
     }
 

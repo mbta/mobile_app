@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -48,7 +47,6 @@ import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -522,7 +520,6 @@ fun stopDetailsManagedVM(
 
     val stopData by viewModel.stopData.collectAsState()
 
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
     val routeCardData by viewModel.routeCardData.collectAsState()
 
     var wasInBackground by rememberSaveable { mutableStateOf(false) }
@@ -571,44 +568,33 @@ fun stopDetailsManagedVM(
         )
     }
 
-    LaunchedEffect(
-        groupByDirection,
-        stopId,
-        globalResponse,
-        stopData,
-        filters,
-        alertData,
-        pinnedRoutes,
-        now
-    ) {
-        if (groupByDirection) {
-            val schedules = stopData?.schedules
-            withContext(Dispatchers.Default) {
-                viewModel.setRouteCardData(
-                    if (
-                        globalResponse != null &&
-                            stopId != null &&
-                            stopId == stopData?.stopId &&
-                            schedules != null &&
-                            stopData?.predictionsLoaded == true
-                    ) {
-                        RouteCardData.routeCardsForStopList(
-                            listOf(stopId) + globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
-                            globalResponse,
-                            sortByDistanceFrom = null,
-                            schedules,
-                            stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
-                            alertData,
-                            now,
-                            pinnedRoutes,
-                            context =
-                                if (filters.stopFilter != null)
-                                    RouteCardData.Context.StopDetailsFiltered
-                                else RouteCardData.Context.StopDetailsUnfiltered
-                        )
-                    } else null
-                )
-            }
+    LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
+        val schedules = stopData?.schedules
+        withContext(Dispatchers.Default) {
+            viewModel.setRouteCardData(
+                if (
+                    globalResponse != null &&
+                        stopId != null &&
+                        stopId == stopData?.stopId &&
+                        schedules != null &&
+                        stopData?.predictionsLoaded == true
+                ) {
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stopId) + globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
+                        globalResponse,
+                        sortByDistanceFrom = null,
+                        schedules,
+                        stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                        alertData,
+                        now,
+                        pinnedRoutes,
+                        context =
+                            if (filters.stopFilter != null)
+                                RouteCardData.Context.StopDetailsFiltered
+                            else RouteCardData.Context.StopDetailsUnfiltered
+                    )
+                } else null
+            )
         }
     }
 
