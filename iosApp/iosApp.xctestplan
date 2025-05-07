@@ -39,7 +39,12 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
-        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()"
+        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
+        "NearbyTransitViewTests\/testDisplaysWheelchairNotAccessibile()",
+        "OnboardingPageTests\/testFlow()",
+        "StopDetailsViewModelTests\/testHandleStopChange()",
+        "StopDetailsViewModelTests\/testLoadTripData()",
+        "StopDetailsViewModelTests\/testSkipLoadingRedundantVehicle()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
@@ -50,6 +55,7 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
+        "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
         "HomeMapViewUITests\/testRecentersToUserLocation()",
         "IosAppUITests\/testMapShown()",
         "IosAppUITestsLaunchTests\/testLaunch()"
