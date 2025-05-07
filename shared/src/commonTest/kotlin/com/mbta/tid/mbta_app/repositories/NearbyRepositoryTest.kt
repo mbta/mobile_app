@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -78,6 +79,47 @@ class NearbyRepositoryTest {
     }
 
     @Test
+    fun `includes nearby child stops only and not stations`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val patternAllStops = objects.routePattern(route)
+
+        val station1 =
+            objects.stop {
+                id = "station1"
+                locationType = LocationType.STATION
+                position = pointAtDistance(0.01)
+
+                childStopIds = listOf("stop1")
+            }
+
+        val stop1 =
+            objects.stop {
+                id = "stop1"
+                position = pointAtDistance(0.01)
+                vehicleType = RouteType.HEAVY_RAIL
+                parentStationId = "station1"
+            }
+
+        val patternIdsByStop: Map<String, List<String>> =
+            mapOf(
+                stop1.id to listOf(patternAllStops.id),
+            )
+
+        val globalData = GlobalResponse(objects, patternIdsByStop)
+
+        val repo = NearbyRepository()
+        val stopIdsIncludingRedundant = runBlocking {
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+            )
+        }
+
+        assertEquals(listOf(stop1.id), stopIdsIncludingRedundant)
+    }
+
+    @Test
     fun `by default includes stops with all route patterns served by closer stop`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = RouteType.HEAVY_RAIL }
@@ -122,26 +164,37 @@ class NearbyRepositoryTest {
     }
 
     @Test
-    fun `when excludeRedundantStops set then filters all route patterns served by closer stop`() {
+    fun `when excludeRedundantStops set then filters stops that are redundant to closer ones based on route patterns served`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = RouteType.HEAVY_RAIL }
         val patternAllStops = objects.routePattern(route)
         val patternStop3 = objects.routePattern(route) {}
 
+        val station =
+            objects.stop {
+                id = "station"
+                position = pointAtDistance(0.01)
+                childStopIds = listOf("stop1", "stop1Node")
+            }
+
         val stop1 =
             objects.stop {
+                id = "stop1"
                 position = pointAtDistance(0.01)
                 vehicleType = RouteType.HEAVY_RAIL
+                parentStationId = "station"
             }
 
         val stop2 =
             objects.stop {
+                id = "stop2"
                 position = pointAtDistance(0.02)
                 vehicleType = RouteType.HEAVY_RAIL
             }
 
         val stop3 =
             objects.stop {
+                id = "stop3"
                 position = pointAtDistance(0.03)
                 vehicleType = RouteType.HEAVY_RAIL
             }

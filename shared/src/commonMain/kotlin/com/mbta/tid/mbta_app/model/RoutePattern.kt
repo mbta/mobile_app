@@ -41,25 +41,6 @@ data class RoutePattern(
     companion object {
 
         /**
-         * Filter the given list of stopIds to the stops that don't have service redundant to
-         * earlier stops in the list; each stop must serve at least one route pattern that is not
-         * seen by any earlier stop.
-         */
-        fun filterStopsWithRedundantPatterns(
-            stopIds: List<String>,
-            globalData: GlobalResponse
-        ): List<String> {
-            val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
-
-            return patternsGroupedByLineOrRouteAndStop(
-                    parentToAllStops,
-                    globalData,
-                )
-                .flatMap { it.value.keys.map { stop -> stop.id } }
-                .distinct()
-        }
-
-        /**
          * Return the map of LineOrRoute => Stop => Patterns that are served by the given [stopIds].
          * A stop is only included for a LineOrRoute if it has any patterns that haven't been seen
          * at an earlier stop for that LineOrRoute.

@@ -2,13 +2,25 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.core.component.KoinComponent
 
 interface INearbyRepository {
-    fun getStopIdsNearby(global: GlobalResponse, location: Position, excludeRedundantService: Boolean = false): List<String>
+    /**
+     * Gets the list of stops within 0.5 miles (or 1 mile for CR). Includes only stops with
+     * [LocationType.STOP].
+     *
+     * @param excludeRedundantService when true, this will omit stops that serves route patterns
+     *   that are all served by closer stops.
+     */
+    fun getStopIdsNearby(
+        global: GlobalResponse,
+        location: Position,
+        excludeRedundantService: Boolean = false
+    ): List<String>
 }
 
 class NearbyRepository : KoinComponent, INearbyRepository {
@@ -55,12 +67,36 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                 }
                 .toList()
 
-       return if (excludeRedundantService) {
-             RoutePattern.filterStopsWithRedundantPatterns(allNearbyStops, global)
+        return if (excludeRedundantService) {
+           return filterStopsWithRedundantPatterns(allNearbyStops, global)
         } else {
             allNearbyStops
         }
     }
+    /**
+     * Filter the given list of stopIds to the stops that don't have service redundant to earlier
+     * stops in the list; each stop must serve at least one route pattern that is not seen by any
+     * earlier stop.
+     */
+    private fun filterStopsWithRedundantPatterns(
+        stopIds: List<String>,
+        globalData: GlobalResponse
+    ): List<String> {
+        val originalStopIdSet = stopIds.toSet()
+        val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
+
+        return RoutePattern.patternsGroupedByLineOrRouteAndStop(
+                parentToAllStops,
+                globalData,
+            )
+            .flatMap {
+                it.value.keys.flatMap { stop ->
+                    stop.childStopIds.toSet().plus(stop.id).intersect(originalStopIdSet)
+                }
+            }
+            .distinct()
+    }
+
 }
 
 class MockNearbyRepository(
