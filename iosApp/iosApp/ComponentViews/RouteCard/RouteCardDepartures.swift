@@ -49,6 +49,7 @@ struct RouteCardDepartures: View {
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
                     .padding(.vertical, 10)
+                    .accessibilityHint(Text("Open for more arrivals"))
                     if index < stopData.data.count - 1 {
                         HaloSeparator()
                     }

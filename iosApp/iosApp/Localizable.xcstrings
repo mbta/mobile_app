@@ -11339,7 +11339,6 @@
       }
     },
     "Open for more arrivals" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
