@@ -18,8 +18,8 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
         continueAfterFailure = false
     }
 
-    // TODO: Re-enable this test once the groupByDirection toggle is removed
     func testOpenStopDetails() throws {
+        app.activate()
         app.launch()
         let alewifeHeadsign = app.staticTexts["Alewife"]
         XCTAssert(alewifeHeadsign.waitForExistence(timeout: 30))

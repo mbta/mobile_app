@@ -36,7 +36,6 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    @Published var groupByDirection: Bool = false
     @Published var showDebugMessages: Bool = false
     @Published var showStationAccessibility: Bool = false
 
@@ -58,7 +57,6 @@ class NearbyViewModel: ObservableObject {
     init(
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
-        groupByDirection: Bool = false,
         showDebugMessages: Bool = false,
         showStationAccessibility: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
@@ -71,7 +69,6 @@ class NearbyViewModel: ObservableObject {
         self.departures = departures
         self.navigationStack = navigationStack
 
-        self.groupByDirection = groupByDirection
         self.showDebugMessages = showDebugMessages
         self.showStationAccessibility = showStationAccessibility
 
@@ -90,9 +87,8 @@ class NearbyViewModel: ObservableObject {
     }
 
     func loadSettings() async {
-        let loaded = await settingsRepository.load([.devDebugMode, .groupByDirection, .stationAccessibility])
+        let loaded = await settingsRepository.load([.devDebugMode, .stationAccessibility])
         Task { @MainActor in
-            groupByDirection = loaded.getSafe(.groupByDirection)
             showDebugMessages = loaded.getSafe(.devDebugMode)
             showStationAccessibility = loaded.getSafe(.stationAccessibility)
         }
@@ -215,28 +211,10 @@ class NearbyViewModel: ObservableObject {
             routeCardData = nil
 
             let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
-            if groupByDirection {
-                nearbyState.stopIds = stopIds
-                nearbyState.loadedLocation = location
-                nearbyState.loading = false
-                selectingLocation = false
-            } else {
-                defer {
-                    self.nearbyState.loading = false
-                    self.selectingLocation = false
-                }
-                await fetchApi(
-                    errorBannerRepository,
-                    errorKey: "NearbyViewModel.getNearby",
-                    getData: { try await self.nearbyRepository.getNearby(global: global, stopIds: stopIds) },
-                    onSuccess: {
-                        self.nearbyStaticData = $0
-                        self.nearbyState.stopIds = stopIds
-                        self.nearbyState.loadedLocation = location
-                    },
-                    onRefreshAfterError: { self.getNearbyStops(global: global, location: location) }
-                )
-            }
+            nearbyState.stopIds = stopIds
+            nearbyState.loadedLocation = location
+            nearbyState.loading = false
+            selectingLocation = false
         }
     }
 

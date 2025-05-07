@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import android.Manifest
 import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +51,8 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
@@ -101,7 +104,7 @@ class NearbyTransitPageTest : KoinTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val stop =
+    val sampleStop =
         builder.stop {
             id = "stop_1"
             name = "Sample Stop"
@@ -191,18 +194,27 @@ class NearbyTransitPageTest : KoinTest {
         GlobalResponse(
             builder,
             mutableMapOf(
-                stop.id to listOf(routePatternOne.id, routePatternTwo.id),
+                sampleStop.id to listOf(routePatternOne.id, routePatternTwo.id),
                 greenLineStop.id to listOf(greenLineRoutePatternOne.id)
             )
         )
 
-    val koinApplication = testKoinApplication(builder)
+    val koinApplication =
+        testKoinApplication(
+            builder,
+            repositoryOverrides = {
+                nearby =
+                    MockNearbyRepository(
+                        stopIds = listOf(sampleStop.id, greenLineStop.id),
+                        response = NearbyResponse(builder)
+                    )
+            }
+        )
 
     val viewportProvider = ViewportProvider(MapViewportState())
 
     @get:Rule
-    val runtimePermissionRule =
-        GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    val runtimePermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
     @get:Rule val composeTestRule = createComposeRule()
 
     @OptIn(ExperimentalTestApi::class)
