@@ -189,6 +189,7 @@ final class RouteCardTests: XCTestCase {
                     stop: stop,
                     directions: [.init(name: "Inbound", destination: "", id: 0)],
                     data: [.init(
+                        lineOrRoute: .route(route), stop: stop,
                         directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                         upcomingTrips: [], alertsHere: [], allDataLoaded: true,
                         hasSchedulesToday: true, alertsDownstream: []

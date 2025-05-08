@@ -31,6 +31,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             stop: stop,
             directions: [.init(name: "Outbound", destination: "Harvard", id: 0)],
             data: [.init(
+                lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [], alertsHere: [], allDataLoaded: true,
                 hasSchedulesToday: true, alertsDownstream: []
@@ -73,6 +74,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             stop: stop,
             directions: [.init(name: "South", destination: "Forest Hills", id: 0)],
             data: [.init(
+                lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [.init(trip: trip, schedule: schedule)], alertsHere: [], allDataLoaded: true,
                 hasSchedulesToday: true, alertsDownstream: []
@@ -200,6 +202,8 @@ final class RouteCardDeparturesTests: XCTestCase {
                 .init(name: "East", destination: "Park St & North", id: 1),
             ],
             data: [.init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
                 directionId: 0,
                 routePatterns: [Green.shared.rpB0, Green.shared.rpC0, Green.shared.rpE0],
                 stopIds: [stop.id],
@@ -212,6 +216,8 @@ final class RouteCardDeparturesTests: XCTestCase {
                 hasSchedulesToday: true, alertsDownstream: [downstreamAlert]
             ),
             .init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
                 directionId: 1,
                 routePatterns: [Green.shared.rpB1, Green.shared.rpC1, Green.shared.rpE1],
                 stopIds: [stop.id],

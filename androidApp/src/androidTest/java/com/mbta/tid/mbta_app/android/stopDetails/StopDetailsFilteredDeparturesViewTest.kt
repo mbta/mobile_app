@@ -9,7 +9,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
@@ -28,7 +27,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
@@ -136,8 +134,6 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         )
 
-    private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
-
     private val settings = mutableMapOf<Settings, Boolean>()
     private val settingsRepository =
         object : ISettingsRepository {
@@ -186,7 +182,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -196,20 +191,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
 
@@ -250,7 +240,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -260,20 +249,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = { tripFilter = it },
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists().performClick()
         composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
 
@@ -336,8 +320,11 @@ class StopDetailsFilteredDeparturesViewTest {
         val tileData: List<TileData>
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val leaf =
             RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
                 trip.directionId,
                 listOf(routePattern),
                 setOf(stop.id),
@@ -359,7 +346,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeCardData =
             RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
+                lineOrRoute,
                 listOf(routeStopData),
                 RouteCardData.Context.StopDetailsFiltered,
                 now
@@ -376,7 +363,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter =
                         StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                     tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -386,13 +372,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -415,8 +397,11 @@ class StopDetailsFilteredDeparturesViewTest {
         val route = objects.route { id = "Green-B" }
         val line = objects.line { id = "Green" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
         val leaf =
             RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
                 0,
                 emptyList(),
                 setOf(stop.id),
@@ -426,22 +411,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 true,
                 emptyList()
             )
-        val routeStopData =
-            RouteCardData.RouteStopData(
-                line,
-                setOf(route),
-                stop,
-                listOf(leaf),
-                RouteCardData.Context.StopDetailsFiltered,
-                GlobalResponse(objects)
-            )
-        val routeCardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Line(line, setOf(route)),
-                listOf(routeStopData),
-                RouteCardData.Context.StopDetailsFiltered,
-                now
-            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -449,7 +418,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = StopDetailsFilter(route.id, 0),
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = listOf(),
                     noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
@@ -459,13 +427,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = StopDetailsViewModel.mocked(),
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {}
                 )
@@ -533,7 +497,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -543,13 +506,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -646,7 +605,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = leafFormat.tileData(),
                     noPredictionsStatus = leafFormat.noPredictionsStatus(),
@@ -656,13 +614,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = global,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -727,7 +681,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -737,13 +690,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -795,7 +744,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -805,13 +753,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -880,7 +824,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -890,13 +833,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -944,7 +883,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = inaccessibleStop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
                     noPredictionsStatus = noPredictionsStatus,
@@ -954,13 +892,9 @@ class StopDetailsFilteredDeparturesViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )

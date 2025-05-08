@@ -360,6 +360,8 @@ final class HomeMapViewTests: XCTestCase {
             stopData: [
                 .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
                     .init(
+                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        stop: stop,
                         directionId: 0,
                         routePatterns: [MapTestDataHelper.shared.patternOrange30],
                         stopIds: [stop.id],
@@ -458,6 +460,8 @@ final class HomeMapViewTests: XCTestCase {
             stopData: [
                 .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
                     .init(
+                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        stop: stop,
                         directionId: 0,
                         routePatterns: [MapTestDataHelper.shared.patternOrange30],
                         stopIds: [stop.id],

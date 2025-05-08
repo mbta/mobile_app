@@ -192,16 +192,20 @@ private fun StopDetailsRoutesViewPreview() {
 
     val globalData = GlobalResponse(objects)
 
+    val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+    val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
     val routeCardData =
         listOf(
             RouteCardData(
-                RouteCardData.LineOrRoute.Route(route1),
+                lineOrRoute1,
                 listOf(
                     RouteCardData.RouteStopData(
                         route1,
                         stop,
                         listOf(
                             RouteCardData.Leaf(
+                                lineOrRoute1,
+                                stop,
                                 0,
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
@@ -220,13 +224,15 @@ private fun StopDetailsRoutesViewPreview() {
                 now
             ),
             RouteCardData(
-                RouteCardData.LineOrRoute.Route(route2),
+                lineOrRoute2,
                 listOf(
                     RouteCardData.RouteStopData(
                         route2,
                         stop,
                         listOf(
                             RouteCardData.Leaf(
+                                lineOrRoute2,
+                                stop,
                                 0,
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
@@ -240,6 +246,8 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsDownstream = emptyList()
                             ),
                             RouteCardData.Leaf(
+                                lineOrRoute2,
+                                stop,
                                 1,
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),

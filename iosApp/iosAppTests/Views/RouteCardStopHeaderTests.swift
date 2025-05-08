@@ -80,6 +80,7 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 stop: stop,
                 directions: [.init(name: "", destination: "", id: 0)],
                 data: [.init(
+                    lineOrRoute: .route(route), stop: stop,
                     directionId: 0, routePatterns: [], stopIds: [], upcomingTrips: [],
                     alertsHere: [alert], allDataLoaded: true, hasSchedulesToday: true, alertsDownstream: []
                 )],

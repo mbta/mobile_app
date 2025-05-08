@@ -105,12 +105,15 @@ data class RouteCardData(
                 data
                     .flatMap { it.alertsHere }
                     .filter { alert -> alert.effect == Alert.Effect.ElevatorClosure }
+                    .distinct()
 
         val hasElevatorAlerts: Boolean
             get() = elevatorAlerts.isNotEmpty()
     }
 
     data class Leaf(
+        val lineOrRoute: LineOrRoute,
+        val stop: Stop,
         val directionId: Int,
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
@@ -123,6 +126,8 @@ data class RouteCardData(
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
         constructor(
+            lineOrRoute: LineOrRoute,
+            stop: Stop,
             directionId: Int,
             routePatterns: List<RoutePattern>,
             stopIds: Set<String>,
@@ -132,6 +137,8 @@ data class RouteCardData(
             hasSchedulesToday: Boolean,
             alertsDownstream: List<Alert>
         ) : this(
+            lineOrRoute,
+            stop,
             directionId,
             routePatterns,
             stopIds,
@@ -690,6 +697,8 @@ data class RouteCardData(
                                                         .groupBy { pattern -> pattern.directionId }
                                                         .mapValues { (directionId, patterns) ->
                                                             LeafBuilder(
+                                                                lineOrRoute = lineOrRoute,
+                                                                stop = stop,
                                                                 directionId = directionId,
                                                                 routePatterns = patterns,
                                                                 patternsNotSeenAtEarlierStops =
@@ -914,7 +923,7 @@ data class RouteCardData(
                         )
                     val elevatorAlerts =
                         Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
-                    leafBuilder.alertsHere = applicableAlerts + elevatorAlerts
+                    leafBuilder.alertsHere = (applicableAlerts + elevatorAlerts).distinct()
                     leafBuilder.alertsDownstream = downstreamAlerts
                 }
             )
@@ -1060,6 +1069,8 @@ data class RouteCardData(
     }
 
     data class LeafBuilder(
+        val lineOrRoute: LineOrRoute,
+        val stop: Stop,
         val directionId: Int,
         var routePatterns: List<RoutePattern>? = null,
         var patternsNotSeenAtEarlierStops: Set<String>? = routePatterns?.map { it.id }?.toSet(),
@@ -1073,6 +1084,8 @@ data class RouteCardData(
 
         fun build(): RouteCardData.Leaf {
             return RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
                 directionId,
                 checkNotNull(routePatterns),
                 checkNotNull(stopIds),
@@ -1166,7 +1179,7 @@ data class RouteCardData(
 
             val hasUnseenTypicalPattern =
                 routePatterns?.any {
-                    (this.patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
+                    (patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
                 }
                     ?: false
 

@@ -177,6 +177,8 @@ private fun DeparturesPreview() {
             jfkUmass,
             listOf(
                 RouteCardData.Leaf(
+                    lineOrRoute,
+                    jfkUmass,
                     0,
                     listOf(redLineAshmontSouthbound, redLineBraintreeSouthbound),
                     setOf(jfkUmass.id),
@@ -206,6 +208,8 @@ private fun DeparturesPreview() {
                     emptyList()
                 ),
                 RouteCardData.Leaf(
+                    lineOrRoute,
+                    jfkUmass,
                     1,
                     listOf(redLineAshmontNorthbound, redLineBraintreeNorthbound),
                     setOf(jfkUmass.id),

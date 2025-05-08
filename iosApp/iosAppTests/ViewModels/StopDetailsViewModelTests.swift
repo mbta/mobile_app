@@ -173,6 +173,7 @@ final class StopDetailsViewModelTests: XCTestCase {
             stopData: [
                 .init(lineOrRoute: .route(route), stop: stop, directions: [direction0, direction1], data: [
                     .init(
+                        lineOrRoute: .route(route), stop: stop,
                         directionId: 0,
                         routePatterns: [pattern0],
                         stopIds: [stop.id],
@@ -183,6 +184,7 @@ final class StopDetailsViewModelTests: XCTestCase {
                         alertsDownstream: []
                     ),
                     .init(
+                        lineOrRoute: .route(route), stop: stop,
                         directionId: 1,
                         routePatterns: [pattern1],
                         stopIds: [stop.id],

@@ -2,21 +2,14 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,16 +22,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
-import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -65,7 +54,6 @@ fun StopDetailsFilteredDeparturesView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    routeStopData: RouteCardData.RouteStopData,
     leaf: RouteCardData.Leaf,
     tileData: List<TileData>,
     noPredictionsStatus: NoTripsFormat?,
@@ -75,21 +63,15 @@ fun StopDetailsFilteredDeparturesView(
     global: GlobalResponse?,
     now: Instant,
     viewModel: StopDetailsViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
-    onClose: () -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject()
 ) {
-    val lineOrRoute = routeStopData.lineOrRoute
-    val stop = routeStopData.stop
-    val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
-    val directions = routeStopData.directions
+    val lineOrRoute = leaf.lineOrRoute
+    val stop = leaf.stop
 
     val alertSummaries by viewModel.alertSummaries.collectAsState()
 
@@ -168,159 +150,123 @@ fun StopDetailsFilteredDeparturesView(
         }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        StopDetailsFilteredHeader(
-            lineOrRoute.sortRoute,
-            (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
-            stop,
-            pinned = pinned,
-            onPin = { togglePinnedRoute(lineOrRoute.id) },
-            onClose = onClose
-        )
-
-        ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
-
-        Box(Modifier.fillMaxSize().background(routeColor)) {
-            HorizontalDivider(
-                Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (!isAllServiceDisrupted && tileData.isNotEmpty()) {
+            DepartureTiles(
+                tripFilter,
+                lineOrRoute,
+                stop,
+                tileData,
+                downstreamAlerts,
+                updateTripFilter,
+                pinned,
+                analytics,
+                bringIntoViewRequesters,
+                tileScrollState
             )
+        }
+
+        @Composable
+        fun AlertCard(alert: Alert, summary: AlertSummary?, spec: AlertCardSpec? = null) {
+            val spec =
+                spec
+                    ?: if (alert.significance == AlertSignificance.Major && isAllServiceDisrupted) {
+                        AlertCardSpec.Major
+                    } else if (
+                        alert.significance == AlertSignificance.Minor &&
+                            alert.effect == Alert.Effect.Delay
+                    ) {
+                        AlertCardSpec.Delay
+                    } else {
+                        AlertCardSpec.Secondary
+                    }
+            AlertCard(
+                alert,
+                summary,
+                spec,
+                color = routeColor,
+                textColor = routeTextColor,
+                onViewDetails = { openAlertDetails(alert, spec) }
+            )
+        }
+
+        if (
+            alertsHere.isNotEmpty() ||
+                downstreamAlerts.isNotEmpty() ||
+                (showStationAccessibility && hasAccessibilityWarning)
+        ) {
             Column(
-                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(top = 14.dp),
+                Modifier.padding(horizontal = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                DirectionPicker(
-                    availableDirections = availableDirections,
-                    directions = directions,
-                    route = lineOrRoute.sortRoute,
-                    line = (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
-                    stopFilter,
-                    updateStopFilter,
-                    modifier = Modifier.padding(horizontal = 10.dp)
-                )
-                if (!isAllServiceDisrupted && tileData.isNotEmpty()) {
-                    DepartureTiles(
-                        tripFilter,
-                        lineOrRoute,
-                        stop,
-                        tileData,
-                        downstreamAlerts,
-                        updateTripFilter,
-                        pinned,
-                        analytics,
-                        bringIntoViewRequesters,
-                        tileScrollState
-                    )
-                }
-
-                @Composable
-                fun AlertCard(alert: Alert, summary: AlertSummary?, spec: AlertCardSpec? = null) {
-                    val spec =
-                        spec
-                            ?: if (
-                                alert.significance == AlertSignificance.Major &&
-                                    isAllServiceDisrupted
-                            ) {
-                                AlertCardSpec.Major
-                            } else if (
-                                alert.significance == AlertSignificance.Minor &&
-                                    alert.effect == Alert.Effect.Delay
-                            ) {
-                                AlertCardSpec.Delay
-                            } else {
-                                AlertCardSpec.Secondary
-                            }
+                // for alerts here and downstream, if the alertSummaries are still loading, skip the
+                // alert completely, so the header doesn’t flicker before the summary loads
+                alertsHere.forEach {
                     AlertCard(
-                        alert,
-                        summary,
-                        spec,
-                        color = routeColor,
-                        textColor = routeTextColor,
-                        onViewDetails = { openAlertDetails(alert, spec) }
+                        it,
+                        if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                        else return@forEach
                     )
                 }
-
-                if (
-                    alertsHere.isNotEmpty() ||
-                        downstreamAlerts.isNotEmpty() ||
-                        (showStationAccessibility && hasAccessibilityWarning)
-                ) {
-                    Column(
-                        Modifier.padding(horizontal = 10.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        // for alerts here and downstream, if the alertSummaries are still loading,
-                        // skip the alert completely, so the header doesn’t flicker before the
-                        // summary loads
-                        alertsHere.forEach {
-                            AlertCard(
-                                it,
-                                if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
-                                else return@forEach
-                            )
-                        }
-                        downstreamAlerts.forEach {
-                            AlertCard(
-                                it,
-                                if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
-                                else return@forEach,
-                                AlertCardSpec.Downstream
-                            )
-                        }
-                        if (showStationAccessibility && hasAccessibilityWarning) {
-                            if (elevatorAlerts.isNotEmpty()) {
-                                elevatorAlerts.forEach {
-                                    AlertCard(it, null, AlertCardSpec.Elevator)
-                                }
-                            } else {
-                                NotAccessibleCard()
-                            }
-                        }
-                    }
-                }
-
-                if (isAllServiceDisrupted) {
-                    Box {}
-                } else if (noPredictionsStatus != null) {
-                    Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
-                        StopDetailsNoTripCard(
-                            status = noPredictionsStatus,
-                            accentColor = routeColor,
-                            routeType = routeType,
-                            hideMaps = hideMaps
-                        )
-                    }
-                } else if (selectedTripIsCancelled) {
-                    Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
-                        StopDetailsIconCard(
-                            routeColor,
-                            details = { Text(stringResource(R.string.trip_cancelled_details)) },
-                            header = { modifier ->
-                                Text(stringResource(R.string.trip_cancelled), modifier = modifier)
-                            },
-                            icon = { modifier ->
-                                Icon(
-                                    painter = routeSlashIcon(routeType = routeType),
-                                    contentDescription = null,
-                                    modifier = modifier.testTag("route_slash_icon"),
-                                )
-                            }
-                        )
-                    }
-                } else {
-                    TripDetailsView(
-                        tripFilter = tripFilter,
-                        stopId = stopId,
-                        allAlerts = allAlerts,
-                        alertSummaries = alertSummaries,
-                        stopDetailsVM = viewModel,
-                        onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
-                        openSheetRoute = openSheetRoute,
-                        openModal = openModal,
-                        now = now,
-                        modifier = Modifier.padding(horizontal = 10.dp)
+                downstreamAlerts.forEach {
+                    AlertCard(
+                        it,
+                        if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                        else return@forEach,
+                        AlertCardSpec.Downstream
                     )
+                }
+                if (showStationAccessibility && hasAccessibilityWarning) {
+                    if (elevatorAlerts.isNotEmpty()) {
+                        elevatorAlerts.forEach { AlertCard(it, null, AlertCardSpec.Elevator) }
+                    } else {
+                        NotAccessibleCard()
+                    }
                 }
             }
+        }
+
+        if (isAllServiceDisrupted) {
+            Box {}
+        } else if (noPredictionsStatus != null) {
+            Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
+                StopDetailsNoTripCard(
+                    status = noPredictionsStatus,
+                    accentColor = routeColor,
+                    routeType = routeType,
+                    hideMaps = hideMaps
+                )
+            }
+        } else if (selectedTripIsCancelled) {
+            Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
+                StopDetailsIconCard(
+                    routeColor,
+                    details = { Text(stringResource(R.string.trip_cancelled_details)) },
+                    header = { modifier ->
+                        Text(stringResource(R.string.trip_cancelled), modifier = modifier)
+                    },
+                    icon = { modifier ->
+                        Icon(
+                            painter = routeSlashIcon(routeType = routeType),
+                            contentDescription = null,
+                            modifier = modifier.testTag("route_slash_icon"),
+                        )
+                    }
+                )
+            }
+        } else {
+            TripDetailsView(
+                tripFilter = tripFilter,
+                stopId = stopId,
+                allAlerts = allAlerts,
+                alertSummaries = alertSummaries,
+                stopDetailsVM = viewModel,
+                onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
+                openSheetRoute = openSheetRoute,
+                openModal = openModal,
+                now = now,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
         }
     }
 }

@@ -89,6 +89,8 @@ open class RouteCardPreviewData {
             stop,
             listOfNotNull(
                 RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         patterns.filter { it.directionId == 0 },
                         setOf(stop.id),
@@ -100,6 +102,8 @@ open class RouteCardPreviewData {
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
                 RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         patterns.filter { it.directionId == 1 },
                         setOf(stop.id),

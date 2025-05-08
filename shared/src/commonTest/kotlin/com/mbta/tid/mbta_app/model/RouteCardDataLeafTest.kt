@@ -51,6 +51,8 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(null, UpcomingFormat.Disruption(alert, "alert-large-red-suspension")),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -96,6 +98,8 @@ class RouteCardDataLeafTest {
                     )
                 ),
                 RouteCardData.Leaf(
+                        RouteCardData.LineOrRoute.Route(route),
+                        objects.stop(),
                         0,
                         emptyList(),
                         emptySet(),
@@ -137,6 +141,8 @@ class RouteCardDataLeafTest {
                 UpcomingFormat.Disruption(alert, "alert-large-silver-suspension")
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -182,6 +188,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -227,6 +235,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -253,6 +263,8 @@ class RouteCardDataLeafTest {
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday)
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -284,6 +296,8 @@ class RouteCardDataLeafTest {
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -307,6 +321,8 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(null, UpcomingFormat.Loading),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     listOf(pattern),
                     emptySet(),
@@ -358,6 +374,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -411,6 +429,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(subwayRoute),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -442,6 +462,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(busRoute),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -468,6 +490,8 @@ class RouteCardDataLeafTest {
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday)
             ),
             RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
                     0,
                     emptyList(),
                     emptySet(),
@@ -487,8 +511,10 @@ class RouteCardDataLeafTest {
         fun objects() = objects.clone()
 
         val route = objects.getRoute("Red")
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
 
         object jfkUmass {
+            val itself = objects.getStop("place-jfk")
             val south1 = objects.getStop("70085")
             val south2 = objects.getStop("70095")
             val north1 = objects.getStop("70086")
@@ -578,6 +604,8 @@ class RouteCardDataLeafTest {
             ),
             wipeBranchUUID(
                 RouteCardData.Leaf(
+                        RedLine.lineOrRoute,
+                        RedLine.jfkUmass.itself,
                         0,
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
@@ -680,6 +708,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            RedLine.lineOrRoute,
+                            RedLine.jfkUmass.itself,
                             0,
                             listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                             setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
@@ -750,6 +780,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    RedLine.lineOrRoute,
+                    RedLine.jfkUmass.itself,
                     1,
                     listOf(RedLine.ashmontNorth, RedLine.braintreeNorth),
                     setOf(RedLine.jfkUmass.north1.id, RedLine.jfkUmass.north2.id),
@@ -838,6 +870,8 @@ class RouteCardDataLeafTest {
             ),
             wipeBranchUUID(
                 RouteCardData.Leaf(
+                        RedLine.lineOrRoute,
+                        RedLine.jfkUmass.itself,
                         0,
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
@@ -937,6 +971,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            RedLine.lineOrRoute,
+                            RedLine.jfkUmass.itself,
                             0,
                             listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                             setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
@@ -971,10 +1007,14 @@ class RouteCardDataLeafTest {
 
         fun objects() = objects.clone()
 
+        val line = objects.getLine("line-Green")
+
         val b = objects.getRoute("Green-B")
         val c = objects.getRoute("Green-C")
         val d = objects.getRoute("Green-D")
         val e = objects.getRoute("Green-E")
+
+        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(b, c, d, e))
 
         val boylston = objects.getStop("place-boyls")
         val kenmore = objects.getStop("place-kencl")
@@ -1056,6 +1096,8 @@ class RouteCardDataLeafTest {
             ),
             wipeBranchUUID(
                 RouteCardData.Leaf(
+                        GreenLine.lineOrRoute,
+                        GreenLine.boylston,
                         0,
                         listOf(
                             GreenLine.bWestbound,
@@ -1098,6 +1140,8 @@ class RouteCardDataLeafTest {
 
         val route = objects.getRoute("CR-Providence")
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+
         val toWickford = objects.getRoutePattern("CR-Providence-9cf54fb3-0")
         val toStoughton = objects.getRoutePattern("CR-Providence-9515a09b-0")
         val toProvidence =
@@ -1114,6 +1158,8 @@ class RouteCardDataLeafTest {
                 typicality = RoutePattern.Typicality.Deviation
                 representativeTrip { headsign = "South Station" }
             }
+
+        val ruggles = objects.getStop("place-rugg")
 
         val global = GlobalResponse(objects)
     }
@@ -1181,6 +1227,8 @@ class RouteCardDataLeafTest {
             ),
             wipeBranchUUID(
                 RouteCardData.Leaf(
+                        ProvidenceStoughtonLine.lineOrRoute,
+                        ProvidenceStoughtonLine.ruggles,
                         0,
                         listOf(
                             ProvidenceStoughtonLine.toProvidence,
@@ -1251,6 +1299,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    ProvidenceStoughtonLine.lineOrRoute,
+                    ProvidenceStoughtonLine.ruggles,
                     1,
                     listOf(
                         ProvidenceStoughtonLine.fromProvidence,
@@ -1283,6 +1333,7 @@ class RouteCardDataLeafTest {
         fun objects() = objects.clone()
 
         val route = objects.getRoute("87")
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val outboundTypical = objects.getRoutePattern("87-2-0")
         val outboundDeviation =
             objects.routePattern(route) {
@@ -1335,6 +1386,8 @@ class RouteCardDataLeafTest {
                 )
             ),
             RouteCardData.Leaf(
+                    `87`.lineOrRoute,
+                    objects.stop(),
                     0,
                     listOf(`87`.outboundTypical, `87`.outboundDeviation),
                     emptySet(),
@@ -1408,6 +1461,8 @@ class RouteCardDataLeafTest {
             ),
             wipeBranchUUID(
                 RouteCardData.Leaf(
+                        `87`.lineOrRoute,
+                        objects.stop(),
                         0,
                         listOf(`87`.outboundTypical, `87`.outboundDeviation),
                         emptySet(),
@@ -1477,6 +1532,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            RedLine.lineOrRoute,
+                            objects.stop(),
                             0,
                             listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                             emptySet(),
@@ -1497,6 +1554,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Red Line southbound as non-branching if service ended on all branches`() =
         parametricTest {
+            val objects = RedLine.objects()
             val now = Clock.System.now()
 
             assertEquals(
@@ -1505,6 +1563,8 @@ class RouteCardDataLeafTest {
                     UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday)
                 ),
                 RouteCardData.Leaf(
+                        RedLine.lineOrRoute,
+                        objects.stop(),
                         0,
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         emptySet(),
@@ -1583,6 +1643,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            GreenLine.lineOrRoute,
+                            GreenLine.boylston,
                             0,
                             listOf(
                                 GreenLine.bWestbound,
@@ -1629,6 +1691,8 @@ class RouteCardDataLeafTest {
                     UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
                 ),
                 RouteCardData.Leaf(
+                        GreenLine.lineOrRoute,
+                        GreenLine.boylston,
                         0,
                         listOf(
                             GreenLine.bWestbound,
@@ -1723,6 +1787,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            GreenLine.lineOrRoute,
+                            GreenLine.kenmore,
                             0,
                             listOf(
                                 GreenLine.bWestbound,
@@ -1823,6 +1889,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            GreenLine.lineOrRoute,
+                            GreenLine.kenmore,
                             0,
                             listOf(
                                 GreenLine.bWestbound,
@@ -1928,6 +1996,8 @@ class RouteCardDataLeafTest {
                 ),
                 wipeBranchUUID(
                     RouteCardData.Leaf(
+                            GreenLine.lineOrRoute,
+                            GreenLine.boylston,
                             0,
                             listOf(
                                 GreenLine.bWestbound,
@@ -2013,6 +2083,8 @@ class RouteCardDataLeafTest {
                     UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b))
                 ),
                 RouteCardData.Leaf(
+                        GreenLine.lineOrRoute,
+                        GreenLine.boylston,
                         0,
                         listOf(
                             GreenLine.bWestbound,

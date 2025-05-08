@@ -32,6 +32,8 @@ final class DirectionPickerTests: XCTestCase {
         }
 
         let leaf0 = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
             directionId: 0,
             routePatterns: [patternNorth],
             stopIds: [stop.id],
@@ -42,6 +44,8 @@ final class DirectionPickerTests: XCTestCase {
             alertsDownstream: []
         )
         let leaf1 = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
             directionId: 1,
             routePatterns: [patternSouth],
             stopIds: [stop.id],

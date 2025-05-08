@@ -45,6 +45,7 @@ class StopDetailsViewTest {
             lineId = "line_1"
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
+    val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -111,13 +112,15 @@ class StopDetailsViewTest {
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    lineOrRoute,
                     listOf(
                         RouteCardData.RouteStopData(
                             route,
                             stop,
                             listOf(
                                 RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
                                     directionId = 0,
                                     listOf(routePatternOne),
                                     setOf(stop.id),
@@ -181,13 +184,15 @@ class StopDetailsViewTest {
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    lineOrRoute,
                     listOf(
                         RouteCardData.RouteStopData(
                             route,
                             stop,
                             listOf(
                                 RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
                                     directionId = 0,
                                     listOf(routePatternOne),
                                     setOf(stop.id),
@@ -257,13 +262,15 @@ class StopDetailsViewTest {
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    lineOrRoute,
                     listOf(
                         RouteCardData.RouteStopData(
                             route,
                             stop,
                             listOf(
                                 RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
                                     directionId = 0,
                                     listOf(routePatternOne),
                                     setOf(stop.id),
@@ -325,13 +332,15 @@ class StopDetailsViewTest {
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    lineOrRoute,
                     listOf(
                         RouteCardData.RouteStopData(
                             route,
                             stop,
                             listOf(
                                 RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
                                     directionId = 0,
                                     listOf(routePatternOne),
                                     setOf(stop.id),

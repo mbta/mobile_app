@@ -86,6 +86,8 @@ struct DirectionPicker: View {
     }
 
     let leaf0 = RouteCardData.Leaf(
+        lineOrRoute: .route(route),
+        stop: stop,
         directionId: 0,
         routePatterns: [patternOutbound],
         stopIds: [stop.id],
@@ -96,6 +98,8 @@ struct DirectionPicker: View {
         alertsDownstream: []
     )
     let leaf1 = RouteCardData.Leaf(
+        lineOrRoute: .route(route),
+        stop: stop,
         directionId: 1,
         routePatterns: [patternInbound],
         stopIds: [stop.id],

@@ -41,13 +41,16 @@ class DeparturesTest {
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val stopData =
             RouteCardData.RouteStopData(
-                RouteCardData.LineOrRoute.Route(route),
+                lineOrRoute,
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
@@ -63,6 +66,8 @@ class DeparturesTest {
                         emptyList()
                     ),
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
@@ -110,13 +115,16 @@ class DeparturesTest {
         val aSchedule = objects.schedule { stopHeadsign = "A Stop Headsign" }
         val bTrip = objects.trip { headsign = "B" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val stopData =
             RouteCardData.RouteStopData(
-                RouteCardData.LineOrRoute.Route(route),
+                lineOrRoute,
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
@@ -133,6 +141,8 @@ class DeparturesTest {
                         emptyList()
                     ),
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
@@ -174,13 +184,16 @@ class DeparturesTest {
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val stopData =
             RouteCardData.RouteStopData(
-                RouteCardData.LineOrRoute.Route(route),
+                lineOrRoute,
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
@@ -196,6 +209,8 @@ class DeparturesTest {
                         emptyList()
                     ),
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),

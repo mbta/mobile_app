@@ -87,14 +87,17 @@ class StopHeaderTest {
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
         val alert = objects.alert { effect = Alert.Effect.ElevatorClosure }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         composeTestRule.setContent {
             StopHeader(
                 RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    lineOrRoute,
                     stop,
                     emptyList(),
                     listOf(
                         RouteCardData.Leaf(
+                            lineOrRoute,
+                            stop,
                             0,
                             emptyList(),
                             emptySet(),

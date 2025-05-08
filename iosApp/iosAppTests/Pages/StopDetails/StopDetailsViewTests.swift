@@ -128,6 +128,8 @@ final class StopDetailsViewTests: XCTestCase {
                 stopData: [.init(
                     route: route, stop: stop,
                     data: [.init(
+                        lineOrRoute: .route(route),
+                        stop: stop,
                         directionId: 0,
                         routePatterns: [],
                         stopIds: [],
@@ -173,6 +175,8 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let leaf = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
             directionId: 0,
             routePatterns: [routePattern],
             stopIds: Set([stop.id]),
