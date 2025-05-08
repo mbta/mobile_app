@@ -186,7 +186,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -251,7 +250,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -351,7 +349,14 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-        val routeStopData = RouteCardData.RouteStopData(stop, route, listOf(leaf), globalResponse)
+        val routeStopData =
+            RouteCardData.RouteStopData(
+                route,
+                stop,
+                listOf(leaf),
+                RouteCardData.Context.StopDetailsFiltered,
+                globalResponse
+            )
         val routeCardData =
             RouteCardData(
                 RouteCardData.LineOrRoute.Route(route),
@@ -371,7 +376,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter =
                         StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                     tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                    routeCardData = routeCardData,
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -424,10 +428,11 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData =
             RouteCardData.RouteStopData(
-                stop,
                 line,
                 setOf(route),
+                stop,
                 listOf(leaf),
+                RouteCardData.Context.StopDetailsFiltered,
                 GlobalResponse(objects)
             )
         val routeCardData =
@@ -444,7 +449,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = StopDetailsFilter(route.id, 0),
                     tripFilter = null,
-                    routeCardData = routeCardData,
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = listOf(),
@@ -529,7 +533,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -643,7 +646,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = leafFormat.tileData(),
@@ -725,7 +727,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -794,7 +795,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -880,7 +880,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,
@@ -945,7 +944,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = inaccessibleStop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeCardData = routeCardData.single(),
                     routeStopData = routeStopData,
                     leaf = leaf,
                     tileData = tileData,

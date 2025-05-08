@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class DirectionPickerTests: XCTestCase {
-    private func getTestData() -> DepartureDataBundle {
+    private func getTestData() -> RouteCardData.RouteStopData {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -51,32 +51,26 @@ final class DirectionPickerTests: XCTestCase {
             hasSchedulesToday: true,
             alertsDownstream: []
         )
-        let stopData = RouteCardData.RouteStopData(stop: stop, directions: [
+        let stopData = RouteCardData.RouteStopData(lineOrRoute: .route(route), stop: stop, directions: [
             Direction(name: "North", destination: "Selected Destination", id: 0),
             Direction(name: "South", destination: "Other Destination", id: 1),
-        ], data: [leaf0, leaf1])
-        let routeData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-            stopData: [stopData],
-            context: .stopDetailsFiltered,
-            at: Date.now.toKotlinInstant()
-        )
+        ], data: [leaf0, leaf1], context: .stopDetailsFiltered)
 
-        return .init(routeData: routeData, stopData: stopData, leaf: leaf0)
+        return stopData
     }
 
     func testDirectionFilter() throws {
-        let data = getTestData()
+        let stopData = getTestData()
 
         let setFilter1Exp: XCTestExpectation = .init(description: "set filter called with direction 1")
         let setFilter0Exp: XCTestExpectation = .init(description: "set filter called with direction 0")
 
         let filter: StopDetailsFilter? = .init(
-            routeId: data.routeData.id,
+            routeId: stopData.lineOrRoute.id,
             directionId: 0
         )
 
-        let sut = DirectionPicker(data: data, filter: filter, setFilter: { filter in
+        let sut = DirectionPicker(stopData: stopData, filter: filter, setFilter: { filter in
             if filter?.directionId == 1 {
                 setFilter1Exp.fulfill()
             }
@@ -93,14 +87,14 @@ final class DirectionPickerTests: XCTestCase {
     }
 
     func testFormatsNorthSouth() throws {
-        let data = getTestData()
+        let stopData = getTestData()
 
         let filter: StopDetailsFilter? = .init(
-            routeId: data.routeData.id,
+            routeId: stopData.lineOrRoute.id,
             directionId: 0
         )
 
-        let sut = DirectionPicker(data: data, filter: filter, setFilter: { _ in })
+        let sut = DirectionPicker(stopData: stopData, filter: filter, setFilter: { _ in })
         XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
         XCTAssertNotNil(try? sut.inspect().find(text: "Southbound to"))
     }

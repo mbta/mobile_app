@@ -11,7 +11,6 @@ import SwiftUI
 
 struct RouteCardDepartures: View {
     var analytics: Analytics = AnalyticsProvider.shared
-    let cardData: RouteCardData
     let stopData: RouteCardData.RouteStopData
     let global: GlobalResponse?
     let now: Date
@@ -24,15 +23,15 @@ struct RouteCardDepartures: View {
                 if let direction = stopData.directions.first(where: { $0.id == leaf.directionId }) {
                     let formatted = leaf.format(
                         now: now.toKotlinInstant(),
-                        representativeRoute: cardData.lineOrRoute.sortRoute,
+                        representativeRoute: stopData.lineOrRoute.sortRoute,
                         globalData: global,
-                        context: cardData.context
+                        context: stopData.context
                     )
                     SheetNavigationLink(
                         value: .stopDetails(
                             stopId: stopData.stop.id,
                             stopFilter: .init(
-                                routeId: cardData.lineOrRoute.id,
+                                routeId: stopData.lineOrRoute.id,
                                 directionId: leaf.directionId
                             ),
                             tripFilter: nil
@@ -70,11 +69,11 @@ struct RouteCardDepartures: View {
         default: nil
         }
         analytics.tappedDeparture(
-            routeId: cardData.lineOrRoute.id,
+            routeId: stopData.lineOrRoute.id,
             stopId: stopData.stop.id,
             pinned: pinned,
             alert: leaf.alertsHere.count > 0,
-            routeType: cardData.lineOrRoute.type,
+            routeType: stopData.lineOrRoute.type,
             noTrips: noTrips
         )
     }

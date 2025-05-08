@@ -21,7 +21,6 @@ import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
 
 class DeparturesTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -44,6 +43,7 @@ class DeparturesTest {
 
         val stopData =
             RouteCardData.RouteStopData(
+                RouteCardData.LineOrRoute.Route(route),
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
@@ -77,18 +77,12 @@ class DeparturesTest {
                         true,
                         listOf(downstreamAlert)
                     )
-                )
-            )
-        val cardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(stopData),
+                ),
                 RouteCardData.Context.NearbyTransit,
-                now,
             )
 
         composeTestRule.setContent {
-            Departures(stopData, cardData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
         }
 
         composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
@@ -118,6 +112,7 @@ class DeparturesTest {
 
         val stopData =
             RouteCardData.RouteStopData(
+                RouteCardData.LineOrRoute.Route(route),
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
@@ -152,18 +147,12 @@ class DeparturesTest {
                         true,
                         emptyList()
                     )
-                )
-            )
-        val cardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(stopData),
+                ),
                 RouteCardData.Context.NearbyTransit,
-                now,
             )
 
         composeTestRule.setContent {
-            Departures(stopData, cardData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
         }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
@@ -187,6 +176,7 @@ class DeparturesTest {
 
         val stopData =
             RouteCardData.RouteStopData(
+                RouteCardData.LineOrRoute.Route(route),
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
@@ -220,14 +210,8 @@ class DeparturesTest {
                         true,
                         emptyList()
                     )
-                )
-            )
-        val cardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(stopData),
+                ),
                 RouteCardData.Context.NearbyTransit,
-                now,
             )
 
         var tapAnalytics: Pair<String, Map<String, String>>? = null
@@ -240,7 +224,7 @@ class DeparturesTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                Departures(stopData, cardData, GlobalResponse(objects), now, pinned = true) {
+                Departures(stopData, GlobalResponse(objects), now, pinned = true) {
                     onClickCalled = true
                 }
             }

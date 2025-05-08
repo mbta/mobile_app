@@ -356,9 +356,9 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
 
         let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: MapTestDataHelper.shared.routeOrange),
+            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
             stopData: [
-                .init(stop: stop, route: MapTestDataHelper.shared.routeOrange, data: [
+                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
                     .init(
                         directionId: 0,
                         routePatterns: [MapTestDataHelper.shared.patternOrange30],
@@ -369,7 +369,7 @@ final class HomeMapViewTests: XCTestCase {
                         hasSchedulesToday: true,
                         alertsDownstream: []
                     ),
-                ], globalData: .init(objects: objects)),
+                ], context: .stopDetailsFiltered, globalData: .init(objects: objects)),
             ],
             context: .stopDetailsFiltered,
             at: Date.now.toKotlinInstant()
@@ -454,9 +454,9 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: MapTestDataHelper.shared.routeOrange),
+            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
             stopData: [
-                .init(stop: stop, route: MapTestDataHelper.shared.routeOrange, data: [
+                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
                     .init(
                         directionId: 0,
                         routePatterns: [MapTestDataHelper.shared.patternOrange30],
@@ -467,7 +467,7 @@ final class HomeMapViewTests: XCTestCase {
                         hasSchedulesToday: true,
                         alertsDownstream: []
                     ),
-                ], globalData: .init(objects: objectCollection)),
+                ], context: .stopDetailsFiltered, globalData: .init(objects: objectCollection)),
             ],
             context: .stopDetailsFiltered,
             at: Date.now.toKotlinInstant()

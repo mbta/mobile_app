@@ -198,8 +198,8 @@ private fun StopDetailsRoutesViewPreview() {
                 RouteCardData.LineOrRoute.Route(route1),
                 listOf(
                     RouteCardData.RouteStopData(
-                        stop,
                         route1,
+                        stop,
                         listOf(
                             RouteCardData.Leaf(
                                 0,
@@ -212,6 +212,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsDownstream = emptyList()
                             )
                         ),
+                        RouteCardData.Context.StopDetailsUnfiltered,
                         globalData
                     )
                 ),
@@ -222,8 +223,8 @@ private fun StopDetailsRoutesViewPreview() {
                 RouteCardData.LineOrRoute.Route(route2),
                 listOf(
                     RouteCardData.RouteStopData(
-                        stop,
                         route2,
+                        stop,
                         listOf(
                             RouteCardData.Leaf(
                                 0,
@@ -249,6 +250,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsDownstream = emptyList()
                             )
                         ),
+                        RouteCardData.Context.StopDetailsUnfiltered,
                         globalData
                     )
                 ),

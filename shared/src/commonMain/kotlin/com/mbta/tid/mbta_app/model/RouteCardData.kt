@@ -28,12 +28,6 @@ private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuild
 
 private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 
-data class DepartureDataBundle(
-    val routeData: RouteCardData,
-    val stopData: RouteCardData.RouteStopData,
-    val leaf: RouteCardData.Leaf
-)
-
 /**
  * Contain all data for presentation in a route card. A route card is a snapshot of service for a
  * route at a set of stops. It has the general structure: Route (or Line) => Stop(s) => Direction =>
@@ -66,35 +60,42 @@ data class RouteCardData(
     }
 
     data class RouteStopData(
+        val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directions: List<Direction>,
-        val data: List<Leaf>
+        val data: List<Leaf>,
+        val context: Context,
     ) {
         // convenience constructors for when directions are not directly under test
         constructor(
-            stop: Stop,
             route: Route,
+            stop: Stop,
             data: List<Leaf>,
+            context: Context,
             globalData: GlobalResponse
-        ) : this(stop, LineOrRoute.Route(route), data, globalData)
+        ) : this(LineOrRoute.Route(route), stop, data, context, globalData)
 
         constructor(
-            stop: Stop,
             line: Line,
             routes: Set<Route>,
+            stop: Stop,
             data: List<Leaf>,
+            context: Context,
             globalData: GlobalResponse
-        ) : this(stop, LineOrRoute.Line(line, routes), data, globalData)
+        ) : this(LineOrRoute.Line(line, routes), stop, data, context, globalData)
 
         constructor(
-            stop: Stop,
             lineOrRoute: LineOrRoute,
+            stop: Stop,
             data: List<Leaf>,
+            context: Context,
             globalData: GlobalResponse
         ) : this(
+            lineOrRoute,
             stop,
             lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
-            data
+            data,
+            context
         )
 
         val id = stop.id
@@ -483,11 +484,11 @@ data class RouteCardData(
         }
     }
 
-    sealed interface LineOrRoute {
+    sealed class LineOrRoute {
 
-        data class Line(val line: LineModel, val routes: Set<RouteModel>) : LineOrRoute
+        data class Line(val line: LineModel, val routes: Set<RouteModel>) : LineOrRoute()
 
-        data class Route(val route: RouteModel) : LineOrRoute
+        data class Route(val route: RouteModel) : LineOrRoute()
 
         val id: String
             get() =
@@ -681,6 +682,7 @@ data class RouteCardData(
                                             )
                                         stop.id to
                                             RouteStopDataBuilder(
+                                                lineOrRoute,
                                                 stop,
                                                 directions = directions,
                                                 data =
@@ -710,7 +712,8 @@ data class RouteCardData(
                                                                     ),
                                                                 allDataLoaded = allDataLoaded
                                                             )
-                                                        }
+                                                        },
+                                                context
                                             )
                                     }
                                     .toMap(),
@@ -1003,43 +1006,56 @@ data class RouteCardData(
     }
 
     data class RouteStopDataBuilder(
+        val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directions: List<Direction>,
-        var data: ByDirectionBuilder
+        var data: ByDirectionBuilder,
+        val context: Context,
     ) {
         // convenience constructors for when directions are not directly under test
         constructor(
-            stop: Stop,
             route: Route,
+            stop: Stop,
             data: ByDirectionBuilder,
+            context: Context,
             globalData: GlobalResponse
-        ) : this(stop, LineOrRoute.Route(route), data, globalData)
+        ) : this(stop, LineOrRoute.Route(route), data, context, globalData)
 
         constructor(
-            stop: Stop,
             line: Line,
             routes: Set<Route>,
+            stop: Stop,
             data: ByDirectionBuilder,
+            context: Context,
             globalData: GlobalResponse
-        ) : this(stop, LineOrRoute.Line(line, routes), data, globalData)
+        ) : this(stop, LineOrRoute.Line(line, routes), data, context, globalData)
 
         constructor(
             stop: Stop,
             lineOrRoute: LineOrRoute,
             data: ByDirectionBuilder,
+            context: Context,
             globalData: GlobalResponse
         ) : this(
+            lineOrRoute,
             stop,
             lineOrRoute.directions(
                 globalData,
                 stop,
                 data.values.mapNotNull { it.routePatterns }.flatten()
             ),
-            data
+            data,
+            context
         )
 
         fun build(): RouteStopData {
-            return RouteStopData(stop, directions, data.values.map { it.build() }.sort())
+            return RouteStopData(
+                lineOrRoute,
+                stop,
+                directions,
+                data.values.map { it.build() }.sort(),
+                context
+            )
         }
     }
 

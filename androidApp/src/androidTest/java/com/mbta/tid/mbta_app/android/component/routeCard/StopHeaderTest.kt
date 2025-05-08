@@ -17,10 +17,20 @@ class StopHeaderTest {
     @Test
     fun testBasic() {
         val objects = ObjectCollectionBuilder()
+        val route = objects.route()
         val stop = objects.stop {}
 
         composeTestRule.setContent {
-            StopHeader(RouteCardData.RouteStopData(stop, emptyList(), emptyList()), false)
+            StopHeader(
+                RouteCardData.RouteStopData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    stop,
+                    emptyList(),
+                    emptyList(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                ),
+                false
+            )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
     }
@@ -28,10 +38,20 @@ class StopHeaderTest {
     @Test
     fun testAccessible() {
         val objects = ObjectCollectionBuilder()
+        val route = objects.route()
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
 
         composeTestRule.setContent {
-            StopHeader(RouteCardData.RouteStopData(stop, emptyList(), emptyList()), true)
+            StopHeader(
+                RouteCardData.RouteStopData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    stop,
+                    emptyList(),
+                    emptyList(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                ),
+                true
+            )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
@@ -40,10 +60,20 @@ class StopHeaderTest {
     @Test
     fun testNotAccessible() {
         val objects = ObjectCollectionBuilder()
+        val route = objects.route()
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE }
 
         composeTestRule.setContent {
-            StopHeader(RouteCardData.RouteStopData(stop, emptyList(), emptyList()), true)
+            StopHeader(
+                RouteCardData.RouteStopData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    stop,
+                    emptyList(),
+                    emptyList(),
+                    RouteCardData.Context.StopDetailsUnfiltered
+                ),
+                true
+            )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
@@ -53,12 +83,14 @@ class StopHeaderTest {
     @Test
     fun testElevatorAlert() {
         val objects = ObjectCollectionBuilder()
+        val route = objects.route()
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
         val alert = objects.alert { effect = Alert.Effect.ElevatorClosure }
 
         composeTestRule.setContent {
             StopHeader(
                 RouteCardData.RouteStopData(
+                    RouteCardData.LineOrRoute.Route(route),
                     stop,
                     emptyList(),
                     listOf(
@@ -72,7 +104,8 @@ class StopHeaderTest {
                             true,
                             emptyList()
                         )
-                    )
+                    ),
+                    RouteCardData.Context.StopDetailsUnfiltered
                 ),
                 true
             )

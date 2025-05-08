@@ -17,7 +17,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var data: DepartureDataBundle
+    var stopData: RouteCardData.RouteStopData
+    var leaf: RouteCardData.Leaf
 
     var pinned: Bool
 
@@ -42,19 +43,19 @@ struct StopDetailsFilteredDepartureDetails: View {
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
 
-    var patternsHere: [RoutePattern] { data.leaf.routePatterns }
-    var alerts: [Shared.Alert] { data.leaf.alertsHere }
-    var downstreamAlerts: [Shared.Alert] { data.leaf.alertsDownstream }
+    var patternsHere: [RoutePattern] { leaf.routePatterns }
+    var alerts: [Shared.Alert] { leaf.alertsHere }
+    var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream }
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
-    var routeColor: Color { Color(hex: data.routeData.lineOrRoute.backgroundColor) }
-    var routeTextColor: Color { Color(hex: data.routeData.lineOrRoute.textColor) }
-    var routeType: RouteType { data.routeData.lineOrRoute.type }
+    var routeColor: Color { Color(hex: stopData.lineOrRoute.backgroundColor) }
+    var routeTextColor: Color { Color(hex: stopData.lineOrRoute.textColor) }
+    var routeType: RouteType { stopData.lineOrRoute.type }
 
     var selectedTripIsCancelled: Bool {
         if let tripFilter {
-            data.leaf.upcomingTrips.contains { upcoming in
+            leaf.upcomingTrips.contains { upcoming in
                 upcoming.trip.id == tripFilter.tripId && upcoming.isCancelled
             }
         } else {
@@ -63,7 +64,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     var hasAccessibilityWarning: Bool {
-        data.stopData.hasElevatorAlerts || !data.stopData.stop.isWheelchairAccessible
+        stopData.hasElevatorAlerts || !stopData.stop.isWheelchairAccessible
     }
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
@@ -85,7 +86,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        data: DepartureDataBundle, pinned: Bool, now: Date,
+        stopData: RouteCardData.RouteStopData, leaf: RouteCardData.Leaf, pinned: Bool, now: Date,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider,
         testTiles: [TileData]? = nil
@@ -95,7 +96,8 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.tripFilter = tripFilter
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
-        self.data = data
+        self.stopData = stopData
+        self.leaf = leaf
         self.pinned = pinned
         self.now = now
         self.testTiles = testTiles
@@ -104,9 +106,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        leafFormat = data.leaf.format(
+        leafFormat = leaf.format(
             now: now.toKotlinInstant(),
-            representativeRoute: data.routeData.lineOrRoute.sortRoute,
+            representativeRoute: stopData.lineOrRoute.sortRoute,
             globalData: stopDetailsVM.global,
             context: .stopDetailsFiltered
         )
@@ -123,7 +125,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 VStack(spacing: 16) {
                     ScrollViewReader { view in
                         DirectionPicker(
-                            data: data,
+                            stopData: stopData,
                             filter: stopFilter,
                             setFilter: { setStopFilter($0) }
                         )
@@ -200,10 +202,10 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
-        .onChange(of: data.leaf) { leaf in
+        .onChange(of: leaf) { leaf in
             leafFormat = leaf.format(
                 now: now.toKotlinInstant(),
-                representativeRoute: data.routeData.lineOrRoute.sortRoute,
+                representativeRoute: stopData.lineOrRoute.sortRoute,
                 globalData: stopDetailsVM.global,
                 context: .stopDetailsFiltered
             )
@@ -220,9 +222,9 @@ struct StopDetailsFilteredDepartureDetails: View {
             setAlertSummaries(newParams)
         }
         .onChange(of: stopDetailsVM.global) { global in
-            leafFormat = data.leaf.format(
+            leafFormat = leaf.format(
                 now: now.toKotlinInstant(),
-                representativeRoute: data.routeData.lineOrRoute.sortRoute,
+                representativeRoute: stopData.lineOrRoute.sortRoute,
                 globalData: global,
                 context: .stopDetailsFiltered
             )
@@ -264,11 +266,11 @@ struct StopDetailsFilteredDepartureDetails: View {
                                 selectionLock: false
                             )
                             analytics.tappedDeparture(
-                                routeId: data.routeData.lineOrRoute.id,
-                                stopId: data.stopData.stop.id,
+                                routeId: stopData.lineOrRoute.id,
+                                stopId: stopData.stop.id,
                                 pinned: pinned,
                                 alert: alerts.count > 0,
-                                routeType: data.routeData.lineOrRoute.type,
+                                routeType: stopData.lineOrRoute.type,
                                 noTrips: nil
                             )
                             view.scrollTo(tileData.id)
@@ -314,7 +316,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     private func pillDecoration(tileData: TileData) -> DepartureTile.PillDecoration {
-        if case .line = onEnum(of: data.routeData.lineOrRoute), let route = tileData.route {
+        if case .line = onEnum(of: stopData.lineOrRoute), let route = tileData.route {
             .onPrediction(route: route)
         } else {
             .none
@@ -323,11 +325,11 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {
         {
-            let line: Line? = switch onEnum(of: data.routeData.lineOrRoute) {
+            let line: Line? = switch onEnum(of: stopData.lineOrRoute) {
             case let .line(line): line.line
             default: nil
             }
-            let routes = switch onEnum(of: data.routeData.lineOrRoute) {
+            let routes = switch onEnum(of: stopData.lineOrRoute) {
             case let .line(line): Array(line.routes)
             case let .route(route): [route.route]
             }
@@ -335,11 +337,11 @@ struct StopDetailsFilteredDepartureDetails: View {
                 alertId: alertId,
                 line: spec == .elevator ? nil : line,
                 routes: spec == .elevator ? nil : routes,
-                stop: data.stopData.stop
+                stop: stopData.stop
             ))
             analytics.tappedAlertDetails(
-                routeId: data.routeData.lineOrRoute.id,
-                stopId: data.stopData.stop.id,
+                routeId: stopData.lineOrRoute.id,
+                stopId: stopData.stop.id,
                 alertId: alertId,
                 elevator: spec == .elevator
             )
@@ -385,8 +387,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
                 if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
-                    if data.stopData.hasElevatorAlerts {
-                        ForEach(data.stopData.elevatorAlerts, id: \.id) { alert in
+                    if stopData.hasElevatorAlerts {
+                        ForEach(stopData.elevatorAlerts, id: \.id) { alert in
                             alertCard(alert, nil, .elevator)
                         }
                     } else {

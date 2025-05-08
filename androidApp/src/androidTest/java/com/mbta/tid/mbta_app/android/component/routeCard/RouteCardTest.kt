@@ -32,7 +32,15 @@ class RouteCardTest {
             RouteCard(
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route),
-                    listOf(RouteCardData.RouteStopData(stop, emptyList(), emptyList())),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                            RouteCardData.Context.NearbyTransit
+                        )
+                    ),
                     RouteCardData.Context.NearbyTransit,
                     now,
                 ),
@@ -66,7 +74,15 @@ class RouteCardTest {
             RouteCard(
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route),
-                    listOf(RouteCardData.RouteStopData(stop, emptyList(), emptyList())),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                            RouteCardData.Context.NearbyTransit
+                        )
+                    ),
                     RouteCardData.Context.NearbyTransit,
                     now,
                 ),
@@ -101,7 +117,15 @@ class RouteCardTest {
             RouteCard(
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route),
-                    listOf(RouteCardData.RouteStopData(stop, emptyList(), emptyList())),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                            RouteCardData.Context.StopDetailsUnfiltered
+                        )
+                    ),
                     RouteCardData.Context.StopDetailsUnfiltered,
                     now,
                 ),

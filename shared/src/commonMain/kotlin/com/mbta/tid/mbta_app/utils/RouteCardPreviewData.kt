@@ -85,8 +85,8 @@ open class RouteCardPreviewData {
         alertDownstream: Map<Int, Alert>
     ) =
         RouteCardData.RouteStopData(
-            stop,
             lineOrRoute,
+            stop,
             listOfNotNull(
                 RouteCardData.Leaf(
                         0,
@@ -111,6 +111,7 @@ open class RouteCardPreviewData {
                     )
                     .takeUnless { it.routePatterns.isEmpty() }
             ),
+            context,
             global
         )
 

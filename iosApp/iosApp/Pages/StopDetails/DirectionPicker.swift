@@ -17,14 +17,14 @@ struct DirectionPicker: View {
     let route: Route
     let line: Line?
 
-    init(data: DepartureDataBundle, filter: StopDetailsFilter?,
+    init(stopData: RouteCardData.RouteStopData, filter: StopDetailsFilter?,
          setFilter: @escaping (StopDetailsFilter?) -> Void) {
         self.filter = filter
         self.setFilter = setFilter
-        availableDirections = Set(data.stopData.data.map(\.directionId)).sorted()
-        directions = data.stopData.directions
-        route = data.routeData.lineOrRoute.sortRoute
-        line = switch onEnum(of: data.routeData.lineOrRoute) {
+        availableDirections = Set(stopData.data.map(\.directionId)).sorted()
+        directions = stopData.directions
+        route = stopData.lineOrRoute.sortRoute
+        line = switch onEnum(of: stopData.lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
@@ -105,19 +105,13 @@ struct DirectionPicker: View {
         hasSchedulesToday: true,
         alertsDownstream: []
     )
-    let stopCard = RouteCardData.RouteStopData(stop: stop, directions: [
+    let stopCard = RouteCardData.RouteStopData(lineOrRoute: .route(route), stop: stop, directions: [
         .init(name: "Outbound", destination: "Out", id: 0),
         .init(name: "Inbound", destination: "In", id: 1),
-    ], data: [leaf0, leaf1])
-    let routeCard = RouteCardData(
-        lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-        stopData: [stopCard],
-        context: .stopDetailsFiltered,
-        at: Date.now.toKotlinInstant()
-    )
+    ], data: [leaf0, leaf1], context: .stopDetailsFiltered)
 
     DirectionPicker(
-        data: .init(routeData: routeCard, stopData: stopCard, leaf: leaf0),
+        stopData: stopCard,
         filter: .init(routeId: route.id, directionId: 0),
         setFilter: { _ in }
     )

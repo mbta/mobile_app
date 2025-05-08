@@ -43,7 +43,6 @@ import org.koin.compose.koinInject
 @Composable
 fun Departures(
     stopData: RouteCardData.RouteStopData,
-    cardData: RouteCardData,
     globalData: GlobalResponse?,
     now: Instant,
     pinned: Boolean,
@@ -58,17 +57,17 @@ fun Departures(
                 val format = (leafFormat as? LeafFormat.Single)?.format
                 val noTrips = (format as? UpcomingFormat.NoTrips)?.noTripsFormat
                 analytics.tappedDeparture(
-                    cardData.lineOrRoute.id,
+                    stopData.lineOrRoute.id,
                     stopData.stop.id,
                     pinned,
                     leaf.alertsHere.isNotEmpty(),
-                    cardData.lineOrRoute.type,
+                    stopData.lineOrRoute.type,
                     noTrips
                 )
             }
 
             val formatted =
-                leaf.format(now, cardData.lineOrRoute.sortRoute, globalData, cardData.context)
+                leaf.format(now, stopData.lineOrRoute.sortRoute, globalData, stopData.context)
             val direction = stopData.directions.first { it.id == leaf.directionId }
 
             NavDrilldownRow(
@@ -174,8 +173,8 @@ private fun DeparturesPreview() {
     val lineOrRoute = RouteCardData.LineOrRoute.Route(redLine)
     val stopData =
         RouteCardData.RouteStopData(
-            jfkUmass,
             lineOrRoute,
+            jfkUmass,
             listOf(
                 RouteCardData.Leaf(
                     0,
@@ -230,21 +229,13 @@ private fun DeparturesPreview() {
                     emptyList()
                 )
             ),
+            context,
             global
         )
-    val card = RouteCardData(lineOrRoute, listOf(stopData), context, now)
 
     MyApplicationTheme {
         Column(Modifier.background(MaterialTheme.colorScheme.background)) {
-            Departures(
-                card.stopData.single(),
-                card,
-                global,
-                now,
-                false,
-                MockAnalytics(),
-                onClick = {}
-            )
+            Departures(stopData, global, now, false, MockAnalytics(), onClick = {})
         }
     }
 }
