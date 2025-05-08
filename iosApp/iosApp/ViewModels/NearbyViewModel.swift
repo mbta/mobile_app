@@ -19,7 +19,6 @@ class NearbyViewModel: ObservableObject {
         var stopIds: [String]?
     }
 
-    @Published var departures: StopDetailsDepartures?
     @Published var navigationStack: [SheetNavigationStackEntry] = [] {
         didSet { Task {
             let navEntry = navigationStack.lastSafe()
@@ -36,13 +35,11 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    @Published var groupByDirection: Bool = false
     @Published var showDebugMessages: Bool = false
     @Published var showStationAccessibility: Bool = false
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
-    @Published var nearbyStaticData: NearbyStaticData?
     @Published var routeCardData: [RouteCardData]?
 
     @Published var selectingLocation = false
@@ -56,9 +53,8 @@ class NearbyViewModel: ObservableObject {
     private let settingsRepository: ISettingsRepository
 
     init(
-        departures: StopDetailsDepartures? = nil,
+        routeCardData: [RouteCardData]? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
-        groupByDirection: Bool = false,
         showDebugMessages: Bool = false,
         showStationAccessibility: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
@@ -68,10 +64,9 @@ class NearbyViewModel: ObservableObject {
         analytics: Analytics = AnalyticsProvider.shared,
         settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
-        self.departures = departures
+        self.routeCardData = routeCardData
         self.navigationStack = navigationStack
 
-        self.groupByDirection = groupByDirection
         self.showDebugMessages = showDebugMessages
         self.showStationAccessibility = showStationAccessibility
 
@@ -86,24 +81,13 @@ class NearbyViewModel: ObservableObject {
     func clearNearbyData() {
         nearbyState = .init()
         routeCardData = nil
-        nearbyStaticData = nil
     }
 
     func loadSettings() async {
-        let loaded = await settingsRepository.load([.devDebugMode, .groupByDirection, .stationAccessibility])
+        let loaded = await settingsRepository.load([.devDebugMode, .stationAccessibility])
         Task { @MainActor in
-            groupByDirection = loaded.getSafe(.groupByDirection)
             showDebugMessages = loaded.getSafe(.devDebugMode)
             showStationAccessibility = loaded.getSafe(.stationAccessibility)
-        }
-    }
-
-    /**
-     Set the departures from the given stop if it is the last stop in the stack.
-     */
-    func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
-        if stopId == navigationStack.lastStopId {
-            departures = newDepartures
         }
     }
 
@@ -211,32 +195,13 @@ class NearbyViewModel: ObservableObject {
                 analytics.refetchedNearbyTransit()
             }
             nearbyState.loading = true
-            nearbyStaticData = nil
             routeCardData = nil
 
             let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
-            if groupByDirection {
-                nearbyState.stopIds = stopIds
-                nearbyState.loadedLocation = location
-                nearbyState.loading = false
-                selectingLocation = false
-            } else {
-                defer {
-                    self.nearbyState.loading = false
-                    self.selectingLocation = false
-                }
-                await fetchApi(
-                    errorBannerRepository,
-                    errorKey: "NearbyViewModel.getNearby",
-                    getData: { try await self.nearbyRepository.getNearby(global: global, stopIds: stopIds) },
-                    onSuccess: {
-                        self.nearbyStaticData = $0
-                        self.nearbyState.stopIds = stopIds
-                        self.nearbyState.loadedLocation = location
-                    },
-                    onRefreshAfterError: { self.getNearbyStops(global: global, location: location) }
-                )
-            }
+            nearbyState.stopIds = stopIds
+            nearbyState.loadedLocation = location
+            nearbyState.loading = false
+            selectingLocation = false
         }
     }
 

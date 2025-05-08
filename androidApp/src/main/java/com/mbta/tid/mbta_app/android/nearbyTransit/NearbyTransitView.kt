@@ -15,7 +15,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,13 +34,10 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
@@ -72,12 +68,11 @@ fun NearbyTransitView(
         }
     }
     val now by timer(updateInterval = 5.seconds)
-    val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
+    val stopIds = nearbyVM.nearbyStopIds
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val analytics: Analytics = koinInject()
@@ -104,9 +99,17 @@ fun NearbyTransitView(
             style = Typography.title3Semibold,
         )
         ErrorBanner(errorBannerViewModel)
-        if (groupByDirection) {
-            LaunchedEffect(
-                nearbyVM.nearby,
+        LaunchedEffect(
+            stopIds,
+            globalResponse,
+            targetLocation,
+            schedules,
+            predictions,
+            alertData,
+            now,
+            pinnedRoutes
+        ) {
+            nearbyVM.loadRouteCardData(
                 globalResponse,
                 targetLocation,
                 schedules,
@@ -114,129 +117,47 @@ fun NearbyTransitView(
                 alertData,
                 now,
                 pinnedRoutes
-            ) {
-                nearbyVM.loadRouteCardData(
-                    globalResponse,
-                    targetLocation,
-                    schedules,
-                    predictions,
-                    alertData,
-                    now,
-                    pinnedRoutes
-                )
-            }
+            )
+        }
 
-            val routeCardData = nearbyVM.routeCardData
+        val routeCardData = nearbyVM.routeCardData
 
-            if (routeCardData == null) {
-                CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                    Column(
-                        Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    ) {
-                        for (i in 1..5) {
-                            LoadingRouteCard()
-                        }
-                        Spacer(Modifier.weight(1f))
-                    }
-                }
-            } else if (routeCardData.isEmpty()) {
-                Column(
-                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    noNearbyStopsView()
-                    Spacer(Modifier.weight(1f))
-                }
-            } else {
+        if (routeCardData == null) {
+            CompositionLocalProvider(IsLoadingSheetContents provides true) {
                 LazyColumn(
                     contentPadding =
                         PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(routeCardData) {
-                        RouteCard(
-                            it,
-                            globalResponse,
-                            now,
-                            pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
-                            ::togglePinnedRoute,
-                            showStationAccessibility,
-                            onOpenStopDetails
-                        )
-                    }
+                    items(5) { LoadingRouteCard() }
                 }
             }
+        } else if (routeCardData.isEmpty()) {
+            Column(
+                Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                noNearbyStopsView()
+                Spacer(Modifier.weight(1f))
+            }
         } else {
-            val nearbyWithRealtimeInfo =
-                rememberSuspend(
-                    nearbyVM.nearby,
-                    globalResponse,
-                    targetLocation,
-                    schedules,
-                    predictions,
-                    alertData,
-                    now,
-                    pinnedRoutes
-                ) {
-                    if (targetLocation != null) {
-                        nearbyVM.nearby?.withRealtimeInfo(
-                            globalData = globalResponse,
-                            sortByDistanceFrom = targetLocation,
-                            schedules,
-                            predictions,
-                            alertData,
-                            now,
-                            pinnedRoutes.orEmpty(),
-                        )
-                    } else {
-                        null
-                    }
-                }
-
-            if (nearbyWithRealtimeInfo == null) {
-                CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                    Column(
-                        Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    ) {
-                        for (i in 1..5) {
-                            LoadingRouteCard()
-                        }
-                        Spacer(Modifier.weight(1f))
-                    }
-                }
-            } else if (nearbyWithRealtimeInfo.isEmpty()) {
-                Column(
-                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    noNearbyStopsView()
-                    Spacer(Modifier.weight(1f))
-                }
-            } else {
-                LazyColumn {
-                    items(nearbyWithRealtimeInfo) {
-                        when (it) {
-                            is StopsAssociated.WithRoute ->
-                                NearbyRouteView(
-                                    it,
-                                    pinnedRoutes.orEmpty().contains(it.id),
-                                    ::togglePinnedRoute,
-                                    now,
-                                    onOpenStopDetails,
-                                    showStationAccessibility
-                                )
-                            is StopsAssociated.WithLine ->
-                                NearbyLineView(
-                                    it,
-                                    pinnedRoutes.orEmpty().contains(it.id),
-                                    ::togglePinnedRoute,
-                                    now,
-                                    onOpenStopDetails,
-                                    showStationAccessibility
-                                )
-                        }
-                    }
+            LazyColumn(
+                contentPadding =
+                    PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                items(routeCardData) {
+                    RouteCard(
+                        it,
+                        globalResponse,
+                        now,
+                        pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
+                        ::togglePinnedRoute,
+                        showStationAccessibility,
+                        onOpenStopDetails
+                    )
                 }
             }
         }

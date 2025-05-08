@@ -13,7 +13,7 @@ struct RouteCardDepartures: View {
     var analytics: Analytics = AnalyticsProvider.shared
     let cardData: RouteCardData
     let stopData: RouteCardData.RouteStopData
-    let global: GlobalResponse
+    let global: GlobalResponse?
     let now: Date
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
@@ -49,6 +49,7 @@ struct RouteCardDepartures: View {
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
                     .padding(.vertical, 10)
+                    .accessibilityHint(Text("Open for more arrivals"))
                     if index < stopData.data.count - 1 {
                         HaloSeparator()
                     }

@@ -101,14 +101,6 @@ class SettingsViewModel: ObservableObject {
                     ),
                     .toggle(
                         label: NSLocalizedString(
-                            "Group by Direction",
-                            comment: "A setting on the More page to group departures by direction (only visible for developers)"
-                        ),
-                        setting: .groupByDirection,
-                        value: settings[.groupByDirection] ?? false
-                    ),
-                    .toggle(
-                        label: NSLocalizedString(
                             "Route Search",
                             comment: "A setting on the More page to display routes in search (only visible for developers)"
                         ),

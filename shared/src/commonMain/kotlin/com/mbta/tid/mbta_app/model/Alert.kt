@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.utils.ServiceDateRounding
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlinx.datetime.Instant
-import kotlinx.datetime.minus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -69,6 +68,8 @@ data class Alert(
                 }
             else -> AlertSignificance.None
         }
+
+    val hasNoThroughService = effect in setOf(Effect.Shuttle, Effect.Suspension)
 
     suspend fun summary(
         stopId: String,
@@ -473,6 +474,28 @@ data class Alert(
             } else {
                 return listOf()
             }
+        }
+
+        /**
+         * A unique list of all the alerts that are downstream from the target stop for each route
+         * pattern
+         */
+        fun alertsDownstreamForPatterns(
+            alerts: Collection<Alert>,
+            patterns: List<RoutePattern>,
+            targetStopWithChildren: Set<String>,
+            tripsById: Map<String, Trip>
+        ): List<Alert> {
+            return patterns
+                .flatMap {
+                    val trip = tripsById[it.representativeTripId]
+                    if (trip != null) {
+                        downstreamAlerts(alerts, trip, targetStopWithChildren)
+                    } else {
+                        listOf()
+                    }
+                }
+                .distinct()
         }
     }
 }

@@ -97,10 +97,6 @@ class MoreViewModel(
                             settings = Settings.DevDebugMode
                         ),
                         MoreItem.Toggle(
-                            label = context.getString(R.string.group_by_direction),
-                            settings = Settings.GroupByDirection
-                        ),
-                        MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_route_search),
                             settings = Settings.SearchRouteResults
                         )

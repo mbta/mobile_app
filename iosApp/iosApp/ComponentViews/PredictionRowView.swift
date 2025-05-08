@@ -46,7 +46,7 @@ struct PredictionRowView: View {
             statuses.foregroundStyle(Color.text)
         }
         .background(Color.fill3)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 24)
     }
 
     @ViewBuilder
@@ -65,18 +65,14 @@ struct PredictionRowView: View {
                     }
                 }
             }
-            .padding(.vertical, 4)
-
         case let .disruption(alert):
             UpcomingTripView(
                 prediction: .disruption(.init(alert: alert.alert), iconName: alert.iconName),
                 isFirst: true,
                 isOnly: true
             )
-
         case let .noTrips(format):
             UpcomingTripView(prediction: .noTrips(format.noTripsFormat), isFirst: true, isOnly: true)
-
         case .loading:
             UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
         }

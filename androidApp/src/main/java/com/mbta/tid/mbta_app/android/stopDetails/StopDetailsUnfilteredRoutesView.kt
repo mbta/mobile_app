@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -32,15 +31,11 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
-import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.Prediction
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -55,51 +50,12 @@ import org.koin.dsl.module
 @Composable
 fun StopDetailsUnfilteredRoutesView(
     stop: Stop,
-    departures: StopDetailsDepartures,
-    servedRoutes: List<PillFilter>,
-    errorBannerViewModel: ErrorBannerViewModel,
-    showStationAccessibility: Boolean,
-    now: Instant,
-    pinRoute: (String) -> Unit,
-    pinnedRoutes: Set<String>,
-    onClose: () -> Unit,
-    onTapRoutePill: (PillFilter) -> Unit,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
-    openModal: (ModalRoutes) -> Unit
-) {
-    Layout(
-        stop,
-        departures.elevatorAlerts,
-        servedRoutes,
-        errorBannerViewModel,
-        showStationAccessibility,
-        onClose,
-        onTapRoutePill,
-        updateStopFilter,
-        openModal,
-        groupByDirection = false
-    ) {
-        items(departures.routes, key = { it.routeIdentifier }) { patternsByStop ->
-            StopDetailsRouteView(
-                patternsByStop,
-                now,
-                pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier),
-                onPin = pinRoute,
-                updateStopFilter
-            )
-        }
-    }
-}
-
-@Composable
-fun StopDetailsUnfilteredRoutesView(
-    stop: Stop,
     routeCardData: List<RouteCardData>,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
     showStationAccessibility: Boolean,
     now: Instant,
-    globalData: GlobalResponse,
+    globalData: GlobalResponse?,
     pinnedRoutes: Set<String>,
     pinRoute: (String) -> Unit,
     onClose: () -> Unit,
@@ -107,46 +63,8 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit
 ) {
-    Layout(
-        stop,
-        routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct(),
-        servedRoutes,
-        errorBannerViewModel,
-        showStationAccessibility,
-        onClose,
-        onTapRoutePill,
-        updateStopFilter,
-        openModal,
-        groupByDirection = true
-    ) {
-        items(routeCardData, key = { it.lineOrRoute.id }) { routeCardData ->
-            RouteCard(
-                routeCardData,
-                globalData,
-                now,
-                pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
-                onPin = pinRoute,
-                showStationAccessibility,
-                onOpenStopDetails = { _, stopDetailsFilter -> updateStopFilter(stopDetailsFilter) }
-            )
-        }
-    }
-}
-
-@Composable
-private fun Layout(
-    stop: Stop,
-    elevatorAlerts: List<Alert>,
-    servedRoutes: List<PillFilter>,
-    errorBannerViewModel: ErrorBannerViewModel,
-    showStationAccessibility: Boolean,
-    onClose: () -> Unit,
-    onTapRoutePill: (PillFilter) -> Unit,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
-    openModal: (ModalRoutes) -> Unit,
-    groupByDirection: Boolean,
-    body: LazyListScope.() -> Unit
-) {
+    val elevatorAlerts =
+        routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
     Column(
         Modifier.background(colorResource(R.color.fill2)),
@@ -172,21 +90,13 @@ private fun Layout(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
             LazyColumn(
-                verticalArrangement =
-                    if (groupByDirection) Arrangement.spacedBy(14.dp)
-                    else Arrangement.spacedBy(0.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding =
-                    if (groupByDirection)
-                        PaddingValues(start = 15.dp, top = 17.dp, end = 15.dp, bottom = 16.dp)
-                    else PaddingValues(top = 16.dp)
+                    PaddingValues(start = 15.dp, top = 17.dp, end = 15.dp, bottom = 16.dp)
             ) {
                 if (showStationAccessibility && hasAccessibilityWarning) {
                     item {
-                        Column(
-                            if (groupByDirection) Modifier
-                            else Modifier.padding(bottom = 14.dp, start = 14.dp, end = 14.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
+                        Column(Modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             if (elevatorAlerts.isNotEmpty()) {
                                 elevatorAlerts.map {
                                     AlertCard(
@@ -208,7 +118,19 @@ private fun Layout(
                         }
                     }
                 }
-                body()
+                items(routeCardData, key = { it.lineOrRoute.id }) { routeCardData ->
+                    RouteCard(
+                        routeCardData,
+                        globalData,
+                        now,
+                        pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
+                        onPin = pinRoute,
+                        showStationAccessibility,
+                        onOpenStopDetails = { _, stopDetailsFilter ->
+                            updateStopFilter(stopDetailsFilter)
+                        }
+                    )
+                }
             }
         }
     }
@@ -217,6 +139,7 @@ private fun Layout(
 @Preview
 @Composable
 private fun StopDetailsRoutesViewPreview() {
+    val now = Clock.System.now()
     val objects = ObjectCollectionBuilder()
 
     val route1 =
@@ -235,29 +158,29 @@ private fun StopDetailsRoutesViewPreview() {
             type = RouteType.BUS
         }
     val stop = objects.stop { name = "Boylston" }
-    val trip1 = objects.trip()
+    val trip1 = objects.trip { headsign = "A" }
     val prediction1 =
         objects.prediction {
             trip = trip1
-            departureTime = Clock.System.now() + 5.minutes
+            departureTime = now + 5.minutes
         }
-    val trip2 = objects.trip()
+    val trip2 = objects.trip { headsign = "C" }
     val schedule2 =
         objects.schedule {
             trip = trip2
-            departureTime = Clock.System.now() + 10.minutes
+            departureTime = now + 10.minutes
         }
-    val trip3 = objects.trip()
+    val trip3 = objects.trip { headsign = "B" }
     val prediction2 =
         objects.prediction {
             trip = trip3
-            departureTime = Clock.System.now() + 8.minutes
+            departureTime = now + 8.minutes
         }
-    val trip4 = objects.trip()
+    val trip4 = objects.trip { headsign = "D" }
     val schedule3 =
         objects.schedule {
             trip = trip4
-            departureTime = Clock.System.now() + 10.minutes
+            departureTime = now + 10.minutes
         }
     val prediction3 =
         objects.prediction {
@@ -267,50 +190,71 @@ private fun StopDetailsRoutesViewPreview() {
             scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
         }
 
-    val departures =
-        StopDetailsDepartures(
-            listOf(
-                PatternsByStop(
-                    route1,
-                    stop,
-                    listOf(
-                        RealtimePatterns.ByHeadsign(
-                            route1,
-                            "A",
-                            null,
-                            emptyList(),
-                            listOf(UpcomingTrip(trip1, prediction = prediction1))
-                        )
+    val globalData = GlobalResponse(objects)
+
+    val routeCardData =
+        listOf(
+            RouteCardData(
+                RouteCardData.LineOrRoute.Route(route1),
+                listOf(
+                    RouteCardData.RouteStopData(
+                        stop,
+                        route1,
+                        listOf(
+                            RouteCardData.Leaf(
+                                0,
+                                routePatterns = emptyList(),
+                                stopIds = emptySet(),
+                                listOf(UpcomingTrip(trip1, prediction1)),
+                                alertsHere = emptyList(),
+                                allDataLoaded = true,
+                                hasSchedulesToday = true,
+                                alertsDownstream = emptyList()
+                            )
+                        ),
+                        globalData
                     )
                 ),
-                PatternsByStop(
-                    route2,
-                    stop,
-                    listOf(
-                        RealtimePatterns.ByHeadsign(
-                            route2,
-                            "B",
-                            null,
-                            emptyList(),
-                            listOf(UpcomingTrip(trip3, prediction = prediction2))
+                RouteCardData.Context.StopDetailsUnfiltered,
+                now
+            ),
+            RouteCardData(
+                RouteCardData.LineOrRoute.Route(route2),
+                listOf(
+                    RouteCardData.RouteStopData(
+                        stop,
+                        route2,
+                        listOf(
+                            RouteCardData.Leaf(
+                                0,
+                                routePatterns = emptyList(),
+                                stopIds = emptySet(),
+                                listOf(
+                                    UpcomingTrip(trip3, prediction = prediction2),
+                                    UpcomingTrip(trip2, schedule2)
+                                ),
+                                alertsHere = emptyList(),
+                                allDataLoaded = true,
+                                hasSchedulesToday = true,
+                                alertsDownstream = emptyList()
+                            ),
+                            RouteCardData.Leaf(
+                                1,
+                                routePatterns = emptyList(),
+                                stopIds = emptySet(),
+                                listOf(UpcomingTrip(trip4, schedule3, prediction3)),
+                                alertsHere = emptyList(),
+                                allDataLoaded = true,
+                                hasSchedulesToday = true,
+                                alertsDownstream = emptyList()
+                            )
                         ),
-                        RealtimePatterns.ByHeadsign(
-                            route2,
-                            "C",
-                            null,
-                            emptyList(),
-                            listOf(UpcomingTrip(trip2, schedule2))
-                        ),
-                        RealtimePatterns.ByHeadsign(
-                            route2,
-                            "D",
-                            null,
-                            emptyList(),
-                            listOf(UpcomingTrip(trip4, schedule3, prediction3))
-                        )
+                        globalData
                     )
-                )
-            )
+                ),
+                RouteCardData.Context.StopDetailsUnfiltered,
+                now
+            ),
         )
 
     val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
@@ -319,14 +263,15 @@ private fun StopDetailsRoutesViewPreview() {
         KoinContext(koin.koin) {
             StopDetailsUnfilteredRoutesView(
                 stop,
-                departures,
+                routeCardData,
                 listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
                 ErrorBannerViewModel(
                     false,
                     MockErrorBannerStateRepository(),
                 ),
                 showStationAccessibility = true,
-                now = Clock.System.now(),
+                now = now,
+                globalData,
                 pinRoute = {},
                 pinnedRoutes = emptySet(),
                 onClose = {},

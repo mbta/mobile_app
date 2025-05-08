@@ -67,14 +67,14 @@ sealed class UpcomingFormat {
             val format: TripInstantDisplay
         ) {
             val id: String
-                get() = trip.trip.id
+                get() = trip.id
 
             constructor(
                 trip: UpcomingTrip,
                 routeType: RouteType,
                 now: Instant,
                 context: TripInstantDisplay.Context
-            ) : this(trip, routeType, trip.format(now, routeType, context))
+            ) : this(trip, routeType, trip.display(now, routeType, context))
         }
 
         constructor(

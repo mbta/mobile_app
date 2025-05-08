@@ -9,12 +9,10 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
 
@@ -39,9 +37,7 @@ fun StopDetailsView(
     val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
 
-    val departures by viewModel.stopDepartures.collectAsState()
     val routeCardData by viewModel.routeCardData.collectAsState()
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
 
     fun openModalAndRecord(modal: ModalRoutes) {
         openModal(modal)
@@ -55,45 +51,24 @@ fun StopDetailsView(
     }
 
     if (stopFilter != null) {
-        if (groupByDirection) {
-            StopDetailsFilteredView(
-                stopId,
-                stopFilter,
-                tripFilter,
-                routeCardData,
-                allAlerts,
-                now,
-                viewModel,
-                pinnedRoutes,
-                togglePinnedRoute,
-                onClose,
-                updateStopFilter,
-                updateTripDetailsFilter,
-                tileScrollState,
-                ::openModalAndRecord,
-                openSheetRoute,
-                errorBannerViewModel,
-            )
-        } else {
-            StopDetailsFilteredView(
-                stopId,
-                stopFilter,
-                tripFilter,
-                departures,
-                allAlerts,
-                now,
-                viewModel,
-                pinnedRoutes,
-                togglePinnedRoute,
-                onClose,
-                updateStopFilter,
-                updateTripDetailsFilter,
-                tileScrollState,
-                ::openModalAndRecord,
-                openSheetRoute,
-                errorBannerViewModel,
-            )
-        }
+        StopDetailsFilteredView(
+            stopId,
+            stopFilter,
+            tripFilter,
+            routeCardData,
+            allAlerts,
+            now,
+            viewModel,
+            pinnedRoutes,
+            togglePinnedRoute,
+            onClose,
+            updateStopFilter,
+            updateTripDetailsFilter,
+            tileScrollState,
+            ::openModalAndRecord,
+            openSheetRoute,
+            errorBannerViewModel,
+        )
     } else {
         StopDetailsUnfilteredView(
             stopId,

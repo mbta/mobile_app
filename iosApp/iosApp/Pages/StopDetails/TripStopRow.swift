@@ -24,7 +24,7 @@ struct TripStopRow: View {
     var background: Color? = nil
 
     var disruption: UpcomingFormat.Disruption? {
-        if let disruption = stop.disruption, disruption.alert.significance == .major, showDownstreamAlert {
+        if let disruption = stop.disruption, disruption.alert.hasNoThroughService, showDownstreamAlert {
             disruption
         } else {
             nil
@@ -60,7 +60,7 @@ struct TripStopRow: View {
                 ZStack(alignment: .leading) {
                     VStack(spacing: 0) {
                         ColoredRouteLine(routeAccents.color, state: stateAfter)
-                        if stop.isTruncating() {
+                        if stop.isTruncating {
                             ColoredRouteLine(routeAccents.color, state: .empty)
                         }
                     }

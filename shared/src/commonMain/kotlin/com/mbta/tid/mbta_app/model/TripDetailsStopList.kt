@@ -31,10 +31,9 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
-        fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
+        val isTruncating = disruption?.alert?.hasNoThroughService == true
 
-        fun isTruncating() =
-            disruption?.alert?.effect in setOf(Alert.Effect.Shuttle, Alert.Effect.Suspension)
+        fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
 
         fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
@@ -91,7 +90,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         val truncatedStopIndex =
             followingStops
-                .indexOfFirst { it.isTruncating() }
+                .indexOfFirst { it.isTruncating }
                 .takeUnless { it == -1 || it == followingStops.lastIndex }
         val isTruncated = truncatedStopIndex != null
         val truncatedFollowingStops =

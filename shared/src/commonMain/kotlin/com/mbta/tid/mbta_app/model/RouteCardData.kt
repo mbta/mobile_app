@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -28,16 +27,6 @@ private typealias ByDirectionBuilder = Map<Int, RouteCardData.LeafBuilder>
 private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuilder>
 
 private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
-
-/**
- * Basic data that a row of a route card should have. For backwards compatibility with
- * [RealtimePatterns]
- */
-interface ILeafData {
-    val hasMajorAlerts: Boolean
-    val upcomingTrips: List<UpcomingTrip>
-    val hasSchedulesToday: Boolean
-}
 
 data class DepartureDataBundle(
     val routeData: RouteCardData,
@@ -81,8 +70,6 @@ data class RouteCardData(
         val directions: List<Direction>,
         val data: List<Leaf>
     ) {
-        val id = stop.id
-
         // convenience constructors for when directions are not directly under test
         constructor(
             stop: Stop,
@@ -110,6 +97,8 @@ data class RouteCardData(
             data
         )
 
+        val id = stop.id
+
         val elevatorAlerts: List<Alert>
             get() =
                 data
@@ -124,12 +113,12 @@ data class RouteCardData(
         val directionId: Int,
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
-        override val upcomingTrips: List<UpcomingTrip>,
+        val upcomingTrips: List<UpcomingTrip>,
         val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
         val hasSchedulesTodayByPattern: Map<String, Boolean>,
         val alertsDownstream: List<Alert>
-    ) : ILeafData {
+    ) {
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
         constructor(
@@ -157,9 +146,9 @@ data class RouteCardData(
 
         val id = directionId
 
-        override val hasSchedulesToday = hasSchedulesTodayByPattern.any { it.value }
+        val hasSchedulesToday = hasSchedulesTodayByPattern.any { it.value }
 
-        override val hasMajorAlerts: Boolean
+        val hasMajorAlerts: Boolean
             get() = run {
                 this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
             }
@@ -214,7 +203,7 @@ data class RouteCardData(
          * necessary to determine what should be displayed for that headsign on a branched route
          *
          * @param stopIds the child stop ids of this Leaf that are served by the [routePatterns]
-         * @param routePatterns all patterns that hvae the matching headsign
+         * @param routePatterns all patterns that have the matching headsign
          * @param hasSchedulesToday whether there are schedules today for the headsign. Used to
          *   determine the appropriate [UpcomingFormat.NoTripsFormat] when needed
          * @param allUpcomingTrips all the upcoming trips under the headsign. Used to determine the
@@ -248,13 +237,7 @@ data class RouteCardData(
 
                     val stopIds =
                         globalData
-                            ?.let {
-                                NearbyStaticData.filterStopsByPatterns(
-                                    routePatterns,
-                                    it,
-                                    this.stopIds
-                                )
-                            }
+                            ?.let { filterStopsByPatterns(routePatterns, it, this.stopIds) }
                             .orEmpty()
                     val majorAlert =
                         Alert.applicableAlerts(
@@ -565,16 +548,16 @@ data class RouteCardData(
                 is Line -> Direction.getDirectionsForLine(globalData, stop, patterns)
                 is Route -> Direction.getDirections(globalData, stop, this.route, patterns)
             }
+
+        fun containsRoute(routeId: String?) =
+            when (this) {
+                is Line -> this.routes.any { it.id == routeId }
+                is Route -> this.id == routeId
+            }
     }
 
-    @OptIn(ExperimentalTurfApi::class)
     /** The distance from the given position to the first stop in this route card. */
-    fun distanceFrom(position: Position): Double {
-        return io.github.dellisd.spatialk.turf.distance(
-            position,
-            this.stopData.first().stop.position
-        )
-    }
+    fun distanceFrom(position: Position): Double = this.stopData.first().stop.distanceFrom(position)
 
     companion object {
         /**
@@ -630,9 +613,22 @@ data class RouteCardData(
                         now,
                         globalData
                     )
-                    .build()
+                    .build(sortByDistanceFrom)
                     .sort(sortByDistanceFrom, pinnedRoutes)
             }
+
+        fun filterStopsByPatterns(
+            routePatterns: List<RoutePattern>,
+            global: GlobalResponse,
+            localStops: Set<String>
+        ): Set<String> {
+            val patternsStops =
+                routePatterns.flatMapTo(mutableSetOf()) {
+                    global.trips[it.representativeTripId]?.stopIds.orEmpty()
+                }
+            val relevantStops = patternsStops.intersect(localStops)
+            return relevantStops.ifEmpty { localStops }
+        }
     }
 
     data class HierarchyPath(val routeOrLineId: String, val stopId: String, val directionId: Int)
@@ -703,15 +699,15 @@ data class RouteCardData(
                                                                                 .patternsNotSeenAtEarlierStops
                                                                         ),
                                                                 stopIds =
-                                                                    NearbyStaticData
-                                                                        .filterStopsByPatterns(
-                                                                            patterns,
-                                                                            globalData,
-                                                                            parentToAllStops
-                                                                                .getOrElse(stop) {
-                                                                                    setOf(stop.id)
-                                                                                }
-                                                                        ),
+                                                                    filterStopsByPatterns(
+                                                                        patterns,
+                                                                        globalData,
+                                                                        parentToAllStops.getOrElse(
+                                                                            stop
+                                                                        ) {
+                                                                            setOf(stop.id)
+                                                                        }
+                                                                    ),
                                                                 allDataLoaded = allDataLoaded
                                                             )
                                                         }
@@ -840,7 +836,7 @@ data class RouteCardData(
                     .add(upcomingTrip)
             }
 
-            val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
+            val hasSchedulesTodayByPattern = schedules?.getSchedulesTodayByPattern()
 
             forEachLeaf { path, leafBuilder ->
                 val upcomingTripsHere = upcomingTripsBySlot[path]
@@ -907,7 +903,7 @@ data class RouteCardData(
                             )
                             .discardTrackChangesAtCRCore(isCRCore)
                     val downstreamAlerts =
-                        PatternsByStop.alertsDownstream(
+                        Alert.alertsDownstreamForPatterns(
                             activeRelevantAlerts,
                             leafBuilder.routePatterns.orEmpty(),
                             leafBuilder.stopIds.orEmpty(),
@@ -975,11 +971,13 @@ data class RouteCardData(
             return this
         }
 
-        fun build(): List<RouteCardData> {
+        fun build(sortByDistanceFrom: Position?): List<RouteCardData> {
             return data.map { routeCardBuilder ->
                 RouteCardData(
                     routeCardBuilder.value.lineOrRoute,
-                    routeCardBuilder.value.stopData.values.map { it.build() },
+                    routeCardBuilder.value.stopData.values
+                        .map { it.build() }
+                        .sort(sortByDistanceFrom),
                     context,
                     now
                 )
@@ -994,8 +992,13 @@ data class RouteCardData(
         val now: Instant
     ) {
 
-        fun build(): RouteCardData {
-            return RouteCardData(this.lineOrRoute, stopData.values.map { it.build() }, context, now)
+        fun build(sortByDistanceFrom: Position?): RouteCardData {
+            return RouteCardData(
+                this.lineOrRoute,
+                stopData.values.map { it.build() }.sort(sortByDistanceFrom),
+                context,
+                now
+            )
         }
     }
 
@@ -1036,11 +1039,7 @@ data class RouteCardData(
         )
 
         fun build(): RouteStopData {
-            return RouteStopData(
-                stop,
-                directions,
-                data.values.map { it.build() }.sortedBy { it.directionId }
-            )
+            return RouteStopData(stop, directions, data.values.map { it.build() }.sort())
         }
     }
 
@@ -1125,7 +1124,6 @@ data class RouteCardData(
                     else ->
                         this.upcomingTrips?.filter { it.isUpcomingWithin(filterAtTime, cutoffTime) }
                 }
-            null
 
             val hasUnseenUpcomingTrip =
                 upcomingTripsInCutoff?.any { upcomingTrip ->
@@ -1182,6 +1180,13 @@ data class RouteCardData(
 fun List<RouteCardData>.sort(
     distanceFrom: Position?,
     pinnedRoutes: Set<String>
-): List<RouteCardData> {
-    return this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
-}
+): List<RouteCardData> =
+    this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
+
+fun List<RouteCardData.RouteStopData>.sort(
+    distanceFrom: Position?
+): List<RouteCardData.RouteStopData> =
+    this.sortedWith(PatternSorting.compareStopsOnRoute(distanceFrom))
+
+fun List<RouteCardData.Leaf>.sort(): List<RouteCardData.Leaf> =
+    this.sortedWith(PatternSorting.compareLeavesAtStop())

@@ -6,76 +6,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 object LoadingPlaceholders {
-    fun nearbyRoute(): StopsAssociated.WithRoute {
-        val patternsByStop = patternsByStop()
-        return StopsAssociated.WithRoute(
-            route = patternsByStop.representativeRoute,
-            patternsByStop = listOf(patternsByStop)
-        )
-    }
-
-    fun patternsByStop(routeId: String? = null, trips: Int = 2): PatternsByStop {
-        val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                routeId?.let { id = it }
-                color = "000000"
-                longName = "Loading"
-                shortName = "00"
-                textColor = "FFFFFF"
-                directionNames = listOf("Loading", "Loading")
-                directionDestinations = listOf("Loading", "Loading")
-            }
-        val pattern1 =
-            objects.routePattern(route = route) {
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-            }
-        val pattern2 =
-            objects.routePattern(route = route) {
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-            }
-        val stop = objects.stop { name = "Loading" }
-
-        fun newTrip(routePattern: RoutePattern, departsIn: Duration): UpcomingTrip {
-            val trip = objects.trip(routePattern)
-            val prediction =
-                objects.prediction {
-                    this.trip = trip
-                    stopId = stop.id
-                    departureTime = Clock.System.now() + departsIn
-                }
-            return UpcomingTrip(trip, prediction = prediction)
-        }
-
-        return PatternsByStop(
-            route = route,
-            stop = stop,
-            patterns =
-                listOf(
-                    RealtimePatterns.ByHeadsign(
-                        route = route,
-                        headsign = "Loading 1",
-                        line = null,
-                        patterns = listOf(pattern1),
-                        upcomingTrips = (1..trips).map { newTrip(pattern1, (it * 2).minutes) },
-                        alertsHere = emptyList(),
-                        hasSchedulesToday = true,
-                        allDataLoaded = false
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        route = route,
-                        headsign = "Loading 2",
-                        line = null,
-                        patterns = listOf(pattern2),
-                        upcomingTrips = (1..trips).map { newTrip(pattern2, (it * 2).minutes) },
-                        alertsHere = emptyList(),
-                        hasSchedulesToday = true,
-                        allDataLoaded = false
-                    )
-                )
-        )
+    fun nearbyRoute(): RouteCardData {
+        return departureDataBundle(
+                context = RouteCardData.Context.NearbyTransit,
+                now = Clock.System.now()
+            )
+            .routeData
     }
 
     fun departureDataBundle(
@@ -159,11 +95,13 @@ object LoadingPlaceholders {
         return DepartureDataBundle(routeData, stopData, leaf1)
     }
 
-    fun stopDetailsDepartures(filter: StopDetailsFilter?) =
-        if (filter != null) {
-            StopDetailsDepartures(listOf(patternsByStop(filter.routeId, 10)))
-        } else {
-            StopDetailsDepartures((1..5).map { patternsByStop("loading-$it") })
+    fun stopDetailsRouteCards() =
+        (1..5).map {
+            departureDataBundle(
+                    context = RouteCardData.Context.StopDetailsUnfiltered,
+                    now = Clock.System.now()
+                )
+                .routeData
         }
 
     data class TripDetailsInfo(
@@ -227,9 +165,5 @@ object LoadingPlaceholders {
             vehicleStop,
             route
         )
-    }
-
-    fun tripDetailsStops(): TripDetailsStopList {
-        return tripDetailsInfo().stops
     }
 }

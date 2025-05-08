@@ -5,10 +5,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -1652,321 +1650,424 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`() =
+    fun `RouteCardData routeCardsForStopList sorts routes with no service today to the bottom`():
+        Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val closeBusStop = objects.stop()
+        val midBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.2
+                longitude = closeBusStop.longitude + 0.2
+            }
+        val farBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.4
+                longitude = closeBusStop.longitude + 0.4
+            }
+        val closeSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.1
+                longitude = closeBusStop.longitude + 0.1
+            }
+        val midSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.3
+                longitude = closeBusStop.longitude + 0.3
+            }
+        val farSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.5
+                longitude = closeBusStop.longitude + 0.5
+            }
+
+        // Unpinned, no schedules
+        val closeBusRoute =
+            objects.route {
+                id = "close-bus"
+                type = RouteType.BUS
+            }
+        // Unpinned, with schedules
+        val midBusRoute =
+            objects.route {
+                id = "mid-bus"
+                type = RouteType.BUS
+            }
+        // Unpinned, no schedules
+        val farBusRoute =
+            objects.route {
+                id = "far-bus"
+                type = RouteType.BUS
+            }
+        // Unpinned, no schedules
+        val closeSubwayRoute =
+            objects.route {
+                id = "close-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+        // Pinned, no schedules
+        val midSubwayRoute =
+            objects.route {
+                id = "mid-subway"
+                type = RouteType.LIGHT_RAIL
+            }
+        // Pinned, with schedules
+        val farSubwayRoute =
+            objects.route {
+                id = "far-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+
+        val closeBusPattern =
+            objects.routePattern(closeBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Lincoln Lab" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midBusPattern1 =
+            objects.routePattern(midBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midBusPattern2 =
+            objects.routePattern(midBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farBusPattern1 =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farBusPattern2 =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+                typicality = RoutePattern.Typicality.Atypical
+            }
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midSubwayPattern =
+            objects.routePattern(midSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Medford/Tufts" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Oak Grove" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = midBusRoute.id
+            stopId = midBusStop.id
+            tripId = midBusPattern1.representativeTripId
+        }
+
+        objects.schedule {
+            routeId = midBusRoute.id
+            tripId = midBusPattern1.representativeTripId
+        }
+
+        objects.schedule {
+            routeId = farSubwayRoute.id
+            tripId = farSubwayPattern.representativeTripId
+        }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        farBusStop.id to listOf(farBusPattern1.id, farBusPattern2.id),
+                        midBusStop.id to listOf(midBusPattern1.id, midBusPattern2.id),
+                        closeBusStop.id to listOf(closeBusPattern.id),
+                        farSubwayStop.id to listOf(farSubwayPattern.id),
+                        midSubwayStop.id to listOf(midSubwayPattern.id),
+                        closeSubwayStop.id to listOf(closeSubwayPattern.id)
+                    )
+            )
+
+        val routeCardsSorted =
+            RouteCardData.routeCardsForStopList(
+                listOf(
+                    farBusStop.id,
+                    farSubwayStop.id,
+                    midSubwayStop.id,
+                    closeBusStop.id,
+                    midBusStop.id,
+                    closeSubwayStop.id
+                ),
+                global,
+                sortByDistanceFrom = closeBusStop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                now = time,
+                pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
+                context = RouteCardData.Context.NearbyTransit
+            )
+
+        // Routes with no service today should sort below all routes with any service today,
+        // unless they are a pinned route, in which case we want them to sort beneath all other
+        // pinned routes, but above any unpinned ones. Here, the far and mid subway routes are
+        // both pinned, but mid has no scheduled service, so it's sorted below the farther
+        // pinned route. For unpinned routes, mid bus is the only one with any schedules, so
+        // it's sorted above all the other unpinned routes, then the remaining  are ordered with
+        // the usual nearby transit sort order, subway first, then by distance.
+        assertEquals(
+            listOf(
+                farSubwayRoute,
+                midSubwayRoute,
+                midBusRoute,
+                closeSubwayRoute,
+                closeBusRoute,
+                farBusRoute
+            ),
+            checkNotNull(routeCardsSorted).flatMap {
+                when (val lineOrRoute = it.lineOrRoute) {
+                    is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
+                    is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
+                }
+            }
+        )
+    }
+
+    @Test
+    fun `RouteCardData routeCardsForStopList sorts stops in route card with no service today to the bottom`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
 
-            val closeBusStop = objects.stop()
+            val closeBusStop = objects.stop { id = "close-bus" }
             val midBusStop =
                 objects.stop {
+                    id = "mid-bus"
                     latitude = closeBusStop.latitude + 0.2
                     longitude = closeBusStop.longitude + 0.2
                 }
             val farBusStop =
                 objects.stop {
+                    id = "far-bus"
                     latitude = closeBusStop.latitude + 0.4
                     longitude = closeBusStop.longitude + 0.4
                 }
             val closeSubwayStop =
                 objects.stop {
+                    id = "close-subway"
                     latitude = closeBusStop.latitude + 0.1
                     longitude = closeBusStop.longitude + 0.1
                 }
             val midSubwayStop =
                 objects.stop {
+                    id = "mid-subway"
                     latitude = closeBusStop.latitude + 0.3
                     longitude = closeBusStop.longitude + 0.3
                 }
             val farSubwayStop =
                 objects.stop {
+                    id = "far-subway"
                     latitude = closeBusStop.latitude + 0.5
                     longitude = closeBusStop.longitude + 0.5
                 }
 
-            // Unpinned, no schedules
-            val closeBusRoute =
+            // With predictions
+            val predictedBusRoute =
                 objects.route {
-                    id = "close-bus"
+                    id = "predicted-bus"
                     type = RouteType.BUS
                 }
-            // Unpinned, with schedules
-            val midBusRoute =
+            // With no upcoming schedules or predictions
+            val serviceEndedBusRoute =
                 objects.route {
-                    id = "mid-bus"
+                    id = "bus-service-ended"
                     type = RouteType.BUS
                 }
-            // Unpinned, no schedules
-            val farBusRoute =
+            // With schedules
+            val scheduledSubwayRoute =
                 objects.route {
-                    id = "far-bus"
-                    type = RouteType.BUS
-                }
-            // Unpinned, no schedules
-            val closeSubwayRoute =
-                objects.route {
-                    id = "close-subway"
+                    id = "scheduled-subway"
                     type = RouteType.HEAVY_RAIL
                 }
-            // Pinned, no schedules
-            val midSubwayRoute =
+            // With predictions
+            val predictedSubwayRoute =
                 objects.route {
-                    id = "mid-subway"
+                    id = "predicted-subway"
                     type = RouteType.LIGHT_RAIL
                 }
-            // Pinned, with schedules
-            val farSubwayRoute =
-                objects.route {
-                    id = "far-subway"
-                    type = RouteType.HEAVY_RAIL
-                }
 
-            val closeBusPattern =
-                objects.routePattern(closeBusRoute) {
+            val predictedBusPattern =
+                objects.routePattern(predictedBusRoute) {
                     sortOrder = 1
-                    representativeTrip { headsign = "Lincoln Lab" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midBusPattern1 =
-                objects.routePattern(midBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Nubian" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midBusPattern2 =
-                objects.routePattern(midBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Nubian" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farBusPattern1 =
-                objects.routePattern(farBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Malden Center" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farBusPattern2 =
-                objects.routePattern(farBusRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Malden Center" }
-                    typicality = RoutePattern.Typicality.Atypical
-                }
-            val closeSubwayPattern =
-                objects.routePattern(closeSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Alewife" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midSubwayPattern =
-                objects.routePattern(midSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Medford/Tufts" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farSubwayPattern =
-                objects.routePattern(farSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Oak Grove" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-
-            val staticData =
-                NearbyStaticData.build {
-                    route(farBusRoute) {
-                        stop(farBusStop) {
-                            headsign("Malden Center", listOf(farBusPattern1, farBusPattern2))
-                        }
+                    representativeTrip {
+                        headsign = "Design Center via South Station"
+                        stopIds = listOf(farBusStop.id)
                     }
-                    route(midBusRoute) {
-                        stop(midBusStop) {
-                            headsign("Nubian", listOf(midBusPattern1, midBusPattern2))
-                        }
+                    typicality = RoutePattern.Typicality.Typical
+                }
+            val partialServiceEndedBusPattern =
+                objects.routePattern(predictedBusRoute) {
+                    sortOrder = 1
+                    representativeTrip {
+                        headsign = "Design Center"
+                        stopIds = listOf(midBusStop.id)
                     }
-                    route(closeBusRoute) {
-                        stop(closeBusStop) { headsign("Lincoln Lab", listOf(closeBusPattern)) }
+                    typicality = RoutePattern.Typicality.Typical
+                }
+            val allServiceEndedBusPattern =
+                objects.routePattern(serviceEndedBusRoute) {
+                    sortOrder = 1
+                    representativeTrip {
+                        headsign = "Nubian"
+                        stopIds = listOf(closeBusStop.id, midBusStop.id)
                     }
-                    route(farSubwayRoute) {
-                        stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
+                    typicality = RoutePattern.Typicality.Typical
+                }
+            val scheduledSubwayPattern =
+                objects.routePattern(scheduledSubwayRoute) {
+                    sortOrder = 1
+                    representativeTrip {
+                        headsign = "Cleveland Circle"
+                        stopIds = listOf(closeSubwayStop.id)
                     }
-                    route(midSubwayRoute) {
-                        stop(midSubwayStop) { headsign("Medford/Tufts", listOf(midSubwayPattern)) }
+                    typicality = RoutePattern.Typicality.Typical
+                }
+            val predictedSubwayPattern =
+                objects.routePattern(predictedSubwayRoute) {
+                    sortOrder = 1
+                    representativeTrip {
+                        headsign = "Government Center"
+                        stopIds = listOf(midSubwayStop.id, farSubwayStop.id)
                     }
-                    route(closeSubwayRoute) {
-                        stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
-                    }
+                    typicality = RoutePattern.Typicality.Typical
                 }
 
             val time = Instant.parse("2024-02-21T09:30:08-05:00")
 
             objects.prediction {
-                arrivalTime = time
-                departureTime = time
-                routeId = midBusRoute.id
+                arrivalTime = time.plus(10.minutes)
+                departureTime = time.plus(10.minutes)
+                routeId = predictedBusRoute.id
+                stopId = farBusStop.id
+                tripId = predictedBusPattern.representativeTripId
+            }
+
+            objects.prediction {
+                arrivalTime = time.plus(5.minutes)
+                departureTime = time.plus(5.minutes)
+                routeId = predictedSubwayRoute.id
+                stopId = farSubwayStop.id
+                tripId = predictedSubwayPattern.representativeTripId
+            }
+
+            objects.schedule {
+                departureTime = time.plus(1.hours)
+                routeId = predictedBusRoute.id
+                tripId = predictedBusPattern.representativeTripId
+                stopId = farBusStop.id
+            }
+
+            objects.schedule {
+                departureTime = time.minus(1.hours)
+                routeId = predictedBusRoute.id
+                tripId = partialServiceEndedBusPattern.representativeTripId
                 stopId = midBusStop.id
-                tripId = midBusPattern1.representativeTripId
             }
 
             objects.schedule {
-                routeId = midBusRoute.id
-                tripId = midBusPattern1.representativeTripId
+                departureTime = time.minus(1.hours)
+                routeId = serviceEndedBusRoute.id
+                tripId = allServiceEndedBusPattern.representativeTripId
+                stopId = closeBusStop.id
             }
 
             objects.schedule {
-                routeId = farSubwayRoute.id
-                tripId = farSubwayPattern.representativeTripId
+                departureTime = time.plus(1.hours)
+                routeId = predictedSubwayRoute.id
+                tripId = predictedSubwayPattern.representativeTripId
+                stopId = farSubwayStop.id
             }
 
-            val realtimeRoutesSorted =
-                staticData.withRealtimeInfo(
-                    globalData = GlobalResponse(objects),
-                    sortByDistanceFrom = closeBusStop.position,
-                    predictions = PredictionsStreamDataResponse(objects),
-                    schedules = ScheduleResponse(objects),
-                    alerts = AlertsStreamDataResponse(emptyMap()),
-                    filterAtTime = time,
-                    pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
+            objects.schedule {
+                departureTime = time.plus(1.hours)
+                routeId = scheduledSubwayRoute.id
+                tripId = scheduledSubwayPattern.representativeTripId
+                stopId = closeSubwayStop.id
+            }
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop =
+                        mapOf(
+                            farBusStop.id to listOf(predictedBusPattern.id),
+                            midBusStop.id to
+                                listOf(
+                                    allServiceEndedBusPattern.id,
+                                    partialServiceEndedBusPattern.id
+                                ),
+                            closeBusStop.id to listOf(allServiceEndedBusPattern.id),
+                            farSubwayStop.id to listOf(predictedSubwayPattern.id),
+                            midSubwayStop.id to listOf(predictedSubwayPattern.id),
+                            closeSubwayStop.id to listOf(scheduledSubwayPattern.id)
+                        )
                 )
 
-            // Routes with no service today should sort below all routes with any service today,
-            // unless they are a pinned route, in which case we want them to sort beneath all other
-            // pinned routes, but above any unpinned ones. Here, the far and mid subway routes are
-            // both pinned, but mid has no scheduled service, so it's sorted below the farther
-            // pinned route. For unpinned routes, mid bus is the only one with any schedules, so
-            // it's sorted above all the other unpinned routes, then the remaining  are ordered with
-            // the usual nearby transit sort order, subway first, then by distance.
+            val routeCardsSorted =
+                RouteCardData.routeCardsForStopList(
+                    listOf(
+                        farBusStop.id,
+                        farSubwayStop.id,
+                        midSubwayStop.id,
+                        closeBusStop.id,
+                        midBusStop.id,
+                        closeSubwayStop.id
+                    ),
+                    global,
+                    sortByDistanceFrom = closeBusStop.position,
+                    schedules = ScheduleResponse(objects),
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(objects),
+                    now = time,
+                    pinnedRoutes = emptySet(),
+                    context = RouteCardData.Context.NearbyTransit
+                )
+
+            // Routes that have multiple variants where some nearby stops can have no more service
+            // today while a slightly farther stop still has upcoming service should never be
+            // sorted all the way to the bottom of the route list, but if all service for a route
+            // at all nearby stops is done for the day, then it should be sorted to the bottom.
             assertEquals(
                 listOf(
-                    farSubwayRoute,
-                    midSubwayRoute,
-                    midBusRoute,
-                    closeSubwayRoute,
-                    closeBusRoute,
-                    farBusRoute
+                    scheduledSubwayRoute,
+                    predictedSubwayRoute,
+                    predictedBusRoute,
+                    serviceEndedBusRoute
                 ),
-                checkNotNull(realtimeRoutesSorted).flatMap {
-                    when (it) {
-                        is StopsAssociated.WithRoute -> listOf(it.route)
-                        is StopsAssociated.WithLine -> it.routes
+                checkNotNull(routeCardsSorted).flatMap {
+                    when (val lineOrRoute = it.lineOrRoute) {
+                        is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
+                        is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
                     }
                 }
             )
-        }
 
-    @Test
-    fun `withRealtimeInfo doesn't sort unscheduled routes to the bottom if they are disrupted`() =
-        parametricTest {
-            val objects = ObjectCollectionBuilder()
-
-            val closeSubwayStop = objects.stop()
-            val midSubwayStop =
-                objects.stop {
-                    latitude = closeSubwayStop.latitude + 0.3
-                    longitude = closeSubwayStop.longitude + 0.3
-                }
-            val farSubwayStop =
-                objects.stop {
-                    latitude = closeSubwayStop.latitude + 0.5
-                    longitude = closeSubwayStop.longitude + 0.5
-                }
-
-            // No alerts, no schedules
-            val closeSubwayRoute =
-                objects.route {
-                    id = "close-subway"
-                    type = RouteType.HEAVY_RAIL
-                }
-            // Some alerts, no schedules
-            val midSubwayRoute =
-                objects.route {
-                    id = "mid-subway"
-                    type = RouteType.LIGHT_RAIL
-                }
-            // No alerts, some schedules
-            val farSubwayRoute =
-                objects.route {
-                    id = "far-subway"
-                    type = RouteType.HEAVY_RAIL
-                }
-
-            val closeSubwayPattern =
-                objects.routePattern(closeSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Alewife" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val midSubwayPattern =
-                objects.routePattern(midSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Medford/Tufts" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-            val farSubwayPattern =
-                objects.routePattern(farSubwayRoute) {
-                    sortOrder = 1
-                    representativeTrip { headsign = "Oak Grove" }
-                    typicality = RoutePattern.Typicality.Typical
-                }
-
-            val staticData =
-                NearbyStaticData.build {
-                    route(farSubwayRoute) {
-                        stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
-                    }
-                    route(midSubwayRoute) {
-                        stop(midSubwayStop) { headsign("Medford/Tufts", listOf(midSubwayPattern)) }
-                    }
-                    route(closeSubwayRoute) {
-                        stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
-                    }
-                }
-
-            val time = Instant.parse("2024-02-21T09:30:08-05:00")
-
-            objects.schedule {
-                routeId = farSubwayRoute.id
-                tripId = farSubwayPattern.representativeTripId
-            }
-
-            objects.alert {
-                activePeriod(time.minus(2.days), time.plus(2.days))
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
-                    ),
-                    route = midSubwayRoute.id,
-                    routeType = midSubwayRoute.type,
-                    stop = midSubwayStop.id
-                )
-            }
-
-            val realtimeRoutesSorted =
-                staticData.withRealtimeInfo(
-                    globalData = GlobalResponse(objects),
-                    sortByDistanceFrom = closeSubwayStop.position,
-                    predictions = PredictionsStreamDataResponse(objects),
-                    schedules = ScheduleResponse(objects),
-                    alerts = AlertsStreamDataResponse(objects),
-                    filterAtTime = time,
-                    pinnedRoutes = setOf(),
-                )
-
-            // If a route has major disruptions and doesn't have any scheduled trips, it should
-            // still
-            // be sorted as it normally would be.
+            val partialServiceEndedRoute =
+                routeCardsSorted.find { it.lineOrRoute.sortRoute.id == predictedBusRoute.id }
             assertEquals(
-                listOf(
-                    midSubwayRoute,
-                    farSubwayRoute,
-                    closeSubwayRoute,
-                ),
-                checkNotNull(realtimeRoutesSorted).flatMap {
-                    when (it) {
-                        is StopsAssociated.WithRoute -> listOf(it.route)
-                        is StopsAssociated.WithLine -> it.routes
-                    }
-                }
+                listOf(farBusStop.id, midBusStop.id),
+                partialServiceEndedRoute?.stopData?.map { it.stop.id } ?: emptyList()
             )
         }
 
@@ -3194,7 +3295,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`() =
+    fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`(): Unit =
         runBlocking {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
@@ -3202,17 +3303,26 @@ class RouteCardDataTest {
             val routePatternA =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "A" }
+                    representativeTrip {
+                        headsign = "A"
+                        stopIds = listOf(stop.id)
+                    }
                 }
             val routePatternB =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "B" }
+                    representativeTrip {
+                        headsign = "B"
+                        stopIds = listOf(stop.id)
+                    }
                 }
             val routePatternC =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Deviation
-                    representativeTrip { headsign = "C" }
+                    representativeTrip {
+                        headsign = "C"
+                        stopIds = listOf(stop.id)
+                    }
                 }
             val trip1 = objects.trip(routePatternA)
 
@@ -3224,54 +3334,49 @@ class RouteCardDataTest {
                 stopSequence = 90
                 departureTime = time - 2.hours
             }
-            val staticData =
-                NearbyStaticData.build {
-                    route(route) {
-                        stop(stop) {
-                            headsign("A", listOf(routePatternA))
-                            headsign("B", listOf(routePatternB))
-                            headsign("C", listOf(routePatternC))
-                        }
-                    }
-                }
 
             assertEquals(
                 listOf(
-                    StopsAssociated.WithRoute(
-                        route,
+                    RouteCardData(
+                        RouteCardData.LineOrRoute.Route(route),
                         listOf(
-                            PatternsByStop(
-                                route,
+                            RouteCardData.RouteStopData(
                                 stop,
+                                route,
                                 listOf(
-                                    RealtimePatterns.ByHeadsign(
-                                        route,
-                                        "A",
-                                        null,
-                                        listOf(routePatternA),
-                                        emptyList()
-                                    ),
-                                    RealtimePatterns.ByHeadsign(
-                                        route,
-                                        "B",
-                                        null,
-                                        listOf(routePatternB),
-                                        emptyList(),
-                                        hasSchedulesToday = false
+                                    RouteCardData.Leaf(
+                                        directionId = 0,
+                                        listOf(routePatternA, routePatternB, routePatternC),
+                                        setOf(stop.id),
+                                        upcomingTrips = emptyList(),
+                                        alertsHere = emptyList(),
+                                        allDataLoaded = true,
+                                        hasSchedulesTodayByPattern =
+                                            mapOf(
+                                                routePatternA.id to true,
+                                                routePatternB.id to false,
+                                                routePatternC.id to false
+                                            ),
+                                        alertsDownstream = emptyList()
                                     )
-                                )
+                                ),
+                                globalData = GlobalResponse(objects)
                             )
-                        )
-                    )
+                        ),
+                        RouteCardData.Context.NearbyTransit,
+                        time
+                    ),
                 ),
-                staticData.withRealtimeInfo(
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(stop.id),
                     globalData = GlobalResponse(objects),
                     sortByDistanceFrom = stop.position,
                     schedules = ScheduleResponse(objects),
                     predictions = PredictionsStreamDataResponse(objects),
                     alerts = AlertsStreamDataResponse(emptyMap()),
-                    filterAtTime = time,
                     pinnedRoutes = setOf(),
+                    now = time,
+                    context = RouteCardData.Context.NearbyTransit
                 )
             )
         }
@@ -4579,7 +4684,7 @@ class RouteCardDataTest {
                     mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
                 )
             val southboundDownstreamAlerts =
-                PatternsByStop.alertsDownstream(
+                Alert.alertsDownstreamForPatterns(
                     alerts =
                         listOf(
                             ashmontShuttleAlert,

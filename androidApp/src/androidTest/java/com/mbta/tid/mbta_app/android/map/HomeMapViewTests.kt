@@ -50,7 +50,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -86,7 +86,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -120,7 +120,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -154,7 +154,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -189,7 +189,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -224,7 +224,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -260,7 +260,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(
@@ -289,7 +289,7 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                stopDetailsDepartures = null,
+                routeCardData = null,
                 viewModel = viewModel,
                 searchResultsViewModel =
                     SearchResultsViewModel(

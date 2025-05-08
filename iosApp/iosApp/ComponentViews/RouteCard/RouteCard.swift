@@ -11,7 +11,7 @@ import SwiftUI
 
 struct RouteCard: View {
     let cardData: RouteCardData
-    let global: GlobalResponse
+    let global: GlobalResponse?
     let now: Date
     let onPin: (String) -> Void
     let pinned: Bool
