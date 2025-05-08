@@ -52,7 +52,7 @@ struct DirectionLabel: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 6) {
             if !showDestination {
                 directionTo(direction)
             } else if let destination = direction.destination {

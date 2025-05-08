@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model.stopDetailsPage
 
-import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
@@ -15,12 +15,18 @@ data class TileData(
 ) {
     val id: String = upcoming.id
 
+    fun isSelected(tripFilter: TripDetailsFilter?): Boolean =
+        upcoming.trip.id == tripFilter?.tripId &&
+            tripFilter.stopSequence?.let { filterSequence ->
+                upcoming.stopSequence?.let { it == filterSequence }
+            }
+                ?: true
+
     companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
             val formattedUpcomingTrip =
-                RealtimePatterns.formatUpcomingTrip(
+                upcoming.format(
                     now,
-                    upcoming,
                     route.type,
                     context = TripInstantDisplay.Context.StopDetailsFiltered
                 )

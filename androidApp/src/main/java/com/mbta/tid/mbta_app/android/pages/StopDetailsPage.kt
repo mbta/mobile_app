@@ -7,7 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
@@ -15,7 +14,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -24,7 +23,6 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-@MapboxExperimental
 fun StopDetailsPage(
     modifier: Modifier = Modifier,
     viewModel: StopDetailsViewModel,
@@ -33,7 +31,7 @@ fun StopDetailsPage(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
-    updateDepartures: (StopDetailsDepartures?) -> Unit,
+    updateRouteCardData: (List<RouteCardData>?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -52,9 +50,9 @@ fun StopDetailsPage(
         }
     }
 
-    val departures by viewModel.stopDepartures.collectAsState()
+    val routeCardData by viewModel.routeCardData.collectAsState()
 
-    LaunchedEffect(departures) { updateDepartures(departures) }
+    LaunchedEffect(routeCardData) { updateRouteCardData(routeCardData) }
 
     StopDetailsView(
         modifier,

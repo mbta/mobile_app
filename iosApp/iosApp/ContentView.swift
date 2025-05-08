@@ -124,6 +124,7 @@ struct ContentView: View {
                     .tag(SelectedTab.nearby)
                     .tabItem { TabLabel(tab: SelectedTab.nearby) }
                 MorePage(viewModel: settingsVM)
+                    .toolbarBackground(.visible, for: .tabBar)
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel(tab: SelectedTab.more) }
                     .onAppear { analytics.track(screen: .settings) }

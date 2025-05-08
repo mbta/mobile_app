@@ -8,12 +8,12 @@ import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.AlertAwareRouteSegment
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -26,7 +26,6 @@ import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.put
 
 data class RouteLineData(
     val id: String,
@@ -211,7 +210,7 @@ object RouteFeaturesBuilder {
     fun filteredRouteShapesForStop(
         stopMapData: StopMapResponse,
         filter: StopDetailsFilter,
-        departures: StopDetailsDepartures?
+        routeCardData: List<RouteCardData>?
     ): List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> {
         /**
          * TODO: When we switch to a more involved filter and pinning ID type system, this should be
@@ -227,8 +226,15 @@ object RouteFeaturesBuilder {
         val targetRouteData = stopMapData.routeShapes.filter { filterRoutes.contains(it.routeId) }
 
         if (targetRouteData.isNotEmpty()) {
-            return departures?.let {
-                val targetRoutePatternIds = departures.upcomingPatternIds
+            return routeCardData?.let {
+                val targetRoutePatternIds =
+                    routeCardData
+                        .asSequence()
+                        .flatMap { it.stopData }
+                        .flatMap { it.data }
+                        .flatMap { it.upcomingTrips }
+                        .map { it.trip.routePatternId }
+                        .toSet()
                 targetRouteData.map { routeData ->
                     val filteredShapes =
                         routeData.segmentedShapes.filter {

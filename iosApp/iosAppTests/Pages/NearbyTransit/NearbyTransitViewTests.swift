@@ -30,7 +30,6 @@ final class NearbyTransitViewTests: XCTestCase {
             self.expectation = expectation
             self.closure = closure
             super.init()
-            groupByDirection = true
         }
 
         override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
@@ -52,7 +51,7 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         )
         let cards = try sut.inspect().findAll(RouteCard.self)
@@ -179,7 +178,7 @@ final class NearbyTransitViewTests: XCTestCase {
         showStationAccessibility: Bool = false,
         now: Date? = nil
     ) -> NearbyTransitView {
-        let nearbyVM = NearbyViewModel(groupByDirection: true, showStationAccessibility: showStationAccessibility)
+        let nearbyVM = NearbyViewModel(showStationAccessibility: showStationAccessibility)
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         nearbyVM.alerts = .init(objects: objects)
 
@@ -511,7 +510,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -543,7 +542,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -578,7 +577,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let objects = route52Objects()
-        let nearbyVM = NearbyViewModel(groupByDirection: true)
+        let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
@@ -633,7 +632,7 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init(groupByDirection: true),
+            nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         )
 
