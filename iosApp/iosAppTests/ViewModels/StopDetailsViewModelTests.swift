@@ -99,7 +99,7 @@ final class StopDetailsViewModelTests: XCTestCase {
         await fulfillment(of: [disconnectExp], timeout: 1)
     }
 
-    func testGetDepartures() async throws {
+    func testGetRouteCardData() async throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
@@ -161,29 +161,40 @@ final class StopDetailsViewModelTests: XCTestCase {
             predictionsLoaded: true
         )
 
-        let departures = await stopDetailsVM.getDepartures(
+        let routeCardData = await stopDetailsVM.getRouteCardData(
             stopId: stop.id,
             alerts: .init(objects: objects),
-            now: now
+            now: now,
+            isFiltered: false
         )
 
-        XCTAssertEqual(StopDetailsDepartures(routes: [.init(
-            routes: [route],
-            line: nil,
-            stop: stop,
-            patterns: [
-                .ByHeadsign(
-                    route: route, headsign: trip0.headsign, line: nil,
-                    patterns: [pattern0], upcomingTrips: [upcoming0]
-                ),
-                .ByHeadsign(
-                    route: route, headsign: trip1.headsign, line: nil,
-                    patterns: [pattern1], upcomingTrips: [upcoming1]
-                ),
-            ],
-            directions: [direction0, direction1],
-            elevatorAlerts: []
-        )]), departures)
+        XCTAssertEqual([RouteCardData(
+            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            stopData: [
+                .init(stop: stop, directions: [direction0, direction1], data: [
+                    .init(
+                        directionId: 0,
+                        routePatterns: [pattern0],
+                        stopIds: [stop.id],
+                        upcomingTrips: [upcoming0],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: []
+                    ),
+                    .init(
+                        directionId: 1,
+                        routePatterns: [pattern1],
+                        stopIds: [stop.id],
+                        upcomingTrips: [upcoming1],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: []
+                    ),
+                ]),
+            ], context: .stopDetailsUnfiltered, at: now.toKotlinInstant()
+        )], routeCardData)
     }
 
     func testLoadTripData() async throws {

@@ -44,7 +44,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         )
         let nearbyVM = NearbyViewModel()
         nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0))
-        nearbyVM.nearbyStaticData = .init(data: [])
+        nearbyVM.routeCardData = []
 
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
@@ -55,7 +55,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: true)
 
         XCTAssertNil(nearbyVM.nearbyState.loadedLocation)
-        XCTAssertNil(nearbyVM.nearbyStaticData)
+        XCTAssertNil(nearbyVM.routeCardData)
     }
 
     @MainActor func testReloadsWhenLocationChanges() throws {

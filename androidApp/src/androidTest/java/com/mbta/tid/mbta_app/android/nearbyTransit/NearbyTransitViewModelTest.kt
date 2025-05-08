@@ -5,15 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.test.fail
 import org.junit.Rule
 import org.junit.Test
 
@@ -50,20 +47,6 @@ class NearbyTransitViewModelTest {
                     } else {
                         response2
                     }
-                }
-
-                override suspend fun getNearby(
-                    global: GlobalResponse,
-                    stopIds: List<String>
-                ): ApiResult<NearbyStaticData> {
-                    fail("getNearby should not be called")
-                }
-
-                override suspend fun getNearby(
-                    global: GlobalResponse,
-                    location: Position
-                ): ApiResult<NearbyStaticData> {
-                    fail("getNearby should not be called")
                 }
             }
 

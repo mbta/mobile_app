@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.android.SheetRoutes
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsFilter.Companion.shouldPopLastStopEntry
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 
 class NearbyTransitTabViewModel : ViewModel() {
 
-    private val _stopDetailsDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
-    val stopDetailsDepartures: StateFlow<StopDetailsDepartures?> = _stopDetailsDepartures
+    private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
+    val routeCardData: StateFlow<List<RouteCardData>?> = _routeCardData
 
-    fun setStopDetailsDepartures(departures: StopDetailsDepartures?) {
-        _stopDetailsDepartures.value = departures
+    fun setRouteCardData(routeCardData: List<RouteCardData>?) {
+        _routeCardData.value = routeCardData
     }
 
     fun setStopFilter(

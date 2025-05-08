@@ -16,7 +16,6 @@ import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -42,35 +41,22 @@ fun StopDetailsUnfilteredView(
 
     val analytics: Analytics = koinInject()
 
-    val departures = viewModel.stopDepartures.collectAsState().value
     val routeCardData = viewModel.routeCardData.collectAsState().value
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)
         val filterId = pillFilter.id
-        val patterns = departures?.routes?.find { it.routeIdentifier == filterId }
-        if (patterns != null) {
+        val routeData = routeCardData?.find { it.lineOrRoute.id == filterId }
+        if (routeData != null) {
             val defaultDirectionId =
-                patterns.patterns.flatMap { it.patterns.mapNotNull { it?.directionId } }.minOrNull()
+                routeData.stopData
+                    .flatMap { it.data }
+                    .flatMap { it.routePatterns }
+                    .minOfOrNull { it.directionId }
                     ?: 0
             updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
         }
     }
-
-    fun getFilterPillRoutes(
-        departures: StopDetailsDepartures,
-        global: GlobalResponse
-    ): List<PillFilter> =
-        departures.routes.map { patterns ->
-            if (patterns.line != null) {
-                PillFilter.ByLine(patterns.line!!)
-            } else {
-                PillFilter.ByRoute(
-                    patterns.representativeRoute,
-                    global.getLine(patterns.representativeRoute.lineId)
-                )
-            }
-        }
 
     fun getFilterPillRoutes(
         routeCardData: List<RouteCardData>,

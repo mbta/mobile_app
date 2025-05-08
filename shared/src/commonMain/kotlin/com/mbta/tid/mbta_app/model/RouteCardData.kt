@@ -28,16 +28,6 @@ private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuild
 
 private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 
-/**
- * Basic data that a row of a route card should have. For backwards compatibility with
- * [RealtimePatterns]
- */
-interface ILeafData {
-    val hasMajorAlerts: Boolean
-    val upcomingTrips: List<UpcomingTrip>
-    val hasSchedulesToday: Boolean
-}
-
 data class DepartureDataBundle(
     val routeData: RouteCardData,
     val stopData: RouteCardData.RouteStopData,
@@ -123,12 +113,12 @@ data class RouteCardData(
         val directionId: Int,
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
-        override val upcomingTrips: List<UpcomingTrip>,
+        val upcomingTrips: List<UpcomingTrip>,
         val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
         val hasSchedulesTodayByPattern: Map<String, Boolean>,
         val alertsDownstream: List<Alert>
-    ) : ILeafData {
+    ) {
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
         constructor(
@@ -156,9 +146,9 @@ data class RouteCardData(
 
         val id = directionId
 
-        override val hasSchedulesToday = hasSchedulesTodayByPattern.any { it.value }
+        val hasSchedulesToday = hasSchedulesTodayByPattern.any { it.value }
 
-        override val hasMajorAlerts: Boolean
+        val hasMajorAlerts: Boolean
             get() = run {
                 this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
             }
@@ -557,6 +547,12 @@ data class RouteCardData(
             when (this) {
                 is Line -> Direction.getDirectionsForLine(globalData, stop, patterns)
                 is Route -> Direction.getDirections(globalData, stop, this.route, patterns)
+            }
+
+        fun containsRoute(routeId: String?) =
+            when (this) {
+                is Line -> this.routes.any { it.id == routeId }
+                is Route -> this.id == routeId
             }
     }
 

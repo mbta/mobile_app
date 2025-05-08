@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.utils
 
-import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
@@ -68,29 +66,6 @@ class GreenLineTestHelper {
                 id = "canonical-8000018"
                 polyline =
                     "awyaG|~`qLZSLKNMl@a@jCeBpCkBhDaCrA}@NKzAgA^Uz@k@bAs@f@_@f@]TOf@]d@Yb@[f@]`@YRM\\W~@k@bAo@n@c@j@c@d@[JG??l@a@v@i@~@o@^Wx@i@l@c@v@g@b@[l@a@bAq@r@i@r@e@fBmALK`@Yh@]x@i@POJGf@]d@[f@]`@Wp@e@z@k@bAs@z@m@TM??DEp@a@p@g@TQr@u@z@}@l@m@r@_AJQZi@n@eAl@eAZm@`@aANe@xAwDhCsHd@sA`A_Dj@wAX}@j@yAz@yBDO??h@yAv@}B`B{En@eBbAwBdAqBj@w@r@_ApAwAt@q@j@q@jAqAhBoAhA{@rDgDzH}HzCyC??zByBd@o@`AsAr@{@vKeK~@_AbAeAz@_A^g@LYN_@H[Z{@d@aA\\i@V]XS~@_@PE`@Gd@SXSx@w@r@w@n@_BlEkLTgAVkAPk@Zi@T[NOVQ\\Y??@?n@a@tAkBr@oBN_@rBgFv@kBpA_DjBoEdBmEn@{A@C??z@iCvAgDDMd@kAPe@Ti@To@Rq@Ru@TuAJcAJs@^aC\\_ABO@OCc@Ea@Mm@g@}AcB_FK[CWCi@?SBOFQtCsCNO??lIkHxAcBLQh@c@LIZQ??NGREZC`@I`GSf@AT@TNtE|Dp@n@PPRN??XVZTdElCt@p@tB~Bn@t@`@b@VPTXp@z@??T\\z@dAZ^^b@VZh@b@n@\\\\BXNp@TfBv@RH`@PPFNPh@R`@T\\LB@??tAZHJDJBLB^Y`LJbBRbCd@bDvArI??F^bJng@??Lr@^`CXbBX`AHRPFlBg@NBhHhAv@Z^XV\\xEzG^h@??RXxMfQ??l@v@`@f@~C|DfAzAVd@d@`ANd@Pl@\\jAXbAr@xB??Ph@f@~AzAbFHVp@bCp@|B^nAT`AfAxDX`A~A`FXhA??d@dBbB~F|B|Hl@|Bj@dB??JZNh@\\dAj@lBLj@l@lCRv@|AtFDNj@nBPh@DL??Rr@Nh@`@dAZr@??HPNX\\|@Nh@Lp@Dd@?Z?pA@tCB~@?v@@v@?v@@l@D^??@L@FFXH`@Xt@N^L\\n@nAZh@T`@P\\PZPXDDD@ZGTI??tDcA~Bq@??VG`Bo@fAa@d@Uf@Bd@CT?b@MBa@CYG]"
-            }
-
-        val nearbyData =
-            NearbyStaticData.build {
-                line(line, listOf(routeB, routeC, routeE)) {
-                    stop(
-                        stopArlington,
-                        listOf(routeB, routeC, routeE),
-                        listOf(stopEastbound.id, stopWestbound.id)
-                    ) {
-                        direction(
-                            Direction("West", "Kenmore & West", 0),
-                            listOf(routeB, routeC),
-                            listOf(rpB0, rpC0)
-                        )
-                        headsign(routeE, "Heath Street", listOf(rpE0))
-                        direction(
-                            Direction("East", "Park St & North", 1),
-                            listOf(routeB, routeC, routeE),
-                            listOf(rpB1, rpC1, rpE1)
-                        )
-                    }
-                }
             }
 
         val stopMapResponse =

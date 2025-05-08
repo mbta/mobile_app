@@ -16,7 +16,6 @@ struct StopDetailsPage: View {
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective departures rather than both showing the departures for the newly presented stop.
-    @State var internalDepartures: StopDetailsDepartures?
     @State var internalRouteCardData: [RouteCardData]?
     @State var now = Date.now
 
@@ -34,8 +33,6 @@ struct StopDetailsPage: View {
 
     init(
         filters: StopDetailsPageFilters,
-        internalDepartures _: StopDetailsDepartures? = nil,
-
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
@@ -59,7 +56,6 @@ struct StopDetailsPage: View {
             tripFilter: tripFilter,
             setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
-            departures: internalDepartures,
             routeCardData: internalRouteCardData,
             now: now,
             errorBannerVM: errorBannerVM,
@@ -92,7 +88,7 @@ struct StopDetailsPage: View {
                 updateDepartures()
             }
             .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
-            .onChange(of: internalDepartures) { _ in
+            .onChange(of: internalRouteCardData) { _ in
                 let nextStopFilter = setStopFilter()
                 setTripFilter(filters: .init(stopId: stopId, stopFilter: nextStopFilter, tripFilter: tripFilter))
             }
@@ -194,16 +190,6 @@ struct StopDetailsPage: View {
             Task { @MainActor in
                 nearbyVM.setRouteCardData(stopId, nextRouteCardData)
                 internalRouteCardData = nextRouteCardData
-            }
-
-            let nextDepartures = await stopDetailsVM.getDepartures(
-                stopId: stopId,
-                alerts: nearbyVM.alerts,
-                now: now
-            )
-            Task { @MainActor in
-                nearbyVM.setDepartures(stopId, nextDepartures)
-                internalDepartures = nextDepartures
             }
         }
     }

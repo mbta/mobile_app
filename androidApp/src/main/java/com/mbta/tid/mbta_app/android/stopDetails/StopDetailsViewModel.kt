@@ -17,7 +17,6 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.StopDetailsUtils
@@ -132,9 +131,6 @@ class StopDetailsViewModel(
 
     private val _tripDetailsStopList = MutableStateFlow<TripDetailsStopList?>(null)
     // not accessible via a property since it needs extra params to be kept up to date
-
-    private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
-    val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
 
     private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
     val routeCardData = _routeCardData.asStateFlow()
@@ -269,10 +265,6 @@ class StopDetailsViewModel(
 
     fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>) {
         _alertSummaries.value = alertSummaries
-    }
-
-    fun setDepartures(departures: StopDetailsDepartures?) {
-        _stopDepartures.value = departures
     }
 
     fun setRouteCardData(routeCardData: List<RouteCardData>?) {
@@ -542,30 +534,6 @@ fun stopDetailsManagedVM(
             viewModel.leaveStopPredictions()
             viewModel.leaveTripChannels()
         }
-    }
-
-    LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
-        val schedules = stopData?.schedules
-        viewModel.setDepartures(
-            if (
-                globalResponse != null &&
-                    stopId != null &&
-                    stopId == stopData?.stopId &&
-                    schedules != null &&
-                    stopData?.predictionsLoaded == true
-            ) {
-                StopDetailsDepartures.fromData(
-                    stopId,
-                    globalResponse,
-                    schedules,
-                    stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
-                    alertData,
-                    pinnedRoutes,
-                    now,
-                    coroutineDispatcher
-                )
-            } else null
-        )
     }
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
