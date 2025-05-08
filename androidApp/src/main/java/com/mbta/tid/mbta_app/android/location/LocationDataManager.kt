@@ -61,8 +61,8 @@ open class LocationDataManager {
                         it.permission == Manifest.permission.ACCESS_FINE_LOCATION
                     }
                 LocationRequest.Builder(5.seconds.inWholeMilliseconds)
-                    // ignore updates less than 0.1km
-                    .setMinUpdateDistanceMeters(100F)
+                    // ignore updates less than 10m
+                    .setMinUpdateDistanceMeters(10F)
                     .setPriority(
                         if (finePermission?.status?.isGranted == true)
                             Priority.PRIORITY_HIGH_ACCURACY
