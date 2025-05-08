@@ -441,6 +441,33 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [lechmereExpectation], timeout: 1)
     }
 
+    func testDoesntRefetchPredictionsOnStopReorder() throws {
+        let sawmillAtWalshExpectation = expectation(description: "joins predictions for Sawmill @ Walsh")
+        let reorderExpectation = expectation(description: "doesn't rejoin when stop order changes")
+        reorderExpectation.isInverted = true
+
+        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
+        loadPublisher.sink { loaded in
+            let stopIds = loaded.predictionStops.sorted()
+            if stopIds == ["84791", "8552"] {
+                sawmillAtWalshExpectation.fulfill()
+            } else if stopIds == ["8552", "84791"] {
+                reorderExpectation.fulfill()
+            } else {
+                XCTFail("unexpected stop IDs \(stopIds)")
+            }
+        }.store(in: &cancellables)
+
+        let sut = setUpSut(route52Objects(), loadPublisher)
+        ViewHosting.host(view: sut)
+
+        wait(for: [sawmillAtWalshExpectation], timeout: 1)
+
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["8552", "84791"])
+
+        wait(for: [reorderExpectation], timeout: 1)
+    }
+
     @MainActor func testRendersUpdatedPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()

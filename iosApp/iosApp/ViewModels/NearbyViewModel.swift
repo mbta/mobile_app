@@ -195,8 +195,6 @@ class NearbyViewModel: ObservableObject {
                 analytics.refetchedNearbyTransit()
             }
             nearbyState.loading = true
-            routeCardData = nil
-
             let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
             nearbyState.stopIds = stopIds
             nearbyState.loadedLocation = location
