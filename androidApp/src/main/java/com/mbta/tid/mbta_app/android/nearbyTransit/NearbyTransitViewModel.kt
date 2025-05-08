@@ -36,7 +36,12 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
             if (loading) {
                 fetchNearbyTask?.cancel()
             }
-            val stopIds = nearbyRepository.getStopIdsNearby(globalResponse, location, excludeRedundantService = true)
+            val stopIds =
+                nearbyRepository.getStopIdsNearby(
+                    globalResponse,
+                    location,
+                    excludeRedundantService = true
+                )
             nearbyStopIds = stopIds
             setLastLocation(location)
             setSelectingLocation(false)
