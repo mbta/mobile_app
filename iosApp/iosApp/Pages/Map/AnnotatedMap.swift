@@ -32,7 +32,7 @@ struct AnnotatedMap: View {
 
     var handleCameraChange: (CameraChanged) -> Void
     var handleStyleLoaded: () -> Void
-    var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
+    var handleTapStopLayer: (QueriedFeature, InteractionContext) -> Bool
     var handleTapVehicle: (Vehicle) -> Void
 
     @State private var zoomLevel: CGFloat = 0
