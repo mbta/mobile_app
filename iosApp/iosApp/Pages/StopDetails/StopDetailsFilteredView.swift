@@ -20,7 +20,8 @@ struct StopDetailsFilteredView: View {
     var routeCardData: [RouteCardData]?
     var now: Date
 
-    var departureData: DepartureDataBundle?
+    var stopData: RouteCardData.RouteStopData?
+    var leaf: RouteCardData.Leaf?
 
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
@@ -60,14 +61,8 @@ struct StopDetailsFilteredView: View {
         self.stopDetailsVM = stopDetailsVM
 
         let routeData = routeCardData?.first { $0.lineOrRoute.id == stopFilter.routeId }
-        let stopData = routeData?.stopData.first { $0.stop.id == stopId }
-        let leafData = stopData?.data.first { $0.directionId == stopFilter.directionId }
-
-        if let routeData, let stopData, let leafData {
-            departureData = .init(routeData: routeData, stopData: stopData, leaf: leafData)
-        } else {
-            departureData = nil
-        }
+        stopData = routeData?.stopData.first { $0.stop.id == stopId }
+        leaf = stopData?.data.first { $0.directionId == stopFilter.directionId }
     }
 
     var pinned: Bool {
@@ -76,7 +71,7 @@ struct StopDetailsFilteredView: View {
 
     func toggledPinnedRoute() {
         Task {
-            if let routeId = departureData?.routeData.lineOrRoute.id {
+            if let routeId = stopData?.lineOrRoute.id {
                 let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
                 analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 stopDetailsVM.loadPinnedRoutes()
@@ -92,14 +87,15 @@ struct StopDetailsFilteredView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            if let departureData {
+            if let stopData, let leaf {
                 StopDetailsFilteredDepartureDetails(
                     stopId: stopId,
                     stopFilter: stopFilter,
                     tripFilter: tripFilter,
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
-                    data: departureData,
+                    stopData: stopData,
+                    leaf: leaf,
                     pinned: pinned,
                     now: now,
                     errorBannerVM: errorBannerVM,
@@ -116,13 +112,13 @@ struct StopDetailsFilteredView: View {
 
     @ViewBuilder
     var header: some View {
-        let line: Line? = switch onEnum(of: departureData?.routeData.lineOrRoute) {
+        let line: Line? = switch onEnum(of: stopData?.lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
         VStack(spacing: 8) {
             StopDetailsFilteredHeader(
-                route: departureData?.routeData.lineOrRoute.sortRoute,
+                route: stopData?.lineOrRoute.sortRoute,
                 line: line,
                 stop: stop,
                 pinned: pinned,
@@ -141,12 +137,14 @@ struct StopDetailsFilteredView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        let loadingData = LoadingPlaceholders.shared.departureDataBundle(
+        let routeData = LoadingPlaceholders.shared.routeCardData(
             routeId: stopFilter.routeId,
             trips: 10,
             context: .stopDetailsFiltered,
             now: nowInstant
         )
+        let stopData = routeData.stopData.first!
+        let leaf = stopData.data.first!
 
         StopDetailsFilteredDepartureDetails(
             stopId: stopId,
@@ -154,7 +152,8 @@ struct StopDetailsFilteredView: View {
             tripFilter: tripFilter,
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
-            data: loadingData,
+            stopData: stopData,
+            leaf: leaf,
             pinned: pinned,
             now: now,
             errorBannerVM: errorBannerVM,

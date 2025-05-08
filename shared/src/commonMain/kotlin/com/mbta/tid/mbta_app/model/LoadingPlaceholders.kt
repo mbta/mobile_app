@@ -6,20 +6,15 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 object LoadingPlaceholders {
-    fun nearbyRoute(): RouteCardData {
-        return departureDataBundle(
-                context = RouteCardData.Context.NearbyTransit,
-                now = Clock.System.now()
-            )
-            .routeData
-    }
+    fun nearbyRoute() =
+        routeCardData(context = RouteCardData.Context.NearbyTransit, now = Clock.System.now())
 
-    fun departureDataBundle(
+    fun routeCardData(
         routeId: String? = null,
         trips: Int = 2,
         context: RouteCardData.Context,
         now: Instant
-    ): DepartureDataBundle {
+    ): RouteCardData {
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
@@ -77,31 +72,27 @@ object LoadingPlaceholders {
                 alertsDownstream = emptyList(),
             )
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val stopData =
             RouteCardData.RouteStopData(
+                lineOrRoute,
                 stop,
                 listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
                 listOf(leaf1, leaf2),
+                context
             )
 
-        val routeData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                stopData = listOf(stopData),
-                context,
-                now
-            )
+        val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), context, now)
 
-        return DepartureDataBundle(routeData, stopData, leaf1)
+        return routeData
     }
 
     fun stopDetailsRouteCards() =
         (1..5).map {
-            departureDataBundle(
-                    context = RouteCardData.Context.StopDetailsUnfiltered,
-                    now = Clock.System.now()
-                )
-                .routeData
+            routeCardData(
+                context = RouteCardData.Context.StopDetailsUnfiltered,
+                now = Clock.System.now()
+            )
         }
 
     data class TripDetailsInfo(

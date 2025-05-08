@@ -41,13 +41,13 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             routeCardData: [
                 .init(
-                    lineOrRoute: RouteCardDataLineOrRouteRoute(route: routeDefaultSort1),
+                    lineOrRoute: .route(routeDefaultSort1),
                     stopData: [],
                     context: .stopDetailsUnfiltered,
                     at: Date.now.toKotlinInstant()
                 ),
                 .init(
-                    lineOrRoute: RouteCardDataLineOrRouteRoute(route: routeDefaultSort0),
+                    lineOrRoute: .route(routeDefaultSort0),
                     stopData: [],
                     context: .stopDetailsUnfiltered,
                     at: Date.now.toKotlinInstant()
@@ -83,8 +83,14 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             routeCardData: [.init(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-                stopData: [.init(stop: stop, route: route, data: [], globalData: .init(objects: objects))],
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    route: route,
+                    stop: stop,
+                    data: [],
+                    context: .stopDetailsUnfiltered,
+                    globalData: .init(objects: objects)
+                )],
                 context: .stopDetailsUnfiltered,
                 at: Date.now.toKotlinInstant()
             )],
@@ -118,10 +124,9 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             routeCardData: [.init(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+                lineOrRoute: .route(route),
                 stopData: [.init(
-                    stop: stop,
-                    route: route,
+                    route: route, stop: stop,
                     data: [.init(
                         directionId: 0,
                         routePatterns: [],
@@ -132,6 +137,7 @@ final class StopDetailsViewTests: XCTestCase {
                         hasSchedulesToday: true,
                         alertsDownstream: []
                     )],
+                    context: .stopDetailsUnfiltered,
                     globalData: .init(objects: objects)
                 )],
                 context: .stopDetailsUnfiltered,
@@ -175,15 +181,17 @@ final class StopDetailsViewTests: XCTestCase {
             hasSchedulesToday: true, alertsDownstream: []
         )
         let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: .route(route),
             stop: stop,
             directions: [
                 .init(directionId: 0, route: route),
                 .init(directionId: 1, route: route),
             ],
-            data: [leaf]
+            data: [leaf],
+            context: .stopDetailsFiltered
         )
         let routeData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stopData: [stopData],
             context: .stopDetailsFiltered,
             at: now.toKotlinInstant()

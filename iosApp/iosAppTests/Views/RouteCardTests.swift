@@ -22,7 +22,7 @@ final class RouteCardTests: XCTestCase {
         }
 
         let routeCardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stopData: [],
             context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
@@ -55,7 +55,7 @@ final class RouteCardTests: XCTestCase {
         }
 
         let routeCardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteLine(line: line, routes: [route]),
+            lineOrRoute: .line(line, [route]),
             stopData: [],
             context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
@@ -84,7 +84,7 @@ final class RouteCardTests: XCTestCase {
         }
 
         let routeCardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stopData: [],
             context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
@@ -126,8 +126,14 @@ final class RouteCardTests: XCTestCase {
 
         let nearbySut = RouteCard(
             cardData: RouteCardData(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-                stopData: [.init(stop: stop, directions: [], data: [])],
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    lineOrRoute: .route(route),
+                    stop: stop,
+                    directions: [],
+                    data: [],
+                    context: .nearbyTransit
+                )],
                 context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()
             ),
@@ -142,8 +148,14 @@ final class RouteCardTests: XCTestCase {
 
         let stopDetailsSut = RouteCard(
             cardData: RouteCardData(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-                stopData: [.init(stop: stop, directions: [], data: [])],
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    lineOrRoute: .route(route),
+                    stop: stop,
+                    directions: [],
+                    data: [],
+                    context: .stopDetailsUnfiltered
+                )],
                 context: .stopDetailsUnfiltered,
                 at: Date.now.toKotlinInstant()
             ),
@@ -171,15 +183,17 @@ final class RouteCardTests: XCTestCase {
 
         let sut = RouteCard(
             cardData: RouteCardData(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+                lineOrRoute: .route(route),
                 stopData: [.init(
+                    lineOrRoute: .route(route),
                     stop: stop,
                     directions: [.init(name: "Inbound", destination: "", id: 0)],
                     data: [.init(
                         directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                         upcomingTrips: [], alertsHere: [], allDataLoaded: true,
                         hasSchedulesToday: true, alertsDownstream: []
-                    )]
+                    )],
+                    context: .nearbyTransit
                 )],
                 context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()

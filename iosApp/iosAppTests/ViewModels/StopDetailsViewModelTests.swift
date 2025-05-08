@@ -169,9 +169,9 @@ final class StopDetailsViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual([RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stopData: [
-                .init(stop: stop, directions: [direction0, direction1], data: [
+                .init(lineOrRoute: .route(route), stop: stop, directions: [direction0, direction1], data: [
                     .init(
                         directionId: 0,
                         routePatterns: [pattern0],
@@ -192,7 +192,7 @@ final class StopDetailsViewModelTests: XCTestCase {
                         hasSchedulesToday: true,
                         alertsDownstream: []
                     ),
-                ]),
+                ], context: .stopDetailsUnfiltered),
             ], context: .stopDetailsUnfiltered, at: now.toKotlinInstant()
         )], routeCardData)
     }

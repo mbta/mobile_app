@@ -68,7 +68,14 @@ class PatternSortingTest {
         stop: Stop,
         lineOrRoute: RouteCardData.LineOrRoute,
         vararg leaf: RouteCardData.Leaf
-    ) = RouteCardData.RouteStopData(stop, lineOrRoute, leaf.asList(), GlobalResponse(objects))
+    ) =
+        RouteCardData.RouteStopData(
+            lineOrRoute,
+            stop,
+            leaf.asList(),
+            RouteCardData.Context.NearbyTransit,
+            GlobalResponse(objects)
+        )
 
     private fun routeCard(route: Route, vararg stops: RouteCardData.RouteStopData) =
         routeCard(RouteCardData.LineOrRoute.Route(route), *stops)

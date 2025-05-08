@@ -114,8 +114,8 @@ class StopDetailsViewTest {
                     RouteCardData.LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            stop,
                             route,
+                            stop,
                             listOf(
                                 RouteCardData.Leaf(
                                     directionId = 0,
@@ -128,6 +128,7 @@ class StopDetailsViewTest {
                                     alertsDownstream = emptyList()
                                 )
                             ),
+                            RouteCardData.Context.StopDetailsUnfiltered,
                             GlobalResponse(builder)
                         )
                     ),
@@ -183,8 +184,8 @@ class StopDetailsViewTest {
                     RouteCardData.LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            stop,
                             route,
+                            stop,
                             listOf(
                                 RouteCardData.Leaf(
                                     directionId = 0,
@@ -197,6 +198,7 @@ class StopDetailsViewTest {
                                     alertsDownstream = emptyList()
                                 )
                             ),
+                            RouteCardData.Context.StopDetailsUnfiltered,
                             GlobalResponse(builder)
                         )
                     ),
@@ -258,8 +260,8 @@ class StopDetailsViewTest {
                     RouteCardData.LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            stop,
                             route,
+                            stop,
                             listOf(
                                 RouteCardData.Leaf(
                                     directionId = 0,
@@ -272,6 +274,7 @@ class StopDetailsViewTest {
                                     alertsDownstream = emptyList()
                                 )
                             ),
+                            RouteCardData.Context.StopDetailsUnfiltered,
                             GlobalResponse(builder)
                         )
                     ),
@@ -325,8 +328,8 @@ class StopDetailsViewTest {
                     RouteCardData.LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            stop,
                             route,
+                            stop,
                             listOf(
                                 RouteCardData.Leaf(
                                     directionId = 0,
@@ -339,6 +342,7 @@ class StopDetailsViewTest {
                                     alertsDownstream = emptyList()
                                 )
                             ),
+                            RouteCardData.Context.StopDetailsUnfiltered,
                             GlobalResponse(builder)
                         )
                     ),

@@ -16,12 +16,19 @@ import XCTest
 final class RouteCardStopHeaderTests: XCTestCase {
     func testStopName() throws {
         let objects = ObjectCollectionBuilder()
+        let route = objects.route()
         let stop = objects.stop { stop in
             stop.name = "Stop Name"
         }
 
         let sut = RouteCardStopHeader(
-            data: .init(stop: stop, directions: [], data: []),
+            data: .init(
+                lineOrRoute: .route(route),
+                stop: stop,
+                directions: [],
+                data: [],
+                context: .stopDetailsFiltered
+            ),
             showStationAccessibility: false
         )
         XCTAssertNotNil(try sut.inspect().find(text: stop.name))
@@ -29,6 +36,7 @@ final class RouteCardStopHeaderTests: XCTestCase {
 
     func testNotAccessible() throws {
         let objects = ObjectCollectionBuilder()
+        let route = objects.route()
         let stop = objects.stop { stop in
             stop.name = "Boylston"
             stop.wheelchairBoarding = .inaccessible
@@ -36,7 +44,13 @@ final class RouteCardStopHeaderTests: XCTestCase {
         }
 
         let sut = RouteCardStopHeader(
-            data: .init(stop: stop, directions: [], data: []),
+            data: .init(
+                lineOrRoute: .route(route),
+                stop: stop,
+                directions: [],
+                data: [],
+                context: .stopDetailsFiltered
+            ),
             showStationAccessibility: true
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Not accessible"))
@@ -44,6 +58,7 @@ final class RouteCardStopHeaderTests: XCTestCase {
 
     func testElevatorAlert() throws {
         let objects = ObjectCollectionBuilder()
+        let route = objects.route()
         let stop = objects.stop { stop in
             stop.name = "Park Street"
             stop.wheelchairBoarding = .accessible
@@ -61,12 +76,14 @@ final class RouteCardStopHeaderTests: XCTestCase {
 
         let sut = RouteCardStopHeader(
             data: .init(
+                lineOrRoute: .route(route),
                 stop: stop,
                 directions: [.init(name: "", destination: "", id: 0)],
                 data: [.init(
                     directionId: 0, routePatterns: [], stopIds: [], upcomingTrips: [],
                     alertsHere: [alert], allDataLoaded: true, hasSchedulesToday: true, alertsDownstream: []
-                )]
+                )],
+                context: .stopDetailsFiltered
             ),
             showStationAccessibility: true
         )

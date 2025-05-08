@@ -59,7 +59,6 @@ fun StopDetailsFilteredView(
             stopId = stopId,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
-            routeCardData = routeCardData.single(),
             routeStopData = routeStopData,
             leaf = leaf,
             tileData = tileData,
@@ -107,25 +106,26 @@ private fun Loading(
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
         Column(modifier = Modifier.loadingShimmer()) {
-            val placeholderData =
-                LoadingPlaceholders.departureDataBundle(
+            val routeData =
+                LoadingPlaceholders.routeCardData(
                     stopFilter.routeId,
                     trips = 10,
                     RouteCardData.Context.StopDetailsFiltered,
                     now
                 )
+            val stopData = routeData.stopData.single()
+            val leaf = stopData.data.first()
             StopDetailsFilteredDeparturesView(
                 stopId = stopId,
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
-                routeCardData = placeholderData.routeData,
-                routeStopData = placeholderData.stopData,
-                leaf = placeholderData.leaf,
+                routeStopData = stopData,
+                leaf = leaf,
                 tileData =
-                    placeholderData.leaf
+                    leaf
                         .format(
                             now,
-                            placeholderData.routeData.lineOrRoute.sortRoute,
+                            routeData.lineOrRoute.sortRoute,
                             globalResponse,
                             RouteCardData.Context.StopDetailsFiltered
                         )
@@ -133,7 +133,7 @@ private fun Loading(
                 noPredictionsStatus = null,
                 isAllServiceDisrupted = false,
                 allAlerts = null,
-                elevatorAlerts = placeholderData.stopData.elevatorAlerts,
+                elevatorAlerts = stopData.elevatorAlerts,
                 global = globalResponse,
                 now = now,
                 viewModel = viewModel,

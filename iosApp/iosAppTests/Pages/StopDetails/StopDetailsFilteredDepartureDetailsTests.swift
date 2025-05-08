@@ -25,9 +25,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
-    ) -> DepartureDataBundle {
+    ) -> (RouteCardData.RouteStopData, RouteCardData.Leaf) {
         makeBundle(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
             alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
         )
@@ -42,24 +42,24 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
-    ) -> DepartureDataBundle {
+    ) -> (RouteCardData.RouteStopData, RouteCardData.Leaf) {
         let routes = routes ?? Set([objects.route { $0.lineId = line.id }])
         return makeBundle(
-            lineOrRoute: RouteCardDataLineOrRouteLine(line: line, routes: routes),
+            lineOrRoute: .line(line, routes),
             stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
             alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
         )
     }
 
     func makeBundle(
-        lineOrRoute: RouteCardDataLineOrRoute,
+        lineOrRoute: RouteCardData.LineOrRoute,
         stop: Stop? = nil,
         patterns: [RoutePattern]? = nil,
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
-    ) -> DepartureDataBundle {
+    ) -> (RouteCardData.RouteStopData, RouteCardData.Leaf) {
         let route = lineOrRoute.sortRoute
         let stop = stop ?? objects.stop { _ in }
         let patterns = patterns ?? [objects.routePattern(route: route) { _ in }]
@@ -74,12 +74,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alertsDownstream: alertsDownstream
         )
         let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: lineOrRoute,
             stop: stop,
             directions: [
                 .init(directionId: 0, route: route),
                 .init(directionId: 1, route: route),
             ],
-            data: [leaf]
+            data: [leaf],
+            context: .stopDetailsFiltered
         )
         let routeData = RouteCardData(
             lineOrRoute: lineOrRoute,
@@ -88,7 +90,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             at: Date.now.toKotlinInstant()
         )
 
-        return .init(routeData: routeData, stopData: stopData, leaf: leaf)
+        return (stopData, leaf)
     }
 
     func testDisplaysTrips() throws {
@@ -134,13 +136,22 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             ),
             upcoming: trip3
         )
+
+        let (stopData, leaf) = makeBundle(
+            route: route,
+            stop: stop,
+            upcomingTrips: [trip1, trip2, trip3],
+            objects: objects
+        )
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(route: route, stop: stop, upcomingTrips: [trip1, trip2, trip3], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -203,19 +214,23 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             ),
             upcoming: trip3
         )
+
+        let (stopData, leaf) = makeBundle(
+            line: line,
+            routes: [route],
+            stop: stop,
+            upcomingTrips: [trip1, trip2, trip3],
+            objects: objects
+        )
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(
-                line: line,
-                routes: [route],
-                stop: stop,
-                upcomingTrips: [trip1, trip2, trip3],
-                objects: objects
-            ),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -274,13 +289,23 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             ),
             upcoming: .init(trip: trip)
         )
+
+        let (stopData, leaf) = makeBundle(
+            line: line,
+            routes: [route],
+            stop: stop,
+            upcomingTrips: [upcoming],
+            objects: objects
+        )
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(line: line, routes: [route], stop: stop, upcomingTrips: [upcoming], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -347,19 +372,21 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             ),
             upcoming: upcoming2
         )
+        let (stopData, leaf) = makeBundle(
+            route: route,
+            stop: stop,
+            patterns: [pattern],
+            upcomingTrips: [upcoming1, upcoming2],
+            objects: objects
+        )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(
-                route: route,
-                stop: stop,
-                patterns: [pattern],
-                upcomingTrips: [upcoming1, upcoming2],
-                objects: objects
-            ),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -383,13 +410,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let route = objects.route { route in route.id = "Green-B" }
         let line = objects.line { line in line.id = "Green" }
 
+        let (stopData, leaf) = makeBundle(line: line, routes: [route], stop: stop, upcomingTrips: [], objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(line: line, routes: [route], stop: stop, upcomingTrips: [], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -432,13 +462,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let stopDetailsVM: StopDetailsViewModel = .init()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
+        let (stopData, leaf) = makeBundle(route: route, stop: stop, alerts: [alert], objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(route: route, stop: stop, alerts: [alert], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -493,13 +526,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let stopDetailsVM: StopDetailsViewModel = .init()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
+        let (stopData, leaf) = makeBundle(route: route, stop: stop, alertsDownstream: [alert], objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(route: route, stop: stop, alertsDownstream: [alert], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -552,13 +588,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.showStationAccessibility = true
 
+        let (stopData, leaf) = makeBundle(route: route, stop: stop, patterns: [], alerts: [alert], objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(route: route, stop: stop, patterns: [], alerts: [alert], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -599,13 +638,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.showStationAccessibility = true
 
+        let (stopData, leaf) = makeBundle(route: route, stop: stop, objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(route: route, stop: stop, objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -652,13 +694,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         stopDetailsVM.showStationAccessibility = true
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
+        let (stopData, leaf) = makeBundle(route: route, stop: stop, alerts: [alert], objects: objects)
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: makeBundle(route: route, stop: stop, alerts: [alert], objects: objects),
+            stopData: stopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),
@@ -750,7 +795,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            data: .init(routeData: routeCardData, stopData: routeStopData, leaf: leaf),
+            stopData: routeStopData,
+            leaf: leaf,
             pinned: false,
             now: Date.now,
             errorBannerVM: .init(),

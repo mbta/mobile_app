@@ -38,7 +38,6 @@ struct RouteCard: View {
                     )
                 }
                 RouteCardDepartures(
-                    cardData: cardData,
                     stopData: stopData,
                     global: global,
                     now: now,

@@ -40,7 +40,7 @@ fun RouteCard(
                 StopHeader(it, showStationAccessibility)
             }
 
-            Departures(it, data, globalData, now, pinned) { leaf ->
+            Departures(it, globalData, now, pinned) { leaf ->
                 onOpenStopDetails(
                     it.stop.id,
                     StopDetailsFilter(data.lineOrRoute.id, leaf.directionId)

@@ -65,7 +65,6 @@ fun StopDetailsFilteredDeparturesView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    routeCardData: RouteCardData,
     routeStopData: RouteCardData.RouteStopData,
     leaf: RouteCardData.Leaf,
     tileData: List<TileData>,
@@ -87,7 +86,7 @@ fun StopDetailsFilteredDeparturesView(
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject()
 ) {
-    val lineOrRoute = routeCardData.lineOrRoute
+    val lineOrRoute = routeStopData.lineOrRoute
     val stop = routeStopData.stop
     val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
     val directions = routeStopData.directions
