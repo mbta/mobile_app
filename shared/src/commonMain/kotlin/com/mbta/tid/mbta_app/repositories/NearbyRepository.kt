@@ -68,7 +68,7 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                 .toList()
 
         return if (excludeRedundantService) {
-           return filterStopsWithRedundantPatterns(allNearbyStops, global)
+            return filterStopsWithRedundantPatterns(allNearbyStops, global)
         } else {
             allNearbyStops
         }
@@ -96,7 +96,6 @@ class NearbyRepository : KoinComponent, INearbyRepository {
             }
             .distinct()
     }
-
 }
 
 class MockNearbyRepository(
