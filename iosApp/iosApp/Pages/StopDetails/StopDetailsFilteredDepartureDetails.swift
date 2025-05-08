@@ -9,6 +9,7 @@
 import Shared
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct StopDetailsFilteredDepartureDetails: View {
     var stopId: String
     var stopFilter: StopDetailsFilter
@@ -103,22 +104,12 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        leafFormat =
-            data.leaf.format(
-                now: now.toKotlinInstant(),
-                representativeRoute: data.routeData.lineOrRoute.sortRoute,
-                globalData: stopDetailsVM.global,
-                context: .stopDetailsFiltered
-            )
-        setAlertSummaries(AlertSummaryParams(
-            global: stopDetailsVM.global,
-            alerts: alerts,
-            downstreamAlerts: downstreamAlerts,
-            stopId: stopId,
-            directionId: stopFilter.directionId,
-            patternsHere: patternsHere,
-            now: now
-        ))
+        leafFormat = data.leaf.format(
+            now: now.toKotlinInstant(),
+            representativeRoute: data.routeData.lineOrRoute.sortRoute,
+            globalData: stopDetailsVM.global,
+            context: .stopDetailsFiltered
+        )
     }
 
     var body: some View {
@@ -190,7 +181,20 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
         }
-        .onAppear { handleViewportForStatus(noPredictionsStatus) }
+        .onAppear {
+            handleViewportForStatus(noPredictionsStatus)
+            setAlertSummaries(
+                AlertSummaryParams(
+                    global: stopDetailsVM.global,
+                    alerts: alerts,
+                    downstreamAlerts: downstreamAlerts,
+                    stopId: stopId,
+                    directionId: stopFilter.directionId,
+                    patternsHere: patternsHere,
+                    now: now
+                )
+            )
+        }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
