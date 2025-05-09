@@ -86,8 +86,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         leaf: RouteCardData.Leaf, pinned: Bool, elevatorAlerts: [Shared.Alert], now: Date,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
-        stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider,
-        testTiles _: [TileData]? = nil
+        stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter

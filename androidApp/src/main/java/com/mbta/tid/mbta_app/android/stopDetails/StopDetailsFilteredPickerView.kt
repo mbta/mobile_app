@@ -98,18 +98,11 @@ fun StopDetailsFilteredPickerView(
                 )
 
                 if (leaf != null) {
-                    val leafFormat = leaf.format(now, global)
-                    val tileData = leafFormat.tileData()
-                    val noPredictionsStatus = leafFormat.noPredictionsStatus()
-
                     StopDetailsFilteredDeparturesView(
                         stopId = stopId,
                         stopFilter = stopFilter,
                         tripFilter = tripFilter,
                         leaf = leaf,
-                        tileData = tileData,
-                        noPredictionsStatus = noPredictionsStatus,
-                        isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
                         allAlerts = allAlerts,
                         elevatorAlerts = routeStopData.elevatorAlerts,
                         global = global,
@@ -133,18 +126,12 @@ fun StopDetailsFilteredPickerView(
                                 )
                             val stopData = routeData.stopData.single()
                             val placeholderLeaf = stopData.data.first()
-                            val leafFormat = placeholderLeaf.format(now, global)
-                            val tileData = leafFormat.tileData()
-                            val noPredictionsStatus = leafFormat.noPredictionsStatus()
 
                             StopDetailsFilteredDeparturesView(
                                 stopId = stopId,
                                 stopFilter = stopFilter,
                                 tripFilter = tripFilter,
                                 leaf = placeholderLeaf,
-                                tileData = tileData,
-                                noPredictionsStatus = noPredictionsStatus,
-                                isAllServiceDisrupted = false,
                                 allAlerts = AlertsStreamDataResponse(emptyMap()),
                                 elevatorAlerts = routeStopData.elevatorAlerts,
                                 global = global,

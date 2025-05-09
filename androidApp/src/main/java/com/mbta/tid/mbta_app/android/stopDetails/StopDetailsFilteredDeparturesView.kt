@@ -39,7 +39,6 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
-import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
@@ -55,9 +54,6 @@ fun StopDetailsFilteredDeparturesView(
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     leaf: RouteCardData.Leaf,
-    tileData: List<TileData>,
-    noPredictionsStatus: NoTripsFormat?,
-    isAllServiceDisrupted: Boolean,
     allAlerts: AlertsStreamDataResponse?,
     elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
@@ -70,6 +66,11 @@ fun StopDetailsFilteredDeparturesView(
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject(),
 ) {
+    val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
+    val tileData = leafFormat.tileData()
+    val noPredictionsStatus = leafFormat.noPredictionsStatus()
+    val isAllServiceDisrupted = leafFormat.isAllServiceDisrupted
+
     val lineOrRoute = leaf.lineOrRoute
     val stop = leaf.stop
 
