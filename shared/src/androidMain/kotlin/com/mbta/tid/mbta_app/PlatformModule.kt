@@ -12,6 +12,6 @@ fun platformModule() = module {
         module { single { createDataStore(get()) } },
         module { single<SystemPaths> { AndroidSystemPaths(get()) } },
         module { single<INetworkConnectivityMonitor> { NetworkConnectivityMonitor(get()) } },
-        module { single<Clock> { Clock.System } }
+        module { single<Clock> { Clock.System } },
     )
 }

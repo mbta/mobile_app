@@ -80,7 +80,7 @@ fun SemanticsNodeInteraction.assertHasColor(targetColor: Color) {
         pixelCounts.entries
             .groupBy(
                 { if (it.key.isGrey()) "grey" else "not grey" },
-                { colorToHex(it.key) to it.value }
+                { colorToHex(it.key) to it.value },
             )
             .mapValues { it.value.sortedByDescending { it.second } }
             .toSortedMap(
@@ -119,6 +119,6 @@ fun testKoinApplication(
                 repositoryOverrides()
             }
         ),
-        MainApplication.koinViewModelModule()
+        MainApplication.koinViewModelModule(),
     )
 }

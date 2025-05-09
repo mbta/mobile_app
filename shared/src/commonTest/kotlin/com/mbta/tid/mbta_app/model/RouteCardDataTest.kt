@@ -38,10 +38,7 @@ class RouteCardDataTest {
                 GlobalResponse(
                     objects,
                     patternIdsByStop =
-                        mapOf(
-                            stop1.id to listOf(route1rp1.id),
-                            stop2.id to listOf(route1rp1.id),
-                        ),
+                        mapOf(stop1.id to listOf(route1rp1.id), stop2.id to listOf(route1rp1.id)),
                 )
             val nearby = NearbyResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
@@ -70,7 +67,7 @@ class RouteCardDataTest {
                                                 )
                                         ),
                                         context,
-                                        global
+                                        global,
                                     )
                             ),
                             context,
@@ -79,7 +76,7 @@ class RouteCardDataTest {
                 ),
                 RouteCardData.ListBuilder(false, context, now)
                     .addStaticStopsData(nearby.stopIds, global)
-                    .data
+                    .data,
             )
         }
 
@@ -144,7 +141,7 @@ class RouteCardDataTest {
                                                 )
                                         ),
                                         context,
-                                        global
+                                        global,
                                     ),
                                 stop2.id to
                                     RouteCardData.RouteStopDataBuilder(
@@ -164,16 +161,16 @@ class RouteCardDataTest {
                                                 )
                                         ),
                                         context,
-                                        global
-                                    )
+                                        global,
+                                    ),
                             ),
                             context,
-                            now
+                            now,
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, now)
                     .addStaticStopsData(nearby.stopIds, global)
-                    .data
+                    .data,
             )
         }
 
@@ -205,9 +202,7 @@ class RouteCardDataTest {
             GlobalResponse(
                 objects,
                 patternIdsByStop =
-                    mapOf(
-                        stop1.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id),
-                    ),
+                    mapOf(stop1.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id)),
             )
         val nearby = NearbyResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
@@ -242,19 +237,19 @@ class RouteCardDataTest {
                                                 routePatterns = listOf(route1rp3),
                                                 stopIds = setOf(stop1.id),
                                                 allDataLoaded = false,
-                                            )
+                                            ),
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                         ),
                         context,
-                        now
+                        now,
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(nearby.stopIds, global)
-                .data
+                .data,
         )
     }
 
@@ -312,11 +307,11 @@ class RouteCardDataTest {
                                                 )
                                         ),
                                         context,
-                                        global
-                                    ),
+                                        global,
+                                    )
                             ),
                             context,
-                            now
+                            now,
                         ),
                     route2.id to
                         RouteCardData.Builder(
@@ -338,16 +333,16 @@ class RouteCardDataTest {
                                                 )
                                         ),
                                         context,
-                                        global
+                                        global,
                                     )
                             ),
                             context,
-                            now
-                        )
+                            now,
+                        ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
                     .addStaticStopsData(nearby.stopIds, global)
-                    .data
+                    .data,
             )
         }
 
@@ -424,13 +419,13 @@ class RouteCardDataTest {
                                                     setOf(
                                                         station1.id,
                                                         station1stop1.id,
-                                                        station1stop2.id
+                                                        station1stop2.id,
                                                     ),
                                                 allDataLoaded = false,
                                             )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 ),
                             stop2.id to
                                 RouteCardData.RouteStopDataBuilder(
@@ -448,16 +443,16 @@ class RouteCardDataTest {
                                             )
                                     ),
                                     context,
-                                    global
-                                )
+                                    global,
+                                ),
                         ),
                         context,
-                        now
-                    ),
+                        now,
+                    )
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(nearby.stopIds, global)
-                .data
+                .data,
         )
     }
 
@@ -486,13 +481,7 @@ class RouteCardDataTest {
         val global =
             GlobalResponse(
                 objects,
-                patternIdsByStop =
-                    mapOf(
-                        logicalPlatform.id to
-                            listOf(
-                                routePattern.id,
-                            ),
-                    ),
+                patternIdsByStop = mapOf(logicalPlatform.id to listOf(routePattern.id)),
             )
         val nearby = NearbyResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
@@ -520,22 +509,22 @@ class RouteCardDataTest {
                                                     setOf(
                                                         parentStation.id,
                                                         logicalPlatform.id,
-                                                        physicalPlatform.id
+                                                        physicalPlatform.id,
                                                     ),
                                                 allDataLoaded = false,
                                             )
                                     ),
                                     context,
-                                    global
-                                ),
+                                    global,
+                                )
                         ),
                         context,
-                        now
-                    ),
+                        now,
+                    )
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(nearby.stopIds, global)
-                .data
+                .data,
         )
     }
 
@@ -609,11 +598,11 @@ class RouteCardDataTest {
                                                     allDataLoaded = false,
                                                 )
                                         ),
-                                        context
+                                        context,
                                     )
                             ),
                             context,
-                            now
+                            now,
                         ),
                     shuttleRoute.id to
                         RouteCardData.Builder(
@@ -631,20 +620,20 @@ class RouteCardDataTest {
                                                     directionId = 0,
                                                     routePatterns = listOf(shuttlePattern),
                                                     stopIds = setOf(stop.id),
-                                                    allDataLoaded = false
+                                                    allDataLoaded = false,
                                                 )
                                         ),
                                         context,
-                                        global
+                                        global,
                                     )
                             ),
                             context,
-                            now
-                        )
+                            now,
+                        ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
                     .addStaticStopsData(nearby.stopIds, global)
-                    .data
+                    .data,
             )
         }
 
@@ -700,7 +689,7 @@ class RouteCardDataTest {
                         eastPlatform.id to listOf(bEastPattern.id, cEastPattern.id),
                         bWestPlatform.id to listOf(bWestPattern.id),
                         cWestPlatform.id to listOf(cWestPattern.id),
-                        dWestPlatform.id to listOf(dWestPattern.id)
+                        dWestPlatform.id to listOf(dWestPattern.id),
                     ),
             )
         val nearby = NearbyResponse(objects)
@@ -729,7 +718,7 @@ class RouteCardDataTest {
                                                     listOf(
                                                         bWestPattern,
                                                         cWestPattern,
-                                                        dWestPattern
+                                                        dWestPattern,
                                                     ),
                                                 stopIds =
                                                     setOf(
@@ -737,7 +726,7 @@ class RouteCardDataTest {
                                                         eastPlatform.id,
                                                         bWestPlatform.id,
                                                         cWestPlatform.id,
-                                                        dWestPlatform.id
+                                                        dWestPlatform.id,
                                                     ),
                                                 allDataLoaded = false,
                                             ),
@@ -753,22 +742,22 @@ class RouteCardDataTest {
                                                         eastPlatform.id,
                                                         bWestPlatform.id,
                                                         cWestPlatform.id,
-                                                        dWestPlatform.id
+                                                        dWestPlatform.id,
                                                     ),
                                                 allDataLoaded = false,
-                                            )
+                                            ),
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                         ),
                         context,
-                        now
-                    ),
+                        now,
+                    )
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(nearby.stopIds, global)
-                .data
+                .data,
         )
     }
 
@@ -870,7 +859,7 @@ class RouteCardDataTest {
                                 stop4.id,
                                 stopGov.id,
                                 stopHaymarket.id,
-                                stop5.id
+                                stop5.id,
                             )
                     }
                     id = "routeCrp3"
@@ -889,7 +878,7 @@ class RouteCardDataTest {
                                 stopGov.id,
                                 stop4.id,
                                 stopArlington.id,
-                                stop3.id
+                                stop3.id,
                             )
                     }
                     id = "routeDrp1"
@@ -908,7 +897,7 @@ class RouteCardDataTest {
                                 stop4.id,
                                 stopGov.id,
                                 stopHaymarket.id,
-                                stop5.id
+                                stop5.id,
                             )
                     }
                     id = "routeDrp2"
@@ -957,22 +946,22 @@ class RouteCardDataTest {
                                                             routeBrp2,
                                                             routeCrp2,
                                                             routeCrp3,
-                                                            routeDrp2
+                                                            routeDrp2,
                                                         ),
                                                     stopIds = setOf(stopGov.id),
                                                     allDataLoaded = false,
-                                                )
+                                                ),
                                         ),
-                                        context
+                                        context,
                                     )
                             ),
                             context,
-                            now
+                            now,
                         )
                 ),
                 RouteCardData.ListBuilder(false, context, now)
                     .addStaticStopsData(nearby.stopIds, global)
-                    .data
+                    .data,
             )
         }
 
@@ -1011,8 +1000,8 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(
                             stop1.id to listOf(pattern1.id, pattern2.id),
-                            stop2.id to listOf(pattern3.id)
-                        )
+                            stop2.id to listOf(pattern3.id),
+                        ),
                 )
             val context = RouteCardData.Context.NearbyTransit
             val time = Instant.parse("2024-02-21T09:30:08-05:00")
@@ -1079,13 +1068,13 @@ class RouteCardDataTest {
                                                             ),
                                                             objects.upcomingTrip(
                                                                 stop1Pattern1Prediction
-                                                            )
+                                                            ),
                                                         ),
-                                                    allDataLoaded = false
+                                                    allDataLoaded = false,
                                                 )
                                         ),
                                         context,
-                                        global
+                                        global,
                                     ),
                                 stop2.id to
                                     RouteCardData.RouteStopDataBuilder(
@@ -1108,15 +1097,15 @@ class RouteCardDataTest {
                                                                 stop2Pattern3Prediction
                                                             ),
                                                         ),
-                                                    allDataLoaded = false
+                                                    allDataLoaded = false,
                                                 )
                                         ),
                                         context,
-                                        global
-                                    )
+                                        global,
+                                    ),
                             ),
                             context,
-                            time
+                            time,
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, time)
@@ -1125,9 +1114,9 @@ class RouteCardDataTest {
                         null,
                         PredictionsStreamDataResponse(objects),
                         filterAtTime = time,
-                        globalData = global
+                        globalData = global,
                     )
-                    .data
+                    .data,
             )
         }
 
@@ -1164,8 +1153,8 @@ class RouteCardDataTest {
                     mapOf(
                         stop1.id to listOf(pattern1.id),
                         stop2.id to listOf(pattern2.id),
-                        stop3.id to listOf(pattern3.id)
-                    )
+                        stop3.id to listOf(pattern3.id),
+                    ),
             )
         val context = RouteCardData.Context.NearbyTransit
         val now = Clock.System.now()
@@ -1205,11 +1194,11 @@ class RouteCardDataTest {
                                                     listOf(objects.upcomingTrip(futureSchedule)),
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
-                                                    mapOf(pattern1.id to true)
+                                                    mapOf(pattern1.id to true),
                                             )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 ),
                             stop2.id to
                                 RouteCardData.RouteStopDataBuilder(
@@ -1226,11 +1215,11 @@ class RouteCardDataTest {
                                                 upcomingTrips = null,
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
-                                                    mapOf(pattern2.id to true)
+                                                    mapOf(pattern2.id to true),
                                             )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 ),
                             stop3.id to
                                 RouteCardData.RouteStopDataBuilder(
@@ -1247,15 +1236,15 @@ class RouteCardDataTest {
                                                 upcomingTrips = null,
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
-                                                    mapOf(pattern3.id to false)
+                                                    mapOf(pattern3.id to false),
                                             )
                                     ),
                                     context,
-                                    global
-                                )
+                                    global,
+                                ),
                         ),
                         context,
-                        now
+                        now,
                     )
             ),
             RouteCardData.ListBuilder(true, context, now)
@@ -1264,9 +1253,9 @@ class RouteCardDataTest {
                     ScheduleResponse(objects),
                     PredictionsStreamDataResponse(objects),
                     filterAtTime = now,
-                    globalData = global
+                    globalData = global,
                 )
-                .data
+                .data,
         )
     }
 
@@ -1329,15 +1318,15 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     )
                                 ),
                                 context,
-                                global
+                                global,
                             )
                         ),
                     context,
-                    time
+                    time,
                 ),
                 RouteCardData(
                     lineOrRoute = busLineOrRoute,
@@ -1357,16 +1346,16 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     )
                                 ),
                                 context,
-                                global
+                                global,
                             )
                         ),
                     context,
-                    time
-                )
+                    time,
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 listOf(busStop.id, subwayStop.id),
@@ -1377,8 +1366,8 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(objects),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -1441,15 +1430,15 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     ),
                     RouteCardData(
                         lineOrRoute = subwayLineOrRoute1,
@@ -1469,16 +1458,16 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
-                    )
+                        time,
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     nearby.stopIds,
@@ -1489,8 +1478,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -1591,8 +1580,8 @@ class RouteCardDataTest {
                         farBusStop.id to listOf(farBusPattern.id),
                         closeBusStop.id to listOf(closeBusPattern.id),
                         farSubwayStop.id to listOf(farSubwayPattern.id),
-                        closeSubwayStop.id to listOf(closeSubwayPattern.id)
-                    )
+                        closeSubwayStop.id to listOf(closeSubwayPattern.id),
+                    ),
             )
 
         val routeCardsSorted =
@@ -1605,7 +1594,7 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(objects),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = RouteCardData.Context.NearbyTransit
+                context = RouteCardData.Context.NearbyTransit,
             )
 
         assertEquals(
@@ -1615,7 +1604,7 @@ class RouteCardDataTest {
                     is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes.toList()
                     is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
                 }
-            }
+            },
         )
     }
 
@@ -1712,8 +1701,8 @@ class RouteCardDataTest {
                         farBusStop.id to listOf(farBusPattern.id),
                         closeBusStop.id to listOf(closeBusPattern.id),
                         farSubwayStop.id to listOf(farSubwayPattern.id),
-                        closeSubwayStop.id to listOf(closeSubwayPattern.id)
-                    )
+                        closeSubwayStop.id to listOf(closeSubwayPattern.id),
+                    ),
             )
 
         val routeCardsSorted =
@@ -1726,7 +1715,7 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(objects),
                 now = time,
                 pinnedRoutes = setOf(farBusRoute.id, farSubwayRoute.id),
-                context = RouteCardData.Context.NearbyTransit
+                context = RouteCardData.Context.NearbyTransit,
             )
 
         assertEquals(
@@ -1736,7 +1725,7 @@ class RouteCardDataTest {
                     is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes.toList()
                     is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
                 }
-            }
+            },
         )
     }
 
@@ -1887,8 +1876,8 @@ class RouteCardDataTest {
                         closeBusStop.id to listOf(closeBusPattern.id),
                         farSubwayStop.id to listOf(farSubwayPattern.id),
                         midSubwayStop.id to listOf(midSubwayPattern.id),
-                        closeSubwayStop.id to listOf(closeSubwayPattern.id)
-                    )
+                        closeSubwayStop.id to listOf(closeSubwayPattern.id),
+                    ),
             )
 
         val routeCardsSorted =
@@ -1899,7 +1888,7 @@ class RouteCardDataTest {
                     midSubwayStop.id,
                     closeBusStop.id,
                     midBusStop.id,
-                    closeSubwayStop.id
+                    closeSubwayStop.id,
                 ),
                 global,
                 sortByDistanceFrom = closeBusStop.position,
@@ -1908,7 +1897,7 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(objects),
                 now = time,
                 pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
-                context = RouteCardData.Context.NearbyTransit
+                context = RouteCardData.Context.NearbyTransit,
             )
 
         // Routes with no service today should sort below all routes with any service today,
@@ -1925,14 +1914,14 @@ class RouteCardDataTest {
                 midBusRoute,
                 closeSubwayRoute,
                 closeBusRoute,
-                farBusRoute
+                farBusRoute,
             ),
             checkNotNull(routeCardsSorted).flatMap {
                 when (val lineOrRoute = it.lineOrRoute) {
                     is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
                     is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
                 }
-            }
+            },
         )
     }
 
@@ -2106,13 +2095,13 @@ class RouteCardDataTest {
                             midBusStop.id to
                                 listOf(
                                     allServiceEndedBusPattern.id,
-                                    partialServiceEndedBusPattern.id
+                                    partialServiceEndedBusPattern.id,
                                 ),
                             closeBusStop.id to listOf(allServiceEndedBusPattern.id),
                             farSubwayStop.id to listOf(predictedSubwayPattern.id),
                             midSubwayStop.id to listOf(predictedSubwayPattern.id),
-                            closeSubwayStop.id to listOf(scheduledSubwayPattern.id)
-                        )
+                            closeSubwayStop.id to listOf(scheduledSubwayPattern.id),
+                        ),
                 )
 
             val routeCardsSorted =
@@ -2123,7 +2112,7 @@ class RouteCardDataTest {
                         midSubwayStop.id,
                         closeBusStop.id,
                         midBusStop.id,
-                        closeSubwayStop.id
+                        closeSubwayStop.id,
                     ),
                     global,
                     sortByDistanceFrom = closeBusStop.position,
@@ -2132,7 +2121,7 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = emptySet(),
-                    context = RouteCardData.Context.NearbyTransit
+                    context = RouteCardData.Context.NearbyTransit,
                 )
 
             // Routes that have multiple variants where some nearby stops can have no more service
@@ -2144,21 +2133,21 @@ class RouteCardDataTest {
                     scheduledSubwayRoute,
                     predictedSubwayRoute,
                     predictedBusRoute,
-                    serviceEndedBusRoute
+                    serviceEndedBusRoute,
                 ),
                 checkNotNull(routeCardsSorted).flatMap {
                     when (val lineOrRoute = it.lineOrRoute) {
                         is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
                         is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
                     }
-                }
+                },
             )
 
             val partialServiceEndedRoute =
                 routeCardsSorted.find { it.lineOrRoute.sortRoute.id == predictedBusRoute.id }
             assertEquals(
                 listOf(farBusStop.id, midBusStop.id),
-                partialServiceEndedRoute?.stopData?.map { it.stop.id } ?: emptyList()
+                partialServiceEndedRoute?.stopData?.map { it.stop.id } ?: emptyList(),
             )
         }
 
@@ -2192,7 +2181,7 @@ class RouteCardDataTest {
                 GlobalResponse(
                     objects,
                     patternIdsByStop =
-                        mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id))
+                        mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
 
             val context = RouteCardData.Context.NearbyTransit
@@ -2232,20 +2221,20 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(typicalOutboundPrediction),
+                                                    objects.upcomingTrip(typicalOutboundPrediction)
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -2257,8 +2246,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -2299,7 +2288,7 @@ class RouteCardDataTest {
                 GlobalResponse(
                     objects,
                     patternIdsByStop =
-                        mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id))
+                        mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
             val context = RouteCardData.Context.NearbyTransit
             val time = Instant.parse("2024-02-22T12:08:19-05:00")
@@ -2346,12 +2335,12 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(typicalOutboundPrediction),
+                                                    objects.upcomingTrip(typicalOutboundPrediction)
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute1,
@@ -2371,15 +2360,15 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
-                                        )
+                                            alertsDownstream = emptyList(),
+                                        ),
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -2391,8 +2380,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -2429,8 +2418,8 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(
                             stop1.id to listOf(typicalOutbound.id),
-                            stop2.id to listOf(typicalOutbound.id, deviationOutbound.id)
-                        )
+                            stop2.id to listOf(typicalOutbound.id, deviationOutbound.id),
+                        ),
                 )
 
             val context = RouteCardData.Context.NearbyTransit
@@ -2472,20 +2461,20 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         typicalOutboundPredictionStop1
-                                                    ),
+                                                    )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -2497,8 +2486,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -2535,8 +2524,8 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(
                             stop1.id to listOf(typicalOutbound.id),
-                            stop2.id to listOf(typicalOutbound.id, deviationOutbound.id)
-                        )
+                            stop2.id to listOf(typicalOutbound.id, deviationOutbound.id),
+                        ),
                 )
 
             val context = RouteCardData.Context.NearbyTransit
@@ -2586,16 +2575,16 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         typicalOutboundPredictionStop1
-                                                    ),
+                                                    )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 ),
                                 RouteCardData.RouteStopData(
                                     route1,
@@ -2620,15 +2609,15 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
-                                )
+                                    global,
+                                ),
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -2640,8 +2629,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -2679,8 +2668,8 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(
                             stop1.id to listOf(deviationOutbound.id),
-                            stop2.id to listOf(typicalOutbound.id)
-                        )
+                            stop2.id to listOf(typicalOutbound.id),
+                        ),
                 )
 
             val context = RouteCardData.Context.NearbyTransit
@@ -2714,16 +2703,16 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         deviationOutboundPredictionStop1
-                                                    ),
+                                                    )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 ),
                                 RouteCardData.RouteStopData(
                                     route1,
@@ -2739,15 +2728,15 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
-                                )
+                                    global,
+                                ),
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -2759,8 +2748,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -2837,9 +2826,9 @@ class RouteCardDataTest {
                                     predictionPast.id,
                                     predictionBrd.id,
                                     predictionSoon.id,
-                                    predictionLater.id
+                                    predictionLater.id,
                                 )
-                        )
+                        ),
                 )
 
             val context = RouteCardData.Context.NearbyTransit
@@ -2915,21 +2904,19 @@ class RouteCardDataTest {
                                             routePatterns = listOf(scheduleSoon),
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
-                                                listOf(
-                                                    objects.upcomingTrip(scheduleSoonSchedule),
-                                                ),
+                                                listOf(objects.upcomingTrip(scheduleSoonSchedule)),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
-                                ),
+                                    global,
+                                )
                             ),
                         context,
-                        time
+                        time,
                     ),
                     RouteCardData(
                         lineOrRoute = lineOrRoute3,
@@ -2949,13 +2936,13 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = predictionBrdPrediction,
-                                                        vehicle = predictionBrdVehicle
-                                                    ),
+                                                        vehicle = predictionBrdVehicle,
+                                                    )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute3,
@@ -2965,21 +2952,21 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(predictionSoonPrediction),
+                                                    objects.upcomingTrip(predictionSoonPrediction)
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
-                                        )
+                                            alertsDownstream = emptyList(),
+                                        ),
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
-                    )
+                        time,
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop1.id),
@@ -2990,8 +2977,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -3024,7 +3011,7 @@ class RouteCardDataTest {
         val global =
             GlobalResponse(
                 objects,
-                patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id, atypicalInbound.id))
+                patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id, atypicalInbound.id)),
             )
 
         val context = RouteCardData.Context.NearbyTransit
@@ -3051,15 +3038,15 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     )
                                 ),
                                 context,
-                                global
-                            ),
+                                global,
+                            )
                         ),
                     context,
-                    time
+                    time,
                 )
             ),
             RouteCardData.routeCardsForStopList(
@@ -3071,8 +3058,8 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -3107,7 +3094,7 @@ class RouteCardDataTest {
                 GlobalResponse(
                     objects,
                     patternIdsByStop =
-                        mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id))
+                        mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
             val context = RouteCardData.Context.StopDetailsFiltered
             val time = Instant.parse("2024-02-22T12:08:19-05:00")
@@ -3152,7 +3139,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute1,
@@ -3167,15 +3154,15 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
-                                            alertsDownstream = emptyList()
-                                        )
+                                            alertsDownstream = emptyList(),
+                                        ),
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -3187,8 +3174,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -3211,7 +3198,7 @@ class RouteCardDataTest {
             val global =
                 GlobalResponse(
                     objects,
-                    patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id))
+                    patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id)),
                 )
             val context = RouteCardData.Context.StopDetailsFiltered
             val time = Instant.parse("2024-02-22T12:08:19-05:00")
@@ -3255,21 +3242,21 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = typicalOutboundPrediction,
-                                                        schedule = typicalOutboundSchedule
+                                                        schedule = typicalOutboundSchedule,
                                                     )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -3281,8 +3268,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -3332,15 +3319,15 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     )
                                 ),
                                 context,
-                                global
+                                global,
                             )
                         ),
                     context,
-                    time
+                    time,
                 )
             ),
             RouteCardData.routeCardsForStopList(
@@ -3352,8 +3339,8 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(objects),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -3410,25 +3397,25 @@ class RouteCardDataTest {
                                             listOf(
                                                 objects.upcomingTrip(
                                                     prediction = pred1,
-                                                    schedule = sched1
+                                                    schedule = sched1,
                                                 ),
                                                 objects.upcomingTrip(
                                                     prediction = pred2,
-                                                    schedule = sched2
-                                                )
+                                                    schedule = sched2,
+                                                ),
                                             ),
                                         alertsHere = emptyList(),
                                         allDataLoaded = true,
                                         hasSchedulesToday = true,
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     )
                                 ),
                                 context,
-                                global
+                                global,
                             )
                         ),
                     context,
-                    time
+                    time,
                 )
             ),
             RouteCardData.routeCardsForStopList(
@@ -3440,8 +3427,8 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(objects),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -3509,18 +3496,18 @@ class RouteCardDataTest {
                                             mapOf(
                                                 routePatternA.id to true,
                                                 routePatternB.id to false,
-                                                routePatternC.id to false
+                                                routePatternC.id to false,
                                             ),
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     )
                                 ),
                                 context = RouteCardData.Context.NearbyTransit,
-                                globalData = GlobalResponse(objects)
+                                globalData = GlobalResponse(objects),
                             )
                         ),
                         RouteCardData.Context.NearbyTransit,
-                        time
-                    ),
+                        time,
+                    )
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop.id),
@@ -3531,8 +3518,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     pinnedRoutes = setOf(),
                     now = time,
-                    context = RouteCardData.Context.NearbyTransit
-                )
+                    context = RouteCardData.Context.NearbyTransit,
+                ),
             )
         }
 
@@ -3558,7 +3545,7 @@ class RouteCardDataTest {
             val global =
                 GlobalResponse(
                     objects,
-                    patternIdsByStop = mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                    patternIdsByStop = mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)),
                 )
             val context = RouteCardData.Context.NearbyTransit
             val time = Instant.parse("2024-03-18T10:41:13-04:00")
@@ -3611,21 +3598,21 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = pred1,
-                                                        schedule = sched1
+                                                        schedule = sched1,
                                                     )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     ),
                     RouteCardData(
                         lineOrRoute = lineOrRoute2,
@@ -3645,26 +3632,26 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = pred2,
-                                                        schedule = sched2
+                                                        schedule = sched2,
                                                     ),
                                                     objects.upcomingTrip(
                                                         prediction = pred3,
-                                                        schedule = sched3
-                                                    )
+                                                        schedule = sched3,
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
-                    )
+                        time,
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop.id),
@@ -3675,8 +3662,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -3777,7 +3764,7 @@ class RouteCardDataTest {
                             boylston.id,
                             arlington.id,
                             hynes.id,
-                            heath.id
+                            heath.id,
                         )
                 }
                 directionId = 0
@@ -3795,7 +3782,7 @@ class RouteCardDataTest {
                             boylston.id,
                             gov.id,
                             haymarket.id,
-                            magoun.id
+                            magoun.id,
                         )
                 }
                 directionId = 1
@@ -3871,9 +3858,9 @@ class RouteCardDataTest {
                                 routePatternC1.id,
                                 routePatternC2.id,
                                 routePatternE1.id,
-                                routePatternE2.id
+                                routePatternE2.id,
                             )
-                    )
+                    ),
             )
         val context = RouteCardData.Context.NearbyTransit
 
@@ -3900,16 +3887,16 @@ class RouteCardDataTest {
                                             listOf(
                                                 objects.upcomingTrip(
                                                     prediction = predB1,
-                                                    schedule = schedB1
+                                                    schedule = schedB1,
                                                 ),
                                                 objects.upcomingTrip(
                                                     prediction = predC1,
-                                                    schedule = schedC1
+                                                    schedule = schedC1,
                                                 ),
                                                 objects.upcomingTrip(
                                                     prediction = predE1,
-                                                    schedule = schedE1
-                                                )
+                                                    schedule = schedE1,
+                                                ),
                                             ),
                                         alertsHere = emptyList(),
                                         allDataLoaded = true,
@@ -3917,9 +3904,9 @@ class RouteCardDataTest {
                                             mapOf(
                                                 routePatternB1.id to true,
                                                 routePatternC1.id to true,
-                                                routePatternE1.id to true
+                                                routePatternE1.id to true,
                                             ),
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     ),
                                     RouteCardData.Leaf(
                                         lineOrRoute = lineOrRoute,
@@ -3932,16 +3919,16 @@ class RouteCardDataTest {
                                             listOf(
                                                 objects.upcomingTrip(
                                                     prediction = predB2,
-                                                    schedule = schedB2
+                                                    schedule = schedB2,
                                                 ),
                                                 objects.upcomingTrip(
                                                     prediction = predC2,
-                                                    schedule = schedC2
+                                                    schedule = schedC2,
                                                 ),
                                                 objects.upcomingTrip(
                                                     prediction = predE2,
-                                                    schedule = schedE2
-                                                )
+                                                    schedule = schedE2,
+                                                ),
                                             ),
                                         alertsHere = emptyList(),
                                         allDataLoaded = true,
@@ -3949,16 +3936,16 @@ class RouteCardDataTest {
                                             mapOf(
                                                 routePatternB2.id to true,
                                                 routePatternC2.id to true,
-                                                routePatternE2.id to true
+                                                routePatternE2.id to true,
                                             ),
-                                        alertsDownstream = emptyList()
-                                    )
+                                        alertsDownstream = emptyList(),
+                                    ),
                                 ),
-                                context
+                                context,
                             )
                         ),
                     context,
-                    time
+                    time,
                 )
             )
 
@@ -3973,8 +3960,8 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(emptyMap()),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -4048,7 +4035,7 @@ class RouteCardDataTest {
                 GlobalResponse(
                     objects,
                     patternIdsByStop =
-                        mapOf(southSt.id to listOf(routePatternB1.id, routePatternB2.id))
+                        mapOf(southSt.id to listOf(routePatternB1.id, routePatternB2.id)),
                 )
             val context = RouteCardData.Context.NearbyTransit
 
@@ -4074,13 +4061,13 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = predB1,
-                                                        schedule = schedB1
-                                                    ),
+                                                        schedule = schedB1,
+                                                    )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute,
@@ -4092,20 +4079,20 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = predB2,
-                                                        schedule = schedB2
+                                                        schedule = schedB2,
                                                     )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
-                                        )
+                                            alertsDownstream = emptyList(),
+                                        ),
                                     ),
-                                    context
+                                    context,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 )
 
@@ -4120,8 +4107,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -4157,7 +4144,7 @@ class RouteCardDataTest {
             val global =
                 GlobalResponse(
                     objects,
-                    patternIdsByStop = mapOf(stop.id to listOf(routePattern1.id))
+                    patternIdsByStop = mapOf(stop.id to listOf(routePattern1.id)),
                 )
             val context = RouteCardData.Context.NearbyTransit
 
@@ -4175,13 +4162,13 @@ class RouteCardDataTest {
                                         Direction(
                                             id = 0,
                                             name = "Direction 0",
-                                            destination = "Direction 0 destination"
+                                            destination = "Direction 0 destination",
                                         ),
                                         Direction(
                                             id = 1,
                                             name = "Direction 1",
-                                            destination = "Direction 1 destination"
-                                        )
+                                            destination = "Direction 1 destination",
+                                        ),
                                     ),
                                     listOf(
                                         RouteCardData.Leaf(
@@ -4194,20 +4181,20 @@ class RouteCardDataTest {
                                                 listOf(
                                                     objects.upcomingTrip(
                                                         prediction = pred1,
-                                                        schedule = sched1
+                                                        schedule = sched1,
                                                     )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
-                                    context
+                                    context,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -4219,8 +4206,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -4373,7 +4360,7 @@ class RouteCardDataTest {
                 id = "601685"
                 activePeriod(
                     Instant.parse("2024-10-28T03:00:00-04:00"),
-                    Instant.parse("2024-11-02T03:00:00-04:00")
+                    Instant.parse("2024-11-02T03:00:00-04:00"),
                 )
                 cause = Alert.Cause.Maintenance
                 effect = Alert.Effect.Shuttle
@@ -4384,55 +4371,55 @@ class RouteCardDataTest {
                             activities =
                                 listOf(
                                     Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride
+                                    Alert.InformedEntity.Activity.Ride,
                                 ),
                             route = orangeRoute.id,
                             routeType = RouteType.HEAVY_RAIL,
-                            stop = northStationSouthboundPlatform.id
+                            stop = northStationSouthboundPlatform.id,
                         ),
                         Alert.InformedEntity(
                             activities =
                                 listOf(
                                     Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Ride
+                                    Alert.InformedEntity.Activity.Ride,
                                 ),
                             route = orangeRoute.id,
                             routeType = RouteType.HEAVY_RAIL,
-                            stop = northStationNorthboundPlatform.id
-                        ),
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride
-                                ),
-                            route = orangeRoute.id,
-                            routeType = RouteType.HEAVY_RAIL,
-                            stop = northStation.id
+                            stop = northStationNorthboundPlatform.id,
                         ),
                         Alert.InformedEntity(
                             activities =
                                 listOf(
                                     Alert.InformedEntity.Activity.Board,
                                     Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride
+                                    Alert.InformedEntity.Activity.Ride,
                                 ),
                             route = orangeRoute.id,
                             routeType = RouteType.HEAVY_RAIL,
-                            stop = oakGrove.id
+                            stop = northStation.id,
                         ),
                         Alert.InformedEntity(
                             activities =
                                 listOf(
                                     Alert.InformedEntity.Activity.Board,
                                     Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride
+                                    Alert.InformedEntity.Activity.Ride,
                                 ),
                             route = orangeRoute.id,
                             routeType = RouteType.HEAVY_RAIL,
-                            stop = oakGrovePlatform.id
-                        )
+                            stop = oakGrove.id,
+                        ),
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                            route = orangeRoute.id,
+                            routeType = RouteType.HEAVY_RAIL,
+                            stop = oakGrovePlatform.id,
+                        ),
                     )
             }
 
@@ -4457,17 +4444,14 @@ class RouteCardDataTest {
                                         routePatterns =
                                             listOf(
                                                 orangeSouthboundTypical,
-                                                orangeSouthboundDiversion
+                                                orangeSouthboundDiversion,
                                             ),
-                                        stopIds =
-                                            setOf(
-                                                northStationSouthboundPlatform.id,
-                                            ),
+                                        stopIds = setOf(northStationSouthboundPlatform.id),
                                         upcomingTrips =
                                             listOf(
                                                 UpcomingTrip(
                                                     trip = orangeSouthboundDiversionTrip,
-                                                    schedule = southboundSchedule
+                                                    schedule = southboundSchedule,
                                                 )
                                             ),
                                         alertsHere = emptyList(),
@@ -4475,9 +4459,9 @@ class RouteCardDataTest {
                                         hasSchedulesTodayByPattern =
                                             mapOf(
                                                 orangeSouthboundDiversion.id to true,
-                                                orangeSouthboundTypical.id to false
+                                                orangeSouthboundTypical.id to false,
                                             ),
-                                        alertsDownstream = emptyList()
+                                        alertsDownstream = emptyList(),
                                     ),
                                     RouteCardData.Leaf(
                                         lineOrRoute = orangeLineOrRoute,
@@ -4486,7 +4470,7 @@ class RouteCardDataTest {
                                         routePatterns =
                                             listOf(
                                                 orangeNorthboundTypical,
-                                                orangeNorthboundDiversion
+                                                orangeNorthboundDiversion,
                                             ),
                                         stopIds = setOf(northStationNorthboundPlatform.id),
                                         upcomingTrips = listOf(),
@@ -4495,24 +4479,24 @@ class RouteCardDataTest {
                                         hasSchedulesTodayByPattern =
                                             mapOf(
                                                 orangeNorthboundDiversion.id to true,
-                                                orangeNorthboundTypical.id to false
+                                                orangeNorthboundTypical.id to false,
                                             ),
-                                        alertsDownstream = emptyList()
-                                    )
+                                        alertsDownstream = emptyList(),
+                                    ),
                                 ),
                                 context,
-                                global
+                                global,
                             )
                         ),
                     context,
-                    time
+                    time,
                 )
             ),
             RouteCardData.routeCardsForStopList(
                 listOf(
                     northStation.id,
                     northStationSouthboundPlatform.id,
-                    northStationNorthboundPlatform.id
+                    northStationNorthboundPlatform.id,
                 ),
                 globalData = global,
                 sortByDistanceFrom = northStation.position,
@@ -4521,8 +4505,8 @@ class RouteCardDataTest {
                 alerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
                 now = time,
                 pinnedRoutes = setOf(),
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -4572,7 +4556,7 @@ class RouteCardDataTest {
                         mapOf(
                             oakGrove.id to
                                 listOf(orangeSouthboundTypical.id, orangeNorthboundTypical.id)
-                        )
+                        ),
                 )
             val context = RouteCardData.Context.NearbyTransit
             val time = Instant.parse("2024-10-30T16:40:00-04:00")
@@ -4617,21 +4601,21 @@ class RouteCardDataTest {
                                                 listOf(
                                                     UpcomingTrip(
                                                         trip = orangeSouthboundTypicalTrip,
-                                                        schedule = sched1
+                                                        schedule = sched1,
                                                     )
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -4643,8 +4627,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -4695,7 +4679,7 @@ class RouteCardDataTest {
                         mapOf(
                             longWharf.id to
                                 listOf(ferryInboundToLongWharf.id, ferryOutboundToHingham.id)
-                        )
+                        ),
                 )
             val context = RouteCardData.Context.NearbyTransit
             val time = Instant.parse("2024-10-30T16:40:00-04:00")
@@ -4741,15 +4725,15 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -4761,8 +4745,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -4825,10 +4809,10 @@ class RouteCardDataTest {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = shawmut.id
+                        stop = shawmut.id,
                     )
                 }
 
@@ -4839,10 +4823,10 @@ class RouteCardDataTest {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = ashmont.id
+                        stop = ashmont.id,
                     )
                 }
 
@@ -4854,10 +4838,10 @@ class RouteCardDataTest {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = park.id
+                        stop = park.id,
                     )
                 }
 
@@ -4869,14 +4853,14 @@ class RouteCardDataTest {
                     informedEntity(
                         listOf(Alert.InformedEntity.Activity.UsingWheelchair),
                         route = route.id,
-                        stop = park.id
+                        stop = park.id,
                     )
                 }
 
             val global =
                 GlobalResponse(
                     objects,
-                    mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
+                    mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id))),
                 )
             val southboundDownstreamAlerts =
                 Alert.alertsDownstreamForPatterns(
@@ -4885,11 +4869,11 @@ class RouteCardDataTest {
                             ashmontShuttleAlert,
                             shawmutShuttleAlert,
                             parkShuttleAlert,
-                            parkElevatorAlert
+                            parkElevatorAlert,
                         ),
                     patterns = listOf(routePatternAshmont, routePatternBraintree),
                     targetStopWithChildren = setOf(park.id),
-                    tripsById = global.trips
+                    tripsById = global.trips,
                 )
             val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
             assertEquals(
@@ -4916,17 +4900,17 @@ class RouteCardDataTest {
                                             hasSchedulesTodayByPattern =
                                                 mapOf(
                                                     routePatternAshmont.id to true,
-                                                    routePatternBraintree.id to true
+                                                    routePatternBraintree.id to true,
                                                 ),
-                                            alertsDownstream = southboundDownstreamAlerts
+                                            alertsDownstream = southboundDownstreamAlerts,
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -4938,8 +4922,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 
@@ -4981,10 +4965,10 @@ class RouteCardDataTest {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = southStation.id
+                        stop = southStation.id,
                     )
                 }
 
@@ -4995,10 +4979,10 @@ class RouteCardDataTest {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = providence.id
+                        stop = providence.id,
                     )
                 }
 
@@ -5007,8 +4991,8 @@ class RouteCardDataTest {
                     objects,
                     mapOf(
                         Pair(southStation.id, listOf(routePatternPvd.id)),
-                        Pair(providence.id, listOf(routePatternPvd.id))
-                    )
+                        Pair(providence.id, listOf(routePatternPvd.id)),
+                    ),
                 )
 
             val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
@@ -5033,15 +5017,15 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesTodayByPattern =
                                                 mapOf(routePatternPvd.id to true),
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -5053,8 +5037,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
 
             assertEquals(
@@ -5078,15 +5062,15 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesTodayByPattern =
                                                 mapOf(routePatternPvd.id to true),
-                                            alertsDownstream = emptyList()
+                                            alertsDownstream = emptyList(),
                                         )
                                     ),
                                     context,
-                                    global
+                                    global,
                                 )
                             ),
                         context,
-                        time
+                        time,
                     )
                 ),
                 RouteCardData.routeCardsForStopList(
@@ -5098,8 +5082,8 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(objects),
                     now = time,
                     pinnedRoutes = setOf(),
-                    context = context
-                )
+                    context = context,
+                ),
             )
         }
 }

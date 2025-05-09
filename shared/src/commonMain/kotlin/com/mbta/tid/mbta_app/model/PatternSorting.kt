@@ -27,7 +27,7 @@ object PatternSorting {
 
     fun compareRouteCards(
         pinnedRoutes: Set<String>,
-        sortByDistanceFrom: Position?
+        sortByDistanceFrom: Position?,
     ): Comparator<RouteCardData> =
         compareBy(
             { pinnedRouteBucket(it.lineOrRoute.sortRoute, pinnedRoutes) },
@@ -50,7 +50,7 @@ object PatternSorting {
                 { it.stop.distanceFrom(sortByDistanceFrom) }
             } else {
                 { 0 }
-            }
+            },
         )
 
     fun compareLeavesAtStop(): Comparator<RouteCardData.Leaf> =

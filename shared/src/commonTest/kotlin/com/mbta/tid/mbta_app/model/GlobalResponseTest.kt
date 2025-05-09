@@ -24,25 +24,25 @@ class GlobalResponseTest {
             objects.alert {
                 activePeriod(
                     Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00")
+                    Instant.parse("2024-03-22T02:30:00-04:00"),
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
 
         val globalResponse =
             GlobalResponse(
                 objects = objects,
-                patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id)))
+                patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id))),
             )
         val alertsByStop =
             GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
@@ -65,25 +65,25 @@ class GlobalResponseTest {
         objects.alert {
             activePeriod(
                 Instant.parse("2024-03-18T04:30:00-04:00"),
-                Instant.parse("2024-03-22T02:30:00-04:00")
+                Instant.parse("2024-03-22T02:30:00-04:00"),
             )
             effect = Alert.Effect.Suspension
             informedEntity(
                 listOf(
                     Alert.InformedEntity.Activity.Board,
                     Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride
+                    Alert.InformedEntity.Activity.Ride,
                 ),
                 route = route.id,
                 routeType = route.type,
-                stop = "different stop"
+                stop = "different stop",
             )
         }
 
         val globalResponse =
             GlobalResponse(
                 objects = objects,
-                patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id)))
+                patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id))),
             )
         val alertsByStop =
             GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
@@ -114,25 +114,25 @@ class GlobalResponseTest {
             objects.alert {
                 activePeriod(
                     Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00")
+                    Instant.parse("2024-03-22T02:30:00-04:00"),
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = childStop.id
+                    stop = childStop.id,
                 )
             }
 
         val globalResponse =
             GlobalResponse(
                 objects = objects,
-                patternIdsByStop = mapOf(Pair(childStop.id, listOf(routePattern.id)))
+                patternIdsByStop = mapOf(Pair(childStop.id, listOf(routePattern.id))),
             )
         val alertsByStop =
             GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
@@ -177,32 +177,32 @@ class GlobalResponseTest {
             objects.alert {
                 activePeriod(
                     Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00")
+                    Instant.parse("2024-03-22T02:30:00-04:00"),
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = childStop1.id
+                    stop = childStop1.id,
                 )
             }
         val alert2 =
             objects.alert {
                 activePeriod(
                     Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00")
+                    Instant.parse("2024-03-22T02:30:00-04:00"),
                 )
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
                     listOf(),
                     route = route.id,
                     routeType = route.type,
-                    stop = childStop2.id
+                    stop = childStop2.id,
                 )
             }
 
@@ -212,8 +212,8 @@ class GlobalResponseTest {
                 patternIdsByStop =
                     mapOf(
                         Pair(childStop1.id, listOf(routePattern1.id)),
-                        Pair(childStop2.id, listOf(routePattern2.id))
-                    )
+                        Pair(childStop2.id, listOf(routePattern2.id)),
+                    ),
             )
         val alertsByStop =
             GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
@@ -286,60 +286,60 @@ class GlobalResponseTest {
         objects.alert {
             activePeriod(
                 Instant.parse("2024-03-18T04:30:00-04:00"),
-                Instant.parse("2024-03-22T02:30:00-04:00")
+                Instant.parse("2024-03-22T02:30:00-04:00"),
             )
             effect = Alert.Effect.Suspension
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
                 route = route.id,
                 routeType = route.type,
-                stop = child1Stop.id
+                stop = child1Stop.id,
             )
             informedEntity(
                 listOf(
                     Alert.InformedEntity.Activity.Board,
                     Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride
+                    Alert.InformedEntity.Activity.Ride,
                 ),
                 route = route.id,
                 routeType = route.type,
-                stop = parent1Stop.id
+                stop = parent1Stop.id,
             )
             informedEntity(
                 listOf(
                     Alert.InformedEntity.Activity.Board,
                     Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride
+                    Alert.InformedEntity.Activity.Ride,
                 ),
                 route = route.id,
                 routeType = route.type,
-                stop = parent2Stop.id
+                stop = parent2Stop.id,
             )
             informedEntity(
                 listOf(
                     Alert.InformedEntity.Activity.Board,
                     Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride
+                    Alert.InformedEntity.Activity.Ride,
                 ),
                 route = route.id,
                 routeType = route.type,
-                stop = child2Stop.id
+                stop = child2Stop.id,
             )
             informedEntity(
                 listOf(
                     Alert.InformedEntity.Activity.Board,
                     Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride
+                    Alert.InformedEntity.Activity.Ride,
                 ),
                 route = route.id,
                 routeType = route.type,
-                stop = parent3Stop.id
+                stop = parent3Stop.id,
             )
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                 route = route.id,
                 routeType = route.type,
-                stop = child3Stop.id
+                stop = child3Stop.id,
             )
         }
 
@@ -351,7 +351,7 @@ class GlobalResponseTest {
                         Pair(child1Stop.id, listOf(routePattern.id)),
                         Pair(child2Stop.id, listOf(routePattern.id)),
                         Pair(child3Stop.id, listOf(routePattern.id)),
-                    )
+                    ),
             )
         val alertsByStop =
             GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)

@@ -30,14 +30,13 @@ data class GlobalResponse(
             .flatMap {
                 objects.trips[it.value.representativeTripId]?.stopIds?.map { stopId ->
                     stopId to it.key
-                }
-                    ?: emptyList()
+                } ?: emptyList()
             }
             .groupBy({ it.first }, { it.second }),
         objects.routes,
         objects.routePatterns,
         objects.stops,
-        objects.trips
+        objects.trips,
     )
 
     constructor(
@@ -49,7 +48,7 @@ data class GlobalResponse(
         objects.routes,
         objects.routePatterns,
         objects.stops,
-        objects.trips
+        objects.trips,
     )
 
     @Transient

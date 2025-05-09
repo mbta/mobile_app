@@ -38,7 +38,7 @@ enum class AlertCardSpec {
     Downstream,
     Secondary,
     Elevator,
-    Delay
+    Delay,
 }
 
 @Composable
@@ -73,11 +73,11 @@ fun AlertCard(
                 .padding(horizontal = 12.dp, vertical = 10.dp)
                 .padding(interiorPadding),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             AlertIcon(
                 alertState = alert.alertState,
@@ -85,13 +85,13 @@ fun AlertCard(
                 modifier =
                     Modifier.clearAndSetSemantics {}
                         .size(iconSize)
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically),
             )
             Text(
                 formattedAlert.alertCardHeader(spec),
                 Modifier.weight(1f),
                 style =
-                    if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.callout
+                    if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.callout,
             )
             if (spec != AlertCardSpec.Major) {
                 InfoCircle()
@@ -106,13 +106,13 @@ fun AlertCard(
                     it,
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonColors(color, color, color, color),
-                    modifier = Modifier.heightIn(min = 44.dp).fillMaxWidth()
+                    modifier = Modifier.heightIn(min = 44.dp).fillMaxWidth(),
                 ) {
                     Text(
                         stringResource(R.string.view_details),
                         color = textColor,
                         modifier = Modifier.padding(4.dp),
-                        style = Typography.bodySemibold
+                        style = Typography.bodySemibold,
                     )
                 }
             }
@@ -133,7 +133,7 @@ fun AlertCardPreview() {
             AlertCardSpec.Major,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("ED8B00"),
-            onViewDetails = {}
+            onViewDetails = {},
         )
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
@@ -141,7 +141,7 @@ fun AlertCardPreview() {
             AlertCardSpec.Secondary,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("80276C"),
-            onViewDetails = {}
+            onViewDetails = {},
         )
         AlertCard(
             ObjectCollectionBuilder.Single.alert({
@@ -153,7 +153,7 @@ fun AlertCardPreview() {
             AlertCardSpec.Elevator,
             textColor = Color.fromHex("FFFFFF"),
             color = Color.fromHex("ED8B00"),
-            onViewDetails = {}
+            onViewDetails = {},
         )
     }
 }

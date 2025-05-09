@@ -48,7 +48,7 @@ class MockSettingsRepository
 constructor(
     private var settings: Map<Settings, Boolean> = emptyMap(),
     private var onGetSettings: () -> Unit = {},
-    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {}
+    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {},
 ) : ISettingsRepository {
     override suspend fun getSettings(): Map<Settings, Boolean> {
         onGetSettings()

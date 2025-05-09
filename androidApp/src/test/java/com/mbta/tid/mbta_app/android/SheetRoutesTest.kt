@@ -11,7 +11,7 @@ class SheetRouteTest {
         assertTrue(
             SheetRoutes.pageChanged(
                 SheetRoutes.NearbyTransit,
-                SheetRoutes.StopDetails("a", null, null)
+                SheetRoutes.StopDetails("a", null, null),
             )
         )
     }
@@ -21,7 +21,7 @@ class SheetRouteTest {
         assertTrue(
             SheetRoutes.pageChanged(
                 SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("b", null, null)
+                SheetRoutes.StopDetails("b", null, null),
             )
         )
     }
@@ -31,7 +31,7 @@ class SheetRouteTest {
         assertFalse(
             SheetRoutes.pageChanged(
                 SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("a", StopDetailsFilter("route1", 1), null)
+                SheetRoutes.StopDetails("a", StopDetailsFilter("route1", 1), null),
             )
         )
     }

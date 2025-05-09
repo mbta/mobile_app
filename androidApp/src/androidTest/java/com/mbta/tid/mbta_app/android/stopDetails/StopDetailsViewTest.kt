@@ -128,15 +128,15 @@ class StopDetailsViewTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
-                                    alertsDownstream = emptyList()
+                                    alertsDownstream = emptyList(),
                                 )
                             ),
                             RouteCardData.Context.StopDetailsUnfiltered,
-                            GlobalResponse(builder)
+                            GlobalResponse(builder),
                         )
                     ),
                     RouteCardData.Context.StopDetailsUnfiltered,
-                    now
+                    now,
                 )
             )
         )
@@ -157,12 +157,9 @@ class StopDetailsViewTest {
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -200,15 +197,15 @@ class StopDetailsViewTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
-                                    alertsDownstream = emptyList()
+                                    alertsDownstream = emptyList(),
                                 )
                             ),
                             RouteCardData.Context.StopDetailsUnfiltered,
-                            GlobalResponse(builder)
+                            GlobalResponse(builder),
                         )
                     ),
                     RouteCardData.Context.StopDetailsUnfiltered,
-                    now
+                    now,
                 )
             )
         )
@@ -230,12 +227,9 @@ class StopDetailsViewTest {
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -278,15 +272,15 @@ class StopDetailsViewTest {
                                     alertsHere = listOf(alert),
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
-                                    alertsDownstream = emptyList()
+                                    alertsDownstream = emptyList(),
                                 )
                             ),
                             RouteCardData.Context.StopDetailsUnfiltered,
-                            GlobalResponse(builder)
+                            GlobalResponse(builder),
                         )
                     ),
                     RouteCardData.Context.StopDetailsUnfiltered,
-                    now
+                    now,
                 )
             )
         )
@@ -306,12 +300,9 @@ class StopDetailsViewTest {
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -348,15 +339,15 @@ class StopDetailsViewTest {
                                     alertsHere = listOf(alert),
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
-                                    alertsDownstream = emptyList()
+                                    alertsDownstream = emptyList(),
                                 )
                             ),
                             RouteCardData.Context.StopDetailsUnfiltered,
-                            GlobalResponse(builder)
+                            GlobalResponse(builder),
                         )
                     ),
                     RouteCardData.Context.StopDetailsUnfiltered,
-                    now
+                    now,
                 )
             )
         )
@@ -378,12 +369,9 @@ class StopDetailsViewTest {
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
                     errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }

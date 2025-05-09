@@ -40,14 +40,14 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5)
+                                    TripInstantDisplay.Minutes(5),
                                 )
                             ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    upcoming
+                    upcoming,
                 ),
-                onTap = {}
+                onTap = {},
             )
         }
 
@@ -78,15 +78,15 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5)
+                                    TripInstantDisplay.Minutes(5),
                                 )
                             ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    upcoming
+                    upcoming,
                 ),
                 onTap = {},
-                showRoutePill = true
+                showRoutePill = true,
             )
         }
 
@@ -112,14 +112,14 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5)
+                                    TripInstantDisplay.Minutes(5),
                                 )
                             ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    upcoming
+                    upcoming,
                 ),
-                onTap = { tapped = true }
+                onTap = { tapped = true },
             )
         }
 
@@ -148,15 +148,15 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5)
+                                    TripInstantDisplay.Minutes(5),
                                 )
                             ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    upcoming
+                    upcoming,
                 ),
                 onTap = {},
-                isSelected = selected
+                isSelected = selected,
             )
         }
 

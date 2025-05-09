@@ -68,7 +68,7 @@ fun StopDetailsFilteredDeparturesView(
     pinnedRoutes: Set<String>,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    analytics: Analytics = koinInject()
+    analytics: Analytics = koinInject(),
 ) {
     val lineOrRoute = leaf.lineOrRoute
     val stop = leaf.stop
@@ -122,7 +122,7 @@ fun StopDetailsFilteredDeparturesView(
                 alertId = alert.id,
                 lineId = if (spec == AlertCardSpec.Elevator) null else lineId,
                 routeIds = if (spec == AlertCardSpec.Elevator) null else routeIds,
-                stopId = stop.id
+                stopId = stop.id,
             )
         )
     }
@@ -162,7 +162,7 @@ fun StopDetailsFilteredDeparturesView(
                 pinned,
                 analytics,
                 bringIntoViewRequesters,
-                tileScrollState
+                tileScrollState,
             )
         }
 
@@ -186,7 +186,7 @@ fun StopDetailsFilteredDeparturesView(
                 spec,
                 color = routeColor,
                 textColor = routeTextColor,
-                onViewDetails = { openAlertDetails(alert, spec) }
+                onViewDetails = { openAlertDetails(alert, spec) },
             )
         }
 
@@ -197,7 +197,7 @@ fun StopDetailsFilteredDeparturesView(
         ) {
             Column(
                 Modifier.padding(horizontal = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 // for alerts here and downstream, if the alertSummaries are still loading, skip the
                 // alert completely, so the header doesn’t flicker before the summary loads
@@ -205,7 +205,7 @@ fun StopDetailsFilteredDeparturesView(
                     AlertCard(
                         it,
                         if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
-                        else return@forEach
+                        else return@forEach,
                     )
                 }
                 downstreamAlerts.forEach {
@@ -213,7 +213,7 @@ fun StopDetailsFilteredDeparturesView(
                         it,
                         if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
                         else return@forEach,
-                        AlertCardSpec.Downstream
+                        AlertCardSpec.Downstream,
                     )
                 }
                 if (showStationAccessibility && hasAccessibilityWarning) {
@@ -234,7 +234,7 @@ fun StopDetailsFilteredDeparturesView(
                     status = noPredictionsStatus,
                     accentColor = routeColor,
                     routeType = routeType,
-                    hideMaps = hideMaps
+                    hideMaps = hideMaps,
                 )
             }
         } else if (selectedTripIsCancelled) {
@@ -251,7 +251,7 @@ fun StopDetailsFilteredDeparturesView(
                             contentDescription = null,
                             modifier = modifier.testTag("route_slash_icon"),
                         )
-                    }
+                    },
                 )
             }
         } else {
@@ -265,7 +265,7 @@ fun StopDetailsFilteredDeparturesView(
                 openSheetRoute = openSheetRoute,
                 openModal = openModal,
                 now = now,
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier.padding(horizontal = 10.dp),
             )
         }
     }
@@ -283,12 +283,12 @@ private fun DepartureTiles(
     pinned: Boolean,
     analytics: Analytics,
     bringIntoViewRequesters: MutableMap<String, BringIntoViewRequester>,
-    scrollState: ScrollState
+    scrollState: ScrollState,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Row(
         Modifier.horizontalScroll(scrollState).padding(horizontal = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         for (tileData in tiles) {
             val bringIntoViewRequester =
@@ -302,7 +302,7 @@ private fun DepartureTiles(
                             tripId = upcoming.trip.id,
                             vehicleId = upcoming.prediction?.vehicleId,
                             stopSequence = upcoming.stopSequence,
-                            selectionLock = false
+                            selectionLock = false,
                         )
                     )
                     analytics.tappedDeparture(
@@ -311,14 +311,14 @@ private fun DepartureTiles(
                         pinned = pinned,
                         alert = alerts.isNotEmpty(),
                         routeType = lineOrRoute.sortRoute.type,
-                        noTrips = null
+                        noTrips = null,
                     )
                     coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
                 },
                 modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
                 showRoutePill = lineOrRoute is RouteCardData.LineOrRoute.Line,
                 showHeadsign = true,
-                isSelected = tileData.isSelected(tripFilter)
+                isSelected = tileData.isSelected(tripFilter),
             )
         }
     }

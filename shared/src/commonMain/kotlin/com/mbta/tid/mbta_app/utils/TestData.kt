@@ -56,7 +56,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_010,
             textColor = "FFFFFF",
             lineId = "line-Red",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -71,7 +71,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_020,
             textColor = "FFFFFF",
             lineId = "line-Orange",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -86,7 +86,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_032,
             textColor = "FFFFFF",
             lineId = "line-Green",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -101,7 +101,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_033,
             textColor = "FFFFFF",
             lineId = "line-Green",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -116,7 +116,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_034,
             textColor = "FFFFFF",
             lineId = "line-Green",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -131,7 +131,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_035,
             textColor = "FFFFFF",
             lineId = "line-Green",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -146,7 +146,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_051,
             textColor = "FFFFFF",
             lineId = "line-SLWaterfront",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -161,7 +161,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_052,
             textColor = "FFFFFF",
             lineId = "line-SLWaterfront",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -176,7 +176,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_053,
             textColor = "FFFFFF",
             lineId = "line-SLWaterfront",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -191,7 +191,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 10_057,
             textColor = "FFFFFF",
             lineId = "line-SLWaterfront",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -206,7 +206,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 20_003,
             textColor = "FFFFFF",
             lineId = "line-Fitchburg",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -221,7 +221,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 20_007,
             textColor = "FFFFFF",
             lineId = "line-Haverhill",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -236,7 +236,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 20_009,
             textColor = "FFFFFF",
             lineId = "line-Lowell",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -251,7 +251,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 20_012,
             textColor = "FFFFFF",
             lineId = "line-Newburyport",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -266,7 +266,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 20_013,
             textColor = "FFFFFF",
             lineId = "line-Providence",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -282,7 +282,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 50_150,
             textColor = "000000",
             lineId = "line-15",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -297,7 +297,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 50_670,
             textColor = "000000",
             lineId = "line-6779",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
     objects.put(
@@ -313,7 +313,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 50_870,
             textColor = "000000",
             lineId = "line-87",
-            routePatternIds = null
+            routePatternIds = null,
         )
     )
 
@@ -325,7 +325,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_100_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-0",
-            routeId = "Red"
+            routeId = "Red",
         )
     )
     objects.put(
@@ -336,7 +336,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_100_001,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-0",
-            routeId = "Red"
+            routeId = "Red",
         )
     )
     objects.put(
@@ -347,7 +347,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_101_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-1",
-            routeId = "Red"
+            routeId = "Red",
         )
     )
     objects.put(
@@ -358,7 +358,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_101_001,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-1",
-            routeId = "Red"
+            routeId = "Red",
         )
     )
     objects.put(
@@ -369,7 +369,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_200_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-0",
-            routeId = "Orange"
+            routeId = "Orange",
         )
     )
     objects.put(
@@ -380,7 +380,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_201_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-1",
-            routeId = "Orange"
+            routeId = "Orange",
         )
     )
     objects.put(
@@ -391,7 +391,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_320_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-0",
-            routeId = "Green-B"
+            routeId = "Green-B",
         )
     )
     objects.put(
@@ -402,7 +402,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_321_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-1",
-            routeId = "Green-B"
+            routeId = "Green-B",
         )
     )
     objects.put(
@@ -413,7 +413,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_330_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-0",
-            routeId = "Green-C"
+            routeId = "Green-C",
         )
     )
     objects.put(
@@ -424,7 +424,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_331_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-1",
-            routeId = "Green-C"
+            routeId = "Green-C",
         )
     )
     objects.put(
@@ -435,7 +435,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_340_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-0",
-            routeId = "Green-D"
+            routeId = "Green-D",
         )
     )
     objects.put(
@@ -446,7 +446,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_341_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-1",
-            routeId = "Green-D"
+            routeId = "Green-D",
         )
     )
     objects.put(
@@ -457,7 +457,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_350_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-0",
-            routeId = "Green-E"
+            routeId = "Green-E",
         )
     )
     objects.put(
@@ -468,7 +468,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_351_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-1",
-            routeId = "Green-E"
+            routeId = "Green-E",
         )
     )
     objects.put(
@@ -479,7 +479,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_510_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68245389",
-            routeId = "741"
+            routeId = "741",
         )
     )
     objects.put(
@@ -490,7 +490,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_511_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68245385",
-            routeId = "741"
+            routeId = "741",
         )
     )
     objects.put(
@@ -501,7 +501,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_520_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68244480",
-            routeId = "742"
+            routeId = "742",
         )
     )
     objects.put(
@@ -512,7 +512,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_521_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68244484",
-            routeId = "742"
+            routeId = "742",
         )
     )
     objects.put(
@@ -523,7 +523,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_530_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68244692",
-            routeId = "743"
+            routeId = "743",
         )
     )
     objects.put(
@@ -534,7 +534,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_531_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68244686",
-            routeId = "743"
+            routeId = "743",
         )
     )
     objects.put(
@@ -545,7 +545,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_570_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68244389",
-            routeId = "746"
+            routeId = "746",
         )
     )
     objects.put(
@@ -556,7 +556,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_571_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68244390",
-            routeId = "746"
+            routeId = "746",
         )
     )
     objects.put(
@@ -567,7 +567,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_030_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728475-405",
-            routeId = "CR-Fitchburg"
+            routeId = "CR-Fitchburg",
         )
     )
     objects.put(
@@ -578,7 +578,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_031_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728473-400",
-            routeId = "CR-Fitchburg"
+            routeId = "CR-Fitchburg",
         )
     )
     objects.put(
@@ -589,7 +589,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_070_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728449-209-HaverhillBradfordVan",
-            routeId = "CR-Haverhill"
+            routeId = "CR-Haverhill",
         )
     )
     objects.put(
@@ -600,7 +600,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_071_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728448-208-HaverhillBradfordVan",
-            routeId = "CR-Haverhill"
+            routeId = "CR-Haverhill",
         )
     )
     objects.put(
@@ -611,7 +611,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_090_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-0",
-            routeId = "CR-Lowell"
+            routeId = "CR-Lowell",
         )
     )
     objects.put(
@@ -622,7 +622,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_091_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-1",
-            routeId = "CR-Lowell"
+            routeId = "CR-Lowell",
         )
     )
     objects.put(
@@ -633,7 +633,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_120_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728599-143",
-            routeId = "CR-Newburyport"
+            routeId = "CR-Newburyport",
         )
     )
     objects.put(
@@ -644,7 +644,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_120_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728591-45",
-            routeId = "CR-Newburyport"
+            routeId = "CR-Newburyport",
         )
     )
     objects.put(
@@ -655,7 +655,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_121_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728590-136",
-            routeId = "CR-Newburyport"
+            routeId = "CR-Newburyport",
         )
     )
     objects.put(
@@ -666,7 +666,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_121_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "SPRING2025V2-728589-28",
-            routeId = "CR-Newburyport"
+            routeId = "CR-Newburyport",
         )
     )
     objects.put(
@@ -677,7 +677,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_130_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "AttleboroWork-715914-803",
-            routeId = "CR-Providence"
+            routeId = "CR-Providence",
         )
     )
     objects.put(
@@ -688,7 +688,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_130_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "AttleboroWork-715956-907",
-            routeId = "CR-Providence"
+            routeId = "CR-Providence",
         )
     )
     objects.put(
@@ -699,7 +699,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_131_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "AttleboroWork-715931-840",
-            routeId = "CR-Providence"
+            routeId = "CR-Providence",
         )
     )
     objects.put(
@@ -710,7 +710,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_131_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "AttleboroWork-715955-904",
-            routeId = "CR-Providence"
+            routeId = "CR-Providence",
         )
     )
     objects.put(
@@ -721,7 +721,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 501_500_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68166816",
-            routeId = "15"
+            routeId = "15",
         )
     )
     objects.put(
@@ -732,7 +732,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 501_501_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68166605",
-            routeId = "15"
+            routeId = "15",
         )
     )
     objects.put(
@@ -743,7 +743,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 506_700_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68596786",
-            routeId = "67"
+            routeId = "67",
         )
     )
     objects.put(
@@ -754,7 +754,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 506_701_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68596783",
-            routeId = "67"
+            routeId = "67",
         )
     )
     objects.put(
@@ -765,7 +765,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 508_700_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68596172",
-            routeId = "87"
+            routeId = "87",
         )
     )
     objects.put(
@@ -776,7 +776,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 508_701_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "68596178",
-            routeId = "87"
+            routeId = "87",
         )
     )
 
@@ -6070,7 +6070,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-alfcl-wgaragestairs-fourth",
                     "node-alfcl-wgaragestairs-ground",
                     "node-alfcl-wgaragestairs-second",
-                    "node-alfcl-wgaragestairs-third"
+                    "node-alfcl-wgaragestairs-third",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -6112,7 +6112,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-amory-ebamory",
                     "door-amory-ebbuick",
                     "door-amory-wbamory",
-                    "door-amory-wbbuick"
+                    "door-amory-wbbuick",
                 ),
             connectingStopIds = listOf<String>("956"),
             parentStationId = null,
@@ -6163,7 +6163,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-andrw-sibstairs-platform",
                     "node-andrw-slobbycenter",
                     "node-andrw-sobstairs-lobby",
-                    "node-andrw-sobstairs-platform"
+                    "node-andrw-sobstairs-platform",
                 ),
             connectingStopIds = listOf<String>("9070083"),
             parentStationId = null,
@@ -6229,7 +6229,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-aqucl-wbatlanticstairs-lobby",
                     "node-aqucl-wbatlanticstairs-platform",
                     "node-aqucl-wbstatestairs-lobby",
-                    "node-aqucl-wbstatestairs-platform"
+                    "node-aqucl-wbstatestairs-platform",
                 ),
             connectingStopIds =
                 listOf<String>(
@@ -6239,7 +6239,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "236",
                     "9170043",
                     "Boat-Long",
-                    "Boat-Aquarium"
+                    "Boat-Aquarium",
                 ),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
@@ -6286,7 +6286,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-armnl-wbstairs-lobby",
                     "node-armnl-wbstairs-platform",
                     "node-armnl-wescstairs-escalator",
-                    "node-armnl-wescstairs-lobby"
+                    "node-armnl-wescstairs-lobby",
                 ),
             connectingStopIds = listOf<String>("9070156", "145", "177"),
             parentStationId = null,
@@ -6340,7 +6340,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-asmnl-radfareunpaid",
                     "node-asmnl-radfordramp",
                     "node-asmnl-rdexstair-lobby",
-                    "node-asmnl-rdexstair-platform"
+                    "node-asmnl-rdexstair-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -6387,7 +6387,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-astao-revdoorstair-ground",
                     "node-astao-revdoorstair-lobby",
                     "node-astao-revplatstair-lobby",
-                    "node-astao-revplatstair-platform"
+                    "node-astao-revplatstair-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -6412,7 +6412,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-babck-ebagganis",
                     "door-babck-ebbabcock",
                     "door-babck-wbagganis",
-                    "door-babck-wbbabcock"
+                    "door-babck-wbbabcock",
                 ),
             connectingStopIds = listOf<String>("933", "958", "934"),
             parentStationId = null,
@@ -6441,7 +6441,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-balsq-ramp-bottom",
                     "node-balsq-ramp-top",
                     "node-balsq-stairs-bottom",
-                    "node-balsq-stairs-top"
+                    "node-balsq-stairs-top",
                 ),
             connectingStopIds = listOf<String>("9070509", "2697", "2736"),
             parentStationId = null,
@@ -6484,7 +6484,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-bcnfd-clark",
                     "door-bcnfd-dean",
                     "door-bcnfd-lot",
-                    "node-bcnfd-stairs-platform"
+                    "node-bcnfd-stairs-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -6564,7 +6564,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-boyls-instair-platform",
                     "node-boyls-out-farepaid",
                     "node-boyls-out-fareunpaid",
-                    "node-boyls-outstair-platform"
+                    "node-boyls-outstair-platform",
                 ),
             connectingStopIds = listOf<String>("8279"),
             parentStationId = null,
@@ -6599,7 +6599,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-brdwy-mainstairs-lobby",
                     "node-brdwy-platstairs-lobby",
                     "node-brdwy-platstairs-platform",
-                    "node-brdwy-travelerstairs-lobby"
+                    "node-brdwy-travelerstairs-lobby",
                 ),
             connectingStopIds = listOf<String>("151", "150"),
             parentStationId = null,
@@ -6640,7 +6640,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70179",
                     "door-brkhl-bhs",
                     "door-brkhl-cypress",
-                    "node-brkhl-eastramp-top"
+                    "node-brkhl-eastramp-top",
                 ),
             connectingStopIds = listOf<String>("9170178"),
             parentStationId = null,
@@ -6704,7 +6704,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-brntn-nplatstairs-platform",
                     "node-brntn-parking",
                     "node-brntn-splatstairs-lobby",
-                    "node-brntn-splatstairs-platform"
+                    "node-brntn-splatstairs-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -6764,7 +6764,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-bvmnl-kent",
                     "door-bvmnl-place",
                     "door-bvmnl-washington",
-                    "node-bvmnl-stairs-platform"
+                    "node-bvmnl-stairs-platform",
                 ),
             connectingStopIds = listOf<String>("11366", "9070180", "1526", "1555"),
             parentStationId = null,
@@ -6791,7 +6791,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-chhil-parke",
                     "door-chhil-parkw",
                     "node-chhil-parkstairs-platform",
-                    "node-chhil-roadstairs-platform"
+                    "node-chhil-roadstairs-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -6844,7 +6844,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-chmnl-nbstairs-lobby",
                     "node-chmnl-nbstairs-platform",
                     "node-chmnl-sbstairs-lobby",
-                    "node-chmnl-sbstairs-platform"
+                    "node-chmnl-sbstairs-platform",
                 ),
             connectingStopIds = listOf<String>("9070074"),
             parentStationId = null,
@@ -6927,7 +6927,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-cntsq-prospectstair-platform",
                     "node-cntsq-westernstair-farepaid",
                     "node-cntsq-westernstair-fareunpaid",
-                    "node-cntsq-westernstair-platform"
+                    "node-cntsq-westernstair-platform",
                 ),
             connectingStopIds =
                 listOf<String>("102", "1060", "1123", "72", "2443", "1059", "9070070", "2755"),
@@ -6962,7 +6962,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-coecl-ebfarepaid",
                     "node-coecl-ebfareunpaid",
                     "node-coecl-wbfarepaid",
-                    "node-coecl-wbfareunpaid"
+                    "node-coecl-wbfareunpaid",
                 ),
             connectingStopIds = listOf<String>("175", "9170154", "178", "9070154"),
             parentStationId = null,
@@ -7035,7 +7035,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-davis-farepaid",
                     "node-davis-fareunpaid",
                     "node-davis-holland-entrance",
-                    "node-davis-holland-lobby"
+                    "node-davis-holland-lobby",
                 ),
             connectingStopIds = listOf<String>("5015", "2581"),
             parentStationId = null,
@@ -7150,7 +7150,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-dwnxg-wintexitfare-paid",
                     "node-dwnxg-wintexitfare-unpaid",
                     "node-dwnxg-wintwashfare-paid",
-                    "node-dwnxg-wintwashfare-unpaid"
+                    "node-dwnxg-wintwashfare-unpaid",
                 ),
             connectingStopIds = listOf<String>("9070080", "16538", "49001", "16535"),
             parentStationId = null,
@@ -7179,7 +7179,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-eliot-meredith",
                     "node-eliot-boyle-bridge",
                     "node-eliot-boylwr-platform",
-                    "node-eliot-boylws-bridge"
+                    "node-eliot-boylws-bridge",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -7271,7 +7271,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70187",
                     "door-fenwy-longwood",
                     "door-fenwy-parkdr",
-                    "node-fenwy-stairs-platform"
+                    "node-fenwy-stairs-platform",
                 ),
             connectingStopIds = listOf<String>("1807", "9434"),
             parentStationId = null,
@@ -7309,7 +7309,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-fldcr-charlesramp-lobby",
                     "node-fldcr-charlesstairs-lobby",
                     "node-fldcr-farepaid",
-                    "node-fldcr-fareunpaid"
+                    "node-fldcr-fareunpaid",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -7340,7 +7340,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-gilmn-medstairs-bottom",
                     "node-gilmn-medstairs-top",
                     "node-gilmn-schstairs-bottom",
-                    "node-gilmn-schstairs-top"
+                    "node-gilmn-schstairs-top",
                 ),
             connectingStopIds = listOf<String>("9070506", "9070505", "2398", "2388"),
             parentStationId = null,
@@ -7389,7 +7389,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-gover-sentrancestairs-lobby",
                     "node-gover-sentrancestairs-platform",
                     "node-gover-wbtransstairs-bl",
-                    "node-gover-wbtransstairs-gl"
+                    "node-gover-wbtransstairs-gl",
                 ),
             connectingStopIds = listOf<String>("4510"),
             parentStationId = null,
@@ -7471,7 +7471,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-haecl-passfhstair-passage",
                     "node-haecl-passfhstair-platform",
                     "node-haecl-passogstair-passage",
-                    "node-haecl-passogstair-platform"
+                    "node-haecl-passogstair-platform",
                 ),
             connectingStopIds = listOf<String>("9170024", "4511", "117", "8309", "9070024"),
             parentStationId = null,
@@ -7538,7 +7538,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-harsq-sqlowstair-lobby",
                     "node-harsq-upperramp-lobby",
                     "node-harsq-upperramp-upper",
-                    "node-harsq-yardstair-lobby"
+                    "node-harsq-yardstair-lobby",
                 ),
             connectingStopIds = listOf<String>("9070072", "110", "22549"),
             parentStationId = null,
@@ -7626,7 +7626,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-hymnl-wbstairs-lobby",
                     "node-hymnl-wbstairs-midblobby",
                     "node-hymnl-wbstairs-midtlobby",
-                    "node-hymnl-wbstairs-platform"
+                    "node-hymnl-wbstairs-platform",
                 ),
             connectingStopIds = listOf<String>("93", "79", "11391", "1932", "9070152", "9170152"),
             parentStationId = null,
@@ -7695,7 +7695,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-jfk-sydfarepaid",
                     "node-jfk-sydfareunpaid",
                     "node-jfk-sydneynstair-lobby",
-                    "node-jfk-sydneysstair-lobby"
+                    "node-jfk-sydneysstair-lobby",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -7746,7 +7746,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-kencl-fvmstair-landing",
                     "node-kencl-fvmstair-lobby",
                     "node-kencl-wbstair-lobby",
-                    "node-kencl-wbstair-platform"
+                    "node-kencl-wbstair-platform",
                 ),
             connectingStopIds =
                 listOf<String>("34510", "9070185", "9170151", "9070150", "9070151", "34509"),
@@ -7800,7 +7800,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-knncl-sbmain-fareunpaid",
                     "node-knncl-sbmain-platform",
                     "node-knncl-sbsec-farepaid",
-                    "node-knncl-sbsec-fareunpaid"
+                    "node-knncl-sbsec-fareunpaid",
                 ),
             connectingStopIds = listOf<String>("2231", "9170071", "9070071"),
             parentStationId = null,
@@ -7870,7 +7870,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-lech-firststairs-bottom",
                     "node-lech-firststairs-top",
                     "node-lech-obrienstairs-bottom",
-                    "node-lech-obrienstairs-top"
+                    "node-lech-obrienstairs-top",
                 ),
             connectingStopIds = listOf<String>("9070502"),
             parentStationId = null,
@@ -7919,7 +7919,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-longw-pramp-landing",
                     "node-longw-pramp-platform",
                     "node-longw-pstairs-landing",
-                    "node-longw-pstairs-platform"
+                    "node-longw-pstairs-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -7947,7 +7947,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-772-bottom",
                     "node-772-top",
                     "node-mdftf-stairs-bottom",
-                    "node-mdftf-stairs-top"
+                    "node-mdftf-stairs-top",
                 ),
             connectingStopIds = listOf<String>("2407"),
             parentStationId = null,
@@ -7994,7 +7994,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-mgngl-ramp-bottom",
                     "node-mgngl-ramp-top",
                     "node-mgngl-stairs-bottom",
-                    "node-mgngl-stairs-top"
+                    "node-mgngl-stairs-top",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -8042,7 +8042,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-newtn-hyde-platform",
                     "node-newtn-hyde-stairs",
                     "node-newtn-lake-platform",
-                    "node-newtn-walnut-platform"
+                    "node-newtn-walnut-platform",
                 ),
             connectingStopIds = listOf<String>("9070169", "9170169", "9170168"),
             parentStationId = null,
@@ -8076,7 +8076,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-newto-ramp-landing",
                     "node-newto-ramp-platform",
                     "node-newto-uniones-platform",
-                    "node-newto-unionws-platform"
+                    "node-newto-unionws-platform",
                 ),
             connectingStopIds = listOf<String>("9070170", "9070171"),
             parentStationId = null,
@@ -8203,7 +8203,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-north-wcausewayexitstairs-bottom",
                     "node-north-wcausewayexitstairs-top",
                     "node-north-wvalentiexitstairs-bottom",
-                    "node-north-wvalentiexitstairs-top"
+                    "node-north-wvalentiexitstairs-top",
                 ),
             connectingStopIds = listOf<String>("9070026", "114", "113", "9070090"),
             parentStationId = null,
@@ -8258,7 +8258,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-nqncy-sfarepaid",
                     "node-nqncy-sfareunpaid",
                     "node-nqncy-spstair-lobby",
-                    "node-nqncy-spstair-platform"
+                    "node-nqncy-spstair-platform",
                 ),
             connectingStopIds = listOf<String>("9370024"),
             parentStationId = null,
@@ -8372,7 +8372,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-pktrm-westfare-unpaid",
                     "node-pktrm-weststairs-lobby",
                     "node-pktrm-wintfare-paid",
-                    "node-pktrm-wintfare-unpaid"
+                    "node-pktrm-wintfare-unpaid",
                 ),
             connectingStopIds = listOf<String>("9070076", "9170076", "10000", "49001"),
             parentStationId = null,
@@ -8444,7 +8444,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-portr-somervilleavestairs-lobby",
                     "node-portr-somervilleavestairs-street",
                     "node-portr-weststairs-crplatform",
-                    "node-portr-weststairs-street"
+                    "node-portr-weststairs-street",
                 ),
             connectingStopIds = listOf<String>("2430", "2460", "12301", "23151", "9070065"),
             parentStationId = null,
@@ -8494,7 +8494,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-prmnl-prustair-lobby",
                     "node-prmnl-prustair-street",
                     "node-prmnl-wbstair-lobby",
-                    "node-prmnl-wbstair-platform"
+                    "node-prmnl-wbstair-platform",
                 ),
             connectingStopIds = listOf<String>("11389", "11388"),
             parentStationId = null,
@@ -8572,7 +8572,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-qamnl-sixth-lobby",
                     "node-qamnl-southstairs-bottom",
                     "node-qamnl-southstairs-top",
-                    "node-qamnl-third-lobby"
+                    "node-qamnl-third-lobby",
                 ),
             connectingStopIds = listOf<String>("3852", "3946"),
             parentStationId = null,
@@ -8619,7 +8619,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-qnctr-farepaid",
                     "node-qnctr-fareunpaid",
                     "node-qnctr-rdstair-entrance",
-                    "node-qnctr-rdstair-platform"
+                    "node-qnctr-rdstair-platform",
                 ),
             connectingStopIds = listOf<String>("32000", "9070101"),
             parentStationId = null,
@@ -8649,7 +8649,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-river-farepaid",
                     "node-river-fareunpaid",
                     "node-river-ramp-lobby",
-                    "node-river-wstairs-lobby"
+                    "node-river-wstairs-lobby",
                 ),
             connectingStopIds = listOf<String>("9070160"),
             parentStationId = null,
@@ -8680,7 +8680,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-rsmnl-eramp-platform",
                     "node-rsmnl-estairs-platform",
                     "node-rsmnl-wramp-platform",
-                    "node-rsmnl-wstairs-platform"
+                    "node-rsmnl-wstairs-platform",
                 ),
             connectingStopIds = listOf<String>("9070238"),
             parentStationId = null,
@@ -8752,7 +8752,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-rugg-olsstairs-lobby",
                     "node-rugg-olsstairs-platform",
                     "node-rugg-track2ramp-bottom",
-                    "node-rugg-track2ramp-top"
+                    "node-rugg-track2ramp-top",
                 ),
             connectingStopIds = listOf<String>("9070010"),
             parentStationId = null,
@@ -8806,7 +8806,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-shmnl-sh-fareunpaid",
                     "node-shmnl-syd-farepaid",
                     "node-shmnl-syd-fareunpaid",
-                    "node-shmnl-sydstair-lobby"
+                    "node-shmnl-sydstair-lobby",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -8855,7 +8855,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-smmnl-nbstairs-lobby",
                     "node-smmnl-nbstairs-platform",
                     "node-smmnl-sbstairs-lobby",
-                    "node-smmnl-sbstairs-platform"
+                    "node-smmnl-sbstairs-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -8917,7 +8917,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-spmnl-ofarepaid",
                     "node-spmnl-ofareunpaid",
                     "node-spmnl-sfarepaid",
-                    "node-spmnl-sfareunpaid"
+                    "node-spmnl-sfareunpaid",
                 ),
             connectingStopIds = listOf<String>("9070091"),
             parentStationId = null,
@@ -9048,7 +9048,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-sstat-outmainstair-lobby",
                     "node-sstat-reservestair-lobby",
                     "node-sstat-south-farepaid",
-                    "node-sstat-south-fareunpaid"
+                    "node-sstat-south-fareunpaid",
                 ),
             connectingStopIds = listOf<String>("6564", "892", "6538", "9070079"),
             parentStationId = null,
@@ -9135,7 +9135,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-sull-nbstairs-lobby",
                     "node-sull-nbstairs-platform",
                     "node-sull-sbstairs-lobby",
-                    "node-sull-sbstairs-platform"
+                    "node-sull-sbstairs-platform",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -9197,7 +9197,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-symcl-wb-midtop",
                     "node-symcl-wb-wbottom",
                     "node-symcl-wb-wtop",
-                    "node-symcl-weststair-platform"
+                    "node-symcl-weststair-platform",
                 ),
             connectingStopIds = listOf<String>("82", "89"),
             parentStationId = null,
@@ -9245,7 +9245,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-771-top",
                     "node-unsqu-rollupgate",
                     "node-unsqu-stairs-bottom",
-                    "node-unsqu-stairs-top"
+                    "node-unsqu-stairs-top",
                 ),
             connectingStopIds = listOf<String>("9070503", "12530", "2512", "2531"),
             parentStationId = null,
@@ -9273,7 +9273,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "door-waban-wyman",
                     "node-waban-beacon-ramp",
                     "node-waban-beacon-stairs",
-                    "node-waban-parkstairs-platform"
+                    "node-waban-parkstairs-platform",
                 ),
             connectingStopIds = listOf<String>("9070164", "9070165"),
             parentStationId = null,
@@ -9349,7 +9349,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-wlsta-stair6gate-farepaid",
                     "node-wlsta-stair6gate-fareunpaid",
                     "node-wlsta-stair7-lobby",
-                    "node-wlsta-stair7-street"
+                    "node-wlsta-stair7-street",
                 ),
             connectingStopIds = listOf<String>("9170099", "9170100"),
             parentStationId = null,
@@ -9424,7 +9424,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "11148",
                     "21148",
                     "1224",
-                    "17861"
+                    "17861",
                 ),
         )
     )
@@ -9459,7 +9459,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "1509",
                     "1510",
                     "1511",
-                    "15100"
+                    "15100",
                 ),
         )
     )
@@ -9515,7 +9515,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "74614",
                     "74615",
                     "74616",
-                    "74617"
+                    "74617",
                 ),
         )
     )
@@ -9538,7 +9538,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "74614",
                     "74615",
                     "74616",
-                    "74617"
+                    "74617",
                 ),
         )
     )
@@ -9560,7 +9560,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "74637",
                     "74635",
                     "74633",
-                    "74631"
+                    "74631",
                 ),
         )
     )
@@ -9583,7 +9583,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "74614",
                     "74615",
                     "74616",
-                    "74617"
+                    "74617",
                 ),
         )
     )
@@ -9641,7 +9641,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "12641",
                     "12642",
                     "12643",
-                    "12644"
+                    "12644",
                 ),
         )
     )
@@ -9689,7 +9689,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "2599",
                     "2600",
                     "2601",
-                    "70500"
+                    "70500",
                 ),
         )
     )
@@ -9722,7 +9722,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "2478",
                     "24790",
                     "24791",
-                    "141"
+                    "141",
                 ),
         )
     )
@@ -9756,7 +9756,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "7959",
                     "7960",
                     "7962",
-                    "7961"
+                    "7961",
                 ),
         )
     )
@@ -9781,7 +9781,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "NEC-1891-01",
                     "NEC-1851-03",
                     "NEC-1768-03",
-                    "NEC-1659-03"
+                    "NEC-1659-03",
                 ),
         )
     )
@@ -9806,7 +9806,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "NEC-2173-02",
                     "NEC-2265-02",
                     "NEC-2276-02",
-                    "NEC-2287"
+                    "NEC-2287",
                 ),
         )
     )
@@ -9827,7 +9827,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "NEC-2203-02",
                     "NEC-2265-02",
                     "NEC-2276-02",
-                    "NEC-2287"
+                    "NEC-2287",
                 ),
         )
     )
@@ -9847,7 +9847,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "NEC-2173-01",
                     "SB-0150-04",
                     "SB-0156-S",
-                    "SB-0189-S"
+                    "SB-0189-S",
                 ),
         )
     )
@@ -9874,7 +9874,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "WR-0062-02",
                     "WR-0053-S",
                     "WR-0045-S",
-                    "BNT-0000"
+                    "BNT-0000",
                 ),
         )
     )
@@ -9901,7 +9901,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "WR-0205-02",
                     "WR-0228-02",
                     "WR-0264-02",
-                    "WR-0325-01"
+                    "WR-0325-01",
                 ),
         )
     )
@@ -9931,7 +9931,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "FR-0074-02",
                     "FR-0064-02",
                     "FR-0034-02",
-                    "BNT-0000"
+                    "BNT-0000",
                 ),
         )
     )
@@ -9961,7 +9961,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "FR-0394-01",
                     "FR-0451-01",
                     "FR-0494-CS",
-                    "FR-3338-CS"
+                    "FR-3338-CS",
                 ),
         )
     )
@@ -9986,7 +9986,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "ER-0128-02",
                     "ER-0117-02",
                     "ER-0042-02",
-                    "BNT-0000"
+                    "BNT-0000",
                 ),
         )
     )
@@ -10010,7 +10010,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "ER-0128-02",
                     "ER-0117-02",
                     "ER-0042-02",
-                    "BNT-0000"
+                    "BNT-0000",
                 ),
         )
     )
@@ -10035,7 +10035,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "GB-0254-01",
                     "GB-0296-01",
                     "GB-0316-S",
-                    "GB-0353-S"
+                    "GB-0353-S",
                 ),
         )
     )
@@ -10059,7 +10059,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "ER-0227-S",
                     "ER-0276-S",
                     "ER-0312-S",
-                    "ER-0362-01"
+                    "ER-0362-01",
                 ),
         )
     )
@@ -10080,7 +10080,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "NHRML-0127-01",
                     "NHRML-0152-01",
                     "NHRML-0218-01",
-                    "NHRML-0254-04"
+                    "NHRML-0254-04",
                 ),
         )
     )
@@ -10101,7 +10101,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "NHRML-0078-02",
                     "NHRML-0073-02",
                     "NHRML-0055-02",
-                    "BNT-0000"
+                    "BNT-0000",
                 ),
         )
     )
@@ -10137,7 +10137,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70115",
                     "70113",
                     "70111",
-                    "70107"
+                    "70107",
                 ),
         )
     )
@@ -10173,7 +10173,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70156",
                     "70158",
                     "70200",
-                    "70201"
+                    "70201",
                 ),
         )
     )
@@ -10206,7 +10206,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70231",
                     "70233",
                     "70235",
-                    "70237"
+                    "70237",
                 ),
         )
     )
@@ -10239,7 +10239,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70156",
                     "70158",
                     "70200",
-                    "70201"
+                    "70201",
                 ),
         )
     )
@@ -10277,7 +10277,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70167",
                     "70165",
                     "70163",
-                    "70161"
+                    "70161",
                 ),
         )
     )
@@ -10315,7 +10315,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70205",
                     "70207",
                     "70501",
-                    "70503"
+                    "70503",
                 ),
         )
     )
@@ -10353,7 +10353,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70253",
                     "70255",
                     "70257",
-                    "70260"
+                    "70260",
                 ),
         )
     )
@@ -10391,7 +10391,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70505",
                     "70507",
                     "70509",
-                    "70511"
+                    "70511",
                 ),
         )
     )
@@ -10424,7 +10424,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70006",
                     "70004",
                     "70002",
-                    "70001"
+                    "70001",
                 ),
         )
     )
@@ -10457,7 +10457,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70279",
                     "70033",
                     "70035",
-                    "70036"
+                    "70036",
                 ),
         )
     )
@@ -10488,7 +10488,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70099",
                     "70101",
                     "70103",
-                    "70105"
+                    "70105",
                 ),
         )
     )
@@ -10519,7 +10519,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70068",
                     "70066",
                     "70064",
-                    "70061"
+                    "70061",
                 ),
         )
     )
@@ -10549,7 +10549,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70087",
                     "70089",
                     "70091",
-                    "70093"
+                    "70093",
                 ),
         )
     )
@@ -10579,7 +10579,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "70068",
                     "70066",
                     "70064",
-                    "70061"
+                    "70061",
                 ),
         )
     )

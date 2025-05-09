@@ -36,7 +36,7 @@ class MockFusedLocationProviderClient : FusedLocationProviderClient {
 
     override fun getCurrentLocation(
         p0: CurrentLocationRequest,
-        p1: CancellationToken?
+        p1: CancellationToken?,
     ): Task<Location> {
         TODO("Not yet implemented")
     }
@@ -48,7 +48,7 @@ class MockFusedLocationProviderClient : FusedLocationProviderClient {
     override fun requestLocationUpdates(
         p0: LocationRequest,
         p1: Executor,
-        p2: LocationListener
+        p2: LocationListener,
     ): Task<Void> {
         TODO("Not yet implemented")
     }
@@ -56,13 +56,13 @@ class MockFusedLocationProviderClient : FusedLocationProviderClient {
     override fun requestLocationUpdates(
         p0: LocationRequest,
         p1: LocationListener,
-        p2: Looper?
+        p2: Looper?,
     ): Task<Void> = Tasks.forCanceled()
 
     override fun requestLocationUpdates(
         p0: LocationRequest,
         p1: LocationCallback,
-        p2: Looper?
+        p2: Looper?,
     ): Task<Void> {
         TODO("Not yet implemented")
     }
@@ -70,7 +70,7 @@ class MockFusedLocationProviderClient : FusedLocationProviderClient {
     override fun requestLocationUpdates(
         p0: LocationRequest,
         p1: Executor,
-        p2: LocationCallback
+        p2: LocationCallback,
     ): Task<Void> {
         TODO("Not yet implemented")
     }
@@ -105,7 +105,7 @@ class MockFusedLocationProviderClient : FusedLocationProviderClient {
     override fun requestDeviceOrientationUpdates(
         p0: DeviceOrientationRequest,
         p1: Executor,
-        p2: DeviceOrientationListener
+        p2: DeviceOrientationListener,
     ): Task<Void> {
         TODO("Not yet implemented")
     }
@@ -114,7 +114,7 @@ class MockFusedLocationProviderClient : FusedLocationProviderClient {
     override fun requestDeviceOrientationUpdates(
         p0: DeviceOrientationRequest,
         p1: DeviceOrientationListener,
-        p2: Looper?
+        p2: Looper?,
     ): Task<Void> {
         TODO("Not yet implemented")
     }

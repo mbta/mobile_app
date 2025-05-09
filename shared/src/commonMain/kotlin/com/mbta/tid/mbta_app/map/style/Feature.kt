@@ -5,5 +5,5 @@ import io.github.dellisd.spatialk.geojson.Geometry
 data class Feature(
     val id: String? = null,
     val geometry: Geometry,
-    val properties: FeatureProperties
+    val properties: FeatureProperties,
 )

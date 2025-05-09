@@ -109,11 +109,7 @@ data class NearbyTransit(
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    MapboxExperimental::class,
-    FlowPreview::class,
-)
+@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, FlowPreview::class)
 @Composable
 fun NearbyTransitPage(
     modifier: Modifier = Modifier,
@@ -127,7 +123,7 @@ fun NearbyTransitPage(
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
-    clock: Clock = koinInject()
+    clock: Clock = koinInject(),
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
@@ -151,7 +147,7 @@ fun NearbyTransitPage(
             stopId,
             stopFilter,
             { navController.popBackStack() },
-            { navController.navigate(it) }
+            { navController.navigate(it) },
         )
     }
 
@@ -161,7 +157,7 @@ fun NearbyTransitPage(
             stopId,
             tripFilter,
             { navController.popBackStack() },
-            { navController.navigate(it) }
+            { navController.navigate(it) },
         )
     }
 
@@ -173,7 +169,7 @@ fun NearbyTransitPage(
                         StopDetailsPageFilters(
                             currentNavEntry.stopId,
                             currentNavEntry.stopFilter,
-                            currentNavEntry.tripFilter
+                            currentNavEntry.tripFilter,
                         )
                     else -> null
                 }),
@@ -183,7 +179,7 @@ fun NearbyTransitPage(
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
             setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
-            now = now
+            now = now,
         )
 
     val routeCardData by viewModel.routeCardData.collectAsState()
@@ -257,11 +253,10 @@ fun NearbyTransitPage(
                     Triple(
                         currentNavEntry.stopId,
                         currentNavEntry.stopFilter,
-                        currentNavEntry.tripFilter
+                        currentNavEntry.tripFilter,
                     )
                 else -> null
-            }
-                ?: return
+            } ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
 
         val routeCard =
@@ -368,10 +363,10 @@ fun NearbyTransitPage(
                 } else {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Up,
-                        animationSpec = tween(easing = EaseInOut)
+                        animationSpec = tween(easing = EaseInOut),
                     )
                 }
-            }
+            },
         ) {
             composable<SheetRoutes.StopDetails>(typeMap = navTypeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
@@ -379,7 +374,7 @@ fun NearbyTransitPage(
                     StopDetailsPageFilters(
                         navRoute.stopId,
                         navRoute.stopFilter,
-                        navRoute.tripFilter
+                        navRoute.tripFilter,
                     )
 
                 LaunchedEffect(navRoute) {
@@ -405,7 +400,7 @@ fun NearbyTransitPage(
                     tileScrollState = tileScrollState,
                     openModal = ::openModal,
                     openSheetRoute = navController::navigate,
-                    errorBannerViewModel = errorBannerViewModel
+                    errorBannerViewModel = errorBannerViewModel,
                 )
             }
 
@@ -460,7 +455,7 @@ fun NearbyTransitPage(
                     nearbyTransit.viewportProvider.isFollowingPuck = false
                     nearbyTransit.viewportProvider.animateTo(
                         ViewportProvider.Companion.Defaults.center,
-                        zoom = 13.75
+                        zoom = 13.75,
                     )
                 }
 
@@ -478,10 +473,10 @@ fun NearbyTransitPage(
                         NoNearbyStopsView(
                             nearbyTransit.hideMaps,
                             ::openSearch,
-                            ::panToDefaultCenter
+                            ::panToDefaultCenter,
                         )
                     },
-                    errorBannerViewModel = errorBannerViewModel
+                    errorBannerViewModel = errorBannerViewModel,
                 )
             }
         }
@@ -505,7 +500,7 @@ fun NearbyTransitPage(
                 ::handleStopNavigation,
                 currentNavEntry,
                 searchFocusRequester,
-                searchResultsViewModel
+                searchResultsViewModel,
             ) {
                 SheetContent(
                     Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp)
@@ -550,7 +545,7 @@ fun NearbyTransitPage(
                         is SheetRoutes.StopDetails -> colorResource(R.color.fill2)
                         else -> colorResource(R.color.fill1)
                     },
-                scaffoldState = nearbyTransit.scaffoldState
+                scaffoldState = nearbyTransit.scaffoldState,
             ) { sheetPadding ->
                 SearchBarOverlay(
                     searchExpanded,
@@ -558,7 +553,7 @@ fun NearbyTransitPage(
                     ::handleStopNavigation,
                     currentNavEntry,
                     searchFocusRequester,
-                    searchResultsViewModel
+                    searchResultsViewModel,
                 ) {
                     HomeMapView(
                         sheetPadding = sheetPadding,
@@ -583,7 +578,7 @@ fun NearbyTransitPage(
         ModalBottomSheet(
             onDismissRequest = { closeModal() },
             sheetState = modalSheetState,
-            dragHandle = null
+            dragHandle = null,
         ) {
             Column {
                 when (val modal = currentModal) {
@@ -594,7 +589,7 @@ fun NearbyTransitPage(
                             modal.routeIds,
                             modal.stopId,
                             nearbyTransit.alertData,
-                            goBack = { closeModal() }
+                            goBack = { closeModal() },
                         )
                     is ModalRoutes.Explainer ->
                         ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })

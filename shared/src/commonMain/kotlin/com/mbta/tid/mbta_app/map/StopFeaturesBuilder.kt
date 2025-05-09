@@ -38,13 +38,13 @@ object StopFeaturesBuilder {
     suspend fun buildCollection(
         stopData: StopSourceData,
         globalMapData: GlobalMapData?,
-        routeSourceDetails: List<RouteSourceData>
+        routeSourceDetails: List<RouteSourceData>,
     ) = buildCollection(stopData, globalMapData?.mapStops.orEmpty(), routeSourceDetails)
 
     internal suspend fun buildCollection(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
-        routeSourceDetails: List<RouteSourceData>
+        routeSourceDetails: List<RouteSourceData>,
     ): FeatureCollection =
         withContext(Dispatchers.Default) {
             val filteredStops =
@@ -64,7 +64,7 @@ object StopFeaturesBuilder {
     private fun generateStopFeatures(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
-        routeSourceDetails: List<RouteSourceData>
+        routeSourceDetails: List<RouteSourceData>,
     ): List<StopFeatureData> {
         val touchedStopIds: MutableSet<String> = mutableSetOf()
         val routeStops =
@@ -78,7 +78,7 @@ object StopFeaturesBuilder {
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
         routeSourceDetails: List<RouteSourceData>,
-        touchedStopIds: MutableSet<String>
+        touchedStopIds: MutableSet<String>,
     ): List<StopFeatureData> {
         return routeSourceDetails.flatMap { routeSource ->
             routeSource.lines.flatMap { lineData ->
@@ -97,7 +97,7 @@ object StopFeaturesBuilder {
                     return@mapNotNull StopFeatureData(
                         stop = mapStop,
                         feature =
-                            generateStopFeature(mapStop, stopData, overrideLocation = snappedCoord)
+                            generateStopFeature(mapStop, stopData, overrideLocation = snappedCoord),
                     )
                 }
             }
@@ -107,7 +107,7 @@ object StopFeaturesBuilder {
     private fun generateRemainingStops(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
-        touchedStopIds: MutableSet<String>
+        touchedStopIds: MutableSet<String>,
     ): List<StopFeatureData> {
         return stops.values.mapNotNull { mapStop ->
             val stop = mapStop.stop
@@ -122,7 +122,7 @@ object StopFeaturesBuilder {
             touchedStopIds.add(stop.id)
             return@mapNotNull StopFeatureData(
                 stop = mapStop,
-                feature = generateStopFeature(mapStop, stopData)
+                feature = generateStopFeature(mapStop, stopData),
             )
         }
     }
@@ -130,7 +130,7 @@ object StopFeaturesBuilder {
     private fun generateStopFeature(
         mapStop: MapStop,
         stopData: StopSourceData,
-        overrideLocation: Position? = null
+        overrideLocation: Position? = null,
     ): Feature {
         val stop = mapStop.stop
         return Feature(
@@ -152,14 +152,14 @@ object StopFeaturesBuilder {
                 propRouteIdsKey,
                 mapStop.routes
                     .map { (routeType, routes) -> Pair(routeType.name, routes.map { it.id }) }
-                    .toMap()
+                    .toMap(),
             )
             put(
                 propServiceStatusKey,
                 mapStop.alerts
                     .orEmpty()
                     .map { (routeType, alertState) -> Pair(routeType.name, alertState.name) }
-                    .toMap()
+                    .toMap(),
             )
 
             // The symbolSortKey must be ascending, so higher priority icons need higher values.

@@ -10,14 +10,14 @@ internal data class KdTreeNode(
     val position: Position,
     val splitAxis: Axis,
     val lowChild: KdTreeNode?,
-    val highChild: KdTreeNode?
+    val highChild: KdTreeNode?,
 ) {
     @OptIn(ExperimentalTurfApi::class)
     fun findNodesWithin(
         searchFrom: Position,
         radiusMiles: Double,
         selectPredicate: (String, Double) -> Boolean,
-        results: MutableList<Pair<String, Double>>
+        results: MutableList<Pair<String, Double>>,
     ) {
         val distanceHere = distance(searchFrom, position, Units.Miles)
         if (distanceHere <= radiusMiles) {
@@ -57,7 +57,7 @@ internal data class KdTreeNode(
                 splitPosition,
                 splitAxis,
                 build(lowChildren, nextSplitAxis),
-                build(highChildren, nextSplitAxis)
+                build(highChildren, nextSplitAxis),
             )
         }
     }

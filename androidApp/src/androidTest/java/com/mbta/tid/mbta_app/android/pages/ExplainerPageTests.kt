@@ -56,11 +56,7 @@ class ExplainerPageTests {
     @Test
     fun testNoPredictions() {
         composeTestRule.setContent {
-            ExplainerPage(
-                ExplainerType.NoPrediction,
-                TripRouteAccents.default,
-                goBack = {},
-            )
+            ExplainerPage(ExplainerType.NoPrediction, TripRouteAccents.default, goBack = {})
         }
 
         composeTestRule.waitForIdle()

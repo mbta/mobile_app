@@ -48,7 +48,7 @@ fun DepartureTile(
     modifier: Modifier = Modifier,
     showRoutePill: Boolean = false,
     showHeadsign: Boolean = true,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
 ) {
     Column(
         modifier
@@ -56,7 +56,7 @@ fun DepartureTile(
                 onClickLabel =
                     if (isSelected) null
                     else stringResource(R.string.departure_tile_on_click_label),
-                onClick = onTap
+                onClick = onTap,
             )
             .heightIn(min = 56.dp)
             .width(IntrinsicSize.Max)
@@ -66,7 +66,7 @@ fun DepartureTile(
                 backgroundColor =
                     if (isSelected) colorResource(R.color.fill3)
                     else colorResource(R.color.deselected_toggle_2).copy(alpha = 0.6f),
-                borderRadius = 8.dp
+                borderRadius = 8.dp,
             )
             .padding(10.dp)
             .semantics {
@@ -75,7 +75,7 @@ fun DepartureTile(
                     selected = true
                 }
             },
-        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
     ) {
         CompositionLocalProvider(
             LocalContentColor provides
@@ -131,17 +131,17 @@ private fun DepartureTilePreview() {
                                 TripInstantDisplay.TimeWithStatus(
                                     Clock.System.now(),
                                     "Delay",
-                                    headline = true
-                                )
+                                    headline = true,
+                                ),
                             )
                         ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    objects.upcomingTrip(schedule1)
+                    objects.upcomingTrip(schedule1),
                 ),
                 onTap = {},
                 showHeadsign = false,
-                isSelected = true
+                isSelected = true,
             )
             DepartureTile(
                 TileData(
@@ -152,15 +152,15 @@ private fun DepartureTilePreview() {
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip2),
                                 RouteType.BUS,
-                                TripInstantDisplay.Minutes(9)
+                                TripInstantDisplay.Minutes(9),
                             )
                         ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    objects.upcomingTrip(schedule1)
+                    objects.upcomingTrip(schedule1),
                 ),
                 onTap = {},
-                showHeadsign = true
+                showHeadsign = true,
             )
             DepartureTile(
                 TileData(
@@ -171,16 +171,16 @@ private fun DepartureTilePreview() {
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip3),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(12)
+                                TripInstantDisplay.Minutes(12),
                             )
                         ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    objects.upcomingTrip(schedule1)
+                    objects.upcomingTrip(schedule1),
                 ),
                 onTap = {},
                 showRoutePill = true,
-                showHeadsign = true
+                showHeadsign = true,
             )
         }
     }

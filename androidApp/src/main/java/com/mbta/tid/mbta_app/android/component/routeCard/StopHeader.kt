@@ -39,24 +39,24 @@ fun StopHeader(data: RouteCardData.RouteStopData, showStationAccessibility: Bool
             .fillMaxWidth()
             .padding(top = 11.dp, bottom = 11.dp, start = 8.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
             modifier = Modifier.height(IntrinsicSize.Min).padding(start = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             Text(
                 text = data.stop.name,
                 modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
                 overflow = TextOverflow.Visible,
-                style = Typography.callout
+                style = Typography.callout,
             )
 
             if (showInaccessible || showElevatorAlerts) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
                 ) {
                     if (showElevatorAlerts) {
                         Image(
@@ -66,7 +66,7 @@ fun StopHeader(data: RouteCardData.RouteStopData, showStationAccessibility: Bool
                                 Modifier.height(18.dp)
                                     .placeholderIfLoading()
                                     .testTag("elevator_alert")
-                                    .clearAndSetSemantics {}
+                                    .clearAndSetSemantics {},
                         )
                     } else if (showInaccessible) {
                         Image(
@@ -76,7 +76,7 @@ fun StopHeader(data: RouteCardData.RouteStopData, showStationAccessibility: Bool
                                 Modifier.height(18.dp)
                                     .placeholderIfLoading()
                                     .testTag("wheelchair_not_accessible")
-                                    .clearAndSetSemantics {}
+                                    .clearAndSetSemantics {},
                         )
                     }
                     Text(
@@ -86,13 +86,13 @@ fun StopHeader(data: RouteCardData.RouteStopData, showStationAccessibility: Bool
                                 pluralStringResource(
                                     R.plurals.elevator_closure_count,
                                     data.elevatorAlerts.size,
-                                    data.elevatorAlerts.size
+                                    data.elevatorAlerts.size,
                                 ),
                         modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Visible,
                         style = Typography.footnoteSemibold,
-                        color = colorResource(R.color.accessibility)
+                        color = colorResource(R.color.accessibility),
                     )
                 }
             }

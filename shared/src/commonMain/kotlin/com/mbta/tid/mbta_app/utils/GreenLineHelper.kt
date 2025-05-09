@@ -87,12 +87,12 @@ class GreenLineTestHelper {
                                             "place-gover",
                                             "place-pktrm",
                                             stopArlington.id,
-                                            "place-lake"
+                                            "place-lake",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeB0
+                                shapeB0,
                             ),
                             SegmentedRouteShape(
                                 rpB1.id,
@@ -107,14 +107,14 @@ class GreenLineTestHelper {
                                             "place-lake",
                                             stopArlington.id,
                                             "place-pktrm",
-                                            "place-gover"
+                                            "place-gover",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeB1
+                                shapeB1,
                             ),
-                        )
+                        ),
                     ),
                     RouteWithSegmentedShapes(
                         routeC.id,
@@ -132,12 +132,12 @@ class GreenLineTestHelper {
                                             "place-gover",
                                             "place-pktrm",
                                             stopArlington.id,
-                                            "place-clmnl"
+                                            "place-clmnl",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeC0
+                                shapeC0,
                             ),
                             SegmentedRouteShape(
                                 rpC1.id,
@@ -152,14 +152,14 @@ class GreenLineTestHelper {
                                             "place-clmnl",
                                             stopArlington.id,
                                             "place-pktrm",
-                                            "place-gover"
+                                            "place-gover",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeC1
+                                shapeC1,
                             ),
-                        )
+                        ),
                     ),
                     RouteWithSegmentedShapes(
                         routeE.id,
@@ -177,12 +177,12 @@ class GreenLineTestHelper {
                                             "place-gover",
                                             "place-pktrm",
                                             stopArlington.id,
-                                            "place-hsmnl"
+                                            "place-hsmnl",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeE0
+                                shapeE0,
                             ),
                             SegmentedRouteShape(
                                 rpE1.id,
@@ -197,17 +197,17 @@ class GreenLineTestHelper {
                                             "place-hsmnl",
                                             stopArlington.id,
                                             "place-pktrm",
-                                            "place-gover"
+                                            "place-gover",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeE1
+                                shapeE1,
                             ),
-                        )
-                    )
+                        ),
+                    ),
                 ),
-                emptyMap()
+                emptyMap(),
             )
     }
 }

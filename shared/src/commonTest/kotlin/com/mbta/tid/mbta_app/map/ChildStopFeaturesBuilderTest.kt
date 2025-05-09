@@ -50,7 +50,7 @@ class ChildStopFeaturesBuilderTest {
                 platform.id to platform,
                 entrance.id to entrance,
                 boardingArea.id to boardingArea,
-                node.id to node
+                node.id to node,
             )
 
         val collection = ChildStopFeaturesBuilder.generateChildStopFeatures(stops)
@@ -65,7 +65,7 @@ class ChildStopFeaturesBuilderTest {
                     put(ChildStopFeaturesBuilder.propLocationTypeKey, LocationType.STOP.name)
                     put(ChildStopFeaturesBuilder.propSortOrderKey, 0)
                 },
-                collection.features[0].properties
+                collection.features[0].properties,
             )
 
             assertEquals(entrance.id, collection.features[1].id)
@@ -74,11 +74,11 @@ class ChildStopFeaturesBuilderTest {
                     put(ChildStopFeaturesBuilder.propNameKey, ("Entrance"))
                     put(
                         ChildStopFeaturesBuilder.propLocationTypeKey,
-                        LocationType.ENTRANCE_EXIT.name
+                        LocationType.ENTRANCE_EXIT.name,
                     )
                     put(ChildStopFeaturesBuilder.propSortOrderKey, 1)
                 },
-                collection.features[1].properties
+                collection.features[1].properties,
             )
 
             assertEquals(boardingArea.id, collection.features[2].id)
@@ -87,11 +87,11 @@ class ChildStopFeaturesBuilderTest {
                     put(ChildStopFeaturesBuilder.propNameKey, "Other Headsign")
                     put(
                         ChildStopFeaturesBuilder.propLocationTypeKey,
-                        LocationType.BOARDING_AREA.name
+                        LocationType.BOARDING_AREA.name,
                     )
                     put(ChildStopFeaturesBuilder.propSortOrderKey, 2)
                 },
-                collection.features[2].properties
+                collection.features[2].properties,
             )
         }
     }

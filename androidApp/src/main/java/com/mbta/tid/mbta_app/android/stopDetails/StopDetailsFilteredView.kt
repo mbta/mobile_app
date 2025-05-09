@@ -37,7 +37,7 @@ fun StopDetailsFilteredView(
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
     val thisRouteCardData = routeCardData?.find { it.lineOrRoute.id == stopFilter.routeId }
@@ -61,7 +61,7 @@ fun StopDetailsFilteredView(
             togglePinnedRoute = togglePinnedRoute,
             onClose = onClose,
             openModal = openModal,
-            openSheetRoute = openSheetRoute
+            openSheetRoute = openSheetRoute,
         )
     } else {
         Loading(
@@ -72,7 +72,7 @@ fun StopDetailsFilteredView(
             viewModel,
             onClose,
             errorBannerViewModel,
-            globalResponse
+            globalResponse,
         )
     }
 }
@@ -95,7 +95,7 @@ private fun Loading(
                     stopFilter.routeId,
                     trips = 10,
                     RouteCardData.Context.StopDetailsFiltered,
-                    now
+                    now,
                 )
             val stopData = routeData.stopData.single()
             StopDetailsFilteredPickerView(
@@ -115,7 +115,7 @@ private fun Loading(
                 togglePinnedRoute = {},
                 onClose = onClose,
                 openModal = {},
-                openSheetRoute = {}
+                openSheetRoute = {},
             )
         }
     }

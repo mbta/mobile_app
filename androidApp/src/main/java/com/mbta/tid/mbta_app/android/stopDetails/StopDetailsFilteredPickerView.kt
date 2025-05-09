@@ -53,7 +53,7 @@ fun StopDetailsFilteredPickerView(
     togglePinnedRoute: (String) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
 ) {
     val leaf = routeStopData.data.find { it.directionId == stopFilter.directionId }
 
@@ -74,7 +74,7 @@ fun StopDetailsFilteredPickerView(
             stop,
             pinned = pinned,
             onPin = { togglePinnedRoute(lineOrRoute.id) },
-            onClose = onClose
+            onClose = onClose,
         )
 
         ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
@@ -85,7 +85,7 @@ fun StopDetailsFilteredPickerView(
             )
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(top = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 DirectionPicker(
                     availableDirections = availableDirections,
@@ -94,7 +94,7 @@ fun StopDetailsFilteredPickerView(
                     line = (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
                     stopFilter,
                     updateStopFilter,
-                    modifier = Modifier.padding(horizontal = 10.dp)
+                    modifier = Modifier.padding(horizontal = 10.dp),
                 )
 
                 if (leaf != null) {
@@ -103,7 +103,7 @@ fun StopDetailsFilteredPickerView(
                             now,
                             routeStopData.lineOrRoute.sortRoute,
                             global,
-                            RouteCardData.Context.StopDetailsFiltered
+                            RouteCardData.Context.StopDetailsFiltered,
                         )
                     val tileData = leafFormat.tileData()
                     val noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -125,7 +125,7 @@ fun StopDetailsFilteredPickerView(
                         tileScrollState = tileScrollState,
                         pinnedRoutes = pinnedRoutes,
                         openModal = openModal,
-                        openSheetRoute = openSheetRoute
+                        openSheetRoute = openSheetRoute,
                     )
                 } else {
                     CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -135,7 +135,7 @@ fun StopDetailsFilteredPickerView(
                                     stopFilter.routeId,
                                     trips = 10,
                                     RouteCardData.Context.StopDetailsFiltered,
-                                    now
+                                    now,
                                 )
                             val stopData = routeData.stopData.single()
                             val placeholderLeaf = stopData.data.first()
@@ -144,7 +144,7 @@ fun StopDetailsFilteredPickerView(
                                     now,
                                     routeStopData.lineOrRoute.sortRoute,
                                     global,
-                                    RouteCardData.Context.StopDetailsFiltered
+                                    RouteCardData.Context.StopDetailsFiltered,
                                 )
                             val tileData = leafFormat.tileData()
                             val noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -166,7 +166,7 @@ fun StopDetailsFilteredPickerView(
                                 tileScrollState = rememberScrollState(),
                                 pinnedRoutes = emptySet(),
                                 openModal = {},
-                                openSheetRoute = {}
+                                openSheetRoute = {},
                             )
                         }
                     }

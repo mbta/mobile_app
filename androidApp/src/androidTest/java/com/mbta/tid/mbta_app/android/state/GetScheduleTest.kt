@@ -38,7 +38,7 @@ class GetScheduleTest {
             object : ISchedulesRepository {
                 override suspend fun getSchedule(
                     stopIds: List<String>,
-                    now: Instant
+                    now: Instant,
                 ): ApiResult<ScheduleResponse> {
                     return if (stopIds == stops1) ApiResult.Ok(expectedSchedules1)
                     else ApiResult.Ok(expectedSchedules2)

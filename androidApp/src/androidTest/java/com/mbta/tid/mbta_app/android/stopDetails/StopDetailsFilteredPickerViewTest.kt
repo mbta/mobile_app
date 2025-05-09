@@ -120,8 +120,8 @@ class StopDetailsFilteredPickerViewTest {
             builder,
             mutableMapOf(
                 stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-                inaccessibleStop.id to listOf(routePatternOne.id, routePatternTwo.id)
-            )
+                inaccessibleStop.id to listOf(routePatternOne.id, routePatternTwo.id),
+            ),
         )
 
     private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
@@ -155,7 +155,7 @@ class StopDetailsFilteredPickerViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -180,7 +180,7 @@ class StopDetailsFilteredPickerViewTest {
                     togglePinnedRoute = {},
                     openModal = {},
                     openSheetRoute = {},
-                    onClose = {}
+                    onClose = {},
                 )
             }
         }
@@ -207,7 +207,7 @@ class StopDetailsFilteredPickerViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -232,7 +232,7 @@ class StopDetailsFilteredPickerViewTest {
                     togglePinnedRoute = {},
                     openModal = {},
                     openSheetRoute = {},
-                    onClose = {}
+                    onClose = {},
                 )
             }
         }
@@ -268,7 +268,7 @@ class StopDetailsFilteredPickerViewTest {
                     AlertsStreamDataResponse(builder),
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -293,7 +293,7 @@ class StopDetailsFilteredPickerViewTest {
                     togglePinnedRoute = {},
                     openModal = {},
                     openSheetRoute = {},
-                    onClose = {}
+                    onClose = {},
                 )
             }
         }
@@ -318,7 +318,7 @@ class StopDetailsFilteredPickerViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsFiltered
+                    RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -343,7 +343,7 @@ class StopDetailsFilteredPickerViewTest {
                     togglePinnedRoute = {},
                     openModal = {},
                     openSheetRoute = {},
-                    onClose = {}
+                    onClose = {},
                 )
             }
         }

@@ -14,7 +14,7 @@ suspend fun <T : Any> fetchApi(
     errorKey: String,
     getData: suspend () -> ApiResult<T>,
     onSuccess: suspend (T) -> Unit = {},
-    onRefreshAfterError: () -> Unit
+    onRefreshAfterError: () -> Unit,
 ) {
     val result: ApiResult<T> =
         try {

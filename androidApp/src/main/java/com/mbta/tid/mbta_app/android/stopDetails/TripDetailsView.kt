@@ -47,7 +47,7 @@ fun TripDetailsView(
     openModal: (ModalRoutes) -> Unit,
     now: Instant,
     analytics: Analytics = koinInject(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
@@ -66,7 +66,7 @@ fun TripDetailsView(
             routeId = tripData?.trip?.routeId ?: "",
             stopId = parentStationId,
             tripId = tripFilter?.tripId ?: "",
-            connectingRouteId = null
+            connectingRouteId = null,
         )
     }
 
@@ -119,7 +119,7 @@ fun TripDetailsView(
             alertSummaries,
             globalResponse,
             showStationAccessibility,
-            modifier
+            modifier,
         )
     } else {
         val placeholderTripInfo = LoadingPlaceholders.tripDetailsInfo()
@@ -132,7 +132,7 @@ fun TripDetailsView(
                 placeholderTripInfo.stops,
                 null,
                 placeholderTripInfo.vehicle,
-                placeholderTripInfo.vehicleStop
+                placeholderTripInfo.vehicleStop,
             )
         val placeholderRouteAccents = TripRouteAccents(placeholderTripInfo.route)
 
@@ -151,7 +151,7 @@ fun TripDetailsView(
                     now,
                     emptyMap(),
                     globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
-                    showStationAccessibility
+                    showStationAccessibility,
                 )
             }
         }
@@ -173,13 +173,13 @@ private fun TripDetailsView(
     alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
     showStationAccessibility: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         DebugView {
             Column(
                 Modifier.align(Alignment.CenterHorizontally),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text("trip id: ${tripFilter?.tripId ?: "null"}")
                 Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
@@ -200,7 +200,7 @@ private fun TripDetailsView(
                 onTapStop,
                 onOpenAlertDetails,
                 routeAccents,
-                showStationAccessibility
+                showStationAccessibility,
             )
         }
     }

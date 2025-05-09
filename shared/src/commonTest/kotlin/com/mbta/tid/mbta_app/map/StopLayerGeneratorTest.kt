@@ -35,17 +35,14 @@ class StopLayerGeneratorTest {
             mapOf(
                 MapStopRoute.ORANGE to listOf(TestData.getRoute("Orange")),
                 MapStopRoute.GREEN to
-                    listOf(
-                        TestData.getRoute("Green-D"),
-                        TestData.getRoute("Green-E"),
-                    ),
+                    listOf(TestData.getRoute("Green-D"), TestData.getRoute("Green-E")),
                 MapStopRoute.COMMUTER to
                     listOf(
                         TestData.getRoute("CR-Fitchburg"),
                         TestData.getRoute("CR-Haverhill"),
                         TestData.getRoute("CR-Lowell"),
-                        TestData.getRoute("CR-Newburyport")
-                    )
+                        TestData.getRoute("CR-Newburyport"),
+                    ),
             )
 
         val mapStops =
@@ -62,8 +59,8 @@ class StopLayerGeneratorTest {
                                 MapStopRoute.ORANGE to StopAlertState.Shuttle,
                                 MapStopRoute.GREEN to StopAlertState.Suspension,
                                 MapStopRoute.COMMUTER to StopAlertState.Normal,
-                                MapStopRoute.BUS to StopAlertState.Normal
-                            )
+                                MapStopRoute.BUS to StopAlertState.Normal,
+                            ),
                     )
             )
 
@@ -90,33 +87,33 @@ class StopLayerGeneratorTest {
 
         assertEquals(
             "map-stop-container-wide-3",
-            stopLayer.iconImage!!.evaluate(feature.properties, zoom = 14.0)
+            stopLayer.iconImage!!.evaluate(feature.properties, zoom = 14.0),
         )
         assertEquals(
             "North Station",
-            stopLayer.textField!!.evaluate(feature.properties, zoom = 14.0)
+            stopLayer.textField!!.evaluate(feature.properties, zoom = 14.0),
         )
 
         assertEquals(
             "map-stop-wide-ORANGE",
-            transferLayer0.iconImage!!.evaluate(feature.properties, zoom = 14.0)
+            transferLayer0.iconImage!!.evaluate(feature.properties, zoom = 14.0),
         )
         assertEquals(
             "map-stop-wide-GREEN",
-            transferLayer1.iconImage!!.evaluate(feature.properties, zoom = 14.0)
+            transferLayer1.iconImage!!.evaluate(feature.properties, zoom = 14.0),
         )
         assertEquals(
             "map-stop-wide-COMMUTER",
-            transferLayer2.iconImage!!.evaluate(feature.properties, zoom = 14.0)
+            transferLayer2.iconImage!!.evaluate(feature.properties, zoom = 14.0),
         )
 
         assertEquals(
             "alert-small-orange-shuttle",
-            alertLayer0.iconImage!!.evaluate(feature.properties, zoom = 14.0)
+            alertLayer0.iconImage!!.evaluate(feature.properties, zoom = 14.0),
         )
         assertEquals(
             "alert-small-green-suspension",
-            alertLayer1.iconImage!!.evaluate(feature.properties, zoom = 14.0)
+            alertLayer1.iconImage!!.evaluate(feature.properties, zoom = 14.0),
         )
         assertEquals("", alertLayer2.iconImage!!.evaluate(feature.properties, zoom = 14.0))
     }

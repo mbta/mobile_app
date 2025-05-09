@@ -60,9 +60,9 @@ class RouteCardDataLeafTest {
                     listOf(alert),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -83,7 +83,7 @@ class RouteCardDataLeafTest {
                 objects.route { type = RouteType.COMMUTER_RAIL } to "alert-large-commuter-issue",
                 objects.route { type = RouteType.FERRY } to "alert-large-ferry-issue",
                 objects.route { type = RouteType.BUS } to "alert-large-bus-issue",
-                objects.route { type = RouteType.HEAVY_RAIL } to "alert-borderless-issue"
+                objects.route { type = RouteType.HEAVY_RAIL } to "alert-borderless-issue",
             )
 
         val alert = objects.alert { effect = Alert.Effect.ServiceChange }
@@ -94,8 +94,8 @@ class RouteCardDataLeafTest {
                     null,
                     UpcomingFormat.NoTrips(
                         UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                        UpcomingFormat.SecondaryAlert(icon)
-                    )
+                        UpcomingFormat.SecondaryAlert(icon),
+                    ),
                 ),
                 RouteCardData.Leaf(
                         RouteCardData.LineOrRoute.Route(route),
@@ -107,9 +107,9 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     )
-                    .format(now, route, GlobalResponse(objects), anyEnumValue())
+                    .format(now, route, GlobalResponse(objects), anyEnumValue()),
             )
         }
     }
@@ -138,7 +138,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(
                 "",
-                UpcomingFormat.Disruption(alert, "alert-large-silver-suspension")
+                UpcomingFormat.Disruption(alert, "alert-large-silver-suspension"),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -150,9 +150,9 @@ class RouteCardDataLeafTest {
                     listOf(alert),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -181,11 +181,11 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip,
                             route.type,
-                            TripInstantDisplay.Minutes(1)
+                            TripInstantDisplay.Minutes(1),
                         )
                     ),
-                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
-                )
+                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                ),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -197,9 +197,9 @@ class RouteCardDataLeafTest {
                     listOf(alert),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -228,11 +228,11 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip,
                             route.type,
-                            TripInstantDisplay.Minutes(1)
+                            TripInstantDisplay.Minutes(1),
                         )
                     ),
-                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
-                )
+                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                ),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -244,9 +244,9 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
-                    listOf(alert)
+                    listOf(alert),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -260,7 +260,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(
                 null,
-                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday)
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -272,9 +272,9 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -293,7 +293,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(
                 "",
-                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -305,9 +305,9 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -330,9 +330,9 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     false,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -367,11 +367,11 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip2,
                             route.type,
-                            TripInstantDisplay.Minutes(5)
+                            TripInstantDisplay.Minutes(5),
                         )
                     ),
-                    null
-                )
+                    null,
+                ),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -383,9 +383,9 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -422,11 +422,11 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip2,
                             subwayRoute.type,
-                            TripInstantDisplay.Minutes(5)
+                            TripInstantDisplay.Minutes(5),
                         )
                     ),
-                    null
-                )
+                    null,
+                ),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(subwayRoute),
@@ -438,9 +438,9 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, subwayRoute, GlobalResponse(objects), anyEnumValue())
+                .format(now, subwayRoute, GlobalResponse(objects), anyEnumValue()),
         )
         assertEquals(
             LeafFormat.Single(
@@ -450,16 +450,16 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip1,
                             busRoute.type,
-                            TripInstantDisplay.ScheduleMinutes(5)
+                            TripInstantDisplay.ScheduleMinutes(5),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip2,
                             busRoute.type,
-                            TripInstantDisplay.Minutes(5)
-                        )
+                            TripInstantDisplay.Minutes(5),
+                        ),
                     ),
-                    null
-                )
+                    null,
+                ),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(busRoute),
@@ -471,9 +471,9 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, busRoute, GlobalResponse(objects), anyEnumValue())
+                .format(now, busRoute, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -487,7 +487,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(
                 null,
-                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday)
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
             ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
@@ -499,9 +499,9 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     false,
-                    emptyList()
+                    emptyList(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue())
+                .format(now, route, GlobalResponse(objects), anyEnumValue()),
         )
     }
 
@@ -573,10 +573,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction1),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Approaching
+                                TripInstantDisplay.Approaching,
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Braintree",
@@ -584,10 +584,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction2),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(2)
+                                TripInstantDisplay.Minutes(2),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Ashmont",
@@ -595,10 +595,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction3),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(9)
+                                TripInstantDisplay.Minutes(9),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                 }
             ),
@@ -613,20 +613,20 @@ class RouteCardDataLeafTest {
                             objects.upcomingTrip(prediction1),
                             objects.upcomingTrip(prediction2),
                             objects.upcomingTrip(prediction3),
-                            objects.upcomingTrip(prediction4)
+                            objects.upcomingTrip(prediction4),
                         ),
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
-                        emptyList()
+                        emptyList(),
                     )
                     .format(
                         now,
                         RedLine.route,
                         RedLine.global,
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
-            )
+            ),
         )
     }
 
@@ -677,10 +677,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction1),
                                     RouteType.HEAVY_RAIL,
-                                    TripInstantDisplay.Approaching
+                                    TripInstantDisplay.Approaching,
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             "Braintree",
@@ -688,10 +688,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction2),
                                     RouteType.HEAVY_RAIL,
-                                    TripInstantDisplay.Minutes(2)
+                                    TripInstantDisplay.Minutes(2),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             "Ashmont",
@@ -699,10 +699,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction3),
                                     RouteType.HEAVY_RAIL,
-                                    TripInstantDisplay.Minutes(9)
+                                    TripInstantDisplay.Minutes(9),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                     }
                 ),
@@ -717,20 +717,20 @@ class RouteCardDataLeafTest {
                                 objects.upcomingTrip(prediction1),
                                 objects.upcomingTrip(prediction2),
                                 objects.upcomingTrip(prediction3),
-                                objects.upcomingTrip(prediction4)
+                                objects.upcomingTrip(prediction4),
                             ),
                             emptyList(),
                             allDataLoaded = true,
                             hasSchedulesToday = true,
-                            listOf(downstreamAlert)
+                            listOf(downstreamAlert),
                         )
                         .format(
                             now,
                             RedLine.route,
                             RedLine.global,
-                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
-                )
+                ),
             )
         }
 
@@ -768,16 +768,16 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction1),
                             RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(3)
+                            TripInstantDisplay.Minutes(3),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction2),
                             RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(12)
+                            TripInstantDisplay.Minutes(12),
                         ),
                     ),
-                    null
-                )
+                    null,
+                ),
             ),
             RouteCardData.Leaf(
                     RedLine.lineOrRoute,
@@ -788,19 +788,19 @@ class RouteCardDataLeafTest {
                     listOf(
                         objects.upcomingTrip(prediction1),
                         objects.upcomingTrip(prediction2),
-                        objects.upcomingTrip(prediction3)
+                        objects.upcomingTrip(prediction3),
                     ),
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
-                    emptyList()
+                    emptyList(),
                 )
                 .format(
                     now,
                     RedLine.route,
                     RedLine.global,
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                )
+                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                ),
         )
     }
 
@@ -839,10 +839,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction1),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(2)
+                                TripInstantDisplay.Minutes(2),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Ashmont",
@@ -850,10 +850,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction2),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(5)
+                                TripInstantDisplay.Minutes(5),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Ashmont",
@@ -861,10 +861,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction3),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(9)
+                                TripInstantDisplay.Minutes(9),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                 }
             ),
@@ -878,15 +878,15 @@ class RouteCardDataLeafTest {
                         listOf(
                             objects.upcomingTrip(prediction1),
                             objects.upcomingTrip(prediction2),
-                            objects.upcomingTrip(prediction3)
+                            objects.upcomingTrip(prediction3),
                         ),
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
-                        emptyList()
+                        emptyList(),
                     )
                     .format(now, RedLine.route, RedLine.global, anyEnumValue())
-            )
+            ),
         )
     }
 
@@ -925,7 +925,7 @@ class RouteCardDataLeafTest {
                                     route = RedLine.route.id,
                                     routeType = RouteType.HEAVY_RAIL,
                                     stop = it,
-                                    trip = null
+                                    trip = null,
                                 )
                             }
                             .toMutableList()
@@ -944,10 +944,10 @@ class RouteCardDataLeafTest {
                                     UpcomingFormat.Some.FormattedTrip(
                                         objects.upcomingTrip(prediction1),
                                         RouteType.HEAVY_RAIL,
-                                        TripInstantDisplay.Minutes(3)
+                                        TripInstantDisplay.Minutes(3),
                                     ),
-                                    null
-                                )
+                                    null,
+                                ),
                             ),
                             LeafFormat.Branched.BranchRow(
                                 null,
@@ -956,16 +956,16 @@ class RouteCardDataLeafTest {
                                     UpcomingFormat.Some.FormattedTrip(
                                         objects.upcomingTrip(prediction2),
                                         RouteType.HEAVY_RAIL,
-                                        TripInstantDisplay.Minutes(12)
+                                        TripInstantDisplay.Minutes(12),
                                     ),
-                                    null
-                                )
+                                    null,
+                                ),
                             ),
                             LeafFormat.Branched.BranchRow(
                                 null,
                                 "Braintree",
-                                UpcomingFormat.Disruption(alert, mapStopRoute)
-                            )
+                                UpcomingFormat.Disruption(alert, mapStopRoute),
+                            ),
                         )
                     )
                 ),
@@ -978,7 +978,7 @@ class RouteCardDataLeafTest {
                             setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
                             listOf(
                                 objects.upcomingTrip(prediction1),
-                                objects.upcomingTrip(prediction2)
+                                objects.upcomingTrip(prediction2),
                             ),
                             listOf(alert),
                             allDataLoaded = true,
@@ -989,9 +989,9 @@ class RouteCardDataLeafTest {
                             now,
                             RedLine.route,
                             RedLine.global,
-                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
-                )
+                ),
             )
         }
 
@@ -1063,10 +1063,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction1),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(3)
+                                TripInstantDisplay.Minutes(3),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         GreenLine.b,
@@ -1075,10 +1075,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction2),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(5)
+                                TripInstantDisplay.Minutes(5),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         GreenLine.d,
@@ -1087,10 +1087,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction3),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(10)
+                                TripInstantDisplay.Minutes(10),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                 }
             ),
@@ -1103,27 +1103,27 @@ class RouteCardDataLeafTest {
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
                             GreenLine.dWestbound,
-                            GreenLine.eWestbound
+                            GreenLine.eWestbound,
                         ),
                         emptySet(),
                         listOf(
                             objects.upcomingTrip(prediction1),
                             objects.upcomingTrip(prediction2),
                             objects.upcomingTrip(prediction3),
-                            objects.upcomingTrip(prediction4)
+                            objects.upcomingTrip(prediction4),
                         ),
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
-                        emptyList()
+                        emptyList(),
                     )
                     .format(
                         now,
                         GreenLine.b,
                         GreenLine.global,
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
-            )
+            ),
         )
     }
 
@@ -1196,10 +1196,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction1),
                                 RouteType.COMMUTER_RAIL,
-                                TripInstantDisplay.Time(prediction1.departureTime!!, true)
+                                TripInstantDisplay.Time(prediction1.departureTime!!, true),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Providence",
@@ -1207,10 +1207,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(schedule2),
                                 RouteType.COMMUTER_RAIL,
-                                TripInstantDisplay.ScheduleTime(schedule2.departureTime!!, true)
+                                TripInstantDisplay.ScheduleTime(schedule2.departureTime!!, true),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Wickford Junction",
@@ -1218,10 +1218,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(schedule3),
                                 RouteType.COMMUTER_RAIL,
-                                TripInstantDisplay.ScheduleTime(schedule3.departureTime!!, true)
+                                TripInstantDisplay.ScheduleTime(schedule3.departureTime!!, true),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                 }
             ),
@@ -1233,26 +1233,26 @@ class RouteCardDataLeafTest {
                         listOf(
                             ProvidenceStoughtonLine.toProvidence,
                             ProvidenceStoughtonLine.toStoughton,
-                            ProvidenceStoughtonLine.toWickford
+                            ProvidenceStoughtonLine.toWickford,
                         ),
                         emptySet(),
                         listOf(
                             objects.upcomingTrip(prediction1),
                             objects.upcomingTrip(schedule2),
-                            objects.upcomingTrip(schedule3)
+                            objects.upcomingTrip(schedule3),
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     )
                     .format(
                         now,
                         ProvidenceStoughtonLine.route,
                         ProvidenceStoughtonLine.global,
-                        anyEnumValue()
+                        anyEnumValue(),
                     )
-            )
+            ),
         )
     }
 
@@ -1287,16 +1287,16 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction1),
                             RouteType.COMMUTER_RAIL,
-                            TripInstantDisplay.Time(prediction1.departureTime!!, true)
+                            TripInstantDisplay.Time(prediction1.departureTime!!, true),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction2),
                             RouteType.COMMUTER_RAIL,
-                            TripInstantDisplay.Time(prediction2.departureTime!!, true)
-                        )
+                            TripInstantDisplay.Time(prediction2.departureTime!!, true),
+                        ),
                     ),
-                    null
-                )
+                    null,
+                ),
             ),
             RouteCardData.Leaf(
                     ProvidenceStoughtonLine.lineOrRoute,
@@ -1305,25 +1305,25 @@ class RouteCardDataLeafTest {
                     listOf(
                         ProvidenceStoughtonLine.fromProvidence,
                         ProvidenceStoughtonLine.fromStoughton,
-                        ProvidenceStoughtonLine.fromWickford
+                        ProvidenceStoughtonLine.fromWickford,
                     ),
                     emptySet(),
                     listOf(
                         objects.upcomingTrip(prediction1),
                         objects.upcomingTrip(prediction2),
-                        objects.upcomingTrip(schedule3)
+                        objects.upcomingTrip(schedule3),
                     ),
                     emptyList(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 )
                 .format(
                     now,
                     ProvidenceStoughtonLine.route,
                     ProvidenceStoughtonLine.global,
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                )
+                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                ),
         )
     }
 
@@ -1374,16 +1374,16 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction1),
                             RouteType.BUS,
-                            TripInstantDisplay.Minutes(3)
+                            TripInstantDisplay.Minutes(3),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction2),
                             RouteType.BUS,
-                            TripInstantDisplay.Minutes(12)
+                            TripInstantDisplay.Minutes(12),
                         ),
                     ),
-                    null
-                )
+                    null,
+                ),
             ),
             RouteCardData.Leaf(
                     `87`.lineOrRoute,
@@ -1394,19 +1394,19 @@ class RouteCardDataLeafTest {
                     listOf(
                         objects.upcomingTrip(prediction1),
                         objects.upcomingTrip(prediction2),
-                        objects.upcomingTrip(prediction3)
+                        objects.upcomingTrip(prediction3),
                     ),
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
-                    emptyList()
+                    emptyList(),
                 )
                 .format(
                     now,
                     `87`.route,
                     `87`.global,
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                )
+                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                ),
         )
     }
 
@@ -1441,10 +1441,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction1),
                                 RouteType.BUS,
-                                TripInstantDisplay.Minutes(1)
+                                TripInstantDisplay.Minutes(1),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                     branchRow(
                         "Clarendon Hill",
@@ -1452,10 +1452,10 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction2),
                                 RouteType.BUS,
-                                TripInstantDisplay.Minutes(32)
+                                TripInstantDisplay.Minutes(32),
                             ),
-                            null
-                        )
+                            null,
+                        ),
                     )
                 }
             ),
@@ -1469,20 +1469,20 @@ class RouteCardDataLeafTest {
                         listOf(
                             objects.upcomingTrip(prediction1),
                             objects.upcomingTrip(prediction2),
-                            objects.upcomingTrip(prediction3)
+                            objects.upcomingTrip(prediction3),
                         ),
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
-                        emptyList()
+                        emptyList(),
                     )
                     .format(
                         now,
                         `87`.route,
                         `87`.global,
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
-            )
+            ),
         )
     }
 
@@ -1512,10 +1512,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction1),
                                     RouteType.HEAVY_RAIL,
-                                    TripInstantDisplay.Approaching
+                                    TripInstantDisplay.Approaching,
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             "Ashmont",
@@ -1523,10 +1523,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction2),
                                     RouteType.HEAVY_RAIL,
-                                    TripInstantDisplay.Minutes(2)
+                                    TripInstantDisplay.Minutes(2),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                     }
                 ),
@@ -1539,15 +1539,15 @@ class RouteCardDataLeafTest {
                             emptySet(),
                             listOf(
                                 objects.upcomingTrip(prediction1),
-                                objects.upcomingTrip(prediction2)
+                                objects.upcomingTrip(prediction2),
                             ),
                             emptyList(),
                             allDataLoaded = true,
                             hasSchedulesToday = true,
-                            emptyList()
+                            emptyList(),
                         )
                         .format(now, RedLine.route, RedLine.global, anyEnumValue())
-                )
+                ),
             )
         }
 
@@ -1560,7 +1560,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 LeafFormat.Single(
                     null,
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday)
+                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
                 ),
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
@@ -1572,9 +1572,9 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     )
-                    .format(now, RedLine.route, RedLine.global, anyEnumValue())
+                    .format(now, RedLine.route, RedLine.global, anyEnumValue()),
             )
         }
 
@@ -1610,10 +1610,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction1),
                                     RouteType.LIGHT_RAIL,
-                                    TripInstantDisplay.Minutes(3)
+                                    TripInstantDisplay.Minutes(3),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.b,
@@ -1622,10 +1622,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction2),
                                     RouteType.LIGHT_RAIL,
-                                    TripInstantDisplay.Minutes(5)
+                                    TripInstantDisplay.Minutes(5),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.b,
@@ -1634,10 +1634,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction3),
                                     RouteType.LIGHT_RAIL,
-                                    TripInstantDisplay.Minutes(10)
+                                    TripInstantDisplay.Minutes(10),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                     }
                 ),
@@ -1650,21 +1650,21 @@ class RouteCardDataLeafTest {
                                 GreenLine.bWestbound,
                                 GreenLine.cWestbound,
                                 GreenLine.dWestbound,
-                                GreenLine.eWestbound
+                                GreenLine.eWestbound,
                             ),
                             emptySet(),
                             listOf(
                                 objects.upcomingTrip(prediction1),
                                 objects.upcomingTrip(prediction2),
-                                objects.upcomingTrip(prediction3)
+                                objects.upcomingTrip(prediction3),
                             ),
                             emptyList(),
                             true,
                             true,
-                            emptyList()
+                            emptyList(),
                         )
                         .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
-                )
+                ),
             )
         }
 
@@ -1688,7 +1688,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 LeafFormat.Single(
                     null,
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
+                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
                 ),
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
@@ -1698,16 +1698,16 @@ class RouteCardDataLeafTest {
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
                             GreenLine.dWestbound,
-                            GreenLine.eWestbound
+                            GreenLine.eWestbound,
                         ),
                         emptySet(),
                         listOf(objects.upcomingTrip(schedule1), objects.upcomingTrip(schedule2)),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     )
-                    .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
+                    .format(now, GreenLine.b, GreenLine.global, anyEnumValue()),
             )
         }
 
@@ -1746,7 +1746,7 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.d.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.kenmore.id,
-                                trip = null
+                                trip = null,
                             )
                         )
                 }
@@ -1761,10 +1761,10 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction1),
                                     RouteType.LIGHT_RAIL,
-                                    TripInstantDisplay.Minutes(3)
+                                    TripInstantDisplay.Minutes(3),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.b,
@@ -1773,15 +1773,15 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction2),
                                     RouteType.LIGHT_RAIL,
-                                    TripInstantDisplay.Minutes(5)
+                                    TripInstantDisplay.Minutes(5),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.d,
                             "Riverside",
-                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d)),
                         )
                     }
                 ),
@@ -1794,26 +1794,26 @@ class RouteCardDataLeafTest {
                                 GreenLine.bWestbound,
                                 GreenLine.cWestbound,
                                 GreenLine.dWestbound,
-                                GreenLine.eWestbound
+                                GreenLine.eWestbound,
                             ),
                             setOf(GreenLine.kenmore.id),
                             listOf(
                                 objects.upcomingTrip(prediction1),
                                 objects.upcomingTrip(prediction2),
-                                objects.upcomingTrip(prediction3)
+                                objects.upcomingTrip(prediction3),
                             ),
                             listOf(alert),
                             true,
                             true,
-                            emptyList()
+                            emptyList(),
                         )
                         .format(
                             now,
                             GreenLine.b,
                             GreenLine.global,
-                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
-                )
+                ),
             )
         }
 
@@ -1847,7 +1847,7 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.b.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.kenmore.id,
-                                trip = null
+                                trip = null,
                             ),
                             Alert.InformedEntity(
                                 activities = listOf(Alert.InformedEntity.Activity.Board),
@@ -1855,8 +1855,8 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.d.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.kenmore.id,
-                                trip = null
-                            )
+                                trip = null,
+                            ),
                         )
                 }
 
@@ -1870,20 +1870,20 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction1),
                                     RouteType.LIGHT_RAIL,
-                                    TripInstantDisplay.Minutes(3)
+                                    TripInstantDisplay.Minutes(3),
                                 ),
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.b,
                             "Boston College",
-                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b))
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b)),
                         )
                         branchRow(
                             GreenLine.d,
                             "Riverside",
-                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d)),
                         )
                     }
                 ),
@@ -1896,25 +1896,25 @@ class RouteCardDataLeafTest {
                                 GreenLine.bWestbound,
                                 GreenLine.cWestbound,
                                 GreenLine.dWestbound,
-                                GreenLine.eWestbound
+                                GreenLine.eWestbound,
                             ),
                             setOf(GreenLine.kenmore.id),
                             listOf(
                                 objects.upcomingTrip(prediction1),
-                                objects.upcomingTrip(prediction2)
+                                objects.upcomingTrip(prediction2),
                             ),
                             listOf(alert),
                             true,
                             true,
-                            emptyList()
+                            emptyList(),
                         )
                         .format(
                             now,
                             GreenLine.b,
                             GreenLine.global,
-                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
-                )
+                ),
             )
         }
 
@@ -1935,7 +1935,7 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.d.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.boylston.id,
-                                trip = null
+                                trip = null,
                             )
                         )
                 }
@@ -1976,21 +1976,21 @@ class RouteCardDataLeafTest {
                             "Boston College",
                             UpcomingFormat.NoTrips(
                                 UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.c,
                             "Cleveland Circle",
                             UpcomingFormat.NoTrips(
                                 UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                                null
-                            )
+                                null,
+                            ),
                         )
                         branchRow(
                             GreenLine.d,
                             "Riverside",
-                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d))
+                            UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.d)),
                         )
                     }
                 ),
@@ -2003,14 +2003,14 @@ class RouteCardDataLeafTest {
                                 GreenLine.bWestbound,
                                 GreenLine.cWestbound,
                                 GreenLine.dWestbound,
-                                GreenLine.eWestbound
+                                GreenLine.eWestbound,
                             ),
                             setOf(GreenLine.boylston.id),
                             listOf(
                                 objects.upcomingTrip(schedB),
                                 objects.upcomingTrip(schedC),
                                 objects.upcomingTrip(schedD),
-                                objects.upcomingTrip(schedE)
+                                objects.upcomingTrip(schedE),
                             ),
                             listOf(alert),
                             true,
@@ -2018,17 +2018,17 @@ class RouteCardDataLeafTest {
                                 GreenLine.bWestbound.id to true,
                                 GreenLine.cWestbound.id to true,
                                 GreenLine.dWestbound.id to true,
-                                GreenLine.eWestbound.id to true
+                                GreenLine.eWestbound.id to true,
                             ),
-                            emptyList()
+                            emptyList(),
                         )
                         .format(
                             now,
                             GreenLine.b,
                             GreenLine.global,
-                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
+                            anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
-                )
+                ),
             )
         }
 
@@ -2048,7 +2048,7 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.b.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.boylston.id,
-                                trip = null
+                                trip = null,
                             ),
                             Alert.InformedEntity(
                                 activities = listOf(Alert.InformedEntity.Activity.Board),
@@ -2056,7 +2056,7 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.c.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.boylston.id,
-                                trip = null
+                                trip = null,
                             ),
                             Alert.InformedEntity(
                                 activities = listOf(Alert.InformedEntity.Activity.Board),
@@ -2064,7 +2064,7 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.d.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.boylston.id,
-                                trip = null
+                                trip = null,
                             ),
                             Alert.InformedEntity(
                                 activities = listOf(Alert.InformedEntity.Activity.Board),
@@ -2072,15 +2072,15 @@ class RouteCardDataLeafTest {
                                 route = GreenLine.e.id,
                                 routeType = RouteType.LIGHT_RAIL,
                                 stop = GreenLine.boylston.id,
-                                trip = null
-                            )
+                                trip = null,
+                            ),
                         )
                 }
 
             assertEquals(
                 LeafFormat.Single(
                     null,
-                    UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b))
+                    UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b)),
                 ),
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
@@ -2090,21 +2090,21 @@ class RouteCardDataLeafTest {
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
                             GreenLine.dWestbound,
-                            GreenLine.eWestbound
+                            GreenLine.eWestbound,
                         ),
                         setOf(GreenLine.boylston.id),
                         listOf(),
                         listOf(alert),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     )
                     .format(
                         now,
                         GreenLine.b,
                         GreenLine.global,
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered)
-                    )
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    ),
             )
         }
 }

@@ -49,7 +49,7 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit,
     ) {
         val rawPayload = message.jsonBody
         if (rawPayload != null) {
@@ -74,7 +74,7 @@ class MockAlertsRepository
 constructor(
     private val response: AlertsStreamDataResponse = AlertsStreamDataResponse(emptyMap()),
     private val onConnect: () -> Unit = {},
-    private val onDisconnect: () -> Unit = {}
+    private val onDisconnect: () -> Unit = {},
 ) : IAlertsRepository {
 
     override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {

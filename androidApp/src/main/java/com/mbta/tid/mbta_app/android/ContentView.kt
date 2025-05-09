@@ -90,7 +90,7 @@ fun ContentView(
         OnboardingPage(
             pendingOnboarding,
             onFinish = { viewModel.clearPendingOnboarding() },
-            locationDataManager = locationDataManager
+            locationDataManager = locationDataManager,
         )
         return
     }
@@ -119,7 +119,7 @@ fun ContentView(
                             currentDestination =
                                 Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
                             navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
-                            navigateToMore = { navController.navigate(Routes.More) }
+                            navigateToMore = { navController.navigate(Routes.More) },
                         )
                     }
                 },
@@ -134,7 +134,7 @@ fun ContentView(
                         currentDestination =
                             Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
                         navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
-                        navigateToMore = { navController.navigate(Routes.More) }
+                        navigateToMore = { navController.navigate(Routes.More) },
                     )
                 }
             )

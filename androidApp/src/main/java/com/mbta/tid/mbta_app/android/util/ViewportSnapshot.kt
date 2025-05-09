@@ -11,7 +11,7 @@ class ViewportSnapshot(val isFollowingPuck: Boolean?, val camera: CameraState?) 
         mapViewportState: MapViewportState
     ) : this(
         isFollowingPuck = mapViewportState.isFollowingPuck,
-        camera = mapViewportState.cameraState
+        camera = mapViewportState.cameraState,
     )
 
     fun restoreOn(mapViewportState: MapViewportState) {
@@ -20,7 +20,7 @@ class ViewportSnapshot(val isFollowingPuck: Boolean?, val camera: CameraState?) 
         } else if (camera != null) {
             mapViewportState.easeTo(
                 CameraOptions.Builder().zoom(camera.zoom).center(camera.center).build(),
-                animationOptions = MapAnimationDefaults.options
+                animationOptions = MapAnimationDefaults.options,
             )
         }
     }

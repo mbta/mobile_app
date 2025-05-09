@@ -32,7 +32,7 @@ class DirectionPickerTest {
                 route = route,
                 line = null,
                 filter = filter,
-                updateStopFilter = { newFilter -> filter = newFilter }
+                updateStopFilter = { newFilter -> filter = newFilter },
             )
         }
 
@@ -59,7 +59,7 @@ class DirectionPickerTest {
                 route = route,
                 line = null,
                 filter = filter,
-                updateStopFilter = { newFilter -> filter = newFilter }
+                updateStopFilter = { newFilter -> filter = newFilter },
             )
         }
 

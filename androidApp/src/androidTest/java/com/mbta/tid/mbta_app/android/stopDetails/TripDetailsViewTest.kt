@@ -72,7 +72,7 @@ class TripDetailsViewTest {
                             StopDetailsPageFilters(
                                 stop.id,
                                 StopDetailsFilter(route.id, routePattern.directionId),
-                                tripFilter
+                                tripFilter,
                             ),
                         globalResponse,
                         alertData,
@@ -80,7 +80,7 @@ class TripDetailsViewTest {
                         updateStopFilter = { _, _ -> },
                         updateTripFilter = { _, _ -> },
                         setMapSelectedVehicle = {},
-                        now
+                        now,
                     )
 
                 TripDetailsView(
@@ -93,7 +93,7 @@ class TripDetailsViewTest {
                     openSheetRoute = openedSheetRoutes::add,
                     openModal = {},
                     now,
-                    analytics
+                    analytics,
                 )
             }
         }
@@ -102,7 +102,7 @@ class TripDetailsViewTest {
         composeTestRule.onNodeWithText(downstreamStop.name).performClick()
         assertEquals<List<SheetRoutes>>(
             listOf(SheetRoutes.StopDetails(downstreamStopParent.id, null, null)),
-            openedSheetRoutes
+            openedSheetRoutes,
         )
         assertEquals(
             listOf(
@@ -112,11 +112,11 @@ class TripDetailsViewTest {
                         "route_id" to route.id,
                         "stop_id" to downstreamStopParent.id,
                         "trip_id" to trip.id,
-                        "connecting_route_id" to ""
-                    )
+                        "connecting_route_id" to "",
+                    ),
                 )
             ),
-            loggedEvents
+            loggedEvents,
         )
     }
 
@@ -138,11 +138,11 @@ class TripDetailsViewTest {
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                 directionId = 0,
                 route = route.id,
-                stop = downstreamStop.id
+                stop = downstreamStop.id,
             )
         }
 
@@ -154,7 +154,7 @@ class TripDetailsViewTest {
                             StopDetailsPageFilters(
                                 stop.id,
                                 StopDetailsFilter(route.id, routePattern.directionId),
-                                tripFilter
+                                tripFilter,
                             ),
                         globalResponse,
                         AlertsStreamDataResponse(objects),
@@ -162,7 +162,7 @@ class TripDetailsViewTest {
                         updateStopFilter = { _, _ -> },
                         updateTripFilter = { _, _ -> },
                         setMapSelectedVehicle = {},
-                        now
+                        now,
                     )
 
                 TripDetailsView(
@@ -175,7 +175,7 @@ class TripDetailsViewTest {
                     openSheetRoute = openedSheetRoutes::add,
                     openModal = {},
                     now,
-                    analytics
+                    analytics,
                 )
             }
         }

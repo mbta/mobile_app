@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.model.morePage
 fun localizedFeedbackFormUrl(
     baseUrl: String,
     translation: String,
-    separateHTForm: Boolean = false
+    separateHTForm: Boolean = false,
 ): String {
     return when (translation) {
         "es" -> "${baseUrl}?lang=es-US"

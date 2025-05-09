@@ -52,7 +52,7 @@ fun SearchBarOverlay(
     currentNavEntry: SheetRoutes?,
     inputFieldFocusRequester: FocusRequester,
     searchResultsVm: SearchResultsViewModel,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     var visible =
         remember(currentNavEntry) {
@@ -82,10 +82,7 @@ fun SearchBarOverlay(
     }
 
     Box(contentAlignment = Alignment.TopCenter) {
-        Box(
-            modifier = Modifier.zIndex(1f),
-            contentAlignment = Alignment.Center,
-        ) {
+        Box(modifier = Modifier.zIndex(1f), contentAlignment = Alignment.Center) {
             if (visible) {
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
@@ -109,7 +106,7 @@ fun SearchBarOverlay(
                                     stringResource(R.string.stops),
                                     // This will be drawn in bodyLarge if we don't
                                     // re-override it here
-                                    style = Typography.callout
+                                    style = Typography.callout,
                                 )
                             },
                             expanded = expanded,
@@ -120,7 +117,7 @@ fun SearchBarOverlay(
                                     .haloContainer(
                                         2.dp,
                                         borderRadius = 8.dp,
-                                        backgroundColor = colorResource(R.color.fill3)
+                                        backgroundColor = colorResource(R.color.fill3),
                                     )
                                     .fillMaxWidth()
                                     .focusRequester(inputFieldFocusRequester),
@@ -129,7 +126,7 @@ fun SearchBarOverlay(
                                 Icon(
                                     painterResource(R.drawable.magnifying_glass),
                                     null,
-                                    tint = colorResource(R.color.deemphasized)
+                                    tint = colorResource(R.color.deemphasized),
                                 )
                             },
                             trailingIcon = {
@@ -141,11 +138,11 @@ fun SearchBarOverlay(
                                         Icon(
                                             painterResource(R.drawable.fa_xmark),
                                             stringResource(R.string.close_button_label),
-                                            tint = colorResource(R.color.deemphasized)
+                                            tint = colorResource(R.color.deemphasized),
                                         )
                                     }
                                 }
-                            }
+                            },
                         )
                     },
                     expanded = expanded,
@@ -153,14 +150,14 @@ fun SearchBarOverlay(
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         if (searchInputState.isEmpty()) {
                             item {
                                 Text(
                                     modifier = Modifier.padding(bottom = 10.dp),
                                     text = stringResource(R.string.recently_viewed),
-                                    style = Typography.subheadlineSemibold
+                                    style = Typography.subheadlineSemibold,
                                 )
                             }
                         }

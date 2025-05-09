@@ -18,12 +18,12 @@ sealed interface ModalRoutes {
         val alertId: String,
         val lineId: String?,
         val routeIds: List<String>?,
-        val stopId: String?
+        val stopId: String?,
     ) : ModalRoutes
 
     @Serializable
     data class Explainer(
         @SerialName("explainerType") val type: ExplainerType,
-        val routeAccents: TripRouteAccents
+        val routeAccents: TripRouteAccents,
     ) : ModalRoutes
 }

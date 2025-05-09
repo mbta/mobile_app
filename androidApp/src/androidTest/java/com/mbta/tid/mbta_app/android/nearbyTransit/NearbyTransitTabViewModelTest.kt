@@ -40,14 +40,14 @@ class NearbyTransitTabViewModelTest {
             "a",
             newFilter,
             { popCalled = true },
-            { pushedRoute = it }
+            { pushedRoute = it },
         )
         assertEquals(
             newFilter,
             when (val actual = pushedRoute) {
                 is SheetRoutes.StopDetails -> actual.stopFilter
                 else -> false
-            }
+            },
         )
 
         assertTrue(popCalled)
@@ -66,7 +66,7 @@ class NearbyTransitTabViewModelTest {
             "a",
             sameFilter,
             { popCalled = true },
-            { pushCalled = true }
+            { pushCalled = true },
         )
         assertFalse(pushCalled)
         assertFalse(popCalled)
@@ -85,14 +85,14 @@ class NearbyTransitTabViewModelTest {
             "a",
             newFilter,
             { popCalled = true },
-            { pushedRoute = it }
+            { pushedRoute = it },
         )
         assertEquals(
             newFilter,
             when (val actual = pushedRoute) {
                 is SheetRoutes.StopDetails -> actual.stopFilter
                 else -> false
-            }
+            },
         )
 
         assertTrue(popCalled)
@@ -115,11 +115,11 @@ class NearbyTransitTabViewModelTest {
                             stop,
                             listOf(),
                             RouteCardData.Context.NearbyTransit,
-                            GlobalResponse(objectCollectionBuilder)
+                            GlobalResponse(objectCollectionBuilder),
                         )
                     ),
                     RouteCardData.Context.NearbyTransit,
-                    Clock.System.now()
+                    Clock.System.now(),
                 )
             )
 

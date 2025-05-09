@@ -57,13 +57,13 @@ class DeparturesTest {
                         listOf(
                             UpcomingTrip(
                                 aTrip,
-                                objects.prediction { departureTime = now.plus(5.minutes) }
+                                objects.prediction { departureTime = now.plus(5.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     ),
                     RouteCardData.Leaf(
                         lineOrRoute,
@@ -74,14 +74,14 @@ class DeparturesTest {
                         listOf(
                             UpcomingTrip(
                                 bTrip,
-                                objects.prediction { departureTime = now.plus(20.minutes) }
+                                objects.prediction { departureTime = now.plus(20.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        listOf(downstreamAlert)
-                    )
+                        listOf(downstreamAlert),
+                    ),
                 ),
                 RouteCardData.Context.NearbyTransit,
             )
@@ -132,13 +132,13 @@ class DeparturesTest {
                             UpcomingTrip(
                                 aTrip,
                                 aSchedule,
-                                objects.prediction { departureTime = now.plus(5.minutes) }
+                                objects.prediction { departureTime = now.plus(5.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     ),
                     RouteCardData.Leaf(
                         lineOrRoute,
@@ -149,14 +149,14 @@ class DeparturesTest {
                         listOf(
                             UpcomingTrip(
                                 bTrip,
-                                objects.prediction { departureTime = now.plus(20.minutes) }
+                                objects.prediction { departureTime = now.plus(20.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
-                    )
+                        emptyList(),
+                    ),
                 ),
                 RouteCardData.Context.NearbyTransit,
             )
@@ -200,13 +200,13 @@ class DeparturesTest {
                         listOf(
                             UpcomingTrip(
                                 aTrip,
-                                objects.prediction { departureTime = now.plus(5.minutes) }
+                                objects.prediction { departureTime = now.plus(5.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
                     ),
                     RouteCardData.Leaf(
                         lineOrRoute,
@@ -217,14 +217,14 @@ class DeparturesTest {
                         listOf(
                             UpcomingTrip(
                                 bTrip,
-                                objects.prediction { departureTime = now.plus(20.minutes) }
+                                objects.prediction { departureTime = now.plus(20.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
-                    )
+                        emptyList(),
+                    ),
                 ),
                 RouteCardData.Context.NearbyTransit,
             )
@@ -258,9 +258,9 @@ class DeparturesTest {
                     "pinned" to "true",
                     "alert" to "false",
                     "mode" to "subway",
-                    "no_trips" to ""
-                )
-            )
+                    "no_trips" to "",
+                ),
+            ),
         )
     }
 }

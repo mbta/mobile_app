@@ -5,7 +5,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 enum class PhoenixPushStatus(val value: String) {
     Ok("ok"),
     Error("error"),
-    Timeout("timeout")
+    Timeout("timeout"),
 }
 
 interface PhoenixMessage {
@@ -86,7 +86,7 @@ class MockPhoenixChannel : PhoenixChannel {
 class MockPush : PhoenixPush {
     override fun receive(
         status: PhoenixPushStatus,
-        callback: (PhoenixMessage) -> Unit
+        callback: (PhoenixMessage) -> Unit,
     ): PhoenixPush {
         return MockPush()
     }

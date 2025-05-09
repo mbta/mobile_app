@@ -21,8 +21,8 @@ fun RecenterButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
         colors =
             IconButtonDefaults.iconButtonColors(
                 containerColor = colorResource(R.color.fill3),
-                contentColor = colorResource(R.color.key)
-            )
+                contentColor = colorResource(R.color.key),
+            ),
     ) {
         Icon(Icons.Default.LocationOn, stringResource(R.string.recenter))
     }

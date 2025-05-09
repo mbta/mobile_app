@@ -47,7 +47,7 @@ object OnboardingPieces {
     fun PageDescription(
         @StringRes headerId: Int,
         @StringRes bodyId: Int,
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
     ) {
         val pane = stringResource(headerId)
         // setting explicit paneTitle resets focus to the text rather than the continue button
@@ -55,7 +55,7 @@ object OnboardingPieces {
         // https://issuetracker.google.com/issues/272065229#comment8
         Column(
             modifier.semantics { paneTitle = pane },
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 stringResource(headerId),
@@ -79,9 +79,9 @@ object OnboardingPieces {
                     .paint(
                         painter = backgroundImage,
                         alignment = Alignment.Center,
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     ),
-            content = content
+            content = content,
         )
     }
 
@@ -96,8 +96,8 @@ object OnboardingPieces {
             colors =
                 buttonColors(
                     containerColor = colorResource(R.color.key),
-                    contentColor = colorResource(R.color.fill3)
-                )
+                    contentColor = colorResource(R.color.fill3),
+                ),
         ) {
             Text(
                 stringResource(textId),
@@ -111,7 +111,7 @@ object OnboardingPieces {
     fun SecondaryButton(
         @StringRes textId: Int,
         onClick: () -> Unit,
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
     ) {
         Button(
             modifier =
@@ -120,15 +120,15 @@ object OnboardingPieces {
                     .border(
                         1.dp,
                         color = colorResource(R.color.key),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     ),
             shape = RoundedCornerShape(8.dp),
             onClick = onClick,
             colors =
                 buttonColors(
                     containerColor = colorResource(R.color.fill1),
-                    contentColor = colorResource(R.color.key)
-                )
+                    contentColor = colorResource(R.color.key),
+                ),
         ) {
             Text(stringResource(textId), textAlign = TextAlign.Center, style = Typography.body)
         }
@@ -142,7 +142,7 @@ object OnboardingPieces {
                     .background(colorResource(R.color.fill3))
                     .padding(horizontal = 16.dp, vertical = 10.dp),
             label = label,
-            value = currentSetting
+            value = currentSetting,
         ) {
             toggleSetting()
         }
@@ -158,7 +158,7 @@ fun BoxScope.OnboardingImage(@DrawableRes drawableId: Int, size: Dp?, offsetY: D
             Modifier.align(Alignment.Center)
                 .offset(y = offsetY)
                 .then(if (size != null) Modifier.size(size) else Modifier.fillMaxSize()),
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop,
     )
 }
 
@@ -174,6 +174,6 @@ fun BoxScope.OnboardingContentColumn(content: @Composable ColumnScope.() -> Unit
                 .padding(horizontal = 32.dp)
                 .padding(top = 16.dp, bottom = bottomPadding),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        content = content
+        content = content,
     )
 }

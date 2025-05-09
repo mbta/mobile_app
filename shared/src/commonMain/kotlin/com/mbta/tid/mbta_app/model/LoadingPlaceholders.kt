@@ -13,7 +13,7 @@ object LoadingPlaceholders {
         routeId: String? = null,
         trips: Int = 2,
         context: RouteCardData.Context,
-        now: Instant
+        now: Instant,
     ): RouteCardData {
         val objects = ObjectCollectionBuilder()
         val route =
@@ -84,7 +84,7 @@ object LoadingPlaceholders {
                 stop,
                 listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
                 listOf(leaf1, leaf2),
-                context
+                context,
             )
 
         val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), context, now)
@@ -96,7 +96,7 @@ object LoadingPlaceholders {
         (1..5).map {
             routeCardData(
                 context = RouteCardData.Context.StopDetailsUnfiltered,
-                now = Clock.System.now()
+                now = Clock.System.now(),
             )
         }
 
@@ -104,7 +104,7 @@ object LoadingPlaceholders {
         val stops: TripDetailsStopList,
         val vehicle: Vehicle,
         val vehicleStop: Stop,
-        val route: Route
+        val route: Route,
     )
 
     fun tripDetailsInfo(): TripDetailsInfo {
@@ -153,13 +153,13 @@ object LoadingPlaceholders {
                         prediction,
                         predictionStop = null,
                         vehicle,
-                        listOf(otherRoute)
+                        listOf(otherRoute),
                     )
-                }
+                },
             ),
             vehicle,
             vehicleStop,
-            route
+            route,
         )
     }
 }

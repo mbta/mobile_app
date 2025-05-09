@@ -39,7 +39,7 @@ fun DirectionPicker(
     line: Line?,
     filter: StopDetailsFilter?,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor =
@@ -50,14 +50,14 @@ fun DirectionPicker(
                     .padding(horizontal = 2.dp)
                     .background(
                         deselectedBackgroundColor.copy(alpha = 0.6f),
-                        RoundedCornerShape(8.dp)
+                        RoundedCornerShape(8.dp),
                     )
                     .padding(2.dp)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(6.dp)),
             selectedTabIndex = filter?.directionId ?: 0,
             indicator = {},
-            divider = {}
+            divider = {},
         ) {
             for (direction in availableDirections) {
                 val isSelected = filter?.directionId == direction
@@ -76,11 +76,11 @@ fun DirectionPicker(
                             .background(deselectedBackgroundColor)
                             .background(
                                 if (isSelected) Color.fromHex(route.color) else Color.Transparent,
-                                shape = if (isSelected) RoundedCornerShape(6.dp) else RectangleShape
+                                shape = if (isSelected) RoundedCornerShape(6.dp) else RectangleShape,
                             )
                             .clip(RoundedCornerShape(6.dp)),
                     selectedContentColor = Color.fromHex(route.textColor),
-                    unselectedContentColor = colorResource(R.color.deselected_toggle_text)
+                    unselectedContentColor = colorResource(R.color.deselected_toggle_text),
                 ) {
                     Column(modifier = Modifier.padding(8.dp)) {
                         DirectionLabel(direction = directions[(direction)])
@@ -97,7 +97,7 @@ fun DirectionPicker(
                 ) {
                     heading()
                 },
-                textColor = Color.fromHex(route.textColor)
+                textColor = Color.fromHex(route.textColor),
             )
         }
     }
@@ -123,7 +123,7 @@ private fun DirectionPickerPreview() {
             route = route,
             line = null,
             filter = StopDetailsFilter(routeId = route.id, directionId = 0),
-            updateStopFilter = {}
+            updateStopFilter = {},
         )
     }
 }

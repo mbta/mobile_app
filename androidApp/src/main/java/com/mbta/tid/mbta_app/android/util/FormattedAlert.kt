@@ -26,7 +26,7 @@ data class FormattedAlert(
 ) {
     constructor(
         alert: Alert,
-        alertSummary: AlertSummary? = null
+        alertSummary: AlertSummary? = null,
     ) : this(
         alert,
         alertSummary,
@@ -34,7 +34,7 @@ data class FormattedAlert(
         sentenceEffectRes(alert.effect),
         causeRes(alert.cause),
         dueToCauseRes(alert.cause),
-        predictionReplacement(alert.effect)
+        predictionReplacement(alert.effect),
     )
 
     val cause
@@ -61,7 +61,7 @@ data class FormattedAlert(
                         R.string.alert_summary,
                         stringResource(sentenceEffectRes),
                         summaryLocation,
-                        summaryTimeframe
+                        summaryTimeframe,
                     )
                 )
             }
@@ -70,8 +70,8 @@ data class FormattedAlert(
     fun alertCardHeader(spec: AlertCardSpec) =
         when (spec) {
             AlertCardSpec.Downstream -> summary ?: AnnotatedString.fromHtml(downstreamEffect)
-            AlertCardSpec.Elevator -> alert.header?.let { AnnotatedString(it) }
-                    ?: AnnotatedString(effect)
+            AlertCardSpec.Elevator ->
+                alert.header?.let { AnnotatedString(it) } ?: AnnotatedString(effect)
             AlertCardSpec.Delay -> AnnotatedString.fromHtml(delaysDueToCause)
             AlertCardSpec.Secondary -> summary ?: AnnotatedString.fromHtml(effect)
             else -> AnnotatedString.fromHtml(effect)
@@ -91,13 +91,13 @@ data class FormattedAlert(
                         stringResource(
                             R.string.alert_summary_location_successive,
                             it.startStopName,
-                            it.endStopName
+                            it.endStopName,
                         )
                     is AlertSummary.Location.StopToDirection ->
                         stringResource(
                             R.string.alert_summary_location_stop_to_direction,
                             it.startStopName,
-                            stringResource(directionNameFormatted(it.direction))
+                            stringResource(directionNameFormatted(it.direction)),
                         )
                     is AlertSummary.Location.DirectionToStop ->
                         stringResource(
@@ -106,8 +106,7 @@ data class FormattedAlert(
                             it.endStopName,
                         )
                 }
-            }
-                ?: ""
+            } ?: ""
 
     private val summaryTimeframe
         @Composable
@@ -121,25 +120,24 @@ data class FormattedAlert(
                     is AlertSummary.Timeframe.LaterDate ->
                         stringResource(
                             R.string.alert_summary_timeframe_later_date,
-                            it.time.formattedServiceDate()
+                            it.time.formattedServiceDate(),
                         )
                     is AlertSummary.Timeframe.ThisWeek ->
                         stringResource(
                             R.string.alert_summary_timeframe_this_week,
-                            it.time.formattedServiceDay()
+                            it.time.formattedServiceDay(),
                         )
                     is AlertSummary.Timeframe.Time ->
                         stringResource(
                             R.string.alert_summary_timeframe_time,
-                            it.time.formattedTime()
+                            it.time.formattedTime(),
                         )
                 }
-            }
-                ?: ""
+            } ?: ""
 
     data class PredictionReplacement(
         @StringRes val textRes: Int,
-        @StringRes val contentDescriptionRes: Int? = null
+        @StringRes val contentDescriptionRes: Int? = null,
     ) {
         val text
             @Composable get() = stringResource(textRes)
@@ -354,7 +352,7 @@ data class FormattedAlert(
                 Alert.Effect.Shuttle ->
                     PredictionReplacement(
                         R.string.shuttle_bus,
-                        R.string.shuttle_buses_replace_service
+                        R.string.shuttle_buses_replace_service,
                     )
                 Alert.Effect.StationClosure -> PredictionReplacement(R.string.station_closed)
                 Alert.Effect.StopClosure -> PredictionReplacement(R.string.stop_closed)

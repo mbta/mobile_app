@@ -27,8 +27,8 @@ object MapExp {
             singleRouteTypeExp,
             Exp.eq(
                 Exp(1),
-                Exp.length(Exp.get(topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey)))
-            )
+                Exp.length(Exp.get(topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey))),
+            ),
         )
 
     // Return true if the route type is a branching route, and there is only a single route ID
@@ -37,9 +37,9 @@ object MapExp {
         Exp.all(
             Exp.any(
                 Exp.eq(topRouteExp, Exp(MapStopRoute.GREEN.name)),
-                Exp.eq(topRouteExp, Exp(MapStopRoute.SILVER.name))
+                Exp.eq(topRouteExp, Exp(MapStopRoute.SILVER.name)),
             ),
-            singleRouteExp
+            singleRouteExp,
         )
 
     // Get the route string in the stop feature's route array at the provided index
@@ -57,7 +57,7 @@ object MapExp {
             Exp(MapDefaults.midZoomThreshold) to
                 withMultipliers(0.25, modeResize = listOf(0.5, 2, 1.75)),
             Exp(13) to withMultipliers(0.625, modeResize = listOf(1, 1.5, 1.5)),
-            Exp(14) to withMultipliers(1)
+            Exp(14) to withMultipliers(1),
         )
 
     val isBusExp = Exp.all(singleRouteTypeExp, Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)))
@@ -68,7 +68,7 @@ object MapExp {
         Exp.case(
             Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(resizeWith[0]),
             Exp.eq(topRouteExp, Exp(MapStopRoute.COMMUTER.name)) to Exp(resizeWith[1]),
-            fallback = Exp(resizeWith[2])
+            fallback = Exp(resizeWith[2]),
         )
 
     // MapBox requires the value at the base of every case in this expression to be a literal length
@@ -96,7 +96,7 @@ object MapExp {
                     offsetAlertPairExp(closeZoom = closeZoom, height = -tripleRouteHeight),
                     offsetAlertPairExp(closeZoom = closeZoom, height = 0),
                     offsetAlertPairExp(closeZoom = closeZoom, height = tripleRouteHeight),
-                )[index]
+                )[index],
         )
     }
 
@@ -122,12 +122,12 @@ object MapExp {
                     Exp.case(
                         Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
                             xyExp(branchTerminalWidth, height),
-                        xyExp(branchStopWidth, height)
+                        xyExp(branchStopWidth, height),
                     ),
                 // Ferry terminals have a special larger icon at the wide zoom level
                 Exp.all(
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
-                    Exp.get(StopFeaturesBuilder.propIsTerminalKey)
+                    Exp.get(StopFeaturesBuilder.propIsTerminalKey),
                 ) to xyExp(terminalFerryWidth, height),
                 // Buses have an extra small dot at wide zoom, and at close zoom, the height is
                 // slightly repositioned to center the alert on the tombstone, ignoring the small
@@ -138,10 +138,10 @@ object MapExp {
                 Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
                     xyExp(terminalRailStopWidth, height),
                 // Regular rail stops, have a basic pill at close zoom and a dot at wide
-                fallback = xyExp(railStopWidth, height)
+                fallback = xyExp(railStopWidth, height),
             ),
             // If the stop is a transfer stop, all routes are displayed with a basic pill and dot
-            Exp(2) to xyExp(railStopWidth, height)
+            Exp(2) to xyExp(railStopWidth, height),
         )
     }
 
@@ -152,7 +152,7 @@ object MapExp {
             Exp.length(routesExp),
             xyExp(0, 0),
             Exp(2) to xyExp(0, listOf(-doubleRouteOffset, doubleRouteOffset, 0)[index]),
-            Exp(3) to xyExp(0, listOf(-tripleRouteOffset, 0, tripleRouteOffset)[index])
+            Exp(3) to xyExp(0, listOf(-tripleRouteOffset, 0, tripleRouteOffset)[index]),
         )
     }
 
@@ -166,7 +166,7 @@ object MapExp {
                 // Ferry terminals have a special larger icon at the wide zoom level
                 Exp.all(
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
-                    Exp.get(StopFeaturesBuilder.propIsTerminalKey)
+                    Exp.get(StopFeaturesBuilder.propIsTerminalKey),
                 ) to xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
                 // Buses have an extra small dot at wide zoom, and at close zoom, the height is
                 // slightly repositioned to center the alert on the tombstone, ignoring the small
@@ -177,10 +177,10 @@ object MapExp {
                 Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
                     xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
                 // Regular rail stops, have a basic pill at close zoom and a dot at wide
-                fallback = xyExp(0, -singleRouteOffset)
+                fallback = xyExp(0, -singleRouteOffset),
             ),
             Exp(2) to xyExp(0, -doubleRouteOffset),
-            Exp(3) to xyExp(0, -tripleRouteOffset)
+            Exp(3) to xyExp(0, -tripleRouteOffset),
         )
     }
 
@@ -197,18 +197,18 @@ object MapExp {
                     Exp.case(
                         branchedRouteExp to xyExp(1.15, 0.75),
                         Exp.get(StopFeaturesBuilder.propIsTerminalKey) to xyExp(1, 0.75),
-                        fallback = xyExp(0.75, 0.5)
+                        fallback = xyExp(0.75, 0.5),
                     ),
                     Exp(2) to xyExp(0.5, 1.25),
-                    Exp(3) to xyExp(0.5, 1.5)
+                    Exp(3) to xyExp(0.5, 1.5),
                 ),
             Exp(MapDefaults.closeZoomThreshold) to
                 Exp.step(
                     Exp.length(Exp.get(StopFeaturesBuilder.propMapRoutesKey)),
                     Exp.case(branchedRouteExp to xyExp(2.5, 1.5), xyExp(2, 1.5)),
                     Exp(2) to xyExp(2, 2),
-                    Exp(3) to xyExp(2, 2.5)
-                )
+                    Exp(3) to xyExp(2, 2.5),
+                ),
         )
 
     // The modeResize array must contain 3 entries for [BUS, COMMUTER, fallback]
@@ -219,7 +219,7 @@ object MapExp {
             // TODO: We actually want to give the icon a halo rather than resize, but that is only
             // supported for SDFs, which can only be one color. Alternates of stop icon SVGs with
             // halo applied?
-            Exp.case(selectedExp to Exp(1.25), Exp(1))
+            Exp.case(selectedExp to Exp(1.25), Exp(1)),
         )
     }
 
@@ -233,7 +233,7 @@ object MapExp {
                     add(x)
                     add(y)
                 }
-            )
+            ),
         )
     }
 
@@ -243,7 +243,7 @@ object MapExp {
     fun busSwitchExp(forBus: Boolean, resultExpression: Exp<String>): Exp<String> {
         return Exp.case(
             isBusExp to if (forBus) resultExpression else Exp.string(Exp("")),
-            if (!forBus) resultExpression else Exp.string(Exp(""))
+            if (!forBus) resultExpression else Exp.string(Exp("")),
         )
     }
 
@@ -261,7 +261,7 @@ object MapExp {
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)) to Exp(""),
                     Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
                         busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey)),
-                    fallback = Exp("")
+                    fallback = Exp(""),
                 ),
             // At close zoom, display labels for all non-bus stops
             Exp(MapDefaults.closeZoomThreshold) to
@@ -270,8 +270,8 @@ object MapExp {
                     selectedExp to Exp(""),
                     Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(""),
                     fallback =
-                        busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey))
-                )
+                        busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey)),
+                ),
         )
     }
 }

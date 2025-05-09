@@ -32,7 +32,7 @@ fun StopDetailsUnfilteredView(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
@@ -52,15 +52,14 @@ fun StopDetailsUnfilteredView(
                 routeData.stopData
                     .flatMap { it.data }
                     .flatMap { it.routePatterns }
-                    .minOfOrNull { it.directionId }
-                    ?: 0
+                    .minOfOrNull { it.directionId } ?: 0
             updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
         }
     }
 
     fun getFilterPillRoutes(
         routeCardData: List<RouteCardData>,
-        global: GlobalResponse
+        global: GlobalResponse,
     ): List<PillFilter> =
         routeCardData.map {
             when (val lineOrRoute = it.lineOrRoute) {
@@ -89,7 +88,7 @@ fun StopDetailsUnfilteredView(
                 onClose,
                 onTapRoutePill,
                 updateStopFilter,
-                openModal
+                openModal,
             )
         }
     } else {
@@ -116,7 +115,7 @@ fun StopDetailsUnfilteredView(
                     onClose = onClose,
                     onTapRoutePill = {},
                     updateStopFilter = {},
-                    openModal = {}
+                    openModal = {},
                 )
             }
         }

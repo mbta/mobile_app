@@ -48,7 +48,7 @@ fun AlertDetailsPage(
     routeIds: List<String>?,
     stopId: String?,
     alerts: AlertsStreamDataResponse?,
-    goBack: () -> Unit
+    goBack: () -> Unit,
 ) {
     val alert = getAlert(alerts, alertId, goBack)
     val globalResponse = getGlobalData("AlertDetailsPage.loadGlobal")
@@ -63,28 +63,19 @@ fun AlertDetailsPage(
     val affectedStops = globalResponse?.getAlertAffectedStops(alert, routes) ?: emptyList()
 
     val headerColor =
-        listOfNotNull(
-                line?.color,
-                firstRoute?.color,
-            )
-            .firstOrNull()
-            ?.let { Color.fromHex(it) }
+        listOfNotNull(line?.color, firstRoute?.color).firstOrNull()?.let { Color.fromHex(it) }
             ?: colorResource(R.color.fill1)
 
     val headerTextColor =
-        listOfNotNull(
-                line?.textColor,
-                firstRoute?.textColor,
-            )
-            .firstOrNull()
-            ?.let { Color.fromHex(it) }
-            ?: colorResource(R.color.text)
+        listOfNotNull(line?.textColor, firstRoute?.textColor).firstOrNull()?.let {
+            Color.fromHex(it)
+        } ?: colorResource(R.color.text)
 
     Column(Modifier.background(colorResource(R.color.fill2))) {
         Row(
             Modifier.background(headerColor).padding(16.dp).safeDrawingPadding(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (alert?.effect == Alert.Effect.ElevatorClosure) {
                 Image(
@@ -98,7 +89,7 @@ fun AlertDetailsPage(
                     icon,
                     description,
                     Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(headerTextColor)
+                    colorFilter = ColorFilter.tint(headerTextColor),
                 )
             }
             Text(
@@ -106,7 +97,7 @@ fun AlertDetailsPage(
                 color = headerTextColor,
                 fontWeight = FontWeight.Bold,
                 style = Typography.headline,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.semantics { heading() },
             )
             Spacer(Modifier.weight(1f))
             ActionButton(ActionButtonKind.Close) { goBack() }
@@ -124,7 +115,7 @@ fun AlertDetailsPage(
 private fun getAlert(
     alerts: AlertsStreamDataResponse?,
     alertId: String,
-    goBack: () -> Unit
+    goBack: () -> Unit,
 ): Alert? {
     var result by rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<Alert?>(null) }
     if (alerts == null) return result

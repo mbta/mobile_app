@@ -7,7 +7,7 @@ import org.koin.core.component.KoinComponent
 
 class FeaturePromoUseCase(
     private val currentAppVersionRepository: ICurrentAppVersionRepository,
-    private val lastLaunchedAppVersionRepository: ILastLaunchedAppVersionRepository
+    private val lastLaunchedAppVersionRepository: ILastLaunchedAppVersionRepository,
 ) : KoinComponent {
     suspend fun getFeaturePromos(): List<FeaturePromo> {
         val currentVersion =

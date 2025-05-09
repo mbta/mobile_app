@@ -82,7 +82,7 @@ open class RouteCardPreviewData {
         patterns: List<RoutePattern>,
         trips: List<UpcomingTrip>,
         alertHere: Map<Int, Alert>,
-        alertDownstream: Map<Int, Alert>
+        alertDownstream: Map<Int, Alert>,
     ) =
         RouteCardData.RouteStopData(
             lineOrRoute,
@@ -98,7 +98,7 @@ open class RouteCardPreviewData {
                         listOfNotNull(alertHere[0]),
                         true,
                         true,
-                        listOfNotNull(alertDownstream[0])
+                        listOfNotNull(alertDownstream[0]),
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
                 RouteCardData.Leaf(
@@ -111,12 +111,12 @@ open class RouteCardPreviewData {
                         listOfNotNull(alertHere[1]),
                         true,
                         true,
-                        listOfNotNull(alertDownstream[1])
+                        listOfNotNull(alertDownstream[1]),
                     )
-                    .takeUnless { it.routePatterns.isEmpty() }
+                    .takeUnless { it.routePatterns.isEmpty() },
             ),
             context,
-            global
+            global,
         )
 
     private fun card(
@@ -125,13 +125,13 @@ open class RouteCardPreviewData {
         patterns: List<RoutePattern>,
         trips: List<UpcomingTrip>,
         alertHere: Map<Int, Alert>,
-        alertDownstream: Map<Int, Alert>
+        alertDownstream: Map<Int, Alert>,
     ) =
         RouteCardData(
             lineOrRoute,
             listOf(cardStop(lineOrRoute, stop, patterns, trips, alertHere, alertDownstream)),
             context,
-            now
+            now,
         )
 
     private fun card(
@@ -139,7 +139,7 @@ open class RouteCardPreviewData {
         stop: Stop,
         trips: List<UpcomingTrip>,
         alertHere: Map<Int, Alert> = emptyMap(),
-        alertDownstream: Map<Int, Alert> = emptyMap()
+        alertDownstream: Map<Int, Alert> = emptyMap(),
     ) =
         card(
             RouteCardData.LineOrRoute.Route(route),
@@ -147,7 +147,7 @@ open class RouteCardPreviewData {
             objects.routePatterns.values.filter { it.routeId == route.id },
             trips,
             alertHere,
-            alertDownstream
+            alertDownstream,
         )
 
     private fun card(
@@ -155,7 +155,7 @@ open class RouteCardPreviewData {
         stop: Stop,
         trips: List<UpcomingTrip>,
         alertHere: Map<Int, Alert> = emptyMap(),
-        alertDownstream: Map<Int, Alert> = emptyMap()
+        alertDownstream: Map<Int, Alert> = emptyMap(),
     ): RouteCardData {
         val routes = objects.routes.values.filter { it.lineId == line.id }.toSet()
         val routeIds = routes.map { it.id }
@@ -166,7 +166,7 @@ open class RouteCardPreviewData {
             routePatterns,
             trips,
             alertHere,
-            alertDownstream
+            alertDownstream,
         )
     }
 
@@ -199,9 +199,9 @@ open class RouteCardPreviewData {
                         trip = objects.trip(orangeLineNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
+                ),
             ),
-            alertDownstream = mapOf(0 to shuttleAlert)
+            alertDownstream = mapOf(0 to shuttleAlert),
         )
 
     // "Disrupted stop" group = "1. Orange Line disruption"
@@ -213,7 +213,7 @@ open class RouteCardPreviewData {
                 wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
             },
             listOf(),
-            mapOf(0 to shuttleAlert, 1 to shuttleAlert)
+            mapOf(0 to shuttleAlert, 1 to shuttleAlert),
         )
 
     // "Show up to the next three trips in the branching direction" group = "2. Red Line branching"
@@ -251,8 +251,8 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
-            )
+                ),
+            ),
         )
 
     // "Next three trips go to the same destination" group = "2. Red Line branching"
@@ -296,8 +296,8 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
-            )
+                ),
+            ),
         )
 
     // "Predictions unavailable for a branch" group = "2. Red Line branching"
@@ -335,8 +335,8 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
-            )
+                ),
+            ),
         )
 
     // "Service not running on a branch downstream", group = "2. Red Line branching"
@@ -377,9 +377,9 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
+                ),
             ),
-            alertDownstream = mapOf(0 to shuttleAlert)
+            alertDownstream = mapOf(0 to shuttleAlert),
         )
 
     // "Service disrupted on a branch downstream", group = "2. Red Line branching"
@@ -417,9 +417,9 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
+                ),
             ),
-            alertDownstream = mapOf(0 to suspensionAlert)
+            alertDownstream = mapOf(0 to suspensionAlert),
         )
 
     // "Branching in both directions" group = "3. Green Line branching")
@@ -464,7 +464,7 @@ open class RouteCardPreviewData {
                         departureTime = now + 12.minutes
                     }
                 ),
-            )
+            ),
         )
 
     // "Downstream disruption", group = "3. Green Line branching"
@@ -510,7 +510,7 @@ open class RouteCardPreviewData {
                     }
                 ),
             ),
-            alertDownstream = mapOf(0 to suspensionAlert)
+            alertDownstream = mapOf(0 to suspensionAlert),
         )
 
     // "Branching in one direction", group = "4. Silver Line branching"
@@ -587,7 +587,7 @@ open class RouteCardPreviewData {
                         departureTime = now + 9.minutes
                     }
                 ),
-            )
+            ),
         )
 
     // "Branching in one direction", group = "5. CR branching"
@@ -661,7 +661,7 @@ open class RouteCardPreviewData {
                         departureTime = today.atTime(15, 53).toInstant()
                     }
                 ),
-            )
+            ),
         )
 
     // "Next two trips go to the same destination" group = "6. Bus route single direction"
@@ -686,10 +686,10 @@ open class RouteCardPreviewData {
                                 trip = objects.trip(clarendonInbound)
                                 departureTime = now + 42.minutes
                             }
-                        )
+                        ),
                     ),
                     emptyMap(),
-                    emptyMap()
+                    emptyMap(),
                 ),
                 cardStop(
                     lineOrRoute,
@@ -713,14 +713,14 @@ open class RouteCardPreviewData {
                                 trip = objects.trip(clarendonOutbound)
                                 departureTime = now + 45.minutes
                             }
-                        )
+                        ),
                     ),
                     emptyMap(),
-                    emptyMap()
-                )
+                    emptyMap(),
+                ),
             ),
             context,
-            now
+            now,
         )
     }
 
@@ -746,10 +746,10 @@ open class RouteCardPreviewData {
                                 trip = objects.trip(clarendonInbound)
                                 departureTime = now + 42.minutes
                             }
-                        )
+                        ),
                     ),
                     emptyMap(),
-                    emptyMap()
+                    emptyMap(),
                 ),
                 cardStop(
                     lineOrRoute,
@@ -767,14 +767,14 @@ open class RouteCardPreviewData {
                                 trip = objects.trip(clarendonOutbound)
                                 departureTime = now + 32.minutes
                             }
-                        )
+                        ),
                     ),
                     emptyMap(),
-                    emptyMap()
-                )
+                    emptyMap(),
+                ),
             ),
             context,
-            now
+            now,
         )
     }
 
@@ -835,7 +835,7 @@ open class RouteCardPreviewData {
                         departureTime = now + 23.minutes
                     }
                 ),
-            )
+            ),
         )
 
     // "Service ended on a branch", group = "8. Service ended")
@@ -867,8 +867,8 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
-            )
+                ),
+            ),
         )
 
     // "Service ended on all branches" group = "8. Service ended"
@@ -888,8 +888,8 @@ open class RouteCardPreviewData {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
                     }
-                )
-            )
+                ),
+            ),
         )
 
     // "Predictions unavailable on a branch", group = "9. Predictions unavailable"
@@ -940,7 +940,7 @@ open class RouteCardPreviewData {
                         departureTime = now + 12.minutes
                     }
                 ),
-            )
+            ),
         )
 
     // "Predictions unavailable on all branches", group = "9. Predictions unavailable"
@@ -985,7 +985,7 @@ open class RouteCardPreviewData {
                         departureTime = now + 12.minutes
                     }
                 ),
-            )
+            ),
         )
 
     // "Disruption on a branch" group = "A. Disruption"
@@ -1001,7 +1001,7 @@ open class RouteCardPreviewData {
                             route = greenLineD.id,
                             routeType = RouteType.LIGHT_RAIL,
                             stop = kenmore.id,
-                            trip = null
+                            trip = null,
                         )
                     )
             }
@@ -1035,7 +1035,7 @@ open class RouteCardPreviewData {
                     }
                 ),
             ),
-            alertHere = mapOf(0 to kenmoreShuttleToRiverside)
+            alertHere = mapOf(0 to kenmoreShuttleToRiverside),
         )
     }
 
@@ -1052,7 +1052,7 @@ open class RouteCardPreviewData {
                             route = greenLineD.id,
                             routeType = RouteType.LIGHT_RAIL,
                             stop = boylston.id,
-                            trip = null
+                            trip = null,
                         )
                     )
             }
@@ -1085,7 +1085,7 @@ open class RouteCardPreviewData {
                     }
                 ),
             ),
-            alertHere = mapOf(0 to boylstonShuttleToRiverside)
+            alertHere = mapOf(0 to boylstonShuttleToRiverside),
         )
     }
 
@@ -1103,7 +1103,7 @@ open class RouteCardPreviewData {
                             route = greenLineB.id,
                             routeType = RouteType.LIGHT_RAIL,
                             stop = boylston.id,
-                            trip = null
+                            trip = null,
                         ),
                         Alert.InformedEntity(
                             activities = listOf(Alert.InformedEntity.Activity.Board),
@@ -1111,7 +1111,7 @@ open class RouteCardPreviewData {
                             route = greenLineC.id,
                             routeType = RouteType.LIGHT_RAIL,
                             stop = boylston.id,
-                            trip = null
+                            trip = null,
                         ),
                         Alert.InformedEntity(
                             activities = listOf(Alert.InformedEntity.Activity.Board),
@@ -1119,8 +1119,8 @@ open class RouteCardPreviewData {
                             route = greenLineD.id,
                             routeType = RouteType.LIGHT_RAIL,
                             stop = boylston.id,
-                            trip = null
-                        )
+                            trip = null,
+                        ),
                     )
             }
 
@@ -1147,7 +1147,7 @@ open class RouteCardPreviewData {
                     }
                 ),
             ),
-            alertHere = mapOf(0 to shuttleAllBranches)
+            alertHere = mapOf(0 to shuttleAllBranches),
         )
     }
 }

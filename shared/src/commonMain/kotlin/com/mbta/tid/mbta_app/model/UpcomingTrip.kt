@@ -25,13 +25,13 @@ constructor(
     // The prediction stop is the stop associated with the stopId contained in the prediction,
     // it can be a child stop with specific boarding information, like the track number
     val predictionStop: Stop? = null,
-    val vehicle: Vehicle? = null
+    val vehicle: Vehicle? = null,
 ) : Comparable<UpcomingTrip> {
 
     constructor(
         trip: Trip,
         prediction: Prediction?,
-        predictionStop: Stop? = null
+        predictionStop: Stop? = null,
     ) : this(trip, null, prediction, predictionStop, null)
 
     val id = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
@@ -120,7 +120,7 @@ constructor(
         now: Instant,
         routeType: RouteType,
         context: TripInstantDisplay.Context,
-        isSubway: Boolean
+        isSubway: Boolean,
     ): UpcomingFormat.Some.FormattedTrip? {
         return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context).takeUnless {
             it.format is TripInstantDisplay.Hidden ||
@@ -139,7 +139,7 @@ constructor(
             predictions: PredictionsStreamDataResponse?,
             scheduleKey: (Schedule, ScheduleResponse) -> Key?,
             predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key?,
-            filterAtTime: Instant
+            filterAtTime: Instant,
         ): Map<Key, List<UpcomingTrip>>? {
 
             val schedulesMap =
@@ -168,7 +168,7 @@ constructor(
                         predictionsHere.orEmpty(),
                         trips,
                         predictions?.vehicles.orEmpty(),
-                        filterAtTime
+                        filterAtTime,
                     )
                 }
             } else {
@@ -186,19 +186,19 @@ constructor(
             predictions: List<Prediction>,
             trips: Map<String, Trip>,
             vehicles: Map<String, Vehicle>,
-            filterAtTime: Instant
+            filterAtTime: Instant,
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
                 val tripId: String,
                 val rootStopId: String?,
-                val stopSequence: Int?
+                val stopSequence: Int?,
             ) {
                 constructor(
                     schedule: Schedule
                 ) : this(
                     schedule.tripId,
                     stops.resolveParentId(schedule.stopId),
-                    schedule.stopSequence
+                    schedule.stopSequence,
                 )
 
                 constructor(
@@ -206,7 +206,7 @@ constructor(
                 ) : this(
                     prediction.tripId,
                     stops.resolveParentId(prediction.stopId),
-                    prediction.stopSequence
+                    prediction.stopSequence,
                 )
             }
 
@@ -223,7 +223,7 @@ constructor(
                         schedulesMap[key],
                         prediction,
                         stops[prediction?.stopId],
-                        predictionsMap[key]?.let { vehicles[it.vehicleId] }
+                        predictionsMap[key]?.let { vehicles[it.vehicleId] },
                     )
                 }
                 .sorted()
@@ -238,7 +238,7 @@ constructor(
             now: Instant,
             upcomingTrip: UpcomingTrip,
             routeType: RouteType,
-            context: TripInstantDisplay.Context
+            context: TripInstantDisplay.Context,
         ) = formatUpcomingTrip(now, upcomingTrip, routeType, context, routeType.isSubway())
 
         fun formatUpcomingTrip(
@@ -246,7 +246,7 @@ constructor(
             upcomingTrip: UpcomingTrip,
             routeType: RouteType,
             context: TripInstantDisplay.Context,
-            isSubway: Boolean
+            isSubway: Boolean,
         ): UpcomingFormat.Some.FormattedTrip? {
             return UpcomingFormat.Some.FormattedTrip(upcomingTrip, routeType, now, context)
                 .takeUnless {
@@ -283,7 +283,7 @@ fun List<UpcomingTrip>.withFormat(
     now: Instant,
     routeType: RouteType,
     context: TripInstantDisplay.Context,
-    limit: Int?
+    limit: Int?,
 ): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>> {
     return this.mapNotNull {
             val format = it.format(now, routeType, context) ?: return@mapNotNull null

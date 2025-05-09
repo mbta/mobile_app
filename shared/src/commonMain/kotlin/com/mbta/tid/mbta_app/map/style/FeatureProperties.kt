@@ -104,7 +104,7 @@ class FeaturePropertiesBuilder(private val data: MutableMap<String, JSONValue> =
     @JvmName("putMapStringListString")
     fun put(
         property: FeatureProperty<Map<String, List<String>>>,
-        value: Map<String, List<String>>
+        value: Map<String, List<String>>,
     ) {
         data[property.key] =
             JSONValue.Object(

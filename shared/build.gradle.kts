@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
 import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
 import java.io.ByteArrayOutputStream
+import java.io.Serializable
 import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
@@ -124,20 +125,25 @@ spotless {
     kotlin {
         custom(
             "ban getValue outside tests",
-            FormatterFunc.NeedsFile { text, file ->
-                if (file.path.contains("commonTest") || file.name == "ObjectCollectionBuilder.kt")
-                    return@NeedsFile text
-                val lines = text.lines()
-                for (line in lines.withIndex()) {
-                    val column = line.value.indexOf("getValue(")
-                    if (column != -1) {
-                        throw IllegalStateException(
-                            "${file.path}:${line.index + 1}:${column + 1} calls getValue"
-                        )
+            object : Serializable, FormatterFunc.NeedsFile {
+                override fun applyWithFile(text: String, file: File): String {
+                    if (
+                        file.path.contains("commonTest") ||
+                            file.name == "ObjectCollectionBuilder.kt"
+                    )
+                        return text
+                    val lines = text.lines()
+                    for (line in lines.withIndex()) {
+                        val column = line.value.indexOf("getValue(")
+                        if (column != -1) {
+                            throw IllegalStateException(
+                                "${file.path}:${line.index + 1}:${column + 1} calls getValue"
+                            )
+                        }
                     }
+                    return text
                 }
-                text
-            }
+            },
         )
     }
 }
@@ -210,7 +216,7 @@ task<CycloneDxBomTransformTask>("bomIos") {
                 setOf(
                         "pkg:maven/MBTA_App/shared@unspecified?type=jar",
                         "pkg:swift/iosApp.xcworkspace@latest",
-                        "pkg:swift/iosApp@latest"
+                        "pkg:swift/iosApp@latest",
                     )
                     .contains(it.purl)
             }
@@ -256,14 +262,14 @@ task<CachedExecTask>("bomIosMerged") {
         "bomIosKotlinStdlib",
         "bomIosCocoapods",
         "bomIosSwiftPM",
-        "bomCycloneDxCliDownload"
+        "bomCycloneDxCliDownload",
     )
     inputFiles =
         layout.buildDirectory.files(
             "boms/bom-ios-kotlin-deps.xml",
             "boms/bom-ios-kotlin-stdlib.xml",
             "boms/bom-ios-cocoapods.xml",
-            "boms/bom-ios-swiftpm.json"
+            "boms/bom-ios-swiftpm.json",
         )
     outputFile = layout.buildDirectory.file("boms/bom-ios-merged.xml")
     workingDir = layout.buildDirectory.dir("boms")
@@ -276,7 +282,7 @@ task<CachedExecTask>("bomIosMerged") {
         "bom-ios-cocoapods.xml",
         "bom-ios-swiftpm.json",
         "--output-file",
-        "bom-ios-merged.xml"
+        "bom-ios-merged.xml",
     )
 }
 
@@ -379,7 +385,7 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                                 component.group == "github.com/mapbox"
                         )
                             "/license?ref=v"
-                        else "/license?ref="
+                        else "/license?ref=",
                     )
             val ghOutput = ByteArrayOutputStream()
             try {
@@ -393,7 +399,7 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                         DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
                         else -> "install it"
                     }} and try `gh auth login`",
-                    e
+                    e,
                 )
             }
             val apiResponse = ghOutput.toString()
@@ -434,7 +440,7 @@ task<CachedExecTask>("bomIosSwiftPMRaw") {
         "swift",
         "-o",
         outputFile.get().toString(),
-        "iosApp.xcworkspace"
+        "iosApp.xcworkspace",
     )
 }
 
@@ -442,7 +448,7 @@ tasks.cyclonedxBom {
     includeConfigs =
         listOf(
             "commonMainImplementationDependenciesMetadata",
-            "iosMainImplementationDependenciesMetadata"
+            "iosMainImplementationDependenciesMetadata",
         )
     destination = layout.buildDirectory.dir("boms").get().asFile
     outputName = "bom-ios-kotlin-deps"

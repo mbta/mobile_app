@@ -193,7 +193,7 @@ class MockRepositories : IRepositories {
                 TripSchedulesResponse.Schedules(objects.schedules.values.toList()),
                 TripResponse(
                     objects.trips.values.singleOrNull() ?: ObjectCollectionBuilder.Single.trip()
-                )
+                ),
             )
         tripPredictions =
             MockTripPredictionsRepository(response = PredictionsStreamDataResponse(objects))

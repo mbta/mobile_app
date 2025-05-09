@@ -57,7 +57,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                 shouldShowSettingsPrompt(
                     locationPermissions.shouldShowRationale,
                     lastRequestStart,
-                    currentTime
+                    currentTime,
                 )
         }
 
@@ -71,15 +71,15 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                 requestPermissionLauncher.launch(
                     arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
                     )
                 )
-            }
+            },
         ) {
             Row {
                 Text(
                     stringResource(R.string.location_services_off),
-                    color = colorResource(R.color.fill3)
+                    color = colorResource(R.color.fill3),
                 )
                 Icon(
                     painterResource(id = R.drawable.baseline_chevron_right_24),
@@ -91,7 +91,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                             .background(colorResource(R.color.fill3), shape = CircleShape)
                             .padding(4.dp)
                             .align(Alignment.CenterVertically),
-                    colorResource(id = R.color.key)
+                    colorResource(id = R.color.key),
                 )
             }
             if (showSettingsPrompt) {
@@ -103,7 +103,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                                 context.startActivity(
                                     Intent(
                                         ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                                        Uri.fromParts("package", BuildConfig.APPLICATION_ID, null),
                                     )
                                 )
                                 showSettingsPrompt = false
@@ -111,7 +111,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                         ) {
                             Text(
                                 stringResource(R.string.location_settings_prompt_turn_on),
-                                style = Typography.body
+                                style = Typography.body,
                             )
                             //
                         }
@@ -120,18 +120,18 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                         TextButton(onClick = { showSettingsPrompt = false }) {
                             Text(
                                 stringResource(R.string.location_settings_prompt_keep_off),
-                                style = Typography.body
+                                style = Typography.body,
                             )
                         }
                     },
                     title = {
                         Text(
                             stringResource(R.string.location_settings_prompt_title),
-                            style = Typography.headlineBold
+                            style = Typography.headlineBold,
                         )
                     },
                     text = { Text(stringResource(R.string.location_settings_prompt_body)) },
-                    containerColor = colorResource(R.color.fill3)
+                    containerColor = colorResource(R.color.fill3),
                 )
             }
         }
@@ -147,7 +147,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
 fun shouldShowSettingsPrompt(
     shouldShowRationale: Boolean,
     startPermissionRequest: Instant?,
-    endPermissionRequest: Instant
+    endPermissionRequest: Instant,
 ): Boolean {
     return !shouldShowRationale &&
         startPermissionRequest != null &&

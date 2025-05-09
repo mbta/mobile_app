@@ -25,7 +25,7 @@ object StopDetailsUtils {
         stopFilter: StopDetailsFilter?,
         currentTripFilter: TripDetailsFilter?,
         filterAtTime: Instant,
-        globalData: GlobalResponse?
+        globalData: GlobalResponse?,
     ): TripDetailsFilter? {
         val route = routeCardData?.find { it.lineOrRoute.id == stopFilter?.routeId } ?: return null
         val leaf =
@@ -38,7 +38,7 @@ object StopDetailsUtils {
                 filterAtTime,
                 route.lineOrRoute.sortRoute,
                 globalData,
-                Context.StopDetailsFiltered
+                Context.StopDetailsFiltered,
             )
         val formats =
             when (leafFormat) {
@@ -73,19 +73,19 @@ object StopDetailsUtils {
         return TripDetailsFilter(
             tripId = filterTrip.trip.id,
             vehicleId = filterTrip.vehicle?.id,
-            stopSequence = filterTrip.stopSequence
+            stopSequence = filterTrip.stopSequence,
         )
     }
 
     class ScreenReaderContext(
         val routeType: RouteType,
         val destination: String?,
-        val stopName: String
+        val stopName: String,
     )
 
     fun getScreenReaderTripDepartureContext(
         routeCardData: List<RouteCardData>?,
-        previousFilters: StopDetailsPageFilters
+        previousFilters: StopDetailsPageFilters,
     ): ScreenReaderContext? {
         val stopFilter = previousFilters.stopFilter ?: return null
         val selectedRoute =
@@ -101,13 +101,13 @@ object StopDetailsUtils {
         return ScreenReaderContext(
             selectedRoute.lineOrRoute.type,
             destination,
-            selectedStop.stop.name
+            selectedStop.stop.name,
         )
     }
 
     fun filterVehiclesByUpcoming(
         routeCardData: List<RouteCardData>,
-        vehicles: VehiclesStreamDataResponse
+        vehicles: VehiclesStreamDataResponse,
     ): Map<String, Vehicle> {
         val routeIds =
             routeCardData

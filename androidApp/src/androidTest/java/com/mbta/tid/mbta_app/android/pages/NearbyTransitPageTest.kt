@@ -79,13 +79,13 @@ class NearbyTransitPageTest {
                                 remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = locationDataManager,
-                            viewportProvider = viewportProvider
+                            viewportProvider = viewportProvider,
                         ),
                     navBarVisible = false,
                     showNavBar = {},
                     hideNavBar = {},
                     bottomBar = {},
-                    searchResultsViewModel = koinViewModel()
+                    searchResultsViewModel = koinViewModel(),
                 )
             }
         }

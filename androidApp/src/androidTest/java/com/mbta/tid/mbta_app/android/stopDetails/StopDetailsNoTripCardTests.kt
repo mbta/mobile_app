@@ -21,7 +21,7 @@ class StopDetailsNoTripCardTests {
                 status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
                 accentColor = Color.Black,
                 routeType = RouteType.BUS,
-                hideMaps = false
+                hideMaps = false,
             )
         }
 
@@ -42,14 +42,14 @@ class StopDetailsNoTripCardTests {
                 status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
                 accentColor = Color.Black,
                 routeType = RouteType.BUS,
-                hideMaps = true
+                hideMaps = true,
             )
         }
 
         composeTestRule
             .onNodeWithText(
                 "The map shows where buses on this route currently are.",
-                substring = true
+                substring = true,
             )
             .assertDoesNotExist()
     }
@@ -61,7 +61,7 @@ class StopDetailsNoTripCardTests {
                 status = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 accentColor = Color.Black,
                 routeType = RouteType.FERRY,
-                hideMaps = false
+                hideMaps = false,
             )
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
@@ -75,7 +75,7 @@ class StopDetailsNoTripCardTests {
                 status = UpcomingFormat.NoTripsFormat.NoSchedulesToday,
                 accentColor = Color.Black,
                 routeType = RouteType.COMMUTER_RAIL,
-                hideMaps = false
+                hideMaps = false,
             )
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()

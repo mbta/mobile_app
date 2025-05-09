@@ -98,7 +98,7 @@ fun endToEndModule(): Module {
     val globalData =
         GlobalResponse(
             objects,
-            mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
+            mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id)),
         )
     return module {
         single<IAccessibilityStatusRepository> {
@@ -115,7 +115,7 @@ fun endToEndModule(): Module {
         single<INearbyRepository> {
             MockNearbyRepository(
                 NearbyResponse(listOf(stopParkStreet.id)),
-                listOf(stopParkStreet.id)
+                listOf(stopParkStreet.id),
             )
         }
         single<IOnboardingRepository> { MockOnboardingRepository() }

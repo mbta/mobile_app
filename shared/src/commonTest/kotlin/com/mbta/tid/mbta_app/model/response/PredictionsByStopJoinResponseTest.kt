@@ -49,10 +49,10 @@ class PredictionsByStopJoinResponseTest {
                 predictionsByStop =
                     mapOf(
                         "1" to mapOf(p1stop1.id to p1stop1),
-                        "2" to mapOf(p1stop2.id to p1stop2, p2stop2.id to p2stop2)
+                        "2" to mapOf(p1stop2.id to p1stop2, p2stop2.id to p2stop2),
                     ),
                 trips = mapOf(trip.id to trip),
-                vehicles = mapOf(vehicle.id to vehicle)
+                vehicles = mapOf(vehicle.id to vehicle),
             )
 
         val stop1NewPredictions =
@@ -60,18 +60,18 @@ class PredictionsByStopJoinResponseTest {
                 stopId = "1",
                 predictions = mapOf(p1stop1updated.id to p1stop1updated, p2stop1.id to p2stop1),
                 trips = mapOf(),
-                vehicles = mapOf()
+                vehicles = mapOf(),
             )
 
         val result = existingPredictions.mergePredictions(stop1NewPredictions)
 
         assertEquals(
             mapOf(p1stop1updated.id to p1stop1updated, p2stop1.id to p2stop1),
-            result.predictionsByStop["1"]
+            result.predictionsByStop["1"],
         )
         assertEquals(
             mapOf(p1stop2.id to p1stop2, p2stop2.id to p2stop2),
-            result.predictionsByStop["2"]
+            result.predictionsByStop["2"],
         )
         assertEquals(mapOf(trip.id to trip), result.trips)
         assertEquals(mapOf(vehicle.id to vehicle), result.vehicles)
@@ -102,7 +102,7 @@ class PredictionsByStopJoinResponseTest {
                 predictionsByStop =
                     mapOf("1" to mapOf(p1stop1.id to p1stop1), "2" to mapOf(p1stop2.id to p1stop2)),
                 trips = mapOf(trip1.id to trip1, trip2.id to trip2),
-                vehicles = mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2)
+                vehicles = mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2),
             )
 
         val stop1NewPredictions =
@@ -110,7 +110,7 @@ class PredictionsByStopJoinResponseTest {
                 stopId = "1",
                 predictions = mapOf(),
                 trips = mapOf(),
-                vehicles = mapOf()
+                vehicles = mapOf(),
             )
 
         val result = existingPredictions.mergePredictions(stop1NewPredictions)
@@ -146,7 +146,7 @@ class PredictionsByStopJoinResponseTest {
                 predictionsByStop =
                     mapOf("1" to mapOf(p1stop1.id to p1stop1), "2" to mapOf(p1stop2.id to p1stop2)),
                 trips = mapOf(trip1.id to trip1, trip2.id to trip2),
-                vehicles = mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2)
+                vehicles = mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2),
             )
 
         val response = data.toPredictionsStreamDataResponse()
@@ -163,10 +163,10 @@ class PredictionsByStopJoinResponseTest {
                 predictionsByStop =
                     mapOf(
                         "1" to mapOf("a" to prediction(), "b" to prediction()),
-                        "2" to mapOf("c" to prediction())
+                        "2" to mapOf("c" to prediction()),
                     ),
                 trips = emptyMap(),
-                vehicles = emptyMap()
+                vehicles = emptyMap(),
             )
 
         assertEquals(3, data.predictionQuantity())

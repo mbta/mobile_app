@@ -38,7 +38,7 @@ fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
-        repositoriesModule(RealRepositories())
+        repositoriesModule(RealRepositories()),
     )
 }
 

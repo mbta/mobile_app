@@ -43,9 +43,7 @@ import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
 
 @Composable
-fun MorePage(
-    bottomBar: @Composable () -> Unit,
-) {
+fun MorePage(bottomBar: @Composable () -> Unit) {
 
     val navController = rememberNavController()
     val viewModel = MoreViewModel(LocalContext.current, { navController.navigate("licenses") })
@@ -61,19 +59,19 @@ fun MorePage(
                         Row(
                             modifier = Modifier.padding(16.dp).fillMaxWidth(),
                             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
-                            verticalAlignment = Alignment.Bottom
+                            verticalAlignment = Alignment.Bottom,
                         ) {
                             Text(
                                 text = stringResource(R.string.more_title),
                                 style = Typography.title1Bold,
-                                modifier = Modifier.semantics { heading() }
+                                modifier = Modifier.semantics { heading() },
                             )
                             Text(
                                 stringResource(
                                     R.string.app_version_number,
-                                    BuildConfig.VERSION_NAME
+                                    BuildConfig.VERSION_NAME,
                                 ),
-                                style = Typography.footnote
+                                style = Typography.footnote,
                             )
                         }
                         HorizontalDivider()
@@ -81,23 +79,23 @@ fun MorePage(
                             Modifier.verticalScroll(rememberScrollState())
                                 .background(colorResource(R.color.fill1))
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             sections.map { section -> MoreSectionView(section = section) }
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
                                     painterResource(R.drawable.mbta_logo),
                                     contentDescription = null,
                                     modifier = Modifier.size(64.dp),
-                                    tint = Color.Unspecified
+                                    tint = Color.Unspecified,
                                 )
 
                                 Text(
                                     stringResource(R.string.more_page_footer),
-                                    style = Typography.callout
+                                    style = Typography.callout,
                                 )
                             }
                         }
@@ -112,7 +110,7 @@ fun MorePage(
                                     .fillMaxWidth()
                                     .height(44.dp),
                             horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Button(
                                 colors =
@@ -120,16 +118,16 @@ fun MorePage(
                                         contentColor = colorResource(R.color.key),
                                         containerColor = colorResource(R.color.fill3),
                                     ),
-                                onClick = { navController.popBackStack() }
+                                onClick = { navController.popBackStack() },
                             ) {
                                 Icon(
                                     painterResource(R.drawable.fa_chevron_left),
                                     modifier = Modifier.size(14.dp),
-                                    contentDescription = null
+                                    contentDescription = null,
                                 )
                                 Text(
                                     stringResource(R.string.back_button_label),
-                                    modifier = Modifier.padding(start = 4.dp)
+                                    modifier = Modifier.padding(start = 4.dp),
                                 )
                             }
                             Text(
@@ -138,7 +136,7 @@ fun MorePage(
                                 modifier =
                                     Modifier.weight(1f).padding(start = 8.dp).semantics {
                                         heading()
-                                    }
+                                    },
                             )
                         }
                         HorizontalDivider()
@@ -152,9 +150,9 @@ fun MorePage(
                                             Icon(
                                                 painterResource(R.drawable.fa_chevron_right),
                                                 modifier = Modifier.size(14.dp),
-                                                contentDescription = null
+                                                contentDescription = null,
                                             )
-                                        }
+                                        },
                                     )
                                     if (index < dependencies.size - 1) {
                                         HorizontalDivider()
@@ -168,9 +166,7 @@ fun MorePage(
                     val id = backStackEntry.arguments?.getString("index") ?: ""
                     val dependency =
                         Dependency.getAllDependencies().getOrNull(id.toInt()) ?: return@composable
-                    Column(
-                        Modifier.background(colorResource(R.color.fill1)),
-                    ) {
+                    Column(Modifier.background(colorResource(R.color.fill1))) {
                         Row(
                             modifier =
                                 Modifier.background(colorResource(R.color.fill3))
@@ -178,7 +174,7 @@ fun MorePage(
                                     .fillMaxWidth()
                                     .height(44.dp),
                             horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Button(
                                 colors =
@@ -186,16 +182,16 @@ fun MorePage(
                                         contentColor = colorResource(R.color.key),
                                         containerColor = colorResource(R.color.fill3),
                                     ),
-                                onClick = { navController.popBackStack() }
+                                onClick = { navController.popBackStack() },
                             ) {
                                 Icon(
                                     painterResource(R.drawable.fa_chevron_left),
                                     modifier = Modifier.size(14.dp),
-                                    contentDescription = null
+                                    contentDescription = null,
                                 )
                                 Text(
                                     stringResource(R.string.software_licenses),
-                                    modifier = Modifier.padding(start = 4.dp)
+                                    modifier = Modifier.padding(start = 4.dp),
                                 )
                             }
                         }
@@ -203,12 +199,12 @@ fun MorePage(
                         Column(
                             modifier =
                                 Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Text(
                                 text = dependency.name,
                                 style = Typography.title2Bold,
-                                modifier = Modifier.semantics { heading() }
+                                modifier = Modifier.semantics { heading() },
                             )
                             Text(text = dependency.licenseText, style = Typography.body)
                         }
