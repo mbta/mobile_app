@@ -27,7 +27,6 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 false,
             )
@@ -48,7 +47,6 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 true,
             )
@@ -70,7 +68,6 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 true,
             )
@@ -106,9 +103,9 @@ class StopHeaderTest {
                             true,
                             true,
                             emptyList(),
+                            RouteCardData.Context.StopDetailsUnfiltered,
                         )
                     ),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 true,
             )

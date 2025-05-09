@@ -170,8 +170,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -228,8 +227,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -316,6 +314,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.StopDetailsFiltered
         val leaf =
             RouteCardData.Leaf(
                 lineOrRoute,
@@ -328,24 +327,11 @@ class StopDetailsFilteredDeparturesViewTest {
                 allDataLoaded = true,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
+                context,
             )
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-        val routeStopData =
-            RouteCardData.RouteStopData(
-                route,
-                stop,
-                listOf(leaf),
-                RouteCardData.Context.StopDetailsFiltered,
-                globalResponse,
-            )
-        val routeCardData =
-            RouteCardData(
-                lineOrRoute,
-                listOf(routeStopData),
-                RouteCardData.Context.StopDetailsFiltered,
-                now,
-            )
+        val leafFormat = leaf.format(now, globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeCardData = RouteCardData(lineOrRoute, listOf(routeStopData), context, now)
 
         viewModel.setRouteCardData(listOf(routeCardData))
         tileData = leafFormat.tileData()
@@ -405,6 +391,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 true,
                 true,
                 emptyList(),
+                RouteCardData.Context.StopDetailsFiltered,
             )
 
         composeTestRule.setContent {
@@ -479,8 +466,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -591,7 +577,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat = leaf.format(now, routeB, global, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, global)
         viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
@@ -664,8 +650,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -727,8 +712,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
         tileData = leafFormat.tileData()
         noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -806,8 +790,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
 
         tileData = leafFormat.tileData()
@@ -865,8 +848,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
+        val leafFormat = leaf.format(now, globalResponse)
         viewModel.setRouteCardData(routeCardData)
 
         tileData = leafFormat.tileData()

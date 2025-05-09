@@ -31,6 +31,7 @@ final class DirectionPickerTests: XCTestCase {
             }
         }
 
+        let context = RouteCardData.Context.stopDetailsFiltered
         let leaf0 = RouteCardData.Leaf(
             lineOrRoute: .route(route),
             stop: stop,
@@ -41,7 +42,8 @@ final class DirectionPickerTests: XCTestCase {
             alertsHere: [],
             allDataLoaded: true,
             hasSchedulesToday: true,
-            alertsDownstream: []
+            alertsDownstream: [],
+            context: context
         )
         let leaf1 = RouteCardData.Leaf(
             lineOrRoute: .route(route),
@@ -53,12 +55,13 @@ final class DirectionPickerTests: XCTestCase {
             alertsHere: [],
             allDataLoaded: true,
             hasSchedulesToday: true,
-            alertsDownstream: []
+            alertsDownstream: [],
+            context: context
         )
         let stopData = RouteCardData.RouteStopData(lineOrRoute: .route(route), stop: stop, directions: [
             Direction(name: "North", destination: "Selected Destination", id: 0),
             Direction(name: "South", destination: "Other Destination", id: 1),
-        ], data: [leaf0, leaf1], context: .stopDetailsFiltered)
+        ], data: [leaf0, leaf1])
 
         return stopData
     }

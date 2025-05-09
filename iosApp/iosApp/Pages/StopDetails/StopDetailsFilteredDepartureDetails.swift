@@ -103,12 +103,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        leafFormat = leaf.format(
-            now: now.toKotlinInstant(),
-            representativeRoute: leaf.lineOrRoute.sortRoute,
-            globalData: stopDetailsVM.global,
-            context: .stopDetailsFiltered
-        )
+        leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
     }
 
     var body: some View {
@@ -181,12 +176,7 @@ struct StopDetailsFilteredDepartureDetails: View {
             selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
         }
         .onChange(of: leaf) { leaf in
-            leafFormat = leaf.format(
-                now: now.toKotlinInstant(),
-                representativeRoute: leaf.lineOrRoute.sortRoute,
-                globalData: stopDetailsVM.global,
-                context: .stopDetailsFiltered
-            )
+            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
         }
         .onChange(of: AlertSummaryParams(
             global: stopDetailsVM.global,
@@ -200,12 +190,7 @@ struct StopDetailsFilteredDepartureDetails: View {
             setAlertSummaries(newParams)
         }
         .onChange(of: stopDetailsVM.global) { global in
-            leafFormat = leaf.format(
-                now: now.toKotlinInstant(),
-                representativeRoute: leaf.lineOrRoute.sortRoute,
-                globalData: global,
-                context: .stopDetailsFiltered
-            )
+            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: global)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)

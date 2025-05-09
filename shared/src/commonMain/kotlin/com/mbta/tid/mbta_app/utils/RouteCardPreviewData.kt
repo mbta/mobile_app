@@ -99,6 +99,7 @@ open class RouteCardPreviewData {
                         true,
                         true,
                         listOfNotNull(alertDownstream[0]),
+                        context,
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
                 RouteCardData.Leaf(
@@ -112,10 +113,10 @@ open class RouteCardPreviewData {
                         true,
                         true,
                         listOfNotNull(alertDownstream[1]),
+                        context,
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
             ),
-            context,
             global,
         )
 

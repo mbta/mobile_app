@@ -64,6 +64,7 @@ class PatternSortingTest {
             allDataLoaded = allDataLoaded,
             hasSchedulesToday = hasSchedulesToday,
             alertsDownstream = emptyList(),
+            context = RouteCardData.Context.NearbyTransit,
         )
 
     private fun stopData(stop: Stop, vararg leaf: RouteCardData.Leaf) =
@@ -73,14 +74,7 @@ class PatternSortingTest {
         stop: Stop,
         lineOrRoute: RouteCardData.LineOrRoute,
         vararg leaf: RouteCardData.Leaf,
-    ) =
-        RouteCardData.RouteStopData(
-            lineOrRoute,
-            stop,
-            leaf.asList(),
-            RouteCardData.Context.NearbyTransit,
-            GlobalResponse(objects),
-        )
+    ) = RouteCardData.RouteStopData(lineOrRoute, stop, leaf.asList(), GlobalResponse(objects))
 
     private fun routeCard(route: Route, vararg stops: RouteCardData.RouteStopData) =
         routeCard(RouteCardData.LineOrRoute.Route(route), *stops)

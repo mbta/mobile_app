@@ -63,6 +63,7 @@ object LoadingPlaceholders {
                 allDataLoaded = false,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
+                context = context,
             )
         val leaf2 =
             RouteCardData.Leaf(
@@ -76,6 +77,7 @@ object LoadingPlaceholders {
                 allDataLoaded = false,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
+                context = context,
             )
 
         val stopData =
@@ -84,7 +86,6 @@ object LoadingPlaceholders {
                 stop,
                 listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
                 listOf(leaf1, leaf2),
-                context,
             )
 
         val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), context, now)

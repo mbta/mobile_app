@@ -34,9 +34,9 @@ final class RouteCardDeparturesTests: XCTestCase {
                 lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
-            )],
-            context: .nearbyTransit
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: .nearbyTransit
+            )]
         )
 
         let sut = RouteCardDepartures(
@@ -77,9 +77,9 @@ final class RouteCardDeparturesTests: XCTestCase {
                 lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [.init(trip: trip, schedule: schedule)], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
-            )],
-            context: .nearbyTransit
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: .nearbyTransit
+            )]
         )
 
         let sut = RouteCardDepartures(
@@ -194,6 +194,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             [Green.shared.routeB, Green.shared.routeC, Green.shared.routeE]
         )
 
+        let context = RouteCardData.Context.nearbyTransit
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: lineOrRoute,
             stop: stop,
@@ -213,7 +214,8 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE0, prediction: predE0),
                     .init(trip: tripC02, prediction: predC02),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [downstreamAlert]
+                hasSchedulesToday: true, alertsDownstream: [downstreamAlert],
+                context: context
             ),
             .init(
                 lineOrRoute: lineOrRoute,
@@ -227,9 +229,9 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE1, prediction: predE1),
                     .init(trip: tripC12, prediction: predC12),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
-            )],
-            context: .nearbyTransit
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: context
+            )]
         )
 
         let sut = RouteCardDepartures(

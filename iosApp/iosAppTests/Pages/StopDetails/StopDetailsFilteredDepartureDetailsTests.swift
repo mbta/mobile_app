@@ -73,7 +73,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             stopIds: Set([stop.id]).union(Set(stop.childStopIds)),
             upcomingTrips: upcomingTrips,
             alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true,
-            alertsDownstream: alertsDownstream
+            alertsDownstream: alertsDownstream,
+            context: .stopDetailsFiltered
         )
 
         return leaf

@@ -64,9 +64,9 @@ class RouteCardDataTest {
                                                     routePatterns = listOf(route1rp1),
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     )
                             ),
@@ -138,9 +138,9 @@ class RouteCardDataTest {
                                                     routePatterns = listOf(route1rp1),
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = true,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     ),
                                 stop2.id to
@@ -158,9 +158,9 @@ class RouteCardDataTest {
                                                         setOf(route1rp2.id),
                                                     stopIds = setOf(stop2.id),
                                                     allDataLoaded = true,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     ),
                             ),
@@ -228,6 +228,7 @@ class RouteCardDataTest {
                                                 routePatterns = listOf(route1rp1, route1rp2),
                                                 stopIds = setOf(stop1.id),
                                                 allDataLoaded = false,
+                                                context = context,
                                             ),
                                         1 to
                                             RouteCardData.LeafBuilder(
@@ -237,9 +238,9 @@ class RouteCardDataTest {
                                                 routePatterns = listOf(route1rp3),
                                                 stopIds = setOf(stop1.id),
                                                 allDataLoaded = false,
+                                                context = context,
                                             ),
                                     ),
-                                    context,
                                     global,
                                 )
                         ),
@@ -304,9 +305,9 @@ class RouteCardDataTest {
                                                     routePatterns = listOf(route1rp1),
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     )
                             ),
@@ -330,9 +331,9 @@ class RouteCardDataTest {
                                                     routePatterns = listOf(route2rp1),
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     )
                             ),
@@ -422,9 +423,9 @@ class RouteCardDataTest {
                                                         station1stop2.id,
                                                     ),
                                                 allDataLoaded = false,
+                                                context = context,
                                             )
                                     ),
-                                    context,
                                     global,
                                 ),
                             stop2.id to
@@ -440,9 +441,9 @@ class RouteCardDataTest {
                                                 routePatterns = listOf(route1rp3),
                                                 stopIds = setOf(stop2.id),
                                                 allDataLoaded = false,
+                                                context = context,
                                             )
                                     ),
-                                    context,
                                     global,
                                 ),
                         ),
@@ -512,9 +513,9 @@ class RouteCardDataTest {
                                                         physicalPlatform.id,
                                                     ),
                                                 allDataLoaded = false,
+                                                context = context,
                                             )
                                     ),
-                                    context,
                                     global,
                                 )
                         ),
@@ -596,9 +597,9 @@ class RouteCardDataTest {
                                                     routePatterns = listOf(railPattern),
                                                     stopIds = setOf(stop.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                     )
                             ),
                             context,
@@ -621,9 +622,9 @@ class RouteCardDataTest {
                                                     routePatterns = listOf(shuttlePattern),
                                                     stopIds = setOf(stop.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     )
                             ),
@@ -729,6 +730,7 @@ class RouteCardDataTest {
                                                         dWestPlatform.id,
                                                     ),
                                                 allDataLoaded = false,
+                                                context = context,
                                             ),
                                         1 to
                                             RouteCardData.LeafBuilder(
@@ -745,9 +747,9 @@ class RouteCardDataTest {
                                                         dWestPlatform.id,
                                                     ),
                                                 allDataLoaded = false,
+                                                context = context,
                                             ),
                                     ),
-                                    context,
                                     global,
                                 )
                         ),
@@ -935,6 +937,7 @@ class RouteCardDataTest {
                                                         listOf(routeBrp1, routeCrp1, routeDrp1),
                                                     stopIds = setOf(stopGov.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 ),
                                             1 to
                                                 RouteCardData.LeafBuilder(
@@ -950,9 +953,9 @@ class RouteCardDataTest {
                                                         ),
                                                     stopIds = setOf(stopGov.id),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 ),
                                         ),
-                                        context,
                                     )
                             ),
                             context,
@@ -1071,9 +1074,9 @@ class RouteCardDataTest {
                                                             ),
                                                         ),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     ),
                                 stop2.id to
@@ -1098,9 +1101,9 @@ class RouteCardDataTest {
                                                             ),
                                                         ),
                                                     allDataLoaded = false,
+                                                    context = context,
                                                 )
                                         ),
-                                        context,
                                         global,
                                     ),
                             ),
@@ -1195,9 +1198,9 @@ class RouteCardDataTest {
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
                                                     mapOf(pattern1.id to true),
+                                                context = context,
                                             )
                                     ),
-                                    context,
                                     global,
                                 ),
                             stop2.id to
@@ -1216,9 +1219,9 @@ class RouteCardDataTest {
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
                                                     mapOf(pattern2.id to true),
+                                                context = context,
                                             )
                                     ),
-                                    context,
                                     global,
                                 ),
                             stop3.id to
@@ -1237,9 +1240,9 @@ class RouteCardDataTest {
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
                                                     mapOf(pattern3.id to false),
+                                                context = context,
                                             )
                                     ),
-                                    context,
                                     global,
                                 ),
                         ),
@@ -1319,9 +1322,9 @@ class RouteCardDataTest {
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     )
                                 ),
-                                context,
                                 global,
                             )
                         ),
@@ -1347,9 +1350,9 @@ class RouteCardDataTest {
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     )
                                 ),
-                                context,
                                 global,
                             )
                         ),
@@ -1431,9 +1434,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -1459,9 +1462,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -2227,9 +2230,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -2341,6 +2344,7 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute1,
@@ -2361,9 +2365,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -2467,9 +2471,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -2581,9 +2585,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 ),
                                 RouteCardData.RouteStopData(
@@ -2610,9 +2614,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 ),
                             ),
@@ -2709,9 +2713,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 ),
                                 RouteCardData.RouteStopData(
@@ -2729,9 +2733,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 ),
                             ),
@@ -2909,9 +2913,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -2943,6 +2947,7 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute3,
@@ -2958,9 +2963,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -3039,9 +3044,9 @@ class RouteCardDataTest {
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     )
                                 ),
-                                context,
                                 global,
                             )
                         ),
@@ -3140,6 +3145,7 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute1,
@@ -3155,9 +3161,9 @@ class RouteCardDataTest {
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -3249,9 +3255,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -3320,9 +3326,9 @@ class RouteCardDataTest {
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     )
                                 ),
-                                context,
                                 global,
                             )
                         ),
@@ -3408,9 +3414,9 @@ class RouteCardDataTest {
                                         allDataLoaded = true,
                                         hasSchedulesToday = true,
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     )
                                 ),
-                                context,
                                 global,
                             )
                         ),
@@ -3474,6 +3480,7 @@ class RouteCardDataTest {
             }
 
             val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val context = RouteCardData.Context.NearbyTransit
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3499,13 +3506,13 @@ class RouteCardDataTest {
                                                 routePatternC.id to false,
                                             ),
                                         alertsDownstream = emptyList(),
+                                        context,
                                     )
                                 ),
-                                context = RouteCardData.Context.NearbyTransit,
                                 globalData = GlobalResponse(objects),
                             )
                         ),
-                        RouteCardData.Context.NearbyTransit,
+                        context,
                         time,
                     )
                 ),
@@ -3518,7 +3525,7 @@ class RouteCardDataTest {
                     alerts = AlertsStreamDataResponse(emptyMap()),
                     pinnedRoutes = setOf(),
                     now = time,
-                    context = RouteCardData.Context.NearbyTransit,
+                    context = context,
                 ),
             )
         }
@@ -3605,9 +3612,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -3643,9 +3650,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -3907,6 +3914,7 @@ class RouteCardDataTest {
                                                 routePatternE1.id to true,
                                             ),
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     ),
                                     RouteCardData.Leaf(
                                         lineOrRoute = lineOrRoute,
@@ -3939,9 +3947,9 @@ class RouteCardDataTest {
                                                 routePatternE2.id to true,
                                             ),
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     ),
                                 ),
-                                context,
                             )
                         ),
                     context,
@@ -4068,6 +4076,7 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                         RouteCardData.Leaf(
                                             lineOrRoute = lineOrRoute,
@@ -4086,9 +4095,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         ),
                                     ),
-                                    context,
                                 )
                             ),
                         context,
@@ -4188,9 +4197,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                 )
                             ),
                         context,
@@ -4462,6 +4471,7 @@ class RouteCardDataTest {
                                                 orangeSouthboundTypical.id to false,
                                             ),
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     ),
                                     RouteCardData.Leaf(
                                         lineOrRoute = orangeLineOrRoute,
@@ -4482,9 +4492,9 @@ class RouteCardDataTest {
                                                 orangeNorthboundTypical.id to false,
                                             ),
                                         alertsDownstream = emptyList(),
+                                        context = context,
                                     ),
                                 ),
-                                context,
                                 global,
                             )
                         ),
@@ -4608,9 +4618,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -4726,9 +4736,9 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -4903,9 +4913,9 @@ class RouteCardDataTest {
                                                     routePatternBraintree.id to true,
                                                 ),
                                             alertsDownstream = southboundDownstreamAlerts,
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -5018,9 +5028,9 @@ class RouteCardDataTest {
                                             hasSchedulesTodayByPattern =
                                                 mapOf(routePatternPvd.id to true),
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),
@@ -5063,9 +5073,9 @@ class RouteCardDataTest {
                                             hasSchedulesTodayByPattern =
                                                 mapOf(routePatternPvd.id to true),
                                             alertsDownstream = emptyList(),
+                                            context = context,
                                         )
                                     ),
-                                    context,
                                     global,
                                 )
                             ),

@@ -131,8 +131,7 @@ final class RouteCardTests: XCTestCase {
                     lineOrRoute: .route(route),
                     stop: stop,
                     directions: [],
-                    data: [],
-                    context: .nearbyTransit
+                    data: []
                 )],
                 context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()
@@ -153,8 +152,7 @@ final class RouteCardTests: XCTestCase {
                     lineOrRoute: .route(route),
                     stop: stop,
                     directions: [],
-                    data: [],
-                    context: .stopDetailsUnfiltered
+                    data: []
                 )],
                 context: .stopDetailsUnfiltered,
                 at: Date.now.toKotlinInstant()
@@ -192,9 +190,9 @@ final class RouteCardTests: XCTestCase {
                         lineOrRoute: .route(route), stop: stop,
                         directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                         upcomingTrips: [], alertsHere: [], allDataLoaded: true,
-                        hasSchedulesToday: true, alertsDownstream: []
-                    )],
-                    context: .nearbyTransit
+                        hasSchedulesToday: true, alertsDownstream: [],
+                        context: .nearbyTransit
+                    )]
                 )],
                 context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()

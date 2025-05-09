@@ -64,38 +64,33 @@ data class RouteCardData(
         val stop: Stop,
         val directions: List<Direction>,
         val data: List<Leaf>,
-        val context: Context,
     ) {
         // convenience constructors for when directions are not directly under test
         constructor(
             route: Route,
             stop: Stop,
             data: List<Leaf>,
-            context: Context,
             globalData: GlobalResponse,
-        ) : this(LineOrRoute.Route(route), stop, data, context, globalData)
+        ) : this(LineOrRoute.Route(route), stop, data, globalData)
 
         constructor(
             line: Line,
             routes: Set<Route>,
             stop: Stop,
             data: List<Leaf>,
-            context: Context,
             globalData: GlobalResponse,
-        ) : this(LineOrRoute.Line(line, routes), stop, data, context, globalData)
+        ) : this(LineOrRoute.Line(line, routes), stop, data, globalData)
 
         constructor(
             lineOrRoute: LineOrRoute,
             stop: Stop,
             data: List<Leaf>,
-            context: Context,
             globalData: GlobalResponse,
         ) : this(
             lineOrRoute,
             stop,
             lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
             data,
-            context,
         )
 
         val id = stop.id
@@ -122,6 +117,7 @@ data class RouteCardData(
         val allDataLoaded: Boolean,
         val hasSchedulesTodayByPattern: Map<String, Boolean>,
         val alertsDownstream: List<Alert>,
+        val context: Context,
     ) {
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
@@ -136,6 +132,7 @@ data class RouteCardData(
             allDataLoaded: Boolean,
             hasSchedulesToday: Boolean,
             alertsDownstream: List<Alert>,
+            context: Context,
         ) : this(
             lineOrRoute,
             stop,
@@ -150,6 +147,7 @@ data class RouteCardData(
             if (routePatterns.isEmpty()) mapOf("fakeId" to hasSchedulesToday)
             else routePatterns.associate { it.id to hasSchedulesToday },
             alertsDownstream,
+            context,
         )
 
         val id = directionId
@@ -420,12 +418,8 @@ data class RouteCardData(
             }
         }
 
-        fun format(
-            now: Instant,
-            representativeRoute: Route,
-            globalData: GlobalResponse?,
-            context: Context,
-        ): LeafFormat {
+        fun format(now: Instant, globalData: GlobalResponse?): LeafFormat {
+            val representativeRoute = this.lineOrRoute.sortRoute
             val potentialHeadsigns = potentialHeadsigns(now, representativeRoute, globalData)
 
             val isBranching = potentialHeadsigns.size > 1
@@ -719,9 +713,9 @@ data class RouteCardData(
                                                                         },
                                                                     ),
                                                                 allDataLoaded = allDataLoaded,
+                                                                context = context,
                                                             )
                                                         },
-                                                context,
                                             )
                                     }
                                     .toMap(),
@@ -1017,31 +1011,27 @@ data class RouteCardData(
         val stop: Stop,
         val directions: List<Direction>,
         var data: ByDirectionBuilder,
-        val context: Context,
     ) {
         // convenience constructors for when directions are not directly under test
         constructor(
             route: Route,
             stop: Stop,
             data: ByDirectionBuilder,
-            context: Context,
             globalData: GlobalResponse,
-        ) : this(stop, LineOrRoute.Route(route), data, context, globalData)
+        ) : this(stop, LineOrRoute.Route(route), data, globalData)
 
         constructor(
             line: Line,
             routes: Set<Route>,
             stop: Stop,
             data: ByDirectionBuilder,
-            context: Context,
             globalData: GlobalResponse,
-        ) : this(stop, LineOrRoute.Line(line, routes), data, context, globalData)
+        ) : this(stop, LineOrRoute.Line(line, routes), data, globalData)
 
         constructor(
             stop: Stop,
             lineOrRoute: LineOrRoute,
             data: ByDirectionBuilder,
-            context: Context,
             globalData: GlobalResponse,
         ) : this(
             lineOrRoute,
@@ -1052,7 +1042,6 @@ data class RouteCardData(
                 data.values.mapNotNull { it.routePatterns }.flatten(),
             ),
             data,
-            context,
         )
 
         fun build(): RouteStopData {
@@ -1061,7 +1050,6 @@ data class RouteCardData(
                 stop,
                 directions,
                 data.values.map { it.build() }.sort(),
-                context,
             )
         }
     }
@@ -1078,10 +1066,11 @@ data class RouteCardData(
         var allDataLoaded: Boolean? = null,
         var hasSchedulesTodayByPattern: Map<String, Boolean>? = null,
         var alertsDownstream: List<Alert>? = null,
+        val context: Context,
     ) {
 
-        fun build(): RouteCardData.Leaf {
-            return RouteCardData.Leaf(
+        fun build(): Leaf {
+            return Leaf(
                 lineOrRoute,
                 stop,
                 directionId,
@@ -1093,6 +1082,7 @@ data class RouteCardData(
                 hasSchedulesTodayByPattern
                     ?: checkNotNull(routePatterns).associate { it.id to false },
                 checkNotNull(alertsDownstream),
+                context,
             )
         }
 

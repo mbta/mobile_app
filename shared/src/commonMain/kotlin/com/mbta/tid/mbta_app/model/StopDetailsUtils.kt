@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RouteCardData.Context
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import kotlinx.datetime.Instant
@@ -33,13 +32,7 @@ object StopDetailsUtils {
                 ?: return null
         if (currentTripFilter?.selectionLock == true) return currentTripFilter
 
-        val leafFormat =
-            leaf.format(
-                filterAtTime,
-                route.lineOrRoute.sortRoute,
-                globalData,
-                Context.StopDetailsFiltered,
-            )
+        val leafFormat = leaf.format(filterAtTime, globalData)
         val formats =
             when (leafFormat) {
                 is LeafFormat.Single -> listOf(leafFormat.format)

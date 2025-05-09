@@ -42,6 +42,7 @@ class DeparturesTest {
         val bTrip = objects.trip { headsign = "B" }
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
                 lineOrRoute,
@@ -64,6 +65,7 @@ class DeparturesTest {
                         true,
                         true,
                         emptyList(),
+                        context,
                     ),
                     RouteCardData.Leaf(
                         lineOrRoute,
@@ -81,9 +83,9 @@ class DeparturesTest {
                         true,
                         true,
                         listOf(downstreamAlert),
+                        context,
                     ),
                 ),
-                RouteCardData.Context.NearbyTransit,
             )
 
         composeTestRule.setContent {
@@ -116,6 +118,7 @@ class DeparturesTest {
         val bTrip = objects.trip { headsign = "B" }
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
                 lineOrRoute,
@@ -139,6 +142,7 @@ class DeparturesTest {
                         true,
                         true,
                         emptyList(),
+                        context,
                     ),
                     RouteCardData.Leaf(
                         lineOrRoute,
@@ -156,9 +160,9 @@ class DeparturesTest {
                         true,
                         true,
                         emptyList(),
+                        context,
                     ),
                 ),
-                RouteCardData.Context.NearbyTransit,
             )
 
         composeTestRule.setContent {
@@ -185,6 +189,7 @@ class DeparturesTest {
         val bTrip = objects.trip { headsign = "B" }
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
                 lineOrRoute,
@@ -207,6 +212,7 @@ class DeparturesTest {
                         true,
                         true,
                         emptyList(),
+                        context,
                     ),
                     RouteCardData.Leaf(
                         lineOrRoute,
@@ -224,9 +230,9 @@ class DeparturesTest {
                         true,
                         true,
                         emptyList(),
+                        context,
                     ),
                 ),
-                RouteCardData.Context.NearbyTransit,
             )
 
         var tapAnalytics: Pair<String, Map<String, String>>? = null

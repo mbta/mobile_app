@@ -38,7 +38,6 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.NearbyTransit,
                         )
                     ),
                     RouteCardData.Context.NearbyTransit,
@@ -80,7 +79,6 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.NearbyTransit,
                         )
                     ),
                     RouteCardData.Context.NearbyTransit,
@@ -123,7 +121,6 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.StopDetailsUnfiltered,
                         )
                     ),
                     RouteCardData.Context.StopDetailsUnfiltered,

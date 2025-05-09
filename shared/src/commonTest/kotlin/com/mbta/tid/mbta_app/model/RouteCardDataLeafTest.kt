@@ -61,8 +61,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -108,8 +109,9 @@ class RouteCardDataLeafTest {
                         true,
                         true,
                         emptyList(),
+                        anyEnumValue(),
                     )
-                    .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                    .format(now, GlobalResponse(objects)),
             )
         }
     }
@@ -151,8 +153,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -198,8 +201,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -245,8 +249,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     listOf(alert),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -273,8 +278,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -306,8 +312,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -331,8 +338,9 @@ class RouteCardDataLeafTest {
                     false,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -384,8 +392,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -439,8 +448,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, subwayRoute, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
         assertEquals(
             LeafFormat.Single(
@@ -472,8 +482,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, busRoute, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -500,8 +511,9 @@ class RouteCardDataLeafTest {
                     true,
                     false,
                     emptyList(),
+                    anyEnumValue(),
                 )
-                .format(now, route, GlobalResponse(objects), anyEnumValue()),
+                .format(now, GlobalResponse(objects)),
         )
     }
 
@@ -619,13 +631,9 @@ class RouteCardDataLeafTest {
                         allDataLoaded = true,
                         hasSchedulesToday = true,
                         emptyList(),
-                    )
-                    .format(
-                        now,
-                        RedLine.route,
-                        RedLine.global,
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
+                    .format(now, RedLine.global)
             ),
         )
     }
@@ -723,13 +731,9 @@ class RouteCardDataLeafTest {
                             allDataLoaded = true,
                             hasSchedulesToday = true,
                             listOf(downstreamAlert),
-                        )
-                        .format(
-                            now,
-                            RedLine.route,
-                            RedLine.global,
                             anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
+                        .format(now, RedLine.global)
                 ),
             )
         }
@@ -794,13 +798,9 @@ class RouteCardDataLeafTest {
                     allDataLoaded = true,
                     hasSchedulesToday = true,
                     emptyList(),
-                )
-                .format(
-                    now,
-                    RedLine.route,
-                    RedLine.global,
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
-                ),
+                )
+                .format(now, RedLine.global),
         )
     }
 
@@ -884,8 +884,9 @@ class RouteCardDataLeafTest {
                         allDataLoaded = true,
                         hasSchedulesToday = true,
                         emptyList(),
+                        anyEnumValue(),
                     )
-                    .format(now, RedLine.route, RedLine.global, anyEnumValue())
+                    .format(now, RedLine.global)
             ),
         )
     }
@@ -984,13 +985,9 @@ class RouteCardDataLeafTest {
                             allDataLoaded = true,
                             hasSchedulesToday = true,
                             emptyList(),
-                        )
-                        .format(
-                            now,
-                            RedLine.route,
-                            RedLine.global,
                             anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
+                        .format(now, RedLine.global)
                 ),
             )
         }
@@ -1116,13 +1113,9 @@ class RouteCardDataLeafTest {
                         allDataLoaded = true,
                         hasSchedulesToday = true,
                         emptyList(),
-                    )
-                    .format(
-                        now,
-                        GreenLine.b,
-                        GreenLine.global,
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
+                    .format(now, GreenLine.global)
             ),
         )
     }
@@ -1245,13 +1238,9 @@ class RouteCardDataLeafTest {
                         true,
                         true,
                         emptyList(),
-                    )
-                    .format(
-                        now,
-                        ProvidenceStoughtonLine.route,
-                        ProvidenceStoughtonLine.global,
                         anyEnumValue(),
                     )
+                    .format(now, ProvidenceStoughtonLine.global)
             ),
         )
     }
@@ -1317,13 +1306,9 @@ class RouteCardDataLeafTest {
                     true,
                     true,
                     emptyList(),
-                )
-                .format(
-                    now,
-                    ProvidenceStoughtonLine.route,
-                    ProvidenceStoughtonLine.global,
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
-                ),
+                )
+                .format(now, ProvidenceStoughtonLine.global),
         )
     }
 
@@ -1400,13 +1385,9 @@ class RouteCardDataLeafTest {
                     allDataLoaded = true,
                     hasSchedulesToday = true,
                     emptyList(),
-                )
-                .format(
-                    now,
-                    `87`.route,
-                    `87`.global,
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
-                ),
+                )
+                .format(now, `87`.global),
         )
     }
 
@@ -1475,13 +1456,9 @@ class RouteCardDataLeafTest {
                         allDataLoaded = true,
                         hasSchedulesToday = true,
                         emptyList(),
-                    )
-                    .format(
-                        now,
-                        `87`.route,
-                        `87`.global,
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
+                    .format(now, `87`.global)
             ),
         )
     }
@@ -1545,8 +1522,9 @@ class RouteCardDataLeafTest {
                             allDataLoaded = true,
                             hasSchedulesToday = true,
                             emptyList(),
+                            anyEnumValue(),
                         )
-                        .format(now, RedLine.route, RedLine.global, anyEnumValue())
+                        .format(now, RedLine.global)
                 ),
             )
         }
@@ -1573,8 +1551,9 @@ class RouteCardDataLeafTest {
                         true,
                         true,
                         emptyList(),
+                        anyEnumValue(),
                     )
-                    .format(now, RedLine.route, RedLine.global, anyEnumValue()),
+                    .format(now, RedLine.global),
             )
         }
 
@@ -1662,8 +1641,9 @@ class RouteCardDataLeafTest {
                             true,
                             true,
                             emptyList(),
+                            anyEnumValue(),
                         )
-                        .format(now, GreenLine.b, GreenLine.global, anyEnumValue())
+                        .format(now, GreenLine.global)
                 ),
             )
         }
@@ -1706,8 +1686,9 @@ class RouteCardDataLeafTest {
                         true,
                         true,
                         emptyList(),
+                        anyEnumValue(),
                     )
-                    .format(now, GreenLine.b, GreenLine.global, anyEnumValue()),
+                    .format(now, GreenLine.global),
             )
         }
 
@@ -1806,13 +1787,9 @@ class RouteCardDataLeafTest {
                             true,
                             true,
                             emptyList(),
-                        )
-                        .format(
-                            now,
-                            GreenLine.b,
-                            GreenLine.global,
                             anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
+                        .format(now, GreenLine.global)
                 ),
             )
         }
@@ -1907,13 +1884,9 @@ class RouteCardDataLeafTest {
                             true,
                             true,
                             emptyList(),
-                        )
-                        .format(
-                            now,
-                            GreenLine.b,
-                            GreenLine.global,
                             anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
+                        .format(now, GreenLine.global)
                 ),
             )
         }
@@ -2021,13 +1994,9 @@ class RouteCardDataLeafTest {
                                 GreenLine.eWestbound.id to true,
                             ),
                             emptyList(),
-                        )
-                        .format(
-                            now,
-                            GreenLine.b,
-                            GreenLine.global,
                             anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                         )
+                        .format(now, GreenLine.global)
                 ),
             )
         }
@@ -2098,13 +2067,9 @@ class RouteCardDataLeafTest {
                         true,
                         true,
                         emptyList(),
-                    )
-                    .format(
-                        now,
-                        GreenLine.b,
-                        GreenLine.global,
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
-                    ),
+                    )
+                    .format(now, GreenLine.global),
             )
         }
 }

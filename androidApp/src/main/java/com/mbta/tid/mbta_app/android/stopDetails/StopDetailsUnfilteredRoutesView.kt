@@ -194,6 +194,7 @@ private fun StopDetailsRoutesViewPreview() {
 
     val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
     val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+    val context = RouteCardData.Context.StopDetailsUnfiltered
     val routeCardData =
         listOf(
             RouteCardData(
@@ -214,13 +215,13 @@ private fun StopDetailsRoutesViewPreview() {
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
                                 alertsDownstream = emptyList(),
+                                context = context,
                             )
                         ),
-                        RouteCardData.Context.StopDetailsUnfiltered,
                         globalData,
                     )
                 ),
-                RouteCardData.Context.StopDetailsUnfiltered,
+                context,
                 now,
             ),
             RouteCardData(
@@ -244,6 +245,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
                                 alertsDownstream = emptyList(),
+                                context = context,
                             ),
                             RouteCardData.Leaf(
                                 lineOrRoute2,
@@ -256,13 +258,13 @@ private fun StopDetailsRoutesViewPreview() {
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
                                 alertsDownstream = emptyList(),
+                                context = context,
                             ),
                         ),
-                        RouteCardData.Context.StopDetailsUnfiltered,
                         globalData,
                     )
                 ),
-                RouteCardData.Context.StopDetailsUnfiltered,
+                context,
                 now,
             ),
         )

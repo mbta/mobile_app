@@ -66,8 +66,7 @@ fun Departures(
                 )
             }
 
-            val formatted =
-                leaf.format(now, stopData.lineOrRoute.sortRoute, globalData, stopData.context)
+            val formatted = leaf.format(now, globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
 
             NavDrilldownRow(
@@ -206,6 +205,7 @@ private fun DeparturesPreview() {
                     true,
                     true,
                     emptyList(),
+                    context,
                 ),
                 RouteCardData.Leaf(
                     lineOrRoute,
@@ -231,9 +231,9 @@ private fun DeparturesPreview() {
                     true,
                     true,
                     emptyList(),
+                    context,
                 ),
             ),
-            context,
             global,
         )
 

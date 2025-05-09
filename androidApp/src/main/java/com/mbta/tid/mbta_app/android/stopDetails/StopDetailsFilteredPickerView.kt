@@ -98,13 +98,7 @@ fun StopDetailsFilteredPickerView(
                 )
 
                 if (leaf != null) {
-                    val leafFormat =
-                        leaf.format(
-                            now,
-                            routeStopData.lineOrRoute.sortRoute,
-                            global,
-                            RouteCardData.Context.StopDetailsFiltered,
-                        )
+                    val leafFormat = leaf.format(now, global)
                     val tileData = leafFormat.tileData()
                     val noPredictionsStatus = leafFormat.noPredictionsStatus()
 
@@ -139,13 +133,7 @@ fun StopDetailsFilteredPickerView(
                                 )
                             val stopData = routeData.stopData.single()
                             val placeholderLeaf = stopData.data.first()
-                            val leafFormat =
-                                placeholderLeaf.format(
-                                    now,
-                                    routeStopData.lineOrRoute.sortRoute,
-                                    global,
-                                    RouteCardData.Context.StopDetailsFiltered,
-                                )
+                            val leafFormat = placeholderLeaf.format(now, global)
                             val tileData = leafFormat.tileData()
                             val noPredictionsStatus = leafFormat.noPredictionsStatus()
 

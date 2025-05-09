@@ -114,7 +114,6 @@ class NearbyTransitTabViewModelTest {
                             route,
                             stop,
                             listOf(),
-                            RouteCardData.Context.NearbyTransit,
                             GlobalResponse(objectCollectionBuilder),
                         )
                     ),
