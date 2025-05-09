@@ -48,7 +48,7 @@ fun PredictionRowView(
     predictions: UpcomingFormat,
     modifier: Modifier = Modifier,
     pillDecoration: PillDecoration? = null,
-    destination: @Composable () -> Unit
+    destination: @Composable () -> Unit,
 ) {
     Row(
         modifier.fillMaxWidth(),
@@ -62,14 +62,14 @@ fun PredictionRowView(
                 RoutePillType.Flex,
                 modifier =
                     if (predictions.secondaryAlert == null) Modifier.padding(end = 8.dp)
-                    else Modifier
+                    else Modifier,
             )
         }
         predictions.secondaryAlert?.let { secondaryAlert ->
             Image(
                 painterResource(drawableByName(secondaryAlert.iconName)),
                 stringResource(R.string.alert),
-                modifier = Modifier.placeholderIfLoading().padding(end = 8.dp)
+                modifier = Modifier.placeholderIfLoading().padding(end = 8.dp),
             )
         }
 
@@ -78,26 +78,26 @@ fun PredictionRowView(
             modifier =
                 DestinationPredictionBalance.predictionWidth(predictions.containsWrappableText()),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             ProvideTextStyle(value = Typography.callout) {
                 Column(
                     modifier = Modifier.weight(1f, fill = false),
                     horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     when (predictions) {
                         is UpcomingFormat.Some ->
                             predictions.trips.mapIndexed { index, prediction ->
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     UpcomingTripView(
                                         UpcomingTripViewState.Some(prediction.format),
                                         modifier = Modifier.weight(1f, fill = false),
                                         isFirst = index == 0,
-                                        isOnly = index == 0 && predictions.trips.count() == 1
+                                        isOnly = index == 0 && predictions.trips.count() == 1,
                                     )
                                     if (pillDecoration is PillDecoration.OnPrediction) {
                                         val route: Route? =
@@ -112,7 +112,7 @@ fun PredictionRowView(
                                                     Modifier.wrapContentHeight(
                                                             Alignment.CenterVertically
                                                         )
-                                                        .scale(0.75f)
+                                                        .scale(0.75f),
                                             )
                                         }
                                     }
@@ -122,7 +122,7 @@ fun PredictionRowView(
                             UpcomingTripView(
                                 UpcomingTripViewState.Disruption(
                                     FormattedAlert(predictions.alert),
-                                    iconName = predictions.iconName
+                                    iconName = predictions.iconName,
                                 )
                             )
                         is UpcomingFormat.NoTrips ->
@@ -162,12 +162,12 @@ private fun PredictionRowViewPreview() {
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Boarding
+                                TripInstantDisplay.Boarding,
                             )
                         ),
-                        null
+                        null,
                     ),
-                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB)),
             ) {
                 Text("Longer Destination than That")
             }
@@ -178,12 +178,12 @@ private fun PredictionRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Overridden("Stopped 10 stops away")
+                            TripInstantDisplay.Overridden("Stopped 10 stops away"),
                         )
                     ),
-                    null
+                    null,
                 ),
-                pillDecoration = PillDecoration.OnRow(greenB)
+                pillDecoration = PillDecoration.OnRow(greenB),
             ) {
                 Text("Destination")
             }
@@ -194,12 +194,12 @@ private fun PredictionRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Overridden("Stopped 10 stops away")
+                            TripInstantDisplay.Overridden("Stopped 10 stops away"),
                         )
                     ),
-                    null
+                    null,
                 ),
-                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB))
+                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB)),
             ) {
                 Text("Destination")
             }
@@ -210,15 +210,15 @@ private fun PredictionRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.BUS,
-                            TripInstantDisplay.ScheduleMinutes(6)
+                            TripInstantDisplay.ScheduleMinutes(6),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.BUS,
-                            TripInstantDisplay.ScheduleMinutes(15)
+                            TripInstantDisplay.ScheduleMinutes(15),
                         ),
                     ),
-                    null
+                    null,
                 )
             ) {
                 Text("Destination")
@@ -227,7 +227,7 @@ private fun PredictionRowViewPreview() {
             PredictionRowView(
                 UpcomingFormat.Disruption(
                     alert { effect = Alert.Effect.Detour },
-                    MapStopRoute.GREEN
+                    MapStopRoute.GREEN,
                 )
             ) {
                 Text("Destination")

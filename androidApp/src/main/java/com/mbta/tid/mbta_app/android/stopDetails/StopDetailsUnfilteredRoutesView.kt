@@ -61,7 +61,7 @@ fun StopDetailsUnfilteredRoutesView(
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    openModal: (ModalRoutes) -> Unit
+    openModal: (ModalRoutes) -> Unit,
 ) {
     val elevatorAlerts =
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
@@ -77,7 +77,7 @@ fun StopDetailsUnfilteredRoutesView(
                     StopDetailsFilterPills(
                         servedRoutes = servedRoutes,
                         onTapRoutePill = onTapRoutePill,
-                        onClearFilter = { updateStopFilter(null) }
+                        onClearFilter = { updateStopFilter(null) },
                     )
                 }
             }
@@ -92,7 +92,7 @@ fun StopDetailsUnfilteredRoutesView(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding =
-                    PaddingValues(start = 15.dp, top = 17.dp, end = 15.dp, bottom = 16.dp)
+                    PaddingValues(start = 15.dp, top = 17.dp, end = 15.dp, bottom = 16.dp),
             ) {
                 if (showStationAccessibility && hasAccessibilityWarning) {
                     item {
@@ -109,7 +109,7 @@ fun StopDetailsUnfilteredRoutesView(
                                             openModal(
                                                 ModalRoutes.AlertDetails(it.id, null, null, stop.id)
                                             )
-                                        }
+                                        },
                                     )
                                 }
                             } else {
@@ -128,7 +128,7 @@ fun StopDetailsUnfilteredRoutesView(
                         showStationAccessibility,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
-                        }
+                        },
                     )
                 }
             }
@@ -209,15 +209,15 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsHere = emptyList(),
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
-                                alertsDownstream = emptyList()
+                                alertsDownstream = emptyList(),
                             )
                         ),
                         RouteCardData.Context.StopDetailsUnfiltered,
-                        globalData
+                        globalData,
                     )
                 ),
                 RouteCardData.Context.StopDetailsUnfiltered,
-                now
+                now,
             ),
             RouteCardData(
                 RouteCardData.LineOrRoute.Route(route2),
@@ -232,12 +232,12 @@ private fun StopDetailsRoutesViewPreview() {
                                 stopIds = emptySet(),
                                 listOf(
                                     UpcomingTrip(trip3, prediction = prediction2),
-                                    UpcomingTrip(trip2, schedule2)
+                                    UpcomingTrip(trip2, schedule2),
                                 ),
                                 alertsHere = emptyList(),
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
-                                alertsDownstream = emptyList()
+                                alertsDownstream = emptyList(),
                             ),
                             RouteCardData.Leaf(
                                 1,
@@ -247,15 +247,15 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsHere = emptyList(),
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
-                                alertsDownstream = emptyList()
-                            )
+                                alertsDownstream = emptyList(),
+                            ),
                         ),
                         RouteCardData.Context.StopDetailsUnfiltered,
-                        globalData
+                        globalData,
                     )
                 ),
                 RouteCardData.Context.StopDetailsUnfiltered,
-                now
+                now,
             ),
         )
 
@@ -267,10 +267,7 @@ private fun StopDetailsRoutesViewPreview() {
                 stop,
                 routeCardData,
                 listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
-                ErrorBannerViewModel(
-                    false,
-                    MockErrorBannerStateRepository(),
-                ),
+                ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                 showStationAccessibility = true,
                 now = now,
                 globalData,
@@ -279,7 +276,7 @@ private fun StopDetailsRoutesViewPreview() {
                 onClose = {},
                 onTapRoutePill = {},
                 updateStopFilter = {},
-                openModal = {}
+                openModal = {},
             )
         }
     }

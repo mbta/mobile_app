@@ -19,7 +19,7 @@ import org.koin.compose.koinInject
 
 class GlobalDataViewModel(
     private val globalRepository: IGlobalRepository,
-    private val errorBannerRepository: IErrorBannerStateRepository
+    private val errorBannerRepository: IErrorBannerStateRepository,
 ) : ViewModel() {
     private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
     var globalResponse: StateFlow<GlobalResponse?> = _globalResponse
@@ -31,14 +31,14 @@ class GlobalDataViewModel(
                 errorKey = errorKey,
                 getData = { globalRepository.getGlobalData() },
                 onSuccess = { _globalResponse.emit(it) },
-                onRefreshAfterError = { getGlobalData(errorKey) }
+                onRefreshAfterError = { getGlobalData(errorKey) },
             )
         }
     }
 
     class Factory(
         private val globalRepository: IGlobalRepository,
-        private val errorBannerRepository: IErrorBannerStateRepository
+        private val errorBannerRepository: IErrorBannerStateRepository,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return GlobalDataViewModel(globalRepository, errorBannerRepository) as T
@@ -50,7 +50,7 @@ class GlobalDataViewModel(
 fun getGlobalData(
     errorKey: String,
     globalRepository: IGlobalRepository = koinInject(),
-    errorBannerRepository: IErrorBannerStateRepository = koinInject()
+    errorBannerRepository: IErrorBannerStateRepository = koinInject(),
 ): GlobalResponse? {
     val viewModel: GlobalDataViewModel =
         viewModel(factory = GlobalDataViewModel.Factory(globalRepository, errorBannerRepository))

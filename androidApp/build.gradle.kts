@@ -160,7 +160,7 @@ task("envVars") {
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_DSN",
-        "\"${getPropsOrEnv("SENTRY_DSN_ANDROID") ?: ""}\""
+        "\"${getPropsOrEnv("SENTRY_DSN_ANDROID") ?: ""}\"",
     )
 
     // https://stackoverflow.com/a/53261807
@@ -169,15 +169,14 @@ task("envVars") {
             gradle.startParameter.taskNames.any {
                 it.lowercase(Locale.getDefault()).contains(env.replace("-", ""))
             }
-        }
-            ?: "debug"
+        } ?: "debug"
 
     val sentryEnvOverride: String = getPropsOrEnv("SENTRY_ENVIRONMENT") ?: sentryEnv
 
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_ENVIRONMENT",
-        "\"${sentryEnvOverride}\""
+        "\"${sentryEnvOverride}\"",
     )
 
     val firebaseKey = getPropsOrEnv("FIREBASE_KEY")
@@ -191,7 +190,7 @@ task("envVars") {
                 "    <string name=\"google_app_id\" translatable=\"false\">$googleAppId</string>",
                 "    <string name=\"google_api_key\" translatable=\"false\">$firebaseKey</string>",
                 "    <string name=\"google_crash_reporting_api_key\" translatable=\"false\">$firebaseKey</string>",
-                "</resources>"
+                "</resources>",
             )
         googleSecretsFile.writeText(lines.joinToString(separator = "\n"))
     } else {

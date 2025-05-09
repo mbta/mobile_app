@@ -27,7 +27,7 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
     open fun subscribeToNetworkStatusChanges() {
         this.networkConnectivityMonitor.registerListener(
             onNetworkAvailable = { setNetworkStatus(NetworkStatus.Connected) },
-            onNetworkLost = { setNetworkStatus(NetworkStatus.Disconnected) }
+            onNetworkLost = { setNetworkStatus(NetworkStatus.Disconnected) },
         )
     }
 
@@ -56,7 +56,7 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
     open fun checkPredictionsStale(
         predictionsLastUpdated: Instant,
         predictionQuantity: Int,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         predictionsStale =
             if (predictionQuantity > 0 && Clock.System.now() - predictionsLastUpdated > 2.minutes) {
@@ -96,7 +96,7 @@ class MockErrorBannerStateRepository
 constructor(
     state: ErrorBannerState? = null,
     onSubscribeToNetworkChanges: (() -> Unit)? = null,
-    onCheckPredictionsStale: (() -> Unit)? = null
+    onCheckPredictionsStale: (() -> Unit)? = null,
 ) : IErrorBannerStateRepository(state) {
     private val onSubscribeToNetworkChanges = onSubscribeToNetworkChanges
     private val onCheckPredictionsStale = onCheckPredictionsStale
@@ -111,7 +111,7 @@ constructor(
     override fun checkPredictionsStale(
         predictionsLastUpdated: Instant,
         predictionQuantity: Int,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         onCheckPredictionsStale?.invoke()
     }

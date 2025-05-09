@@ -22,7 +22,7 @@ class TripDetailsStopListTest {
         fun stop(
             stopId: String,
             childStopIds: List<String> = listOf(),
-            connectingStopIds: List<String> = listOf()
+            connectingStopIds: List<String> = listOf(),
         ): Stop {
             objects.stops[stopId]?.let {
                 return it
@@ -59,7 +59,7 @@ class TripDetailsStopListTest {
             stopId: String,
             stopSequence: Int,
             routeId: String = "",
-            time: Instant? = null
+            time: Instant? = null,
         ) =
             objects.prediction {
                 this.stopId = stop(stopId).id
@@ -72,7 +72,7 @@ class TripDetailsStopListTest {
         fun pattern(
             patternId: String,
             route: Route,
-            typicality: RoutePattern.Typicality = RoutePattern.Typicality.Typical
+            typicality: RoutePattern.Typicality = RoutePattern.Typicality.Typical,
         ) =
             objects.routePattern(route) {
                 this.id = patternId
@@ -81,7 +81,7 @@ class TripDetailsStopListTest {
 
         fun alert(
             effect: Alert.Effect,
-            block: ObjectCollectionBuilder.AlertBuilder.() -> Unit = {}
+            block: ObjectCollectionBuilder.AlertBuilder.() -> Unit = {},
         ) =
             objects.alert {
                 this.effect = effect
@@ -92,12 +92,12 @@ class TripDetailsStopListTest {
         fun stopListOf(
             vararg stops: TripDetailsStopList.Entry,
             terminalStop: TripDetailsStopList.Entry? = null,
-            tripId: String? = null
+            tripId: String? = null,
         ) =
             TripDetailsStopList(
                 tripId ?: if (this@TestBuilder::_trip.isInitialized) _trip.id else "",
                 stops.asList(),
-                terminalStop ?: stops.firstOrNull()
+                terminalStop ?: stops.firstOrNull(),
             )
 
         fun entry(
@@ -109,7 +109,7 @@ class TripDetailsStopListTest {
             prediction: Prediction? = null,
             predictionStop: Stop? = null,
             vehicle: Vehicle? = null,
-            routes: List<Route> = listOf()
+            routes: List<Route> = listOf(),
         ) =
             TripDetailsStopList.Entry(
                 stop(stopId),
@@ -119,7 +119,7 @@ class TripDetailsStopListTest {
                 prediction,
                 predictionStop ?: objects.stops[prediction?.stopId],
                 vehicle,
-                routes
+                routes,
             )
 
         fun globalData(patternIdsByStop: Map<String, List<String>> = emptyMap()) =
@@ -130,7 +130,7 @@ class TripDetailsStopListTest {
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle? = null,
             patternIdsByStop: Map<String, List<String>> = emptyMap(),
-            trip: Trip? = null
+            trip: Trip? = null,
         ): TripDetailsStopList? {
             val actualTrip =
                 trip
@@ -142,7 +142,7 @@ class TripDetailsStopListTest {
                 tripPredictions,
                 vehicle,
                 AlertsStreamDataResponse(objects),
-                globalData(patternIdsByStop)
+                globalData(patternIdsByStop),
             )
         }
 
@@ -181,9 +181,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, schedule = sched1),
                 entry("B", 20, schedule = sched2),
-                entry("C", 30, schedule = sched3)
+                entry("C", 30, schedule = sched3),
             ),
-            fromPieces(schedulesResponseOf(sched1, sched2, sched3), null)
+            fromPieces(schedulesResponseOf(sched1, sched2, sched3), null),
         )
     }
 
@@ -195,7 +195,7 @@ class TripDetailsStopListTest {
         val sched3 = schedule("C", 30)
         assertEquals(
             stopListOf(entry("A", 997), entry("B", 998), entry("C", 999)),
-            fromPieces(schedulesResponseOf(sched1.stopId, sched2.stopId, sched3.stopId), null)
+            fromPieces(schedulesResponseOf(sched1.stopId, sched2.stopId, sched3.stopId), null),
         )
     }
 
@@ -204,7 +204,7 @@ class TripDetailsStopListTest {
         val trip = trip {}
         assertEquals(
             TripDetailsStopList(trip.id, stops = emptyList()),
-            fromPieces(TripSchedulesResponse.Unknown, null)
+            fromPieces(TripSchedulesResponse.Unknown, null),
         )
     }
 
@@ -218,9 +218,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, prediction = pred1),
                 entry("B", 20, prediction = pred2),
-                entry("C", 30, prediction = pred3)
+                entry("C", 30, prediction = pred3),
             ),
-            fromPieces(null, predictions())
+            fromPieces(null, predictions()),
         )
     }
 
@@ -237,9 +237,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, schedule = sched1, prediction = pred1),
                 entry("B", 20, schedule = sched2, prediction = pred2),
-                entry("C", 30, schedule = sched3, prediction = pred3)
+                entry("C", 30, schedule = sched3, prediction = pred3),
             ),
-            fromPieces(schedulesResponseOf(sched1, sched2, sched3), predictions())
+            fromPieces(schedulesResponseOf(sched1, sched2, sched3), predictions()),
         )
     }
 
@@ -253,9 +253,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, prediction = pred1),
                 entry("B", 20, prediction = pred2),
-                entry("C", 30, prediction = pred3)
+                entry("C", 30, prediction = pred3),
             ),
-            fromPieces(schedulesResponseOf("A", "B", "C"), predictions())
+            fromPieces(schedulesResponseOf("A", "B", "C"), predictions()),
         )
     }
 
@@ -268,9 +268,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10),
                 entry("B", 20, prediction = pred2),
-                entry("C", 30, prediction = pred3)
+                entry("C", 30, prediction = pred3),
             ),
-            fromPieces(schedulesResponseOf("A", "B", "C"), predictions())
+            fromPieces(schedulesResponseOf("A", "B", "C"), predictions()),
         )
     }
 
@@ -284,9 +284,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, prediction = pred1),
                 entry("B", 20, prediction = pred2),
-                entry("C", 30)
+                entry("C", 30),
             ),
-            fromPieces(schedulesResponseOf("A", "B", "C"), predictions())
+            fromPieces(schedulesResponseOf("A", "B", "C"), predictions()),
         )
     }
 
@@ -303,9 +303,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A2", 10, schedule = sched1, prediction = pred1),
                 entry("B2", 20, schedule = sched2, prediction = pred2),
-                entry("C2", 30, schedule = sched3, prediction = pred3)
+                entry("C2", 30, schedule = sched3, prediction = pred3),
             ),
-            fromPieces(schedulesResponseOf(sched1, sched2, sched3), predictions())
+            fromPieces(schedulesResponseOf(sched1, sched2, sched3), predictions()),
         )
     }
 
@@ -322,9 +322,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A2", 10, prediction = pred1),
                 entry("B2", 20, prediction = pred2),
-                entry("C2", 30, prediction = pred3)
+                entry("C2", 30, prediction = pred3),
             ),
-            fromPieces(schedulesResponseOf("A1", "B1", "C1"), predictions())
+            fromPieces(schedulesResponseOf("A1", "B1", "C1"), predictions()),
         )
     }
 
@@ -340,17 +340,17 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, prediction = pred1),
                 entry("B", 20, prediction = pred2),
-                entry("C1", 30, prediction = pred3a)
+                entry("C1", 30, prediction = pred3a),
             ),
-            fromPieces(schedulesResponseOf("A", "B", "C1"), predictions())
+            fromPieces(schedulesResponseOf("A", "B", "C1"), predictions()),
         )
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
                 entry("B", 20, prediction = pred2),
-                entry("C2", 30, prediction = pred3b)
+                entry("C2", 30, prediction = pred3b),
             ),
-            fromPieces(schedulesResponseOf("A", "B", "C2"), predictions())
+            fromPieces(schedulesResponseOf("A", "B", "C2"), predictions()),
         )
     }
 
@@ -421,7 +421,7 @@ class TripDetailsStopListTest {
                 predictions,
                 null,
                 alertsData,
-                globalData
+                globalData,
             )
 
         assertEquals(
@@ -436,7 +436,7 @@ class TripDetailsStopListTest {
                         null,
                         null,
                         null,
-                        listOf()
+                        listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         parkStreet,
@@ -446,7 +446,7 @@ class TripDetailsStopListTest {
                         p1,
                         parkStreet,
                         null,
-                        listOf()
+                        listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         governmentCenter,
@@ -456,12 +456,12 @@ class TripDetailsStopListTest {
                         p3,
                         governmentCenter,
                         null,
-                        listOf()
+                        listOf(),
                     ),
                 ),
-                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf())
+                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf()),
             ),
-            list
+            list,
         )
     }
 
@@ -510,7 +510,7 @@ class TripDetailsStopListTest {
                 predictions,
                 vehicle,
                 alertsData,
-                globalData
+                globalData,
             )
 
         assertEquals(
@@ -525,7 +525,7 @@ class TripDetailsStopListTest {
                         prediction1,
                         stop1,
                         vehicle,
-                        listOf()
+                        listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -535,7 +535,7 @@ class TripDetailsStopListTest {
                         prediction2,
                         stop2,
                         vehicle,
-                        listOf()
+                        listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -545,8 +545,8 @@ class TripDetailsStopListTest {
                         prediction3,
                         stop3,
                         vehicle,
-                        listOf()
-                    )
+                        listOf(),
+                    ),
                 ),
                 TripDetailsStopList.Entry(
                     stop1,
@@ -556,10 +556,10 @@ class TripDetailsStopListTest {
                     prediction1,
                     stop1,
                     vehicle,
-                    listOf()
-                )
+                    listOf(),
+                ),
             ),
-            list
+            list,
         )
     }
 
@@ -635,7 +635,7 @@ class TripDetailsStopListTest {
                     vehicle = vehicle,
                     schedule = sched1,
                     prediction = pred1,
-                    routes = listOf(routeW, routeX, routeY, routeZ)
+                    routes = listOf(routeW, routeX, routeY, routeZ),
                 ),
                 entry(
                     "B1",
@@ -643,7 +643,7 @@ class TripDetailsStopListTest {
                     vehicle = vehicle,
                     schedule = sched2,
                     prediction = pred2,
-                    routes = listOf(routeZ)
+                    routes = listOf(routeZ),
                 ),
                 entry(
                     "C1",
@@ -651,8 +651,8 @@ class TripDetailsStopListTest {
                     vehicle = vehicle,
                     schedule = sched3,
                     prediction = pred3,
-                    routes = listOf(routeY)
-                )
+                    routes = listOf(routeY),
+                ),
             ),
             fromPieces(
                 schedulesResponseOf(sched1, sched2, sched3),
@@ -665,9 +665,9 @@ class TripDetailsStopListTest {
                     Pair(stopA4.id, listOf(patternY1.id)),
                     Pair(stopB1.id, listOf(patternZ1.id, patternCurrent2.id)),
                     Pair(stopC.id, listOf(patternW2.id, patternY1.id, patternExcluded.id)),
-                    Pair(stopC1.id, listOf(patternY1.id, patternCurrent1.id, patternCurrent2.id))
-                )
-            )
+                    Pair(stopC1.id, listOf(patternY1.id, patternCurrent1.id, patternCurrent2.id)),
+                ),
+            ),
         )
     }
 
@@ -694,8 +694,8 @@ class TripDetailsStopListTest {
                 schedulesResponseOf(sched),
                 null,
                 null,
-                mapOf(Pair(stopA.id, listOf(patternCurrent.id, patternOther.id)))
-            )
+                mapOf(Pair(stopA.id, listOf(patternCurrent.id, patternOther.id))),
+            ),
         )
 
         assertEquals(
@@ -704,8 +704,8 @@ class TripDetailsStopListTest {
                 null,
                 predictions(),
                 null,
-                mapOf(Pair(stopB.id, listOf(patternCurrent.id, patternOther.id)))
-            )
+                mapOf(Pair(stopB.id, listOf(patternCurrent.id, patternOther.id))),
+            ),
         )
     }
 
@@ -727,9 +727,9 @@ class TripDetailsStopListTest {
                 entry("B", 20, prediction = pred2, vehicle = vehicle),
                 entry("C", 30, prediction = pred3, vehicle = vehicle),
                 terminalStop = entry("A", 10, prediction = pred1, vehicle = vehicle),
-                tripId = trip.id
+                tripId = trip.id,
             ),
-            fromPieces(null, predictions(), vehicle, trip = trip)
+            fromPieces(null, predictions(), vehicle, trip = trip),
         )
     }
 
@@ -751,7 +751,7 @@ class TripDetailsStopListTest {
                 entry("C", 30, prediction = pred3, vehicle = vehicle),
                 terminalStop = entry("A", 10, prediction = pred1, vehicle = vehicle),
             ),
-            fromPieces(null, predictions(), vehicle)
+            fromPieces(null, predictions(), vehicle),
         )
     }
 
@@ -772,9 +772,9 @@ class TripDetailsStopListTest {
             stopListOf(
                 entry("A", 10, prediction = pred1, vehicle = vehicle),
                 entry("B", 20, prediction = pred2, vehicle = vehicle),
-                entry("C", 30, prediction = pred3, vehicle = vehicle)
+                entry("C", 30, prediction = pred3, vehicle = vehicle),
             ),
-            fromPieces(null, predictions(), vehicle, trip = trip)
+            fromPieces(null, predictions(), vehicle, trip = trip),
         )
     }
 
@@ -798,11 +798,11 @@ class TripDetailsStopListTest {
                     20,
                     disruption =
                         UpcomingFormat.Disruption(alert, iconName = "alert-large-red-issue"),
-                    prediction = pred2
+                    prediction = pred2,
                 ),
-                entry("C", 30, prediction = pred3)
+                entry("C", 30, prediction = pred3),
             ),
-            fromPieces(null, predictions())
+            fromPieces(null, predictions()),
         )
     }
 
@@ -814,7 +814,7 @@ class TripDetailsStopListTest {
         val pred2 = prediction("A", 10, routeId = "2", time = now + 1.minutes)
         assertEquals(
             stopListOf(entry("A", 10, prediction = pred1)),
-            fromPieces(null, predictions())
+            fromPieces(null, predictions()),
         )
     }
 
@@ -826,18 +826,18 @@ class TripDetailsStopListTest {
             TripDetailsStopList.TargetSplit(
                 collapsedStops = emptyList(),
                 targetStop = entry("A", 10),
-                followingStops = listOf(entry("B", 20), entry("C", 30), entry("A", 40))
+                followingStops = listOf(entry("B", 20), entry("C", 30), entry("A", 40)),
             ),
-            list.splitForTarget("A", 10, globalData())
+            list.splitForTarget("A", 10, globalData()),
         )
         assertEquals(
             TripDetailsStopList.TargetSplit(
                 firstStop = entry("A", 10),
                 collapsedStops = listOf(entry("B", 20), entry("C", 30)),
                 targetStop = entry("A", 40),
-                followingStops = emptyList()
+                followingStops = emptyList(),
             ),
-            list.splitForTarget("A", 40, globalData())
+            list.splitForTarget("A", 40, globalData()),
         )
     }
 
@@ -850,9 +850,9 @@ class TripDetailsStopListTest {
                 firstStop = entry("A", 996),
                 collapsedStops = listOf(entry("C", 997)),
                 targetStop = entry("A", 998),
-                followingStops = listOf(entry("B", 999))
+                followingStops = listOf(entry("B", 999)),
             ),
-            list.splitForTarget("A", 3, globalData())
+            list.splitForTarget("A", 3, globalData()),
         )
     }
 
@@ -868,7 +868,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("B1", 20),
                 followingStops = listOf(entry("C1", 30)),
             ),
-            list.splitForTarget("B2", 20, globalData())
+            list.splitForTarget("B2", 20, globalData()),
         )
     }
 
@@ -883,7 +883,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30),
                 followingStops = listOf(entry("D", 40)),
             ),
-            list.splitForTarget("C", 30, globalData())
+            list.splitForTarget("C", 30, globalData()),
         )
     }
 
@@ -901,7 +901,7 @@ class TripDetailsStopListTest {
                 entry("A", 10, vehicle = vehicle),
                 entry("B", 20, vehicle = vehicle),
                 entry("C", 30, vehicle = vehicle),
-                entry("D", 40, vehicle = vehicle)
+                entry("D", 40, vehicle = vehicle),
             )
 
         assertEquals(
@@ -911,7 +911,7 @@ class TripDetailsStopListTest {
                 targetStop = entry("C", 30, vehicle = vehicle),
                 followingStops = listOf(entry("D", 40, vehicle = vehicle)),
             ),
-            list.splitForTarget("C", 30, globalData())
+            list.splitForTarget("C", 30, globalData()),
         )
     }
 
@@ -925,9 +925,9 @@ class TripDetailsStopListTest {
                 firstStop = null,
                 collapsedStops = null,
                 targetStop = null,
-                followingStops = list.stops
+                followingStops = list.stops,
             ),
-            list.splitForTarget("D", 40, globalData())
+            list.splitForTarget("D", 40, globalData()),
         )
     }
 
@@ -946,9 +946,9 @@ class TripDetailsStopListTest {
                 collapsedStops = emptyList(),
                 targetStop = entryA,
                 followingStops = listOf(entryB, entryC),
-                isTruncatedByLastAlert = true
+                isTruncatedByLastAlert = true,
             ),
-            list.splitForTarget("A", 10, globalData())
+            list.splitForTarget("A", 10, globalData()),
         )
     }
 
@@ -967,18 +967,18 @@ class TripDetailsStopListTest {
                 collapsedStops = emptyList(),
                 targetStop = entryA,
                 followingStops = listOf(entryB),
-                isTruncatedByLastAlert = true
+                isTruncatedByLastAlert = true,
             ),
-            list.splitForTarget("A", 10, globalData())
+            list.splitForTarget("A", 10, globalData()),
         )
         assertEquals(
             TripDetailsStopList.TargetSplit(
                 firstStop = entryA,
                 collapsedStops = listOf(entryB, entryC),
                 targetStop = entryD,
-                followingStops = listOf(entryE)
+                followingStops = listOf(entryE),
             ),
-            list.splitForTarget("D", 40, globalData())
+            list.splitForTarget("D", 40, globalData()),
         )
     }
 }

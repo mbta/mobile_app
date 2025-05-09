@@ -49,7 +49,7 @@ fun OnboardingScreenView(
     advance: () -> Unit,
     locationDataManager: LocationDataManager,
     skipLocationDialogue: Boolean = false,
-    settingsCache: SettingsCache = koinInject()
+    settingsCache: SettingsCache = koinInject(),
 ) {
     var sharingLocation by rememberSaveable { mutableStateOf(false) }
     val permissions =
@@ -94,7 +94,7 @@ fun OnboardingScreenView(
                     animation = tween(durationMillis = 1250, easing = EaseInOut),
                     repeatMode = RepeatMode.Reverse,
                 ),
-            label = "haloSizeMultiplier"
+            label = "haloSizeMultiplier",
         )
     val moreHaloSizeDp = moreHaloSize * haloSizeMultiplier.value
     val locationHaloSizeDp = locationHaloSize * haloSizeMultiplier.value
@@ -109,13 +109,13 @@ fun OnboardingScreenView(
                     OnboardingImage(
                         R.drawable.onboarding_halo,
                         size = moreHaloSizeDp,
-                        offsetY = haloOffset
+                        offsetY = haloOffset,
                     )
                 }
                 OnboardingContentColumn {
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_feedback_header,
-                        R.string.onboarding_feedback_body
+                        R.string.onboarding_feedback_body,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     OnboardingPieces.KeyButton(
@@ -134,13 +134,13 @@ fun OnboardingScreenView(
                     Modifier.align(Alignment.Center)
                         .padding(horizontal = 32.dp)
                         .background(colorResource(R.color.fill2), shape = RoundedCornerShape(32.dp))
-                        .padding(32.dp)
+                        .padding(32.dp),
                 )
                 OnboardingContentColumn {
                     OnboardingPieces.SettingsToggle(
                         currentSetting = !localHideMapsSetting,
                         toggleSetting = { localHideMapsSetting = !localHideMapsSetting },
-                        label = stringResource(R.string.setting_toggle_map_display)
+                        label = stringResource(R.string.setting_toggle_map_display),
                     )
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
@@ -158,7 +158,7 @@ fun OnboardingScreenView(
                     OnboardingImage(
                         R.drawable.onboarding_halo,
                         size = locationHaloSizeDp,
-                        offsetY = haloOffset
+                        offsetY = haloOffset,
                     )
                     OnboardingImage(R.drawable.onboarding_transit_lines, size = null)
                 }
@@ -173,7 +173,7 @@ fun OnboardingScreenView(
                     )
                     Text(
                         stringResource(R.string.onboarding_location_footer),
-                        style = Typography.body
+                        style = Typography.body,
                     )
                 }
             }
@@ -186,7 +186,7 @@ fun OnboardingScreenView(
                             Image(
                                 painterResource(R.drawable.accessibility_icon_accessible),
                                 modifier = Modifier.size(192.dp).weight(1f),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         }
                     }
@@ -201,7 +201,7 @@ fun OnboardingScreenView(
                         toggleSetting = {
                             settingsCache.set(Settings.StationAccessibility, !stationAccessibility)
                         },
-                        label = stringResource(R.string.setting_station_accessibility)
+                        label = stringResource(R.string.setting_station_accessibility),
                     )
 
                     OnboardingPieces.KeyButton(
@@ -221,7 +221,7 @@ private fun OnboardingScreenViewFeedbackPreview() {
         OnboardingScreenView(
             OnboardingScreen.Feedback,
             advance = {},
-            locationDataManager = LocationDataManager()
+            locationDataManager = LocationDataManager(),
         )
     }
 }
@@ -233,7 +233,7 @@ private fun OnboardingScreenViewHideMapsPreview() {
         OnboardingScreenView(
             OnboardingScreen.HideMaps,
             advance = {},
-            locationDataManager = LocationDataManager()
+            locationDataManager = LocationDataManager(),
         )
     }
 }
@@ -245,7 +245,7 @@ private fun OnboardingScreenViewLocationPreview() {
         OnboardingScreenView(
             OnboardingScreen.Location,
             advance = {},
-            locationDataManager = LocationDataManager()
+            locationDataManager = LocationDataManager(),
         )
     }
 }
@@ -257,7 +257,7 @@ private fun OnboardingScreenViewStationAccessibiityPreview() {
         OnboardingScreenView(
             OnboardingScreen.StationAccessibility,
             advance = {},
-            locationDataManager = LocationDataManager()
+            locationDataManager = LocationDataManager(),
         )
     }
 }

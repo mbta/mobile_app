@@ -51,7 +51,7 @@ open class LocationDataManager {
     @Composable
     fun running(
         lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-        analytics: Analytics = koinInject()
+        analytics: Analytics = koinInject(),
     ): LocationDataManager {
         val permissions = rememberPermissions()
         val locationRequest =
@@ -135,7 +135,7 @@ open class LocationDataManager {
                         locationClient.requestLocationUpdates(
                             locationRequest,
                             locationCallback,
-                            Looper.getMainLooper()
+                            Looper.getMainLooper(),
                         )
                     } else if (event == Lifecycle.Event.ON_STOP) {
                         locationClient.removeLocationUpdates(locationCallback)
@@ -160,9 +160,9 @@ open class LocationDataManager {
         rememberMultiplePermissionsState(
             listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
             ),
-            onPermissionsResult
+            onPermissionsResult,
         )
 
     open val currentLocation = _currentLocation.asStateFlow()

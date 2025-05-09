@@ -69,10 +69,10 @@ object StopIcons {
                     Exp("-"),
                     Exp.at(
                         Exp(0),
-                        Exp.get(MapExp.topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey))
-                    )
+                        Exp.get(MapExp.topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey)),
+                    ),
                 ),
-            Exp("")
+            Exp(""),
         )
 
     fun atZooms(pre: String, post: String): List<String> {
@@ -92,12 +92,12 @@ object StopIcons {
                 Exp.all(
                     Exp.get(StopFeaturesBuilder.propIsTerminalKey),
                     MapExp.singleRouteTypeExp,
-                    Exp.boolean(Exp(zoomPrefix == stopZoomWidePrefix))
+                    Exp.boolean(Exp(zoomPrefix == stopZoomWidePrefix)),
                 ) to Exp.concat(Exp(stopTerminalSuffix), branchingRouteSuffixExp),
                 // If at close zoom, give stops on a branch their own distinct icons
                 Exp.boolean(Exp(zoomPrefix == stopZoomClosePrefix)) to branchingRouteSuffixExp,
-                fallback = Exp("")
-            )
+                fallback = Exp(""),
+            ),
         )
     }
 
@@ -111,8 +111,8 @@ object StopIcons {
                     Exp.length(MapExp.routesExp),
                     getRouteIconName(zoomPrefix, 0),
                     Exp(2) to Exp(stopContainerPrefix + zoomPrefix + "2"),
-                    Exp(3) to Exp(stopContainerPrefix + zoomPrefix + "3")
-                )
+                    Exp(3) to Exp(stopContainerPrefix + zoomPrefix + "3"),
+                ),
             )
             .downcastToResolvedImage()
     }
@@ -122,7 +122,7 @@ object StopIcons {
             Exp.zoom(),
             getStopIconName(stopZoomWidePrefix, forBus = forBus),
             Exp(MapDefaults.closeZoomThreshold) to
-                getStopIconName(stopZoomClosePrefix, forBus = forBus)
+                getStopIconName(stopZoomClosePrefix, forBus = forBus),
         )
     }
 
@@ -139,9 +139,9 @@ object StopIcons {
                             // to use a different icon when a bus is included in a transfer stack.
                             Exp.eq(MapExp.routeAt(index), Exp(MapStopRoute.BUS.name)) to
                                 Exp(stopTransferSuffix),
-                            Exp("")
-                        )
-                    )
+                            Exp(""),
+                        ),
+                    ),
             )
             .downcastToResolvedImage()
     }
@@ -150,7 +150,7 @@ object StopIcons {
         return Exp.step(
             Exp.zoom(),
             getTransferIconName(stopZoomWidePrefix, index),
-            Exp(MapDefaults.closeZoomThreshold) to getTransferIconName(stopZoomClosePrefix, index)
+            Exp(MapDefaults.closeZoomThreshold) to getTransferIconName(stopZoomClosePrefix, index),
         )
     }
 }

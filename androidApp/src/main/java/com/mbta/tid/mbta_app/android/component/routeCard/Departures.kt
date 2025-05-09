@@ -62,7 +62,7 @@ fun Departures(
                     pinned,
                     leaf.alertsHere.isNotEmpty(),
                     stopData.lineOrRoute.type,
-                    noTrips
+                    noTrips,
                 )
             }
 
@@ -76,12 +76,12 @@ fun Departures(
                     analyticsTappedDeparture(formatted)
                 },
                 onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
             ) { modifier ->
                 Column(
                     modifier = modifier,
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically)
+                    verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                 ) {
                     when (formatted) {
                         is LeafFormat.Single -> {
@@ -89,7 +89,7 @@ fun Departures(
                                 direction.copy(
                                     destination = formatted.headsign ?: direction.destination
                                 ),
-                                formatted.format
+                                formatted.format,
                             )
                         }
                         is LeafFormat.Branched -> {
@@ -99,7 +99,7 @@ fun Departures(
                                         painterResource(drawableByName(secondaryAlert.iconName)),
                                         stringResource(R.string.alert),
                                         modifier =
-                                            Modifier.placeholderIfLoading().padding(end = 8.dp)
+                                            Modifier.placeholderIfLoading().padding(end = 8.dp),
                                     )
                                 }
                                 DirectionLabel(direction, showDestination = false)
@@ -203,7 +203,7 @@ private fun DeparturesPreview() {
                     emptyList(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
                 ),
                 RouteCardData.Leaf(
                     1,
@@ -221,16 +221,16 @@ private fun DeparturesPreview() {
                                 trip = objects.trip(redLineBraintreeNorthbound)
                                 departureTime = now + 12.minutes
                             }
-                        )
+                        ),
                     ),
                     emptyList(),
                     true,
                     true,
-                    emptyList()
-                )
+                    emptyList(),
+                ),
             ),
             context,
-            global
+            global,
         )
 
     MyApplicationTheme {

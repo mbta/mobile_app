@@ -14,7 +14,7 @@ class RouteLayerGeneratorTest {
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
-                ColorPalette.light
+                ColorPalette.light,
             )
 
         assertEquals(
@@ -28,7 +28,7 @@ class RouteLayerGeneratorTest {
                 "route-layer-Red-shuttled",
                 "route-layer-Red-suspended",
             ),
-            routeLayers.map { it.id }
+            routeLayers.map { it.id },
         )
 
         for (alertingRouteLayer in
@@ -43,7 +43,7 @@ class RouteLayerGeneratorTest {
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
-                ColorPalette.light
+                ColorPalette.light,
             )
 
         for (layer in routeLayers) {
@@ -57,7 +57,7 @@ class RouteLayerGeneratorTest {
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
-                ColorPalette.light
+                ColorPalette.light,
             )
 
         for (route in listOf(MapTestDataHelper.routeRed, MapTestDataHelper.routeOrange)) {
@@ -66,7 +66,7 @@ class RouteLayerGeneratorTest {
                 routeLayers
                     .first { it.id == RouteLayerGenerator.getRouteLayerId(route.id) }
                     .lineColor!!
-                    .asJson()
+                    .asJson(),
             )
         }
     }
@@ -79,20 +79,20 @@ class RouteLayerGeneratorTest {
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
-                colorPalette
+                colorPalette,
             )
 
         for (suspendedLayer in routeLayers.filter { it.id.endsWith("-suspended") }) {
             assertEquals(
                 JsonPrimitive(colorPalette.deemphasized),
-                suspendedLayer.lineColor?.asJson()
+                suspendedLayer.lineColor?.asJson(),
             )
         }
 
         for (alertBackgroundLayer in routeLayers.filter { it.id.endsWith("-bg") }) {
             assertEquals(
                 JsonPrimitive(colorPalette.fill3),
-                alertBackgroundLayer.lineColor?.asJson()
+                alertBackgroundLayer.lineColor?.asJson(),
             )
         }
     }

@@ -26,7 +26,7 @@ class NearbyRepositoryTest {
         distanceMiles: Double,
         routeType: RouteType,
         headsign: String,
-        patternIdsByStop: MutableMap<String, MutableList<String>>
+        patternIdsByStop: MutableMap<String, MutableList<String>>,
     ): Triple<Route, RoutePattern, Stop> {
         val route = this.route { type = routeType }
         val routePattern =
@@ -56,13 +56,13 @@ class NearbyRepositoryTest {
                 0.99,
                 RouteType.COMMUTER_RAIL,
                 "Nearby Commuter Rail",
-                patternIdsByStop
+                patternIdsByStop,
             )
         objects.rpsAtDistance(
             1.01,
             RouteType.COMMUTER_RAIL,
             "Distant Commuter Rail",
-            patternIdsByStop
+            patternIdsByStop,
         )
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
@@ -70,7 +70,7 @@ class NearbyRepositoryTest {
         val stopIds = runBlocking {
             repo.getStopIdsNearby(
                 globalData,
-                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
         }
 
@@ -90,13 +90,13 @@ class NearbyRepositoryTest {
                 9.99,
                 RouteType.COMMUTER_RAIL,
                 "Nearby Commuter Rail",
-                patternIdsByStop
+                patternIdsByStop,
             )
         objects.rpsAtDistance(
             10.01,
             RouteType.COMMUTER_RAIL,
             "Distant Commuter Rail",
-            patternIdsByStop
+            patternIdsByStop,
         )
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
@@ -104,7 +104,7 @@ class NearbyRepositoryTest {
         val stopIds = runBlocking {
             repo.getStopIdsNearby(
                 globalData,
-                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
         }
 
@@ -121,7 +121,7 @@ class NearbyRepositoryTest {
             10.01,
             RouteType.COMMUTER_RAIL,
             "Distant Commuter Rail",
-            patternIdsByStop
+            patternIdsByStop,
         )
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
@@ -129,7 +129,7 @@ class NearbyRepositoryTest {
         val stopIds = runBlocking {
             repo.getStopIdsNearby(
                 globalData,
-                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude)
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
         }
 

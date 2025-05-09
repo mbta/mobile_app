@@ -114,7 +114,7 @@ class GlobalRepositoryTest : KoinTest {
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -142,7 +142,7 @@ class GlobalRepositoryTest : KoinTest {
                     shortName = "Blue Line Shuttle",
                     sortOrder = 60208,
                     textColor = "000000",
-                    routePatternIds = null
+                    routePatternIds = null,
                 )
             val routePattern =
                 RoutePattern(
@@ -152,7 +152,7 @@ class GlobalRepositoryTest : KoinTest {
                     routeId = "39",
                     sortOrder = 503900000,
                     typicality = RoutePattern.Typicality.Typical,
-                    representativeTripId = "61945832"
+                    representativeTripId = "61945832",
                 )
             val stop =
                 Stop(
@@ -163,7 +163,7 @@ class GlobalRepositoryTest : KoinTest {
                     vehicleType = RouteType.BUS,
                     childStopIds = emptyList(),
                     connectingStopIds = emptyList(),
-                    locationType = LocationType.STOP
+                    locationType = LocationType.STOP,
                 )
             val trip =
                 Trip(
@@ -173,7 +173,7 @@ class GlobalRepositoryTest : KoinTest {
                     routePatternId = "37-D-0",
                     stopIds = listOf("10642", "596"),
                     headsign = "LaGrange & Corey",
-                    shapeId = "370137-2"
+                    shapeId = "370137-2",
                 )
             val expectedResponse =
                 GlobalResponse(
@@ -182,7 +182,7 @@ class GlobalRepositoryTest : KoinTest {
                     routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
                     routePatterns = mapOf("39-3-0" to routePattern),
                     stops = mapOf("3992" to stop),
-                    trips = mapOf("62145526_2" to trip)
+                    trips = mapOf("62145526_2" to trip),
                 )
             assertEquals(ApiResult.Ok(expectedResponse), response)
             assertEquals(expectedResponse, repo.state.value)

@@ -32,8 +32,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL),
                 now = Clock.System.now(),
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
     }
 
@@ -52,8 +52,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
     }
 
@@ -70,8 +70,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = Clock.System.now(),
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
     }
 
@@ -89,8 +89,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = Clock.System.now(),
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
         assertEquals(
             TripInstantDisplay.Hidden,
@@ -104,8 +104,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = Clock.System.now(),
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
     }
 
@@ -124,8 +124,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
         assertEquals(
             TripInstantDisplay.Hidden,
@@ -139,8 +139,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 now = now,
                 routeType = null,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
         assertEquals(
             TripInstantDisplay.Time(now + 3.minutes),
@@ -154,8 +154,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
         assertEquals(
             TripInstantDisplay.ScheduleTime(now + 3.minutes),
@@ -169,8 +169,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
     }
 
@@ -186,8 +186,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
 
         assertEquals(
@@ -199,8 +199,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
     }
 
@@ -219,8 +219,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
     }
 
@@ -239,8 +239,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
     }
 
@@ -267,8 +267,8 @@ class TripInstantDisplayTest {
                 vehicle = vehicle,
                 now = now,
                 routeType = null,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
     }
 
@@ -295,8 +295,8 @@ class TripInstantDisplayTest {
                 vehicle = vehicle,
                 now = now,
                 routeType = null,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
     }
 
@@ -324,8 +324,8 @@ class TripInstantDisplayTest {
                     vehicle = vehicle,
                     routeType = nonScheduleBased(),
                     now = now,
-                    context = nonTripDetails()
-                )
+                    context = nonTripDetails(),
+                ),
             )
         }
 
@@ -354,8 +354,8 @@ class TripInstantDisplayTest {
                     vehicle = vehicle,
                     routeType = subway(),
                     now = now,
-                    context = nonTripDetails()
-                )
+                    context = nonTripDetails(),
+                ),
             )
         }
 
@@ -383,8 +383,8 @@ class TripInstantDisplayTest {
                 vehicle = vehicle,
                 routeType = null,
                 now = now,
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
         // wrong stop ID
         vehicle =
@@ -407,8 +407,8 @@ class TripInstantDisplayTest {
                 routeType = null,
                 vehicle = vehicle,
                 now = now,
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
         // wrong trip ID
         vehicle =
@@ -431,8 +431,8 @@ class TripInstantDisplayTest {
                 vehicle = vehicle,
                 routeType = null,
                 now = now,
-                context = anyEnumValue()
-            )
+                context = anyEnumValue(),
+            ),
         )
     }
 
@@ -451,8 +451,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
         assertEquals(
             TripInstantDisplay.Arriving,
@@ -465,8 +465,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
     }
 
@@ -486,8 +486,8 @@ class TripInstantDisplayTest {
                     vehicle = null,
                     routeType = null,
                     now = now,
-                    context = nonTripDetails()
-                )
+                    context = nonTripDetails(),
+                ),
             )
         }
 
@@ -506,8 +506,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
         assertEquals(
             TripInstantDisplay.Approaching,
@@ -520,8 +520,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = nonTripDetails()
-            )
+                context = nonTripDetails(),
+            ),
         )
     }
 
@@ -540,8 +540,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Time(now + 40.seconds),
@@ -554,8 +554,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
     }
 
@@ -579,8 +579,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Minutes(moreFutureMinutes),
@@ -593,8 +593,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Time(now.plus(moreFutureMinutes.minutes), true),
@@ -607,8 +607,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = scheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -630,8 +630,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered
-            )
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
         )
     }
 
@@ -650,8 +650,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Minutes(2),
@@ -664,8 +664,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Minutes(2),
@@ -678,8 +678,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Minutes(3),
@@ -692,8 +692,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Minutes(3),
@@ -706,8 +706,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Minutes(45),
@@ -720,8 +720,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = nonScheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
 
         assertEquals(
@@ -735,8 +735,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = scheduleBased(),
                 now = now,
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -754,8 +754,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Time(now + 149.seconds),
@@ -768,8 +768,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 now = now,
                 routeType = null,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
         assertEquals(
             TripInstantDisplay.Time(now + 45.minutes),
@@ -782,8 +782,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = null,
                 now = now,
-                context = TripInstantDisplay.Context.TripDetails
-            )
+                context = TripInstantDisplay.Context.TripDetails,
+            ),
         )
     }
 
@@ -804,8 +804,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered
-            )
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
         )
     }
 
@@ -826,8 +826,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered
-            )
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
         )
     }
 
@@ -848,8 +848,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.LIGHT_RAIL,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered
-            )
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
         )
     }
 
@@ -870,8 +870,8 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = anyEnumValueExcept(TripInstantDisplay.Context.StopDetailsFiltered)
-            )
+                context = anyEnumValueExcept(TripInstantDisplay.Context.StopDetailsFiltered),
+            ),
         )
     }
 }

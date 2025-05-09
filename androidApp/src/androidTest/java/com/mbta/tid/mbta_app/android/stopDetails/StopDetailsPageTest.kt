@@ -33,11 +33,7 @@ class StopDetailsPageTest : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 var filters by remember { filters }
-                val errorBannerVM =
-                    ErrorBannerViewModel(
-                        false,
-                        MockErrorBannerStateRepository(),
-                    )
+                val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
                 StopDetailsPage(
                     viewModel = viewModel,
@@ -50,7 +46,7 @@ class StopDetailsPageTest : KoinTest {
                     tileScrollState = rememberScrollState(),
                     openModal = {},
                     openSheetRoute = {},
-                    errorBannerViewModel = errorBannerVM
+                    errorBannerViewModel = errorBannerVM,
                 )
             }
 

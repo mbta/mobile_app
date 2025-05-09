@@ -25,7 +25,7 @@ fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
         checked = pinned,
         onCheckedChange = { action() },
         modifier =
-            Modifier.size(30.dp).clickable(onClickLabel = onClickLabel, onClick = { action() })
+            Modifier.size(30.dp).clickable(onClickLabel = onClickLabel, onClick = { action() }),
     ) {
         Icon(
             painter =
@@ -36,7 +36,7 @@ fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
                 ),
             contentDescription = stringResource(R.string.star_route),
             modifier = Modifier.size(20.dp).placeholderIfLoading(),
-            tint = color
+            tint = color,
         )
     }
 }

@@ -27,7 +27,7 @@ enum class RouteLineState {
 fun ColoredRouteLine(
     routeColor: Color,
     modifier: Modifier = Modifier,
-    state: RouteLineState = RouteLineState.Regular
+    state: RouteLineState = RouteLineState.Regular,
 ) {
     Box(
         modifier.width(4.dp).height(IntrinsicSize.Max).drawWithCache {
@@ -38,7 +38,7 @@ fun ColoredRouteLine(
                         RouteLineState.Shuttle ->
                             PathEffect.dashPathEffect(
                                 floatArrayOf(8.dp.toPx(), 8.dp.toPx()),
-                                phase = 14.dp.toPx()
+                                phase = 14.dp.toPx(),
                             )
                         RouteLineState.Regular -> null
                     }
@@ -47,7 +47,7 @@ fun ColoredRouteLine(
                     Offset(size.width / 2, 0f),
                     Offset(size.width / 2, size.height),
                     size.width,
-                    pathEffect = pathEffect
+                    pathEffect = pathEffect,
                 )
             }
         }
@@ -63,7 +63,7 @@ fun RouteLineTwist(color: Color, modifier: Modifier = Modifier) {
             Icon(
                 painterResource(R.drawable.stop_trip_line_twist),
                 contentDescription = null,
-                tint = color
+                tint = color,
             )
             Icon(painterResource(R.drawable.stop_trip_line_twist_shadow), contentDescription = null)
         }

@@ -21,7 +21,7 @@ data class Stop(
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList(),
     @SerialName("connecting_stop_ids") val connectingStopIds: List<String> = emptyList(),
     @SerialName("parent_station_id") val parentStationId: String? = null,
-    @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null
+    @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null,
 ) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
 

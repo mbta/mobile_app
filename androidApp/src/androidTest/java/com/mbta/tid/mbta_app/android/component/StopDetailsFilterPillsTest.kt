@@ -59,7 +59,7 @@ class StopDetailsFilterPillsTest {
             listOf(
                 PillFilter.ByRoute(route1, null),
                 PillFilter.ByRoute(route2, null),
-                PillFilter.ByRoute(route3, null)
+                PillFilter.ByRoute(route3, null),
             )
         composeTestRule.setContent {
             StopDetailsFilterPills(
@@ -68,7 +68,7 @@ class StopDetailsFilterPillsTest {
                 onTapRoutePill = { pillFilter ->
                     filter.value = StopDetailsFilter(routeId = pillFilter.id, directionId = 0)
                 },
-                onClearFilter = { filter.value = null }
+                onClearFilter = { filter.value = null },
             )
         }
 

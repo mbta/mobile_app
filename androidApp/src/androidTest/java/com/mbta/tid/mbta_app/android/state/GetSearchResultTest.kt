@@ -37,15 +37,9 @@ class GetSearchResultTest {
                         name = "stopName",
                         zone = "stopZone",
                         isStation = false,
-                        routes =
-                            listOf(
-                                StopResultRoute(
-                                    type = RouteType.BUS,
-                                    icon = "routeIcon",
-                                )
-                            )
+                        routes = listOf(StopResultRoute(type = RouteType.BUS, icon = "routeIcon")),
                     )
-                )
+                ),
         )
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -72,26 +66,20 @@ class GetSearchResultTest {
                             return ApiResult.Ok(searchResults)
                         }
                     },
-                    VisitHistoryUsecase(mockVisitHistoryRepository)
+                    VisitHistoryUsecase(mockVisitHistoryRepository),
                 )
         }
 
         composeTestRule.waitUntil { actualSearchResultsViewModel != null }
         composeTestRule.waitForIdle()
 
-        actualSearchResultsViewModel?.getSearchResults(
-            "",
-            GlobalResponse(builder),
-        )
+        actualSearchResultsViewModel?.getSearchResults("", GlobalResponse(builder))
         composeTestRule.waitUntil { actualSearchResultsViewModel?.searchResults?.value != null }
         assert(
             actualSearchResultsViewModel?.searchResults?.value?.stops?.first()?.id == visitedStop.id
         )
 
-        actualSearchResultsViewModel?.getSearchResults(
-            "query",
-            GlobalResponse(builder),
-        )
+        actualSearchResultsViewModel?.getSearchResults("query", GlobalResponse(builder))
         composeTestRule.waitUntil {
             actualSearchResultsViewModel?.searchResults?.value == searchResults
         }

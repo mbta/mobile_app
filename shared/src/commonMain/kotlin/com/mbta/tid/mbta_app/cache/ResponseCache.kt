@@ -27,7 +27,7 @@ data class ResponseMetadata(
     val etag: String?,
     @Serializable(with = TimeMarkSerializer::class)
     var fetchTime: TimeSource.Monotonic.ValueTimeMark,
-    val invalidationKey: String? = null
+    val invalidationKey: String? = null,
 )
 
 @Serializable data class Response<T>(val metadata: ResponseMetadata, val body: T)
@@ -40,7 +40,7 @@ class ResponseCache<T : Any>(
     // the key provided on cache creation, the data will be reloaded from the backend. This can be
     // set to any arbitrary string value, but should only be changed if you want to wipe the cached
     // data after an update, even when the etag matches the backend.
-    private val invalidationKey: String? = null
+    private val invalidationKey: String? = null,
 ) : KoinComponent {
     companion object {
         const val CACHE_SUBDIRECTORY = "responseCache"
@@ -48,7 +48,7 @@ class ResponseCache<T : Any>(
         inline fun <reified T : Any> create(
             cacheKey: String,
             maxAge: Duration = 1.hours,
-            invalidationKey: String? = null
+            invalidationKey: String? = null,
         ) = ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer(), invalidationKey)
     }
 
@@ -101,7 +101,7 @@ class ResponseCache<T : Any>(
         val nextData =
             Response(
                 ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow(), invalidationKey),
-                decodeString(responseBody)
+                decodeString(responseBody),
             )
         this.data = nextData
         this.flow.value = nextData.body
@@ -170,7 +170,7 @@ class ResponseCache<T : Any>(
                     else ->
                         ApiResult.Error(
                             code = httpResponse.status.value,
-                            message = httpResponse.bodyAsText()
+                            message = httpResponse.bodyAsText(),
                         )
                 }
             } catch (ex: Exception) {

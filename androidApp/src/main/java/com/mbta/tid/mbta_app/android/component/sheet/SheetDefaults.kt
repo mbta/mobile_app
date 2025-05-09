@@ -68,19 +68,10 @@ class SheetState(
         )
 
     companion object {
-        fun Saver(
-            confirmValueChange: (SheetValue) -> Boolean,
-            density: Density,
-        ) =
+        fun Saver(confirmValueChange: (SheetValue) -> Boolean, density: Density) =
             Saver<SheetState, SheetValue>(
                 save = { it.currentValue },
-                restore = { savedValue ->
-                    SheetState(
-                        density,
-                        savedValue,
-                        confirmValueChange,
-                    )
-                }
+                restore = { savedValue -> SheetState(density, savedValue, confirmValueChange) },
             )
     }
 }
@@ -90,7 +81,7 @@ enum class SheetValue {
     Large,
     Medium,
     Small,
-    Hidden
+    Hidden,
 }
 
 /** @see androidx.compose.material3.ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection */
@@ -98,7 +89,7 @@ enum class SheetValue {
 internal fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     sheetState: SheetState,
     orientation: Orientation,
-    onFling: (velocity: Float) -> Unit
+    onFling: (velocity: Float) -> Unit,
 ): NestedScrollConnection =
     object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -113,7 +104,7 @@ internal fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
         override fun onPostScroll(
             consumed: Offset,
             available: Offset,
-            source: NestedScrollSource
+            source: NestedScrollSource,
         ): Offset {
             return if (source == NestedScrollSource.UserInput) {
                 sheetState.anchoredDraggableState.dispatchRawDelta(available.toFloat()).toOffset()
@@ -143,7 +134,7 @@ internal fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
         private fun Float.toOffset(): Offset =
             Offset(
                 x = if (orientation == Orientation.Horizontal) this else 0f,
-                y = if (orientation == Orientation.Vertical) this else 0f
+                y = if (orientation == Orientation.Vertical) this else 0f,
             )
 
         @JvmName("velocityToFloat")
@@ -166,17 +157,9 @@ internal fun rememberSheetState(
         skipPartiallyExpanded,
         confirmValueChange,
         skipHiddenState,
-        saver =
-            SheetState.Saver(
-                confirmValueChange = confirmValueChange,
-                density = density,
-            )
+        saver = SheetState.Saver(confirmValueChange = confirmValueChange, density = density),
     ) {
-        SheetState(
-            density,
-            initialValue,
-            confirmValueChange,
-        )
+        SheetState(density, initialValue, confirmValueChange)
     }
 }
 

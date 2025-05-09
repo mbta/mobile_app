@@ -104,9 +104,7 @@ class StopDetailsUnfilteredRoutesViewTest {
     val globalResponse =
         GlobalResponse(
             builder,
-            mutableMapOf(
-                stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-            )
+            mutableMapOf(stop.id to listOf(routePatternOne.id, routePatternTwo.id)),
         )
 
     private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
@@ -126,7 +124,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
 
@@ -169,7 +167,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
 
@@ -205,7 +203,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         val routeCardData =
@@ -219,7 +217,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
 

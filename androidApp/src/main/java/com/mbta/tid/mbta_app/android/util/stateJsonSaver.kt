@@ -14,5 +14,5 @@ import kotlinx.serialization.encodeToString
 inline fun <reified T> stateJsonSaver() =
     Saver<MutableState<T>, String>(
         { json.encodeToString(it.value) },
-        { mutableStateOf(json.decodeFromString(it)) }
+        { mutableStateOf(json.decodeFromString(it)) },
     )

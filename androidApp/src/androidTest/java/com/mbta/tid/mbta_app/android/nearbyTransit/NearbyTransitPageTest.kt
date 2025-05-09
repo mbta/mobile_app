@@ -195,8 +195,8 @@ class NearbyTransitPageTest : KoinTest {
             builder,
             mutableMapOf(
                 sampleStop.id to listOf(routePatternOne.id, routePatternTwo.id),
-                greenLineStop.id to listOf(greenLineRoutePatternOne.id)
-            )
+                greenLineStop.id to listOf(greenLineRoutePatternOne.id),
+            ),
         )
 
     val koinApplication =
@@ -206,9 +206,9 @@ class NearbyTransitPageTest : KoinTest {
                 nearby =
                     MockNearbyRepository(
                         stopIds = listOf(sampleStop.id, greenLineStop.id),
-                        response = NearbyResponse(builder)
+                        response = NearbyResponse(builder),
                     )
-            }
+            },
         )
 
     val viewportProvider = ViewportProvider(MapViewportState())
@@ -224,7 +224,7 @@ class NearbyTransitPageTest : KoinTest {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient()
+                    LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
                     NearbyTransitPage(
                         Modifier,
@@ -247,7 +247,7 @@ class NearbyTransitPageTest : KoinTest {
                             SearchResultsViewModel(
                                 MockAnalytics(),
                                 MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                                VisitHistoryUsecase(MockVisitHistoryRepository()),
                             ),
                         bottomBar = {},
                     )
@@ -311,7 +311,7 @@ class NearbyTransitPageTest : KoinTest {
 
             override suspend fun refreshStopFeatures(
                 selectedStop: Stop?,
-                globalMapData: GlobalMapData?
+                globalMapData: GlobalMapData?,
             ) {}
 
             override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
@@ -332,7 +332,7 @@ class NearbyTransitPageTest : KoinTest {
                 currentLocation: Location?,
                 locationDataManager: LocationDataManager,
                 searchResultsViewModel: SearchResultsViewModel,
-                viewportProvider: ViewportProvider
+                viewportProvider: ViewportProvider,
             ) {
                 TODO("Not yet implemented")
             }
@@ -344,7 +344,7 @@ class NearbyTransitPageTest : KoinTest {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient()
+                    LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
                     NearbyTransitPage(
                         Modifier,
@@ -367,10 +367,10 @@ class NearbyTransitPageTest : KoinTest {
                             SearchResultsViewModel(
                                 MockAnalytics(),
                                 MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                                VisitHistoryUsecase(MockVisitHistoryRepository()),
                             ),
                         bottomBar = {},
-                        mapViewModel = mockMapVM
+                        mapViewModel = mockMapVM,
                     )
                 }
             }
@@ -390,7 +390,7 @@ class NearbyTransitPageTest : KoinTest {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient()
+                    LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
                     NearbyTransitPage(
                         Modifier,
@@ -413,9 +413,9 @@ class NearbyTransitPageTest : KoinTest {
                             SearchResultsViewModel(
                                 MockAnalytics(),
                                 MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                                VisitHistoryUsecase(MockVisitHistoryRepository()),
                             ),
-                        bottomBar = {}
+                        bottomBar = {},
                     )
                 }
             }
@@ -449,7 +449,7 @@ class NearbyTransitPageTest : KoinTest {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
-                    LocalLifecycleOwner provides lifecycleOwner
+                    LocalLifecycleOwner provides lifecycleOwner,
                 ) {
                     NearbyTransitPage(
                         Modifier,
@@ -472,9 +472,9 @@ class NearbyTransitPageTest : KoinTest {
                             SearchResultsViewModel(
                                 MockAnalytics(),
                                 MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository())
+                                VisitHistoryUsecase(MockVisitHistoryRepository()),
                             ),
-                        bottomBar = {}
+                        bottomBar = {},
                     )
                 }
             }

@@ -58,7 +58,7 @@ class VisitHistoryUsecaseTest {
         assertEquals(VisitHistory.RETRIEVE_COUNT, latest.size)
         assertEquals(
             VisitHistory.SAVE_COUNT,
-            repository.getVisitHistory().latest(VisitHistory.SAVE_COUNT + 5).size
+            repository.getVisitHistory().latest(VisitHistory.SAVE_COUNT + 5).size,
         )
     }
 }

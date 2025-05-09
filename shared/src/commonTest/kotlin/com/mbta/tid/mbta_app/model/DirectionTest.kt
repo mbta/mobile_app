@@ -39,8 +39,8 @@ class DirectionTest {
                     "place-armnl",
                     "place-hymnl",
                     "place-kencl",
-                    "place-lake"
-                )
+                    "place-lake",
+                ),
             )
         assertEquals("West", glWest.name)
         assertEquals("Copley & West", glWest.destination)
@@ -56,8 +56,8 @@ class DirectionTest {
                     "place-hymnl",
                     "place-armnl",
                     "place-pktrm",
-                    "place-gover"
-                )
+                    "place-gover",
+                ),
             )
         assertEquals("East", glEast.name)
         assertEquals("Gov Ctr & North", glEast.destination)
@@ -67,7 +67,7 @@ class DirectionTest {
                 0,
                 red,
                 savinHill,
-                listOf("place-alfcl", "place-jfk", "place-shmnl", "place-asmnl")
+                listOf("place-alfcl", "place-jfk", "place-shmnl", "place-asmnl"),
             )
         assertEquals("South", rlSouth.name)
         assertEquals("Ashmont", rlSouth.destination)
@@ -77,7 +77,7 @@ class DirectionTest {
                 1,
                 red,
                 savinHill,
-                listOf("place-asmnl", "place-shmnl", "place-jfk", "place-alfcl")
+                listOf("place-asmnl", "place-shmnl", "place-jfk", "place-alfcl"),
             )
         assertEquals("North", rlNorth.name)
         assertEquals("Alewife", rlNorth.destination)
@@ -104,7 +104,7 @@ class DirectionTest {
         val globalResponse =
             GlobalResponse(
                 objects = objects,
-                patternIdsByStop = mapOf(Pair(stop.id, patterns.map { pattern -> pattern.id }))
+                patternIdsByStop = mapOf(Pair(stop.id, patterns.map { pattern -> pattern.id })),
             )
 
         val directions = Direction.getDirections(globalResponse, stop, route, patterns)
@@ -134,7 +134,7 @@ class DirectionTest {
         val globalResponse =
             GlobalResponse(
                 objects = objects,
-                patternIdsByStop = mapOf(Pair(stop.id, patterns.map { pattern -> pattern.id }))
+                patternIdsByStop = mapOf(Pair(stop.id, patterns.map { pattern -> pattern.id })),
             )
 
         val directionRp1 =
@@ -177,7 +177,7 @@ class DirectionTest {
         // on Western branch
         assertEquals(
             listOf(Direction("West", "Boston College", 0), Direction("East", "Park St & North", 1)),
-            Direction.getDirectionsForLine(global, southSt, listOf(routePatternB1, routePatternB2))
+            Direction.getDirectionsForLine(global, southSt, listOf(routePatternB1, routePatternB2)),
         )
 
         // at Kenmore
@@ -186,8 +186,8 @@ class DirectionTest {
             Direction.getDirectionsForLine(
                 global,
                 kenmore,
-                listOf(routePatternB1, routePatternB2, routePatternC1, routePatternC2)
-            )
+                listOf(routePatternB1, routePatternB2, routePatternC1, routePatternC2),
+            ),
         )
 
         // on shard trunk
@@ -196,15 +196,15 @@ class DirectionTest {
             Direction.getDirectionsForLine(
                 global,
                 hynes,
-                listOf(routePatternB1, routePatternB2, routePatternC1, routePatternC2)
-            )
+                listOf(routePatternB1, routePatternB2, routePatternC1, routePatternC2),
+            ),
         )
 
         // gov center extra special case
         assertEquals(
             listOf(
                 Direction("West", "Copley & West", 0),
-                Direction("East", "North Station & North", 1)
+                Direction("East", "North Station & North", 1),
             ),
             Direction.getDirectionsForLine(
                 global,
@@ -215,15 +215,15 @@ class DirectionTest {
                     routePatternC1,
                     routePatternC2,
                     routePatternE1,
-                    routePatternE2
-                )
-            )
+                    routePatternE2,
+                ),
+            ),
         )
 
         // eastern branch
         assertEquals(
             listOf(Direction("West", "Copley & West", 0), Direction("East", "Medford/Tufts", 1)),
-            Direction.getDirectionsForLine(global, magoun, listOf(routePatternE1, routePatternE2))
+            Direction.getDirectionsForLine(global, magoun, listOf(routePatternE1, routePatternE2)),
         )
     }
 }

@@ -26,7 +26,7 @@ fun StopDetailsAlertHeader(
     alert: Alert,
     routeColor: Color?,
     modifier: Modifier = Modifier,
-    showInfoIcon: Boolean = false
+    showInfoIcon: Boolean = false,
 ) {
     Row(
         modifier = modifier.padding(start = 12.dp, end = 8.dp).padding(vertical = 12.dp),
@@ -39,12 +39,12 @@ fun StopDetailsAlertHeader(
             modifier =
                 if (alert.alertState == StopAlertState.Elevator)
                     Modifier.height(24.dp).width(36.dp).padding(end = 8.dp).fillMaxHeight()
-                else Modifier.size(36.dp).padding(6.dp)
+                else Modifier.size(36.dp).padding(6.dp),
         )
         Text(
             alert.header ?: "",
             Modifier.padding(vertical = 3.dp).weight(1f),
-            style = Typography.callout
+            style = Typography.callout,
         )
         if (showInfoIcon) {
             Box(

@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 data class GithubLicenseResponse(
     val encoding: String,
     val content: String,
-    val license: KnownLicense
+    val license: KnownLicense,
 ) {
     @Serializable data class KnownLicense(@SerialName("spdx_id") val spdxId: String)
 

@@ -39,7 +39,7 @@ object StopLayerGenerator {
             stopSelectedPinLayer.iconImage =
                 Exp.case(
                     MapExp.selectedExp to Exp.image(Exp(StopIcons.stopPinIcon)),
-                    Exp.image(Exp(""))
+                    Exp.image(Exp("")),
                 )
             stopSelectedPinLayer.textField =
                 Exp.case(MapExp.selectedExp to Exp.get(StopFeaturesBuilder.propNameKey), Exp(""))
@@ -48,7 +48,7 @@ object StopLayerGenerator {
             stopTouchTargetLayer.filter =
                 Exp.ge(
                     Exp.zoom(),
-                    Exp.case(MapExp.isBusExp to Exp(busStopZoomThreshold), Exp(stopZoomThreshold))
+                    Exp.case(MapExp.isBusExp to Exp(busStopZoomThreshold), Exp(stopZoomThreshold)),
                 )
             includeSharedProps(stopSelectedPinLayer, forBus = false)
 
@@ -91,7 +91,7 @@ object StopLayerGenerator {
     fun createStopLayer(
         id: String,
         forBus: Boolean = false,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
     ): SymbolLayer {
         val stopLayer = SymbolLayer(id = id, source = StopFeaturesBuilder.stopSourceId)
         stopLayer.iconImage = (StopIcons.getStopLayerIcon(forBus = forBus))
@@ -129,7 +129,7 @@ object StopLayerGenerator {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetAlertExp(closeZoom = false, index),
-            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetAlertExp(closeZoom = true, index)
+            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetAlertExp(closeZoom = true, index),
         )
     }
 
@@ -137,7 +137,7 @@ object StopLayerGenerator {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetTransferExp(closeZoom = false, index),
-            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetTransferExp(closeZoom = true, index)
+            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetTransferExp(closeZoom = true, index),
         )
     }
 
@@ -145,7 +145,7 @@ object StopLayerGenerator {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetPinExp(closeZoom = false),
-            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetPinExp(closeZoom = true)
+            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetPinExp(closeZoom = true),
         )
     }
 }

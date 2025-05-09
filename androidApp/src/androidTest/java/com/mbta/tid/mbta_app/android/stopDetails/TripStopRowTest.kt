@@ -51,13 +51,13 @@ class TripStopRowTest {
                     prediction,
                     stop,
                     null,
-                    listOf(route)
+                    listOf(route),
                 ),
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
                 TripRouteAccents(route),
-                alertSummaries = emptyMap()
+                alertSummaries = emptyMap(),
             )
         }
 
@@ -84,13 +84,13 @@ class TripStopRowTest {
                     prediction,
                     stop,
                     null,
-                    listOf(route)
+                    listOf(route),
                 ),
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
                 TripRouteAccents(route),
-                alertSummaries = emptyMap()
+                alertSummaries = emptyMap(),
             )
         }
 
@@ -123,13 +123,13 @@ class TripStopRowTest {
                     prediction,
                     platformStop,
                     null,
-                    listOf(route)
+                    listOf(route),
                 ),
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
                 TripRouteAccents(route),
-                alertSummaries = emptyMap()
+                alertSummaries = emptyMap(),
             )
         }
 
@@ -155,7 +155,7 @@ class TripStopRowTest {
                 prediction,
                 stop,
                 null,
-                listOf(route)
+                listOf(route),
             )
 
         var selected by mutableStateOf(false)
@@ -170,7 +170,7 @@ class TripStopRowTest {
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
                 targeted = selected,
-                firstStop = first
+                firstStop = first,
             )
         }
 
@@ -208,7 +208,7 @@ class TripStopRowTest {
                 prediction,
                 stop,
                 null,
-                listOf(route)
+                listOf(route),
             )
         var linkTappedWith: TripDetailsStopList.Entry? = null
 
@@ -219,7 +219,7 @@ class TripStopRowTest {
                 onTapLink = { linkTappedWith = it },
                 onOpenAlertDetails = {},
                 TripRouteAccents(route),
-                alertSummaries = emptyMap()
+                alertSummaries = emptyMap(),
             )
         }
 
@@ -255,7 +255,7 @@ class TripStopRowTest {
                 stop,
                 null,
                 listOf(route),
-                elevatorAlerts
+                elevatorAlerts,
             )
 
         var testEntry by mutableStateOf(entry(inaccessibleStop))
@@ -267,7 +267,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true
+                showStationAccessibility = true,
             )
         }
 
@@ -285,7 +285,7 @@ class TripStopRowTest {
         testEntry =
             entry(
                 accessibleStop,
-                listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) })
+                listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) }),
             )
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
         composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
@@ -305,7 +305,7 @@ class TripStopRowTest {
             AlertSummary(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops("Roxbury Crossing", "Green Street"),
-                AlertSummary.Timeframe.Tomorrow
+                AlertSummary.Timeframe.Tomorrow,
             )
 
         val entry =
@@ -317,7 +317,7 @@ class TripStopRowTest {
                 prediction = null,
                 predictionStop = null,
                 vehicle = null,
-                routes = emptyList()
+                routes = emptyList(),
             )
 
         composeTestRule.setContent {
@@ -328,7 +328,7 @@ class TripStopRowTest {
                 {},
                 TripRouteAccents(route),
                 mapOf(alert.id to summary),
-                showDownstreamAlert = true
+                showDownstreamAlert = true,
             )
         }
 

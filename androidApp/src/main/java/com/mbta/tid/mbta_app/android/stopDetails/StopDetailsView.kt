@@ -32,7 +32,7 @@ fun StopDetailsView(
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
@@ -45,7 +45,7 @@ fun StopDetailsView(
             analytics.tappedAlertDetails(
                 routeId = modal.lineId ?: modal.routeIds?.firstOrNull() ?: "",
                 stopId = modal.stopId ?: "",
-                alertId = modal.alertId
+                alertId = modal.alertId,
             )
         }
     }

@@ -88,7 +88,7 @@ fun BottomSheetScaffold(
     snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     // padding the map to account for the sheet height is a bit of a mess, especially because
     // padding with the full layout height crashes the app, so we need a max padding
@@ -110,7 +110,7 @@ fun BottomSheetScaffold(
                     bottom =
                         (actualSheetHeight ?: 0.dp).coerceIn(
                             sheetSmallHeight,
-                            max(maxPadding, sheetSmallHeight)
+                            max(maxPadding, sheetSmallHeight),
                         )
                 )
             )
@@ -132,9 +132,9 @@ fun BottomSheetScaffold(
                 tonalElevation = sheetTonalElevation,
                 shadowElevation = sheetShadowElevation,
                 dragHandle = sheetDragHandle,
-                content = sheetContent
+                content = sheetContent,
             )
-        }
+        },
     )
 }
 
@@ -143,7 +143,7 @@ fun BottomSheetScaffold(
 @Stable
 class BottomSheetScaffoldState(
     val bottomSheetState: SheetState,
-    val snackbarHostState: SnackbarHostState
+    val snackbarHostState: SnackbarHostState,
 )
 
 /** @see androidx.compose.material3.rememberBottomSheetScaffoldState */
@@ -151,12 +151,12 @@ class BottomSheetScaffoldState(
 @ExperimentalMaterial3Api
 fun rememberBottomSheetScaffoldState(
     bottomSheetState: SheetState = rememberStandardBottomSheetState(),
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ): BottomSheetScaffoldState {
     return remember(bottomSheetState, snackbarHostState) {
         BottomSheetScaffoldState(
             bottomSheetState = bottomSheetState,
-            snackbarHostState = snackbarHostState
+            snackbarHostState = snackbarHostState,
         )
     }
 }
@@ -189,7 +189,7 @@ private fun StandardBottomSheet(
     tonalElevation: Dp,
     shadowElevation: Dp,
     dragHandle: @Composable (() -> Unit)?,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
@@ -201,7 +201,7 @@ private fun StandardBottomSheet(
                     ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
                         sheetState = state,
                         orientation = orientation,
-                        onFling = { scope.launch { state.settle(it) } }
+                        onFling = { scope.launch { state.settle(it) } },
                     )
                 }
             )
@@ -236,7 +236,7 @@ private fun StandardBottomSheet(
                 .anchoredDraggable(
                     state = state.anchoredDraggableState,
                     orientation = orientation,
-                    enabled = sheetSwipeEnabled
+                    enabled = sheetSwipeEnabled,
                 ),
         shape = shape,
         color = containerColor,
@@ -283,7 +283,7 @@ private fun StandardBottomSheet(
                                 }
                             }
                         }
-                    },
+                    }
                 ) {
                     dragHandle()
                 }
@@ -315,11 +315,11 @@ private fun BottomSheetScaffoldLayout(
                         modifier = modifier,
                         color = containerColor,
                         contentColor = contentColor,
-                        content = body
+                        content = body,
                     )
                 },
                 bottomSheet,
-                snackbarHost
+                snackbarHost,
             )
     ) {
         (topBarMeasurables, bodyMeasurables, bottomSheetMeasurables, snackbarHostMeasurables),

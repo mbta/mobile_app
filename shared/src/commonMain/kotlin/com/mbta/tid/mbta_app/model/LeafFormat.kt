@@ -22,7 +22,7 @@ sealed class LeafFormat {
     data class Single(
         /** The headsign to show next to [format]. Overrides [Direction.destination] if set. */
         val headsign: String?,
-        val format: UpcomingFormat
+        val format: UpcomingFormat,
     ) : LeafFormat() {
         override fun tileData(): List<TileData> {
             return if (format is UpcomingFormat.Some) {
@@ -31,7 +31,7 @@ sealed class LeafFormat {
                         route = null,
                         headsign = null,
                         UpcomingFormat.Some(trip, format.secondaryAlert),
-                        trip.trip
+                        trip.trip,
                     )
                 }
             } else {
@@ -56,7 +56,7 @@ sealed class LeafFormat {
      */
     data class Branched(
         val branchRows: List<BranchRow>,
-        val secondaryAlert: UpcomingFormat.SecondaryAlert? = null
+        val secondaryAlert: UpcomingFormat.SecondaryAlert? = null,
     ) : LeafFormat() {
         data class BranchRow
         @OptIn(ExperimentalUuidApi::class)
@@ -69,7 +69,7 @@ sealed class LeafFormat {
             val route: Route?,
             val headsign: String,
             val format: UpcomingFormat,
-            val id: String = "$headsign-$format-${Uuid.random()}"
+            val id: String = "$headsign-$format-${Uuid.random()}",
         )
 
         override fun tileData(): List<TileData> {
@@ -80,7 +80,7 @@ sealed class LeafFormat {
                         branch.route,
                         branch.headsign,
                         UpcomingFormat.Some(trip, branch.format.secondaryAlert),
-                        trip.trip
+                        trip.trip,
                     )
                 } else null
             }

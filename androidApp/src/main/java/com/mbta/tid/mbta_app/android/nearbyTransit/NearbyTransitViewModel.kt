@@ -18,9 +18,8 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 
-class NearbyTransitViewModel(
-    private val nearbyRepository: INearbyRepository,
-) : KoinComponent, ViewModel() {
+class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
+    KoinComponent, ViewModel() {
     var loading by mutableStateOf(false)
     var nearbyStopIds by mutableStateOf<List<String>?>(null)
     var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
@@ -31,7 +30,7 @@ class NearbyTransitViewModel(
         globalResponse: GlobalResponse,
         location: Position,
         setLastLocation: (Position) -> Unit,
-        setSelectingLocation: (Boolean) -> Unit
+        setSelectingLocation: (Boolean) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             if (loading) {
@@ -68,7 +67,7 @@ class NearbyTransitViewModel(
                     alerts,
                     now,
                     pinnedRoutes ?: emptySet(),
-                    RouteCardData.Context.NearbyTransit
+                    RouteCardData.Context.NearbyTransit,
                 )
         }
     }

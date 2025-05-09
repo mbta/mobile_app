@@ -8,7 +8,7 @@ class MoreSection(var id: Category, var items: List<MoreItem>, var note: String?
         Settings,
         Resources,
         Other,
-        Support
+        Support,
     }
 
     val hiddenOnProd: Boolean =

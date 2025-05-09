@@ -55,7 +55,7 @@ fun NearbyTransitView(
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     noNearbyStopsView: @Composable () -> Unit,
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
 ) {
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
@@ -63,7 +63,7 @@ fun NearbyTransitView(
                 globalResponse,
                 targetLocation,
                 setLastLocation,
-                setSelectingLocation
+                setSelectingLocation,
             )
         }
     }
@@ -107,7 +107,7 @@ fun NearbyTransitView(
             predictions,
             alertData,
             now,
-            pinnedRoutes
+            pinnedRoutes,
         ) {
             nearbyVM.loadRouteCardData(
                 globalResponse,
@@ -116,7 +116,7 @@ fun NearbyTransitView(
                 predictions,
                 alertData,
                 now,
-                pinnedRoutes
+                pinnedRoutes,
             )
         }
 
@@ -136,7 +136,7 @@ fun NearbyTransitView(
         } else if (routeCardData.isEmpty()) {
             Column(
                 Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 noNearbyStopsView()
                 Spacer(Modifier.weight(1f))
@@ -156,7 +156,7 @@ fun NearbyTransitView(
                         pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
                         ::togglePinnedRoute,
                         showStationAccessibility,
-                        onOpenStopDetails
+                        onOpenStopDetails,
                     )
                 }
             }

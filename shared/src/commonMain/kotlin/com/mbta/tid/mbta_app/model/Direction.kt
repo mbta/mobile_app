@@ -3,11 +3,7 @@ package com.mbta.tid.mbta_app.model
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 
-data class Direction(
-    var name: String,
-    var destination: String?,
-    var id: Int,
-) {
+data class Direction(var name: String, var destination: String?, var id: Int) {
     /**
      * This constructor is used to provide additional context to a Direction to allow for overriding
      * the destination label in cases where a route or line has branching. We want to display a
@@ -26,12 +22,14 @@ data class Direction(
         route: Route,
         stop: Stop? = null,
         routeStopIds: List<String>? = null,
-        patternDestination: String? = null
+        patternDestination: String? = null,
     ) : this(
         name = route.directionNames[directionId] ?: "",
-        destination = getSpecialCaseDestination(directionId, route.id, stop?.id, routeStopIds)
-                ?: patternDestination ?: route.directionDestinations[directionId],
-        directionId
+        destination =
+            getSpecialCaseDestination(directionId, route.id, stop?.id, routeStopIds)
+                ?: patternDestination
+                ?: route.directionDestinations[directionId],
+        directionId,
     )
 
     companion object {
@@ -65,16 +63,16 @@ data class Direction(
                             Pair("place-armnl", "Copley & West"),
                             Pair("place-hymnl", "Kenmore & West"),
                             Pair("place-prmnl", null),
-                            Pair("place-kencl", null)
+                            Pair("place-kencl", null),
                         ),
                         listOf(
                             Pair("place-boyls", "Park St & North"),
                             Pair("place-pktrm", "Gov Ctr & North"),
                             Pair("place-haecl", northStationDestination),
                             Pair("place-spmnl", "Lechmere & North"),
-                            Pair("place-lech", null)
-                        )
-                    )
+                            Pair("place-lech", null),
+                        ),
+                    ),
                 ),
                 Pair(
                     "Red",
@@ -82,11 +80,11 @@ data class Direction(
                         listOf(
                             Pair("place-jfk", null),
                             Pair("place-asmnl", "Ashmont"),
-                            Pair("place-brntn", "Braintree")
+                            Pair("place-brntn", "Braintree"),
                         ),
-                        null
-                    )
-                )
+                        null,
+                    ),
+                ),
             )
 
         private val idOverrides: Map<String, String> =
@@ -119,7 +117,7 @@ data class Direction(
             global: GlobalResponse,
             stop: Stop,
             route: Route,
-            patterns: List<RoutePattern>
+            patterns: List<RoutePattern>,
         ): List<Direction> {
             if (!specialCases.containsKey(idOverrides[route.id] ?: route.id)) {
                 return listOf(0, 1).map { directionId -> Direction(directionId, route) }
@@ -135,7 +133,7 @@ data class Direction(
             global: GlobalResponse,
             stop: Stop,
             route: Route,
-            pattern: RoutePattern
+            pattern: RoutePattern,
         ): Direction {
             if (!specialCases.containsKey(idOverrides[route.id] ?: route.id)) {
                 return Direction(pattern.directionId, route)
@@ -149,7 +147,7 @@ data class Direction(
         fun getDirectionsForLine(
             global: GlobalResponse,
             stop: Stop,
-            patterns: List<RoutePattern>
+            patterns: List<RoutePattern>,
         ): List<Direction> {
             if (patterns.isEmpty()) {
                 // If no patterns were provided, something is wrong, return dummy directions
@@ -209,7 +207,7 @@ data class Direction(
 
         private fun getStopListForPattern(
             pattern: RoutePattern?,
-            global: GlobalResponse
+            global: GlobalResponse,
         ): List<String>? {
             return global.trips[pattern?.representativeTripId]?.stopIds?.map { stopId ->
                 global.stops[stopId]?.parentStationId ?: stopId
@@ -218,7 +216,7 @@ data class Direction(
 
         private fun getTypicalStopListByDirection(
             patterns: List<RoutePattern>,
-            global: GlobalResponse
+            global: GlobalResponse,
         ): Map<Int, List<String>?> {
             return patterns
                 .groupBy { pattern -> pattern.directionId }
@@ -227,7 +225,7 @@ data class Direction(
                         directionPatterns.value.firstOrNull { pattern ->
                             pattern.typicality == RoutePattern.Typicality.Typical
                         },
-                        global
+                        global,
                     )
                 }
         }

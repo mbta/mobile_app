@@ -52,7 +52,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                     EdgeInsets(0.0, 0.0, 0.0, 0.0),
                     Defaults.zoom,
                     0.0,
-                    0.0
+                    0.0,
                 )
         )
     var cameraStateFlow =
@@ -65,7 +65,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
     suspend fun setSheetPadding(
         sheetPadding: PaddingValues,
         density: Density,
-        layoutDirection: LayoutDirection
+        layoutDirection: LayoutDirection,
     ) {
         val insets =
             with(density) {
@@ -73,7 +73,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                     sheetPadding.calculateTopPadding().toPx().toDouble(),
                     sheetPadding.calculateLeftPadding(layoutDirection).toPx().toDouble(),
                     sheetPadding.calculateBottomPadding().toPx().toDouble(),
-                    sheetPadding.calculateRightPadding(layoutDirection).toPx().toDouble()
+                    sheetPadding.calculateRightPadding(layoutDirection).toPx().toDouble(),
                 )
             }
 
@@ -97,7 +97,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                         zoom(_cameraState.value.zoom)
                     }
                     .build(),
-            defaultTransitionOptions = defaultTransitionOptions
+            defaultTransitionOptions = defaultTransitionOptions,
         )
         isAnimating = false
     }
@@ -143,25 +143,25 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                     .center(coordinates)
                     .zoom(zoom ?: _cameraState.value.zoom)
                     .build(),
-            animation = animation
+            animation = animation,
         )
         isAnimating = false
     }
 
     fun animateToCamera(
         options: CameraOptions,
-        animation: MapAnimationOptions = MapAnimationDefaults.options
+        animation: MapAnimationOptions = MapAnimationDefaults.options,
     ) {
         this.viewport.easeTo(
             options,
             animation,
-            completionListener = { isManuallyCentering = false }
+            completionListener = { isManuallyCentering = false },
         )
     }
 
     fun animateToOverview(
         options: OverviewViewportStateOptions,
-        defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition
+        defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition,
     ) {
         isAnimating = true
         this.viewport.transitionToOverviewState(options, defaultTransitionOptions)
@@ -177,7 +177,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                 EdgeInsets(0.0, 0.0, 0.0, 0.0),
                 Defaults.zoom,
                 0.0,
-                0.0
+                0.0,
             )
         )
     }
@@ -234,7 +234,7 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
                         95.dp.toPx().toDouble(),
                         50.dp.toPx().toDouble(),
                         75.dp.toPx().toDouble(),
-                        50.dp.toPx().toDouble()
+                        50.dp.toPx().toDouble(),
                     )
                 }
         }

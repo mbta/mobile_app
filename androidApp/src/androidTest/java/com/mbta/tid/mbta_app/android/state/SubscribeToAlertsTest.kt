@@ -57,7 +57,7 @@ class SubscribeToAlertsTest {
             MockAlertsRepository(
                 alertsStreamDataResponse,
                 { connectCount += 1 },
-                { disconnectCount += 1 }
+                { disconnectCount += 1 },
             )
 
         var actualData: AlertsStreamDataResponse? = null

@@ -42,7 +42,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
             } catch (error: Exception) {
                 Log.e(
                     "MapLayerManager",
-                    "Failed to add source (${source.sourceId}):\n${error.localizedMessage}"
+                    "Failed to add source (${source.sourceId}):\n${error.localizedMessage}",
                 )
             }
         }
@@ -51,7 +51,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
     suspend fun addLayers(
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
         globalResponse: GlobalResponse,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
     ) {
         addLayers(mapFriendlyRouteResponse.routesWithSegmentedShapes, globalResponse, colorPalette)
     }
@@ -59,7 +59,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
     suspend fun addLayers(
         routes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalResponse: GlobalResponse,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
     ) {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(routes, globalResponse, colorPalette).map {
@@ -121,7 +121,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
                 map.setStyleGeoJSONSourceData(
                     sourceId,
                     "",
-                    GeoJSONSourceData(checkNotNull(data.features()))
+                    GeoJSONSourceData(checkNotNull(data.features())),
                 )
             }
         } else {
@@ -134,7 +134,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         for (data in routeData) {
             updateSourceData(
                 RouteFeaturesBuilder.getRouteSourceId(data.routeId),
-                data.features.toMapbox()
+                data.features.toMapbox(),
             )
         }
     }

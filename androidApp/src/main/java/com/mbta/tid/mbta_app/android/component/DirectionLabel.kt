@@ -33,7 +33,7 @@ fun DirectionTo(direction: Direction, textColor: Color) {
         stringResource(R.string.directionTo, stringResource(directionNameFormatted(direction))),
         color = textColor,
         modifier = Modifier.placeholderIfLoading(),
-        style = Typography.footnote
+        style = Typography.footnote,
     )
 }
 
@@ -48,7 +48,7 @@ fun DestinationLabel(destination: String, textColor: Color) {
         destination,
         color = textColor,
         modifier = Modifier.placeholderIfLoading(),
-        style = Typography.bodySemibold
+        style = Typography.bodySemibold,
     )
 }
 
@@ -57,7 +57,7 @@ fun DirectionLabel(
     direction: Direction,
     modifier: Modifier = Modifier,
     textColor: Color = LocalContentColor.current,
-    showDestination: Boolean = true
+    showDestination: Boolean = true,
 ) {
     val destination = direction.destination
     Column(modifier = modifier) {

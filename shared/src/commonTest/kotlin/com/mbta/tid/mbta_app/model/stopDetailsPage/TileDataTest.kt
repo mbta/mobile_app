@@ -26,9 +26,9 @@ class TileDataTest {
                 UpcomingFormat.Some.FormattedTrip(
                     upcomingTrip,
                     route.type,
-                    TripInstantDisplay.Arriving
+                    TripInstantDisplay.Arriving,
                 ),
-                null
+                null,
             )
         val tileData = TileData(route, "Headsign", format, upcomingTrip)
 
@@ -56,13 +56,13 @@ class TileDataTest {
                     UpcomingFormat.Some.FormattedTrip(
                         upcomingTrip,
                         route.type,
-                        TripInstantDisplay.Arriving
+                        TripInstantDisplay.Arriving,
                     ),
-                    null
+                    null,
                 ),
-                upcomingTrip
+                upcomingTrip,
             ),
-            TileData.fromUpcoming(upcomingTrip, route, now)
+            TileData.fromUpcoming(upcomingTrip, route, now),
         )
     }
 

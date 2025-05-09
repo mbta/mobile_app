@@ -38,7 +38,7 @@ class MockLastLaunchedAppVersionRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     private var lastLaunchedAppVersion: AppVersion?,
-    private var onSet: (AppVersion) -> Unit = {}
+    private var onSet: (AppVersion) -> Unit = {},
 ) : ILastLaunchedAppVersionRepository {
     override suspend fun getLastLaunchedAppVersion() = lastLaunchedAppVersion
 

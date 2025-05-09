@@ -8,12 +8,12 @@ data class RoutePillSpec(
     val content: Content,
     val size: Size,
     val shape: Shape,
-    val contentDescription: String? = null
+    val contentDescription: String? = null,
 ) {
     enum class Type {
         Fixed,
         Flex,
-        FlexCompact
+        FlexCompact,
     }
 
     sealed interface Content {
@@ -29,17 +29,17 @@ data class RoutePillSpec(
         Circle,
         CircleSmall,
         FlexPill,
-        FlexPillSmall
+        FlexPillSmall,
     }
 
     enum class Shape {
         Capsule,
-        Rectangle
+        Rectangle,
     }
 
     enum class Context {
         SearchStation,
-        Default
+        Default,
     }
 
     @DefaultArgumentInterop.Enabled

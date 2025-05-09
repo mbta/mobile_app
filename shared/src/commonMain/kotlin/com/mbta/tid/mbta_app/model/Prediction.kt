@@ -33,6 +33,6 @@ data class Prediction(
         @SerialName("no_data") NoData,
         @SerialName("skipped") Skipped,
         @SerialName("unscheduled") Unscheduled,
-        @SerialName("scheduled") Scheduled
+        @SerialName("scheduled") Scheduled,
     }
 }

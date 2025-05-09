@@ -53,7 +53,7 @@ class NearbyRepository : KoinComponent, INearbyRepository {
 
 class MockNearbyRepository(
     val response: NearbyResponse,
-    val stopIds: List<String> = response.stopIds
+    val stopIds: List<String> = response.stopIds,
 ) : INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         stopIds

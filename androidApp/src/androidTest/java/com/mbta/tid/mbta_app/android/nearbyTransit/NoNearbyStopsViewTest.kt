@@ -31,7 +31,7 @@ class NoNearbyStopsViewTest {
             NoNearbyStopsView(
                 hideMaps = false,
                 onOpenSearch = { openedSearch = true },
-                onPanToDefaultCenter = { pannedToDefaultCenter = true }
+                onPanToDefaultCenter = { pannedToDefaultCenter = true },
             )
         }
 

@@ -60,7 +60,7 @@ class AlertTest {
                 assertEquals(
                     expectedSignificance,
                     alert.significance,
-                    "significance for effect $effect with${if (specifiedStops) "" else "out"} specified stops"
+                    "significance for effect $effect with${if (specifiedStops) "" else "out"} specified stops",
                 )
             }
         }
@@ -122,7 +122,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
                     stop = stop.id,
-                    directionId = 0
+                    directionId = 0,
                 )
             }
         val alertMatchNoDirection =
@@ -131,7 +131,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
                     stop = stop.id,
-                    directionId = null
+                    directionId = null,
                 )
             }
         val alertDifferentRoute =
@@ -140,7 +140,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = "other_route",
                     stop = stop.id,
-                    directionId = 0
+                    directionId = 0,
                 )
             }
         val alertDifferentStop =
@@ -149,7 +149,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
                     stop = "other_stop",
-                    directionId = 0
+                    directionId = 0,
                 )
             }
         val alertDifferentDirection =
@@ -158,7 +158,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
                     stop = stop.id,
-                    directionId = 1
+                    directionId = 1,
                 )
             }
         val filteredList =
@@ -168,12 +168,12 @@ class AlertTest {
                     alertMatchNoDirection,
                     alertDifferentRoute,
                     alertDifferentStop,
-                    alertDifferentDirection
+                    alertDifferentDirection,
                 ),
                 0,
                 listOf(route.id),
                 setOf(stop.id),
-                tripId = null
+                tripId = null,
             )
 
         assertEquals(listOf(alertMatch, alertMatchNoDirection), filteredList)
@@ -192,11 +192,11 @@ class AlertTest {
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         val invalidAlert =
@@ -206,7 +206,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
                     route = "wrong",
                     routeType = route.type,
-                    stop = "wrong"
+                    stop = "wrong",
                 )
             }
         assertEquals(
@@ -217,7 +217,7 @@ class AlertTest {
                 setOf(stop.id),
                 tripId = null,
             ),
-            listOf(validAlert)
+            listOf(validAlert),
         )
     }
 
@@ -234,7 +234,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     routeType = route.type,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         assertEquals(
@@ -245,7 +245,7 @@ class AlertTest {
                 setOf(stop.id),
                 tripId = null,
             ),
-            emptyList()
+            emptyList(),
         )
     }
 
@@ -262,7 +262,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
                     route = "not matching",
                     routeType = route.type,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         assertEquals(
@@ -273,7 +273,7 @@ class AlertTest {
                 setOf(stop.id),
                 tripId = null,
             ),
-            emptyList()
+            emptyList(),
         )
     }
 
@@ -290,7 +290,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     routeType = route.type,
-                    stop = "not matching"
+                    stop = "not matching",
                 )
             }
         assertEquals(
@@ -301,7 +301,7 @@ class AlertTest {
                 setOf(stop.id),
                 tripId = null,
             ),
-            emptyList()
+            emptyList(),
         )
     }
 
@@ -318,7 +318,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
                     routeType = route.type,
-                    stop = "not matching"
+                    stop = "not matching",
                 )
             }
 
@@ -329,7 +329,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = otherRoute.id,
                     routeType = otherRoute.type,
-                    stop = "not matching"
+                    stop = "not matching",
                 )
             }
         assertEquals(
@@ -339,7 +339,7 @@ class AlertTest {
                 directionId = null,
                 listOf(route.id),
                 stopIds = null,
-                tripId = null
+                tripId = null,
             ),
         )
     }
@@ -360,7 +360,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = targetStop.id,
-                    directionId = 0
+                    directionId = 0,
                 )
             }
 
@@ -371,7 +371,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
                     stop = stopWithBoardAlert.id,
-                    directionId = 0
+                    directionId = 0,
                 )
             }
         val firstRideAlert =
@@ -381,7 +381,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = firstStopWithRideAlert.id,
-                    directionId = null
+                    directionId = null,
                 )
             }
 
@@ -392,7 +392,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = secondStopWithRideAlert.id,
-                    directionId = null
+                    directionId = null,
                 )
             }
 
@@ -405,7 +405,7 @@ class AlertTest {
                         targetStop.id,
                         stopWithBoardAlert.id,
                         firstStopWithRideAlert.id,
-                        secondStopWithRideAlert.id
+                        secondStopWithRideAlert.id,
                     )
             }
 
@@ -413,7 +413,7 @@ class AlertTest {
             Alert.downstreamAlerts(
                 listOf(alertRideTargetStop, alertBoard, firstRideAlert, secondRideAlert),
                 trip,
-                setOf(targetStop.id)
+                setOf(targetStop.id),
             )
 
         assertEquals(listOf(firstRideAlert), downstreamAlerts)
@@ -434,19 +434,19 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = targetStop.id,
-                    directionId = 0
+                    directionId = 0,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = downstreamStop1.id,
-                    directionId = 0
+                    directionId = 0,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = downstreamStop2.id,
-                    directionId = 0
+                    directionId = 0,
                 )
             }
 
@@ -457,7 +457,7 @@ class AlertTest {
                     listOf(Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     stop = downstreamStop2.id,
-                    directionId = 0
+                    directionId = 0,
                 )
             }
 
@@ -465,19 +465,14 @@ class AlertTest {
             objects.trip {
                 routeId = route.id
                 directionId = 0
-                stopIds =
-                    listOf(
-                        targetStop.id,
-                        downstreamStop1.id,
-                        downstreamStop2.id,
-                    )
+                stopIds = listOf(targetStop.id, downstreamStop1.id, downstreamStop2.id)
             }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(
                 listOf(alertAllStops, alertDownstream2Only),
                 trip,
-                setOf(targetStop.id)
+                setOf(targetStop.id),
             )
 
         assertEquals(listOf(alertDownstream2Only), downstreamAlerts)
@@ -496,7 +491,7 @@ class AlertTest {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = route.id,
-                    directionId = null
+                    directionId = null,
                 )
             }
 
@@ -504,11 +499,7 @@ class AlertTest {
             objects.trip {
                 routeId = route.id
                 directionId = 0
-                stopIds =
-                    listOf(
-                        targetStop.id,
-                        nextStop.id,
-                    )
+                stopIds = listOf(targetStop.id, nextStop.id)
             }
 
         val downstreamAlerts = Alert.downstreamAlerts(listOf(alert), trip, setOf(targetStop.id))
@@ -526,7 +517,7 @@ class AlertTest {
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         val serviceAlert =
@@ -613,7 +604,7 @@ class AlertTest {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
-                    stop = shawmut.id
+                    stop = shawmut.id,
                 )
             }
 
@@ -624,7 +615,7 @@ class AlertTest {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
-                    stop = ashmont.id
+                    stop = ashmont.id,
                 )
             }
         val alewifeShuttleAlert =
@@ -635,7 +626,7 @@ class AlertTest {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
-                    stop = alewife.id
+                    stop = alewife.id,
                 )
             }
 
@@ -647,14 +638,14 @@ class AlertTest {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
-                    stop = park.id
+                    stop = park.id,
                 )
             }
 
         val global =
             GlobalResponse(
                 objects,
-                mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
+                mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id))),
             )
         val southboundDownstreamAlerts =
             Alert.alertsDownstreamForPatterns(
@@ -663,11 +654,11 @@ class AlertTest {
                         ashmontShuttleAlert,
                         shawmutShuttleAlert,
                         parkShuttleAlert,
-                        alewifeShuttleAlert
+                        alewifeShuttleAlert,
                     ),
                 patterns = listOf(routePatternAshmont, routePatternBraintree),
                 targetStopWithChildren = setOf(park.id),
-                tripsById = global.trips
+                tripsById = global.trips,
             )
         // ashmont alert not included b/c only first downstream alert on pattern returned
         assertEquals(listOf(shawmutShuttleAlert), southboundDownstreamAlerts)
@@ -679,11 +670,11 @@ class AlertTest {
                         ashmontShuttleAlert,
                         shawmutShuttleAlert,
                         parkShuttleAlert,
-                        alewifeShuttleAlert
+                        alewifeShuttleAlert,
                     ),
                 patterns = listOf(routePatternAlewife),
                 targetStopWithChildren = setOf(park.id),
-                tripsById = global.trips
+                tripsById = global.trips,
             )
         assertEquals(listOf(alewifeShuttleAlert), northboundDownstreamAlerts)
     }

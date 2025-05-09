@@ -21,12 +21,12 @@ fun DirectionRowView(
     direction: Direction,
     predictions: UpcomingFormat,
     modifier: Modifier = Modifier,
-    pillDecoration: PillDecoration? = null
+    pillDecoration: PillDecoration? = null,
 ) {
     PredictionRowView(
         predictions = predictions,
         modifier = modifier,
-        pillDecoration = pillDecoration
+        pillDecoration = pillDecoration,
     ) {
         DirectionLabel(direction)
     }
@@ -61,26 +61,26 @@ private fun DirectionRowViewPreview() {
                                     trip = UpcomingTrip(trip = trip1, prediction = prediction1),
                                     routeType = RouteType.LIGHT_RAIL,
                                     now = now,
-                                    context = TripInstantDisplay.Context.NearbyTransit
+                                    context = TripInstantDisplay.Context.NearbyTransit,
                                 ),
                                 UpcomingFormat.Some.FormattedTrip(
                                     trip = UpcomingTrip(trip = trip2, prediction = prediction2),
                                     routeType = RouteType.LIGHT_RAIL,
                                     now = now,
-                                    context = TripInstantDisplay.Context.NearbyTransit
+                                    context = TripInstantDisplay.Context.NearbyTransit,
                                 ),
                             ),
-                        secondaryAlert = null
-                    )
+                        secondaryAlert = null,
+                    ),
             )
             DirectionRowView(
                 direction = Direction(name = "North", destination = "None", id = 0),
                 predictions =
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
+                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             )
             DirectionRowView(
                 direction = Direction(name = "South", destination = "Loading", id = 1),
-                predictions = UpcomingFormat.Loading
+                predictions = UpcomingFormat.Loading,
             )
             DirectionRowView(
                 direction = Direction(name = "East", destination = "No Service", id = 1),
@@ -90,8 +90,8 @@ private fun DirectionRowViewPreview() {
                             ObjectCollectionBuilder.Single.alert {
                                 effect = Alert.Effect.Suspension
                             },
-                        mapStopRoute = MapStopRoute.GREEN
-                    )
+                        mapStopRoute = MapStopRoute.GREEN,
+                    ),
             )
         }
     }

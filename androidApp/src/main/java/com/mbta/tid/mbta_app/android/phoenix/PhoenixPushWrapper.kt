@@ -9,7 +9,7 @@ import org.phoenixframework.Push
 value class PhoenixPushWrapper(private val push: Push) : PhoenixPush {
     override fun receive(
         status: PhoenixPushStatus,
-        callback: (PhoenixMessage) -> Unit
+        callback: (PhoenixMessage) -> Unit,
     ): PhoenixPush = push.receive(status.value, callback.unwrapped()).wrapped()
 }
 

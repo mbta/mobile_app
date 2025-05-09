@@ -15,8 +15,8 @@ interface TripStopTime : Comparable<TripStopTime> {
      * Is the current time between the arrival & departure times for this prediction (inclusive)?
      */
     fun hasArrivedButNotDeparted(now: Instant): Boolean {
-        return (arrivalTime?.let { it <= now }
-            ?: false) && (departureTime?.let { it >= now } ?: false)
+        return (arrivalTime?.let { it <= now } ?: false) &&
+            (departureTime?.let { it >= now } ?: false)
     }
 
     override fun compareTo(other: TripStopTime): Int =

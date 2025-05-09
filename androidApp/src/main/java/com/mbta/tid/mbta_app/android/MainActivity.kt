@@ -31,20 +31,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(
             navigationBarStyle =
                 if (isDarkModeOn()) {
-                    SystemBarStyle.dark(
-                        scrim = getColor(R.color.fill2),
-                    )
+                    SystemBarStyle.dark(scrim = getColor(R.color.fill2))
                 } else {
                     SystemBarStyle.light(
                         scrim = getColor(R.color.fill2),
-                        darkScrim = getColor(R.color.fill2)
+                        darkScrim = getColor(R.color.fill2),
                     )
                 },
             statusBarStyle =
                 if (isDarkModeOn()) {
-                    SystemBarStyle.dark(
-                        scrim = Color(0x00000000).toArgb(),
-                    )
+                    SystemBarStyle.dark(scrim = Color(0x00000000).toArgb())
                 } else {
                     SystemBarStyle.light(
                         scrim = Color(0x00000000).toArgb(),
@@ -57,7 +53,7 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize().navigationBarsPadding(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     CompositionLocalProvider(
                         LocalActivity provides this,

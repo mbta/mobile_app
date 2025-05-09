@@ -71,7 +71,7 @@ class StopDetailsViewModel(
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
     companion object {
@@ -82,7 +82,7 @@ class StopDetailsViewModel(
             tripPredictionsRepo: ITripPredictionsRepository = MockTripPredictionsRepository(),
             tripRepo: ITripRepository = MockTripRepository(),
             vehicleRepo: IVehicleRepository = MockVehicleRepository(),
-            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): StopDetailsViewModel {
             return StopDetailsViewModel(
                 errorBannerRepo,
@@ -91,7 +91,7 @@ class StopDetailsViewModel(
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
-                coroutineDispatcher
+                coroutineDispatcher,
             )
         }
 
@@ -108,7 +108,7 @@ class StopDetailsViewModel(
                 MockTripPredictionsRepository(response = PredictionsStreamDataResponse(objects)),
             tripRepo: ITripRepository = MockTripRepository(),
             vehicleRepo: IVehicleRepository = MockVehicleRepository(),
-            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ) =
             mocked(
                 errorBannerRepo,
@@ -117,7 +117,7 @@ class StopDetailsViewModel(
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
-                coroutineDispatcher
+                coroutineDispatcher,
             )
     }
 
@@ -143,7 +143,7 @@ class StopDetailsViewModel(
             predictionsRepository,
             errorBannerRepository,
             ::onJoinMessage,
-            ::onPushMessage
+            ::onPushMessage,
         )
 
     fun loadStopDetails(stopId: String) {
@@ -168,7 +168,7 @@ class StopDetailsViewModel(
                         it.schedules,
                         (it.predictionsByStop ?: PredictionsByStopJoinResponse(message))
                             .mergePredictions(message),
-                        true
+                        true,
                     )
                 }
             }
@@ -289,7 +289,7 @@ class StopDetailsViewModel(
     fun getTripDetailsStopList(
         tripFilter: TripDetailsFilter?,
         allAlerts: AlertsStreamDataResponse?,
-        globalResponse: GlobalResponse?
+        globalResponse: GlobalResponse?,
     ): StateFlow<TripDetailsStopList?> {
         val tripData = this.tripData.collectAsState().value
         LaunchedEffect(tripFilter, tripData, allAlerts, globalResponse) {
@@ -308,7 +308,7 @@ class StopDetailsViewModel(
                         tripData.tripPredictions,
                         tripData.vehicle,
                         allAlerts,
-                        globalResponse
+                        globalResponse,
                     )
                 } else {
                     null
@@ -341,7 +341,7 @@ class StopDetailsViewModel(
                     trip = trip,
                     tripSchedules = schedules,
                     tripPredictions = null,
-                    vehicle = null
+                    vehicle = null,
                 )
             }
         }
@@ -376,7 +376,7 @@ class StopDetailsViewModel(
                     "TripDetailsView.loadTripSchedules",
                     { tripRepository.getTripSchedules(tripFilter.tripId) },
                     { schedules -> result = schedules },
-                    { clearAndLoadTripDetails(tripFilter) }
+                    { clearAndLoadTripDetails(tripFilter) },
                 )
                 result
             }
@@ -504,7 +504,7 @@ fun stopDetailsManagedVM(
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    clock: Clock = koinInject()
+    clock: Clock = koinInject(),
 ): StopDetailsViewModel {
     val now = now ?: clock.now()
     val stopId = filters?.stopId
@@ -559,7 +559,7 @@ fun stopDetailsManagedVM(
                         context =
                             if (filters.stopFilter != null)
                                 RouteCardData.Context.StopDetailsFiltered
-                            else RouteCardData.Context.StopDetailsUnfiltered
+                            else RouteCardData.Context.StopDetailsUnfiltered,
                     )
                 } else null
             )
@@ -576,7 +576,7 @@ fun stopDetailsManagedVM(
                     filters.stopFilter,
                     filters.tripFilter,
                     now,
-                    globalResponse
+                    globalResponse,
                 )
 
             if (autoTripFilter != filters.tripFilter) {
@@ -601,7 +601,7 @@ fun stopDetailsManagedVM(
                         filters.stopFilter,
                         filters.tripFilter,
                         now,
-                        globalResponse
+                        globalResponse,
                     )
 
                 if (autoTripFilter != filters.tripFilter) {

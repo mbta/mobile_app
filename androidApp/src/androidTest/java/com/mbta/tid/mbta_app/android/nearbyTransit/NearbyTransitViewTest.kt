@@ -160,9 +160,9 @@ class NearbyTransitViewTest : KoinTest {
                 nearby =
                     MockNearbyRepository(
                         stopIds = listOf(sampleStop.id, greenLineStop.id),
-                        response = NearbyResponse(builder)
+                        response = NearbyResponse(builder),
                     )
-            }
+            },
         )
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -181,10 +181,7 @@ class NearbyTransitViewTest : KoinTest {
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = {},
                     errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        )
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                 )
             }
         }
@@ -216,10 +213,7 @@ class NearbyTransitViewTest : KoinTest {
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = { Text("This would be the no nearby stops view") },
                     errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        )
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                 )
             }
         }

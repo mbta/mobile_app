@@ -27,9 +27,9 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
-                false
+                false,
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
@@ -48,9 +48,9 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
-                true
+                true,
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
@@ -70,9 +70,9 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
-                true
+                true,
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
@@ -102,12 +102,12 @@ class StopHeaderTest {
                             listOf(alert),
                             true,
                             true,
-                            emptyList()
+                            emptyList(),
                         )
                     ),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
-                true
+                true,
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()

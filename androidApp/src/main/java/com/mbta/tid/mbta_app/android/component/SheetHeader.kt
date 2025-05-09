@@ -23,13 +23,13 @@ fun SheetHeader(title: String? = null, onClose: (() -> Unit)? = null) {
     Row(
         Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.Top,
     ) {
         if (title != null) {
             Text(
                 title,
                 modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                style = Typography.title3Semibold
+                style = Typography.title3Semibold,
             )
         } else {
             Spacer(Modifier.weight(1f))

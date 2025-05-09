@@ -45,7 +45,7 @@ object ProjectUtils {
                 "CR-Newburyport",
                 "CR-Providence",
                 "Orange",
-                "Red"
+                "Red",
             )
         val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Red")
         val stops =
@@ -57,7 +57,7 @@ object ProjectUtils {
                 "place-astao",
                 "place-aqucl",
                 "place-rugg",
-                "place-sull"
+                "place-sull",
             )
     }
 
@@ -121,12 +121,12 @@ object ProjectUtils {
                                 addStatement(
                                     "directionNames = listOf(%S, %S),",
                                     route.directionNames[0],
-                                    route.directionNames[1]
+                                    route.directionNames[1],
                                 )
                                 addStatement(
                                     "directionDestinations = listOf(%S, %S),",
                                     route.directionDestinations[0],
-                                    route.directionDestinations[1]
+                                    route.directionDestinations[1],
                                 )
                                 addStatement("longName = %S,", route.longName)
                                 addStatement("shortName = %S,", route.shortName)
@@ -147,11 +147,11 @@ object ProjectUtils {
                                 addStatement("sortOrder = %L,", pattern.sortOrder)
                                 addStatement(
                                     "typicality = RoutePattern.Typicality.%L,",
-                                    pattern.typicality
+                                    pattern.typicality,
                                 )
                                 addStatement(
                                     "representativeTripId = %S,",
-                                    pattern.representativeTripId
+                                    pattern.representativeTripId,
                                 )
                                 addStatement("routeId = %S", pattern.routeId)
                                 addStatement("))")
@@ -173,12 +173,12 @@ object ProjectUtils {
                                 addStatement("childStopIds = %L,", stop.childStopIds.encode())
                                 addStatement(
                                     "connectingStopIds = %L,",
-                                    stop.connectingStopIds.encode()
+                                    stop.connectingStopIds.encode(),
                                 )
                                 addStatement("parentStationId = %S,", stop.parentStationId)
                                 addStatement(
                                     "wheelchairBoarding = WheelchairBoardingStatus.%L,",
-                                    stop.wheelchairBoarding
+                                    stop.wheelchairBoarding,
                                 )
                                 addStatement("))")
                             }
@@ -225,7 +225,7 @@ object ProjectUtils {
                     "Trip",
                     "RouteType",
                     "LocationType",
-                    "WheelchairBoardingStatus"
+                    "WheelchairBoardingStatus",
                 )
                 .addProperty(testData)
                 .build()
