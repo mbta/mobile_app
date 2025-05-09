@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -42,5 +44,28 @@ class StopTest {
 
         assertFalse(Stop.equalOrFamily(stop1.id, stop2.id, objects.stops))
         assertFalse(Stop.equalOrFamily(stop2.id, stop1.id, objects.stops))
+    }
+
+    @Test
+    fun `resolvedParentToAllStops builds map for station and and standalone stops`() {
+        val objects = ObjectCollectionBuilder()
+
+        val station =
+            objects.stop {
+                id = "station"
+                locationType = LocationType.STATION
+                childStopIds = listOf("child1")
+            }
+        val child1 =
+            objects.stop {
+                id = "child1"
+                parentStationId = "station"
+            }
+        val standalone = objects.stop()
+
+        assertEquals(
+            mapOf(station to setOf(child1.id, station.id), standalone to setOf(standalone.id)),
+            Stop.resolvedParentToAllStops(listOf(child1.id, standalone.id), GlobalResponse(objects)),
+        )
     }
 }

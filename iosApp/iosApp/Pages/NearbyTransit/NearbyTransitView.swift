@@ -66,7 +66,6 @@ struct NearbyTransitView: View {
             getNearby(location: newLocation, globalData: globalData)
         }
         .onChange(of: nearbyVM.nearbyState.stopIds) { [oldValue = nearbyVM.nearbyState.stopIds] newNearbyStops in
-
             if Set(oldValue ?? []) != Set(newNearbyStops ?? []) {
                 getSchedule()
                 joinPredictions(newNearbyStops)

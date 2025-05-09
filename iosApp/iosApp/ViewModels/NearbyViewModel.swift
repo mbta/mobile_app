@@ -195,7 +195,11 @@ class NearbyViewModel: ObservableObject {
                 analytics.refetchedNearbyTransit()
             }
             nearbyState.loading = true
-            let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
+
+            let stopIds = nearbyRepository.getStopIdsNearby(
+                global: global,
+                location: location.positionKt
+            )
             nearbyState.stopIds = stopIds
             nearbyState.loadedLocation = location
             nearbyState.loading = false
