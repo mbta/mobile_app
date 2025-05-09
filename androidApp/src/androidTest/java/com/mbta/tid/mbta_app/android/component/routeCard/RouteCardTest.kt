@@ -129,7 +129,7 @@ class RouteCardTest {
                 now,
                 pinned = false,
                 onPin = {},
-                showStopHeader = true,
+                showStopHeader = false,
                 showStationAccessibility = false,
             ) { _, _ ->
             }
