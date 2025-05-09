@@ -240,6 +240,7 @@
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="routes">Tuyến đường</string>
     <string name="schedule_change">Thay đổi lịch trình</string>
     <string name="schedule_change_sentence_case">Thay đổi lịch trình</string>
     <string name="scheduled_to_depart">Đã lên lịch khởi hành</string>
