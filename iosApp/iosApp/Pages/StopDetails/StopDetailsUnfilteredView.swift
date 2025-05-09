@@ -142,6 +142,7 @@ struct StopDetailsUnfilteredView: View {
                                         onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } },
                                         pinned: stopDetailsVM.pinnedRoutes.contains(routeCardData.lineOrRoute.id),
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
+                                        showStopHeader: false,
                                         showStationAccessibility: stopDetailsVM.showStationAccessibility
                                     )
                                     .padding(.horizontal, 16)
@@ -169,6 +170,7 @@ struct StopDetailsUnfilteredView: View {
                     onPin: { _ in },
                     pinned: false,
                     pushNavEntry: { _ in },
+                    showStopHeader: false,
                     showStationAccessibility: false
                 )
                 .padding(.horizontal, 16)

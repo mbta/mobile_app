@@ -131,7 +131,6 @@ open class RouteCardPreviewData {
         RouteCardData(
             lineOrRoute,
             listOf(cardStop(lineOrRoute, stop, patterns, trips, alertHere, alertDownstream)),
-            context,
             now,
         )
 
@@ -720,7 +719,6 @@ open class RouteCardPreviewData {
                     emptyMap(),
                 ),
             ),
-            context,
             now,
         )
     }
@@ -774,7 +772,6 @@ open class RouteCardPreviewData {
                     emptyMap(),
                 ),
             ),
-            context,
             now,
         )
     }

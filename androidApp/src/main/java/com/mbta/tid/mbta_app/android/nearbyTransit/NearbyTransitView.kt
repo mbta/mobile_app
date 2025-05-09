@@ -155,6 +155,7 @@ fun NearbyTransitView(
                         now,
                         pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
                         ::togglePinnedRoute,
+                        showStopHeader = true,
                         showStationAccessibility,
                         onOpenStopDetails,
                     )

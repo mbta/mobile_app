@@ -82,13 +82,7 @@ class PatternSortingTest {
     private fun routeCard(
         lineOrRoute: RouteCardData.LineOrRoute,
         vararg stops: RouteCardData.RouteStopData,
-    ) =
-        RouteCardData(
-            lineOrRoute,
-            stops.asList(),
-            RouteCardData.Context.NearbyTransit,
-            Clock.System.now(),
-        )
+    ) = RouteCardData(lineOrRoute, stops.asList(), Clock.System.now())
 
     @Test
     fun compareLeavesAtStop() {

@@ -24,7 +24,6 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .route(route),
             stopData: [],
-            context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
         )
 
@@ -35,6 +34,7 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: true,
             showStationAccessibility: false
         )
 
@@ -57,7 +57,6 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .line(line, [route]),
             stopData: [],
-            context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
         )
 
@@ -68,6 +67,7 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: true,
             showStationAccessibility: false
         )
 
@@ -86,7 +86,6 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .route(route),
             stopData: [],
-            context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
         )
 
@@ -103,6 +102,7 @@ final class RouteCardTests: XCTestCase {
             onPin: onPin,
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: true,
             showStationAccessibility: false
         )
 
@@ -133,7 +133,6 @@ final class RouteCardTests: XCTestCase {
                     directions: [],
                     data: []
                 )],
-                context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()
             ),
             global: .init(objects: objects),
@@ -141,6 +140,7 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: true,
             showStationAccessibility: false
         )
         XCTAssertNotNil(try nearbySut.inspect().find(text: stop.name))
@@ -154,7 +154,6 @@ final class RouteCardTests: XCTestCase {
                     directions: [],
                     data: []
                 )],
-                context: .stopDetailsUnfiltered,
                 at: Date.now.toKotlinInstant()
             ),
             global: .init(objects: objects),
@@ -162,6 +161,7 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: false,
             showStationAccessibility: false
         )
         XCTAssertThrowsError(try stopDetailsSut.inspect().find(text: stop.name))
@@ -194,7 +194,6 @@ final class RouteCardTests: XCTestCase {
                         context: .nearbyTransit
                     )]
                 )],
-                context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()
             ),
             global: .init(objects: objects),
@@ -202,6 +201,7 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: true,
             showStationAccessibility: false
         )
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
@@ -217,6 +217,7 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
+            showStopHeader: true,
             showStationAccessibility: false
         )
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))

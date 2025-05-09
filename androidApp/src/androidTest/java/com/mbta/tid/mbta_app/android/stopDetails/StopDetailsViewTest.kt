@@ -109,7 +109,6 @@ class StopDetailsViewTest {
     fun testStopDetailsViewDisplaysUnfilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        val context = RouteCardData.Context.StopDetailsUnfiltered
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
@@ -130,13 +129,12 @@ class StopDetailsViewTest {
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
                                     alertsDownstream = emptyList(),
-                                    context = context,
+                                    context = RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
                             GlobalResponse(builder),
                         )
                     ),
-                    context,
                     now,
                 )
             )
@@ -179,7 +177,6 @@ class StopDetailsViewTest {
     fun testStopDetailsViewDisplaysFilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        val context = RouteCardData.Context.StopDetailsUnfiltered
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
@@ -200,13 +197,12 @@ class StopDetailsViewTest {
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
                                     alertsDownstream = emptyList(),
-                                    context = context,
+                                    context = RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
                             GlobalResponse(builder),
                         )
                     ),
-                    context,
                     now,
                 )
             )
@@ -255,7 +251,6 @@ class StopDetailsViewTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        val context = RouteCardData.Context.StopDetailsUnfiltered
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
@@ -276,13 +271,12 @@ class StopDetailsViewTest {
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
                                     alertsDownstream = emptyList(),
-                                    context,
+                                    RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
                             GlobalResponse(builder),
                         )
                     ),
-                    context,
                     now,
                 )
             )
@@ -323,7 +317,6 @@ class StopDetailsViewTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        val context = RouteCardData.Context.StopDetailsUnfiltered
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
@@ -344,13 +337,12 @@ class StopDetailsViewTest {
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
                                     alertsDownstream = emptyList(),
-                                    context,
+                                    RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
                             GlobalResponse(builder),
                         )
                     ),
-                    context,
                     now,
                 )
             )

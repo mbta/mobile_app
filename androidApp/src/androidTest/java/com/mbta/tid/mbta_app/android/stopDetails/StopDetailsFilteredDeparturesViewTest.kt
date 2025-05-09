@@ -294,7 +294,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val viewModel = StopDetailsViewModel.mocked()
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
-        val context = RouteCardData.Context.StopDetailsFiltered
         val leaf =
             RouteCardData.Leaf(
                 lineOrRoute,
@@ -307,10 +306,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 allDataLoaded = true,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
-                context,
+                RouteCardData.Context.StopDetailsFiltered,
             )
         val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
-        val routeCardData = RouteCardData(lineOrRoute, listOf(routeStopData), context, now)
+        val routeCardData = RouteCardData(lineOrRoute, listOf(routeStopData), now)
 
         viewModel.setRouteCardData(listOf(routeCardData))
 

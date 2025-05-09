@@ -355,7 +355,6 @@ final class HomeMapViewTests: XCTestCase {
 
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
 
-        let context = RouteCardData.Context.stopDetailsFiltered
         let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
             lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
             stopData: [
@@ -371,11 +370,10 @@ final class HomeMapViewTests: XCTestCase {
                         allDataLoaded: true,
                         hasSchedulesToday: true,
                         alertsDownstream: [],
-                        context: context
+                        context: .stopDetailsFiltered
                     ),
                 ], globalData: .init(objects: objects)),
             ],
-            context: context,
             at: Date.now.toKotlinInstant()
         )])
 
@@ -457,7 +455,6 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.directionId = 0
         }
 
-        let context = RouteCardData.Context.stopDetailsFiltered
         let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
             lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
             stopData: [
@@ -473,11 +470,10 @@ final class HomeMapViewTests: XCTestCase {
                         allDataLoaded: true,
                         hasSchedulesToday: true,
                         alertsDownstream: [],
-                        context: context
+                        context: .stopDetailsFiltered
                     ),
                 ], globalData: .init(objects: objectCollection)),
             ],
-            context: context,
             at: Date.now.toKotlinInstant()
         )])
 

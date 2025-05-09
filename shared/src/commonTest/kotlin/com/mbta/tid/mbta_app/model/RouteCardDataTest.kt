@@ -70,7 +70,6 @@ class RouteCardDataTest {
                                         global,
                                     )
                             ),
-                            context,
                             now,
                         )
                 ),
@@ -164,7 +163,6 @@ class RouteCardDataTest {
                                         global,
                                     ),
                             ),
-                            context,
                             now,
                         )
                 ),
@@ -244,7 +242,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                         ),
-                        context,
                         now,
                     )
             ),
@@ -311,7 +308,6 @@ class RouteCardDataTest {
                                         global,
                                     )
                             ),
-                            context,
                             now,
                         ),
                     route2.id to
@@ -337,7 +333,6 @@ class RouteCardDataTest {
                                         global,
                                     )
                             ),
-                            context,
                             now,
                         ),
                 ),
@@ -447,7 +442,6 @@ class RouteCardDataTest {
                                     global,
                                 ),
                         ),
-                        context,
                         now,
                     )
             ),
@@ -519,7 +513,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                         ),
-                        context,
                         now,
                     )
             ),
@@ -602,7 +595,6 @@ class RouteCardDataTest {
                                         ),
                                     )
                             ),
-                            context,
                             now,
                         ),
                     shuttleRoute.id to
@@ -628,7 +620,6 @@ class RouteCardDataTest {
                                         global,
                                     )
                             ),
-                            context,
                             now,
                         ),
                 ),
@@ -753,7 +744,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                         ),
-                        context,
                         now,
                     )
             ),
@@ -958,7 +948,6 @@ class RouteCardDataTest {
                                         ),
                                     )
                             ),
-                            context,
                             now,
                         )
                 ),
@@ -1107,7 +1096,6 @@ class RouteCardDataTest {
                                         global,
                                     ),
                             ),
-                            context,
                             time,
                         )
                 ),
@@ -1246,7 +1234,6 @@ class RouteCardDataTest {
                                     global,
                                 ),
                         ),
-                        context,
                         now,
                     )
             ),
@@ -1328,7 +1315,6 @@ class RouteCardDataTest {
                                 global,
                             )
                         ),
-                    context,
                     time,
                 ),
                 RouteCardData(
@@ -1356,7 +1342,6 @@ class RouteCardDataTest {
                                 global,
                             )
                         ),
-                    context,
                     time,
                 ),
             ),
@@ -1440,7 +1425,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     ),
                     RouteCardData(
@@ -1468,7 +1452,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     ),
                 ),
@@ -2236,7 +2219,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -2371,7 +2353,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -2477,7 +2458,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -2620,7 +2600,6 @@ class RouteCardDataTest {
                                     global,
                                 ),
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -2739,7 +2718,6 @@ class RouteCardDataTest {
                                     global,
                                 ),
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -2919,7 +2897,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     ),
                     RouteCardData(
@@ -2969,7 +2946,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     ),
                 ),
@@ -3050,7 +3026,6 @@ class RouteCardDataTest {
                                 global,
                             )
                         ),
-                    context,
                     time,
                 )
             ),
@@ -3167,7 +3142,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -3261,7 +3235,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -3332,7 +3305,6 @@ class RouteCardDataTest {
                                 global,
                             )
                         ),
-                    context,
                     time,
                 )
             ),
@@ -3420,7 +3392,6 @@ class RouteCardDataTest {
                                 global,
                             )
                         ),
-                    context,
                     time,
                 )
             ),
@@ -3512,7 +3483,6 @@ class RouteCardDataTest {
                                 globalData = GlobalResponse(objects),
                             )
                         ),
-                        context,
                         time,
                     )
                 ),
@@ -3618,7 +3588,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     ),
                     RouteCardData(
@@ -3656,7 +3625,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     ),
                 ),
@@ -3952,7 +3920,6 @@ class RouteCardDataTest {
                                 ),
                             )
                         ),
-                    context,
                     time,
                 )
             )
@@ -4100,7 +4067,6 @@ class RouteCardDataTest {
                                     ),
                                 )
                             ),
-                        context,
                         time,
                     )
                 )
@@ -4202,7 +4168,6 @@ class RouteCardDataTest {
                                     ),
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -4498,7 +4463,6 @@ class RouteCardDataTest {
                                 global,
                             )
                         ),
-                    context,
                     time,
                 )
             ),
@@ -4624,7 +4588,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -4742,7 +4705,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -4919,7 +4881,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -5034,7 +4995,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),
@@ -5079,7 +5039,6 @@ class RouteCardDataTest {
                                     global,
                                 )
                             ),
-                        context,
                         time,
                     )
                 ),

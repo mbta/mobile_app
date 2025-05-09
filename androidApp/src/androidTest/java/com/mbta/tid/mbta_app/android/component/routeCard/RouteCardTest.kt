@@ -40,14 +40,14 @@ class RouteCardTest {
                             emptyList(),
                         )
                     ),
-                    RouteCardData.Context.NearbyTransit,
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
-                false,
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -81,14 +81,14 @@ class RouteCardTest {
                             emptyList(),
                         )
                     ),
-                    RouteCardData.Context.NearbyTransit,
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = { onPinCalled = true },
-                false,
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -123,14 +123,14 @@ class RouteCardTest {
                             emptyList(),
                         )
                     ),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
-                false,
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }

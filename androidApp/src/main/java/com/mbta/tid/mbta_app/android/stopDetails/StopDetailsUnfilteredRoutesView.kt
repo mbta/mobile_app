@@ -125,6 +125,7 @@ fun StopDetailsUnfilteredRoutesView(
                         now,
                         pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
                         onPin = pinRoute,
+                        showStopHeader = false,
                         showStationAccessibility,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
@@ -221,7 +222,6 @@ private fun StopDetailsRoutesViewPreview() {
                         globalData,
                     )
                 ),
-                context,
                 now,
             ),
             RouteCardData(
@@ -264,7 +264,6 @@ private fun StopDetailsRoutesViewPreview() {
                         globalData,
                     )
                 ),
-                context,
                 now,
             ),
         )

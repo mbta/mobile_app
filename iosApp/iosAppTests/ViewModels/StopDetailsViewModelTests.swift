@@ -198,7 +198,7 @@ final class StopDetailsViewModelTests: XCTestCase {
                         context: context
                     ),
                 ]),
-            ], context: context, at: now.toKotlinInstant()
+            ], at: now.toKotlinInstant()
         )], routeCardData)
     }
 

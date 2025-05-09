@@ -36,7 +36,6 @@ private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 data class RouteCardData(
     val lineOrRoute: LineOrRoute,
     val stopData: List<RouteStopData>,
-    val context: Context,
     val at: Instant,
 ) {
     val id = lineOrRoute.id
@@ -719,7 +718,6 @@ data class RouteCardData(
                                             )
                                     }
                                     .toMap(),
-                                context,
                                 now,
                             )
                     }
@@ -982,7 +980,6 @@ data class RouteCardData(
                     routeCardBuilder.value.stopData.values
                         .map { it.build() }
                         .sort(sortByDistanceFrom),
-                    context,
                     now,
                 )
             }
@@ -992,7 +989,6 @@ data class RouteCardData(
     data class Builder(
         val lineOrRoute: LineOrRoute,
         var stopData: ByStopIdBuilder,
-        val context: Context,
         val now: Instant,
     ) {
 
@@ -1000,7 +996,6 @@ data class RouteCardData(
             return RouteCardData(
                 this.lineOrRoute,
                 stopData.values.map { it.build() }.sort(sortByDistanceFrom),
-                context,
                 now,
             )
         }
