@@ -65,7 +65,7 @@ class StopTest {
 
         assertEquals(
             mapOf(station to setOf(child1.id, station.id), standalone to setOf(standalone.id)),
-            Stop.resolvedParentToAllStops(listOf(child1.id, standalone.id), GlobalResponse(objects))
+            Stop.resolvedParentToAllStops(listOf(child1.id, standalone.id), GlobalResponse(objects)),
         )
     }
 }

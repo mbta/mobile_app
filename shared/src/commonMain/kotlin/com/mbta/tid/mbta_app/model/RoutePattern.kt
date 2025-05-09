@@ -35,7 +35,7 @@ data class RoutePattern(
 
     data class PatternsForStop(
         val allPatterns: List<RoutePattern>,
-        val patternsNotSeenAtEarlierStops: Set<String>
+        val patternsNotSeenAtEarlierStops: Set<String>,
     )
 
     companion object {
@@ -68,7 +68,7 @@ data class RoutePattern(
                         routeStops.getOrPut(parentStop) {
                             PatternsForStop(
                                 allPatterns = routePatterns,
-                                patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops
+                                patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops,
                             )
                         }
                         usedPatternIds.addAll(routePatterns.map { it.id })
@@ -81,7 +81,7 @@ data class RoutePattern(
 
         private fun patternsByRouteOrLine(
             stopIds: Set<String>,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): Map<LineOrRoute, List<RoutePattern>> {
 
             val allPatternsAtStopWithRoute: List<Pair<Route, RoutePattern>> =
@@ -108,11 +108,11 @@ data class RoutePattern(
                                 routes =
                                     globalData.routesByLineId
                                         .getOrElse(line.id) { emptyList() }
-                                        .toSet()
+                                        .toSet(),
                             )
                         } else LineOrRoute.Route(route)
                     },
-                    { it.second }
+                    { it.second },
                 )
 
             return patternsByRouteOrLine

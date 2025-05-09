@@ -72,7 +72,7 @@ data class Stop(
          */
         fun resolvedParentToAllStops(
             stopIds: List<String>,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): Map<Stop, Set<String>> {
             return stopIds
                 .mapNotNull { stopId ->

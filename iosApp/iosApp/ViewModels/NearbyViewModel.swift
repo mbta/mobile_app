@@ -198,8 +198,7 @@ class NearbyViewModel: ObservableObject {
 
             let stopIds = nearbyRepository.getStopIdsNearby(
                 global: global,
-                location: location.positionKt,
-                excludeRedundantService: true
+                location: location.positionKt
             )
             nearbyState.stopIds = stopIds
             nearbyState.loadedLocation = location

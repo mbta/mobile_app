@@ -11,24 +11,14 @@ import org.koin.core.component.KoinComponent
 interface INearbyRepository {
     /**
      * Gets the list of stops within 0.5 miles (or 1 mile for CR). Includes only stops with
-     * [LocationType.STOP].
-     *
-     * @param excludeRedundantService when true, this will omit stops that serves route patterns
-     *   that are all served by closer stops.
+     * [LocationType.STOP]. Omits stops that serves route pattern that are all served by closer
+     * stops.
      */
-    fun getStopIdsNearby(
-        global: GlobalResponse,
-        location: Position,
-        excludeRedundantService: Boolean = false
-    ): List<String>
+    fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String>
 }
 
 class NearbyRepository : KoinComponent, INearbyRepository {
-    override fun getStopIdsNearby(
-        global: GlobalResponse,
-        location: Position,
-        excludeRedundantService: Boolean
-    ): List<String> {
+    override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> {
         val searchPosition = Position(latitude = location.latitude, longitude = location.longitude)
 
         var radiusMiles = 0.5
@@ -67,12 +57,9 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                 }
                 .toList()
 
-        return if (excludeRedundantService) {
-            return filterStopsWithRedundantPatterns(allNearbyStops, global)
-        } else {
-            allNearbyStops
-        }
+        return filterStopsWithRedundantPatterns(allNearbyStops, global)
     }
+
     /**
      * Filter the given list of stopIds to the stops that don't have service redundant to earlier
      * stops in the list; each stop must serve at least one route pattern that is not seen by any
@@ -80,15 +67,12 @@ class NearbyRepository : KoinComponent, INearbyRepository {
      */
     private fun filterStopsWithRedundantPatterns(
         stopIds: List<String>,
-        globalData: GlobalResponse
+        globalData: GlobalResponse,
     ): List<String> {
         val originalStopIdSet = stopIds.toSet()
         val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
 
-        return RoutePattern.patternsGroupedByLineOrRouteAndStop(
-                parentToAllStops,
-                globalData,
-            )
+        return RoutePattern.patternsGroupedByLineOrRouteAndStop(parentToAllStops, globalData)
             .flatMap {
                 it.value.keys.flatMap { stop ->
                     stop.childStopIds.toSet().plus(stop.id).intersect(originalStopIdSet)
@@ -102,14 +86,11 @@ class MockNearbyRepository(
     val response: NearbyResponse,
     val stopIds: List<String> = response.stopIds,
 ) : INearbyRepository {
-    override fun getStopIdsNearby(global: GlobalResponse, location: Position, excludeRedundantService: Boolean): List<String> =
+    override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         stopIds
 }
 
 class IdleNearbyRepository : INearbyRepository {
-    override fun getStopIdsNearby(
-        global: GlobalResponse,
-        location: Position,
-        excludeRedundantService: Boolean
-    ): List<String> = emptyList()
+    override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
+        emptyList()
 }

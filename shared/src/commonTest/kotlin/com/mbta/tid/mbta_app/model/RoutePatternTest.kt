@@ -27,8 +27,8 @@ class RoutePatternTest {
                         stop1.id to listOf(rp1.id),
                         // stop2 won't be returned b/c redundant service to stop1
                         stop2.id to listOf(rp1.id),
-                        stop3.id to listOf(rp1.id, rp2.id)
-                    )
+                        stop3.id to listOf(rp1.id, rp2.id),
+                    ),
             )
 
         val expected: Map<LineOrRoute, Map<Stop, PatternsForStop>> =
@@ -38,13 +38,13 @@ class RoutePatternTest {
                         stop1 to
                             PatternsForStop(
                                 allPatterns = listOf(rp1),
-                                patternsNotSeenAtEarlierStops = setOf(rp1.id)
+                                patternsNotSeenAtEarlierStops = setOf(rp1.id),
                             ),
                         stop3 to
                             PatternsForStop(
                                 allPatterns = listOf(rp1, rp2),
-                                patternsNotSeenAtEarlierStops = setOf(rp2.id)
-                            )
+                                patternsNotSeenAtEarlierStops = setOf(rp2.id),
+                            ),
                     )
             )
 
@@ -52,8 +52,8 @@ class RoutePatternTest {
             expected,
             RoutePattern.patternsGroupedByLineOrRouteAndStop(
                 Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
-                global
-            )
+                global,
+            ),
         )
     }
 }
