@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class RoutePatternTest {
 
     @Test
-    fun `test patternsGroupedByLineORRouteAndStop includes only closest stops with unique service`() {
+    fun `test patternsGroupedByLineOrRouteAndStop includes only closest stops with unique service`() {
         val objects = ObjectCollectionBuilder()
         val stop1 = objects.stop {}
         val stop2 = objects.stop {}
