@@ -13,6 +13,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.process.internal.ExecException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import java.io.Serializable
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -124,20 +125,25 @@ spotless {
     kotlin {
         custom(
             "ban getValue outside tests",
-            FormatterFunc.NeedsFile { text, file ->
-                if (file.path.contains("commonTest") || file.name == "ObjectCollectionBuilder.kt")
-                    return@NeedsFile text
-                val lines = text.lines()
-                for (line in lines.withIndex()) {
-                    val column = line.value.indexOf("getValue(")
-                    if (column != -1) {
-                        throw IllegalStateException(
-                            "${file.path}:${line.index + 1}:${column + 1} calls getValue"
-                        )
+            object : Serializable, FormatterFunc.NeedsFile {
+                override fun applyWithFile(text: String, file: File): String {
+                    if (
+                        file.path.contains("commonTest") ||
+                        file.name == "ObjectCollectionBuilder.kt"
+                    )
+                        return text
+                    val lines = text.lines()
+                    for (line in lines.withIndex()) {
+                        val column = line.value.indexOf("getValue(")
+                        if (column != -1) {
+                            throw IllegalStateException(
+                                "${file.path}:${line.index + 1}:${column + 1} calls getValue"
+                            )
+                        }
                     }
+                    return text
                 }
-                text
-            }
+            },
         )
     }
 }

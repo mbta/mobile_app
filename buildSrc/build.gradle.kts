@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
     kotlin("plugin.serialization") version "1.9.22"
-    id("com.diffplug.spotless").version("6.21.0")
+    id("com.diffplug.spotless").version("7.0.3")
 }
 
 dependencies {
