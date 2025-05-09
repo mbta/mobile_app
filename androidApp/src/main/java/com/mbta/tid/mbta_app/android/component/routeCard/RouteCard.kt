@@ -27,6 +27,7 @@ fun RouteCard(
     now: Instant,
     pinned: Boolean,
     onPin: (String) -> Unit,
+    showStopHeader: Boolean,
     showStationAccessibility: Boolean = false,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {
@@ -36,7 +37,7 @@ fun RouteCard(
         }
 
         data.stopData.forEach {
-            if (data.context == RouteCardData.Context.NearbyTransit) {
+            if (showStopHeader) {
                 StopHeader(it, showStationAccessibility)
             }
 
@@ -58,7 +59,16 @@ class Previews() {
     fun CardForPreview(card: RouteCardData) {
         KoinContext(koin.koin) {
             Box(Modifier.width(358.dp)) {
-                RouteCard(card, data.global, data.now, false, {}, true, { _, _ -> })
+                RouteCard(
+                    card,
+                    data.global,
+                    data.now,
+                    pinned = false,
+                    onPin = {},
+                    showStopHeader = true,
+                    showStationAccessibility = true,
+                    onOpenStopDetails = { _, _ -> },
+                )
             }
         }
     }

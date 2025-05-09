@@ -360,6 +360,8 @@ final class HomeMapViewTests: XCTestCase {
             stopData: [
                 .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
                     .init(
+                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        stop: stop,
                         directionId: 0,
                         routePatterns: [MapTestDataHelper.shared.patternOrange30],
                         stopIds: [stop.id],
@@ -367,11 +369,11 @@ final class HomeMapViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
-                        alertsDownstream: []
+                        alertsDownstream: [],
+                        context: .stopDetailsFiltered
                     ),
-                ], context: .stopDetailsFiltered, globalData: .init(objects: objects)),
+                ], globalData: .init(objects: objects)),
             ],
-            context: .stopDetailsFiltered,
             at: Date.now.toKotlinInstant()
         )])
 
@@ -458,6 +460,8 @@ final class HomeMapViewTests: XCTestCase {
             stopData: [
                 .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
                     .init(
+                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        stop: stop,
                         directionId: 0,
                         routePatterns: [MapTestDataHelper.shared.patternOrange30],
                         stopIds: [stop.id],
@@ -465,11 +469,11 @@ final class HomeMapViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
-                        alertsDownstream: []
+                        alertsDownstream: [],
+                        context: .stopDetailsFiltered
                     ),
-                ], context: .stopDetailsFiltered, globalData: .init(objects: objectCollection)),
+                ], globalData: .init(objects: objectCollection)),
             ],
-            context: .stopDetailsFiltered,
             at: Date.now.toKotlinInstant()
         )])
 

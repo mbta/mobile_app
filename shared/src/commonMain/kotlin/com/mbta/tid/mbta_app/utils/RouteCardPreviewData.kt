@@ -89,6 +89,8 @@ open class RouteCardPreviewData {
             stop,
             listOfNotNull(
                 RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         patterns.filter { it.directionId == 0 },
                         setOf(stop.id),
@@ -97,9 +99,12 @@ open class RouteCardPreviewData {
                         true,
                         true,
                         listOfNotNull(alertDownstream[0]),
+                        context,
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
                 RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         patterns.filter { it.directionId == 1 },
                         setOf(stop.id),
@@ -108,10 +113,10 @@ open class RouteCardPreviewData {
                         true,
                         true,
                         listOfNotNull(alertDownstream[1]),
+                        context,
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
             ),
-            context,
             global,
         )
 
@@ -126,7 +131,6 @@ open class RouteCardPreviewData {
         RouteCardData(
             lineOrRoute,
             listOf(cardStop(lineOrRoute, stop, patterns, trips, alertHere, alertDownstream)),
-            context,
             now,
         )
 
@@ -715,7 +719,6 @@ open class RouteCardPreviewData {
                     emptyMap(),
                 ),
             ),
-            context,
             now,
         )
     }
@@ -769,7 +772,6 @@ open class RouteCardPreviewData {
                     emptyMap(),
                 ),
             ),
-            context,
             now,
         )
     }

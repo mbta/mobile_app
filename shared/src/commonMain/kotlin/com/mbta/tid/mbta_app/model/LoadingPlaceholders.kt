@@ -49,8 +49,12 @@ object LoadingPlaceholders {
             return UpcomingTrip(trip, prediction = prediction)
         }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+
         val leaf1 =
             RouteCardData.Leaf(
+                lineOrRoute = lineOrRoute,
+                stop = stop,
                 directionId = 0,
                 routePatterns = listOf(pattern1),
                 stopIds = setOf(stop.id),
@@ -59,9 +63,12 @@ object LoadingPlaceholders {
                 allDataLoaded = false,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
+                context = context,
             )
         val leaf2 =
             RouteCardData.Leaf(
+                lineOrRoute = lineOrRoute,
+                stop = stop,
                 directionId = 1,
                 routePatterns = listOf(pattern2),
                 stopIds = setOf(stop.id),
@@ -70,19 +77,18 @@ object LoadingPlaceholders {
                 allDataLoaded = false,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
+                context = context,
             )
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val stopData =
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
                 listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
                 listOf(leaf1, leaf2),
-                context,
             )
 
-        val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), context, now)
+        val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), now)
 
         return routeData
     }

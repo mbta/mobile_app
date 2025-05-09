@@ -27,7 +27,6 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 false,
             )
@@ -48,7 +47,6 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 true,
             )
@@ -70,7 +68,6 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 true,
             )
@@ -87,14 +84,17 @@ class StopHeaderTest {
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
         val alert = objects.alert { effect = Alert.Effect.ElevatorClosure }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         composeTestRule.setContent {
             StopHeader(
                 RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    lineOrRoute,
                     stop,
                     emptyList(),
                     listOf(
                         RouteCardData.Leaf(
+                            lineOrRoute,
+                            stop,
                             0,
                             emptyList(),
                             emptySet(),
@@ -103,9 +103,9 @@ class StopHeaderTest {
                             true,
                             true,
                             emptyList(),
+                            RouteCardData.Context.StopDetailsUnfiltered,
                         )
                     ),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                 ),
                 true,
             )

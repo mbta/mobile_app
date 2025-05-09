@@ -16,6 +16,7 @@ struct RouteCard: View {
     let onPin: (String) -> Void
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let showStopHeader: Bool
     let showStationAccessibility: Bool
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
@@ -31,7 +32,7 @@ struct RouteCard: View {
             )
             .accessibilityElement(children: .contain)
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
-                if cardData.context == .nearbyTransit {
+                if showStopHeader {
                     RouteCardStopHeader(
                         data: stopData,
                         showStationAccessibility: showStationAccessibility
@@ -63,6 +64,7 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
         onPin: { _ in },
         pinned: false,
         pushNavEntry: { _ in },
+        showStopHeader: true,
         showStationAccessibility: true
     )
 }

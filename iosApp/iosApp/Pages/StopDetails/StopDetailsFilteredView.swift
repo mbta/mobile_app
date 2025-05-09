@@ -21,7 +21,6 @@ struct StopDetailsFilteredView: View {
     var now: Date
 
     var stopData: RouteCardData.RouteStopData?
-    var leaf: RouteCardData.Leaf?
 
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
@@ -62,7 +61,6 @@ struct StopDetailsFilteredView: View {
 
         let routeData = routeCardData?.first { $0.lineOrRoute.id == stopFilter.routeId }
         stopData = routeData?.stopData.first { $0.stop.id == stopId }
-        leaf = stopData?.data.first { $0.directionId == stopFilter.directionId }
     }
 
     var pinned: Bool {
@@ -87,15 +85,14 @@ struct StopDetailsFilteredView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            if let stopData, let leaf {
-                StopDetailsFilteredDepartureDetails(
+            if let stopData {
+                StopDetailsFilteredPickerView(
                     stopId: stopId,
                     stopFilter: stopFilter,
                     tripFilter: tripFilter,
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
                     stopData: stopData,
-                    leaf: leaf,
                     pinned: pinned,
                     now: now,
                     errorBannerVM: errorBannerVM,
@@ -146,14 +143,13 @@ struct StopDetailsFilteredView: View {
         let stopData = routeData.stopData.first!
         let leaf = stopData.data.first!
 
-        StopDetailsFilteredDepartureDetails(
+        StopDetailsFilteredPickerView(
             stopId: stopId,
             stopFilter: stopFilter,
             tripFilter: tripFilter,
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
             stopData: stopData,
-            leaf: leaf,
             pinned: pinned,
             now: now,
             errorBannerVM: errorBannerVM,

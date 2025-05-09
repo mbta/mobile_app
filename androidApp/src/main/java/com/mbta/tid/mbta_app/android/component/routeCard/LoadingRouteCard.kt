@@ -11,6 +11,15 @@ import kotlinx.datetime.Clock
 fun LoadingRouteCard() {
     val placeholderRouteData = LoadingPlaceholders.nearbyRoute()
     Column(modifier = Modifier.loadingShimmer()) {
-        RouteCard(placeholderRouteData, null, Clock.System.now(), false, {}, false, { _, _ -> })
+        RouteCard(
+            placeholderRouteData,
+            null,
+            Clock.System.now(),
+            false,
+            {},
+            showStopHeader = true,
+            showStationAccessibility = false,
+            { _, _ -> },
+        )
     }
 }

@@ -38,17 +38,16 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.NearbyTransit,
                         )
                     ),
-                    RouteCardData.Context.NearbyTransit,
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
-                false,
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -80,17 +79,16 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.NearbyTransit,
                         )
                     ),
-                    RouteCardData.Context.NearbyTransit,
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = { onPinCalled = true },
-                false,
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -123,17 +121,16 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.StopDetailsUnfiltered,
                         )
                     ),
-                    RouteCardData.Context.StopDetailsUnfiltered,
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
-                false,
+                showStopHeader = false,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }

@@ -26,8 +26,7 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 lineOrRoute: .route(route),
                 stop: stop,
                 directions: [],
-                data: [],
-                context: .stopDetailsFiltered
+                data: []
             ),
             showStationAccessibility: false
         )
@@ -48,8 +47,7 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 lineOrRoute: .route(route),
                 stop: stop,
                 directions: [],
-                data: [],
-                context: .stopDetailsFiltered
+                data: []
             ),
             showStationAccessibility: true
         )
@@ -80,10 +78,11 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 stop: stop,
                 directions: [.init(name: "", destination: "", id: 0)],
                 data: [.init(
+                    lineOrRoute: .route(route), stop: stop,
                     directionId: 0, routePatterns: [], stopIds: [], upcomingTrips: [],
-                    alertsHere: [alert], allDataLoaded: true, hasSchedulesToday: true, alertsDownstream: []
-                )],
-                context: .stopDetailsFiltered
+                    alertsHere: [alert], allDataLoaded: true, hasSchedulesToday: true, alertsDownstream: [],
+                    context: .stopDetailsFiltered
+                )]
             ),
             showStationAccessibility: true
         )

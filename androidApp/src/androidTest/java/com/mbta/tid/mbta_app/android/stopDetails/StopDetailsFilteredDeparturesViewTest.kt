@@ -9,7 +9,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
@@ -19,16 +18,13 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
-import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
@@ -136,8 +132,6 @@ class StopDetailsFilteredDeparturesViewTest {
             ),
         )
 
-    private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
-
     private val settings = mutableMapOf<Settings, Boolean>()
     private val settingsRepository =
         object : ISettingsRepository {
@@ -156,8 +150,6 @@ class StopDetailsFilteredDeparturesViewTest {
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(
@@ -174,11 +166,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -186,30 +174,21 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
 
@@ -219,8 +198,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         val routeCardData =
             checkNotNull(
@@ -238,11 +215,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -250,30 +223,21 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = { tripFilter = it },
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists().performClick()
         composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
 
@@ -328,11 +292,12 @@ class StopDetailsFilteredDeparturesViewTest {
             GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
 
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         val leaf =
             RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
                 trip.directionId,
                 listOf(routePattern),
                 setOf(stop.id),
@@ -341,28 +306,12 @@ class StopDetailsFilteredDeparturesViewTest {
                 allDataLoaded = true,
                 hasSchedulesToday = true,
                 alertsDownstream = emptyList(),
-            )
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
-        val routeStopData =
-            RouteCardData.RouteStopData(
-                route,
-                stop,
-                listOf(leaf),
                 RouteCardData.Context.StopDetailsFiltered,
-                globalResponse,
             )
-        val routeCardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(routeStopData),
-                RouteCardData.Context.StopDetailsFiltered,
-                now,
-            )
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeCardData = RouteCardData(lineOrRoute, listOf(routeStopData), now)
 
         viewModel.setRouteCardData(listOf(routeCardData))
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -371,23 +320,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter =
                         StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                     tripFilter = TripDetailsFilter(trip.id, null, null, false),
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -410,8 +351,11 @@ class StopDetailsFilteredDeparturesViewTest {
         val route = objects.route { id = "Green-B" }
         val line = objects.line { id = "Green" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
         val leaf =
             RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
                 0,
                 emptyList(),
                 setOf(stop.id),
@@ -420,22 +364,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 true,
                 true,
                 emptyList(),
-            )
-        val routeStopData =
-            RouteCardData.RouteStopData(
-                line,
-                setOf(route),
-                stop,
-                listOf(leaf),
                 RouteCardData.Context.StopDetailsFiltered,
-                GlobalResponse(objects),
-            )
-        val routeCardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Line(line, setOf(route)),
-                listOf(routeStopData),
-                RouteCardData.Context.StopDetailsFiltered,
-                now,
             )
 
         composeTestRule.setContent {
@@ -444,23 +373,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = StopDetailsFilter(route.id, 0),
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = listOf(),
-                    noPredictionsStatus = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(),
                     global = globalResponse,
                     now = now,
                     viewModel = StopDetailsViewModel.mocked(),
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -495,9 +416,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
-        val isAllServiceDisrupted: Boolean
 
         val routeCardData =
             checkNotNull(
@@ -515,12 +433,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
-        isAllServiceDisrupted = leafFormat.isAllServiceDisrupted
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -528,23 +441,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = isAllServiceDisrupted,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -632,7 +537,6 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat = leaf.format(now, routeB, global, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
@@ -641,23 +545,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = leafFormat.tileData(),
-                    noPredictionsStatus = leafFormat.noPredictionsStatus(),
-                    isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = global,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -691,8 +587,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         val routeCardData =
             checkNotNull(
@@ -710,11 +604,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -722,23 +612,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = alertResponse,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -759,8 +641,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         val routeCardData =
             checkNotNull(
@@ -778,11 +658,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -790,23 +666,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = listOf(alert),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -843,8 +711,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         val routeCardData =
             checkNotNull(
@@ -862,12 +728,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -875,23 +736,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = stop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -906,9 +759,6 @@ class StopDetailsFilteredDeparturesViewTest {
         settings[Settings.StationAccessibility] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
-
-        val tileData: List<TileData>
-        val noPredictionsStatus: UpcomingFormat.NoTripsFormat?
 
         val routeCardData =
             checkNotNull(
@@ -926,12 +776,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
-        val leafFormat =
-            leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
         viewModel.setRouteCardData(routeCardData)
-
-        tileData = leafFormat.tileData()
-        noPredictionsStatus = leafFormat.noPredictionsStatus()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -939,23 +784,15 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopId = inaccessibleStop.id,
                     stopFilter = filterState,
                     tripFilter = null,
-                    routeStopData = routeStopData,
                     leaf = leaf,
-                    tileData = tileData,
-                    noPredictionsStatus = noPredictionsStatus,
-                    isAllServiceDisrupted = false,
                     allAlerts = null,
                     elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
-                    onClose = {},
                     openModal = {},
                     openSheetRoute = {},
                 )
