@@ -22,14 +22,14 @@ object ChildStopLayerGenerator {
                     Exp(LocationType.ENTRANCE_EXIT.name) to Exp(ChildStopIcons.entranceIcon),
                     Exp.Bare.arrayOf(LocationType.BOARDING_AREA.name, LocationType.STOP.name) to
                         Exp(ChildStopIcons.platformIcon),
-                    fallback = Exp("")
+                    fallback = Exp(""),
                 )
                 .downcastToResolvedImage()
         layer.textField =
             Exp.step(
                 Exp.zoom(),
                 Exp(""),
-                Exp(annotationTextZoomThreshold) to Exp.get(ChildStopFeaturesBuilder.propNameKey)
+                Exp(annotationTextZoomThreshold) to Exp.get(ChildStopFeaturesBuilder.propNameKey),
             )
 
         // TODO actually pick a color

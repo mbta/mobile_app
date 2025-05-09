@@ -20,7 +20,7 @@ sealed class UpcomingFormat {
             fun fromUpcomingTrips(
                 upcomingTrips: List<UpcomingTrip>,
                 hasSchedulesToday: Boolean,
-                now: Instant
+                now: Instant,
             ): NoTripsFormat {
                 val hasUpcomingTrips =
                     upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
@@ -46,12 +46,12 @@ sealed class UpcomingFormat {
     data class SecondaryAlert(val iconName: String) {
         constructor(
             alert: Alert,
-            mapStopRoute: MapStopRoute?
+            mapStopRoute: MapStopRoute?,
         ) : this(alert.alertState, mapStopRoute)
 
         constructor(
             alertState: StopAlertState,
-            mapStopRoute: MapStopRoute?
+            mapStopRoute: MapStopRoute?,
         ) : this(iconName(alertState, mapStopRoute))
     }
 
@@ -64,7 +64,7 @@ sealed class UpcomingFormat {
         data class FormattedTrip(
             val trip: UpcomingTrip,
             val routeType: RouteType,
-            val format: TripInstantDisplay
+            val format: TripInstantDisplay,
         ) {
             val id: String
                 get() = trip.id
@@ -73,13 +73,13 @@ sealed class UpcomingFormat {
                 trip: UpcomingTrip,
                 routeType: RouteType,
                 now: Instant,
-                context: TripInstantDisplay.Context
+                context: TripInstantDisplay.Context,
             ) : this(trip, routeType, trip.display(now, routeType, context))
         }
 
         constructor(
             trip: FormattedTrip,
-            secondaryAlert: SecondaryAlert?
+            secondaryAlert: SecondaryAlert?,
         ) : this(listOf(trip), secondaryAlert)
     }
 
@@ -87,7 +87,7 @@ sealed class UpcomingFormat {
     @DefaultArgumentInterop.Enabled
     constructor(
         val noTripsFormat: NoTripsFormat,
-        override val secondaryAlert: SecondaryAlert? = null
+        override val secondaryAlert: SecondaryAlert? = null,
     ) : UpcomingFormat()
 
     data class Disruption(val alert: Alert, val iconName: String) : UpcomingFormat() {
@@ -95,7 +95,7 @@ sealed class UpcomingFormat {
 
         constructor(
             alert: Alert,
-            mapStopRoute: MapStopRoute?
+            mapStopRoute: MapStopRoute?,
         ) : this(alert, iconName(alert.alertState, mapStopRoute))
     }
 

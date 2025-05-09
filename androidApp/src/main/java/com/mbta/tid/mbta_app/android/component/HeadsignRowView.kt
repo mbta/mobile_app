@@ -30,7 +30,7 @@ fun HeadsignRowView(
     PredictionRowView(
         predictions = predictions,
         modifier = modifier,
-        pillDecoration = pillDecoration
+        pillDecoration = pillDecoration,
     ) {
         Text(headsign, style = Typography.bodySemibold, modifier = Modifier.placeholderIfLoading())
     }
@@ -48,16 +48,16 @@ fun HeadsignRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "1" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(5)
+                            TripInstantDisplay.Minutes(5),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "2" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(15)
-                        )
+                            TripInstantDisplay.Minutes(15),
+                        ),
                     ),
-                    secondaryAlert = null
-                )
+                    secondaryAlert = null,
+                ),
             )
             HeadsignRowView(
                 "Some with Alert",
@@ -66,33 +66,33 @@ fun HeadsignRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "1" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(5)
+                            TripInstantDisplay.Minutes(5),
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "2" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(15)
-                        )
+                            TripInstantDisplay.Minutes(15),
+                        ),
                     ),
-                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
-                )
+                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                ),
             )
             HeadsignRowView(
                 "None",
-                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             )
             HeadsignRowView(
                 "None with Alert",
                 UpcomingFormat.NoTrips(
                     UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
-                )
+                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                ),
             )
             HeadsignRowView(
                 "Decorated None with Alert",
                 UpcomingFormat.NoTrips(
                     UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue")
+                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue"),
                 ),
                 pillDecoration =
                     PillDecoration.OnRow(
@@ -104,15 +104,15 @@ fun HeadsignRowViewPreview() {
                             textColor = "FFFFFF"
                             longName = "Green Line E"
                         }
-                    )
+                    ),
             )
             HeadsignRowView("Loading", UpcomingFormat.Loading)
             HeadsignRowView(
                 "No Service",
                 UpcomingFormat.Disruption(
                     alert { effect = Alert.Effect.Suspension },
-                    MapStopRoute.ORANGE
-                )
+                    MapStopRoute.ORANGE,
+                ),
             )
         }
     }

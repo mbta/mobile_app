@@ -9,7 +9,7 @@ enum class FeaturePromo(val addedInAndroidVersion: AppVersion, val addedInIosVer
     companion object {
         fun featuresBetween(
             lastLaunchedVersion: AppVersion,
-            currentVersion: AppVersion
+            currentVersion: AppVersion,
         ): List<FeaturePromo> {
             return entries.filter {
                 lastLaunchedVersion < it.addedInVersion && it.addedInVersion <= currentVersion

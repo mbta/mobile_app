@@ -28,7 +28,7 @@ sealed class TripInstantDisplay {
     data class TimeWithStatus(
         val predictionTime: Instant,
         val status: String,
-        val headline: Boolean = false
+        val headline: Boolean = false,
     ) : TripInstantDisplay()
 
     data class Minutes(val minutes: Int) : TripInstantDisplay()
@@ -56,7 +56,7 @@ sealed class TripInstantDisplay {
             vehicle: Vehicle?,
             routeType: RouteType?,
             now: Instant,
-            context: Context
+            context: Context,
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
             val scheduleBasedRouteType =

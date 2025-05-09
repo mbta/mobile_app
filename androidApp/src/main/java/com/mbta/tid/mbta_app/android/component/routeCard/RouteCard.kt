@@ -28,7 +28,7 @@ fun RouteCard(
     pinned: Boolean,
     onPin: (String) -> Unit,
     showStationAccessibility: Boolean = false,
-    onOpenStopDetails: (String, StopDetailsFilter) -> Unit
+    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {
     Column(Modifier.haloContainer(1.dp)) {
         TransitHeader(data.lineOrRoute) { color ->
@@ -43,7 +43,7 @@ fun RouteCard(
             Departures(it, globalData, now, pinned) { leaf ->
                 onOpenStopDetails(
                     it.stop.id,
-                    StopDetailsFilter(data.lineOrRoute.id, leaf.directionId)
+                    StopDetailsFilter(data.lineOrRoute.id, leaf.directionId),
                 )
             }
         }
@@ -77,7 +77,7 @@ class Previews() {
 
     @Preview(
         name = "Show up to the next three trips in the branching direction",
-        group = "2. Red Line branching"
+        group = "2. Red Line branching",
     )
     @Composable
     fun RL1() {
@@ -134,7 +134,7 @@ class Previews() {
 
     @Preview(
         name = "Next two trips go to the same destination",
-        group = "6. Bus route single direction"
+        group = "6. Bus route single direction",
     )
     @Composable
     fun Bus1() {
@@ -143,7 +143,7 @@ class Previews() {
 
     @Preview(
         name = "Next two trips go to different destinations",
-        group = "6. Bus route single direction"
+        group = "6. Bus route single direction",
     )
     @Composable
     fun Bus2() {
@@ -152,7 +152,7 @@ class Previews() {
 
     @Preview(
         name = "Next two trips go to different destinations",
-        group = "7. Bus route both directions"
+        group = "7. Bus route both directions",
     )
     @Composable
     fun Bus3() {
@@ -191,7 +191,7 @@ class Previews() {
 
     @Preview(
         name = "Disruption on a branch, predictions unavailable for other branches",
-        group = "A. Disruption"
+        group = "A. Disruption",
     )
     @Composable
     fun GL6() {

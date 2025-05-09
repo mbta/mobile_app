@@ -49,7 +49,7 @@ sealed interface Exp<T> : MapboxStyleObject {
         fun <T> array(
             type: ArrayType<T>? = null,
             size: Number? = null,
-            value: Exp<List<T>>
+            value: Exp<List<T>>,
         ): Exp<List<T>> {
             check(!(type == null && size != null)) { "can't specify array size without array type" }
             return op("array") {
@@ -134,7 +134,7 @@ sealed interface Exp<T> : MapboxStyleObject {
         fun <I, O> match(
             input: Exp<I>,
             vararg cases: Pair<Exp<*>, Exp<O>>,
-            fallback: Exp<O>
+            fallback: Exp<O>,
         ): Exp<O> =
             op("match") {
                 add(input)
@@ -148,7 +148,7 @@ sealed interface Exp<T> : MapboxStyleObject {
         fun <T> interpolate(
             interpolation: Interpolation,
             input: Exp<Number>,
-            vararg stops: Pair<Exp<Number>, Exp<T>>
+            vararg stops: Pair<Exp<Number>, Exp<T>>,
         ): Exp<T> =
             op("interpolate") {
                 add(interpolation)
@@ -162,7 +162,7 @@ sealed interface Exp<T> : MapboxStyleObject {
         fun <T> step(
             input: Exp<Number>,
             outputBelow: Exp<T>,
-            vararg stops: Pair<Exp<Number>, Exp<T>>
+            vararg stops: Pair<Exp<Number>, Exp<T>>,
         ): Exp<T> =
             op("step") {
                 add(input)

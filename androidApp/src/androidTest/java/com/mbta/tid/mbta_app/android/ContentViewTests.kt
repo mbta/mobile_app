@@ -35,7 +35,7 @@ class ContentViewTests : KoinTest {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient()
+                    LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
                     ContentView()
                 }
@@ -65,7 +65,7 @@ class ContentViewTests : KoinTest {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
-                    LocalLifecycleOwner provides lifecycleOwner
+                    LocalLifecycleOwner provides lifecycleOwner,
                 ) {
                     ContentView()
                 }

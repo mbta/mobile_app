@@ -29,7 +29,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 fun BottomNavBar(
     currentDestination: Routes,
     navigateToNearby: () -> Unit,
-    navigateToMore: () -> Unit
+    navigateToMore: () -> Unit,
 ) {
 
     val selectedTabIndex = if (currentDestination == Routes.NearbyTransit) 0 else 1
@@ -41,7 +41,7 @@ fun BottomNavBar(
                 // Override the system font scale so that the tab size doesn't scale up at larger
                 // display sizes
                 // https://stackoverflow.com/a/74290870
-                1f
+                1f,
             )
     ) {
         TabRow(selectedTabIndex = selectedTabIndex, indicator = {}) {
@@ -49,14 +49,14 @@ fun BottomNavBar(
                 selected = currentDestination == Routes.NearbyTransit,
                 onClick = { navigateToNearby() },
                 icon = painterResource(R.drawable.map_pin),
-                text = stringResource(R.string.nearby_transit_link)
+                text = stringResource(R.string.nearby_transit_link),
             )
 
             BottomNavTab(
                 selected = currentDestination == Routes.More,
                 onClick = { navigateToMore() },
                 icon = painterResource(R.drawable.more),
-                text = stringResource(R.string.more_link)
+                text = stringResource(R.string.more_link),
             )
         }
     }
@@ -69,11 +69,11 @@ private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, 
         onClick = onClick,
         selectedContentColor = colorResource(R.color.key),
         unselectedContentColor = colorResource(R.color.text),
-        modifier = Modifier.background(colorResource(R.color.fill2))
+        modifier = Modifier.background(colorResource(R.color.fill2)),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp),
         ) {
             Icon(icon, contentDescription = null, modifier = Modifier.padding(4.dp))
             Text(
@@ -81,7 +81,7 @@ private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, 
                 style =
                     Typography.caption2.copy(
                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                    )
+                    ),
             )
         }
     }

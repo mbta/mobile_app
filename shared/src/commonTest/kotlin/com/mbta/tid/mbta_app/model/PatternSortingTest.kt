@@ -16,8 +16,7 @@ class PatternSortingTest {
     private fun singleLineOrRoute() =
         objects.lines.values.singleOrNull()?.let {
             RouteCardData.LineOrRoute.Line(it, objects.routes.values.toSet())
-        }
-            ?: objects.routes.values.single().let { RouteCardData.LineOrRoute.Route(it) }
+        } ?: objects.routes.values.single().let { RouteCardData.LineOrRoute.Route(it) }
 
     @BeforeTest
     fun setup() {
@@ -46,7 +45,7 @@ class PatternSortingTest {
         trips: Int = 0,
         alertHere: Boolean = false,
         allDataLoaded: Boolean = true,
-        hasSchedulesToday: Boolean = trips > 0
+        hasSchedulesToday: Boolean = trips > 0,
     ) =
         RouteCardData.Leaf(
             directionId = pattern.directionId,
@@ -58,7 +57,7 @@ class PatternSortingTest {
                 else emptyList(),
             allDataLoaded = allDataLoaded,
             hasSchedulesToday = hasSchedulesToday,
-            alertsDownstream = emptyList()
+            alertsDownstream = emptyList(),
         )
 
     private fun stopData(stop: Stop, vararg leaf: RouteCardData.Leaf) =
@@ -67,14 +66,14 @@ class PatternSortingTest {
     private fun stopData(
         stop: Stop,
         lineOrRoute: RouteCardData.LineOrRoute,
-        vararg leaf: RouteCardData.Leaf
+        vararg leaf: RouteCardData.Leaf,
     ) =
         RouteCardData.RouteStopData(
             lineOrRoute,
             stop,
             leaf.asList(),
             RouteCardData.Context.NearbyTransit,
-            GlobalResponse(objects)
+            GlobalResponse(objects),
         )
 
     private fun routeCard(route: Route, vararg stops: RouteCardData.RouteStopData) =
@@ -82,13 +81,13 @@ class PatternSortingTest {
 
     private fun routeCard(
         lineOrRoute: RouteCardData.LineOrRoute,
-        vararg stops: RouteCardData.RouteStopData
+        vararg stops: RouteCardData.RouteStopData,
     ) =
         RouteCardData(
             lineOrRoute,
             stops.asList(),
             RouteCardData.Context.NearbyTransit,
-            Clock.System.now()
+            Clock.System.now(),
         )
 
     @Test
@@ -136,25 +135,25 @@ class PatternSortingTest {
 
         assertEquals(
             0,
-            PatternSorting.compareStopsOnRoute(null).compare(nearService0, nearService1)
+            PatternSorting.compareStopsOnRoute(null).compare(nearService0, nearService1),
         )
         assertEquals(
             0,
-            PatternSorting.compareStopsOnRoute(position).compare(nearService0, nearService1)
+            PatternSorting.compareStopsOnRoute(position).compare(nearService0, nearService1),
         )
         assertEquals(0, PatternSorting.compareStopsOnRoute(null).compare(nearService0, farService))
 
         val expected = listOf(nearService0, farService, nearNoService)
         assertEquals(
             expected,
-            expected.reversed().sortedWith(PatternSorting.compareStopsOnRoute(position))
+            expected.reversed().sortedWith(PatternSorting.compareStopsOnRoute(position)),
         )
     }
 
     enum class Service {
         Yes,
         Ended,
-        No
+        No,
     }
 
     @Test
@@ -176,7 +175,7 @@ class PatternSortingTest {
             service: Service,
             subway: Boolean,
             near: Boolean,
-            sortOrder: Int
+            sortOrder: Int,
         ): RouteCardData {
             val route =
                 objects.route {
@@ -192,9 +191,9 @@ class PatternSortingTest {
                     leaf(
                         pattern(route, 0, 0),
                         trips = if (service == Service.Yes) 1 else 0,
-                        hasSchedulesToday = service != Service.No
-                    )
-                )
+                        hasSchedulesToday = service != Service.No,
+                    ),
+                ),
             )
         }
         val routeCard1 =
@@ -203,7 +202,7 @@ class PatternSortingTest {
                 service = Service.Yes,
                 subway = true,
                 near = true,
-                sortOrder = 1
+                sortOrder = 1,
             )
         val routeCard2 =
             routeCard(
@@ -211,7 +210,7 @@ class PatternSortingTest {
                 service = Service.Yes,
                 subway = true,
                 near = true,
-                sortOrder = 50
+                sortOrder = 50,
             )
         val routeCard3 =
             routeCard(
@@ -219,7 +218,7 @@ class PatternSortingTest {
                 service = Service.Yes,
                 subway = true,
                 near = false,
-                sortOrder = 1
+                sortOrder = 1,
             )
         val routeCard4 =
             routeCard(
@@ -227,7 +226,7 @@ class PatternSortingTest {
                 service = Service.Yes,
                 subway = false,
                 near = true,
-                sortOrder = 1
+                sortOrder = 1,
             )
         val routeCard5 =
             routeCard(
@@ -235,7 +234,7 @@ class PatternSortingTest {
                 service = Service.Ended,
                 subway = true,
                 near = true,
-                sortOrder = 1
+                sortOrder = 1,
             )
         val routeCard6 =
             routeCard(
@@ -243,7 +242,7 @@ class PatternSortingTest {
                 service = Service.No,
                 subway = true,
                 near = true,
-                sortOrder = 1
+                sortOrder = 1,
             )
         val routeCard7 =
             routeCard(
@@ -251,16 +250,16 @@ class PatternSortingTest {
                 service = Service.Yes,
                 subway = true,
                 near = true,
-                sortOrder = 1
+                sortOrder = 1,
             )
 
         assertEquals(
             0,
-            PatternSorting.compareRouteCards(emptySet(), null).compare(routeCard1, routeCard3)
+            PatternSorting.compareRouteCards(emptySet(), null).compare(routeCard1, routeCard3),
         )
         assertEquals(
             0,
-            PatternSorting.compareRouteCards(emptySet(), position).compare(routeCard1, routeCard7)
+            PatternSorting.compareRouteCards(emptySet(), position).compare(routeCard1, routeCard7),
         )
 
         val expected =
@@ -271,11 +270,11 @@ class PatternSortingTest {
                 routeCard4,
                 routeCard5,
                 routeCard6,
-                routeCard7
+                routeCard7,
             )
         assertEquals(
             expected,
-            expected.reversed().sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, position))
+            expected.reversed().sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, position)),
         )
     }
 }

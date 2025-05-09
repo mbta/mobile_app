@@ -26,7 +26,7 @@ class SettingsCacheTest {
         val settingsRepo =
             MockSettingsRepository(
                 mapOf(Settings.HideMaps to true),
-                onGetSettings = { gotSettings = true }
+                onGetSettings = { gotSettings = true },
             )
         val koin = testKoinApplication { settings = settingsRepo }
 
@@ -54,7 +54,7 @@ class SettingsCacheTest {
         val settingsRepo =
             MockSettingsRepository(
                 mapOf(Settings.HideMaps to true),
-                onGetSettings = { gotSettings = true }
+                onGetSettings = { gotSettings = true },
             )
         val koin = testKoinApplication { settings = settingsRepo }
 
@@ -86,7 +86,7 @@ class SettingsCacheTest {
                 onSaveSettings = { newSettings ->
                     assertEquals(mapOf(Settings.HideMaps to true), newSettings)
                     savedSettings = true
-                }
+                },
             )
         val koin = testKoinApplication { settings = settingsRepo }
 

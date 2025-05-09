@@ -38,7 +38,7 @@ class MoreViewModelTests {
                 .items
                 .filterIsInstance<MoreItem.Link>()
                 .first()
-                .url
+                .url,
         )
     }
 }

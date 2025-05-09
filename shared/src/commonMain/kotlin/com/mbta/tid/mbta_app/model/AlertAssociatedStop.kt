@@ -13,7 +13,7 @@ class AlertAssociatedStop(val stop: Stop) {
         stop: Stop,
         alertsByStop: Map<String, Set<Alert>>,
         nullStopAlerts: Set<Alert>,
-        global: GlobalResponse
+        global: GlobalResponse,
     ) : this(stop) {
         global.run {
             relevantAlerts = alertsByStop[stop.id]?.toList() ?: emptyList()
@@ -50,7 +50,7 @@ class AlertAssociatedStop(val stop: Stop) {
     constructor(
         stop: Stop,
         relevantAlerts: List<Alert>,
-        stateByRoute: Map<MapStopRoute, StopAlertState>
+        stateByRoute: Map<MapStopRoute, StopAlertState>,
     ) : this(stop) {
         this.relevantAlerts = relevantAlerts
         this.serviceAlerts = getServiceAlerts(relevantAlerts)
@@ -62,7 +62,7 @@ class AlertAssociatedStop(val stop: Stop) {
         stop: Stop,
         relevantAlerts: List<Alert>,
         childAlerts: Map<String, AlertAssociatedStop>,
-        stateByRoute: Map<MapStopRoute, StopAlertState>
+        stateByRoute: Map<MapStopRoute, StopAlertState>,
     ) : this(stop) {
         this.relevantAlerts = relevantAlerts
         this.serviceAlerts = getServiceAlerts(relevantAlerts)
@@ -77,18 +77,18 @@ enum class StopAlertState {
     Issue,
     Normal,
     Shuttle,
-    Suspension
+    Suspension,
 }
 
 private fun entityMatcher(
     entity: Alert.InformedEntity,
     stop: Stop?,
-    pattern: RoutePattern
+    pattern: RoutePattern,
 ): Boolean {
     return entity.appliesTo(
         stopId = stop?.id,
         routeId = pattern.routeId,
-        directionId = pattern.directionId
+        directionId = pattern.directionId,
     )
 }
 
@@ -101,7 +101,7 @@ private fun getAlertStateByRoute(
     stop: Stop,
     serviceAlerts: List<Alert>,
     childAlerts: Map<String, AlertAssociatedStop>,
-    global: GlobalResponse
+    global: GlobalResponse,
 ): Map<MapStopRoute, StopAlertState> {
     val patternsByMapRoute = mutableMapOf<MapStopRoute, List<RoutePattern>>()
     for (patternId in global.patternIdsByStop.getOrElse(stop.id) { listOf() }) {
@@ -158,7 +158,7 @@ private fun getAlertStateByRoute(
 private fun stopState(
     stop: Stop,
     on: MapStopRoute,
-    alerts: Map<String, AlertAssociatedStop>
+    alerts: Map<String, AlertAssociatedStop>,
 ): StopAlertState? {
     return alerts[stop.id]?.stateByRoute?.get(on)
 }
@@ -166,7 +166,7 @@ private fun stopState(
 private fun statesForPattern(
     pattern: RoutePattern,
     stop: Stop,
-    serviceAlerts: List<Alert>
+    serviceAlerts: List<Alert>,
 ): StopAlertState {
 
     val matchingAlert =

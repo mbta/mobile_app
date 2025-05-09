@@ -48,7 +48,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                 details = {
                     Text(
                         stringResource(R.string.error_loading_data),
-                        style = Typography.subheadline
+                        style = Typography.subheadline,
                     )
                     DebugView {
                         Text((state as? ErrorBannerState.DataError)?.messages?.joinToString() ?: "")
@@ -59,7 +59,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         (state as ErrorBannerState.DataError).action()
                         vm.clearState()
                     }
-                }
+                },
             )
         }
         is ErrorBannerState.NetworkError -> {
@@ -71,18 +71,18 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         Text(
                             stringResource(R.string.unable_to_connect),
                             modifier = Modifier.padding(start = 12.dp),
-                            style = Typography.subheadline
+                            style = Typography.subheadline,
                         )
                         Spacer(Modifier.weight(1f))
                     }
-                }
+                },
             )
         }
         is ErrorBannerState.StalePredictions -> {
             if (vm.loadingWhenPredictionsStale) {
                 Row(
                     modifier = modifier.heightIn(60.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     IndeterminateLoadingIndicator(Modifier.width(48.dp))
@@ -97,9 +97,9 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                             pluralStringResource(
                                 R.plurals.updated_mins_ago,
                                 minutes.toInt(),
-                                minutes
+                                minutes,
                             ),
-                            style = Typography.subheadline
+                            style = Typography.subheadline,
                         )
                     },
                     button = {
@@ -107,7 +107,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                             (state as ErrorBannerState.StalePredictions).action()
                             vm.clearState()
                         }
-                    }
+                    },
                 )
             }
         }
@@ -119,7 +119,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
 private fun ErrorCard(
     modifier: Modifier = Modifier,
     details: @Composable () -> Unit,
-    button: (@Composable () -> Unit)? = null
+    button: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -127,7 +127,7 @@ private fun ErrorCard(
                 .padding(horizontal = 16.dp)
                 .heightIn(60.dp)
                 .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) { details() }
         Spacer(Modifier.weight(1f))
@@ -141,12 +141,12 @@ private fun ErrorCard(
 private fun RefreshButton(
     loading: Boolean = false,
     label: String = stringResource(R.string.refresh),
-    action: () -> Unit
+    action: () -> Unit,
 ) {
     TextButton(
         onClick = action,
         contentPadding = PaddingValues(0.dp),
-        modifier = Modifier.size(20.dp)
+        modifier = Modifier.size(20.dp),
     ) {
         Box {
             if (loading) {
@@ -156,7 +156,7 @@ private fun RefreshButton(
                     Icons.Rounded.Refresh,
                     contentDescription = label,
                     modifier = Modifier.width(20.dp),
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
             }
         }
@@ -173,17 +173,13 @@ private fun ErrorBannerPreviews() {
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
     val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
-    val dataErrorDebugVM =
-        ErrorBannerViewModel(
-            false,
-            dataErrorRepo,
-        )
+    val dataErrorDebugVM = ErrorBannerViewModel(false, dataErrorRepo)
     val staleRepo =
         MockErrorBannerStateRepository(
             state =
                 ErrorBannerState.StalePredictions(
                     lastUpdated = Clock.System.now().minus(2.minutes),
-                    action = {}
+                    action = {},
                 )
         )
     val staleVM = ErrorBannerViewModel(false, staleRepo)
@@ -197,7 +193,7 @@ private fun ErrorBannerPreviews() {
         Column(
             modifier =
                 Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             ErrorBanner(networkErrorVM)
             ErrorBanner(dataErrorVM)

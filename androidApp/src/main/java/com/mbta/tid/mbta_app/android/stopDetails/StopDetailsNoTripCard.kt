@@ -20,13 +20,13 @@ fun StopDetailsNoTripCard(
     status: UpcomingFormat.NoTripsFormat,
     accentColor: Color,
     routeType: RouteType,
-    hideMaps: Boolean
+    hideMaps: Boolean,
 ) {
 
     StopDetailsIconCard(
         accentColor = accentColor,
         details = detailText(status, routeType, hideMaps),
-        header = { modifier -> HeaderText(status, modifier) }
+        header = { modifier -> HeaderText(status, modifier) },
     ) { modifier ->
         HeaderImage(status, routeType, modifier)
     }
@@ -48,7 +48,7 @@ private fun HeaderText(status: UpcomingFormat.NoTripsFormat, modifier: Modifier 
 private fun detailText(
     status: UpcomingFormat.NoTripsFormat,
     routeType: RouteType,
-    hideMaps: Boolean
+    hideMaps: Boolean,
 ): (@Composable () -> Unit)? {
     val context = LocalContext.current
 
@@ -78,21 +78,21 @@ private fun detailText(
 private fun HeaderImage(
     status: UpcomingFormat.NoTripsFormat,
     routeType: RouteType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when (status) {
         is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
             Icon(
                 painterResource(R.drawable.live_data_slash),
                 null,
-                modifier = modifier.testTag("live_data_slash")
+                modifier = modifier.testTag("live_data_slash"),
             )
         is UpcomingFormat.NoTripsFormat.NoSchedulesToday,
         UpcomingFormat.NoTripsFormat.ServiceEndedToday ->
             Icon(
                 routeSlashIcon(routeType = routeType),
                 null,
-                modifier = modifier.testTag("route_slash_icon")
+                modifier = modifier.testTag("route_slash_icon"),
             )
     }
 }

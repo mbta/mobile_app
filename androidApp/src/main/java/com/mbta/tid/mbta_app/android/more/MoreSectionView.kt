@@ -47,7 +47,7 @@ fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInj
                     Text(
                         name,
                         style = Typography.subheadlineSemibold,
-                        modifier = Modifier.semantics { heading() }
+                        modifier = Modifier.semantics { heading() },
                     )
 
                     if (note != null) {
@@ -72,7 +72,7 @@ fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInj
                                 // value of hide maps to match the label
                                 value =
                                     if (item.settings == Settings.HideMaps) !settingValue
-                                    else settingValue
+                                    else settingValue,
                             ) {
                                 settingsCache.set(item.settings, !settingValue)
                             }
@@ -82,14 +82,14 @@ fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInj
                                 item.label,
                                 item.url,
                                 item.note,
-                                isKey = section.id == MoreSection.Category.Feedback
+                                isKey = section.id == MoreSection.Category.Feedback,
                             )
                         is MoreItem.NavLink ->
                             MoreLink(
                                 item.label,
                                 item.callback,
                                 item.note,
-                                isKey = section.id == MoreSection.Category.Feedback
+                                isKey = section.id == MoreSection.Category.Feedback,
                             )
                         is MoreItem.Phone ->
                             MorePhone(label = item.label, phoneNumber = item.phoneNumber)

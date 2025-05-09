@@ -132,8 +132,8 @@ class StopDetailsFilteredDeparturesViewTest {
             builder,
             mutableMapOf(
                 stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-                inaccessibleStop.id to listOf(routePatternOne.id, routePatternTwo.id)
-            )
+                inaccessibleStop.id to listOf(routePatternOne.id, routePatternTwo.id),
+            ),
         )
 
     private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
@@ -169,7 +169,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -204,7 +204,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     togglePinnedRoute = {},
                     onClose = {},
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -233,7 +233,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -268,7 +268,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     togglePinnedRoute = {},
                     onClose = {},
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -325,12 +325,7 @@ class StopDetailsFilteredDeparturesViewTest {
             }
 
         val globalResponse =
-            GlobalResponse(
-                objects,
-                mutableMapOf(
-                    stop.id to listOf(routePattern.id),
-                )
-            )
+            GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
 
         val viewModel = StopDetailsViewModel.mocked()
         val tileData: List<TileData>
@@ -345,7 +340,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsHere = emptyList(),
                 allDataLoaded = true,
                 hasSchedulesToday = true,
-                alertsDownstream = emptyList()
+                alertsDownstream = emptyList(),
             )
         val leafFormat =
             leaf.format(now, route, globalResponse, RouteCardData.Context.StopDetailsFiltered)
@@ -355,14 +350,14 @@ class StopDetailsFilteredDeparturesViewTest {
                 stop,
                 listOf(leaf),
                 RouteCardData.Context.StopDetailsFiltered,
-                globalResponse
+                globalResponse,
             )
         val routeCardData =
             RouteCardData(
                 RouteCardData.LineOrRoute.Route(route),
                 listOf(routeStopData),
                 RouteCardData.Context.StopDetailsFiltered,
-                now
+                now,
             )
 
         viewModel.setRouteCardData(listOf(routeCardData))
@@ -394,7 +389,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     togglePinnedRoute = {},
                     onClose = {},
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -424,7 +419,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 emptyList(),
                 true,
                 true,
-                emptyList()
+                emptyList(),
             )
         val routeStopData =
             RouteCardData.RouteStopData(
@@ -433,14 +428,14 @@ class StopDetailsFilteredDeparturesViewTest {
                 stop,
                 listOf(leaf),
                 RouteCardData.Context.StopDetailsFiltered,
-                GlobalResponse(objects)
+                GlobalResponse(objects),
             )
         val routeCardData =
             RouteCardData(
                 RouteCardData.LineOrRoute.Line(line, setOf(route)),
                 listOf(routeStopData),
                 RouteCardData.Context.StopDetailsFiltered,
-                now
+                now,
             )
 
         composeTestRule.setContent {
@@ -467,7 +462,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     togglePinnedRoute = {},
                     onClose = {},
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -489,11 +484,11 @@ class StopDetailsFilteredDeparturesViewTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
                     route = route.id,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -515,7 +510,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -585,22 +580,22 @@ class StopDetailsFilteredDeparturesViewTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
                     route = routeB.id,
-                    stop = "71151"
+                    stop = "71151",
                 )
                 informedEntity(
                     activities =
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
                     route = routeC.id,
-                    stop = "70151"
+                    stop = "70151",
                 )
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -632,7 +627,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -685,11 +680,11 @@ class StopDetailsFilteredDeparturesViewTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
                     route = route.id,
-                    stop = downstreamStop.id
+                    stop = downstreamStop.id,
                 )
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -710,7 +705,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -778,7 +773,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -836,12 +831,12 @@ class StopDetailsFilteredDeparturesViewTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
                     route = route.id,
                     routeType = RouteType.LIGHT_RAIL,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -862,7 +857,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     emptySet(),
-                    context = RouteCardData.Context.StopDetailsFiltered
+                    context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -926,7 +921,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsFiltered
+                    RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()

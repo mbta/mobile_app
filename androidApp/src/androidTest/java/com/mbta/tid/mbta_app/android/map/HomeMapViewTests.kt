@@ -56,8 +56,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
 
@@ -92,8 +92,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
         composeTestRule
@@ -126,8 +126,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
         composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
@@ -160,8 +160,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
 
@@ -195,8 +195,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
 
@@ -230,8 +230,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
 
@@ -266,8 +266,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
         composeTestRule.onNodeWithContentDescription("Recenter map on my location").assertExists()
@@ -295,8 +295,8 @@ class HomeMapViewTests {
                     SearchResultsViewModel(
                         MockAnalytics(),
                         MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository())
-                    )
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
             )
         }
         composeTestRule.onNodeWithTag("Empty map grid").assertIsDisplayed()

@@ -84,7 +84,7 @@ class TripStopsTest {
                         prediction1,
                         stop1,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -94,7 +94,7 @@ class TripStopsTest {
                         prediction2,
                         stop2,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3Target,
@@ -104,7 +104,7 @@ class TripStopsTest {
                         prediction3,
                         stop3Target,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop4,
@@ -114,7 +114,7 @@ class TripStopsTest {
                         prediction4,
                         stop4,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop5,
@@ -124,9 +124,9 @@ class TripStopsTest {
                         prediction5,
                         stop5,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -140,7 +140,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -205,7 +205,7 @@ class TripStopsTest {
                         prediction1,
                         stop1,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -215,7 +215,7 @@ class TripStopsTest {
                         prediction2,
                         stop2,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -225,9 +225,9 @@ class TripStopsTest {
                         prediction3,
                         stop3,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -241,7 +241,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -299,7 +299,7 @@ class TripStopsTest {
                 prediction1,
                 stop1,
                 vehicle,
-                listOf(route)
+                listOf(route),
             )
         val stops =
             TripDetailsStopList(
@@ -314,10 +314,10 @@ class TripStopsTest {
                         prediction2,
                         stop2,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                 ),
-                startTerminalEntry = firstStop
+                startTerminalEntry = firstStop,
             )
 
         composeTestRule.setContent {
@@ -331,7 +331,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -390,7 +390,7 @@ class TripStopsTest {
                 prediction1,
                 stop1,
                 vehicle,
-                listOf(route)
+                listOf(route),
             )
         val stops =
             TripDetailsStopList(
@@ -405,7 +405,7 @@ class TripStopsTest {
                         prediction2,
                         stop2,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -415,10 +415,10 @@ class TripStopsTest {
                         prediction3,
                         stop3,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                 ),
-                startTerminalEntry = firstStop
+                startTerminalEntry = firstStop,
             )
 
         composeTestRule.setContent {
@@ -432,7 +432,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -497,7 +497,7 @@ class TripStopsTest {
                         prediction1,
                         stop1,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -507,7 +507,7 @@ class TripStopsTest {
                         prediction2,
                         stop2Target,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -517,9 +517,9 @@ class TripStopsTest {
                         prediction3,
                         stop3,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -538,10 +538,10 @@ class TripStopsTest {
                             AlertSummary(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService
+                                AlertSummary.Timeframe.EndOfService,
                             )
                     ),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -607,7 +607,7 @@ class TripStopsTest {
                         prediction1,
                         stop1,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -617,7 +617,7 @@ class TripStopsTest {
                         prediction2,
                         stop2Target,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -627,9 +627,9 @@ class TripStopsTest {
                         prediction3,
                         stop3,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -648,10 +648,10 @@ class TripStopsTest {
                             AlertSummary(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService
+                                AlertSummary.Timeframe.EndOfService,
                             )
                     ),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -717,7 +717,7 @@ class TripStopsTest {
                         prediction1,
                         stop1,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -727,7 +727,7 @@ class TripStopsTest {
                         prediction2,
                         stop2Target,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -737,9 +737,9 @@ class TripStopsTest {
                         prediction3,
                         stop3,
                         vehicle,
-                        listOf(route)
+                        listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -758,10 +758,10 @@ class TripStopsTest {
                             AlertSummary(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop1.name),
-                                AlertSummary.Timeframe.EndOfService
+                                AlertSummary.Timeframe.EndOfService,
                             )
                     ),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 

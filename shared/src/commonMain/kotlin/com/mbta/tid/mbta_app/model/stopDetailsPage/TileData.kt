@@ -11,7 +11,7 @@ data class TileData(
     val route: Route?,
     val headsign: String?,
     val formatted: UpcomingFormat,
-    val upcoming: UpcomingTrip
+    val upcoming: UpcomingTrip,
 ) {
     val id: String = upcoming.id
 
@@ -19,8 +19,7 @@ data class TileData(
         upcoming.trip.id == tripFilter?.tripId &&
             tripFilter.stopSequence?.let { filterSequence ->
                 upcoming.stopSequence?.let { it == filterSequence }
-            }
-                ?: true
+            } ?: true
 
     companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
@@ -28,13 +27,13 @@ data class TileData(
                 upcoming.format(
                     now,
                     route.type,
-                    context = TripInstantDisplay.Context.StopDetailsFiltered
+                    context = TripInstantDisplay.Context.StopDetailsFiltered,
                 )
             val formatted =
                 if (formattedUpcomingTrip != null) {
                     UpcomingFormat.Some(
                         trips = listOf(formattedUpcomingTrip),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     )
                 } else {
                     return null

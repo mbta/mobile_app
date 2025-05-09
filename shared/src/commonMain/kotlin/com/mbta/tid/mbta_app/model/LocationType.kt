@@ -9,5 +9,5 @@ enum class LocationType {
     @SerialName("station") STATION,
     @SerialName("entrance_exit") ENTRANCE_EXIT,
     @SerialName("generic_node") GENERIC_NODE,
-    @SerialName("boarding_area") BOARDING_AREA
+    @SerialName("boarding_area") BOARDING_AREA,
 }

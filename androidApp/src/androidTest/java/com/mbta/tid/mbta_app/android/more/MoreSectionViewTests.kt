@@ -25,12 +25,12 @@ class MoreSectionViewTests {
                 section =
                     MoreSection(
                         MoreSection.Category.Settings,
-                        listOf(MoreItem.Toggle("Toggle 1", Settings.HideMaps))
+                        listOf(MoreItem.Toggle("Toggle 1", Settings.HideMaps)),
                     ),
                 settingsCache =
                     SettingsCache(
                         MockSettingsRepository(onSaveSettings = { toggleCallbackCalled = true })
-                    )
+                    ),
             )
         }
 

@@ -24,13 +24,13 @@ class UpcomingTripAccessibilityFormatters {
             context: Context,
             scheduledTime: String,
             isFirst: Boolean,
-            vehicleType: String
+            vehicleType: String,
         ): String {
             return if (isFirst)
                 context.resources.getString(
                     R.string.vehicle_cancelled_first,
                     vehicleType,
-                    scheduledTime
+                    scheduledTime,
                 )
             else context.resources.getString(R.string.vehicle_cancelled_other, scheduledTime)
         }
@@ -39,13 +39,13 @@ class UpcomingTripAccessibilityFormatters {
             context: Context,
             minutes: Int,
             isFirst: Boolean,
-            vehicleType: String
+            vehicleType: String,
         ): String {
             return if (isFirst) {
                 context.resources.getString(
                     R.string.vehicle_schedule_minutes_first,
                     vehicleType,
-                    minutes
+                    minutes,
                 )
             } else {
                 context.resources.getString(R.string.vehicle_schedule_minutes_other, minutes)
@@ -56,7 +56,7 @@ class UpcomingTripAccessibilityFormatters {
             context: Context,
             time: String,
             isFirst: Boolean,
-            vehicleType: String
+            vehicleType: String,
         ): String {
             return if (isFirst) {
                 context.resources.getString(R.string.vehicle_schedule_time_first, vehicleType, time)
@@ -69,13 +69,13 @@ class UpcomingTripAccessibilityFormatters {
             context: Context,
             minutes: Int,
             isFirst: Boolean,
-            vehicleType: String
+            vehicleType: String,
         ): String {
             return if (isFirst) {
                 context.resources.getString(
                     R.string.vehicle_prediction_minutes_first,
                     vehicleType,
-                    minutes
+                    minutes,
                 )
             } else {
                 context.resources.getString(R.string.vehicle_prediction_minutes_other, minutes)
@@ -86,13 +86,13 @@ class UpcomingTripAccessibilityFormatters {
             context: Context,
             time: String,
             isFirst: Boolean,
-            vehicleType: String
+            vehicleType: String,
         ): String {
             return if (isFirst) {
                 context.resources.getString(
                     R.string.vehicle_prediction_time_first,
                     vehicleType,
-                    time
+                    time,
                 )
             } else {
                 context.resources.getString(R.string.vehicle_prediction_time_other, time)

@@ -23,7 +23,7 @@ class NearbyTransitTabViewModel : ViewModel() {
         stopId: String,
         stopFilter: StopDetailsFilter?,
         popLastNavEntry: () -> Unit,
-        pushNavEntry: (SheetRoutes) -> Unit
+        pushNavEntry: (SheetRoutes) -> Unit,
     ) {
 
         if (lastNavEntry is SheetRoutes.StopDetails && stopId == lastNavEntry.stopId) {
@@ -47,7 +47,7 @@ class NearbyTransitTabViewModel : ViewModel() {
         stopId: String,
         tripFilter: TripDetailsFilter?,
         popLastNavEntry: () -> Unit,
-        pushNavEntry: (SheetRoutes) -> Unit
+        pushNavEntry: (SheetRoutes) -> Unit,
     ) {
         if (
             lastNavEntry is SheetRoutes.StopDetails &&
@@ -62,7 +62,7 @@ class NearbyTransitTabViewModel : ViewModel() {
     private fun shouldSkipStopFilterUpdate(
         lastNavEntry: SheetRoutes?,
         newStopId: String,
-        newFilter: StopDetailsFilter?
+        newFilter: StopDetailsFilter?,
     ): Boolean {
         // If the new filter is null and there is already a null filter in the stack for the same
         // stop ID, we don't want a duplicate unfiltered entry, so skip appending a new one

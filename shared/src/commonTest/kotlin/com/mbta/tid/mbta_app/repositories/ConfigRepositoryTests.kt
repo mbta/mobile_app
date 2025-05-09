@@ -40,7 +40,7 @@ class ConfigRepositoryTests {
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -66,7 +66,7 @@ class ConfigRepositoryTests {
                             .trimIndent()
                     ),
                 status = HttpStatusCode.Unauthorized,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 

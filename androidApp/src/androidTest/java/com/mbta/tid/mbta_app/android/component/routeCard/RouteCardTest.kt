@@ -38,7 +38,7 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.NearbyTransit
+                            RouteCardData.Context.NearbyTransit,
                         )
                     ),
                     RouteCardData.Context.NearbyTransit,
@@ -48,7 +48,7 @@ class RouteCardTest {
                 now,
                 pinned = false,
                 onPin = {},
-                false
+                false,
             ) { _, _ ->
             }
         }
@@ -80,7 +80,7 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.NearbyTransit
+                            RouteCardData.Context.NearbyTransit,
                         )
                     ),
                     RouteCardData.Context.NearbyTransit,
@@ -90,7 +90,7 @@ class RouteCardTest {
                 now,
                 pinned = false,
                 onPin = { onPinCalled = true },
-                false
+                false,
             ) { _, _ ->
             }
         }
@@ -123,7 +123,7 @@ class RouteCardTest {
                             stop,
                             emptyList(),
                             emptyList(),
-                            RouteCardData.Context.StopDetailsUnfiltered
+                            RouteCardData.Context.StopDetailsUnfiltered,
                         )
                     ),
                     RouteCardData.Context.StopDetailsUnfiltered,
@@ -133,7 +133,7 @@ class RouteCardTest {
                 now,
                 pinned = false,
                 onPin = {},
-                false
+                false,
             ) { _, _ ->
             }
         }

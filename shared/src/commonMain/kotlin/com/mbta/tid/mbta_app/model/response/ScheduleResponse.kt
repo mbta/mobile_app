@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ScheduleResponse(
     internal val schedules: List<Schedule>,
-    internal val trips: Map<String, Trip>
+    internal val trips: Map<String, Trip>,
 ) {
     constructor(
         objects: ObjectCollectionBuilder

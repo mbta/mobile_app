@@ -12,7 +12,7 @@ data class PredictionsByStopJoinResponse(
     @SerialName("predictions_by_stop")
     internal val predictionsByStop: Map<String, Map<String, Prediction>>,
     internal val trips: Map<String, Trip>,
-    internal val vehicles: Map<String, Vehicle>
+    internal val vehicles: Map<String, Vehicle>,
 ) {
 
     constructor(
@@ -22,7 +22,7 @@ data class PredictionsByStopJoinResponse(
             .groupBy { it.stopId }
             .mapValues { predictions -> predictions.value.associateBy { it.id } },
         objects.trips,
-        objects.vehicles
+        objects.vehicles,
     )
 
     constructor(
@@ -30,7 +30,7 @@ data class PredictionsByStopJoinResponse(
     ) : this(
         mapOf(partialResponse.stopId to partialResponse.predictions),
         partialResponse.trips,
-        partialResponse.vehicles
+        partialResponse.vehicles,
     )
 
     /**
@@ -62,7 +62,7 @@ data class PredictionsByStopJoinResponse(
         return PredictionsByStopJoinResponse(
             predictionsByStop = updatedPredictionsByStop,
             trips = updatedTrips,
-            vehicles = updatedVehicles
+            vehicles = updatedVehicles,
         )
     }
 
@@ -72,7 +72,7 @@ data class PredictionsByStopJoinResponse(
         return PredictionsStreamDataResponse(
             predictions = predictionsById,
             trips = trips,
-            vehicles = vehicles
+            vehicles = vehicles,
         )
     }
 

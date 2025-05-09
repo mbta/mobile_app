@@ -82,7 +82,7 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
     @Serializable data class AppearanceFilter(val appearance: String, val value: String)
 
     enum class ColorSchemeFilter {
-        DARK,
+        DARK
     }
 
     private val darkModeFilter = AppearanceFilter("luminosity", "dark")
@@ -219,7 +219,7 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
                 appendLine("        \"$name\" -> R.drawable.$drawable")
             }
             appendLine(
-                "        else -> throw IllegalArgumentException(\"Invalid drawable name \$name\")",
+                "        else -> throw IllegalArgumentException(\"Invalid drawable name \$name\")"
             )
             appendLine("    }")
         }

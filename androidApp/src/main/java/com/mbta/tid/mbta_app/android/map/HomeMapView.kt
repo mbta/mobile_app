@@ -91,7 +91,7 @@ fun HomeMapView(
     vehiclesData: List<Vehicle>,
     routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
-    searchResultsViewModel: SearchResultsViewModel
+    searchResultsViewModel: SearchResultsViewModel,
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -134,10 +134,10 @@ fun HomeMapView(
                 listOf(
                     StopLayerGenerator.stopLayerId,
                     StopLayerGenerator.busLayerId,
-                    StopLayerGenerator.stopTouchTargetLayerId
+                    StopLayerGenerator.stopTouchTargetLayerId,
                 ),
-                null
-            )
+                null,
+            ),
         ) { result ->
             if (result.isError) {
                 Log.e("Map", "Failed handling tap feature query:\n${result.error}")
@@ -158,7 +158,7 @@ fun HomeMapView(
                 currentLocation,
                 locationDataManager,
                 searchResultsViewModel,
-                viewportProvider
+                viewportProvider,
             )
         }
     }
@@ -173,13 +173,13 @@ fun HomeMapView(
                 RouteFeaturesBuilder.filteredRouteShapesForStop(
                     stopMapData,
                     currentNavEntry.stopFilter,
-                    routeCardData
+                    routeCardData,
                 )
             } else {
                 RouteFeaturesBuilder.forRailAtStop(
                     stopMapData.routeShapes,
                     railRouteShapes.routesWithSegmentedShapes,
-                    globalResponse
+                    globalResponse,
                 )
             }
         val newRailData =
@@ -189,7 +189,7 @@ fun HomeMapView(
             addLayers(
                 filteredRoutes,
                 globalResponse,
-                if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                if (isDarkMode) ColorPalette.dark else ColorPalette.light,
             )
         }
     }
@@ -201,7 +201,7 @@ fun HomeMapView(
             addLayers(
                 railRouteShapes ?: return@run,
                 globalResponse ?: return@run,
-                if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                if (isDarkMode) ColorPalette.dark else ColorPalette.light,
             )
         }
     }
@@ -270,7 +270,7 @@ fun HomeMapView(
                 addLayers(
                     railRouteShapes ?: return@run,
                     globalResponse ?: return@run,
-                    if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                    if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                 )
             }
         }
@@ -292,7 +292,7 @@ fun HomeMapView(
                 painterResource(R.drawable.empty_map_grid),
                 null,
                 Modifier.fillMaxSize().testTag("Empty map grid"),
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.FillWidth,
             )
         } else {
             MapboxMap(
@@ -305,7 +305,7 @@ fun HomeMapView(
                 attribution = {
                     Attribution(
                         contentPadding = sheetPadding + PaddingValues(8.dp),
-                        alignment = Alignment.BottomEnd
+                        alignment = Alignment.BottomEnd,
                     )
                 },
                 mapViewportState = viewportProvider.viewport,
@@ -315,7 +315,7 @@ fun HomeMapView(
                         style =
                             if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle
                     )
-                }
+                },
             ) {
                 LaunchedEffect(now) { viewModel.refreshGlobalMapData(now) }
                 LaunchedEffect(currentNavEntry) { handleNavChange() }
@@ -348,7 +348,7 @@ fun HomeMapView(
                     viewportProvider.isFollowingPuck,
                     selectedVehicle,
                     searchResultsViewModel.expanded,
-                    viewportProvider.isVehicleOverview
+                    viewportProvider.isVehicleOverview,
                 ) {
                     if (viewportProvider.isAnimating) {
                         viewModel.hideCenterButtons()
@@ -357,7 +357,7 @@ fun HomeMapView(
                             currentLocation,
                             locationDataManager,
                             searchResultsViewModel,
-                            viewportProvider
+                            viewportProvider,
                         )
                     }
                 }
@@ -467,7 +467,7 @@ fun HomeMapView(
                                     { handleVehicleTap(vehicle) }
                                 } else {
                                     null
-                                }
+                                },
                         )
                     }
                 }
@@ -482,7 +482,7 @@ fun HomeMapView(
                 LocationAuthButton(
                     locationDataManager,
                     modifier =
-                        Modifier.align(Alignment.TopCenter).padding(top = 85.dp).statusBarsPadding()
+                        Modifier.align(Alignment.TopCenter).padding(top = 85.dp).statusBarsPadding(),
                 )
             }
 
@@ -495,7 +495,7 @@ fun HomeMapView(
                 if (showRecenterButton) {
                     RecenterButton(
                         onClick = { viewportProvider.follow() },
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 
@@ -509,10 +509,10 @@ fun HomeMapView(
                                     viewportProvider.vehicleOverview(
                                         selectedVehicle,
                                         selectedStop,
-                                        density
+                                        density,
                                     )
                                 },
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                modifier = Modifier.padding(horizontal = 16.dp),
                             )
                         }
                     }

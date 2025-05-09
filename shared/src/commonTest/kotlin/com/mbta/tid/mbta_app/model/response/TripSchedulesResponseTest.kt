@@ -28,7 +28,7 @@ class TripSchedulesResponseTest {
 
         assertEquals(
             TripSchedulesResponse.Schedules(listOf(schedule1, schedule2)),
-            json.decodeFromJsonElement(payload)
+            json.decodeFromJsonElement(payload),
         )
     }
 
@@ -45,7 +45,7 @@ class TripSchedulesResponseTest {
 
         assertEquals(
             TripSchedulesResponse.StopIds(listOf("9", "10", "11")),
-            json.decodeFromJsonElement(payload)
+            json.decodeFromJsonElement(payload),
         )
     }
 

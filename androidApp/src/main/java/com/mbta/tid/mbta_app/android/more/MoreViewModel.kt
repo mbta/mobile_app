@@ -11,10 +11,8 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MoreViewModel(
-    private val context: Context,
-    private val licensesCallback: () -> Unit,
-) : ViewModel() {
+class MoreViewModel(private val context: Context, private val licensesCallback: () -> Unit) :
+    ViewModel() {
 
     private val _sections = MutableStateFlow<List<MoreSection>>(listOf())
     var sections = _sections.asStateFlow()
@@ -47,9 +45,9 @@ class MoreViewModel(
                     listOf(
                         MoreItem.Link(
                             label = context.resources.getString(R.string.feedback_link_form),
-                            url = feedbackFormUrl
+                            url = feedbackFormUrl,
                         )
-                    )
+                    ),
             ),
             MoreSection(
                 id = MoreSection.Category.Resources,
@@ -58,20 +56,19 @@ class MoreViewModel(
                         MoreItem.Link(
                             label =
                                 context.resources.getString(R.string.resources_link_trip_planner),
-                            url = "https://www.mbta.com/trip-planner"
+                            url = "https://www.mbta.com/trip-planner",
                         ),
                         MoreItem.Link(
                             label = context.resources.getString(R.string.resources_link_fare_info),
-                            url = "https://www.mbta.com/fares"
+                            url = "https://www.mbta.com/fares",
                         ),
                         MoreItem.Link(
                             label = context.resources.getString(R.string.resources_link_mticket),
                             note =
                                 context.resources.getString(R.string.resources_link_mticket_note),
-                            url =
-                                "https://play.google.com/store/apps/details?id=com.mbta.mobileapp",
-                        )
-                    )
+                            url = "https://play.google.com/store/apps/details?id=com.mbta.mobileapp",
+                        ),
+                    ),
             ),
             MoreSection(
                 id = MoreSection.Category.Settings,
@@ -80,13 +77,13 @@ class MoreViewModel(
                         MoreItem.Toggle(
                             label =
                                 context.resources.getString(R.string.setting_toggle_map_display),
-                            settings = Settings.HideMaps
+                            settings = Settings.HideMaps,
                         ),
                         MoreItem.Toggle(
                             label = context.getString(R.string.setting_station_accessibility),
-                            settings = Settings.StationAccessibility
-                        )
-                    )
+                            settings = Settings.StationAccessibility,
+                        ),
+                    ),
             ),
             MoreSection(
                 id = MoreSection.Category.FeatureFlags,
@@ -94,17 +91,17 @@ class MoreViewModel(
                     listOf(
                         MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_debug_mode),
-                            settings = Settings.DevDebugMode
+                            settings = Settings.DevDebugMode,
                         ),
                         MoreItem.Toggle(
                             label = "Enhanced Favorites",
-                            settings = Settings.EnhancedFavorites
+                            settings = Settings.EnhancedFavorites,
                         ),
                         MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_route_search),
-                            settings = Settings.SearchRouteResults
-                        )
-                    )
+                            settings = Settings.SearchRouteResults,
+                        ),
+                    ),
             ),
             MoreSection(
                 id = MoreSection.Category.Other,
@@ -112,27 +109,27 @@ class MoreViewModel(
                     listOf(
                         MoreItem.Link(
                             label = context.resources.getString(R.string.other_link_tos),
-                            url = "https://www.mbta.com/policies/terms-use"
+                            url = "https://www.mbta.com/policies/terms-use",
                         ),
                         MoreItem.Link(
                             label = context.resources.getString(R.string.other_link_privacy_policy),
-                            url = "https://www.mbta.com/policies/privacy-policy"
+                            url = "https://www.mbta.com/policies/privacy-policy",
                         ),
                         MoreItem.Link(
                             label = context.resources.getString(R.string.other_link_source_code),
-                            url = "https://github.com/mbta/mobile_app"
+                            url = "https://github.com/mbta/mobile_app",
                         ),
                         MoreItem.NavLink(
                             label = context.resources.getString(R.string.software_licenses),
-                            callback = licensesCallback
-                        )
-                    )
+                            callback = licensesCallback,
+                        ),
+                    ),
             ),
             MoreSection(
                 id = MoreSection.Category.Support,
                 items = listOf(MoreItem.Phone("617-222-3200", "6172223200")),
-                note = context.resources.getString(R.string.more_section_support_note)
-            )
+                note = context.resources.getString(R.string.more_section_support_note),
+            ),
         )
     }
 }

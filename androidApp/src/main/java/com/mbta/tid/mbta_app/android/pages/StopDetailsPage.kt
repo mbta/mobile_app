@@ -35,7 +35,7 @@ fun StopDetailsPage(
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val stopId = filters.stopId
 
@@ -69,6 +69,6 @@ fun StopDetailsPage(
         tileScrollState,
         openModal,
         openSheetRoute,
-        errorBannerViewModel
+        errorBannerViewModel,
     )
 }

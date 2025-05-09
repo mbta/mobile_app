@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class PredictionsStreamDataResponse(
     internal val predictions: Map<String, Prediction>,
     internal val trips: Map<String, Trip>,
-    internal val vehicles: Map<String, Vehicle>
+    internal val vehicles: Map<String, Vehicle>,
 ) {
     constructor(
         objects: ObjectCollectionBuilder

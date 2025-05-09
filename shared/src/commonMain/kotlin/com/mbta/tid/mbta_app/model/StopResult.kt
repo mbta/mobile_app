@@ -13,8 +13,4 @@ data class StopResult(
     val routes: List<StopResultRoute>,
 )
 
-@Serializable
-data class StopResultRoute(
-    val type: RouteType,
-    val icon: String,
-)
+@Serializable data class StopResultRoute(val type: RouteType, val icon: String)

@@ -64,9 +64,9 @@ class SearchBarOverlayTest : KoinTest {
                                                         type = RouteType.BUS,
                                                         icon = "routeIcon",
                                                     )
-                                                )
+                                                ),
                                         )
-                                    )
+                                    ),
                             )
                         )
                     }

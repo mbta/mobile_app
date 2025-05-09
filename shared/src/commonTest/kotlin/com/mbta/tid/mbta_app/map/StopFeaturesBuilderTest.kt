@@ -35,7 +35,7 @@ class StopFeaturesBuilderTest {
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BLUE),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             ),
                         stop2.id to
                             MapStop(
@@ -43,7 +43,7 @@ class StopFeaturesBuilderTest {
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.GREEN),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             ),
                         stop3.id to
                             MapStop(
@@ -53,10 +53,10 @@ class StopFeaturesBuilderTest {
                                     listOf(
                                         MapStopRoute.RED,
                                         MapStopRoute.MATTAPAN,
-                                        MapStopRoute.BUS
+                                        MapStopRoute.BUS,
                                     ),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             ),
                         stop4.id to
                             MapStop(
@@ -64,7 +64,7 @@ class StopFeaturesBuilderTest {
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             ),
                         stop5.id to
                             MapStop(
@@ -72,7 +72,7 @@ class StopFeaturesBuilderTest {
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             ),
                         stop6.id to
                             MapStop(
@@ -80,10 +80,10 @@ class StopFeaturesBuilderTest {
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             ),
                     ),
-                routeSourceDetails = emptyList()
+                routeSourceDetails = emptyList(),
             )
 
         assertEquals(5, collection.features.size)
@@ -104,13 +104,13 @@ class StopFeaturesBuilderTest {
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 stopsById = stops.mapValues { it.value.stop },
-                alertsByStop = emptyMap()
+                alertsByStop = emptyMap(),
             )
         val collection =
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                routeSourceDetails = routeLines
+                routeSourceDetails = routeLines,
             )
         val snappedStopCoordinates =
             Position(latitude = 42.3961623851223, longitude = -71.14129664101432)
@@ -118,7 +118,7 @@ class StopFeaturesBuilderTest {
         assertEquals(4, collection.features.size)
         assertEquals(
             Point(snappedStopCoordinates),
-            collection.features.find { it.id == MapTestDataHelper.stopAlewife.id }?.geometry
+            collection.features.find { it.id == MapTestDataHelper.stopAlewife.id }?.geometry,
         )
     }
 
@@ -139,10 +139,10 @@ class StopFeaturesBuilderTest {
                             routes = mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                             routeTypes = listOf(MapStopRoute.RED),
                             isTerminal = false,
-                            alerts = null
+                            alerts = null,
                         )
                     },
-                routeSourceDetails = emptyList()
+                routeSourceDetails = emptyList(),
             )
 
         assertEquals(2, collection.features.size)
@@ -162,12 +162,12 @@ class StopFeaturesBuilderTest {
                 stopData =
                     StopSourceData(
                         filteredStopIds = listOf(MapTestDataHelper.stopAlewife.id),
-                        selectedStopId = null
+                        selectedStopId = null,
                     ),
                 stops =
                     mapOf(
                             MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
-                            MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis
+                            MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
                         )
                         .mapValues { (_, stop) ->
                             MapStop(
@@ -176,10 +176,10 @@ class StopFeaturesBuilderTest {
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
                                 isTerminal = false,
-                                alerts = null
+                                alerts = null,
                             )
                         },
-                routeSourceDetails = emptyList()
+                routeSourceDetails = emptyList(),
             )
 
         assertEquals(1, collection.features.size)
@@ -205,7 +205,7 @@ class StopFeaturesBuilderTest {
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
                                 isTerminal = true,
-                                alerts = null
+                                alerts = null,
                             ),
                         "place-alfcl" to
                             MapStop(
@@ -214,7 +214,7 @@ class StopFeaturesBuilderTest {
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
                                 isTerminal = true,
-                                alerts = mapOf(MapStopRoute.RED to StopAlertState.Shuttle)
+                                alerts = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                             ),
                         "place-astao" to
                             MapStop(
@@ -225,10 +225,10 @@ class StopFeaturesBuilderTest {
                                     ),
                                 routeTypes = listOf(MapStopRoute.ORANGE),
                                 isTerminal = false,
-                                alerts = mapOf(MapStopRoute.ORANGE to StopAlertState.Suspension)
+                                alerts = mapOf(MapStopRoute.ORANGE to StopAlertState.Suspension),
                             ),
                     ),
-                routeSourceDetails = emptyList()
+                routeSourceDetails = emptyList(),
             )
 
         assertEquals(2, collection.features.size)
@@ -245,7 +245,7 @@ class StopFeaturesBuilderTest {
             checkNotNull(assemblyFeature.properties[StopFeaturesBuilder.propServiceStatusKey])
         assertEquals(
             StopAlertState.Suspension.name,
-            assemblyServiceStatus[MapStopRoute.ORANGE.name]
+            assemblyServiceStatus[MapStopRoute.ORANGE.name],
         )
     }
 
@@ -263,13 +263,13 @@ class StopFeaturesBuilderTest {
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 stopsById = stops.mapValues { it.value.stop },
-                alertsByStop = emptyMap()
+                alertsByStop = emptyMap(),
             )
         val collection =
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                routeSourceDetails = routeLines
+                routeSourceDetails = routeLines,
             )
 
         assertEquals(4, collection.features.size)
@@ -287,9 +287,9 @@ class StopFeaturesBuilderTest {
         assertEquals(
             mapOf(
                 MapStopRoute.RED.name to listOf(MapTestDataHelper.routeRed.id),
-                MapStopRoute.BUS.name to listOf(MapTestDataHelper.route67.id)
+                MapStopRoute.BUS.name to listOf(MapTestDataHelper.route67.id),
             ),
-            alewifeRouteIds
+            alewifeRouteIds,
         )
     }
 
@@ -298,14 +298,14 @@ class StopFeaturesBuilderTest {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
-                MapTestDataHelper.stopAlewife.id to MapTestDataHelper.mapStopAlewife
+                MapTestDataHelper.stopAlewife.id to MapTestDataHelper.mapStopAlewife,
             )
 
         val collection =
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                routeSourceDetails = emptyList()
+                routeSourceDetails = emptyList(),
             )
 
         assertEquals(2, collection.features.size)
@@ -326,14 +326,14 @@ class StopFeaturesBuilderTest {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAlewife.id to MapTestDataHelper.mapStopAlewife,
-                MapTestDataHelper.stopDavis.id to MapTestDataHelper.mapStopDavis
+                MapTestDataHelper.stopDavis.id to MapTestDataHelper.mapStopDavis,
             )
 
         val collection =
             StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
-                routeSourceDetails = emptyList()
+                routeSourceDetails = emptyList(),
             )
 
         assertEquals(2, collection.features.size)

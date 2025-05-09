@@ -44,7 +44,7 @@ class SubscribeToPredictionsTest {
                 { stops -> connectProps = stops },
                 { disconnectCount += 1 },
                 null,
-                predictionsOnJoin
+                predictionsOnJoin,
             )
 
         var stopIds = mutableStateOf(listOf("place-a"))
@@ -57,10 +57,7 @@ class SubscribeToPredictionsTest {
                 subscribeToPredictions(
                     stopIds,
                     predictionsRepo,
-                    ErrorBannerViewModel(
-                        false,
-                        MockErrorBannerStateRepository(),
-                    )
+                    ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                 )
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
@@ -93,7 +90,7 @@ class SubscribeToPredictionsTest {
                 { stopIds -> connectCount += 1 },
                 { disconnectCount += 1 },
                 null,
-                null
+                null,
             )
 
         var stopIds = mutableStateOf(listOf("place-a"))
@@ -107,10 +104,7 @@ class SubscribeToPredictionsTest {
                     subscribeToPredictions(
                         stopIds,
                         predictionsRepo,
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        )
+                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                     )
                 predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
             }
@@ -140,7 +134,7 @@ class SubscribeToPredictionsTest {
                     connected = true
                 },
                 connectV2Response =
-                    PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
+                    PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap()),
             )
 
         var predictions: PredictionsStreamDataResponse? = null
@@ -150,10 +144,7 @@ class SubscribeToPredictionsTest {
                 subscribeToPredictions(
                     emptyList(),
                     predictionsRepo,
-                    ErrorBannerViewModel(
-                        false,
-                        MockErrorBannerStateRepository(),
-                    )
+                    ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
                 )
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
@@ -185,11 +176,8 @@ class SubscribeToPredictionsTest {
             subscribeToPredictions(
                 stopIds,
                 predictionsRepo,
-                ErrorBannerViewModel(
-                    false,
-                    mockErrorRepo,
-                ),
-                1.seconds
+                ErrorBannerViewModel(false, mockErrorRepo),
+                1.seconds,
             )
         }
 

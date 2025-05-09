@@ -40,7 +40,7 @@ class NearbyTransitViewModelTest {
             object : INearbyRepository {
                 override fun getStopIdsNearby(
                     global: GlobalResponse,
-                    location: Position
+                    location: Position,
                 ): List<String> {
                     return if (location === position1) {
                         response1
@@ -59,7 +59,7 @@ class NearbyTransitViewModelTest {
                     globalResponse,
                     position,
                     setLastLocation = {},
-                    setSelectingLocation = {}
+                    setSelectingLocation = {},
                 )
             }
         }

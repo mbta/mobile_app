@@ -72,7 +72,7 @@ data class RouteCardData(
             stop: Stop,
             data: List<Leaf>,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) : this(LineOrRoute.Route(route), stop, data, context, globalData)
 
         constructor(
@@ -81,7 +81,7 @@ data class RouteCardData(
             stop: Stop,
             data: List<Leaf>,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) : this(LineOrRoute.Line(line, routes), stop, data, context, globalData)
 
         constructor(
@@ -89,13 +89,13 @@ data class RouteCardData(
             stop: Stop,
             data: List<Leaf>,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) : this(
             lineOrRoute,
             stop,
             lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
             data,
-            context
+            context,
         )
 
         val id = stop.id
@@ -118,7 +118,7 @@ data class RouteCardData(
         val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
         val hasSchedulesTodayByPattern: Map<String, Boolean>,
-        val alertsDownstream: List<Alert>
+        val alertsDownstream: List<Alert>,
     ) {
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
@@ -130,7 +130,7 @@ data class RouteCardData(
             alertsHere: List<Alert>,
             allDataLoaded: Boolean,
             hasSchedulesToday: Boolean,
-            alertsDownstream: List<Alert>
+            alertsDownstream: List<Alert>,
         ) : this(
             directionId,
             routePatterns,
@@ -142,7 +142,7 @@ data class RouteCardData(
             // when routePatterns are not specified in the test
             if (routePatterns.isEmpty()) mapOf("fakeId" to hasSchedulesToday)
             else routePatterns.associate { it.id to hasSchedulesToday },
-            alertsDownstream
+            alertsDownstream,
         )
 
         val id = directionId
@@ -161,8 +161,7 @@ data class RouteCardData(
             alertsHere.firstOrNull {
                 it.significance < AlertSignificance.Major &&
                     it.significance >= AlertSignificance.Secondary
-            }
-                ?: alertsDownstream.firstOrNull()
+            } ?: alertsDownstream.firstOrNull()
 
         /**
          * Get all headsigns that might be shown for this leaf. For bus, the only headsigns that
@@ -174,7 +173,7 @@ data class RouteCardData(
         fun potentialHeadsigns(
             now: Instant,
             representativeRoute: Route,
-            globalData: GlobalResponse?
+            globalData: GlobalResponse?,
         ): Set<String> {
             val potentialHeadsigns = mutableSetOf<String>()
             val cutoffTime = now + 120.minutes
@@ -216,7 +215,7 @@ data class RouteCardData(
             val routePatterns: List<RoutePattern>,
             val hasSchedulesToday: Boolean,
             val allUpcomingTrips: List<UpcomingTrip>,
-            val majorAlert: Alert?
+            val majorAlert: Alert?,
         )
 
         /**
@@ -225,7 +224,7 @@ data class RouteCardData(
          */
         private fun dataByHeadsign(
             potentialHeadsigns: Set<String>,
-            globalData: GlobalResponse?
+            globalData: GlobalResponse?,
         ): Map<String, ByHeadsignData> {
             return potentialHeadsigns
                 .map { headsign ->
@@ -246,7 +245,7 @@ data class RouteCardData(
                             directionId,
                             routePatterns.map { it.routeId },
                             stopIds,
-                            null
+                            null,
                         )
 
                     headsign to
@@ -257,7 +256,7 @@ data class RouteCardData(
                                 .filterKeys { it in routePatternIds }
                                 .any { it.value },
                             upcomingTrips.filter { it.headsign == headsign },
-                            majorAlert.firstOrNull()
+                            majorAlert.firstOrNull(),
                         )
                 }
                 .toMap()
@@ -281,7 +280,7 @@ data class RouteCardData(
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
             globalData: GlobalResponse?,
-            now: Instant
+            now: Instant,
         ): LeafFormat {
 
             // If there is more than 1 route id, then we are dealing with a line and should
@@ -301,10 +300,10 @@ data class RouteCardData(
                         LeafFormat.Branched.BranchRow(
                             route,
                             trip.headsign,
-                            UpcomingFormat.Some(format, null)
+                            UpcomingFormat.Some(format, null),
                         )
                     },
-                    secondaryAlert
+                    secondaryAlert,
                 )
             }
 
@@ -318,8 +317,8 @@ data class RouteCardData(
                     null,
                     UpcomingFormat.Disruption(
                         disruptedHeadsigns.first().value.majorAlert!!,
-                        mapStopRoute
-                    )
+                        mapStopRoute,
+                    ),
                 )
             }
 
@@ -337,7 +336,7 @@ data class RouteCardData(
                         LeafFormat.Branched.BranchRow(
                             route,
                             headsign,
-                            UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute)
+                            UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute),
                         )
                     }
 
@@ -351,7 +350,7 @@ data class RouteCardData(
                     LeafFormat.Branched.BranchRow(
                         route,
                         upcomingTrip.trip.headsign,
-                        UpcomingFormat.Some(formatted, null)
+                        UpcomingFormat.Some(formatted, null),
                     )
                 }
 
@@ -372,14 +371,14 @@ data class RouteCardData(
                                 NoTripsFormat.fromUpcomingTrips(
                                     groupedData.allUpcomingTrips,
                                     groupedData.hasSchedulesToday,
-                                    now
+                                    now,
                                 )
 
                             if (noTripsFormat == NoTripsFormat.PredictionsUnavailable) {
                                 LeafFormat.Branched.BranchRow(
                                     route,
                                     headsign,
-                                    UpcomingFormat.NoTrips(noTripsFormat, null)
+                                    UpcomingFormat.NoTrips(noTripsFormat, null),
                                 )
                             } else {
                                 null
@@ -392,7 +391,7 @@ data class RouteCardData(
 
             return LeafFormat.Branched(
                 upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches,
-                secondaryAlert
+                secondaryAlert,
             )
         }
 
@@ -404,7 +403,7 @@ data class RouteCardData(
             headsign: String?,
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
-            secondaryAlert: UpcomingFormat.SecondaryAlert?
+            secondaryAlert: UpcomingFormat.SecondaryAlert?,
         ): LeafFormat.Single {
 
             return if (majorAlert != null) {
@@ -418,7 +417,7 @@ data class RouteCardData(
             now: Instant,
             representativeRoute: Route,
             globalData: GlobalResponse?,
-            context: Context
+            context: Context,
         ): LeafFormat {
             val potentialHeadsigns = potentialHeadsigns(now, representativeRoute, globalData)
 
@@ -456,10 +455,10 @@ data class RouteCardData(
                                 NoTripsFormat.fromUpcomingTrips(
                                     upcomingTrips,
                                     hasSchedulesToday,
-                                    now
+                                    now,
                                 ),
-                                secondaryAlert
-                            )
+                                secondaryAlert,
+                            ),
                         )
                 }
             }
@@ -471,14 +470,14 @@ data class RouteCardData(
                     mapStopRoute,
                     secondaryAlert,
                     globalData,
-                    now
+                    now,
                 )
             } else {
                 formatForSingleHeadsignService(
                     potentialHeadsigns.singleOrNull(),
                     tripsToShow.map { it.second },
                     mapStopRoute,
-                    secondaryAlert
+                    secondaryAlert,
                 )
             }
         }
@@ -543,7 +542,7 @@ data class RouteCardData(
         fun directions(
             globalData: GlobalResponse,
             stop: Stop,
-            patterns: List<RoutePattern>
+            patterns: List<RoutePattern>,
         ): List<Direction> =
             when (this) {
                 is Line -> Direction.getDirectionsForLine(globalData, stop, patterns)
@@ -583,7 +582,7 @@ data class RouteCardData(
             alerts: AlertsStreamDataResponse?,
             now: Instant,
             pinnedRoutes: Set<String>,
-            context: Context
+            context: Context,
         ): List<RouteCardData>? =
             withContext(Dispatchers.Default) {
 
@@ -612,7 +611,7 @@ data class RouteCardData(
                         alerts,
                         includeMinorAlerts = context.isStopDetails(),
                         now,
-                        globalData
+                        globalData,
                     )
                     .build(sortByDistanceFrom)
                     .sort(sortByDistanceFrom, pinnedRoutes)
@@ -621,7 +620,7 @@ data class RouteCardData(
         fun filterStopsByPatterns(
             routePatterns: List<RoutePattern>,
             global: GlobalResponse,
-            localStops: Set<String>
+            localStops: Set<String>,
         ): Set<String> {
             val patternsStops =
                 routePatterns.flatMapTo(mutableSetOf()) {
@@ -678,7 +677,7 @@ data class RouteCardData(
                                             lineOrRoute.directions(
                                                 globalData,
                                                 stop,
-                                                patternsForStop.allPatterns
+                                                patternsForStop.allPatterns,
                                             )
                                         stop.id to
                                             RouteStopDataBuilder(
@@ -708,17 +707,17 @@ data class RouteCardData(
                                                                             stop
                                                                         ) {
                                                                             setOf(stop.id)
-                                                                        }
+                                                                        },
                                                                     ),
-                                                                allDataLoaded = allDataLoaded
+                                                                allDataLoaded = allDataLoaded,
                                                             )
                                                         },
-                                                context
+                                                context,
                                             )
                                     }
                                     .toMap(),
                                 context,
-                                now
+                                now,
                             )
                     }
                     .toMap()
@@ -728,7 +727,7 @@ data class RouteCardData(
 
         private fun patternsByRouteOrLine(
             stopIds: Set<String>,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): Map<LineOrRoute, List<RoutePattern>> {
 
             val allPatternsAtStopWithRoute: List<Pair<Route, RoutePattern>> =
@@ -755,11 +754,11 @@ data class RouteCardData(
                                 routes =
                                     globalData.routesByLineId
                                         .getOrElse(line.id) { emptyList() }
-                                        .toSet()
+                                        .toSet(),
                             )
                         } else LineOrRoute.Route(route)
                     },
-                    { it.second }
+                    { it.second },
                 )
 
             return patternsByRouteOrLine
@@ -767,7 +766,7 @@ data class RouteCardData(
 
         private data class PatternsForStop(
             val allPatterns: List<RoutePattern>,
-            val patternsNotSeenAtEarlierStops: Set<String>
+            val patternsNotSeenAtEarlierStops: Set<String>,
         )
 
         // build the map of LineOrRoute => Stop => (Patterns, pattern Ids unique to the stop).
@@ -775,7 +774,7 @@ data class RouteCardData(
         // at an earlier stop for that LineOrRoute.
         private fun patternsGroupedByLineOrRouteAndStop(
             globalData: GlobalResponse,
-            parentToAllStops: Map<Stop, Set<String>>
+            parentToAllStops: Map<Stop, Set<String>>,
         ): Map<LineOrRoute, Map<Stop, PatternsForStop>> {
             val routePatternsUsed = mutableSetOf<String>()
 
@@ -797,7 +796,7 @@ data class RouteCardData(
                         routeStops.getOrPut(parentStop) {
                             PatternsForStop(
                                 allPatterns = routePatterns,
-                                patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops
+                                patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops,
                             )
                         }
                         routePatternsUsed.addAll(routePatterns.map { it.id })
@@ -822,7 +821,7 @@ data class RouteCardData(
                     predictions.predictions.values.toList(),
                     schedules?.trips.orEmpty() + predictions.trips,
                     predictions.vehicles,
-                    filterAtTime
+                    filterAtTime,
                 )
 
             val upcomingTripsBySlot = mutableMapOf<HierarchyPath, MutableList<UpcomingTrip>>()
@@ -834,7 +833,7 @@ data class RouteCardData(
                 upcomingTripsBySlot
                     .getOrPut(
                         HierarchyPath(lineOrRouteId, parentStopId, upcomingTrip.trip.directionId),
-                        ::mutableListOf
+                        ::mutableListOf,
                     )
                     .add(upcomingTrip)
             }
@@ -883,7 +882,7 @@ data class RouteCardData(
             alerts: AlertsStreamDataResponse?,
             includeMinorAlerts: Boolean,
             filterAtTime: Instant,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): ListBuilder {
             val activeRelevantAlerts =
                 filterRelevantAlerts(alerts, includeMinorAlerts, filterAtTime)
@@ -902,7 +901,7 @@ data class RouteCardData(
                                 path.directionId,
                                 routes,
                                 leafBuilder.stopIds,
-                                null
+                                null,
                             )
                             .discardTrackChangesAtCRCore(isCRCore)
                     val downstreamAlerts =
@@ -910,7 +909,7 @@ data class RouteCardData(
                             activeRelevantAlerts,
                             leafBuilder.routePatterns.orEmpty(),
                             leafBuilder.stopIds.orEmpty(),
-                            globalData.trips
+                            globalData.trips,
                         )
                     val elevatorAlerts =
                         Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
@@ -924,21 +923,20 @@ data class RouteCardData(
         private fun filterRelevantAlerts(
             alerts: AlertsStreamDataResponse?,
             includeMinorAlerts: Boolean,
-            filterAtTime: Instant
+            filterAtTime: Instant,
         ): List<Alert> =
             alerts?.alerts?.values?.filter {
                 it.isActive(filterAtTime) &&
                     it.significance >=
                         if (includeMinorAlerts) AlertSignificance.Minor
                         else AlertSignificance.Accessibility
-            }
-                ?: emptyList()
+            } ?: emptyList()
 
         fun filterIrrelevantData(
             filterAtTime: Instant,
             cutoffTime: Instant?,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): ListBuilder {
 
             val showAllPatternsWhileLoading = context.isStopDetails()
@@ -958,7 +956,7 @@ data class RouteCardData(
                                     cutoffTime,
                                     showAllPatternsWhileLoading,
                                     isSubway,
-                                    globalData
+                                    globalData,
                                 )
                             }
                             .mapValues {
@@ -982,7 +980,7 @@ data class RouteCardData(
                         .map { it.build() }
                         .sort(sortByDistanceFrom),
                     context,
-                    now
+                    now,
                 )
             }
         }
@@ -992,7 +990,7 @@ data class RouteCardData(
         val lineOrRoute: LineOrRoute,
         var stopData: ByStopIdBuilder,
         val context: Context,
-        val now: Instant
+        val now: Instant,
     ) {
 
         fun build(sortByDistanceFrom: Position?): RouteCardData {
@@ -1000,7 +998,7 @@ data class RouteCardData(
                 this.lineOrRoute,
                 stopData.values.map { it.build() }.sort(sortByDistanceFrom),
                 context,
-                now
+                now,
             )
         }
     }
@@ -1018,7 +1016,7 @@ data class RouteCardData(
             stop: Stop,
             data: ByDirectionBuilder,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) : this(stop, LineOrRoute.Route(route), data, context, globalData)
 
         constructor(
@@ -1027,7 +1025,7 @@ data class RouteCardData(
             stop: Stop,
             data: ByDirectionBuilder,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) : this(stop, LineOrRoute.Line(line, routes), data, context, globalData)
 
         constructor(
@@ -1035,17 +1033,17 @@ data class RouteCardData(
             lineOrRoute: LineOrRoute,
             data: ByDirectionBuilder,
             context: Context,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) : this(
             lineOrRoute,
             stop,
             lineOrRoute.directions(
                 globalData,
                 stop,
-                data.values.mapNotNull { it.routePatterns }.flatten()
+                data.values.mapNotNull { it.routePatterns }.flatten(),
             ),
             data,
-            context
+            context,
         )
 
         fun build(): RouteStopData {
@@ -1054,7 +1052,7 @@ data class RouteCardData(
                 stop,
                 directions,
                 data.values.map { it.build() }.sort(),
-                context
+                context,
             )
         }
     }
@@ -1068,7 +1066,7 @@ data class RouteCardData(
         var alertsHere: List<Alert>? = null,
         var allDataLoaded: Boolean? = null,
         var hasSchedulesTodayByPattern: Map<String, Boolean>? = null,
-        var alertsDownstream: List<Alert>? = null
+        var alertsDownstream: List<Alert>? = null,
     ) {
 
         fun build(): RouteCardData.Leaf {
@@ -1081,7 +1079,7 @@ data class RouteCardData(
                 allDataLoaded ?: false,
                 hasSchedulesTodayByPattern
                     ?: checkNotNull(routePatterns).associate { it.id to false },
-                checkNotNull(alertsDownstream)
+                checkNotNull(alertsDownstream),
             )
         }
 
@@ -1131,7 +1129,7 @@ data class RouteCardData(
             cutoffTime: Instant?,
             showAllPatternsWhileLoading: Boolean,
             isSubway: Boolean,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): Boolean {
             if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
             val upcomingTripsInCutoff =
@@ -1147,10 +1145,8 @@ data class RouteCardData(
                         // If there isn't a route pattern for the trip (rare GL cases), assume it
                         // hasn't been seen elsewhere and that we should show this leaf.
                         this.patternsNotSeenAtEarlierStops?.contains(it)
-                    }
-                        ?: true
-                }
-                    ?: false
+                    } ?: true
+                } ?: false
 
             val shouldBeFilteredAsArrivalOnly =
                 if (isSubway) {
@@ -1167,8 +1163,7 @@ data class RouteCardData(
             val hasUnseenTypicalPattern =
                 routePatterns?.any {
                     (this.patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
-                }
-                    ?: false
+                } ?: false
 
             return (hasUnseenTypicalPattern || hasUnseenUpcomingTrip) &&
                 !(shouldBeFilteredAsArrivalOnly)
@@ -1176,7 +1171,7 @@ data class RouteCardData(
 
         private fun isTypicalLastStopOnRoutePattern(
             stop: Stop,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): Boolean {
             return this.routePatterns
                 ?.filter { it.typicality == RoutePattern.Typicality.Typical }
@@ -1187,15 +1182,14 @@ data class RouteCardData(
                         representativeTrip?.stopIds?.last() ?: return@all false
                     lastStopIdInPattern == stop.id ||
                         stop.childStopIds.contains(lastStopIdInPattern)
-                }
-                ?: false
+                } ?: false
         }
     }
 }
 
 fun List<RouteCardData>.sort(
     distanceFrom: Position?,
-    pinnedRoutes: Set<String>
+    pinnedRoutes: Set<String>,
 ): List<RouteCardData> =
     this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
 

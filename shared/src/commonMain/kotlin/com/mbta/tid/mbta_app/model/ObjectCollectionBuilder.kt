@@ -116,7 +116,7 @@ private constructor(
                     route,
                     routeType,
                     stop,
-                    trip
+                    trip,
                 )
             )
         }
@@ -134,7 +134,7 @@ private constructor(
                 informedEntity,
                 lifecycle,
                 severity,
-                updatedAt
+                updatedAt,
             )
     }
 
@@ -208,7 +208,7 @@ private constructor(
                 stopId = schedule.stopId
                 stopSequence = schedule.stopSequence
             },
-            block
+            block,
         )
 
     fun getPrediction(id: String) = predictions.getValue(id)
@@ -316,7 +316,7 @@ private constructor(
                 stopSequence,
                 routeId,
                 stopId,
-                tripId
+                tripId,
             )
     }
 
@@ -353,7 +353,7 @@ private constructor(
                     stopIds = representativeTrip.stopIds
                 }
             },
-            block
+            block,
         )
 
     fun getTrip(id: String) = trips.getValue(id)
@@ -445,7 +445,7 @@ private constructor(
                 updatedAt,
                 routeId,
                 stopId,
-                tripId
+                tripId,
             )
     }
 
@@ -458,7 +458,7 @@ private constructor(
         schedule: Schedule? = null,
         prediction: Prediction? = null,
         predictionStop: Stop? = null,
-        vehicle: Vehicle? = null
+        vehicle: Vehicle? = null,
     ): UpcomingTrip {
         if (prediction != null && schedule != null) {
             check(schedule.tripId == prediction.tripId)
@@ -471,7 +471,7 @@ private constructor(
             schedule,
             prediction,
             predictionStop ?: stops[prediction?.stopId],
-            vehicle
+            vehicle,
         )
     }
 
@@ -480,7 +480,7 @@ private constructor(
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
         builder: Builder,
-        block: Builder.() -> Unit
+        block: Builder.() -> Unit,
     ): Built {
         builder.block()
         val result = builder.built()

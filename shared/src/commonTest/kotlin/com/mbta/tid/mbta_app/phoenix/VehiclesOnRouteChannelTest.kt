@@ -52,11 +52,11 @@ class VehiclesOnRouteChannelTest {
                             Instant.parse("2024-05-15T09:00:00-04:00"),
                             "1",
                             "99",
-                            "61391720"
+                            "61391720",
                         )
                 )
             ),
-            parsed
+            parsed,
         )
     }
 

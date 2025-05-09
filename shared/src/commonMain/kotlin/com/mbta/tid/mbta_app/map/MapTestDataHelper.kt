@@ -23,13 +23,10 @@ object MapTestDataHelper {
     val mapStopAlewife: MapStop =
         MapStop(
             stopAlewife,
-            mapOf(
-                MapStopRoute.RED to listOf(routeRed),
-                MapStopRoute.BUS to listOf(route67),
-            ),
+            mapOf(MapStopRoute.RED to listOf(routeRed), MapStopRoute.BUS to listOf(route67)),
             listOf(MapStopRoute.RED, MapStopRoute.BUS),
             true,
-            null
+            null,
         )
 
     val stopDavis = objects.getStop("place-davis")
@@ -41,7 +38,7 @@ object MapTestDataHelper {
             routes = mapOf(MapStopRoute.RED to listOf(routeRed)),
             routeTypes = listOf(MapStopRoute.RED),
             isTerminal = false,
-            alerts = null
+            alerts = null,
         )
 
     val stopPorter = objects.getStop("place-portr")
@@ -52,7 +49,7 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
             false,
-            null
+            null,
         )
 
     val stopHarvard = objects.getStop("place-harsq")
@@ -63,7 +60,7 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
             false,
-            null
+            null,
         )
 
     val stopCentral = objects.getStop("place-cntsq")
@@ -74,7 +71,7 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
             false,
-            null
+            null,
         )
 
     val stopAssembly = objects.getStop("place-astao")
@@ -87,7 +84,7 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.ORANGE to listOf(routeOrange)),
             listOf(MapStopRoute.ORANGE),
             false,
-            null
+            null,
         )
 
     val stopSullivan = objects.getStop("place-sull")
@@ -98,7 +95,7 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.ORANGE to listOf(routeOrange)),
             listOf(MapStopRoute.ORANGE),
             false,
-            null
+            null,
         )
 
     val patternRed10 = objects.getRoutePattern("Red-1-0")
@@ -168,10 +165,10 @@ object MapTestDataHelper {
                                     patternRed10.id,
                                     patternRed10.routeId,
                                     listOf(stopAlewife.id, stopDavis.id),
-                                    emptyMap()
+                                    emptyMap(),
                                 )
                             ),
-                            shapeRedC1
+                            shapeRedC1,
                         ),
                         SegmentedRouteShape(
                             patternRed30.id,
@@ -182,17 +179,13 @@ object MapTestDataHelper {
                                     "segment2",
                                     patternRed30.id,
                                     patternRed30.routeId,
-                                    listOf(
-                                        stopPorter.id,
-                                        stopHarvard.id,
-                                        stopCentral.id,
-                                    ),
-                                    emptyMap()
+                                    listOf(stopPorter.id, stopHarvard.id, stopCentral.id),
+                                    emptyMap(),
                                 )
                             ),
-                            shapeRedC1
+                            shapeRedC1,
                         ),
-                    )
+                    ),
                 ),
                 MapFriendlyRouteResponse.RouteWithSegmentedShapes(
                     routeOrange.id,
@@ -207,12 +200,12 @@ object MapTestDataHelper {
                                     patternOrange30.id,
                                     patternOrange30.routeId,
                                     listOf(stopAssembly.id, stopSullivan.id),
-                                    emptyMap()
+                                    emptyMap(),
                                 )
                             ),
-                            shapeOrangeC1
-                        ),
-                    )
+                            shapeOrangeC1,
+                        )
+                    ),
                 ),
             )
         )

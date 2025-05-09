@@ -47,7 +47,7 @@ class AlertCardTests {
                 AlertCardSpec.Downstream,
                 color,
                 textColor,
-                { onViewDetailsClicked = true }
+                { onViewDetailsClicked = true },
             )
         }
 
@@ -71,7 +71,7 @@ class AlertCardTests {
                 AlertCardSpec.Major,
                 color,
                 textColor,
-                { onViewDetailsClicked = true }
+                { onViewDetailsClicked = true },
             )
         }
 
@@ -96,7 +96,7 @@ class AlertCardTests {
                 AlertCardSpec.Secondary,
                 color,
                 textColor,
-                { onViewDetailsClicked = true }
+                { onViewDetailsClicked = true },
             )
         }
 
@@ -120,7 +120,7 @@ class AlertCardTests {
                 AlertCardSpec.Elevator,
                 color,
                 textColor,
-                { onViewDetailsClicked = true }
+                { onViewDetailsClicked = true },
             )
         }
 
@@ -179,7 +179,7 @@ class AlertCardTests {
                 AlertCardSpec.Major,
                 color,
                 textColor,
-                {}
+                {},
             )
         }
 
@@ -206,7 +206,7 @@ class AlertCardTests {
                 AlertCardSpec.Secondary,
                 color,
                 textColor,
-                {}
+                {},
             )
         }
 

@@ -52,7 +52,7 @@ class ResponseCacheTest {
             respond(
                 content = ByteReadChannel(json.encodeToString(globalData)),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -76,7 +76,7 @@ class ResponseCacheTest {
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
-            }
+            },
         )
         assertTrue(didFetch)
     }
@@ -94,9 +94,9 @@ class ResponseCacheTest {
             Response(
                 ResponseMetadata(
                     null,
-                    TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
                 ),
-                globalData
+                globalData,
             )
 
         startKoin {
@@ -125,7 +125,7 @@ class ResponseCacheTest {
             respond(
                 content = ByteReadChannel(json.encodeToString(newData)),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
@@ -135,9 +135,9 @@ class ResponseCacheTest {
             Response(
                 ResponseMetadata(
                     null,
-                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
                 ),
-                oldData
+                oldData,
             )
 
         var didFetch = false
@@ -156,7 +156,7 @@ class ResponseCacheTest {
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
-            }
+            },
         )
         assertTrue(didFetch)
     }
@@ -183,7 +183,7 @@ class ResponseCacheTest {
                         respond(
                             content = "",
                             status = HttpStatusCode.NotModified,
-                            headers = headersOf(HttpHeaders.ETag, matchingEtag)
+                            headers = headersOf(HttpHeaders.ETag, matchingEtag),
                         )
                     else ->
                         respond(
@@ -192,8 +192,8 @@ class ResponseCacheTest {
                             headers =
                                 headersOf(
                                     Pair(HttpHeaders.ContentType, listOf("application/json")),
-                                    Pair(HttpHeaders.ETag, listOf("different etag"))
-                                )
+                                    Pair(HttpHeaders.ETag, listOf("different etag")),
+                                ),
                         )
                 }
             } else {
@@ -203,8 +203,8 @@ class ResponseCacheTest {
                     headers =
                         headersOf(
                             Pair(HttpHeaders.ContentType, listOf("application/json")),
-                            Pair(HttpHeaders.ETag, listOf(matchingEtag))
-                        )
+                            Pair(HttpHeaders.ETag, listOf(matchingEtag)),
+                        ),
                 )
             }
         }
@@ -276,7 +276,7 @@ class ResponseCacheTest {
                 json.encodeToString(
                     ResponseMetadata(
                         null,
-                        TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
+                        TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
                     )
                 )
             )
@@ -297,7 +297,7 @@ class ResponseCacheTest {
         assertEquals(
             ApiResult.Ok(globalData),
             cache.getOrFetch { fail() },
-            "Only the initial get is from disk, after that it's stored in memory"
+            "Only the initial get is from disk, after that it's stored in memory",
         )
     }
 
@@ -316,7 +316,7 @@ class ResponseCacheTest {
             respond(
                 content = ByteReadChannel(json.encodeToString(newData)),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
@@ -331,7 +331,7 @@ class ResponseCacheTest {
                 json.encodeToString(
                     ResponseMetadata(
                         null,
-                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
                     )
                 )
             )
@@ -356,7 +356,7 @@ class ResponseCacheTest {
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
-            }
+            },
         )
         assertTrue(didFetch)
     }
@@ -376,7 +376,7 @@ class ResponseCacheTest {
             respond(
                 content = ByteReadChannel(json.encodeToString(newData)),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
@@ -391,7 +391,7 @@ class ResponseCacheTest {
                 json.encodeToString(
                     ResponseMetadata(
                         null,
-                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
                     )
                 )
             )
@@ -442,8 +442,8 @@ class ResponseCacheTest {
                 headers =
                     headersOf(
                         Pair(HttpHeaders.ContentType, listOf("application/json")),
-                        Pair(HttpHeaders.ETag, listOf(responseEtag))
-                    )
+                        Pair(HttpHeaders.ETag, listOf(responseEtag)),
+                    ),
             )
         }
 
@@ -470,7 +470,7 @@ class ResponseCacheTest {
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
-            }
+            },
         )
         assertTrue(didFetch)
         assertEquals(
@@ -483,7 +483,7 @@ class ResponseCacheTest {
                         readUtf8()
                     }
                 )
-                .etag
+                .etag,
         )
         assertEquals(
             cache.data!!.body,
@@ -491,7 +491,7 @@ class ResponseCacheTest {
                 fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
                     readUtf8()
                 }
-            )
+            ),
         )
     }
 
@@ -514,8 +514,8 @@ class ResponseCacheTest {
                 headers =
                     headersOf(
                         Pair(HttpHeaders.ContentType, listOf("application/json")),
-                        Pair(HttpHeaders.ETag, listOf(responseEtag))
-                    )
+                        Pair(HttpHeaders.ETag, listOf(responseEtag)),
+                    ),
             )
         }
 
@@ -542,7 +542,7 @@ class ResponseCacheTest {
             partialCache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
-            }
+            },
         )
         assertTrue(didFetch)
 
@@ -552,13 +552,13 @@ class ResponseCacheTest {
                 fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
                     readUtf8()
                 }
-            )
+            ),
         )
 
         val completeCache = ResponseCache.create<CompleteObject>(cacheKey = "test")
         assertEquals(
             ApiResult.Ok(complete),
-            completeCache.getOrFetch { fail("Should not fetch again") }
+            completeCache.getOrFetch { fail("Should not fetch again") },
         )
     }
 
@@ -578,8 +578,8 @@ class ResponseCacheTest {
                 headers =
                     headersOf(
                         Pair(HttpHeaders.ContentType, listOf("application/json")),
-                        Pair(HttpHeaders.ETag, listOf(responseEtag))
-                    )
+                        Pair(HttpHeaders.ETag, listOf(responseEtag)),
+                    ),
             )
         }
 
@@ -627,7 +627,7 @@ class ResponseCacheTest {
         val invalidatedCache =
             ResponseCache.create<GlobalResponse>(
                 cacheKey = "test",
-                invalidationKey = firstInvalidationKey
+                invalidationKey = firstInvalidationKey,
             )
         assertEquals(ApiResult.Ok(globalData), invalidatedCache.getOrFetch { fetch() })
         assertEquals(2, fetchCount)
@@ -639,7 +639,7 @@ class ResponseCacheTest {
         val otherInvalidatedCache =
             ResponseCache.create<GlobalResponse>(
                 cacheKey = "test",
-                invalidationKey = secondInvalidationKey
+                invalidationKey = secondInvalidationKey,
             )
         assertEquals(ApiResult.Ok(globalData), otherInvalidatedCache.getOrFetch { fetch() })
         assertEquals(3, fetchCount)

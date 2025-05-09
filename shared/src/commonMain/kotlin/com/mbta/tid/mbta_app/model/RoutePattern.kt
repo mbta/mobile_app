@@ -11,7 +11,7 @@ data class RoutePattern(
     @SerialName("sort_order") val sortOrder: Int,
     val typicality: Typicality?,
     @SerialName("representative_trip_id") val representativeTripId: String,
-    @SerialName("route_id") val routeId: String
+    @SerialName("route_id") val routeId: String,
 ) : Comparable<RoutePattern>, BackendObject {
     @Serializable
     enum class Typicality {
@@ -19,7 +19,7 @@ data class RoutePattern(
         @SerialName("deviation") Deviation,
         @SerialName("atypical") Atypical,
         @SerialName("diversion") Diversion,
-        @SerialName("canonical_only") CanonicalOnly
+        @SerialName("canonical_only") CanonicalOnly,
     }
 
     /**

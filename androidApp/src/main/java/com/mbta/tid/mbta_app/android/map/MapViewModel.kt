@@ -78,7 +78,7 @@ interface IMapViewModel {
         currentLocation: Location?,
         locationDataManager: LocationDataManager,
         searchResultsViewModel: SearchResultsViewModel,
-        viewportProvider: ViewportProvider
+        viewportProvider: ViewportProvider,
     )
 
     fun hideCenterButtons()
@@ -89,7 +89,7 @@ open class MapViewModel(
     val configureMapboxToken: (String) -> Unit = { token -> MapboxOptions.accessToken = token },
     setHttpInterceptor: (MapHttpInterceptor?) -> Unit = { interceptor ->
         HttpServiceFactory.setHttpServiceInterceptor(interceptor)
-    }
+    },
 ) : ViewModel(), IMapViewModel, KoinComponent {
     private val _configLoadAttempted = MutableStateFlow(false)
     override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
@@ -162,7 +162,7 @@ open class MapViewModel(
             RouteFeaturesBuilder.generateRouteSources(
                 railRouteShapes.routesWithSegmentedShapes,
                 globalResponse,
-                globalMapData
+                globalMapData,
             )
     }
 
@@ -172,7 +172,7 @@ open class MapViewModel(
             StopFeaturesBuilder.buildCollection(
                     StopSourceData(selectedStopId = selectedStop?.id),
                     globalMapData,
-                    routeLineData
+                    routeLineData,
                 )
                 .toMapbox()
     }
@@ -205,7 +205,7 @@ open class MapViewModel(
         currentLocation: Location?,
         locationDataManager: LocationDataManager,
         searchResultsViewModel: SearchResultsViewModel,
-        viewportProvider: ViewportProvider
+        viewportProvider: ViewportProvider,
     ) {
         setShowRecenterButton(
             locationDataManager.hasPermission &&

@@ -43,7 +43,7 @@ class SettingsRepositoryTest : KoinTest {
                 Settings.HideMaps to false,
                 Settings.EnhancedFavorites to false,
             ),
-            repo.getSettings()
+            repo.getSettings(),
         )
     }
 

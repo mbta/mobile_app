@@ -18,19 +18,15 @@ fun LabeledSwitch(
     modifier: Modifier = Modifier,
     label: String,
     value: Boolean,
-    onValueChange: ((Boolean) -> Unit)
+    onValueChange: ((Boolean) -> Unit),
 ) {
     Row(
         modifier =
-            Modifier.toggleable(
-                    value = value,
-                    role = Role.Switch,
-                    onValueChange = onValueChange,
-                )
+            Modifier.toggleable(value = value, role = Role.Switch, onValueChange = onValueChange)
                 .fillMaxWidth()
                 .then(modifier),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = label, style = Typography.body, modifier = Modifier.weight(1f))
 

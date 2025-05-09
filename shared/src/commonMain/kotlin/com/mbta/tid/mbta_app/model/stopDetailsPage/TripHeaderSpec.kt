@@ -15,7 +15,7 @@ sealed class TripHeaderSpec {
         val vehicle: Vehicle,
         val stop: Stop,
         val entry: TripDetailsStopList.Entry?,
-        val atTerminal: Boolean
+        val atTerminal: Boolean,
     ) : TripHeaderSpec()
 
     companion object {
@@ -24,7 +24,7 @@ sealed class TripHeaderSpec {
             stops: TripDetailsStopList,
             terminalStop: Stop?,
             vehicle: Vehicle?,
-            vehicleStop: Stop?
+            vehicleStop: Stop?,
         ): TripHeaderSpec? {
             return if (vehicle != null && vehicleStop != null) {
                 val atTerminal =
@@ -37,7 +37,7 @@ sealed class TripHeaderSpec {
                         vehicleStop,
                         if (atTerminal) stops.startTerminalEntry
                         else stops.stops.firstOrNull { it.stop.id == vehicleStop.id },
-                        atTerminal
+                        atTerminal,
                     )
                 } else {
                     FinishingAnotherTrip

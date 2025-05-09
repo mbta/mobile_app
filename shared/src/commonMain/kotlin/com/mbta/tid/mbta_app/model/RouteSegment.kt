@@ -13,7 +13,7 @@ interface IRouteSegment {
 @Serializable
 data class RoutePatternKey(
     @SerialName("route_id") val routeId: String,
-    @SerialName("route_pattern_id") val routePatternId: String
+    @SerialName("route_pattern_id") val routePatternId: String,
 )
 
 @Serializable
@@ -27,7 +27,7 @@ data class RouteSegment(
     @SerialName("source_route_id") override val sourceRouteId: String,
     @SerialName("stop_ids") override val stopIds: List<String>,
     @SerialName("other_patterns_by_stop_id")
-    override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
+    override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
 ) : IRouteSegment {
 
     /**
@@ -50,7 +50,7 @@ data class RouteSegment(
                 sourceRouteId = sourceRouteId,
                 stopIds = segmentStops,
                 alertState = alertState,
-                otherPatternsByStopId = otherPatternsByStopId.filter { stopIdSet.contains(it.key) }
+                otherPatternsByStopId = otherPatternsByStopId.filter { stopIdSet.contains(it.key) },
             )
         }
     }
@@ -99,7 +99,7 @@ data class RouteSegment(
                     // TODO determine effects that count
                     StopAlertState(
                         hasSuspension = serviceAlerts.any { it.effect == Alert.Effect.Suspension },
-                        hasShuttle = serviceAlerts.any { it.effect == Alert.Effect.Shuttle }
+                        hasShuttle = serviceAlerts.any { it.effect == Alert.Effect.Shuttle },
                     )
                 }
             }
@@ -113,7 +113,7 @@ data class RouteSegment(
     companion object {
         internal fun alertingSegments(
             stopIds: List<String>,
-            stopsAlertState: Map<String, StopAlertState>
+            stopsAlertState: Map<String, StopAlertState>,
         ): List<Pair<SegmentAlertState, List<String>>> {
 
             if (stopIds.isEmpty()) {
@@ -127,7 +127,7 @@ data class RouteSegment(
                             it,
                             stopsAlertState.getOrElse(it) {
                                 StopAlertState(hasSuspension = false, hasShuttle = false)
-                            }
+                            },
                         )
                     }
                     .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
@@ -179,7 +179,7 @@ data class AlertAwareRouteSegment(
     override val sourceRouteId: String,
     override val stopIds: List<String>,
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
-    val alertState: SegmentAlertState
+    val alertState: SegmentAlertState,
 ) : IRouteSegment
 
 enum class SegmentAlertState {

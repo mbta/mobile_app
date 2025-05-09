@@ -16,7 +16,7 @@ class FeaturePromoUsecaseTest {
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(null),
-                MockLastLaunchedAppVersionRepository(AppVersion(0u, 1u, 0u), onSet = { fail() })
+                MockLastLaunchedAppVersionRepository(AppVersion(0u, 1u, 0u), onSet = { fail() }),
             )
         assertEquals(emptyList(), useCase.getFeaturePromos())
     }
@@ -27,7 +27,7 @@ class FeaturePromoUsecaseTest {
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(AppVersion(0u, 1u, 0u)),
-                MockLastLaunchedAppVersionRepository(null, onSet = { savedVersion = it })
+                MockLastLaunchedAppVersionRepository(null, onSet = { savedVersion = it }),
             )
         assertEquals(emptyList(), useCase.getFeaturePromos())
         assertEquals(AppVersion(0u, 1u, 0u), savedVersion)
@@ -41,7 +41,7 @@ class FeaturePromoUsecaseTest {
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
-                MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
+                MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u)),
             )
         assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
     }
@@ -53,7 +53,7 @@ class FeaturePromoUsecaseTest {
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
-                MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u))
+                MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u)),
             )
         assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
     }

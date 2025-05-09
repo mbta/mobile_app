@@ -73,7 +73,7 @@ fun AlertDetails(
     stop: Stop?,
     affectedStops: List<Stop>,
     now: Instant,
-    analytics: Analytics = koinInject()
+    analytics: Analytics = koinInject(),
 ) {
     val routeId = line?.id ?: routes?.firstOrNull()?.id ?: ""
     val routeLabel = line?.longName ?: routes?.firstOrNull()?.label
@@ -87,7 +87,7 @@ fun AlertDetails(
         Modifier.verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
             .padding(top = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         AlertTitle(routeLabel, stopLabel, formattedAlert, elevatorSubtitle, isElevatorAlert)
         if (!isElevatorAlert) {
@@ -98,7 +98,7 @@ fun AlertDetails(
                     affectedStops,
                     onTappedAffectedStops = {
                         analytics.tappedAffectedStops(routeId, stop?.id ?: "", alert.id)
-                    }
+                    },
                 )
                 TripPlannerLink(
                     onTappedTripPlanner = {
@@ -131,19 +131,19 @@ private fun AlertTitle(
             Text(
                 stringResource(R.string.route_effect, routeLabel, effectLabel),
                 style = Typography.title2Bold,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.semantics { heading() },
             )
         } else if (stopLabel != null) {
             Text(
                 stringResource(R.string.route_effect, stopLabel, effectLabel),
                 style = Typography.title2Bold,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.semantics { heading() },
             )
         } else {
             Text(
                 effectLabel,
                 style = Typography.title2Bold,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.semantics { heading() },
             )
         }
         if (!isElevatorAlert && causeLabel != null) {
@@ -180,29 +180,29 @@ private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
         Column(
             Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(14.dp),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 Text(
                     columnTexts[0],
                     Modifier.width(columnWidth),
                     style = style,
-                    onTextLayout = { startWidth = it.size.width }
+                    onTextLayout = { startWidth = it.size.width },
                 )
                 Text(currentPeriod.formatStart(LocalContext.current), style = style)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 Text(
                     columnTexts[1],
                     Modifier.width(columnWidth),
                     style = style,
-                    onTextLayout = { endWidth = it.size.width }
+                    onTextLayout = { endWidth = it.size.width },
                 )
                 Text(currentPeriod.formatEnd(LocalContext.current), style = style)
             }
@@ -229,14 +229,14 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
                         }
                     }
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     affectedStopsLabel,
                     Modifier.weight(1f),
                     color = colorResource(R.color.text),
                     textAlign = TextAlign.Start,
-                    style = Typography.callout
+                    style = Typography.callout,
                 )
                 val degrees by
                     animateFloatAsState(if (areStopsExpanded) 90f else 0f, label = "rotation")
@@ -244,13 +244,13 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
                     painterResource(R.drawable.fa_chevron_right),
                     null,
                     Modifier.rotate(degrees).size(16.dp),
-                    colorResource(R.color.text)
+                    colorResource(R.color.text),
                 )
             }
             AnimatedVisibility(
                 areStopsExpanded,
                 enter = expandVertically(),
-                exit = shrinkVertically()
+                exit = shrinkVertically(),
             ) {
                 Column {
                     for (stop in affectedStops) {
@@ -258,7 +258,7 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
                         Text(
                             stop.name,
                             modifier = Modifier.padding(16.dp),
-                            style = Typography.bodySemibold
+                            style = Typography.bodySemibold,
                         )
                     }
                 }
@@ -283,20 +283,20 @@ fun TripPlannerLink(onTappedTripPlanner: () -> Unit) {
             }
             .tile()
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             "Plan a route with Trip Planner",
             Modifier.weight(1f),
             color = colorResource(R.color.text),
             textAlign = TextAlign.Start,
-            style = Typography.callout
+            style = Typography.callout,
         )
         Icon(
             painterResource(R.drawable.fa_route),
             null,
             Modifier.size(16.dp),
-            colorResource(R.color.text)
+            colorResource(R.color.text),
         )
     }
 }
@@ -332,7 +332,7 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
                 if (!isElevatorAlert) stringResource(R.string.full_description)
                 else stringResource(R.string.alternative_path),
                 style = Typography.bodySemibold,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.semantics { heading() },
             )
             for (section in alertDescriptionParagraphs) {
                 Text(section, style = Typography.callout)
@@ -349,14 +349,14 @@ private fun AlertFooter(updatedAt: Instant) {
         Text(
             stringResource(R.string.updated_at, formattedDate),
             color = colorResource(R.color.deemphasized),
-            style = Typography.callout
+            style = Typography.callout,
         )
     }
 }
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
-    backgroundColor = 0xFFFFFFFF
+    backgroundColor = 0xFFFFFFFF,
 )
 @Composable
 private fun AlertDetailsPreview() {

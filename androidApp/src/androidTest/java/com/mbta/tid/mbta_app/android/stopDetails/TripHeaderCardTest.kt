@@ -41,7 +41,7 @@ class TripHeaderCardTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -70,7 +70,7 @@ class TripHeaderCardTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -111,7 +111,7 @@ class TripHeaderCardTest {
                 TripHeaderSpec.FinishingAnotherTrip,
                 "",
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -156,7 +156,7 @@ class TripHeaderCardTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -198,13 +198,13 @@ class TripHeaderCardTest {
                         prediction = prediction,
                         predictionStop = stop,
                         vehicle = vehicle,
-                        routes = listOf()
+                        routes = listOf(),
                     ),
-                    true
+                    true,
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -263,13 +263,13 @@ class TripHeaderCardTest {
                         prediction = prediction,
                         predictionStop = platformStop,
                         vehicle = vehicle,
-                        routes = listOf()
+                        routes = listOf(),
                     ),
-                    false
+                    false,
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -300,12 +300,12 @@ class TripHeaderCardTest {
                         prediction = null,
                         predictionStop = null,
                         vehicle = null,
-                        routes = listOf()
-                    )
+                        routes = listOf(),
+                    ),
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -320,6 +320,7 @@ class TripHeaderCardTest {
             .onNodeWithText(formatTime(scheduledTime), useUnmergedTree = true)
             .assertIsDisplayed()
     }
+
     /*
     @Test
     fun testScheduledTap()  {
@@ -372,14 +373,14 @@ class TripHeaderCardTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus Approaching stop, selected stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }
@@ -421,20 +422,20 @@ class TripHeaderCardTest {
                         prediction = prediction,
                         predictionStop = platformStop,
                         vehicle = vehicle,
-                        routes = listOf()
+                        routes = listOf(),
                     ),
-                    false
+                    false,
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected train Now at Ruggles, selected stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
         composeTestRule
@@ -458,14 +459,14 @@ class TripHeaderCardTest {
                 TripHeaderSpec.VehicleOnTrip(vehicle, otherStop, null, false),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus Approaching other stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }
@@ -492,19 +493,19 @@ class TripHeaderCardTest {
                         prediction = null,
                         predictionStop = null,
                         vehicle = null,
-                        routes = listOf()
-                    )
+                        routes = listOf(),
+                    ),
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus scheduled to depart stop, selected stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }
@@ -533,19 +534,19 @@ class TripHeaderCardTest {
                         prediction = null,
                         predictionStop = null,
                         vehicle = null,
-                        routes = listOf()
-                    )
+                        routes = listOf(),
+                    ),
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus scheduled to depart other stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }

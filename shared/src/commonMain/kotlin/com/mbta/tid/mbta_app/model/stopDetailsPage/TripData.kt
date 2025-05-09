@@ -14,5 +14,5 @@ data class TripData(
     val tripSchedules: TripSchedulesResponse?,
     val tripPredictions: PredictionsStreamDataResponse?,
     val tripPredictionsLoaded: Boolean = false,
-    val vehicle: Vehicle?
+    val vehicle: Vehicle?,
 )

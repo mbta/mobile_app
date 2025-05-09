@@ -14,7 +14,7 @@ object Typography {
     private val fontFamily =
         FontFamily(
             Font(R.font.inter_regular, FontWeight.Normal, FontStyle.Normal),
-            Font(R.font.inter_bold, FontWeight.Bold, FontStyle.Normal)
+            Font(R.font.inter_bold, FontWeight.Bold, FontStyle.Normal),
         )
 
     private fun textStyle(fontSize: TextUnit): TextStyle =
@@ -24,7 +24,7 @@ object Typography {
             fontFamily = fontFamily,
             fontSize = fontSize,
             fontWeight = FontWeight.Normal,
-            fontFeatureSettings = "tnum"
+            fontFeatureSettings = "tnum",
         )
 
     val largeTitle = textStyle(36.sp)

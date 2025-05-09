@@ -58,14 +58,14 @@ abstract class Analytics {
         routeId: String,
         stopId: String,
         alertId: String,
-        elevator: Boolean = false
+        elevator: Boolean = false,
     ) {
         logEvent(
             "tapped_alert_details",
             "route_id" to routeId,
             "stop_id" to stopId,
             "alertId" to alertId,
-            "elevator" to elevator.toString()
+            "elevator" to elevator.toString(),
         )
     }
 
@@ -84,7 +84,7 @@ abstract class Analytics {
         pinned: Boolean,
         alert: Boolean,
         routeType: RouteType,
-        noTrips: UpcomingFormat.NoTripsFormat?
+        noTrips: UpcomingFormat.NoTripsFormat?,
     ) {
         val mode =
             when (routeType) {
@@ -116,7 +116,7 @@ abstract class Analytics {
         routeId: String,
         stopId: String,
         tripId: String,
-        connectingRouteId: String?
+        connectingRouteId: String?,
     ) {
         logEvent(
             "tapped_downstream_stop",
@@ -128,26 +128,15 @@ abstract class Analytics {
     }
 
     fun tappedOnStop(stopId: String) {
-        logEvent(
-            "tapped_on_stop",
-            "stop_id" to stopId,
-        )
+        logEvent("tapped_on_stop", "stop_id" to stopId)
     }
 
     fun tappedRouteFilter(routeId: String, stopId: String) {
-        logEvent(
-            "tapped_route_filter",
-            "route_id" to routeId,
-            "stop_id" to stopId,
-        )
+        logEvent("tapped_route_filter", "route_id" to routeId, "stop_id" to stopId)
     }
 
     fun tappedRouteFilterLegacy(routeId: String, stopId: String) {
-        logEvent(
-            "tapped_route_filter",
-            "route_id" to routeId,
-            "stop_id" to stopId,
-        )
+        logEvent("tapped_route_filter", "route_id" to routeId, "stop_id" to stopId)
     }
 
     fun tappedTripPlanner(routeId: String, stopId: String, alertId: String) {
@@ -164,17 +153,11 @@ abstract class Analytics {
     }
 
     fun toggledPinnedRoute(pinned: Boolean, routeId: String) {
-        logEvent(
-            if (pinned) "pin_route" else "unpin_route",
-            "route_id" to routeId,
-        )
+        logEvent(if (pinned) "pin_route" else "unpin_route", "route_id" to routeId)
     }
 
     fun track(screen: AnalyticsScreen) {
-        logEvent(
-            ANALYTICS_EVENT_SCREEN_VIEW,
-            ANALYTICS_PARAMETER_SCREEN_NAME to screen.pageName,
-        )
+        logEvent(ANALYTICS_EVENT_SCREEN_VIEW, ANALYTICS_PARAMETER_SCREEN_NAME to screen.pageName)
     }
 
     companion object {
