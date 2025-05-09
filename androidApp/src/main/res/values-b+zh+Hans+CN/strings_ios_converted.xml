@@ -240,6 +240,7 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="routes">线路</string>
     <string name="schedule_change">时刻表变更</string>
     <string name="schedule_change_sentence_case">时刻表变更</string>
     <string name="scheduled_to_depart">计划出发</string>
