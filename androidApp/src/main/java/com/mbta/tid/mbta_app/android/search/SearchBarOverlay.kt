@@ -23,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.search.results.RouteResultsView
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
@@ -51,18 +49,14 @@ import com.mbta.tid.mbta_app.repositories.Settings
 @Composable
 fun SearchBarOverlay(
     expanded: Boolean,
+    searchBarIsVisible: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
     onRouteNavigation: (routeId: String) -> Unit,
-    currentNavEntry: SheetRoutes?,
     inputFieldFocusRequester: FocusRequester,
     searchResultsVm: SearchResultsViewModel,
     content: @Composable () -> Unit,
 ) {
-    val visible =
-        remember(currentNavEntry) {
-            currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
-        }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
@@ -75,11 +69,11 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, visible, globalResponse) {
+    LaunchedEffect(searchInputState, searchBarIsVisible, globalResponse) {
         searchResultsVm.getSearchResults(searchInputState, globalResponse)
     }
-    LaunchedEffect(visible, expanded) {
-        if (visible) {
+    LaunchedEffect(searchBarIsVisible, expanded) {
+        if (searchBarIsVisible) {
             onExpandedChange(expanded)
             if (!expanded) {
                 searchInputState = ""
@@ -89,7 +83,7 @@ fun SearchBarOverlay(
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(modifier = Modifier.zIndex(1f), contentAlignment = Alignment.Center) {
-            if (visible) {
+            if (searchBarIsVisible) {
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
                     colors =

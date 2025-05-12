@@ -26,7 +26,7 @@ import org.junit.Test
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 
-class NearbyTransitPageTest {
+class MapAndSheetPageTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)

@@ -112,6 +112,7 @@
     <string name="extra_service_sentence_case">Dịch vụ bổ sung</string>
     <string name="facility_issue">Vấn đề về cơ sở vật chất</string>
     <string name="facility_issue_sentence_case">Vấn đề về cơ sở vật chất</string>
+    <string name="favorites_link">Yêu thích</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi phản hồi về ứng dụng</string>

@@ -46,8 +46,6 @@ import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
-import com.mbta.tid.mbta_app.android.StopFilterParameterType
-import com.mbta.tid.mbta_app.android.TripFilterParameterType
 import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -81,7 +79,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.reflect.typeOf
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -111,9 +108,10 @@ data class NearbyTransit(
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, FlowPreview::class)
 @Composable
-fun NearbyTransitPage(
+fun MapAndSheetPage(
     modifier: Modifier = Modifier,
     nearbyTransit: NearbyTransit,
+    sheetNavEntrypoint: SheetRoutes.Entrypoint,
     navBarVisible: Boolean,
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
@@ -127,9 +125,9 @@ fun NearbyTransitPage(
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
-    val navController = rememberNavController()
-
     val viewModel: NearbyTransitTabViewModel = viewModel()
+
+    val navController = rememberNavController()
 
     val currentNavBackStackEntry by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -275,6 +273,12 @@ fun NearbyTransitPage(
         updateTripFilter(stopId, TripDetailsFilter(tripId, vehicle.id, stopSequence, true))
     }
 
+    fun navigateToEntrypoint() {
+        navController.navigate(sheetNavEntrypoint.route()) {
+            popUpTo(navController.graph.id) { inclusive = true }
+        }
+    }
+
     fun openSearch() {
         searchFocusRequester.requestFocus()
     }
@@ -284,9 +288,7 @@ fun NearbyTransitPage(
         backgroundTimestamp?.let {
             val timeSinceBackground = clock.now().minus(Instant.fromEpochMilliseconds(it))
             if (timeSinceBackground > 1.hours) {
-                navController.navigate(SheetRoutes.NearbyTransit) {
-                    popUpTo(navController.graph.id) { inclusive = true }
-                }
+                navigateToEntrypoint()
                 if (nearbyTransit.locationDataManager.hasPermission) {
                     nearbyTransit.viewportProvider.follow()
                 }
@@ -305,16 +307,12 @@ fun NearbyTransitPage(
         mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
     }
 
+    LaunchedEffect(sheetNavEntrypoint) { navigateToEntrypoint() }
     LaunchedEffect(currentNavEntry) {
         if (SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
     }
-    val navTypeMap =
-        mapOf(
-            typeOf<StopDetailsFilter?>() to StopFilterParameterType,
-            typeOf<TripDetailsFilter?>() to TripFilterParameterType,
-        )
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var currentModal by
@@ -333,7 +331,7 @@ fun NearbyTransitPage(
     fun SheetContent(modifier: Modifier = Modifier) {
         NavHost(
             navController,
-            startDestination = SheetRoutes.NearbyTransit,
+            startDestination = sheetNavEntrypoint.route(),
             modifier = Modifier.then(modifier),
             enterTransition = {
                 val initialRoute = SheetRoutes.fromNavBackStackEntry(this.initialState)
@@ -368,7 +366,11 @@ fun NearbyTransitPage(
                 }
             },
         ) {
-            composable<SheetRoutes.StopDetails>(typeMap = navTypeMap) { backStackEntry ->
+            composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
+                FavoritesPage(modifier = modifier, openSheetRoute = navController::navigate)
+            }
+
+            composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                 val filters =
                     StopDetailsPageFilters(
@@ -404,7 +406,7 @@ fun NearbyTransitPage(
                 )
             }
 
-            composable<SheetRoutes.NearbyTransit>(typeMap = navTypeMap) {
+            composable<SheetRoutes.NearbyTransit>(typeMap = SheetRoutes.typeMap) {
                 // for ViewModel reasons, must be within the `composable` to be the same instance
                 val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
                 LaunchedEffect(true) {
@@ -485,9 +487,13 @@ fun NearbyTransitPage(
     // when not fully expanded https://stackoverflow.com/a/77361483
     Scaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
         outerSheetPadding ->
+        val searchBarIsVisible =
+            remember(currentNavEntry) {
+                currentNavEntry?.let {
+                    it is SheetRoutes.NearbyTransit || it is SheetRoutes.Favorites
+                } ?: true
+            }
         if (nearbyTransit.hideMaps) {
-            val isNearbyTransit = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
-
             LaunchedEffect(null) {
                 nearbyTransit.locationDataManager.currentLocation.collect { location ->
                     nearbyTransit.viewportProvider.updateCameraState(location)
@@ -496,15 +502,15 @@ fun NearbyTransitPage(
 
             SearchBarOverlay(
                 searchExpanded,
+                searchBarIsVisible,
                 ::handleSearchExpandedChange,
                 ::handleStopNavigation,
                 onRouteNavigation = {},
-                currentNavEntry,
                 searchFocusRequester,
                 searchResultsViewModel,
             ) {
                 SheetContent(
-                    Modifier.padding(top = if (isNearbyTransit) 94.dp else 0.dp)
+                    Modifier.padding(top = if (searchBarIsVisible) 94.dp else 0.dp)
                         .statusBarsPadding()
                         .fillMaxSize()
                 )
@@ -550,10 +556,10 @@ fun NearbyTransitPage(
             ) { sheetPadding ->
                 SearchBarOverlay(
                     searchExpanded,
+                    searchBarIsVisible,
                     ::handleSearchExpandedChange,
                     ::handleStopNavigation,
                     onRouteNavigation = {},
-                    currentNavEntry,
                     searchFocusRequester,
                     searchResultsViewModel,
                 ) {

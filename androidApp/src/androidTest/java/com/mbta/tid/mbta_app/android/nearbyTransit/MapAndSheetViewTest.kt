@@ -24,7 +24,7 @@ import org.junit.Test
 import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
-class NearbyTransitViewTest : KoinTest {
+class MapAndSheetViewTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =

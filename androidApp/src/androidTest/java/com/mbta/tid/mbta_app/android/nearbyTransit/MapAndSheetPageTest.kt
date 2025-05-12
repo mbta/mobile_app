@@ -73,7 +73,7 @@ import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalMaterial3Api::class)
-class NearbyTransitPageTest : KoinTest {
+class MapAndSheetPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
