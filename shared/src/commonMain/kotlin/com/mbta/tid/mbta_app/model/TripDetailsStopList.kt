@@ -311,14 +311,25 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             entry: WorkingEntry,
             globalData: GlobalResponse,
         ): List<Route> {
-            val stop = globalData.stops[entry.stopId] ?: return emptyList()
+            return getTransferRoutes(
+                entry.stopId,
+                entry.prediction?.routeId ?: entry.schedule?.routeId,
+                globalData,
+            )
+        }
+
+        fun getTransferRoutes(
+            stopId: String,
+            currentRouteId: String?,
+            globalData: GlobalResponse,
+        ): List<Route> {
+            val stop = globalData.stops[stopId] ?: return emptyList()
             val selfOrParent =
                 if (stop.parentStationId == null) stop
                 else globalData.stops[stop.parentStationId] ?: return emptyList()
             // Bail if stop is not a parent but its parent stop can't be found
 
-            val currentRoute =
-                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]
+            val currentRoute = globalData.routes[currentRouteId]
 
             val transferStopIds =
                 listOf(selfOrParent.id) +

@@ -91,9 +91,8 @@ fun StopDetailsFilteredPickerView(
                     availableDirections = availableDirections,
                     directions = directions,
                     route = lineOrRoute.sortRoute,
-                    line = (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
-                    stopFilter,
-                    updateStopFilter,
+                    selectedDirectionId = stopFilter.directionId,
+                    updateDirectionId = { updateStopFilter(stopFilter.copy(directionId = it)) },
                     modifier = Modifier.padding(horizontal = 10.dp),
                 )
 

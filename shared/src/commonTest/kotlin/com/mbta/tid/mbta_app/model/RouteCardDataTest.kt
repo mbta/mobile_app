@@ -1585,12 +1585,7 @@ class RouteCardDataTest {
 
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
-            routeCardsSorted?.flatMap {
-                when (val lineOrRoute = it.lineOrRoute) {
-                    is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes.toList()
-                    is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
-                }
-            },
+            routeCardsSorted?.flatMap { it.lineOrRoute.allRoutes },
         )
     }
 
@@ -1706,12 +1701,7 @@ class RouteCardDataTest {
 
         assertEquals(
             listOf(farSubwayRoute, farBusRoute, closeSubwayRoute, closeBusRoute),
-            routeCardsSorted?.flatMap {
-                when (val lineOrRoute = it.lineOrRoute) {
-                    is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes.toList()
-                    is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
-                }
-            },
+            routeCardsSorted?.flatMap { it.lineOrRoute.allRoutes },
         )
     }
 
@@ -1902,12 +1892,7 @@ class RouteCardDataTest {
                 closeBusRoute,
                 farBusRoute,
             ),
-            checkNotNull(routeCardsSorted).flatMap {
-                when (val lineOrRoute = it.lineOrRoute) {
-                    is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
-                    is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
-                }
-            },
+            checkNotNull(routeCardsSorted).flatMap { it.lineOrRoute.allRoutes },
         )
     }
 
@@ -2121,12 +2106,7 @@ class RouteCardDataTest {
                     predictedBusRoute,
                     serviceEndedBusRoute,
                 ),
-                checkNotNull(routeCardsSorted).flatMap {
-                    when (val lineOrRoute = it.lineOrRoute) {
-                        is RouteCardData.LineOrRoute.Route -> listOf(lineOrRoute.route)
-                        is RouteCardData.LineOrRoute.Line -> lineOrRoute.routes
-                    }
-                },
+                checkNotNull(routeCardsSorted).flatMap { it.lineOrRoute.allRoutes },
             )
 
             val partialServiceEndedRoute =

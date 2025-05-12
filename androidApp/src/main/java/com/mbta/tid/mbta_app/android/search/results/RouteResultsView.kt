@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -33,14 +32,13 @@ fun RouteResultsView(
     globalResponse: GlobalResponse?,
     handleSearch: (String) -> Unit,
 ) {
-    val route = globalResponse?.getRoute(routeResult.id)
-
-    val line: Line? =
-        if (route?.lineId != null) {
-            globalResponse.getLine(route.lineId)
-        } else {
-            null
+    val resultId =
+        when {
+            routeResult.id == "Green" -> "line-Green"
+            else -> routeResult.id
         }
+    val route = globalResponse?.getRoute(resultId)
+    val line = globalResponse?.getLine(resultId)
 
     val routePillSpec =
         RoutePillSpec(route, line, RoutePillSpec.Type.Fixed, RoutePillSpec.Context.Default)
@@ -49,7 +47,7 @@ fun RouteResultsView(
         Row(
             modifier =
                 Modifier.clip(shape)
-                    .clickable { handleSearch(routeResult.id) }
+                    .clickable { handleSearch(resultId) }
                     .background(colorResource(id = R.color.fill3))
                     .padding(12.dp)
                     .minimumInteractiveComponentSize()
