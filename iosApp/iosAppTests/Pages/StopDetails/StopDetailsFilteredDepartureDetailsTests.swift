@@ -108,7 +108,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -177,7 +176,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -231,7 +229,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -288,7 +285,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -320,7 +316,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
@@ -367,7 +362,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -431,7 +425,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -459,7 +452,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
-    func testShowsElevatorAlert() throws {
+    func testShowsElevatorAlertOnlyOnce() throws {
         let objects = ObjectCollectionBuilder()
         let now = Date.now
         let stop = objects.stop { _ in }
@@ -467,6 +460,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .elevatorClosure
             alert.header = "Elevator closed at stop"
+            alert.informedEntity(
+                activities: [.usingWheelchair],
+                directionId: nil,
+                facility: nil,
+                route: nil,
+                routeType: nil,
+                stop: stop.id,
+                trip: nil
+            )
+            alert.activePeriod(start: (now - 30 * 60).toKotlinInstant(), end: nil)
         }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "A" }
@@ -476,6 +479,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.showStationAccessibility = true
+        stopDetailsVM.setAlertSummaries([alert.id: nil])
 
         let leaf = makeLeaf(
             route: route,
@@ -494,7 +498,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [alert],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -505,6 +508,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
+        XCTAssertNil(try? sut.inspect().find(text: "Elevator Closure"))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
         try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
         XCTAssertEqual(
@@ -538,7 +542,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -588,7 +591,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -680,7 +682,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setTripFilter: { _ in },
             leaf: leaf,
             pinned: false,
-            elevatorAlerts: [],
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),

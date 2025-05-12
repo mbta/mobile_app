@@ -55,7 +55,6 @@ fun StopDetailsFilteredDeparturesView(
     tripFilter: TripDetailsFilter?,
     leaf: RouteCardData.Leaf,
     allAlerts: AlertsStreamDataResponse?,
-    elevatorAlerts: List<Alert>,
     global: GlobalResponse?,
     now: Instant,
     viewModel: StopDetailsViewModel,
@@ -79,9 +78,9 @@ fun StopDetailsFilteredDeparturesView(
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
+    val (elevatorAlerts, alertsHere) =
+        leaf.alertsHere.partition { it.effect == Alert.Effect.ElevatorClosure }
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
-
-    val alertsHere: List<Alert> = leaf.alertsHere
     val pinned = pinnedRoutes.contains(lineOrRoute.id)
 
     val downstreamAlerts: List<Alert> = leaf.alertsDownstream

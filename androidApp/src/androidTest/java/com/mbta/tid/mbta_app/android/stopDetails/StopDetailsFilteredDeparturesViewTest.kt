@@ -176,7 +176,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -225,7 +224,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -322,7 +320,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = TripDetailsFilter(trip.id, null, null, false),
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -375,7 +372,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = listOf(),
                     global = globalResponse,
                     now = now,
                     viewModel = StopDetailsViewModel.mocked(),
@@ -443,7 +439,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -547,7 +542,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = global,
                     now = now,
                     viewModel = viewModel,
@@ -614,7 +608,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = alertResponse,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -631,12 +624,17 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsElevatorAlert(): Unit = runBlocking {
+    fun testShowsElevatorAlertOnlyOnce(): Unit = runBlocking {
         settings[Settings.StationAccessibility] = true
         val alert =
             builder.alert {
                 effect = Alert.Effect.ElevatorClosure
                 header = "Elevator Alert Header"
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                    stop = stop.id,
+                )
+                activePeriod(now - 30.minutes, null)
             }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
@@ -650,7 +648,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     null,
                     null,
                     PredictionsStreamDataResponse(builder),
-                    AlertsStreamDataResponse(emptyMap()),
+                    AlertsStreamDataResponse(builder),
                     now,
                     emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
@@ -659,6 +657,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
         viewModel.setRouteCardData(routeCardData)
+        viewModel.setAlertSummaries(mapOf(alert.id to null))
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -668,7 +667,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = listOf(alert),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -681,6 +679,7 @@ class StopDetailsFilteredDeparturesViewTest {
             }
         }
 
+        composeTestRule.onNodeWithText("Elevator Closure").assertDoesNotExist()
         composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
     }
 
@@ -738,7 +737,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
@@ -786,7 +784,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     tripFilter = null,
                     leaf = leaf,
                     allAlerts = null,
-                    elevatorAlerts = emptyList(),
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,

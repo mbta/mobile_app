@@ -20,7 +20,6 @@ struct StopDetailsFilteredDepartureDetails: View {
     var leaf: RouteCardData.Leaf
 
     var pinned: Bool
-    var elevatorAlerts: [Shared.Alert]
 
     var now: Date
 
@@ -42,7 +41,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
 
     var patternsHere: [RoutePattern] { leaf.routePatterns }
-    var alerts: [Shared.Alert] { leaf.alertsHere }
+    var alerts: [Shared.Alert] { leaf.alertsHere.filter { $0.effect != .elevatorClosure } }
+    var elevatorAlerts: [Shared.Alert] { leaf.alertsHere.filter { $0.effect == .elevatorClosure } }
     var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream }
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
@@ -84,7 +84,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        leaf: RouteCardData.Leaf, pinned: Bool, elevatorAlerts: [Shared.Alert], now: Date,
+        leaf: RouteCardData.Leaf, pinned: Bool, now: Date,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
@@ -95,7 +95,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.setTripFilter = setTripFilter
         self.leaf = leaf
         self.pinned = pinned
-        self.elevatorAlerts = elevatorAlerts
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
