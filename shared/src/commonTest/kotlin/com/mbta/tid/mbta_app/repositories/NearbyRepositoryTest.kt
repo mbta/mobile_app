@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -75,6 +76,101 @@ class NearbyRepositoryTest {
         }
 
         assertEquals(listOf(nearbySubwayStop.id, nearbyCRStop.id), stopIds)
+    }
+
+    @Test
+    fun `includes nearby child stops only and not stations`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val patternAllStops = objects.routePattern(route)
+
+        val station1 =
+            objects.stop {
+                id = "station1"
+                locationType = LocationType.STATION
+                position = pointAtDistance(0.01)
+
+                childStopIds = listOf("stop1")
+            }
+
+        val stop1 =
+            objects.stop {
+                id = "stop1"
+                position = pointAtDistance(0.01)
+                vehicleType = RouteType.HEAVY_RAIL
+                parentStationId = "station1"
+            }
+
+        val patternIdsByStop: Map<String, List<String>> =
+            mapOf(stop1.id to listOf(patternAllStops.id))
+
+        val globalData = GlobalResponse(objects, patternIdsByStop)
+
+        val repo = NearbyRepository()
+        val stopIdsIncludingRedundant = runBlocking {
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
+            )
+        }
+
+        assertEquals(listOf(stop1.id), stopIdsIncludingRedundant)
+    }
+
+    @Test
+    fun `filters stops that are redundant to closer ones based on route patterns served`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val patternAllStops = objects.routePattern(route)
+        val patternStop3 = objects.routePattern(route) {}
+
+        val station =
+            objects.stop {
+                id = "station"
+                position = pointAtDistance(0.01)
+                childStopIds = listOf("stop1", "stop1Node")
+            }
+
+        val stop1 =
+            objects.stop {
+                id = "stop1"
+                position = pointAtDistance(0.01)
+                vehicleType = RouteType.HEAVY_RAIL
+                parentStationId = "station"
+            }
+
+        val stop2 =
+            objects.stop {
+                id = "stop2"
+                position = pointAtDistance(0.02)
+                vehicleType = RouteType.HEAVY_RAIL
+            }
+
+        val stop3 =
+            objects.stop {
+                id = "stop3"
+                position = pointAtDistance(0.03)
+                vehicleType = RouteType.HEAVY_RAIL
+            }
+
+        val patternIdsByStop: Map<String, List<String>> =
+            mapOf(
+                stop1.id to listOf(patternAllStops.id),
+                stop2.id to listOf(patternAllStops.id),
+                stop3.id to listOf(patternAllStops.id, patternStop3.id),
+            )
+
+        val globalData = GlobalResponse(objects, patternIdsByStop)
+
+        val repo = NearbyRepository()
+        val stopIdsExcludingRedundant = runBlocking {
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
+            )
+        }
+
+        assertEquals(listOf(stop1.id, stop3.id), stopIdsExcludingRedundant)
     }
 
     @Test
