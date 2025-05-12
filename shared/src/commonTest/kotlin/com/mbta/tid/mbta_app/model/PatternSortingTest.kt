@@ -18,6 +18,8 @@ class PatternSortingTest {
             RouteCardData.LineOrRoute.Line(it, objects.routes.values.toSet())
         } ?: objects.routes.values.single().let { RouteCardData.LineOrRoute.Route(it) }
 
+    private fun singleStop() = objects.stops.values.single()
+
     @BeforeTest
     fun setup() {
         objects = ObjectCollectionBuilder()
@@ -41,6 +43,8 @@ class PatternSortingTest {
         )
 
     private fun leaf(
+        lineOrRoute: RouteCardData.LineOrRoute = singleLineOrRoute(),
+        stop: Stop = singleStop(),
         pattern: RoutePattern,
         trips: Int = 0,
         alertHere: Boolean = false,
@@ -48,6 +52,8 @@ class PatternSortingTest {
         hasSchedulesToday: Boolean = trips > 0,
     ) =
         RouteCardData.Leaf(
+            lineOrRoute = lineOrRoute,
+            stop = stop,
             directionId = pattern.directionId,
             routePatterns = listOf(pattern),
             stopIds = emptySet(),
@@ -58,6 +64,7 @@ class PatternSortingTest {
             allDataLoaded = allDataLoaded,
             hasSchedulesToday = hasSchedulesToday,
             alertsDownstream = emptyList(),
+            context = RouteCardData.Context.NearbyTransit,
         )
 
     private fun stopData(stop: Stop, vararg leaf: RouteCardData.Leaf) =
@@ -67,14 +74,7 @@ class PatternSortingTest {
         stop: Stop,
         lineOrRoute: RouteCardData.LineOrRoute,
         vararg leaf: RouteCardData.Leaf,
-    ) =
-        RouteCardData.RouteStopData(
-            lineOrRoute,
-            stop,
-            leaf.asList(),
-            RouteCardData.Context.NearbyTransit,
-            GlobalResponse(objects),
-        )
+    ) = RouteCardData.RouteStopData(lineOrRoute, stop, leaf.asList(), GlobalResponse(objects))
 
     private fun routeCard(route: Route, vararg stops: RouteCardData.RouteStopData) =
         routeCard(RouteCardData.LineOrRoute.Route(route), *stops)
@@ -82,27 +82,22 @@ class PatternSortingTest {
     private fun routeCard(
         lineOrRoute: RouteCardData.LineOrRoute,
         vararg stops: RouteCardData.RouteStopData,
-    ) =
-        RouteCardData(
-            lineOrRoute,
-            stops.asList(),
-            RouteCardData.Context.NearbyTransit,
-            Clock.System.now(),
-        )
+    ) = RouteCardData(lineOrRoute, stops.asList(), Clock.System.now())
 
     @Test
     fun compareLeavesAtStop() {
         objects.route()
+        objects.stop()
         val pattern0 = pattern(directionId = 0, sortOrder = 0)
-        val alert0 = leaf(pattern0, alertHere = true)
-        val trip0 = leaf(pattern0, trips = 1)
-        val ended0 = leaf(pattern0, hasSchedulesToday = true)
-        val noService0 = leaf(pattern0)
+        val alert0 = leaf(pattern = pattern0, alertHere = true)
+        val trip0 = leaf(pattern = pattern0, trips = 1)
+        val ended0 = leaf(pattern = pattern0, hasSchedulesToday = true)
+        val noService0 = leaf(pattern = pattern0)
         val pattern1 = pattern(directionId = 1, sortOrder = 0)
-        val alert1 = leaf(pattern1, alertHere = true)
-        val trip1 = leaf(pattern1, trips = 1)
-        val ended1 = leaf(pattern1, hasSchedulesToday = true)
-        val noService1 = leaf(pattern1)
+        val alert1 = leaf(pattern = pattern1, alertHere = true)
+        val trip1 = leaf(pattern = pattern1, trips = 1)
+        val ended1 = leaf(pattern = pattern1, hasSchedulesToday = true)
+        val noService1 = leaf(pattern = pattern1)
 
         assertEquals(0, PatternSorting.compareLeavesAtStop().compare(alert0, trip0))
         assertEquals(0, PatternSorting.compareLeavesAtStop().compare(alert1, trip1))
@@ -127,11 +122,25 @@ class PatternSortingTest {
             }
 
         val nearService0 =
-            stopData(nearStop, leaf(pattern(directionId = 0, sortOrder = 0), trips = 1))
+            stopData(
+                nearStop,
+                leaf(stop = nearStop, pattern = pattern(directionId = 0, sortOrder = 0), trips = 1),
+            )
         val nearService1 =
-            stopData(nearStop, leaf(pattern(directionId = 1, sortOrder = 0), trips = 1))
-        val nearNoService = stopData(nearStop, leaf(pattern(directionId = 0, sortOrder = 0)))
-        val farService = stopData(farStop, leaf(pattern(directionId = 0, sortOrder = 0), trips = 1))
+            stopData(
+                nearStop,
+                leaf(stop = nearStop, pattern = pattern(directionId = 1, sortOrder = 0), trips = 1),
+            )
+        val nearNoService =
+            stopData(
+                nearStop,
+                leaf(stop = nearStop, pattern = pattern(directionId = 0, sortOrder = 0)),
+            )
+        val farService =
+            stopData(
+                farStop,
+                leaf(stop = farStop, pattern = pattern(directionId = 0, sortOrder = 0), trips = 1),
+            )
 
         assertEquals(
             0,
@@ -182,13 +191,17 @@ class PatternSortingTest {
                     type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
                     this.sortOrder = sortOrder
                 }
+            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
             if (pinned) pinnedRoutes.add(route.id)
+            val stop = if (near) nearStop else farStop
             return routeCard(
                 route,
                 stopData(
-                    if (near) nearStop else farStop,
+                    stop,
                     RouteCardData.LineOrRoute.Route(route),
                     leaf(
+                        lineOrRoute,
+                        stop,
                         pattern(route, 0, 0),
                         trips = if (service == Service.Yes) 1 else 0,
                         hasSchedulesToday = service != Service.No,

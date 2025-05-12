@@ -125,6 +125,7 @@ fun StopDetailsUnfilteredRoutesView(
                         now,
                         pinned = pinnedRoutes.contains(routeCardData.lineOrRoute.id),
                         onPin = pinRoute,
+                        showStopHeader = false,
                         showStationAccessibility,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
@@ -192,16 +193,21 @@ private fun StopDetailsRoutesViewPreview() {
 
     val globalData = GlobalResponse(objects)
 
+    val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+    val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+    val context = RouteCardData.Context.StopDetailsUnfiltered
     val routeCardData =
         listOf(
             RouteCardData(
-                RouteCardData.LineOrRoute.Route(route1),
+                lineOrRoute1,
                 listOf(
                     RouteCardData.RouteStopData(
                         route1,
                         stop,
                         listOf(
                             RouteCardData.Leaf(
+                                lineOrRoute1,
+                                stop,
                                 0,
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
@@ -210,23 +216,24 @@ private fun StopDetailsRoutesViewPreview() {
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
                                 alertsDownstream = emptyList(),
+                                context = context,
                             )
                         ),
-                        RouteCardData.Context.StopDetailsUnfiltered,
                         globalData,
                     )
                 ),
-                RouteCardData.Context.StopDetailsUnfiltered,
                 now,
             ),
             RouteCardData(
-                RouteCardData.LineOrRoute.Route(route2),
+                lineOrRoute2,
                 listOf(
                     RouteCardData.RouteStopData(
                         route2,
                         stop,
                         listOf(
                             RouteCardData.Leaf(
+                                lineOrRoute2,
+                                stop,
                                 0,
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
@@ -238,8 +245,11 @@ private fun StopDetailsRoutesViewPreview() {
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
                                 alertsDownstream = emptyList(),
+                                context = context,
                             ),
                             RouteCardData.Leaf(
+                                lineOrRoute2,
+                                stop,
                                 1,
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
@@ -248,13 +258,12 @@ private fun StopDetailsRoutesViewPreview() {
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
                                 alertsDownstream = emptyList(),
+                                context = context,
                             ),
                         ),
-                        RouteCardData.Context.StopDetailsUnfiltered,
                         globalData,
                     )
                 ),
-                RouteCardData.Context.StopDetailsUnfiltered,
                 now,
             ),
         )

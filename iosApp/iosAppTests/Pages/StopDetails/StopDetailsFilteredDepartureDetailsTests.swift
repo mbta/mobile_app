@@ -17,7 +17,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func makeBundle(
+    func makeLeaf(
         route: Route,
         stop: Stop? = nil,
         patterns: [RoutePattern]? = nil,
@@ -25,15 +25,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
-    ) -> (RouteCardData.RouteStopData, RouteCardData.Leaf) {
-        makeBundle(
+    ) -> RouteCardData.Leaf {
+        makeLeaf(
             lineOrRoute: .route(route),
             stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
             alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
         )
     }
 
-    func makeBundle(
+    func makeLeaf(
         line: Line,
         routes: Set<Route>? = nil,
         stop: Stop? = nil,
@@ -42,16 +42,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
-    ) -> (RouteCardData.RouteStopData, RouteCardData.Leaf) {
+    ) -> RouteCardData.Leaf {
         let routes = routes ?? Set([objects.route { $0.lineId = line.id }])
-        return makeBundle(
+        return makeLeaf(
             lineOrRoute: .line(line, routes),
             stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
             alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
         )
     }
 
-    func makeBundle(
+    func makeLeaf(
         lineOrRoute: RouteCardData.LineOrRoute,
         stop: Stop? = nil,
         patterns: [RoutePattern]? = nil,
@@ -59,90 +59,46 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
-    ) -> (RouteCardData.RouteStopData, RouteCardData.Leaf) {
+    ) -> RouteCardData.Leaf {
         let route = lineOrRoute.sortRoute
         let stop = stop ?? objects.stop { _ in }
         let patterns = patterns ?? [objects.routePattern(route: route) { _ in }]
         let upcomingTrips = upcomingTrips ?? []
 
         let leaf = RouteCardData.Leaf(
+            lineOrRoute: lineOrRoute,
+            stop: stop,
             directionId: 0,
             routePatterns: patterns,
             stopIds: Set([stop.id]).union(Set(stop.childStopIds)),
             upcomingTrips: upcomingTrips,
             alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true,
-            alertsDownstream: alertsDownstream
-        )
-        let stopData = RouteCardData.RouteStopData(
-            lineOrRoute: lineOrRoute,
-            stop: stop,
-            directions: [
-                .init(directionId: 0, route: route),
-                .init(directionId: 1, route: route),
-            ],
-            data: [leaf],
+            alertsDownstream: alertsDownstream,
             context: .stopDetailsFiltered
         )
-        let routeData = RouteCardData(
-            lineOrRoute: lineOrRoute,
-            stopData: [stopData],
-            context: .stopDetailsFiltered,
-            at: Date.now.toKotlinInstant()
-        )
 
-        return (stopData, leaf)
+        return leaf
     }
 
     func testDisplaysTrips() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { _ in }
         let route = objects.route()
-        let trip1 = UpcomingTrip(trip: objects.trip { _ in })
-        let trip2 = UpcomingTrip(trip: objects.trip { _ in })
-        let trip3 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "A" }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
+        let trip2 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "B" }
+            prediction.departureTime = (now + 3 * 60).toKotlinInstant()
+        })
+        let trip3 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "C" }
+            prediction.departureTime = (now + 7 * 60).toKotlinInstant()
+        })
 
-        let tile1 = TileData(
-            route: route,
-            headsign: "A",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip1, routeType: .heavyRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip1
-        )
-        let tile2 = TileData(
-            route: route,
-            headsign: "B",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(
-                    trip: trip2,
-                    routeType: .heavyRail,
-                    format: .Minutes(minutes: 3)
-                )],
-                secondaryAlert: nil
-            ),
-            upcoming: trip2
-        )
-        let tile3 = TileData(
-            route: route,
-            headsign: "C",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(
-                    trip: trip3,
-                    routeType: .heavyRail,
-                    format: .Minutes(minutes: 7)
-                )],
-                secondaryAlert: nil
-            ),
-            upcoming: trip3
-        )
-
-        let (stopData, leaf) = makeBundle(
-            route: route,
-            stop: stop,
-            upcomingTrips: [trip1, trip2, trip3],
-            objects: objects
-        )
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip1, trip2, trip3], objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -150,16 +106,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init(),
-            testTiles: [tile1, tile2, tile3]
+            viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(text: "A"))
@@ -170,52 +124,96 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
     }
 
-    func testAlwaysShowsHeadsignAndPillsWhenLine() throws {
+    func testShowsHeadsignAndPillsWhenBranchingLine() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
+        let stop = objects.stop { _ in }
+        let line = objects.line { line in line.id = "Green" }
+        let routeB = objects.route { route in
+            route.id = "Green-B"
+            route.lineId = line.id
+        }
+        let routePatternB = objects.routePattern(route: routeB) { pattern in
+            pattern.representativeTrip { $0.headsign = "Headsign B" }
+        }
+        let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePatternB)
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
+        let trip2 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePatternB)
+            prediction.departureTime = (now + 3 * 60).toKotlinInstant()
+        })
+        let routeC = objects.route { route in
+            route.id = "Green-C"
+            route.lineId = line.id
+        }
+        let routePatternC = objects.routePattern(route: routeC) { pattern in
+            pattern.representativeTrip { $0.headsign = "Headsign C" }
+        }
+        let trip3 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePatternC)
+            prediction.departureTime = (now + 7 * 60).toKotlinInstant()
+        })
+
+        let leaf = makeLeaf(
+            line: line,
+            routes: [routeB, routeC],
+            stop: stop,
+            patterns: [routePatternB, routePatternC],
+            upcomingTrips: [trip1, trip2, trip3],
+            objects: objects
+        )
+
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.global = .init(objects: objects)
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: line.id, directionId: 0),
+            tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            pinned: false,
+            now: now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider())
+
+        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: trip1.headsign))
+        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(RoutePill.self))
+        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
+        XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
+        XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
+    }
+
+    func testShowsTripDetails() throws {
+        let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { _ in }
         let route = objects.route { route in route.id = "Green-B" }
+        let pattern = objects.routePattern(route: route) { pattern in
+            pattern.representativeTrip { $0.headsign = "Matching" }
+        }
         let line = objects.line { line in line.id = "Green" }
-        let trip1 = UpcomingTrip(trip: objects.trip { _ in })
-        let trip2 = UpcomingTrip(trip: objects.trip { _ in })
-        let trip3 = UpcomingTrip(trip: objects.trip { _ in })
+        let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: pattern)
+            prediction.departureTime = now.addingTimeInterval(120).toKotlinInstant()
+        })
+        let trip2 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: pattern)
+            prediction.departureTime = (now + 3 * 60).toKotlinInstant()
+        })
+        let trip3 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: pattern)
+            prediction.departureTime = (now + 7 * 60).toKotlinInstant()
+        })
 
-        let tile1 = TileData(
-            route: route,
-            headsign: "Matching",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip1, routeType: .lightRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip1
-        )
-        let tile2 = TileData(
-            route: route,
-            headsign: tile1.headsign,
-            formatted: UpcomingFormat.Some(
-                trips: [.init(
-                    trip: trip2,
-                    routeType: .lightRail,
-                    format: .Minutes(minutes: 3)
-                )],
-                secondaryAlert: nil
-            ),
-            upcoming: trip2
-        )
-        let tile3 = TileData(
-            route: route,
-            headsign: tile1.headsign,
-            formatted: UpcomingFormat.Some(
-                trips: [.init(
-                    trip: trip3,
-                    routeType: .lightRail,
-                    format: .Minutes(minutes: 7)
-                )],
-                secondaryAlert: nil
-            ),
-            upcoming: trip3
-        )
-
-        let (stopData, leaf) = makeBundle(
+        let leaf = makeLeaf(
             line: line,
             routes: [route],
             stop: stop,
@@ -226,94 +224,17 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: 0),
-            tripFilter: nil,
+            tripFilter: .init(tripId: trip1.trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init(),
-            testTiles: [tile1, tile2, tile3]
-        ).environmentObject(ViewportProvider())
-
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign!))
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(RoutePill.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
-        XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
-        XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
-    }
-
-    func testShowsTripDetails() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-        let route = objects.route { route in route.id = "Green-B" }
-        let pattern = objects.routePattern(route: route) { _ in }
-        let line = objects.line { line in line.id = "Green" }
-        let trip = objects.trip { trip in
-            trip.routeId = route.id
-            trip.routePatternId = pattern.id
-        }
-        let upcoming = UpcomingTrip(trip: trip, prediction: objects.prediction { prediction in
-            prediction.departureTime = Date.now.addingTimeInterval(120).toKotlinInstant()
-        })
-
-        let tile1 = TileData(
-            route: route,
-            headsign: "Matching",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: upcoming
-        )
-        let tile2 = TileData(
-            route: route,
-            headsign: tile1.headsign,
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Minutes(minutes: 3))],
-                secondaryAlert: nil
-            ),
-            upcoming: .init(trip: trip)
-        )
-        let tile3 = TileData(
-            route: route,
-            headsign: tile1.headsign,
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: .init(trip: trip), routeType: .lightRail, format: .Minutes(minutes: 7))],
-                secondaryAlert: nil
-            ),
-            upcoming: .init(trip: trip)
-        )
-
-        let (stopData, leaf) = makeBundle(
-            line: line,
-            routes: [route],
-            stop: stop,
-            upcomingTrips: [upcoming],
-            objects: objects
-        )
-
-        let sut = StopDetailsFilteredDepartureDetails(
-            stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
-            tripFilter: .init(tripId: trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            stopData: stopData,
-            leaf: leaf,
-            pinned: false,
-            now: Date.now,
-            errorBannerVM: .init(),
-            nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(),
-            viewportProvider: .init(),
-            testTiles: [tile1, tile2, tile3]
+            viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(TripDetailsView.self))
@@ -349,30 +270,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
         let upcoming2 = objects.upcomingTrip(schedule: schedule2, prediction: prediction2)
 
-        let tile1 = TileData(
-            route: route,
-            headsign: "Harvard",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(
-                    trip: upcoming1, routeType: .bus,
-                    format: .Cancelled(
-                        scheduledTime: schedule1.departureTime!
-                    )
-                )],
-                secondaryAlert: nil
-            ),
-            upcoming: upcoming1
-        )
-        let tile2 = TileData(
-            route: route,
-            headsign: tile1.headsign,
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: upcoming2, routeType: .bus, format: .Minutes(minutes: 3))],
-                secondaryAlert: nil
-            ),
-            upcoming: upcoming2
-        )
-        let (stopData, leaf) = makeBundle(
+        let leaf = makeLeaf(
             route: route,
             stop: stop,
             patterns: [pattern],
@@ -385,7 +283,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
             now: Date.now,
@@ -393,8 +290,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init(),
-            testTiles: [tile1, tile2]
+            viewportProvider: .init()
         ).environmentObject(ViewportProvider())
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
         XCTAssertNotNil(try sut.inspect()
@@ -410,7 +306,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let route = objects.route { route in route.id = "Green-B" }
         let line = objects.line { line in line.id = "Green" }
 
-        let (stopData, leaf) = makeBundle(line: line, routes: [route], stop: stop, upcomingTrips: [], objects: objects)
+        let leaf = makeLeaf(line: line, routes: [route], stop: stop, upcomingTrips: [], objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -418,7 +314,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
             now: Date.now,
@@ -426,8 +321,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init(),
-            viewportProvider: .init(),
-            testTiles: []
+            viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
@@ -438,31 +332,27 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testShowsSuspensionFallback() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
         }
-        let trip = UpcomingTrip(trip: objects.trip { _ in })
 
         // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
         // skipped
-        let tile = TileData(
-            route: route,
-            headsign: "A",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip
-        )
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { _ in }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
+
         let nearbyVM = NearbyViewModel()
 
         let stopDetailsVM: StopDetailsViewModel = .init()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
-        let (stopData, leaf) = makeBundle(route: route, stop: stop, alerts: [alert], objects: objects)
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -470,16 +360,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init(),
-            testTiles: [tile]
+            viewportProvider: .init()
         )
 
         let departureTileExp = sut.inspection.inspect { _ in
@@ -504,29 +392,30 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testShowsDownstreamAlertFallback() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
         }
-        let trip = UpcomingTrip(trip: objects.trip { _ in })
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { _ in }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
 
-        let tile = TileData(
-            route: route,
-            headsign: "A",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip
-        )
         let nearbyVM = NearbyViewModel()
 
         let stopDetailsVM: StopDetailsViewModel = .init()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
-        let (stopData, leaf) = makeBundle(route: route, stop: stop, alertsDownstream: [alert], objects: objects)
+        let leaf = makeLeaf(
+            route: route,
+            stop: stop,
+            upcomingTrips: [trip],
+            alertsDownstream: [alert],
+            objects: objects
+        )
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -534,7 +423,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
             now: Date.now,
@@ -542,8 +430,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init(),
-            testTiles: [tile]
+            viewportProvider: .init()
         )
 
         let departureTileExp = sut.inspection.inspect { view in
@@ -565,30 +452,43 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
-    func testShowsElevatorAlert() throws {
+    func testShowsElevatorAlertOnlyOnce() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
             alert.effect = .elevatorClosure
             alert.header = "Elevator closed at stop"
+            alert.informedEntity(
+                activities: [.usingWheelchair],
+                directionId: nil,
+                facility: nil,
+                route: nil,
+                routeType: nil,
+                stop: stop.id,
+                trip: nil
+            )
+            alert.activePeriod(start: (now - 30 * 60).toKotlinInstant(), end: nil)
         }
-        let trip = UpcomingTrip(trip: objects.trip { _ in })
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "A" }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
 
-        let tile = TileData(
-            route: route,
-            headsign: "A",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip
-        )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.showStationAccessibility = true
+        stopDetailsVM.setAlertSummaries([alert.id: nil])
 
-        let (stopData, leaf) = makeBundle(route: route, stop: stop, patterns: [], alerts: [alert], objects: objects)
+        let leaf = makeLeaf(
+            route: route,
+            stop: stop,
+            patterns: [],
+            upcomingTrips: [trip],
+            alerts: [alert],
+            objects: objects
+        )
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -596,20 +496,19 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init(),
-            testTiles: [tile]
+            viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
+        XCTAssertNil(try? sut.inspect().find(text: "Elevator Closure"))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
         try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
         XCTAssertEqual(
@@ -620,25 +519,20 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     func testShowsInaccessible() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { stop in
             stop.wheelchairBoarding = .inaccessible
         }
         let route = objects.route { _ in }
-        let trip = UpcomingTrip(trip: objects.trip { _ in })
-        let tile = TileData(
-            route: route,
-            headsign: "A",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip
-        )
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { _ in }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.showStationAccessibility = true
 
-        let (stopData, leaf) = makeBundle(route: route, stop: stop, objects: objects)
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -646,16 +540,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init(),
-            testTiles: [tile]
+            viewportProvider: .init()
         ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
@@ -664,6 +556,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testShowsSubwayDelayAlertFallback() throws {
         let objects = ObjectCollectionBuilder()
+        let now = Date.now
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
@@ -678,23 +571,17 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 stop: nil, trip: nil
             )
         }
-        let trip = UpcomingTrip(trip: objects.trip { _ in })
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "A" }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
 
-        let tile = TileData(
-            route: route,
-            headsign: "A",
-            formatted: UpcomingFormat.Some(
-                trips: [.init(trip: trip, routeType: .heavyRail, format: .Arriving())],
-                secondaryAlert: nil
-            ),
-            upcoming: trip
-        )
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.showStationAccessibility = true
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
-        let (stopData, leaf) = makeBundle(route: route, stop: stop, alerts: [alert], objects: objects)
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -702,16 +589,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: stopData,
             leaf: leaf,
             pinned: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init(),
-            testTiles: [tile]
+            viewportProvider: .init()
         )
 
         let departureTileExp = sut.inspection.inspect { view in
@@ -795,7 +680,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            stopData: routeStopData,
             leaf: leaf,
             pinned: false,
             now: Date.now,

@@ -33,7 +33,7 @@ fun StopDetailsFilteredView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -42,36 +42,20 @@ fun StopDetailsFilteredView(
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
     val thisRouteCardData = routeCardData?.find { it.lineOrRoute.id == stopFilter.routeId }
     val routeStopData = thisRouteCardData?.stopData?.get(0)
-    val leaf = routeStopData?.data?.find { it.directionId == stopFilter.directionId }
 
-    if (leaf != null) {
-        val leafFormat =
-            leaf.format(
-                now,
-                thisRouteCardData.lineOrRoute.sortRoute,
-                globalResponse,
-                RouteCardData.Context.StopDetailsFiltered,
-            )
-        val tileData = leafFormat.tileData()
-        val noPredictionsStatus = leafFormat.noPredictionsStatus()
-
-        StopDetailsFilteredDeparturesView(
+    if (routeStopData != null) {
+        StopDetailsFilteredPickerView(
             stopId = stopId,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
             routeStopData = routeStopData,
-            leaf = leaf,
-            tileData = tileData,
-            noPredictionsStatus = noPredictionsStatus,
-            isAllServiceDisrupted = leafFormat.isAllServiceDisrupted,
             allAlerts = allAlerts,
-            elevatorAlerts = routeStopData.elevatorAlerts,
             global = globalResponse,
             now = now,
             viewModel = viewModel,
             errorBannerViewModel = errorBannerViewModel,
             updateStopFilter = updateStopFilter,
-            updateTripFilter = updateTripDetailsFilter,
+            updateTripFilter = updateTripFilter,
             tileScrollState = tileScrollState,
             pinnedRoutes = pinnedRoutes,
             togglePinnedRoute = togglePinnedRoute,
@@ -114,26 +98,12 @@ private fun Loading(
                     now,
                 )
             val stopData = routeData.stopData.single()
-            val leaf = stopData.data.first()
-            StopDetailsFilteredDeparturesView(
+            StopDetailsFilteredPickerView(
                 stopId = stopId,
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 routeStopData = stopData,
-                leaf = leaf,
-                tileData =
-                    leaf
-                        .format(
-                            now,
-                            routeData.lineOrRoute.sortRoute,
-                            globalResponse,
-                            RouteCardData.Context.StopDetailsFiltered,
-                        )
-                        .tileData(),
-                noPredictionsStatus = null,
-                isAllServiceDisrupted = false,
                 allAlerts = null,
-                elevatorAlerts = stopData.elevatorAlerts,
                 global = globalResponse,
                 now = now,
                 viewModel = viewModel,

@@ -168,11 +168,13 @@ final class StopDetailsViewModelTests: XCTestCase {
             isFiltered: false
         )
 
+        let context = RouteCardData.Context.stopDetailsUnfiltered
         XCTAssertEqual([RouteCardData(
             lineOrRoute: .route(route),
             stopData: [
                 .init(lineOrRoute: .route(route), stop: stop, directions: [direction0, direction1], data: [
                     .init(
+                        lineOrRoute: .route(route), stop: stop,
                         directionId: 0,
                         routePatterns: [pattern0],
                         stopIds: [stop.id],
@@ -180,9 +182,11 @@ final class StopDetailsViewModelTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
-                        alertsDownstream: []
+                        alertsDownstream: [],
+                        context: context
                     ),
                     .init(
+                        lineOrRoute: .route(route), stop: stop,
                         directionId: 1,
                         routePatterns: [pattern1],
                         stopIds: [stop.id],
@@ -190,10 +194,11 @@ final class StopDetailsViewModelTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
-                        alertsDownstream: []
+                        alertsDownstream: [],
+                        context: context
                     ),
-                ], context: .stopDetailsUnfiltered),
-            ], context: .stopDetailsUnfiltered, at: now.toKotlinInstant()
+                ]),
+            ], at: now.toKotlinInstant()
         )], routeCardData)
     }
 

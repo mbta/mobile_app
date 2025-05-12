@@ -85,7 +85,11 @@ struct DirectionPicker: View {
         pattern.directionId = 1
     }
 
+    let lineOrRoute = RouteCardData.LineOrRoute.route(route)
+    let context = RouteCardData.Context.stopDetailsFiltered
     let leaf0 = RouteCardData.Leaf(
+        lineOrRoute: lineOrRoute,
+        stop: stop,
         directionId: 0,
         routePatterns: [patternOutbound],
         stopIds: [stop.id],
@@ -93,9 +97,12 @@ struct DirectionPicker: View {
         alertsHere: [],
         allDataLoaded: true,
         hasSchedulesToday: true,
-        alertsDownstream: []
+        alertsDownstream: [],
+        context: context
     )
     let leaf1 = RouteCardData.Leaf(
+        lineOrRoute: lineOrRoute,
+        stop: stop,
         directionId: 1,
         routePatterns: [patternInbound],
         stopIds: [stop.id],
@@ -103,12 +110,13 @@ struct DirectionPicker: View {
         alertsHere: [],
         allDataLoaded: true,
         hasSchedulesToday: true,
-        alertsDownstream: []
+        alertsDownstream: [],
+        context: context
     )
-    let stopCard = RouteCardData.RouteStopData(lineOrRoute: .route(route), stop: stop, directions: [
+    let stopCard = RouteCardData.RouteStopData(lineOrRoute: lineOrRoute, stop: stop, directions: [
         .init(name: "Outbound", destination: "Out", id: 0),
         .init(name: "Inbound", destination: "In", id: 1),
-    ], data: [leaf0, leaf1], context: .stopDetailsFiltered)
+    ], data: [leaf0, leaf1])
 
     DirectionPicker(
         stopData: stopCard,

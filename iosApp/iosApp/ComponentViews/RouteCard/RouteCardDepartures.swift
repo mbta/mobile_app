@@ -21,12 +21,7 @@ struct RouteCardDepartures: View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(stopData.data.enumerated()), id: \.element) { index, leaf in
                 if let direction = stopData.directions.first(where: { $0.id == leaf.directionId }) {
-                    let formatted = leaf.format(
-                        now: now.toKotlinInstant(),
-                        representativeRoute: stopData.lineOrRoute.sortRoute,
-                        globalData: global,
-                        context: stopData.context
-                    )
+                    let formatted = leaf.format(now: now.toKotlinInstant(), globalData: global)
                     SheetNavigationLink(
                         value: .stopDetails(
                             stopId: stopData.stop.id,
