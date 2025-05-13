@@ -82,7 +82,7 @@ class MapAndSheetPageTest {
                             locationDataManager = locationDataManager,
                             viewportProvider = viewportProvider,
                         ),
-                    sheetNavEntrypoint = SheetRoutes.Entrypoint.NearbyTransit,
+                    sheetNavEntrypoint = SheetRoutes.NearbyTransit,
                     navBarVisible = false,
                     showNavBar = {},
                     hideNavBar = {},
