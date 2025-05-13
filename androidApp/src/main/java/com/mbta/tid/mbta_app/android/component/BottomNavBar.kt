@@ -22,17 +22,36 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.Routes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.util.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavBar(
     currentDestination: Routes,
+    sheetNavEntrypoint: SheetRoutes.Entrypoint,
+    navigateToFavorites: () -> Unit,
     navigateToNearby: () -> Unit,
     navigateToMore: () -> Unit,
+    enhancedFavorites: Boolean = false,
 ) {
 
-    val selectedTabIndex = if (currentDestination == Routes.NearbyTransit) 0 else 1
+    val selectedTabIndex =
+        if (enhancedFavorites) {
+            when (currentDestination) {
+                is Routes.MapAndSheet ->
+                    when (sheetNavEntrypoint) {
+                        SheetRoutes.Favorites -> 0
+                        SheetRoutes.NearbyTransit -> 1
+                    }
+                is Routes.More -> 2
+            }
+        } else {
+            when (currentDestination) {
+                is Routes.MapAndSheet -> 0
+                is Routes.More -> 1
+            }
+        }
 
     CompositionLocalProvider(
         LocalDensity provides
@@ -45,8 +64,21 @@ fun BottomNavBar(
             )
     ) {
         TabRow(selectedTabIndex = selectedTabIndex, indicator = {}) {
+            if (enhancedFavorites) {
+                BottomNavTab(
+                    selected =
+                        currentDestination is Routes.MapAndSheet &&
+                            sheetNavEntrypoint == SheetRoutes.Favorites,
+                    onClick = { navigateToFavorites() },
+                    icon = painterResource(R.drawable.tab_star),
+                    text = stringResource(R.string.favorites_link),
+                )
+            }
+
             BottomNavTab(
-                selected = currentDestination == Routes.NearbyTransit,
+                selected =
+                    currentDestination is Routes.MapAndSheet &&
+                        sheetNavEntrypoint == SheetRoutes.NearbyTransit,
                 onClick = { navigateToNearby() },
                 icon = painterResource(R.drawable.map_pin),
                 text = stringResource(R.string.nearby_transit_link),

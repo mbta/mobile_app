@@ -118,6 +118,7 @@
     <string name="extra_service_sentence_case">Serviço extra</string>
     <string name="facility_issue">Problema nas instalações</string>
     <string name="facility_issue_sentence_case">Problema nas instalações</string>
+    <string name="favorites_link">Favoritos</string>
     <string name="feature_flag_debug_mode">Modo de depuração</string>
     <string name="feature_flag_route_search">Pesquisa de rotas</string>
     <string name="feedback_link_form">Enviar feedback sobre o aplicativo</string>

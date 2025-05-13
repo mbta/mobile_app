@@ -9,6 +9,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
@@ -26,7 +27,7 @@ import org.junit.Test
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 
-class NearbyTransitPageTest {
+class MapAndSheetPageTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
@@ -68,7 +69,7 @@ class NearbyTransitPageTest {
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
-                NearbyTransitPage(
+                MapAndSheetPage(
                     nearbyTransit =
                         NearbyTransit(
                             alertData = alertData,
@@ -81,6 +82,7 @@ class NearbyTransitPageTest {
                             locationDataManager = locationDataManager,
                             viewportProvider = viewportProvider,
                         ),
+                    sheetNavEntrypoint = SheetRoutes.NearbyTransit,
                     navBarVisible = false,
                     showNavBar = {},
                     hideNavBar = {},

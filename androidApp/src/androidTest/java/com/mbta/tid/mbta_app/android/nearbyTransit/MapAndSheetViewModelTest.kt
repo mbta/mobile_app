@@ -14,7 +14,7 @@ import kotlin.test.assertNotEquals
 import org.junit.Rule
 import org.junit.Test
 
-class NearbyTransitViewModelTest {
+class MapAndSheetViewModelTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test

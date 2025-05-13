@@ -12,7 +12,7 @@ import kotlin.test.assertNull
 import kotlinx.datetime.Clock
 import org.junit.Test
 
-class NearbyTransitTabViewModelTest {
+class MapAndSheetTabViewModelTest {
 
     @Test
     fun testSetStopDetailsFilterPushedWhenNotInStopDetails() {

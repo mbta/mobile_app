@@ -117,6 +117,7 @@
     <string name="extra_service_sentence_case">Extra service</string>
     <string name="facility_issue">Facility Issue</string>
     <string name="facility_issue_sentence_case">Facility issue</string>
+    <string name="favorites_link">Favorites</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send App Feedback</string>

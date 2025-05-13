@@ -112,6 +112,7 @@
     <string name="extra_service_sentence_case">額外服務</string>
     <string name="facility_issue">設施問題</string>
     <string name="facility_issue_sentence_case">設施問題</string>
+    <string name="favorites_link">收藏夾</string>
     <string name="feature_flag_debug_mode">調試模式</string>
     <string name="feature_flag_route_search">線路搜尋</string>
     <string name="feedback_link_form">發送應用程式回饋</string>

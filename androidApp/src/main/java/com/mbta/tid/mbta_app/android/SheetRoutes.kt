@@ -1,18 +1,24 @@
 package com.mbta.tid.mbta_app.android
 
 import android.os.Bundle
+import androidx.compose.runtime.saveable.Saver
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import kotlin.reflect.typeOf
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 @Serializable
 sealed class SheetRoutes {
-    @Serializable data object NearbyTransit : SheetRoutes()
+
+    @Serializable sealed interface Entrypoint
+
+    @Serializable data object Favorites : SheetRoutes(), Entrypoint
+
+    @Serializable data object NearbyTransit : SheetRoutes(), Entrypoint
 
     @Serializable
     data class StopDetails(
@@ -21,7 +27,27 @@ sealed class SheetRoutes {
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
 
+    val showSearchBar: Boolean
+        get() =
+            when (this) {
+                is Favorites -> true
+                is NearbyTransit -> true
+                else -> false
+            }
+
     companion object {
+        val EntrypointSaver =
+            Saver<Entrypoint, String>(
+                save = { json.encodeToString<Entrypoint>(it) },
+                restore = { json.decodeFromString<Entrypoint>(it) },
+            )
+
+        val typeMap =
+            mapOf(
+                typeOf<StopDetailsFilter?>() to StopFilterParameterType,
+                typeOf<TripDetailsFilter?>() to TripFilterParameterType,
+            )
+
         /**
          * Whether the page within the nearby transit tab changed. Moving from StopDetails to
          * StopDetails is only considered a page change if the stopId changed.
@@ -37,6 +63,8 @@ sealed class SheetRoutes {
         fun fromNavBackStackEntry(backStackEntry: NavBackStackEntry): SheetRoutes {
             return if (backStackEntry.destination.route?.contains("StopDetails") == true) {
                 backStackEntry.toRoute<StopDetails>()
+            } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
+                backStackEntry.toRoute<Favorites>()
             } else {
                 backStackEntry.toRoute<NearbyTransit>()
             }

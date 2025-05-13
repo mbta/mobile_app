@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -24,9 +25,9 @@ import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheetState
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.location.rememberLocationDataManager
+import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.pages.OnboardingPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
@@ -49,8 +50,14 @@ fun ContentView(
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
     val navController = rememberNavController()
+    var sheetNavEntrypoint: SheetRoutes.Entrypoint by
+        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) {
+            mutableStateOf(SheetRoutes.NearbyTransit)
+        }
+
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView.getGlobalData")
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()
@@ -96,9 +103,9 @@ fun ContentView(
     }
 
     val sheetModifier = Modifier.fillMaxSize()
-    NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
-        composable<Routes.NearbyTransit> {
-            NearbyTransitPage(
+    NavHost(navController = navController, startDestination = Routes.MapAndSheet) {
+        composable<Routes.MapAndSheet> {
+            MapAndSheetPage(
                 modifier = sheetModifier,
                 NearbyTransit(
                     alertData = alertData,
@@ -110,6 +117,7 @@ fun ContentView(
                     locationDataManager = locationDataManager,
                     viewportProvider = viewportProvider,
                 ),
+                sheetNavEntrypoint = sheetNavEntrypoint,
                 navBarVisible = navBarVisible,
                 showNavBar = { navBarVisible = true },
                 hideNavBar = { navBarVisible = false },
@@ -118,8 +126,11 @@ fun ContentView(
                         BottomNavBar(
                             currentDestination =
                                 Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
-                            navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
+                            sheetNavEntrypoint = sheetNavEntrypoint,
+                            navigateToFavorites = { sheetNavEntrypoint = SheetRoutes.Favorites },
+                            navigateToNearby = { sheetNavEntrypoint = SheetRoutes.NearbyTransit },
                             navigateToMore = { navController.navigate(Routes.More) },
+                            enhancedFavorites = enhancedFavorites,
                         )
                     }
                 },
@@ -133,8 +144,17 @@ fun ContentView(
                     BottomNavBar(
                         currentDestination =
                             Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
-                        navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
-                        navigateToMore = { navController.navigate(Routes.More) },
+                        sheetNavEntrypoint = sheetNavEntrypoint,
+                        navigateToFavorites = {
+                            navController.popBackStack()
+                            sheetNavEntrypoint = SheetRoutes.Favorites
+                        },
+                        navigateToNearby = {
+                            navController.popBackStack()
+                            sheetNavEntrypoint = SheetRoutes.NearbyTransit
+                        },
+                        navigateToMore = {},
+                        enhancedFavorites = enhancedFavorites,
                     )
                 }
             )
