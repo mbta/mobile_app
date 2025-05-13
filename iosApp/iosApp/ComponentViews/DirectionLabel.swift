@@ -28,7 +28,8 @@ struct DirectionLabel: View {
     ]
 
     static func directionNameFormatted(_ direction: Direction) -> String {
-        localizedDirectionNames[direction.name] ?? NSLocalizedString("Heading", comment: "A route direction label")
+        localizedDirectionNames[direction.name ?? ""] ??
+            NSLocalizedString("Heading", comment: "A route direction label")
     }
 
     @ViewBuilder

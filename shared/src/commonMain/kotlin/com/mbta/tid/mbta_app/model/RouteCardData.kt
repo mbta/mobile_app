@@ -539,6 +539,13 @@ data class RouteCardData(
                     is Line -> this.routes.min()
                 }
 
+        val allRoutes: Set<RouteModel>
+            get() =
+                when (this) {
+                    is Route -> setOf(this.route)
+                    is Line -> this.routes
+                }
+
         fun directions(
             globalData: GlobalResponse,
             stop: Stop,

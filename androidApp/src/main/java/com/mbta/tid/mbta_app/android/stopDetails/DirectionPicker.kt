@@ -24,10 +24,8 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
 @ColorRes private fun deselectedBackgroundColor(route: Route): Int = R.color.deselected_toggle_2
 
@@ -36,9 +34,8 @@ fun DirectionPicker(
     availableDirections: List<Int>,
     directions: List<Direction>,
     route: Route,
-    line: Line?,
-    filter: StopDetailsFilter?,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    selectedDirectionId: Int?,
+    updateDirectionId: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (availableDirections.size > 1) {
@@ -55,17 +52,13 @@ fun DirectionPicker(
                     .padding(2.dp)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(6.dp)),
-            selectedTabIndex = filter?.directionId ?: 0,
+            selectedTabIndex = selectedDirectionId ?: 0,
             indicator = {},
             divider = {},
         ) {
             for (direction in availableDirections) {
-                val isSelected = filter?.directionId == direction
-                val action = {
-                    updateStopFilter(
-                        StopDetailsFilter(routeId = line?.id ?: route.id, directionId = direction)
-                    )
-                }
+                val isSelected = selectedDirectionId == direction
+                val action = { updateDirectionId(direction) }
 
                 Tab(
                     selected = isSelected,
@@ -121,9 +114,8 @@ private fun DirectionPickerPreview() {
                     Direction(name = "Inbound", destination = "In", id = 1),
                 ),
             route = route,
-            line = null,
-            filter = StopDetailsFilter(routeId = route.id, directionId = 0),
-            updateStopFilter = {},
+            selectedDirectionId = 0,
+            updateDirectionId = {},
         )
     }
 }
