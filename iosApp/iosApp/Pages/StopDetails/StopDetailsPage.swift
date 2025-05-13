@@ -80,22 +80,27 @@ struct StopDetailsPage: View {
                     )
                 }
             }
-            .onChange(of: stopDetailsVM.global) { _ in updateDepartures() }
-            .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures() }
-            .onChange(of: stopFilter) { _ in updateDepartures() }
+            .onChange(of: stopDetailsVM.global) { _ in updateDepartures(stopFilter: stopFilter) }
+            .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures(stopFilter: stopFilter) }
+            .onChange(of: stopFilter) { newStopFilter in
+                if newStopFilter == nil {
+                    internalRouteCardData = nil
+                }
+                updateDepartures(stopFilter: newStopFilter)
+            }
             .onChange(of: stopDetailsVM.stopData) { stopData in
                 errorBannerVM.loadingWhenPredictionsStale = !(stopData?.predictionsLoaded ?? true)
-                updateDepartures()
+                updateDepartures(stopFilter: stopFilter)
             }
             .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
             .onChange(of: internalRouteCardData) { _ in
                 let nextStopFilter = setStopFilter()
                 setTripFilter(filters: .init(stopId: stopId, stopFilter: nextStopFilter, tripFilter: tripFilter))
             }
-            .task(id: stopId) {
+            .task(id: "\(stopId) \(stopFilter) \(tripFilter)") {
                 while !Task.isCancelled {
                     now = Date.now
-                    updateDepartures()
+                    updateDepartures(stopFilter: stopFilter)
                     stopDetailsVM.checkStopPredictionsStale()
                     try? await Task.sleep(for: .seconds(5))
                 }
@@ -178,9 +183,11 @@ struct StopDetailsPage: View {
         nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)
     }
 
-    func updateDepartures() {
+    func updateDepartures(stopFilter: StopDetailsFilter?) {
         Task {
-            if stopId != stopDetailsVM.stopData?.stopId { return }
+            if stopId != stopDetailsVM.stopData?.stopId {
+                return
+            }
             let nextRouteCardData = await stopDetailsVM.getRouteCardData(
                 stopId: stopId,
                 alerts: nearbyVM.alerts,
