@@ -41,7 +41,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.ModalRoutes
@@ -59,9 +58,7 @@ import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
-import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
-import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
@@ -70,7 +67,6 @@ import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -84,8 +80,6 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -103,11 +97,11 @@ data class NearbyTransit(
     val locationDataManager: LocationDataManager,
     val viewportProvider: ViewportProvider,
 ) {
-    var lastNearbyTransitLocation by lastNearbyTransitLocationState
-    var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
+    var lastNearbyTransitLocation by this.lastNearbyTransitLocationState
+    var nearbyTransitSelectingLocation by this.nearbyTransitSelectingLocationState
 }
 
-@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapAndSheetPage(
     modifier: Modifier = Modifier,
@@ -422,68 +416,14 @@ fun MapAndSheetPage(
                     analytics.track(AnalyticsScreen.NearbyTransit)
                 }
 
-                var targetLocation by remember { mutableStateOf<Position?>(null) }
-                LaunchedEffect(nearbyTransit.locationDataManager) {
-                    nearbyTransit.locationDataManager.currentLocation.collect { location ->
-                        if (
-                            nearbyTransit.viewportProvider.isFollowingPuck &&
-                                !nearbyTransit.viewportProvider.isManuallyCentering
-                        ) {
-                            targetLocation = location?.let { Position(it.longitude, it.latitude) }
-                        }
-                    }
-                }
-                LaunchedEffect(nearbyTransit.viewportProvider) {
-                    nearbyTransit.viewportProvider.cameraStateFlow.debounce(0.5.seconds).collect {
-                        // since this LaunchedEffect is cancelled when not on the nearby transit
-                        // page, we don't need to check
-                        if (!nearbyTransit.viewportProvider.isFollowingPuck) {
-                            targetLocation = it.center.toPosition()
-                        }
-                    }
-                }
-                LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
-                    if (nearbyTransit.viewportProvider.isManuallyCentering) {
-                        nearbyViewModel.reset()
-                        targetLocation = null
-                    }
-                }
-                LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {
-                    if (nearbyTransit.viewportProvider.isFollowingPuck) {
-                        nearbyViewModel.reset()
-                        targetLocation =
-                            nearbyTransit.locationDataManager.currentLocation.value?.let {
-                                Position(it.longitude, it.latitude)
-                            }
-                    }
-                }
-
-                fun panToDefaultCenter() {
-                    nearbyTransit.viewportProvider.isManuallyCentering = true
-                    nearbyTransit.viewportProvider.isFollowingPuck = false
-                    nearbyTransit.viewportProvider.animateTo(
-                        ViewportProvider.Companion.Defaults.center,
-                        zoom = 13.75,
-                    )
-                }
-
-                NearbyTransitView(
-                    alertData = nearbyTransit.alertData,
-                    globalResponse = nearbyTransit.globalResponse,
-                    targetLocation = targetLocation,
-                    setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
-                    setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
+                NearbyTransitPage(
+                    nearbyTransit,
                     onOpenStopDetails = { stopId, filter ->
                         updateVisitHistory(stopId)
                         navController.navigate(SheetRoutes.StopDetails(stopId, filter, null))
                     },
-                    noNearbyStopsView = {
-                        NoNearbyStopsView(
-                            nearbyTransit.hideMaps,
-                            ::openSearch,
-                            ::panToDefaultCenter,
-                        )
-                    },
+                    openSearch = ::openSearch,
+                    nearbyViewModel = nearbyViewModel,
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }
