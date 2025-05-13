@@ -10,12 +10,23 @@ import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
+struct RouteCardParams: Equatable {
+    let alerts: AlertsStreamDataResponse?
+    let global: GlobalResponse?
+    let now: Date
+    let pinnedRoutes: Set<String>
+    let stopData: StopData?
+    let stopFilter: StopDetailsFilter?
+    let stopId: String
+}
+
 struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
 
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective departures rather than both showing the departures for the newly presented stop.
+
     @State var internalRouteCardData: [RouteCardData]?
     @State var now = Date.now
 
@@ -80,27 +91,31 @@ struct StopDetailsPage: View {
                     )
                 }
             }
-            .onChange(of: stopDetailsVM.global) { _ in updateDepartures(stopFilter: stopFilter) }
-            .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures(stopFilter: stopFilter) }
             .onChange(of: stopFilter) { newStopFilter in
                 if newStopFilter == nil {
                     internalRouteCardData = nil
                 }
-                updateDepartures(stopFilter: newStopFilter)
             }
             .onChange(of: stopDetailsVM.stopData) { stopData in
                 errorBannerVM.loadingWhenPredictionsStale = !(stopData?.predictionsLoaded ?? true)
-                updateDepartures(stopFilter: stopFilter)
             }
             .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
-            .onChange(of: internalRouteCardData) { _ in
-                let nextStopFilter = setStopFilter()
+            .onChange(of: RouteCardParams(alerts: nearbyVM.alerts,
+                                          global: stopDetailsVM.global,
+                                          now: now,
+                                          pinnedRoutes: stopDetailsVM.pinnedRoutes,
+                                          stopData: stopDetailsVM.stopData,
+                                          stopFilter: stopFilter,
+                                          stopId: stopId)) { newParams in
+                updateDepartures(routeCardParams: newParams)
+            }
+            .onChange(of: internalRouteCardData) { newInternalRouteCardData in
+                let nextStopFilter = setStopFilter(newInternalRouteCardData)
                 setTripFilter(filters: .init(stopId: stopId, stopFilter: nextStopFilter, tripFilter: tripFilter))
             }
-            .task(id: "\(stopId) \(stopFilter) \(tripFilter)") {
+            .task(id: stopId) {
                 while !Task.isCancelled {
                     now = Date.now
-                    updateDepartures(stopFilter: stopFilter)
                     stopDetailsVM.checkStopPredictionsStale()
                     try? await Task.sleep(for: .seconds(5))
                 }
@@ -159,8 +174,8 @@ struct StopDetailsPage: View {
         }
     }
 
-    func setStopFilter() -> StopDetailsFilter? {
-        let nextStopFilter = stopFilter ?? StopDetailsUtils.shared.autoStopFilter(routeCardData: internalRouteCardData)
+    func setStopFilter(_ routeCardData: [RouteCardData]?) -> StopDetailsFilter? {
+        let nextStopFilter = stopFilter ?? StopDetailsUtils.shared.autoStopFilter(routeCardData: routeCardData)
         if stopFilter != nextStopFilter {
             nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
         }
@@ -183,21 +198,32 @@ struct StopDetailsPage: View {
         nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)
     }
 
-    func updateDepartures(stopFilter: StopDetailsFilter?) {
+    func updateDepartures(routeCardParams: RouteCardParams) {
         Task {
-            if stopId != stopDetailsVM.stopData?.stopId {
+            if routeCardParams.stopId != routeCardParams.stopData?.stopId {
                 return
             }
             let nextRouteCardData = await stopDetailsVM.getRouteCardData(
-                stopId: stopId,
-                alerts: nearbyVM.alerts,
-                now: now,
-                isFiltered: stopFilter != nil
+                stopId: routeCardParams.stopId,
+                alerts: routeCardParams.alerts,
+                now: routeCardParams.now,
+                isFiltered: routeCardParams.stopFilter != nil
             )
             Task { @MainActor in
-                nearbyVM.setRouteCardData(stopId, nextRouteCardData)
+                nearbyVM.setRouteCardData(routeCardParams.stopId, nextRouteCardData)
                 internalRouteCardData = nextRouteCardData
             }
         }
+    }
+
+    // Testing convenience
+    func updateDepartures() {
+        updateDepartures(routeCardParams: RouteCardParams(alerts: nearbyVM.alerts,
+                                                          global: stopDetailsVM.global,
+                                                          now: now,
+                                                          pinnedRoutes: stopDetailsVM.pinnedRoutes,
+                                                          stopData: stopDetailsVM.stopData,
+                                                          stopFilter: stopFilter,
+                                                          stopId: stopId))
     }
 }
