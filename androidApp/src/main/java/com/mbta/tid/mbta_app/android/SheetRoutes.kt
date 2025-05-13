@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import kotlin.reflect.typeOf
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 @Serializable
 sealed class SheetRoutes {
@@ -37,6 +36,14 @@ sealed class SheetRoutes {
         val stopFilter: StopDetailsFilter?,
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
+
+    val showSearchBar: Boolean
+        get() =
+            when (this) {
+                is Favorites -> true
+                is NearbyTransit -> true
+                else -> false
+            }
 
     companion object {
         val typeMap =

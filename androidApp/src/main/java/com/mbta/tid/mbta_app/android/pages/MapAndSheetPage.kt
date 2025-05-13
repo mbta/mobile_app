@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInOut
@@ -274,8 +275,13 @@ fun MapAndSheetPage(
     }
 
     fun navigateToEntrypoint() {
-        navController.navigate(sheetNavEntrypoint.route()) {
-            popUpTo(navController.graph.id) { inclusive = true }
+        try {
+            navController.navigate(sheetNavEntrypoint.route()) {
+                popUpTo(navController.graph.id) { inclusive = true }
+            }
+        } catch (e: IllegalStateException) {
+            // This should only happen in tests when the navigation graph hasn't been initialized
+            Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
         }
     }
 
@@ -487,12 +493,7 @@ fun MapAndSheetPage(
     // when not fully expanded https://stackoverflow.com/a/77361483
     Scaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
         outerSheetPadding ->
-        val searchBarIsVisible =
-            remember(currentNavEntry) {
-                currentNavEntry?.let {
-                    it is SheetRoutes.NearbyTransit || it is SheetRoutes.Favorites
-                } ?: true
-            }
+        val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
         if (nearbyTransit.hideMaps) {
             LaunchedEffect(null) {
                 nearbyTransit.locationDataManager.currentLocation.collect { location ->
@@ -502,7 +503,7 @@ fun MapAndSheetPage(
 
             SearchBarOverlay(
                 searchExpanded,
-                searchBarIsVisible,
+                showSearchBar,
                 ::handleSearchExpandedChange,
                 ::handleStopNavigation,
                 onRouteNavigation = {},
@@ -510,7 +511,7 @@ fun MapAndSheetPage(
                 searchResultsViewModel,
             ) {
                 SheetContent(
-                    Modifier.padding(top = if (searchBarIsVisible) 94.dp else 0.dp)
+                    Modifier.padding(top = if (showSearchBar) 94.dp else 0.dp)
                         .statusBarsPadding()
                         .fillMaxSize()
                 )
@@ -556,7 +557,7 @@ fun MapAndSheetPage(
             ) { sheetPadding ->
                 SearchBarOverlay(
                     searchExpanded,
-                    searchBarIsVisible,
+                    showSearchBar,
                     ::handleSearchExpandedChange,
                     ::handleStopNavigation,
                     onRouteNavigation = {},

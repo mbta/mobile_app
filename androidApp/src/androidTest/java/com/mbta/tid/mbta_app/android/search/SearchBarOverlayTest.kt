@@ -91,10 +91,10 @@ class SearchBarOverlayTest : KoinTest {
                 val focusRequester = remember { FocusRequester() }
                 SearchBarOverlay(
                     expanded.value,
+                    currentNavEntry.value?.showSearchBar ?: true,
                     { expanded.value = it },
                     onStopNavigation = { navigated.value = true },
                     onRouteNavigation = {},
-                    currentNavEntry = currentNavEntry.value,
                     inputFieldFocusRequester = focusRequester,
                     searchResultsVm = koinViewModel(),
                 ) {
@@ -146,10 +146,10 @@ class SearchBarOverlayTest : KoinTest {
                 val focusRequester = remember { FocusRequester() }
                 SearchBarOverlay(
                     expanded = true,
+                    showSearchBar = true,
                     onExpandedChange = {},
                     onStopNavigation = {},
                     onRouteNavigation = {},
-                    currentNavEntry = null,
                     inputFieldFocusRequester = focusRequester,
                     searchResultsVm = koinViewModel(),
                     content = {},
@@ -183,10 +183,10 @@ class SearchBarOverlayTest : KoinTest {
                 val focusRequester = remember { FocusRequester() }
                 SearchBarOverlay(
                     expanded = true,
+                    showSearchBar = true,
                     onExpandedChange = {},
                     onStopNavigation = {},
                     onRouteNavigation = { navigated = true },
-                    currentNavEntry = null,
                     inputFieldFocusRequester = focusRequester,
                     searchResultsVm = koinViewModel(),
                     content = {},

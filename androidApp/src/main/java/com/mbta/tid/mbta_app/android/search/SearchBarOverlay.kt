@@ -49,7 +49,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 @Composable
 fun SearchBarOverlay(
     expanded: Boolean,
-    searchBarIsVisible: Boolean,
+    showSearchBar: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
     onRouteNavigation: (routeId: String) -> Unit,
@@ -69,11 +69,11 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, searchBarIsVisible, globalResponse) {
+    LaunchedEffect(searchInputState, showSearchBar, globalResponse) {
         searchResultsVm.getSearchResults(searchInputState, globalResponse)
     }
-    LaunchedEffect(searchBarIsVisible, expanded) {
-        if (searchBarIsVisible) {
+    LaunchedEffect(showSearchBar, expanded) {
+        if (showSearchBar) {
             onExpandedChange(expanded)
             if (!expanded) {
                 searchInputState = ""
@@ -83,7 +83,7 @@ fun SearchBarOverlay(
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(modifier = Modifier.zIndex(1f), contentAlignment = Alignment.Center) {
-            if (searchBarIsVisible) {
+            if (showSearchBar) {
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
                     colors =

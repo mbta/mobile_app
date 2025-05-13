@@ -27,14 +27,15 @@ import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
+import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.util.LocalActivity
@@ -219,14 +220,14 @@ class MapAndSheetPageTest : KoinTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testNearbyTransitPageDisplaysCorrectly() {
+    fun testMapAndSheetPageDisplaysCorrectly() {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
                     LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
-                    NearbyTransitPage(
+                    MapAndSheetPage(
                         Modifier,
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
@@ -240,6 +241,7 @@ class MapAndSheetPageTest : KoinTest {
                             locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
                         ),
+                        SheetRoutes.Entrypoint.NearbyTransit,
                         false,
                         {},
                         {},
@@ -346,7 +348,7 @@ class MapAndSheetPageTest : KoinTest {
                     LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
-                    NearbyTransitPage(
+                    MapAndSheetPage(
                         Modifier,
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
@@ -360,6 +362,7 @@ class MapAndSheetPageTest : KoinTest {
                             locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
                         ),
+                        SheetRoutes.Entrypoint.NearbyTransit,
                         false,
                         {},
                         {},
@@ -392,7 +395,7 @@ class MapAndSheetPageTest : KoinTest {
                     LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
                 ) {
-                    NearbyTransitPage(
+                    MapAndSheetPage(
                         Modifier,
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
@@ -406,6 +409,7 @@ class MapAndSheetPageTest : KoinTest {
                             locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
                         ),
+                        SheetRoutes.Entrypoint.NearbyTransit,
                         false,
                         {},
                         {},
@@ -451,7 +455,7 @@ class MapAndSheetPageTest : KoinTest {
                     LocalLocationClient provides MockFusedLocationProviderClient(),
                     LocalLifecycleOwner provides lifecycleOwner,
                 ) {
-                    NearbyTransitPage(
+                    MapAndSheetPage(
                         Modifier,
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
@@ -465,6 +469,7 @@ class MapAndSheetPageTest : KoinTest {
                             locationDataManager = locationDataManager,
                             viewportProvider = viewportProvider,
                         ),
+                        SheetRoutes.Entrypoint.NearbyTransit,
                         false,
                         {},
                         {},
