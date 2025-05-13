@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.more
 
+import android.annotation.SuppressLint
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
@@ -13,6 +14,7 @@ class MoreViewModelTests {
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @SuppressLint("LocalContextConfigurationRead")
     @Test
     fun testLocalizedFeedbackLink() {
         lateinit var vm: MoreViewModel

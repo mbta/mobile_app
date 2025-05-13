@@ -28,11 +28,11 @@ sentry {
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
         versionName = "1.2.2"
