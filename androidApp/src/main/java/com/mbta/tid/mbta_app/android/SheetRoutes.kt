@@ -27,6 +27,8 @@ sealed class SheetRoutes {
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
 
+    @Serializable data class RouteDetails(val routeId: String) : SheetRoutes()
+
     val showSearchBar: Boolean
         get() =
             when (this) {
@@ -63,6 +65,8 @@ sealed class SheetRoutes {
         fun fromNavBackStackEntry(backStackEntry: NavBackStackEntry): SheetRoutes {
             return if (backStackEntry.destination.route?.contains("StopDetails") == true) {
                 backStackEntry.toRoute<StopDetails>()
+            } else if (backStackEntry.destination.route?.contains("RouteDetails") == true) {
+                backStackEntry.toRoute<RouteDetails>()
             } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
                 backStackEntry.toRoute<Favorites>()
             } else {

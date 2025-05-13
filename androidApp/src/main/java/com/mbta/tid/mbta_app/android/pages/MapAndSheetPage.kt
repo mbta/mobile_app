@@ -59,6 +59,7 @@ import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
+import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
@@ -238,6 +239,13 @@ fun MapAndSheetPage(
         }
     }
 
+    fun handleRouteNavigation(routeId: String) {
+        mapViewModel.setSelectedVehicle(null)
+        navController.navigate(SheetRoutes.RouteDetails(routeId)) {
+            popUpTo(SheetRoutes.NearbyTransit)
+        }
+    }
+
     fun handleVehicleTap(vehicle: Vehicle) {
         val tripId = vehicle.tripId ?: return
         val (stopId, stopFilter, tripFilter) =
@@ -406,6 +414,24 @@ fun MapAndSheetPage(
                 )
             }
 
+            composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                val navRoute: SheetRoutes.RouteDetails = backStackEntry.toRoute()
+
+                LaunchedEffect(true) {
+                    if (navBarVisible) {
+                        hideNavBar()
+                    }
+                    analytics.track(AnalyticsScreen.RouteDetails)
+                }
+
+                RouteDetailsView(
+                    selectionId = navRoute.routeId,
+                    onOpenStopDetails = ::handleStopNavigation,
+                    onClose = { navController.popBackStack() },
+                    errorBannerViewModel = errorBannerViewModel,
+                )
+            }
+
             composable<SheetRoutes.NearbyTransit>(typeMap = SheetRoutes.typeMap) {
                 // for ViewModel reasons, must be within the `composable` to be the same instance
                 val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
@@ -446,7 +472,7 @@ fun MapAndSheetPage(
                 showSearchBar,
                 ::handleSearchExpandedChange,
                 ::handleStopNavigation,
-                onRouteNavigation = {},
+                ::handleRouteNavigation,
                 searchFocusRequester,
                 searchResultsViewModel,
             ) {
@@ -500,7 +526,7 @@ fun MapAndSheetPage(
                     showSearchBar,
                     ::handleSearchExpandedChange,
                     ::handleStopNavigation,
-                    onRouteNavigation = {},
+                    ::handleRouteNavigation,
                     searchFocusRequester,
                     searchResultsViewModel,
                 ) {
