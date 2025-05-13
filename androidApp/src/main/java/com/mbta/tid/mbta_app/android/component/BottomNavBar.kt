@@ -41,8 +41,8 @@ fun BottomNavBar(
             when (currentDestination) {
                 is Routes.MapAndSheet ->
                     when (sheetNavEntrypoint) {
-                        SheetRoutes.Entrypoint.Favorites -> 0
-                        SheetRoutes.Entrypoint.NearbyTransit -> 1
+                        SheetRoutes.Favorites -> 0
+                        SheetRoutes.NearbyTransit -> 1
                     }
                 is Routes.More -> 2
             }
@@ -68,7 +68,7 @@ fun BottomNavBar(
                 BottomNavTab(
                     selected =
                         currentDestination is Routes.MapAndSheet &&
-                            sheetNavEntrypoint == SheetRoutes.Entrypoint.Favorites,
+                            sheetNavEntrypoint == SheetRoutes.Favorites,
                     onClick = { navigateToFavorites() },
                     icon = painterResource(R.drawable.tab_star),
                     text = stringResource(R.string.favorites_link),
@@ -78,7 +78,7 @@ fun BottomNavBar(
             BottomNavTab(
                 selected =
                     currentDestination is Routes.MapAndSheet &&
-                        sheetNavEntrypoint == SheetRoutes.Entrypoint.NearbyTransit,
+                        sheetNavEntrypoint == SheetRoutes.NearbyTransit,
                 onClick = { navigateToNearby() },
                 icon = painterResource(R.drawable.map_pin),
                 text = stringResource(R.string.nearby_transit_link),

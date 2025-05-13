@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
 import android.os.Bundle
+import androidx.compose.runtime.saveable.Saver
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.toRoute
@@ -13,22 +14,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class SheetRoutes {
 
-    // An enum is used to represent the entrypoint so that it can be used in rememberSaveable,
-    // and to make clear that there is a specific subset of root nav routes that the sheet can use.
-    enum class Entrypoint {
-        Favorites,
-        NearbyTransit;
+    @Serializable sealed interface Entrypoint
 
-        fun route(): SheetRoutes =
-            when (this) {
-                Favorites -> SheetRoutes.Favorites
-                NearbyTransit -> SheetRoutes.NearbyTransit
-            }
-    }
+    @Serializable data object Favorites : SheetRoutes(), Entrypoint
 
-    @Serializable data object Favorites : SheetRoutes()
-
-    @Serializable data object NearbyTransit : SheetRoutes()
+    @Serializable data object NearbyTransit : SheetRoutes(), Entrypoint
 
     @Serializable
     data class StopDetails(
@@ -46,6 +36,12 @@ sealed class SheetRoutes {
             }
 
     companion object {
+        val EntrypointSaver =
+            Saver<Entrypoint, String>(
+                save = { json.encodeToString<Entrypoint>(it) },
+                restore = { json.decodeFromString<Entrypoint>(it) },
+            )
+
         val typeMap =
             mapOf(
                 typeOf<StopDetailsFilter?>() to StopFilterParameterType,

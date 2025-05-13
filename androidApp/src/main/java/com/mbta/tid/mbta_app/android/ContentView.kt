@@ -50,9 +50,10 @@ fun ContentView(
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
     val navController = rememberNavController()
-    var sheetNavEntrypoint: SheetRoutes.Entrypoint by rememberSaveable {
-        mutableStateOf(SheetRoutes.Entrypoint.NearbyTransit)
-    }
+    var sheetNavEntrypoint: SheetRoutes.Entrypoint by
+        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) {
+            mutableStateOf(SheetRoutes.NearbyTransit)
+        }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView.getGlobalData")
@@ -126,12 +127,8 @@ fun ContentView(
                             currentDestination =
                                 Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
                             sheetNavEntrypoint = sheetNavEntrypoint,
-                            navigateToFavorites = {
-                                sheetNavEntrypoint = SheetRoutes.Entrypoint.Favorites
-                            },
-                            navigateToNearby = {
-                                sheetNavEntrypoint = SheetRoutes.Entrypoint.NearbyTransit
-                            },
+                            navigateToFavorites = { sheetNavEntrypoint = SheetRoutes.Favorites },
+                            navigateToNearby = { sheetNavEntrypoint = SheetRoutes.NearbyTransit },
                             navigateToMore = { navController.navigate(Routes.More) },
                             enhancedFavorites = enhancedFavorites,
                         )
@@ -150,11 +147,11 @@ fun ContentView(
                         sheetNavEntrypoint = sheetNavEntrypoint,
                         navigateToFavorites = {
                             navController.popBackStack()
-                            sheetNavEntrypoint = SheetRoutes.Entrypoint.Favorites
+                            sheetNavEntrypoint = SheetRoutes.Favorites
                         },
                         navigateToNearby = {
                             navController.popBackStack()
-                            sheetNavEntrypoint = SheetRoutes.Entrypoint.NearbyTransit
+                            sheetNavEntrypoint = SheetRoutes.NearbyTransit
                         },
                         navigateToMore = {},
                         enhancedFavorites = enhancedFavorites,

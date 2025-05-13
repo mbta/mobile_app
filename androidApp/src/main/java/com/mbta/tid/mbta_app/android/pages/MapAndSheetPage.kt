@@ -276,7 +276,7 @@ fun MapAndSheetPage(
 
     fun navigateToEntrypoint() {
         try {
-            navController.navigate(sheetNavEntrypoint.route()) {
+            navController.navigate(sheetNavEntrypoint) {
                 popUpTo(navController.graph.id) { inclusive = true }
             }
         } catch (e: IllegalStateException) {
@@ -337,7 +337,7 @@ fun MapAndSheetPage(
     fun SheetContent(modifier: Modifier = Modifier) {
         NavHost(
             navController,
-            startDestination = sheetNavEntrypoint.route(),
+            startDestination = sheetNavEntrypoint,
             modifier = Modifier.then(modifier),
             enterTransition = {
                 val initialRoute = SheetRoutes.fromNavBackStackEntry(this.initialState)
