@@ -6,7 +6,7 @@ import kotlin.uuid.Uuid
 
 /** Represents a [RouteCardData.Leaf] ready to be displayed. */
 sealed class LeafFormat {
-    abstract fun tileData(): List<TileData>
+    abstract fun tileData(directionDestination: String?): List<TileData>
 
     abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
 
@@ -30,12 +30,12 @@ sealed class LeafFormat {
         val headsign: String?,
         val format: UpcomingFormat,
     ) : LeafFormat() {
-        override fun tileData(): List<TileData> {
+        override fun tileData(directionDestination: String?): List<TileData> {
             return if (format is UpcomingFormat.Some) {
                 format.trips.map { trip ->
                     TileData(
                         route = route,
-                        headsign = null,
+                        headsign = headsign.takeUnless { it == directionDestination },
                         UpcomingFormat.Some(trip, format.secondaryAlert),
                         trip.trip,
                     )
@@ -78,7 +78,7 @@ sealed class LeafFormat {
             val id: String = "$headsign-$format-${Uuid.random()}",
         )
 
-        override fun tileData(): List<TileData> {
+        override fun tileData(directionDestination: String?): List<TileData> {
             return branchRows.mapNotNull { branch ->
                 if (branch.format is UpcomingFormat.Some) {
                     val trip = branch.format.trips.singleOrNull() ?: return@mapNotNull null
