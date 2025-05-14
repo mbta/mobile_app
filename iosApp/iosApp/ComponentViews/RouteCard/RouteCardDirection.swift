@@ -37,6 +37,8 @@ struct RouteCardDirection: View {
             }
 
         case let .single(single):
+            let pillDecoration: PredictionRowView.PillDecoration =
+                if let route = single.route { .onDirectionDestination(route: route) } else { .none }
             DirectionRowView(
                 direction: .init(
                     name: direction.name,
@@ -45,7 +47,8 @@ struct RouteCardDirection: View {
                         : single.headsign,
                     id: direction.id
                 ),
-                predictions: single.format
+                predictions: single.format,
+                pillDecoration: pillDecoration
             )
         }
     }

@@ -20,6 +20,12 @@ sealed class LeafFormat {
 
     /** A [RouteCardData.Leaf] which only has one destination within its direction. */
     data class Single(
+        /**
+         * The route to display next to [headsign] and [format]. Only set if the
+         * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
+         * set.
+         */
+        val route: Route?,
         /** The headsign to show next to [format]. Overrides [Direction.destination] if set. */
         val headsign: String?,
         val format: UpcomingFormat,
@@ -28,7 +34,7 @@ sealed class LeafFormat {
             return if (format is UpcomingFormat.Some) {
                 format.trips.map { trip ->
                     TileData(
-                        route = null,
+                        route = route,
                         headsign = null,
                         UpcomingFormat.Some(trip, format.secondaryAlert),
                         trip.trip,

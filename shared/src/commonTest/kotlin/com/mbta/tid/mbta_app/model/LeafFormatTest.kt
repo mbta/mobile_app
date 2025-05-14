@@ -32,6 +32,7 @@ class LeafFormatTest {
             )
         val format =
             LeafFormat.Single(
+                route = null,
                 "Overridden Headsign",
                 UpcomingFormat.Some(listOf(trip1, trip2, trip3), null),
             )
@@ -124,7 +125,8 @@ class LeafFormatTest {
     fun `Single tileData empty if no trips`() {
         val format =
             LeafFormat.Single(
-                null,
+                route = null,
+                headsign = null,
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
             )
         assertEquals(emptyList(), format.tileData())
@@ -151,7 +153,8 @@ class LeafFormatTest {
                 UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 UpcomingFormat.NoTripsFormat.NoSchedulesToday,
             )) {
-            val format = LeafFormat.Single(null, UpcomingFormat.NoTrips(noTrips))
+            val format =
+                LeafFormat.Single(route = null, headsign = null, UpcomingFormat.NoTrips(noTrips))
             assertEquals(noTrips, format.noPredictionsStatus())
         }
     }
@@ -182,7 +185,8 @@ class LeafFormatTest {
                 anyEnumValue(),
                 TripInstantDisplay.Minutes(15),
             )
-        val format = LeafFormat.Single(null, UpcomingFormat.Some(trip, null))
+        val format =
+            LeafFormat.Single(route = null, headsign = null, UpcomingFormat.Some(trip, null))
         assertNull(format.noPredictionsStatus())
     }
 

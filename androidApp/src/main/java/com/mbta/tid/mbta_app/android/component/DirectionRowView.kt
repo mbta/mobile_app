@@ -28,7 +28,7 @@ fun DirectionRowView(
         modifier = modifier,
         pillDecoration = pillDecoration,
     ) {
-        DirectionLabel(direction)
+        DirectionLabel(direction, pillDecoration = pillDecoration)
     }
 }
 

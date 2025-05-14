@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +38,7 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 sealed interface PillDecoration {
     data class OnRow(val route: Route) : PillDecoration
 
-    data class OnPrediction(val routesByTrip: Map<String, Route>) : PillDecoration
+    data class OnDirectionDestination(val route: Route) : PillDecoration
 }
 
 @Composable
@@ -99,23 +97,6 @@ fun PredictionRowView(
                                         isFirst = index == 0,
                                         isOnly = index == 0 && predictions.trips.count() == 1,
                                     )
-                                    if (pillDecoration is PillDecoration.OnPrediction) {
-                                        val route: Route? =
-                                            pillDecoration.routesByTrip[prediction.id]
-
-                                        if (route != null) {
-                                            RoutePill(
-                                                route,
-                                                null,
-                                                RoutePillType.Flex,
-                                                modifier =
-                                                    Modifier.wrapContentHeight(
-                                                            Alignment.CenterVertically
-                                                        )
-                                                        .scale(0.75f),
-                                            )
-                                        }
-                                    }
                                 }
                             }
                         is UpcomingFormat.Disruption ->
@@ -166,8 +147,7 @@ private fun PredictionRowViewPreview() {
                             )
                         ),
                         null,
-                    ),
-                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB)),
+                    )
             ) {
                 Text("Longer Destination than That")
             }
@@ -198,8 +178,7 @@ private fun PredictionRowViewPreview() {
                         )
                     ),
                     null,
-                ),
-                pillDecoration = PillDecoration.OnPrediction(mapOf(trip.id to greenB)),
+                )
             ) {
                 Text("Destination")
             }

@@ -49,7 +49,11 @@ class RouteCardDataLeafTest {
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            LeafFormat.Single(null, UpcomingFormat.Disruption(alert, "alert-large-red-suspension")),
+            LeafFormat.Single(
+                route = null,
+                headsign = null,
+                UpcomingFormat.Disruption(alert, "alert-large-red-suspension"),
+            ),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
                     objects.stop(),
@@ -92,7 +96,8 @@ class RouteCardDataLeafTest {
         for ((route, icon) in cases) {
             assertEquals(
                 LeafFormat.Single(
-                    null,
+                    route = null,
+                    headsign = null,
                     UpcomingFormat.NoTrips(
                         UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                         UpcomingFormat.SecondaryAlert(icon),
@@ -139,7 +144,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.Disruption(alert, "alert-large-silver-suspension"),
             ),
             RouteCardData.Leaf(
@@ -178,7 +184,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -226,7 +233,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -264,7 +272,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                null,
+                route = null,
+                headsign = null,
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
             ),
             RouteCardData.Leaf(
@@ -298,7 +307,8 @@ class RouteCardDataLeafTest {
             }
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             ),
             RouteCardData.Leaf(
@@ -326,7 +336,7 @@ class RouteCardDataLeafTest {
         val route = objects.route { type = anyEnumValue() }
         val pattern = objects.routePattern(route)
         assertEquals(
-            LeafFormat.Single(null, UpcomingFormat.Loading),
+            LeafFormat.Single(route = null, headsign = null, UpcomingFormat.Loading),
             RouteCardData.Leaf(
                     RouteCardData.LineOrRoute.Route(route),
                     objects.stop(),
@@ -369,7 +379,8 @@ class RouteCardDataLeafTest {
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -425,7 +436,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -454,7 +466,8 @@ class RouteCardDataLeafTest {
         )
         assertEquals(
             LeafFormat.Single(
-                "",
+                route = null,
+                headsign = "",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -497,7 +510,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                null,
+                route = null,
+                headsign = null,
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
             ),
             RouteCardData.Leaf(
@@ -766,7 +780,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "Alewife",
+                route = null,
+                headsign = "Alewife",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -1015,6 +1030,7 @@ class RouteCardDataLeafTest {
 
         val boylston = objects.getStop("place-boyls")
         val kenmore = objects.getStop("place-kencl")
+        val reservoir = objects.getStop("place-rsmnl")
 
         val bWestbound = objects.getRoutePattern("Green-B-812-0")
         val cWestbound = objects.getRoutePattern("Green-C-832-0")
@@ -1117,6 +1133,74 @@ class RouteCardDataLeafTest {
                     )
                     .format(now, GreenLine.global)
             ),
+        )
+    }
+
+    @Test
+    fun `formats Green Line westbound at Reservoir as single`() = parametricTest {
+        val objects = GreenLine.objects()
+        val now = Clock.System.now()
+
+        val prediction1 =
+            objects.prediction {
+                departureTime = now + 3.minutes
+                trip = objects.trip(GreenLine.dWestbound)
+            }
+        val prediction2 =
+            objects.prediction {
+                departureTime = now + 5.minutes
+                trip = objects.trip(GreenLine.dWestbound)
+            }
+        val prediction3 =
+            objects.prediction {
+                departureTime = now + 10.minutes
+                trip = objects.trip(GreenLine.dWestbound)
+            }
+        val prediction4 =
+            objects.prediction {
+                departureTime = now + 15.minutes
+                trip = objects.trip(GreenLine.dWestbound)
+            }
+
+        assertEquals(
+            LeafFormat.Single(
+                GreenLine.d,
+                "Riverside",
+                UpcomingFormat.Some(
+                    listOf(
+                        UpcomingFormat.Some.FormattedTrip(
+                            objects.upcomingTrip(prediction1),
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Minutes(3),
+                        ),
+                        UpcomingFormat.Some.FormattedTrip(
+                            objects.upcomingTrip(prediction2),
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Minutes(5),
+                        ),
+                    ),
+                    null,
+                ),
+            ),
+            RouteCardData.Leaf(
+                    GreenLine.lineOrRoute,
+                    GreenLine.reservoir,
+                    0,
+                    listOf(GreenLine.dWestbound),
+                    emptySet(),
+                    listOf(
+                        objects.upcomingTrip(prediction1),
+                        objects.upcomingTrip(prediction2),
+                        objects.upcomingTrip(prediction3),
+                        objects.upcomingTrip(prediction4),
+                    ),
+                    emptyList(),
+                    allDataLoaded = true,
+                    hasSchedulesToday = true,
+                    emptyList(),
+                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                )
+                .format(now, GreenLine.global),
         )
     }
 
@@ -1270,7 +1354,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "South Station",
+                route = null,
+                headsign = "South Station",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -1353,7 +1438,8 @@ class RouteCardDataLeafTest {
 
         assertEquals(
             LeafFormat.Single(
-                "Arlington Center",
+                route = null,
+                headsign = "Arlington Center",
                 UpcomingFormat.Some(
                     listOf(
                         UpcomingFormat.Some.FormattedTrip(
@@ -1537,7 +1623,8 @@ class RouteCardDataLeafTest {
 
             assertEquals(
                 LeafFormat.Single(
-                    null,
+                    route = null,
+                    headsign = null,
                     UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
                 ),
                 RouteCardData.Leaf(
@@ -1667,7 +1754,8 @@ class RouteCardDataLeafTest {
 
             assertEquals(
                 LeafFormat.Single(
-                    null,
+                    route = null,
+                    headsign = null,
                     UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
                 ),
                 RouteCardData.Leaf(
@@ -2048,7 +2136,8 @@ class RouteCardDataLeafTest {
 
             assertEquals(
                 LeafFormat.Single(
-                    null,
+                    route = null,
+                    headsign = null,
                     UpcomingFormat.Disruption(alert, MapStopRoute.matching(GreenLine.b)),
                 ),
                 RouteCardData.Leaf(
