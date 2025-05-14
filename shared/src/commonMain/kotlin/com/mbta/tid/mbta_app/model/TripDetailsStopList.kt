@@ -37,7 +37,18 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
         fun format(trip: Trip, now: Instant, routeType: RouteType): UpcomingFormat? {
             if (disruption != null) {
-                return disruption
+                // ignore activities on platforms since they may be wrong or they may be correct in
+                // a way that doesn’t match how service is being run
+                if (isTruncating) {
+                    // if the alert represents a truncation of service, either this is the first
+                    // stop of the alert and we want to show its arrival time or this is a later
+                    // stop in the alert and it was discarded in splitForTarget so this was never
+                    // called
+                } else {
+                    // if the alert does not represent a truncation of service (e.g. stop closure),
+                    // we do want to replace the time with the alert
+                    return disruption
+                }
             }
 
             return UpcomingFormat.Some(

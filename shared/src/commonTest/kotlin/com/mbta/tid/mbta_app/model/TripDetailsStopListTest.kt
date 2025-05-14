@@ -1001,7 +1001,21 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `Entry format takes disruption over prediction`() = test {
+    fun `Entry format takes non-truncating disruption over prediction`() = test {
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val trip = trip { routeId = route.id }
+        val now = Clock.System.now()
+        val shuttleAlert = alert(Alert.Effect.StationClosure)
+        val pred = prediction("A", 10, time = now)
+        val entry = entry("A", 10, alert = shuttleAlert, prediction = pred)
+        assertEquals(
+            UpcomingFormat.Disruption(shuttleAlert, mapStopRoute = null),
+            entry.format(trip, now, route.type),
+        )
+    }
+
+    @Test
+    fun `Entry format takes prediction over truncating disruption`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
         val trip = trip { routeId = route.id }
         val now = Clock.System.now()
@@ -1009,7 +1023,14 @@ class TripDetailsStopListTest {
         val pred = prediction("A", 10, time = now)
         val entry = entry("A", 10, alert = shuttleAlert, prediction = pred)
         assertEquals(
-            UpcomingFormat.Disruption(shuttleAlert, mapStopRoute = null),
+            UpcomingFormat.Some(
+                UpcomingFormat.Some.FormattedTrip(
+                    objects.upcomingTrip(pred),
+                    route.type,
+                    TripInstantDisplay.Time(now),
+                ),
+                secondaryAlert = null,
+            ),
             entry.format(trip, now, route.type),
         )
     }
