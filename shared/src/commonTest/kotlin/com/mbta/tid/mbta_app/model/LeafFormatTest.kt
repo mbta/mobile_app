@@ -56,7 +56,7 @@ class LeafFormatTest {
                 routeType,
                 TripInstantDisplay.Arriving,
             )
-        val format = LeafFormat.Single("Headsign", UpcomingFormat.Some(listOf(trip1), null))
+        val format = LeafFormat.Single(null, "Headsign", UpcomingFormat.Some(listOf(trip1), null))
         assertEquals(
             listOf(TileData(null, null, UpcomingFormat.Some(trip1, null), trip1.trip)),
             format.tileData(directionDestination = "Headsign"),
