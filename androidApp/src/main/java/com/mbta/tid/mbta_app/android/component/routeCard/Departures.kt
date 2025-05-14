@@ -89,7 +89,10 @@ fun Departures(
                                     destination = formatted.headsign ?: direction.destination
                                 ),
                                 formatted.format,
-                                pillDecoration = formatted.route?.let { PillDecoration.OnRow(it) },
+                                pillDecoration =
+                                    formatted.route?.let {
+                                        PillDecoration.OnDirectionDestination(it)
+                                    },
                             )
                         }
                         is LeafFormat.Branched -> {

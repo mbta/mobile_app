@@ -38,7 +38,7 @@ struct RouteCardDirection: View {
 
         case let .single(single):
             let pillDecoration: PredictionRowView.PillDecoration =
-                if let route = single.route { .onRow(route: route) } else { .none }
+                if let route = single.route { .onDirectionDestination(route: route) } else { .none }
             DirectionRowView(
                 direction: .init(
                     name: direction.name,
