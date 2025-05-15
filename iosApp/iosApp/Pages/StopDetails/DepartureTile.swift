@@ -27,6 +27,8 @@ struct DepartureTile: View {
                     Text(headsign)
                         .font(Typography.footnoteSemibold)
                         .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .border(Color.red, width: 1)
                 }
                 HStack(spacing: 0) {
                     if case let .onPrediction(route) = pillDecoration {
@@ -35,11 +37,14 @@ struct DepartureTile: View {
                     }
                     TripStatus(predictions: data.formatted)
                 }
-            }
+            }.frame(maxHeight: .infinity)
+                .border(Color.orange, width: 1)
         }
-        .padding(.horizontal, 10)
+        .frame(maxHeight: .infinity)
+        .frame(maxWidth: 195, minHeight: 56, maxHeight: .infinity)
         .padding(.vertical, 10)
-        .frame(minHeight: 56)
+        .padding(.horizontal, 10)
+        .border(Color.cyan, width: 1)
         .background(isSelected ? Color.fill3 : Color.deselectedToggle2.opacity(0.6))
         .foregroundStyle(isSelected ? Color.text : Color.deselectedToggleText)
         .clipShape(.rect(cornerRadius: 8))

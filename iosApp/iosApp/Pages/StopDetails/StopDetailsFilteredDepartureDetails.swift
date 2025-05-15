@@ -243,16 +243,19 @@ struct StopDetailsFilteredDepartureDetails: View {
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
                         isSelected: tileData.isSelected(tripFilter: tripFilter)
-                    )
-                    .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
-                    .padding(.horizontal, 4)
+                    ).frame(maxHeight: .infinity)
+                        .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
+                        .padding(.horizontal, 4)
                 }
             }
 
             .padding(.horizontal, 12)
             .padding(.vertical, 1)
-            .fixedSize(horizontal: false, vertical: true)
-        }
+            .frame(maxHeight: .infinity)
+            .border(Color.green, width: 1)
+
+        }.fixedSize(horizontal: false, vertical: true)
+            .border(Color.blue, width: 1)
     }
 
     private func setAlertSummaries(_ alertSummaryParams: AlertSummaryParams) {
