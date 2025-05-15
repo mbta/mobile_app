@@ -21,6 +21,7 @@ final class TripStopRowTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -32,9 +33,10 @@ final class TripStopRowTests: XCTestCase {
         let sut = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
-                schedule: schedule, prediction: prediction, predictionStop: nil,
+                schedule: schedule, prediction: prediction,
                 vehicle: nil, routes: [route], elevatorAlerts: []
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -49,6 +51,7 @@ final class TripStopRowTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -60,9 +63,10 @@ final class TripStopRowTests: XCTestCase {
         let sut = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
-                schedule: schedule, prediction: prediction, predictionStop: nil,
+                schedule: schedule, prediction: prediction,
                 vehicle: nil, routes: [route], elevatorAlerts: []
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -82,6 +86,7 @@ final class TripStopRowTests: XCTestCase {
             platformStop.vehicleType = .commuterRail
             platformStop.parentStationId = stop.id
         }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -97,6 +102,7 @@ final class TripStopRowTests: XCTestCase {
                 schedule: schedule, prediction: prediction, predictionStop: platformStop,
                 vehicle: nil, routes: [route], elevatorAlerts: []
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -112,6 +118,7 @@ final class TripStopRowTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -123,9 +130,10 @@ final class TripStopRowTests: XCTestCase {
         let targeted = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
-                schedule: schedule, prediction: prediction, predictionStop: nil,
+                schedule: schedule, prediction: prediction,
                 vehicle: nil, routes: [route], elevatorAlerts: []
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -141,9 +149,10 @@ final class TripStopRowTests: XCTestCase {
         let notTargeted = TripStopRow(
             stop: .init(
                 stop: stop, stopSequence: 0, disruption: nil,
-                schedule: schedule, prediction: prediction, predictionStop: nil,
+                schedule: schedule, prediction: prediction,
                 vehicle: nil, routes: [route], elevatorAlerts: []
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -160,6 +169,7 @@ final class TripStopRowTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "stop" }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -170,12 +180,13 @@ final class TripStopRowTests: XCTestCase {
 
         let stopEntry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
-            schedule: schedule, prediction: prediction, predictionStop: nil,
+            schedule: schedule, prediction: prediction,
             vehicle: nil, routes: [route], elevatorAlerts: []
         )
 
         let basicRow = TripStopRow(
             stop: stopEntry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -186,6 +197,7 @@ final class TripStopRowTests: XCTestCase {
 
         let selectedRow = TripStopRow(
             stop: stopEntry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -197,6 +209,7 @@ final class TripStopRowTests: XCTestCase {
 
         let firstRow = TripStopRow(
             stop: stopEntry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -208,6 +221,7 @@ final class TripStopRowTests: XCTestCase {
 
         let selectedFirstRow = TripStopRow(
             stop: stopEntry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -228,6 +242,7 @@ final class TripStopRowTests: XCTestCase {
             stop.name = "stop"
             stop.wheelchairBoarding = .inaccessible
         }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -238,12 +253,13 @@ final class TripStopRowTests: XCTestCase {
 
         let stopEntry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
-            schedule: schedule, prediction: prediction, predictionStop: nil,
+            schedule: schedule, prediction: prediction,
             vehicle: nil, routes: [route], elevatorAlerts: []
         )
 
         let row = TripStopRow(
             stop: stopEntry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -262,6 +278,7 @@ final class TripStopRowTests: XCTestCase {
             stop.name = "stop"
             stop.wheelchairBoarding = .accessible
         }
+        let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
         }
@@ -272,7 +289,7 @@ final class TripStopRowTests: XCTestCase {
 
         let stopEntry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
-            schedule: schedule, prediction: prediction, predictionStop: nil,
+            schedule: schedule, prediction: prediction,
             vehicle: nil, routes: [route], elevatorAlerts: [objects.alert {
                 $0.activePeriod(
                     start: Date.now.addingTimeInterval(-20 * 60).toKotlinInstant(),
@@ -283,6 +300,7 @@ final class TripStopRowTests: XCTestCase {
 
         let row = TripStopRow(
             stop: stopEntry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -298,6 +316,7 @@ final class TripStopRowTests: XCTestCase {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { $0.effect = .shuttle }
         let summary = AlertSummary(
@@ -313,13 +332,13 @@ final class TripStopRowTests: XCTestCase {
             disruption: .init(alert: alert, mapStopRoute: .orange),
             schedule: nil,
             prediction: nil,
-            predictionStop: nil,
             vehicle: nil,
             routes: []
         )
 
         let sut = TripStopRow(
             stop: entry,
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },

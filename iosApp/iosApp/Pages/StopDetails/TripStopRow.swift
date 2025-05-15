@@ -11,6 +11,7 @@ import SwiftUI
 
 struct TripStopRow: View {
     var stop: TripDetailsStopList.Entry
+    var trip: Trip
     var now: Instant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var onOpenAlertDetails: (Shared.Alert) -> Void
@@ -126,12 +127,14 @@ struct TripStopRow: View {
                                     }
                                 }
                                 Spacer()
-                                UpcomingTripView(
-                                    prediction: upcomingTripViewState,
-                                    routeType: routeAccents.type,
-                                    hideRealtimeIndicators: true,
-                                    maxTextAlpha: 0.6
-                                ).foregroundStyle(Color.text)
+                                if let upcomingTripViewState {
+                                    UpcomingTripView(
+                                        prediction: upcomingTripViewState,
+                                        routeType: routeAccents.type,
+                                        hideRealtimeIndicators: true,
+                                        maxTextAlpha: 0.6
+                                    ).foregroundStyle(Color.text)
+                                }
 
                                 // Adding the accessibility description into the stop label rather than on the
                                 // accessibility icon so that it is clear which stop it is associated with
@@ -251,17 +254,22 @@ struct TripStopRow: View {
         }
     }
 
-    var upcomingTripViewState: UpcomingTripView.State {
-        if let disruption = stop.disruption {
-            .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
-        } else {
-            .some(stop.format(now: now, routeType: routeAccents.type))
+    var upcomingTripViewState: UpcomingTripView.State? {
+        guard let formatted = stop.format(trip: trip, now: now, routeType: routeAccents.type) else { return nil }
+        switch onEnum(of: formatted) {
+        case let .disruption(disruption): return .disruption(
+                .init(alert: disruption.alert),
+                iconName: disruption.iconName
+            )
+        case let .some(some): return .some(some.trips[0].format)
+        default: return nil
         }
     }
 }
 
 #Preview {
     let objects = ObjectCollectionBuilder()
+    let trip = objects.trip { _ in }
     let now = Date.now
     VStack {
         TripStopRow(
@@ -274,7 +282,6 @@ struct TripStopRow: View {
                 disruption: nil,
                 schedule: nil,
                 prediction: objects.prediction { $0.status = "Stopped 5 stops away" },
-                predictionStop: nil,
                 vehicle: nil,
                 routes: [
                     objects.route { route in
@@ -289,6 +296,7 @@ struct TripStopRow: View {
                     },
                 ]
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -306,7 +314,6 @@ struct TripStopRow: View {
                 disruption: nil,
                 schedule: nil,
                 prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
-                predictionStop: nil,
                 vehicle: nil,
                 routes: [
                     objects.route { route in
@@ -321,6 +328,7 @@ struct TripStopRow: View {
                     },
                 ]
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -350,6 +358,7 @@ struct TripStopRow: View {
                     },
                 ]
             ),
+            trip: trip,
             now: now.toKotlinInstant(),
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -367,6 +376,7 @@ struct TripStopRow: View {
 
 #Preview("Disruptions") {
     let objects = ObjectCollectionBuilder()
+    let trip = objects.trip { _ in }
     let now = Date.now
     ZStack {
         Color.fill3.padding(6)
@@ -382,7 +392,6 @@ struct TripStopRow: View {
                     ),
                     schedule: nil,
                     prediction: objects.prediction { $0.status = "Stopped 5 stops away" },
-                    predictionStop: nil,
                     vehicle: nil,
                     routes: [
                         objects.route { route in
@@ -397,6 +406,7 @@ struct TripStopRow: View {
                         },
                     ]
                 ),
+                trip: trip,
                 now: now.toKotlinInstant(),
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
@@ -415,7 +425,6 @@ struct TripStopRow: View {
                     disruption: nil,
                     schedule: nil,
                     prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
-                    predictionStop: nil,
                     vehicle: nil,
                     routes: [
                         objects.route { route in
@@ -430,6 +439,7 @@ struct TripStopRow: View {
                         },
                     ]
                 ),
+                trip: trip,
                 now: now.toKotlinInstant(),
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
@@ -454,6 +464,7 @@ struct TripStopRow: View {
                     routes: [],
                     elevatorAlerts: []
                 ),
+                trip: trip,
                 now: now.toKotlinInstant(),
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },

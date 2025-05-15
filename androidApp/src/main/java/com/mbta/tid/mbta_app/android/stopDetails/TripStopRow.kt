@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -36,6 +37,7 @@ import kotlinx.datetime.Instant
 @Composable
 fun TripStopRow(
     stop: TripDetailsStopList.Entry,
+    trip: Trip,
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
@@ -71,16 +73,20 @@ fun TripStopRow(
         trackNumber = stop.trackNumber,
         rightSideContent = { rightSideModifier ->
             CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
-                val state = upcomingTripViewState(stop, now, routeAccents)
-                UpcomingTripView(
-                    state,
-                    rightSideModifier.then(
-                        DestinationPredictionBalance.predictionWidth(state.containsWrappableText())
-                    ),
-                    routeType = routeAccents.type,
-                    hideRealtimeIndicators = true,
-                    maxTextAlpha = 0.6f,
-                )
+                val state = upcomingTripViewState(stop, trip, now, routeAccents)
+                if (state != null) {
+                    UpcomingTripView(
+                        state,
+                        rightSideModifier.then(
+                            DestinationPredictionBalance.predictionWidth(
+                                state.containsWrappableText()
+                            )
+                        ),
+                        routeType = routeAccents.type,
+                        hideRealtimeIndicators = true,
+                        maxTextAlpha = 0.6f,
+                    )
+                }
             }
         },
     )
@@ -88,17 +94,19 @@ fun TripStopRow(
 
 private fun upcomingTripViewState(
     stop: TripDetailsStopList.Entry,
+    trip: Trip,
     now: Instant,
     routeAccents: TripRouteAccents,
-): UpcomingTripViewState {
-    val disruption = stop.disruption
-    return if (disruption != null) {
-        UpcomingTripViewState.Disruption(
-            FormattedAlert(disruption.alert),
-            iconName = disruption.iconName,
-        )
-    } else {
-        UpcomingTripViewState.Some(stop.format(now, routeAccents.type))
+): UpcomingTripViewState? {
+    return when (val formatted = stop.format(trip, now, routeAccents.type)) {
+        is UpcomingFormat.Some ->
+            UpcomingTripViewState.Some(formatted.trips.singleOrNull()?.format ?: return null)
+        is UpcomingFormat.Disruption ->
+            UpcomingTripViewState.Disruption(
+                FormattedAlert(formatted.alert),
+                iconName = formatted.iconName,
+            )
+        else -> null
     }
 }
 
@@ -106,6 +114,7 @@ private fun upcomingTripViewState(
 @Composable
 private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder()
+    val trip = objects.trip()
     val now = Clock.System.now()
     MyApplicationTheme {
         Column(Modifier.background(colorResource(R.color.fill3))) {
@@ -120,7 +129,6 @@ private fun TripStopRowPreview() {
                         disruption = null,
                         schedule = null,
                         prediction = objects.prediction { status = "Stopped 5 stops away" },
-                        predictionStop = null,
                         vehicle = null,
                         routes =
                             listOf(
@@ -136,6 +144,7 @@ private fun TripStopRowPreview() {
                                 },
                             ),
                     ),
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -154,7 +163,6 @@ private fun TripStopRowPreview() {
                         disruption = null,
                         schedule = null,
                         prediction = objects.prediction { departureTime = now.plus(5.minutes) },
-                        predictionStop = null,
                         vehicle = null,
                         routes =
                             listOf(
@@ -170,6 +178,7 @@ private fun TripStopRowPreview() {
                                 },
                             ),
                     ),
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -198,6 +207,7 @@ private fun TripStopRowPreview() {
                                 }
                             ),
                     ),
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -216,6 +226,7 @@ private fun TripStopRowPreview() {
 @Composable
 private fun TripStopRowDisruptionsPreview() {
     val objects = ObjectCollectionBuilder()
+    val trip = objects.trip()
     val now = Clock.System.now()
     MyApplicationTheme {
         Box {
@@ -233,7 +244,6 @@ private fun TripStopRowDisruptionsPreview() {
                                 ),
                             schedule = null,
                             prediction = objects.prediction { status = "Stopped 5 stops away" },
-                            predictionStop = null,
                             vehicle = null,
                             routes =
                                 listOf(
@@ -249,6 +259,7 @@ private fun TripStopRowDisruptionsPreview() {
                                     },
                                 ),
                         ),
+                    trip,
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},
@@ -267,7 +278,6 @@ private fun TripStopRowDisruptionsPreview() {
                             disruption = null,
                             schedule = null,
                             prediction = objects.prediction { departureTime = now.plus(5.minutes) },
-                            predictionStop = null,
                             vehicle = null,
                             routes =
                                 listOf(
@@ -283,6 +293,7 @@ private fun TripStopRowDisruptionsPreview() {
                                     },
                                 ),
                         ),
+                    trip,
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},
@@ -315,6 +326,7 @@ private fun TripStopRowDisruptionsPreview() {
                                     }
                                 ),
                         ),
+                    trip,
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},

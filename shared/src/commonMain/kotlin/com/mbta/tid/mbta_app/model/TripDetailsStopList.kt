@@ -11,7 +11,7 @@ import kotlinx.datetime.Instant
 
 data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
-constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
+constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
 
     data class Entry
     @DefaultArgumentInterop.Enabled
@@ -23,7 +23,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val prediction: Prediction?,
         // The prediction stop can be the same as `stop`, but it can also be a child stop which
         // contains more specific boarding information for a prediction, like the track number
-        val predictionStop: Stop?,
+        val predictionStop: Stop? = stop.takeIf { prediction != null },
         val vehicle: Vehicle?,
         val routes: List<Route>,
         val elevatorAlerts: List<Alert> = emptyList(),
@@ -35,15 +35,17 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
 
-        fun format(now: Instant, routeType: RouteType?) =
-            TripInstantDisplay.from(
-                prediction,
-                schedule,
-                vehicle,
-                routeType,
-                now,
-                context = TripInstantDisplay.Context.TripDetails,
+        fun format(trip: Trip, now: Instant, routeType: RouteType): UpcomingFormat? {
+            if (disruption != null) {
+                return disruption
+            }
+
+            return UpcomingFormat.Some(
+                UpcomingTrip(trip, schedule, prediction, predictionStop, vehicle)
+                    .format(now, routeType, TripInstantDisplay.Context.TripDetails) ?: return null,
+                secondaryAlert = null,
             )
+        }
     }
 
     /**
@@ -77,7 +79,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val firstCollapsed = collapsedStops?.firstOrNull()
         if (
             firstCollapsed == startTerminalEntry &&
-                (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.tripId)
+                (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.trip.id)
         ) {
             collapsedStops = collapsedStops?.drop(1)
             firstStop = firstCollapsed
@@ -176,8 +178,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         }
 
         suspend fun fromPieces(
-            tripId: String,
-            directionId: Int,
+            trip: Trip,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
@@ -221,7 +222,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                 }
 
                 if (entries.isEmpty()) {
-                    return@withContext TripDetailsStopList(tripId, emptyList())
+                    return@withContext TripDetailsStopList(trip, emptyList())
                 }
 
                 val sortedEntries = entries.entries.sortedBy { it.key }
@@ -238,7 +239,14 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                     val parent = stop.resolveParent(globalData.stops)
                     val parentAndChildStopIds = setOf(parent.id) + parent.childStopIds
                     val disruption =
-                        getDisruption(working, fallbackTime, alertsData, route, tripId, directionId)
+                        getDisruption(
+                            working,
+                            fallbackTime,
+                            alertsData,
+                            route,
+                            trip.id,
+                            trip.directionId,
+                        )
                     return Entry(
                         stop,
                         working.stopSequence,
@@ -254,12 +262,12 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
                 val startTerminalEntry = getEntry(sortedEntries.firstOrNull()?.value)
                 TripDetailsStopList(
-                    tripId,
+                    trip,
                     sortedEntries
                         .dropWhile {
                             if (
                                 vehicle == null ||
-                                    vehicle.tripId != tripId ||
+                                    vehicle.tripId != trip.id ||
                                     vehicle.currentStopSequence == null
                             ) {
                                 false
