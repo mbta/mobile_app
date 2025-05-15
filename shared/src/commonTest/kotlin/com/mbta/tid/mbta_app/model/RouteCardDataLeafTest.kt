@@ -2161,4 +2161,50 @@ class RouteCardDataLeafTest {
                     .format(now, GreenLine.global),
             )
         }
+
+    @Test
+    fun `filters alerts by trip`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop()
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+        val trip3 = objects.trip()
+        val generalAlert =
+            objects.alert { informedEntity(listOf(Alert.InformedEntity.Activity.Board)) }
+        val trip1Alert =
+            objects.alert {
+                informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip1.id)
+            }
+        val trip2Alert =
+            objects.alert {
+                informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip2.id)
+            }
+        val leaf =
+            RouteCardData.Leaf(
+                RouteCardData.LineOrRoute.Route(route),
+                stop,
+                directionId = 0,
+                routePatterns = emptyList(),
+                stopIds = emptySet(),
+                upcomingTrips = listOf(),
+                alertsHere = listOf(generalAlert, trip1Alert, trip2Alert),
+                hasSchedulesToday = true,
+                allDataLoaded = true,
+                alertsDownstream = listOf(generalAlert, trip1Alert, trip2Alert),
+                context = RouteCardData.Context.StopDetailsFiltered,
+            )
+
+        assertEquals(listOf(generalAlert, trip1Alert, trip2Alert), leaf.alertsHere(tripId = null))
+        assertEquals(listOf(generalAlert, trip1Alert), leaf.alertsHere(tripId = trip1.id))
+        assertEquals(listOf(generalAlert, trip2Alert), leaf.alertsHere(tripId = trip2.id))
+        assertEquals(listOf(generalAlert), leaf.alertsHere(tripId = trip3.id))
+        assertEquals(
+            listOf(generalAlert, trip1Alert, trip2Alert),
+            leaf.alertsDownstream(tripId = null),
+        )
+        assertEquals(listOf(generalAlert, trip1Alert), leaf.alertsDownstream(tripId = trip1.id))
+        assertEquals(listOf(generalAlert, trip2Alert), leaf.alertsDownstream(tripId = trip2.id))
+        assertEquals(listOf(generalAlert), leaf.alertsDownstream(tripId = trip3.id))
+    }
 }

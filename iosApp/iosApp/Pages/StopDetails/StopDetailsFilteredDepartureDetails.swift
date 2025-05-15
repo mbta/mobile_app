@@ -42,9 +42,12 @@ struct StopDetailsFilteredDepartureDetails: View {
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
 
     var patternsHere: [RoutePattern] { leaf.routePatterns }
-    var alerts: [Shared.Alert] { leaf.alertsHere.filter { $0.effect != .elevatorClosure } }
-    var elevatorAlerts: [Shared.Alert] { leaf.alertsHere.filter { $0.effect == .elevatorClosure } }
-    var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream }
+    var alerts: [Shared.Alert] { leaf.alertsHere(tripId: tripFilter?.tripId).filter { $0.effect != .elevatorClosure } }
+    var elevatorAlerts: [Shared.Alert] {
+        leaf.alertsHere(tripId: tripFilter?.tripId).filter { $0.effect == .elevatorClosure }
+    }
+
+    var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream(tripId: tripFilter?.tripId) }
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
