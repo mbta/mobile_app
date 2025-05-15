@@ -131,7 +131,7 @@ class TripDetailsViewTest {
 
         objects.alert {
             cause = Alert.Cause.Parade
-            effect = Alert.Effect.Shuttle
+            effect = Alert.Effect.StopClosure
             activePeriod(now.minus(5.minutes), now.plus(30.minutes))
             informedEntity(
                 activities =
@@ -182,6 +182,6 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(downstreamStop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stop Closed").assertIsDisplayed()
     }
 }
