@@ -1,14 +1,12 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import android.Manifest
-import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -38,7 +36,6 @@ import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
-import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
@@ -224,8 +221,7 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
-                    LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient(),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
                 ) {
                     MapAndSheetPage(
                         Modifier,
@@ -345,8 +341,7 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
-                    LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient(),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
                 ) {
                     MapAndSheetPage(
                         Modifier,
@@ -392,8 +387,7 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
-                    LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient(),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
                 ) {
                     MapAndSheetPage(
                         Modifier,
@@ -451,7 +445,6 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
-                    LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
                     LocalLifecycleOwner provides lifecycleOwner,
                 ) {
