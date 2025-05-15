@@ -129,7 +129,8 @@ class ViewportProvider(var viewport: MapViewportState, isManuallyCentering: Bool
         animateTo(stop.position.toMapbox())
     }
 
-    fun isDefault() = viewport.cameraState?.center?.isRoughlyEqualTo(Defaults.center) == true
+    // if camera state's center is null, then treat it like it is at the default center
+    fun isDefault() = viewport.cameraState?.center?.isRoughlyEqualTo(Defaults.center) != false
 
     fun animateTo(
         coordinates: Point,

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -175,6 +176,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -223,6 +225,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -319,6 +322,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         StopDetailsFilter(routeId = route.id, directionId = trip.directionId),
                     tripFilter = TripDetailsFilter(trip.id, null, null, false),
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -371,6 +375,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = StopDetailsFilter(route.id, 0),
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = Direction(null, null, 0),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -438,6 +443,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -541,6 +547,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = global,
                     now = now,
@@ -607,6 +614,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = alertResponse,
                     global = globalResponse,
                     now = now,
@@ -666,6 +674,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -736,6 +745,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,
@@ -783,6 +793,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     stopFilter = filterState,
                     tripFilter = null,
                     leaf = leaf,
+                    selectedDirection = routeStopData.directions.first(),
                     allAlerts = null,
                     global = globalResponse,
                     now = now,

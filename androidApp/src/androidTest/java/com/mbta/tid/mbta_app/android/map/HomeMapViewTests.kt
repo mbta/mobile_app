@@ -9,18 +9,23 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraState
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -67,13 +72,59 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testRecenterNotShownWhenPermissions(): Unit = runBlocking {
+    fun testRecenterNotShownWhenPermissionsAndAtDefaultCenter(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = true
         val viewModel =
             MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
         val viewportProvider = ViewportProvider(MapViewportState())
+        viewModel.loadConfig()
+        composeTestRule.setContent {
+            HomeMapView(
+                sheetPadding = PaddingValues(0.dp),
+                lastNearbyTransitLocation = null,
+                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                locationDataManager = locationManager,
+                viewportProvider = viewportProvider,
+                currentNavEntry = null,
+                handleStopNavigation = {},
+                handleVehicleTap = {},
+                vehiclesData = emptyList(),
+                routeCardData = null,
+                viewModel = viewModel,
+                searchResultsViewModel =
+                    SearchResultsViewModel(
+                        MockAnalytics(),
+                        MockSearchResultRepository(),
+                        VisitHistoryUsecase(MockVisitHistoryRepository()),
+                    ),
+            )
+        }
+        composeTestRule
+            .onNodeWithContentDescription("Recenter map on my location")
+            .assertIsNotDisplayed()
+    }
+
+    @Test
+    fun testRecenterShownWhenPermissionsAndMapNotAtDefaultCenter(): Unit = runBlocking {
+        val locationManager = MockLocationDataManager()
+        val customLocation =
+            Point.fromLngLat(
+                ViewportProvider.Companion.Defaults.center.latitude() + 1,
+                ViewportProvider.Companion.Defaults.center.longitude() + 1,
+            )
+
+        locationManager.hasPermission = true
+        val viewModel =
+            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewportProvider =
+            ViewportProvider(
+                MapViewportState(
+                    initialCameraState =
+                        CameraState(customLocation, EdgeInsets(0.0, 0.0, 0.0, 0.0), 0.0, 0.0, 0.0)
+                )
+            )
         viewModel.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
@@ -243,10 +294,11 @@ class HomeMapViewTests {
     @Test
     fun testOverviewShownOnStopDetails(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
-
         locationManager.hasPermission = true
         val viewModel =
             MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+
+        viewModel.setGlobalResponse(GlobalResponse(objects = TestData))
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.loadConfig()
         composeTestRule.setContent {
@@ -256,7 +308,7 @@ class HomeMapViewTests {
                 nearbyTransitSelectingLocationState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
-                currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
+                currentNavEntry = SheetRoutes.StopDetails(TestData.getStop("121").id, null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),

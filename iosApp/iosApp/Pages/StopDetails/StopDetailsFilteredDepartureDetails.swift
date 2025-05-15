@@ -18,6 +18,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var leaf: RouteCardData.Leaf
+    var selectedDirection: Direction
 
     var pinned: Bool
 
@@ -36,7 +37,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @State var leafFormat: LeafFormat
 
-    var tiles: [TileData] { leafFormat.tileData() }
+    var tiles: [TileData] { leafFormat.tileData(directionDestination: selectedDirection.destination) }
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
 
@@ -84,7 +85,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        leaf: RouteCardData.Leaf, pinned: Bool, now: Date,
+        leaf: RouteCardData.Leaf, selectedDirection: Direction, pinned: Bool, now: Date,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
@@ -94,6 +95,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.leaf = leaf
+        self.selectedDirection = selectedDirection
         self.pinned = pinned
         self.now = now
         self.errorBannerVM = errorBannerVM

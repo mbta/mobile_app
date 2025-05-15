@@ -74,7 +74,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -82,9 +82,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -92,9 +91,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3Target,
@@ -102,9 +100,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3Target,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop4,
@@ -112,9 +109,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule4,
                         prediction4,
-                        stop4,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop5,
@@ -122,9 +118,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule5,
                         prediction5,
-                        stop5,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
             )
@@ -195,7 +190,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -203,9 +198,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -213,9 +207,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -223,9 +216,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
             )
@@ -297,13 +289,12 @@ class TripStopsTest {
                 disruption = null,
                 schedule1,
                 prediction1,
-                stop1,
-                vehicle,
-                listOf(route),
+                vehicle = vehicle,
+                routes = listOf(route),
             )
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     firstStop,
                     TripDetailsStopList.Entry(
@@ -312,9 +303,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
                 startTerminalEntry = firstStop,
@@ -388,13 +378,12 @@ class TripStopsTest {
                 disruption = null,
                 schedule1,
                 prediction1,
-                stop1,
-                vehicle,
-                listOf(route),
+                vehicle = vehicle,
+                routes = listOf(route),
             )
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     firstStop,
                     TripDetailsStopList.Entry(
@@ -403,9 +392,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -413,9 +401,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
                 startTerminalEntry = firstStop,
@@ -487,7 +474,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -495,9 +482,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -505,9 +491,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2Target,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -515,9 +500,8 @@ class TripStopsTest {
                         disruption = UpcomingFormat.Disruption(alert, null),
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
             )
@@ -597,7 +581,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -605,9 +589,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -615,9 +598,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2Target,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -625,9 +607,8 @@ class TripStopsTest {
                         disruption = UpcomingFormat.Disruption(alert, null),
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
             )
@@ -707,7 +688,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -715,9 +696,8 @@ class TripStopsTest {
                         disruption = UpcomingFormat.Disruption(alert, null),
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -725,9 +705,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2Target,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -735,9 +714,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route),
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
             )

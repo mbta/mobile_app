@@ -6,7 +6,7 @@ import kotlin.uuid.Uuid
 
 /** Represents a [RouteCardData.Leaf] ready to be displayed. */
 sealed class LeafFormat {
-    abstract fun tileData(): List<TileData>
+    abstract fun tileData(directionDestination: String?): List<TileData>
 
     abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
 
@@ -20,16 +20,22 @@ sealed class LeafFormat {
 
     /** A [RouteCardData.Leaf] which only has one destination within its direction. */
     data class Single(
+        /**
+         * The route to display next to [headsign] and [format]. Only set if the
+         * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
+         * set.
+         */
+        val route: Route?,
         /** The headsign to show next to [format]. Overrides [Direction.destination] if set. */
         val headsign: String?,
         val format: UpcomingFormat,
     ) : LeafFormat() {
-        override fun tileData(): List<TileData> {
+        override fun tileData(directionDestination: String?): List<TileData> {
             return if (format is UpcomingFormat.Some) {
                 format.trips.map { trip ->
                     TileData(
-                        route = null,
-                        headsign = null,
+                        route = route,
+                        headsign = headsign.takeUnless { it == directionDestination },
                         UpcomingFormat.Some(trip, format.secondaryAlert),
                         trip.trip,
                     )
@@ -72,7 +78,7 @@ sealed class LeafFormat {
             val id: String = "$headsign-$format-${Uuid.random()}",
         )
 
-        override fun tileData(): List<TileData> {
+        override fun tileData(directionDestination: String?): List<TileData> {
             return branchRows.mapNotNull { branch ->
                 if (branch.format is UpcomingFormat.Some) {
                     val trip = branch.format.trips.singleOrNull() ?: return@mapNotNull null

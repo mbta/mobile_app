@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.TestData
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -172,6 +173,55 @@ class DeparturesTest {
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
         composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertIsDisplayed()
         composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+    }
+
+    @Test
+    fun testSinglePill() {
+        val now = Clock.System.now()
+        val objects = TestData.clone()
+
+        val stop = objects.getStop("place-rsmnl")
+        val line = objects.getLine("line-Green")
+        val route = objects.getRoute("Green-D")
+        val routePattern = objects.getRoutePattern("Green-D-855-0")
+
+        val trip =
+            objects.upcomingTrip(
+                objects.prediction {
+                    trip = objects.trip(routePattern)
+                    departureTime = now + 5.minutes
+                }
+            )
+
+        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
+        val context = RouteCardData.Context.NearbyTransit
+        val stopData =
+            RouteCardData.RouteStopData(
+                lineOrRoute,
+                stop,
+                listOf(Direction("West", "Riverside", 0), Direction("East", "Park St & North", 1)),
+                listOf(
+                    RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
+                        0,
+                        listOf(routePattern),
+                        setOf(stop.id),
+                        listOf(trip),
+                        emptyList(),
+                        true,
+                        true,
+                        emptyList(),
+                        context,
+                    )
+                ),
+            )
+
+        composeTestRule.setContent {
+            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
+        }
+
+        composeTestRule.onNodeWithText("D").assertIsDisplayed()
     }
 
     @Test

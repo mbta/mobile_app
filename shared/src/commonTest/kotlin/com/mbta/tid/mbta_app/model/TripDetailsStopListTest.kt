@@ -41,7 +41,7 @@ class TripDetailsStopListTest {
             }
         }
 
-        private lateinit var _trip: Trip
+        private var _trip: Trip? = null
 
         fun trip(block: ObjectCollectionBuilder.TripBuilder.() -> Unit): Trip {
             return objects.trip(block).also { _trip = it }
@@ -51,7 +51,7 @@ class TripDetailsStopListTest {
             objects.schedule {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
-                if (this@TestBuilder::_trip.isInitialized) this.trip = _trip
+                _trip?.let { this.trip = it }
                 this.routeId = routeId
             }
 
@@ -64,7 +64,7 @@ class TripDetailsStopListTest {
             objects.prediction {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
-                if (this@TestBuilder::_trip.isInitialized) this.trip = _trip
+                _trip?.let { this.trip = it }
                 this.routeId = routeId
                 this.departureTime = time
             }
@@ -89,13 +89,15 @@ class TripDetailsStopListTest {
                 block()
             }
 
+        private fun defaultTrip() = Trip("trip", 0, "", "")
+
         fun stopListOf(
             vararg stops: TripDetailsStopList.Entry,
             terminalStop: TripDetailsStopList.Entry? = null,
-            tripId: String? = null,
+            trip: Trip? = null,
         ) =
             TripDetailsStopList(
-                tripId ?: if (this@TestBuilder::_trip.isInitialized) _trip.id else "",
+                trip ?: _trip ?: defaultTrip(),
                 stops.asList(),
                 terminalStop ?: stops.firstOrNull(),
             )
@@ -132,12 +134,9 @@ class TripDetailsStopListTest {
             patternIdsByStop: Map<String, List<String>> = emptyMap(),
             trip: Trip? = null,
         ): TripDetailsStopList? {
-            val actualTrip =
-                trip
-                    ?: if (this@TestBuilder::_trip.isInitialized) _trip else Trip("trip", 0, "", "")
+            val actualTrip = trip ?: _trip ?: defaultTrip()
             return TripDetailsStopList.fromPieces(
-                actualTrip.id,
-                actualTrip.directionId,
+                actualTrip,
                 tripSchedules,
                 tripPredictions,
                 vehicle,
@@ -168,7 +167,7 @@ class TripDetailsStopListTest {
     @Test
     fun `fromPieces returns empty list with no data`() = test {
         val trip = trip {}
-        assertEquals(TripDetailsStopList(trip.id, stops = emptyList()), fromPieces(null, null))
+        assertEquals(TripDetailsStopList(trip, stops = emptyList()), fromPieces(null, null))
     }
 
     @Test
@@ -203,7 +202,7 @@ class TripDetailsStopListTest {
     fun `fromPieces returns null with unavailable schedules and no predictions`() = test {
         val trip = trip {}
         assertEquals(
-            TripDetailsStopList(trip.id, stops = emptyList()),
+            TripDetailsStopList(trip, stops = emptyList()),
             fromPieces(TripSchedulesResponse.Unknown, null),
         )
     }
@@ -415,8 +414,7 @@ class TripDetailsStopListTest {
 
         val list =
             TripDetailsStopList.fromPieces(
-                trip.id,
-                trip.directionId,
+                trip,
                 schedules,
                 predictions,
                 null,
@@ -426,7 +424,7 @@ class TripDetailsStopListTest {
 
         assertEquals(
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         boylston,
@@ -434,9 +432,8 @@ class TripDetailsStopListTest {
                         null,
                         null,
                         null,
-                        null,
-                        null,
-                        listOf(),
+                        vehicle = null,
+                        routes = listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         parkStreet,
@@ -444,9 +441,8 @@ class TripDetailsStopListTest {
                         null,
                         null,
                         p1,
-                        parkStreet,
-                        null,
-                        listOf(),
+                        vehicle = null,
+                        routes = listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         governmentCenter,
@@ -454,12 +450,19 @@ class TripDetailsStopListTest {
                         null,
                         null,
                         p3,
-                        governmentCenter,
-                        null,
-                        listOf(),
+                        vehicle = null,
+                        routes = listOf(),
                     ),
                 ),
-                TripDetailsStopList.Entry(boylston, 590, null, null, null, null, null, listOf()),
+                TripDetailsStopList.Entry(
+                    boylston,
+                    590,
+                    null,
+                    null,
+                    null,
+                    vehicle = null,
+                    routes = listOf(),
+                ),
             ),
             list,
         )
@@ -504,8 +507,7 @@ class TripDetailsStopListTest {
 
         val list =
             TripDetailsStopList.fromPieces(
-                trip.id,
-                trip.directionId,
+                trip,
                 schedules,
                 predictions,
                 vehicle,
@@ -515,7 +517,7 @@ class TripDetailsStopListTest {
 
         assertEquals(
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -523,9 +525,8 @@ class TripDetailsStopListTest {
                         null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(),
+                        vehicle = vehicle,
+                        routes = listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -533,9 +534,8 @@ class TripDetailsStopListTest {
                         null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(),
+                        vehicle = vehicle,
+                        routes = listOf(),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -543,9 +543,8 @@ class TripDetailsStopListTest {
                         null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(),
+                        vehicle = vehicle,
+                        routes = listOf(),
                     ),
                 ),
                 TripDetailsStopList.Entry(
@@ -554,9 +553,8 @@ class TripDetailsStopListTest {
                     null,
                     schedule1,
                     prediction1,
-                    stop1,
-                    vehicle,
-                    listOf(),
+                    vehicle = vehicle,
+                    routes = listOf(),
                 ),
             ),
             list,
@@ -632,25 +630,25 @@ class TripDetailsStopListTest {
                 entry(
                     "A1",
                     10,
-                    vehicle = vehicle,
                     schedule = sched1,
                     prediction = pred1,
+                    vehicle = vehicle,
                     routes = listOf(routeW, routeX, routeY, routeZ),
                 ),
                 entry(
                     "B1",
                     20,
-                    vehicle = vehicle,
                     schedule = sched2,
                     prediction = pred2,
+                    vehicle = vehicle,
                     routes = listOf(routeZ),
                 ),
                 entry(
                     "C1",
                     30,
-                    vehicle = vehicle,
                     schedule = sched3,
                     prediction = pred3,
+                    vehicle = vehicle,
                     routes = listOf(routeY),
                 ),
             ),
@@ -727,7 +725,7 @@ class TripDetailsStopListTest {
                 entry("B", 20, prediction = pred2, vehicle = vehicle),
                 entry("C", 30, prediction = pred3, vehicle = vehicle),
                 terminalStop = entry("A", 10, prediction = pred1, vehicle = vehicle),
-                tripId = trip.id,
+                trip = trip,
             ),
             fromPieces(null, predictions(), vehicle, trip = trip),
         )
@@ -979,6 +977,40 @@ class TripDetailsStopListTest {
                 followingStops = listOf(entryE),
             ),
             list.splitForTarget("D", 40, globalData()),
+        )
+    }
+
+    @Test
+    fun `Entry format displays prediction`() = test {
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val trip = trip { routeId = route.id }
+        val now = Clock.System.now()
+        val pred = prediction("A", 10, time = now)
+        val entry = entry("A", 10, prediction = pred)
+        assertEquals(
+            UpcomingFormat.Some(
+                UpcomingFormat.Some.FormattedTrip(
+                    objects.upcomingTrip(pred),
+                    route.type,
+                    TripInstantDisplay.Time(now),
+                ),
+                secondaryAlert = null,
+            ),
+            entry.format(trip, now, route.type),
+        )
+    }
+
+    @Test
+    fun `Entry format takes disruption over prediction`() = test {
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val trip = trip { routeId = route.id }
+        val now = Clock.System.now()
+        val shuttleAlert = alert(Alert.Effect.Shuttle)
+        val pred = prediction("A", 10, time = now)
+        val entry = entry("A", 10, alert = shuttleAlert, prediction = pred)
+        assertEquals(
+            UpcomingFormat.Disruption(shuttleAlert, mapStopRoute = null),
+            entry.format(trip, now, route.type),
         )
     }
 }

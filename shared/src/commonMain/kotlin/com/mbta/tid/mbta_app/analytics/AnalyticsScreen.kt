@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.analytics
 
 enum class AnalyticsScreen(val pageName: String) {
     NearbyTransit("NearbyTransitPage"),
+    RouteDetails("RouteDetailsPage"),
     TripDetails("TripDetailsPage"),
     StopDetailsFiltered("StopDetailsFilteredPage"),
     StopDetailsUnfiltered("StopDetailsUnfilteredPage"),

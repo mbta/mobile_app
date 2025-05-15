@@ -110,7 +110,7 @@ struct TripDetailsView: View {
                 let routeAccents = stopDetailsVM.getTripRouteAccents()
                 let terminalStop = getParentFor(tripData.trip.stopIds?.first, global: global)
                 let vehicleStop = getParentFor(vehicle?.stopId, global: global)
-                tripDetails(tripFilter.tripId, stops, terminalStop, vehicle, vehicleStop, routeAccents)
+                tripDetails(tripData.trip, stops, terminalStop, vehicle, vehicleStop, routeAccents)
                     .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
@@ -119,7 +119,7 @@ struct TripDetailsView: View {
     }
 
     @ViewBuilder private func tripDetails(
-        _ tripId: String,
+        _ trip: Trip,
         _ stops: TripDetailsStopList,
         _ terminalStop: Stop?,
         _ vehicle: Vehicle?,
@@ -133,7 +133,7 @@ struct TripDetailsView: View {
                 let entry = atTerminal ? stops.startTerminalEntry : stops.stops.first { entry in
                     entry.stop.id == vehicleStop.id
                 }
-                return vehicle.tripId == tripId
+                return vehicle.tripId == trip.id
                     ? .vehicle(vehicle, vehicleStop, entry, atTerminal)
                     : .finishingAnotherTrip
             } else if stops.stops.contains(where: { entry in entry.prediction != nil }) {
@@ -154,7 +154,7 @@ struct TripDetailsView: View {
         } } else { nil }
 
         VStack(spacing: 0) {
-            tripHeaderCard(tripId, headerSpec, onHeaderTap, routeAccents).zIndex(1)
+            tripHeaderCard(trip, headerSpec, onHeaderTap, routeAccents).zIndex(1)
                 .padding(.horizontal, 6)
             TripStops(
                 targetId: stopId,
@@ -175,7 +175,7 @@ struct TripDetailsView: View {
 
     @ViewBuilder
     func tripHeaderCard(
-        _ tripId: String,
+        _ trip: Trip,
         _ spec: TripHeaderSpec?,
         _ onTap: (() -> Void)?,
         _ routeAccents: TripRouteAccents
@@ -183,7 +183,7 @@ struct TripDetailsView: View {
         if let spec {
             TripHeaderCard(
                 spec: spec,
-                tripId: tripId,
+                trip: trip,
                 targetId: stopId,
                 routeAccents: routeAccents,
                 onTap: onTap,
@@ -195,7 +195,7 @@ struct TripDetailsView: View {
     @ViewBuilder private func loadingBody() -> some View {
         let placeholderInfo = LoadingPlaceholders.shared.tripDetailsInfo()
         tripDetails(
-            placeholderInfo.vehicle.tripId ?? "",
+            placeholderInfo.trip,
             placeholderInfo.stops,
             nil,
             placeholderInfo.vehicle,
@@ -214,8 +214,7 @@ struct TripDetailsView: View {
                tripData.tripPredictionsLoaded,
                let global = stopDetailsVM.global {
                 stops = try await TripDetailsStopList.companion.fromPieces(
-                    tripId: tripFilter.tripId,
-                    directionId: tripData.trip.directionId,
+                    trip: tripData.trip,
                     tripSchedules: tripData.tripSchedules,
                     tripPredictions: tripData.tripPredictions,
                     vehicle: vehicle,

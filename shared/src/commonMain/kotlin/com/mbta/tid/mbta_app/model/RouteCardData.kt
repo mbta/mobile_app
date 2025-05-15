@@ -167,26 +167,28 @@ data class RouteCardData(
                     it.significance >= AlertSignificance.Secondary
             } ?: alertsDownstream.firstOrNull()
 
+        private data class PotentialService(val routeId: String, val headsign: String)
+
         /**
-         * Get all headsigns that might be shown for this leaf. For bus, the only headsigns that
-         * could be shown would be of the next two upcoming trips. For all other modes, headsigns
-         * for all of the upcoming trips **and** any other typical headsigns that are not reflected
-         * in the upcoming trips (may have already ended for the day, be disrupted, etc. but should
-         * still be considered) could be shown
+         * Get all routes and headsigns that might be shown for this leaf. For bus, the only
+         * headsigns that could be shown would be of the next two upcoming trips. For all other
+         * modes, headsigns for all of the upcoming trips **and** any other typical headsigns that
+         * are not reflected in the upcoming trips (may have already ended for the day, be
+         * disrupted, etc. but should still be considered) could be shown
          */
-        fun potentialHeadsigns(
+        private fun potentialService(
             now: Instant,
             representativeRoute: Route,
             globalData: GlobalResponse?,
-        ): Set<String> {
-            val potentialHeadsigns = mutableSetOf<String>()
+        ): Set<PotentialService> {
+            val potentialService = mutableSetOf<PotentialService>()
             val cutoffTime = now + 120.minutes
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
             val tripsToConsider = if (isBus) tripsUpcoming.take(2) else tripsUpcoming
             for (trip in tripsToConsider) {
                 if (trip.isUpcomingWithin(now, cutoffTime)) {
-                    potentialHeadsigns.add(trip.headsign)
+                    potentialService.add(PotentialService(trip.trip.routeId, trip.headsign))
                 }
             }
             if (!isBus) {
@@ -195,11 +197,11 @@ data class RouteCardData(
                         val headsign =
                             globalData?.trips?.get(routePattern.representativeTripId)?.headsign
                                 ?: continue
-                        potentialHeadsigns.add(headsign)
+                        potentialService.add(PotentialService(routePattern.routeId, headsign))
                     }
                 }
             }
-            return potentialHeadsigns
+            return potentialService
         }
 
         /**
@@ -227,11 +229,11 @@ data class RouteCardData(
          * the pre-determined list of tripsWithFormat that should be shown for this leaf.
          */
         private fun dataByHeadsign(
-            potentialHeadsigns: Set<String>,
+            potentialService: Set<PotentialService>,
             globalData: GlobalResponse?,
         ): Map<String, ByHeadsignData> {
-            return potentialHeadsigns
-                .map { headsign ->
+            return potentialService
+                .map { (_, headsign) ->
                     val routePatterns =
                         routePatterns.filter {
                             globalData?.trips?.get(it.representativeTripId)?.headsign == headsign
@@ -279,7 +281,7 @@ data class RouteCardData(
          * branches, then upcoming trips, then [NoTripsFormat.PredictionsUnavailable]
          */
         private fun formatForBranchedService(
-            potentialHeadsigns: Set<String>,
+            potentialService: Set<PotentialService>,
             tripsWithFormat: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>>,
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
@@ -287,11 +289,11 @@ data class RouteCardData(
             now: Instant,
         ): LeafFormat {
 
-            // If there is more than 1 route id, then we are dealing with a line and should
-            // show the route alongside the UpcomingTripFormat
-            val shouldIncludeRoute = routePatterns.distinctBy { it.routeId }.size > 1
+            // If we are dealing with a line, then we should show the route alongside the
+            // UpcomingTripFormat
+            val shouldIncludeRoute = this.lineOrRoute is LineOrRoute.Line
 
-            val dataByHeadsign = dataByHeadsign(potentialHeadsigns, globalData)
+            val dataByHeadsign = dataByHeadsign(potentialService, globalData)
             val (nonDisruptedHeadsigns, disruptedHeadsigns) =
                 dataByHeadsign.entries.partition { it.value.majorAlert == null }
 
@@ -318,6 +320,7 @@ data class RouteCardData(
                         .all { it == disruptedHeadsigns.first().value.majorAlert }
             ) {
                 return LeafFormat.Single(
+                    route = null,
                     null,
                     UpcomingFormat.Disruption(
                         disruptedHeadsigns.first().value.majorAlert!!,
@@ -404,24 +407,30 @@ data class RouteCardData(
          * the appropriate [LeafFormat.Single].
          */
         private fun formatForSingleHeadsignService(
+            route: Route?,
             headsign: String?,
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
         ): LeafFormat.Single {
-
-            return if (majorAlert != null) {
-                LeafFormat.Single(headsign, UpcomingFormat.Disruption(majorAlert, mapStopRoute))
-            } else {
-                LeafFormat.Single(headsign, UpcomingFormat.Some(formattedTrips, secondaryAlert))
-            }
+            val format =
+                if (majorAlert != null) {
+                    UpcomingFormat.Disruption(majorAlert, mapStopRoute)
+                } else {
+                    UpcomingFormat.Some(formattedTrips, secondaryAlert)
+                }
+            return LeafFormat.Single(route, headsign, format)
         }
 
         fun format(now: Instant, globalData: GlobalResponse?): LeafFormat {
             val representativeRoute = this.lineOrRoute.sortRoute
-            val potentialHeadsigns = potentialHeadsigns(now, representativeRoute, globalData)
+            val potentialService = potentialService(now, representativeRoute, globalData)
 
-            val isBranching = potentialHeadsigns.size > 1
+            // If we are dealing with a line, then we should show the route alongside the
+            // UpcomingTripFormat
+            val shouldIncludeRoute = this.lineOrRoute is LineOrRoute.Line
+
+            val isBranching = potentialService.size > 1
 
             val routeType = representativeRoute.type
             val translatedContext = context.toTripInstantDisplayContext()
@@ -445,12 +454,15 @@ data class RouteCardData(
             if (majorAlert == null && tripsToShow.isEmpty()) {
                 // base case is the same for branched & non-branched routes:
                 // if there is no alert & no trips to show, use the single format
-                val headsign = if (isBranching) null else potentialHeadsigns.firstOrNull()
+                val service = if (isBranching) null else potentialService.firstOrNull()
+                val route = globalData?.getRoute(service?.routeId)?.takeIf { shouldIncludeRoute }
                 return when {
-                    !allDataLoaded -> LeafFormat.Single(headsign, UpcomingFormat.Loading)
+                    !allDataLoaded ->
+                        LeafFormat.Single(route, service?.headsign, UpcomingFormat.Loading)
                     else ->
                         LeafFormat.Single(
-                            headsign,
+                            route,
+                            service?.headsign,
                             UpcomingFormat.NoTrips(
                                 NoTripsFormat.fromUpcomingTrips(
                                     upcomingTrips,
@@ -465,7 +477,7 @@ data class RouteCardData(
 
             return if (isBranching) {
                 formatForBranchedService(
-                    potentialHeadsigns,
+                    potentialService,
                     tripsToShow,
                     mapStopRoute,
                     secondaryAlert,
@@ -474,7 +486,10 @@ data class RouteCardData(
                 )
             } else {
                 formatForSingleHeadsignService(
-                    potentialHeadsigns.singleOrNull(),
+                    globalData?.getRoute(potentialService.singleOrNull()?.routeId)?.takeIf {
+                        shouldIncludeRoute
+                    },
+                    potentialService.singleOrNull()?.headsign,
                     tripsToShow.map { it.second },
                     mapStopRoute,
                     secondaryAlert,

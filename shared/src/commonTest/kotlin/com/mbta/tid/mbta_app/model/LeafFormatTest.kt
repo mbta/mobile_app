@@ -32,16 +32,34 @@ class LeafFormatTest {
             )
         val format =
             LeafFormat.Single(
+                route = null,
                 "Overridden Headsign",
                 UpcomingFormat.Some(listOf(trip1, trip2, trip3), null),
             )
         assertEquals(
             listOf(
-                TileData(null, null, UpcomingFormat.Some(trip1, null), trip1.trip),
-                TileData(null, null, UpcomingFormat.Some(trip2, null), trip2.trip),
-                TileData(null, null, UpcomingFormat.Some(trip3, null), trip3.trip),
+                TileData(null, "Overridden Headsign", UpcomingFormat.Some(trip1, null), trip1.trip),
+                TileData(null, "Overridden Headsign", UpcomingFormat.Some(trip2, null), trip2.trip),
+                TileData(null, "Overridden Headsign", UpcomingFormat.Some(trip3, null), trip3.trip),
             ),
-            format.tileData(),
+            format.tileData(directionDestination = null),
+        )
+    }
+
+    @Test
+    fun `Single tileData drops headsign if normal`() = parametricTest {
+        val objects = ObjectCollectionBuilder()
+        val routeType = anyEnumValue<RouteType>()
+        val trip1 =
+            UpcomingFormat.Some.FormattedTrip(
+                UpcomingTrip(objects.trip()),
+                routeType,
+                TripInstantDisplay.Arriving,
+            )
+        val format = LeafFormat.Single(null, "Headsign", UpcomingFormat.Some(listOf(trip1), null))
+        assertEquals(
+            listOf(TileData(null, null, UpcomingFormat.Some(trip1, null), trip1.trip)),
+            format.tileData(directionDestination = "Headsign"),
         )
     }
 
@@ -83,7 +101,7 @@ class LeafFormatTest {
                 TileData(route2, "Headsign 2", UpcomingFormat.Some(trip2, null), trip2.trip),
                 TileData(route1, "Headsign 3", UpcomingFormat.Some(trip3, null), trip3.trip),
             ),
-            format.tileData(),
+            format.tileData(directionDestination = null),
         )
     }
 
@@ -116,7 +134,7 @@ class LeafFormatTest {
                 TileData(null, "Headsign 1", UpcomingFormat.Some(trip1, null), trip1.trip),
                 TileData(null, "Headsign 2", UpcomingFormat.Some(trip2, null), trip2.trip),
             ),
-            format.tileData(),
+            format.tileData(directionDestination = null),
         )
     }
 
@@ -124,10 +142,11 @@ class LeafFormatTest {
     fun `Single tileData empty if no trips`() {
         val format =
             LeafFormat.Single(
-                null,
+                route = null,
+                headsign = null,
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
             )
-        assertEquals(emptyList(), format.tileData())
+        assertEquals(emptyList(), format.tileData(directionDestination = null))
     }
 
     @Test
@@ -140,7 +159,7 @@ class LeafFormatTest {
                 )
                 branchRow("Headsign 2", UpcomingFormat.Loading)
             }
-        assertEquals(emptyList(), format.tileData())
+        assertEquals(emptyList(), format.tileData(directionDestination = null))
     }
 
     @Test
@@ -151,7 +170,8 @@ class LeafFormatTest {
                 UpcomingFormat.NoTripsFormat.ServiceEndedToday,
                 UpcomingFormat.NoTripsFormat.NoSchedulesToday,
             )) {
-            val format = LeafFormat.Single(null, UpcomingFormat.NoTrips(noTrips))
+            val format =
+                LeafFormat.Single(route = null, headsign = null, UpcomingFormat.NoTrips(noTrips))
             assertEquals(noTrips, format.noPredictionsStatus())
         }
     }
@@ -182,7 +202,8 @@ class LeafFormatTest {
                 anyEnumValue(),
                 TripInstantDisplay.Minutes(15),
             )
-        val format = LeafFormat.Single(null, UpcomingFormat.Some(trip, null))
+        val format =
+            LeafFormat.Single(route = null, headsign = null, UpcomingFormat.Some(trip, null))
         assertNull(format.noPredictionsStatus())
     }
 

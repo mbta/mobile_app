@@ -302,8 +302,7 @@ class StopDetailsViewModel(
                         globalResponse != null
                 ) {
                     TripDetailsStopList.fromPieces(
-                        tripFilter.tripId,
-                        tripData.trip.directionId,
+                        tripData.trip,
                         tripData.tripSchedules,
                         tripData.tripPredictions,
                         tripData.vehicle,

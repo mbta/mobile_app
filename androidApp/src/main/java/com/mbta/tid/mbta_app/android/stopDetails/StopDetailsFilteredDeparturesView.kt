@@ -34,6 +34,7 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -47,13 +48,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StopDetailsFilteredDeparturesView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     leaf: RouteCardData.Leaf,
+    selectedDirection: Direction,
     allAlerts: AlertsStreamDataResponse?,
     global: GlobalResponse?,
     now: Instant,
@@ -66,7 +67,7 @@ fun StopDetailsFilteredDeparturesView(
     analytics: Analytics = koinInject(),
 ) {
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
-    val tileData = leafFormat.tileData()
+    val tileData = leafFormat.tileData(selectedDirection.destination)
     val noPredictionsStatus = leafFormat.noPredictionsStatus()
     val isAllServiceDisrupted = leafFormat.isAllServiceDisrupted
 

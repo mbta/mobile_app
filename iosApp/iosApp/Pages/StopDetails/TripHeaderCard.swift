@@ -20,7 +20,7 @@ enum TripHeaderSpec {
 // swiftlint:disable:next type_body_length
 struct TripHeaderCard: View {
     let spec: TripHeaderSpec
-    let tripId: String
+    let trip: Trip
     let targetId: String
     let routeAccents: TripRouteAccents
     let onTap: (() -> Void)?
@@ -126,7 +126,7 @@ struct TripHeaderCard: View {
     @ViewBuilder private func vehicleDescription(
         _ vehicle: Vehicle, _ stop: Stop, _ entry: TripDetailsStopList.Entry?, _ atTerminal: Bool
     ) -> some View {
-        if vehicle.tripId == tripId {
+        if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 2) {
                     vehicleStatusDescription(vehicle.currentStatus, atTerminal)
@@ -304,14 +304,15 @@ struct TripHeaderCard: View {
         default: nil
         }
         guard let entry else { return nil }
-        if let disruption = entry.disruption {
-            return .disruption(.init(alert: disruption.alert), iconName: disruption.iconName)
-        } else {
-            let formatted = entry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
-            return switch onEnum(of: formatted) {
-            case .hidden, .skipped: nil
-            default: .some(formatted)
-            }
+        guard let formatted = entry.format(trip: trip, now: now.toKotlinInstant(), routeType: routeAccents.type)
+        else { return nil }
+        switch onEnum(of: formatted) {
+        case let .disruption(disruption): return .disruption(
+                .init(alert: disruption.alert),
+                iconName: disruption.iconName
+            )
+        case let .some(some): return .some(some.trips[0].format)
+        default: return nil
         }
     }
 }
@@ -350,7 +351,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
         List {
             TripHeaderCard(
                 spec: .vehicle(vehicle, stop, nil, false),
-                tripId: trip.id,
+                trip: trip,
                 targetId: "",
                 routeAccents: TripRouteAccents(route: red),
                 onTap: nil,

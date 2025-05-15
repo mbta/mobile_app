@@ -13,7 +13,7 @@ struct PredictionRowView: View {
     enum PillDecoration {
         case none
         case onRow(route: Route)
-        case onPrediction(routesByTrip: [String: Route])
+        case onDirectionDestination(route: Route)
     }
 
     let predictions: UpcomingFormat
@@ -55,14 +55,11 @@ struct PredictionRowView: View {
         case let .some(trips):
             VStack(alignment: .trailing, spacing: 10) {
                 ForEach(Array(trips.trips.enumerated()), id: \.1.id) { index, trip in
-                    HStack(spacing: 0) {
-                        UpcomingTripView(
-                            prediction: .some(trip.format),
-                            isFirst: index == 0,
-                            isOnly: index == 0 && trips.trips.count == 1
-                        )
-                        TripPill(tripId: trip.id, pillDecoration: pillDecoration)
-                    }
+                    UpcomingTripView(
+                        prediction: .some(trip.format),
+                        isFirst: index == 0,
+                        isOnly: index == 0 && trips.trips.count == 1
+                    )
                 }
             }
         case let .disruption(alert):
@@ -75,19 +72,6 @@ struct PredictionRowView: View {
             UpcomingTripView(prediction: .noTrips(format.noTripsFormat), isFirst: true, isOnly: true)
         case .loading:
             UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
-        }
-    }
-
-    struct TripPill: View {
-        let tripId: String
-        let pillDecoration: PillDecoration
-
-        var body: some View {
-            if case let .onPrediction(routesByTrip) = pillDecoration, let route = routesByTrip[tripId] {
-                RoutePill(route: route, type: .flex).scaleEffect(0.75).padding(.leading, 2)
-            } else {
-                EmptyView()
-            }
         }
     }
 }

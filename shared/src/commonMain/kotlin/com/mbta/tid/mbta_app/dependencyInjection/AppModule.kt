@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
@@ -52,6 +53,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IOnboardingRepository> { repositories.onboarding }
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }
         single<IRailRouteShapeRepository> { repositories.railRouteShapes }
+        single<IRouteStopsRepository> { repositories.routeStops }
         single<ISchedulesRepository> { repositories.schedules }
         single<ISearchResultRepository> { repositories.searchResults }
         single<ISentryRepository> { repositories.sentry }

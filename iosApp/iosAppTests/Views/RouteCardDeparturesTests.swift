@@ -264,4 +264,52 @@ final class RouteCardDeparturesTests: XCTestCase {
         XCTAssertNotNil(try eastDirection.find(text: "6 min")
             .find(HeadsignRowView.self, relation: .parent).find(text: "Medford/Tufts"))
     }
+
+    func testSinglePill() throws {
+        let now = Date.now
+        let objects = TestData.clone()
+
+        let stop = objects.getStop(id: "place-rsmnl")
+        let line = objects.getLine(id: "line-Green")
+        let route = objects.getRoute(id: "Green-D")
+        let routePattern = objects.getRoutePattern(id: "Green-D-855-0")
+
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePattern)
+            prediction.departureTime = (now + 5 * 60).toKotlinInstant()
+        })
+
+        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+
+        let context = RouteCardData.Context.nearbyTransit
+        let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: lineOrRoute,
+            stop: stop,
+            directions: [
+                .init(name: "West", destination: "Riverside", id: 0),
+                .init(name: "East", destination: "Park St & North", id: 1),
+            ],
+            data: [.init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
+                directionId: 0,
+                routePatterns: [routePattern],
+                stopIds: [stop.id],
+                upcomingTrips: [trip],
+                alertsHere: [], allDataLoaded: true,
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: context
+            )]
+        )
+
+        let sut = RouteCardDepartures(
+            stopData: stopData,
+            global: .init(objects: objects),
+            now: now,
+            pinned: false,
+            pushNavEntry: { _ in }
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
+    }
 }
