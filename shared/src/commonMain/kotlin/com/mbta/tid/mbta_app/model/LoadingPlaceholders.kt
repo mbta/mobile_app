@@ -103,6 +103,7 @@ object LoadingPlaceholders {
 
     data class TripDetailsInfo(
         val stops: TripDetailsStopList,
+        val trip: Trip,
         val vehicle: Vehicle,
         val vehicleStop: Stop,
         val route: Route,
@@ -136,7 +137,7 @@ object LoadingPlaceholders {
             }
         return TripDetailsInfo(
             TripDetailsStopList(
-                trip.id,
+                trip,
                 (1..8).map { sequence ->
                     val stop = objects.stop { name = "Loading" }
                     val prediction =
@@ -152,12 +153,12 @@ object LoadingPlaceholders {
                         disruption = null,
                         schedule = null,
                         prediction,
-                        predictionStop = null,
-                        vehicle,
-                        listOf(otherRoute),
+                        vehicle = vehicle,
+                        routes = listOf(otherRoute),
                     )
                 },
             ),
+            trip,
             vehicle,
             vehicleStop,
             route,

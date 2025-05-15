@@ -62,8 +62,9 @@ import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
-import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import kotlin.time.Duration.Companion.minutes
@@ -72,7 +73,7 @@ import kotlinx.datetime.Instant
 
 @Composable
 fun TripHeaderCard(
-    tripId: String,
+    trip: Trip,
     spec: TripHeaderSpec?,
     targetId: String,
     routeAccents: TripRouteAccents,
@@ -113,13 +114,13 @@ fun TripHeaderCard(
                             TripMarker(spec, targetId, routeAccents)
                             Description(
                                 spec,
-                                tripId,
+                                trip.id,
                                 targetId,
                                 routeAccents,
                                 clickable,
                                 DestinationPredictionBalance.destinationWidth(),
                             )
-                            TripIndicator(spec, routeAccents, now, clickable)
+                            TripIndicator(spec, routeAccents, trip, now, clickable)
                         }
                     }
                     when (spec) {
@@ -398,10 +399,11 @@ private fun VehiclePuck(
 private fun RowScope.TripIndicator(
     spec: TripHeaderSpec,
     routeAccents: TripRouteAccents,
+    trip: Trip,
     now: Instant,
     clickable: Boolean = false,
 ) {
-    val upcomingTripViewState = upcomingTripViewState(spec, routeAccents, now)
+    val upcomingTripViewState = upcomingTripViewState(spec, routeAccents, trip, now)
     Column(
         DestinationPredictionBalance.predictionWidth(
             upcomingTripViewState?.containsWrappableText() ?: false
@@ -455,6 +457,7 @@ private fun LiveIndicator() {
 private fun upcomingTripViewState(
     spec: TripHeaderSpec,
     routeAccents: TripRouteAccents,
+    trip: Trip,
     now: Instant,
 ): UpcomingTripViewState? {
     val entry =
@@ -464,10 +467,10 @@ private fun upcomingTripViewState(
             else -> null
         }
     if (entry == null) return null
-    return when (val formatted = entry.format(now, routeAccents.type)) {
-        TripInstantDisplay.Hidden,
-        is TripInstantDisplay.Skipped -> null
-        else -> UpcomingTripViewState.Some(formatted)
+    return when (val formatted = entry.format(trip, now, routeAccents.type)) {
+        is UpcomingFormat.Some ->
+            UpcomingTripViewState.Some(formatted.trips.singleOrNull()?.format ?: return null)
+        else -> null
     }
 }
 
@@ -532,9 +535,8 @@ private fun TripHeaderCardPreview() {
             null,
             null,
             objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
-            null,
-            null,
-            listOf(red),
+            vehicle = null,
+            routes = listOf(red),
         )
     val busEntry =
         TripDetailsStopList.Entry(
@@ -543,15 +545,14 @@ private fun TripHeaderCardPreview() {
             null,
             objects.schedule { departureTime = Clock.System.now().plus(5.minutes) },
             null,
-            null,
-            null,
-            listOf(bus),
+            vehicle = null,
+            routes = listOf(bus),
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         MyApplicationTheme {
             TripHeaderCard(
-                tripId = trip.id,
+                trip = trip,
                 spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
                 targetId = davis.id,
                 routeAccents = TripRouteAccents(red),
@@ -559,7 +560,7 @@ private fun TripHeaderCardPreview() {
             )
 
             TripHeaderCard(
-                tripId = trip.id,
+                trip = trip,
                 spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
                 targetId = cityPoint.id,
                 routeAccents = TripRouteAccents(bus),
@@ -568,7 +569,7 @@ private fun TripHeaderCardPreview() {
             )
 
             TripHeaderCard(
-                tripId = trip.id,
+                trip = trip,
                 spec = TripHeaderSpec.FinishingAnotherTrip,
                 targetId = "",
                 routeAccents = TripRouteAccents(commuter),
@@ -577,7 +578,7 @@ private fun TripHeaderCardPreview() {
             )
 
             TripHeaderCard(
-                tripId = trip.id,
+                trip = trip,
                 spec = TripHeaderSpec.NoVehicle,
                 targetId = "",
                 routeAccents = TripRouteAccents(ferry),
@@ -588,7 +589,7 @@ private fun TripHeaderCardPreview() {
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
                 Column(modifier = Modifier.loadingShimmer()) {
                     TripHeaderCard(
-                        tripId = trip.id,
+                        trip = trip,
                         spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, false),
                         targetId = "",
                         routeAccents = TripRouteAccents.default,

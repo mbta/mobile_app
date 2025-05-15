@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -74,6 +75,7 @@ fun TripStops(
 ) {
     val context = LocalContext.current
 
+    val trip = stops.trip
     val splitStops: TripDetailsStopList.TargetSplit =
         remember(targetId, stops, stopSequence, global) {
             stops.splitForTarget(targetId, stopSequence, global)
@@ -127,6 +129,7 @@ fun TripStops(
                 if (firstStop != null) {
                     TripStopRow(
                         stop = firstStop,
+                        trip,
                         now,
                         onTapLink,
                         onOpenAlertDetails,
@@ -208,6 +211,7 @@ fun TripStops(
                         HaloUnderRouteLine(routeAccents.color)
                         StopList(
                             list = collapsedStops,
+                            trip,
                             lastStopSequence,
                             now,
                             onTapLink,
@@ -235,6 +239,7 @@ fun TripStops(
                 }
                 TripStopRow(
                     stop = target,
+                    trip,
                     now,
                     onTapLink,
                     onOpenAlertDetails,
@@ -251,6 +256,7 @@ fun TripStops(
             }
             StopList(
                 splitStops.followingStops,
+                trip,
                 lastStopSequence,
                 now,
                 onTapLink,
@@ -277,6 +283,7 @@ private fun HaloUnderRouteLine(color: Color) {
 @Composable
 private fun StopList(
     list: List<TripDetailsStopList.Entry>,
+    trip: Trip,
     lastStopSequence: Int?,
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
@@ -289,6 +296,7 @@ private fun StopList(
     for (stop in list) {
         TripStopRow(
             stop,
+            trip,
             now,
             onTapLink,
             onOpenAlertDetails,
@@ -325,7 +333,7 @@ private fun TripStopsPreview() {
     val alert = objects.alert { effect = Alert.Effect.Shuttle }
     val stopList =
         TripDetailsStopList(
-            trip.id,
+            trip,
             stops.mapIndexed { index, stop ->
                 TripDetailsStopList.Entry(
                     stop,
@@ -336,7 +344,6 @@ private fun TripStopsPreview() {
                         else null,
                     schedule = null,
                     prediction = objects.prediction { departureTime = now + (2 * index).minutes },
-                    predictionStop = null,
                     vehicle = null,
                     routes = emptyList(),
                 )

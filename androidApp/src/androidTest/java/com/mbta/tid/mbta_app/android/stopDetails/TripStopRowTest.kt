@@ -37,6 +37,7 @@ class TripStopRowTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Worcester" }
+        val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route()
@@ -49,10 +50,10 @@ class TripStopRowTest {
                     null,
                     schedule,
                     prediction,
-                    stop,
-                    null,
-                    listOf(route),
+                    vehicle = null,
+                    routes = listOf(route),
                 ),
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -70,6 +71,7 @@ class TripStopRowTest {
             LocalDateTime.parse("2025-01-24T15:37:39").toInstant(TimeZone.currentSystemDefault())
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
+        val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route()
@@ -82,10 +84,10 @@ class TripStopRowTest {
                     null,
                     schedule,
                     prediction,
-                    stop,
-                    null,
-                    listOf(route),
+                    vehicle = null,
+                    routes = listOf(route),
                 ),
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -109,6 +111,7 @@ class TripStopRowTest {
                 vehicleType = RouteType.COMMUTER_RAIL
                 parentStationId = stop.id
             }
+        val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
@@ -121,10 +124,11 @@ class TripStopRowTest {
                     null,
                     schedule,
                     prediction,
-                    platformStop,
-                    null,
-                    listOf(route),
+                    predictionStop = platformStop,
+                    vehicle = null,
+                    routes = listOf(route),
                 ),
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -142,6 +146,7 @@ class TripStopRowTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
+        val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route()
@@ -153,9 +158,8 @@ class TripStopRowTest {
                 null,
                 schedule,
                 prediction,
-                stop,
-                null,
-                listOf(route),
+                vehicle = null,
+                routes = listOf(route),
             )
 
         var selected by mutableStateOf(false)
@@ -164,6 +168,7 @@ class TripStopRowTest {
         composeTestRule.setContent {
             TripStopRow(
                 stopEntry,
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -195,6 +200,7 @@ class TripStopRowTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Worcester" }
+        val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route()
@@ -206,15 +212,15 @@ class TripStopRowTest {
                 null,
                 schedule,
                 prediction,
-                stop,
-                null,
-                listOf(route),
+                vehicle = null,
+                routes = listOf(route),
             )
         var linkTappedWith: TripDetailsStopList.Entry? = null
 
         composeTestRule.setContent {
             TripStopRow(
                 entry,
+                trip,
                 now,
                 onTapLink = { linkTappedWith = it },
                 onOpenAlertDetails = {},
@@ -241,6 +247,7 @@ class TripStopRowTest {
                 name = "Boylston"
                 wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
             }
+        val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
         val route = objects.route()
@@ -252,16 +259,16 @@ class TripStopRowTest {
                 null,
                 schedule,
                 prediction,
-                stop,
-                null,
-                listOf(route),
-                elevatorAlerts,
+                vehicle = null,
+                routes = listOf(route),
+                elevatorAlerts = elevatorAlerts,
             )
 
         var testEntry by mutableStateOf(entry(inaccessibleStop))
         composeTestRule.setContent {
             TripStopRow(
                 testEntry,
+                trip,
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
@@ -308,6 +315,7 @@ class TripStopRowTest {
                 AlertSummary.Timeframe.Tomorrow,
             )
 
+        val trip = objects.trip()
         val entry =
             TripDetailsStopList.Entry(
                 stop,
@@ -315,7 +323,6 @@ class TripStopRowTest {
                 UpcomingFormat.Disruption(alert, MapStopRoute.ORANGE),
                 schedule = null,
                 prediction = null,
-                predictionStop = null,
                 vehicle = null,
                 routes = emptyList(),
             )
@@ -323,6 +330,7 @@ class TripStopRowTest {
         composeTestRule.setContent {
             TripStopRow(
                 entry,
+                trip,
                 now,
                 {},
                 {},
