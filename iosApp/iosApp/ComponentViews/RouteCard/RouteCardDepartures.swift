@@ -67,7 +67,7 @@ struct RouteCardDepartures: View {
             routeId: stopData.lineOrRoute.id,
             stopId: stopData.stop.id,
             pinned: pinned,
-            alert: leaf.alertsHere.count > 0,
+            alert: leaf.alertsHere(tripId: nil).count > 0,
             routeType: stopData.lineOrRoute.type,
             noTrips: noTrips
         )

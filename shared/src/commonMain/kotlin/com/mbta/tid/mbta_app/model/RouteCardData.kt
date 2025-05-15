@@ -97,7 +97,7 @@ data class RouteCardData(
         val elevatorAlerts: List<Alert>
             get() =
                 data
-                    .flatMap { it.alertsHere }
+                    .flatMap { it.alertsHere() }
                     .filter { alert -> alert.effect == Alert.Effect.ElevatorClosure }
                     .distinct()
 
@@ -112,10 +112,10 @@ data class RouteCardData(
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
         val upcomingTrips: List<UpcomingTrip>,
-        val alertsHere: List<Alert>,
+        private val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
         val hasSchedulesTodayByPattern: Map<String, Boolean>,
-        val alertsDownstream: List<Alert>,
+        private val alertsDownstream: List<Alert>,
         val context: Context,
     ) {
 
@@ -166,6 +166,16 @@ data class RouteCardData(
                 it.significance < AlertSignificance.Major &&
                     it.significance >= AlertSignificance.Secondary
             } ?: alertsDownstream.firstOrNull()
+
+        fun alertsHere(tripId: String? = null) =
+            alertsHere.filter { alert ->
+                (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+            }
+
+        fun alertsDownstream(tripId: String? = null) =
+            alertsDownstream.filter { alert ->
+                (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+            }
 
         private data class PotentialService(val routeId: String, val headsign: String)
 

@@ -80,11 +80,13 @@ fun StopDetailsFilteredDeparturesView(
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val (elevatorAlerts, alertsHere) =
-        leaf.alertsHere.partition { it.effect == Alert.Effect.ElevatorClosure }
+        leaf.alertsHere(tripId = tripFilter?.tripId).partition {
+            it.effect == Alert.Effect.ElevatorClosure
+        }
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
     val pinned = pinnedRoutes.contains(lineOrRoute.id)
 
-    val downstreamAlerts: List<Alert> = leaf.alertsDownstream
+    val downstreamAlerts: List<Alert> = leaf.alertsDownstream(tripId = tripFilter?.tripId)
 
     val selectedTripIsCancelled =
         if (tripFilter != null)
