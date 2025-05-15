@@ -2,15 +2,16 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,7 +60,7 @@ fun DepartureTile(
                 onClick = onTap,
             )
             .heightIn(min = 56.dp)
-            .width(IntrinsicSize.Max)
+            .widthIn(max = 195.dp)
             .haloContainer(
                 borderWidth = 2.dp,
                 outlineColor = if (isSelected) colorResource(R.color.halo) else Color.Transparent,
@@ -118,7 +119,13 @@ private fun DepartureTilePreview() {
     val trip3 = objects.trip()
 
     MyApplicationTheme {
-        Row(Modifier.background(Color.fromHex("00843D")).padding(16.dp)) {
+        Row(
+            Modifier.background(Color.fromHex("00843D"))
+                .padding(16.dp)
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             DepartureTile(
                 TileData(
                     route1,
@@ -165,7 +172,7 @@ private fun DepartureTilePreview() {
             DepartureTile(
                 TileData(
                     routeB,
-                    "Government Center",
+                    "Really long headsign that should be broken onto multiple lines",
                     UpcomingFormat.Some(
                         listOf(
                             UpcomingFormat.Some.FormattedTrip(
