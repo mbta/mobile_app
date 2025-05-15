@@ -35,6 +35,11 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
         fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
 
+        /**
+         * Gets the time to display for this entry, or an alert to be displayed instead.
+         *
+         * @return [disruption], an [UpcomingFormat.Some] with a single entry, or null
+         */
         fun format(trip: Trip, now: Instant, routeType: RouteType): UpcomingFormat? {
             if (disruption != null) {
                 // ignore activities on platforms since they may be wrong or they may be correct in
