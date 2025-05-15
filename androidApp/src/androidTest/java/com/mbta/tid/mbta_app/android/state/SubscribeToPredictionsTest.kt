@@ -50,15 +50,12 @@ class SubscribeToPredictionsTest {
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
             val predictionsVM =
-                subscribeToPredictions(
-                    stopIds,
-                    predictionsRepo,
-                    ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
-                )
+                subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel)
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
@@ -96,16 +93,13 @@ class SubscribeToPredictionsTest {
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var stopIds by remember { stopIds }
                 val predictionsVM =
-                    subscribeToPredictions(
-                        stopIds,
-                        predictionsRepo,
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
-                    )
+                    subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel)
                 predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
             }
         }
@@ -138,14 +132,11 @@ class SubscribeToPredictionsTest {
             )
 
         var predictions: PredictionsStreamDataResponse? = null
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             val predictionsVM =
-                subscribeToPredictions(
-                    emptyList(),
-                    predictionsRepo,
-                    ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
-                )
+                subscribeToPredictions(emptyList(), predictionsRepo, errorBannerViewModel)
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
@@ -170,15 +161,11 @@ class SubscribeToPredictionsTest {
             MockErrorBannerStateRepository(
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
+        val errorBannerViewModel = ErrorBannerViewModel(false, mockErrorRepo)
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
-            subscribeToPredictions(
-                stopIds,
-                predictionsRepo,
-                ErrorBannerViewModel(false, mockErrorRepo),
-                1.seconds,
-            )
+            subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel, 1.seconds)
         }
 
         composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }

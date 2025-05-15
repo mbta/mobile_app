@@ -140,6 +140,7 @@ class StopDetailsViewTest {
             )
         )
 
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
@@ -155,8 +156,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                    errorBannerViewModel = errorBannerVM,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -207,6 +207,8 @@ class StopDetailsViewTest {
                 )
             )
         )
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember {
@@ -224,8 +226,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                    errorBannerViewModel = errorBannerViewModel,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -281,6 +282,8 @@ class StopDetailsViewTest {
                 )
             )
         )
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
@@ -296,8 +299,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                    errorBannerViewModel = errorBannerViewModel,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -347,6 +349,7 @@ class StopDetailsViewTest {
                 )
             )
         )
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember {
@@ -364,8 +367,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                    errorBannerViewModel = errorBannerViewModel,
                     openModal = {},
                     openSheetRoute = {},
                 )

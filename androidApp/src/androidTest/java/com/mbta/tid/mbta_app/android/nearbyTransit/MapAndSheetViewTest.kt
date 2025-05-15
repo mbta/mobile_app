@@ -170,6 +170,7 @@ class MapAndSheetViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewDisplaysCorrectly() {
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 NearbyTransitView(
@@ -180,8 +181,7 @@ class MapAndSheetViewTest : KoinTest {
                     setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = {},
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                    errorBannerViewModel = errorBannerVM,
                 )
             }
         }
@@ -202,6 +202,7 @@ class MapAndSheetViewTest : KoinTest {
     @Test
     fun testNearbyTransitViewNoNearbyStops() {
         val emptyNearbyKoinApplication = testKoinApplication()
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
                 NearbyTransitView(
@@ -212,8 +213,7 @@ class MapAndSheetViewTest : KoinTest {
                     setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = { Text("This would be the no nearby stops view") },
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                    errorBannerViewModel = errorBannerVM,
                 )
             }
         }

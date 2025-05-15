@@ -166,14 +166,41 @@ private fun RefreshButton(
 @Preview
 @Composable
 private fun ErrorBannerPreviews() {
+    val vm = previewVMs()
+    LaunchedEffect(null) { vm.networkErrorVM.activate() }
+    LaunchedEffect(null) { vm.dataErrorVM.activate() }
+    LaunchedEffect(null) { vm.dataErrorDebugVM.activate() }
+    LaunchedEffect(null) { vm.staleVM.activate() }
+    LaunchedEffect(null) { vm.staleLoadingVM.activate() }
+    MyApplicationTheme {
+        Column(
+            modifier =
+                Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            ErrorBanner(vm.networkErrorVM)
+            ErrorBanner(vm.dataErrorVM)
+            ErrorBanner(vm.dataErrorDebugVM)
+            ErrorBanner(vm.staleVM)
+            ErrorBanner(vm.staleLoadingVM)
+        }
+    }
+}
+
+data class PreviewVMs(
+    val networkErrorVM: ErrorBannerViewModel,
+    val dataErrorVM: ErrorBannerViewModel,
+    val dataErrorDebugVM: ErrorBannerViewModel,
+    val staleVM: ErrorBannerViewModel,
+    val staleLoadingVM: ErrorBannerViewModel,
+)
+
+fun previewVMs(): PreviewVMs {
     val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-    val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo)
     val dataErrorRepo =
         MockErrorBannerStateRepository(
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
-    val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
-    val dataErrorDebugVM = ErrorBannerViewModel(false, dataErrorRepo)
     val staleRepo =
         MockErrorBannerStateRepository(
             state =
@@ -182,24 +209,11 @@ private fun ErrorBannerPreviews() {
                     action = {},
                 )
         )
-    val staleVM = ErrorBannerViewModel(false, staleRepo)
-    val staleLoadingVM = ErrorBannerViewModel(true, staleRepo)
-    LaunchedEffect(null) { networkErrorVM.activate() }
-    LaunchedEffect(null) { dataErrorVM.activate() }
-    LaunchedEffect(null) { dataErrorDebugVM.activate() }
-    LaunchedEffect(null) { staleVM.activate() }
-    LaunchedEffect(null) { staleLoadingVM.activate() }
-    MyApplicationTheme {
-        Column(
-            modifier =
-                Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            ErrorBanner(networkErrorVM)
-            ErrorBanner(dataErrorVM)
-            ErrorBanner(dataErrorDebugVM)
-            ErrorBanner(staleVM)
-            ErrorBanner(staleLoadingVM)
-        }
-    }
+    return PreviewVMs(
+        ErrorBannerViewModel(false, networkErrorRepo),
+        ErrorBannerViewModel(false, dataErrorRepo),
+        ErrorBannerViewModel(false, dataErrorRepo),
+        ErrorBannerViewModel(false, staleRepo),
+        ErrorBannerViewModel(true, staleRepo),
+    )
 }

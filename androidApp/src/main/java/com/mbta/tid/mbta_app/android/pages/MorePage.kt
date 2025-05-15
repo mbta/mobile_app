@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -46,7 +47,8 @@ import com.mbta.tid.mbta_app.model.getAllDependencies
 fun MorePage(bottomBar: @Composable () -> Unit) {
 
     val navController = rememberNavController()
-    val viewModel = MoreViewModel(LocalContext.current, { navController.navigate("licenses") })
+    val context = LocalContext.current
+    val viewModel = viewModel { MoreViewModel(context) { navController.navigate("licenses") } }
 
     val sections by viewModel.sections.collectAsState()
     val dependencies = Dependency.getAllDependencies()

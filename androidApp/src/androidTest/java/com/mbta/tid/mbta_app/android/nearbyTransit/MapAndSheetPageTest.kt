@@ -221,6 +221,13 @@ class MapAndSheetPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -245,12 +252,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -341,6 +343,12 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         val mockMapVM = MockMapVM()
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -366,12 +374,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                         mapViewModel = mockMapVM,
                     )
@@ -389,6 +392,13 @@ class MapAndSheetPageTest : KoinTest {
 
     @Test
     fun testHidesMap() {
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -413,12 +423,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -447,6 +452,12 @@ class MapAndSheetPageTest : KoinTest {
         locationDataManager.hasPermission = true
 
         val koinApplication = testKoinApplication(builder, clock = mockClock)
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -473,12 +484,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
