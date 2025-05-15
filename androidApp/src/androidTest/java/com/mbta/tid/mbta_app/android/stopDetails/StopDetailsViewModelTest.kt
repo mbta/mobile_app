@@ -1209,15 +1209,11 @@ class StopDetailsViewModelTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        val stopFilters =
-            mutableStateOf(StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null))
-
         var newTripFilter: TripDetailsFilter? = null
 
         composeTestRule.setContent {
-            val filters by remember { stopFilters }
             stopDetailsManagedVM(
-                filters,
+                StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null),
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
