@@ -1135,16 +1135,15 @@ class StopDetailsViewModelTest {
 
         objects.prediction()
 
-        val stopFilters = mutableStateOf(StopDetailsPageFilters(stop.id, null, null))
-
         val viewModel = StopDetailsViewModel.mocked(objects)
 
         var newStopFilter: StopDetailsFilter? = null
 
+        val expectedFilter = StopDetailsFilter(route.id, routePattern.directionId, true)
+
         composeTestRule.setContent {
-            var stopFilters by remember { stopFilters }
             stopDetailsManagedVM(
-                stopFilters,
+                StopDetailsPageFilters(stop.id, null, null),
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
@@ -1153,6 +1152,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, filter -> newStopFilter = filter },
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = {},
+                now = now,
             )
 
             LaunchedEffect(null) {
@@ -1172,11 +1172,9 @@ class StopDetailsViewModelTest {
             }
         }
 
-        composeTestRule.waitUntil {
-            newStopFilter == StopDetailsFilter(route.id, routePattern.directionId, true)
-        }
-
-        assertEquals(StopDetailsFilter(route.id, routePattern.directionId, true), newStopFilter)
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil(2000) { newStopFilter == expectedFilter }
+        kotlin.test.assertEquals(expectedFilter, newStopFilter)
     }
 
     @Test
@@ -1217,9 +1215,9 @@ class StopDetailsViewModelTest {
         var newTripFilter: TripDetailsFilter? = null
 
         composeTestRule.setContent {
-            var stopFilters by remember { stopFilters }
+            val filters by remember { stopFilters }
             stopDetailsManagedVM(
-                stopFilters,
+                filters,
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
@@ -1228,6 +1226,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
                 setMapSelectedVehicle = {},
+                now = now,
             )
 
             LaunchedEffect(null) {
@@ -1303,6 +1302,7 @@ class StopDetailsViewModelTest {
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
                 setMapSelectedVehicle = {},
+                now = now,
             )
 
             LaunchedEffect(null) {

@@ -74,10 +74,10 @@ fun getSchedule(
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
 ): ScheduleResponse? {
-    var viewModel: ScheduleViewModel =
+    val viewModel: ScheduleViewModel =
         viewModel(factory = ScheduleViewModel.Factory(schedulesRepository, errorBannerRepository))
 
     LaunchedEffect(key1 = stopIds) { viewModel.getSchedule(stopIds ?: emptyList(), errorKey) }
 
-    return viewModel?.schedule?.collectAsState(initial = null)?.value
+    return viewModel.schedule.collectAsState(initial = null).value
 }

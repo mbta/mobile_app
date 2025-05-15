@@ -52,7 +52,7 @@ class GetScheduleTest {
             }
 
         var stopIds by mutableStateOf(stops1)
-        var actualSchedules: ScheduleResponse? = expectedSchedules1
+        var actualSchedules: ScheduleResponse? = null
         composeTestRule.setContent {
             actualSchedules = getSchedule(stopIds = stopIds, "errorKey", schedulesRepo)
         }
