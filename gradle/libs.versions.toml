@@ -34,7 +34,7 @@ skie = "0.10.2-preview.2.1.20"
 spatialk = "0.3.0"
 spotless = "7.0.3"
 turbine = "1.2.0"
-lifecycleRuntimeTesting = "2.8.7"
+lifecycleRuntimeTesting = "2.9.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
