@@ -97,7 +97,7 @@ jobs:
     if: ${{ inputs.deploy }}
     needs:
       - build-ios
-    runs-on: ubuntu-latest
+    runs-on: macos-14-xlarge
     permissions:
       id-token: write
       contents: read
