@@ -5,7 +5,32 @@ on:
   workflow_dispatch:
   merge_group:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  check-changes:
+    name: Check which platforms were changed
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          # exclude rather than include to avoid problems caused by not including enough
+          predicate-quantifier: 'every'
+          filters: |
+            android:
+              - '!iosApp'
+            ios:
+              - '!androidApp'
+    outputs:
+      android: ${{ steps.changes.outputs.android == 'true' }}
+      ios: ${{ steps.changes.outputs.ios == 'true' }}
   pre-commit:
     name: Run pre-commit to check formatting and linting
     permissions:
@@ -15,11 +40,15 @@ jobs:
     name: Test for Android
     permissions:
       contents: read
+    needs: check-changes
+    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android }}
     uses: ./.github/workflows/test-android.yaml
   test-ios:
     name: Test for iOS
     permissions:
       contents: read
+    needs: check-changes
+    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.ios }}
     uses: ./.github/workflows/test-ios.yaml
     secrets:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -31,6 +60,8 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
+    needs: check-changes
+    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android }}
     uses: ./.github/workflows/build-android.yaml
     with:
       build-type: "Debug"

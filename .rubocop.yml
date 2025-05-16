@@ -16,7 +16,3 @@ Naming/FileName:
 
 Style/Documentation:
   Enabled: false
-
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'fastlane/Pluginfile'
