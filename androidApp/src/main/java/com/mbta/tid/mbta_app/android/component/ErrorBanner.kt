@@ -30,13 +30,20 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
+import org.koin.compose.KoinContext
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 @Composable
 fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
@@ -166,14 +173,22 @@ private fun RefreshButton(
 @Preview
 @Composable
 private fun ErrorBannerPreviews() {
-    val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-    val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo)
+    @Composable
+    fun PreviewBanner(vm: ErrorBannerViewModel) {
+        LaunchedEffect(null) { vm.activate() }
+        ErrorBanner(vm)
+    }
+
     val dataErrorRepo =
         MockErrorBannerStateRepository(
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
-    val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
-    val dataErrorDebugVM = ErrorBannerViewModel(false, dataErrorRepo)
+    val dataErrorVM = viewModel(key = "data") { ErrorBannerViewModel(false, dataErrorRepo) }
+
+    val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
+    val networkErrorVM =
+        viewModel(key = "network") { ErrorBannerViewModel(false, networkErrorRepo) }
+
     val staleRepo =
         MockErrorBannerStateRepository(
             state =
@@ -182,24 +197,28 @@ private fun ErrorBannerPreviews() {
                     action = {},
                 )
         )
-    val staleVM = ErrorBannerViewModel(false, staleRepo)
-    val staleLoadingVM = ErrorBannerViewModel(true, staleRepo)
-    LaunchedEffect(null) { networkErrorVM.activate() }
-    LaunchedEffect(null) { dataErrorVM.activate() }
-    LaunchedEffect(null) { dataErrorDebugVM.activate() }
-    LaunchedEffect(null) { staleVM.activate() }
-    LaunchedEffect(null) { staleLoadingVM.activate() }
-    MyApplicationTheme {
-        Column(
-            modifier =
-                Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            ErrorBanner(networkErrorVM)
-            ErrorBanner(dataErrorVM)
-            ErrorBanner(dataErrorDebugVM)
-            ErrorBanner(staleVM)
-            ErrorBanner(staleLoadingVM)
+    val staleVM = viewModel(key = "stale") { ErrorBannerViewModel(false, staleRepo) }
+    val staleLoadingVM = viewModel(key = "loading") { ErrorBannerViewModel(true, staleRepo) }
+
+    // The preview requires Koin to contain the cache in order to render,
+    // but it won't actually use the debug value set here when displayed
+    val settingsRepo = MockSettingsRepository(mapOf(Settings.DevDebugMode to false))
+    val koinApplication = koinApplication {
+        modules(module { single<SettingsCache> { SettingsCache(settingsRepo) } })
+    }
+    KoinContext(koinApplication.koin) {
+        MyApplicationTheme {
+            Column(
+                modifier =
+                    Modifier.background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                PreviewBanner(networkErrorVM)
+                PreviewBanner(dataErrorVM)
+                PreviewBanner(staleVM)
+                PreviewBanner(staleLoadingVM)
+            }
         }
     }
 }
