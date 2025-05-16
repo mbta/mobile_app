@@ -30,13 +30,20 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
+import org.koin.compose.KoinContext
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 @Composable
 fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
@@ -166,41 +173,22 @@ private fun RefreshButton(
 @Preview
 @Composable
 private fun ErrorBannerPreviews() {
-    val vm = previewVMs()
-    LaunchedEffect(null) { vm.networkErrorVM.activate() }
-    LaunchedEffect(null) { vm.dataErrorVM.activate() }
-    LaunchedEffect(null) { vm.dataErrorDebugVM.activate() }
-    LaunchedEffect(null) { vm.staleVM.activate() }
-    LaunchedEffect(null) { vm.staleLoadingVM.activate() }
-    MyApplicationTheme {
-        Column(
-            modifier =
-                Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            ErrorBanner(vm.networkErrorVM)
-            ErrorBanner(vm.dataErrorVM)
-            ErrorBanner(vm.dataErrorDebugVM)
-            ErrorBanner(vm.staleVM)
-            ErrorBanner(vm.staleLoadingVM)
-        }
+    @Composable
+    fun PreviewBanner(vm: ErrorBannerViewModel) {
+        LaunchedEffect(null) { vm.activate() }
+        ErrorBanner(vm)
     }
-}
 
-data class PreviewVMs(
-    val networkErrorVM: ErrorBannerViewModel,
-    val dataErrorVM: ErrorBannerViewModel,
-    val dataErrorDebugVM: ErrorBannerViewModel,
-    val staleVM: ErrorBannerViewModel,
-    val staleLoadingVM: ErrorBannerViewModel,
-)
-
-fun previewVMs(): PreviewVMs {
-    val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
     val dataErrorRepo =
         MockErrorBannerStateRepository(
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
+    val dataErrorVM = viewModel(key = "data") { ErrorBannerViewModel(false, dataErrorRepo) }
+
+    val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
+    val networkErrorVM =
+        viewModel(key = "network") { ErrorBannerViewModel(false, networkErrorRepo) }
+
     val staleRepo =
         MockErrorBannerStateRepository(
             state =
@@ -209,11 +197,28 @@ fun previewVMs(): PreviewVMs {
                     action = {},
                 )
         )
-    return PreviewVMs(
-        ErrorBannerViewModel(false, networkErrorRepo),
-        ErrorBannerViewModel(false, dataErrorRepo),
-        ErrorBannerViewModel(false, dataErrorRepo),
-        ErrorBannerViewModel(false, staleRepo),
-        ErrorBannerViewModel(true, staleRepo),
-    )
+    val staleVM = viewModel(key = "stale") { ErrorBannerViewModel(false, staleRepo) }
+    val staleLoadingVM = viewModel(key = "loading") { ErrorBannerViewModel(true, staleRepo) }
+
+    // The preview requires Koin to contain the cache in order to render,
+    // but it won't actually use the debug value set here when displayed
+    val settingsRepo = MockSettingsRepository(mapOf(Settings.DevDebugMode to false))
+    val koinApplication = koinApplication {
+        modules(module { single<SettingsCache> { SettingsCache(settingsRepo) } })
+    }
+    KoinContext(koinApplication.koin) {
+        MyApplicationTheme {
+            Column(
+                modifier =
+                    Modifier.background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                PreviewBanner(networkErrorVM)
+                PreviewBanner(dataErrorVM)
+                PreviewBanner(staleVM)
+                PreviewBanner(staleLoadingVM)
+            }
+        }
+    }
 }
