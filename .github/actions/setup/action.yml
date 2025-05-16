@@ -151,7 +151,7 @@ runs:
       shell: bash
       run: brew install swiftlint xcbeautify
     - name: Install Transporter
-      if: steps.settings.outputs.transformer == 'true' && runner.os == 'Linux'
+      if: steps.settings.outputs.transporter == 'true' && runner.os == 'Linux'
       shell: bash
       run: |
         curl -o transporter-install.sh https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/resources/download/public/Transporter__Linux/bin
