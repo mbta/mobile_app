@@ -133,6 +133,7 @@ struct TripStops: View {
                                         ColoredRouteLine(routeAccents.color).padding(.leading, 42)
                                     }
                                 }
+                                .padding(.horizontal, 6)
                                 stopList(list: collapsedStops)
                             }
                         },
