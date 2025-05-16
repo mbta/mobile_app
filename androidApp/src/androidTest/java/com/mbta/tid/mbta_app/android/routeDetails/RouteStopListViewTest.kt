@@ -16,13 +16,13 @@ import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.compose.koinInject
 
 class RouteStopListViewTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -60,6 +60,7 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops = MockRouteStopsRepository(listOf(stop1.id, stop2.id, stop3.id))
             }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -68,7 +69,7 @@ class RouteStopListViewTest {
                     GlobalResponse(objects),
                     onClick = clicks::add,
                     onClose = { closed = true },
-                    errorBannerViewModel = ErrorBannerViewModel(errorRepository = koinInject()),
+                    errorBannerViewModel = errorBannerVM,
                     rightSideContent = { entry, _ ->
                         Text("rightSideContent for ${entry.stop.name}")
                     },
@@ -141,6 +142,7 @@ class RouteStopListViewTest {
                         onGet = { routeId, _ -> lastSelectedRoute = routeId },
                     )
             }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -149,7 +151,7 @@ class RouteStopListViewTest {
                     GlobalResponse(objects),
                     onClick = {},
                     onClose = {},
-                    errorBannerViewModel = ErrorBannerViewModel(errorRepository = koinInject()),
+                    errorBannerViewModel = errorBannerVM,
                     defaultSelectedRouteId = route2.id,
                     rightSideContent = { _, _ -> },
                 )

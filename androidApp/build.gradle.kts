@@ -42,6 +42,7 @@ android {
         buildConfig = true
         compose = true
     }
+    lint { disable.add("NullSafeMutableLiveData") }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes { getByName("release") { isMinifyEnabled = false } }
     flavorDimensions += "environment"

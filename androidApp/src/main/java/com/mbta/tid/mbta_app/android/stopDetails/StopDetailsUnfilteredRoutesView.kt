@@ -22,6 +22,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
@@ -269,6 +270,7 @@ private fun StopDetailsRoutesViewPreview() {
         )
 
     val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
+    val errorBannerVM = viewModel { ErrorBannerViewModel(false, MockErrorBannerStateRepository()) }
 
     MyApplicationTheme {
         KoinContext(koin.koin) {
@@ -276,7 +278,7 @@ private fun StopDetailsRoutesViewPreview() {
                 stop,
                 routeCardData,
                 listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
-                ErrorBannerViewModel(false, MockErrorBannerStateRepository()),
+                errorBannerVM,
                 showStationAccessibility = true,
                 now = now,
                 globalData,
