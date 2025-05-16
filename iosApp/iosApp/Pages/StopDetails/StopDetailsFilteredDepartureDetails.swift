@@ -119,45 +119,46 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .onChange(of: tripFilter) { filter in if let filter { view.scrollTo(filter.tripId) } }
                 }
             }
-            alertCards
+            /*
+             alertCards
 
-            if isAllServiceDisrupted {
-                EmptyView()
-            } else if let noPredictionsStatus {
-                StopDetailsNoTripCard(
-                    status: noPredictionsStatus,
-                    accentColor: routeColor,
-                    routeType: routeType,
-                    hideMaps: stopDetailsVM.hideMaps
-                )
-                .accessibilityHeading(.h3)
-                .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
-            } else if selectedTripIsCancelled {
-                StopDetailsIconCard(
-                    accentColor: routeColor,
-                    details: Text(
-                        "This trip has been cancelled. We’re sorry for the inconvenience.",
-                        comment: "Explanation for a cancelled trip on stop details"
-                    ),
-                    header: Text(
-                        "Trip cancelled",
-                        comment: "Header for a cancelled trip card on stop details"
-                    ),
-                    icon: routeSlashIcon(routeType)
-                )
-                .accessibilityHeading(.h4)
-            } else {
-                TripDetailsView(
-                    tripFilter: tripFilter,
-                    stopId: stopId,
-                    now: now,
-                    errorBannerVM: errorBannerVM,
-                    nearbyVM: nearbyVM,
-                    mapVM: mapVM,
-                    stopDetailsVM: stopDetailsVM,
-                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() }
-                )
-            }
+             if isAllServiceDisrupted {
+                 EmptyView()
+             } else if let noPredictionsStatus {
+                 StopDetailsNoTripCard(
+                     status: noPredictionsStatus,
+                     accentColor: routeColor,
+                     routeType: routeType,
+                     hideMaps: stopDetailsVM.hideMaps
+                 )
+                 .accessibilityHeading(.h3)
+                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
+             } else if selectedTripIsCancelled {
+                 StopDetailsIconCard(
+                     accentColor: routeColor,
+                     details: Text(
+                         "This trip has been cancelled. We’re sorry for the inconvenience.",
+                         comment: "Explanation for a cancelled trip on stop details"
+                     ),
+                     header: Text(
+                         "Trip cancelled",
+                         comment: "Header for a cancelled trip card on stop details"
+                     ),
+                     icon: routeSlashIcon(routeType)
+                 )
+                 .accessibilityHeading(.h4)
+             } else {
+                 TripDetailsView(
+                     tripFilter: tripFilter,
+                     stopId: stopId,
+                     now: now,
+                     errorBannerVM: errorBannerVM,
+                     nearbyVM: nearbyVM,
+                     mapVM: mapVM,
+                     stopDetailsVM: stopDetailsVM,
+                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() }
+                 )
+             }*/
         }
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
@@ -217,45 +218,57 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
+    @State var scrollViewHeight: CGFloat = .zero
+
+    struct TileText: Identifiable, Equatable {
+        let id: Int
+        let text: String
+    }
+
     @ViewBuilder
-    func departureTiles(_ view: ScrollViewProxy) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top, spacing: 0) {
-                ForEach(tiles, id: \.id) { tileData in
-                    DepartureTile(
-                        data: tileData,
-                        onTap: {
-                            nearbyVM.navigationStack.lastTripDetailsFilter = .init(
-                                tripId: tileData.upcoming.trip.id,
-                                vehicleId: tileData.upcoming.prediction?.vehicleId,
-                                stopSequence: tileData.upcoming.stopSequence,
-                                selectionLock: false
-                            )
-                            analytics.tappedDeparture(
-                                routeId: leaf.lineOrRoute.id,
-                                stopId: leaf.stop.id,
-                                pinned: pinned,
-                                alert: alerts.count > 0,
-                                routeType: leaf.lineOrRoute.type,
-                                noTrips: nil
-                            )
-                            view.scrollTo(tileData.id)
-                        },
-                        pillDecoration: pillDecoration(tileData: tileData),
-                        isSelected: tileData.isSelected(tripFilter: tripFilter)
-                    ).frame(maxHeight: .infinity)
-                        .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
-                        .padding(.horizontal, 4)
-                }
+    func departureTiles(_: ScrollViewProxy) -> some View {
+        HScrollableContent(
+            [TileText(id: 1, text: "THIS TEXT IS REALLY LONG AND SHOULD SCROLL PLS WORK"),
+             TileText(id: 2, text: "short txt")],
+            buildView: { tileText, _ in
+                Text(tileText.text)
+                    .frame(maxWidth: 195)
+                    .lineLimit(5)
             }
+        )
 
-            .padding(.horizontal, 12)
-            .padding(.vertical, 1)
-            .frame(maxHeight: .infinity)
-            .border(Color.green, width: 1)
+        /*  ForEach(tiles, id: \.id) { _ in
 
-        }.fixedSize(horizontal: false, vertical: true)
-            .border(Color.blue, width: 1)
+             /** DepartureTile(
+              data: tileData,
+              onTap: {
+              nearbyVM.navigationStack.lastTripDetailsFilter = .init(
+              tripId: tileData.upcoming.trip.id,
+              vehicleId: tileData.upcoming.prediction?.vehicleId,
+              stopSequence: tileData.upcoming.stopSequence,
+              selectionLock: false
+              )
+              analytics.tappedDeparture(
+              routeId: leaf.lineOrRoute.id,
+              stopId: leaf.stop.id,
+              pinned: pinned,
+              alert: alerts.count > 0,
+              routeType: leaf.lineOrRoute.type,
+              noTrips: nil
+              )
+              view.scrollTo(tileData.id)
+              },
+              pillDecoration: pillDecoration(tileData: tileData),
+              isSelected: tileData.isSelected(tripFilter: tripFilter)
+              ).frame(maxHeight: .infinity)
+              .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
+              .padding(.horizontal, 4)
+              */
+         }*/
+
+        .padding(.horizontal, 12)
+        .padding(.vertical, 1)
+        .border(Color.green, width: 1)
     }
 
     private func setAlertSummaries(_ alertSummaryParams: AlertSummaryParams) {
@@ -365,6 +378,104 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
             }.padding(.horizontal, 16)
+        }
+    }
+}
+
+struct SizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value _: inout CGSize, nextValue _: () -> CGSize) {}
+}
+
+// https://medium.com/@santhoshudaya95/building-a-custom-horizontal-scrollable-view-in-swiftui-hscrollablecontent-6ac27afb396a
+
+struct HScrollableContent<Content, T>: View where Content: View, T: Identifiable, T: Equatable {
+    @Namespace private var contentAnimationNameSpace
+    @Binding var selectionValue: Int
+    private let buildView: (T, Int) -> Content
+    private let spacing: CGFloat
+    private let containerSpace: CGFloat
+    private let showsIndicators: Bool
+    private let scrollToCenter: Bool
+    private let shouldLoadViewLazy: Bool
+    private let contents: [T]
+    private let alignment: VerticalAlignment
+    private let scrollDisabled: Bool
+    @State var scrollViewHeight: CGFloat = .zero
+
+    init(
+        _ contents: [T],
+        selection: Binding<Int> = .constant(0),
+        spacing: CGFloat = .zero,
+        containerSpace: CGFloat = .zero,
+        alignment: VerticalAlignment = .top,
+        showsIndicators: Bool = false,
+        scrollToCenter: Bool = false,
+        shouldLoadViewLazy: Bool = true,
+        scrollDisabled: Bool = false,
+        @ViewBuilder buildView: @escaping (T, Int) -> Content
+    ) {
+        self.contents = contents
+        self.spacing = spacing
+        self.containerSpace = containerSpace
+        self.alignment = alignment
+        self.showsIndicators = showsIndicators
+        self.scrollToCenter = scrollToCenter
+        self.shouldLoadViewLazy = shouldLoadViewLazy
+        _selectionValue = selection
+        self.scrollDisabled = scrollDisabled
+        self.buildView = buildView
+    }
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: showsIndicators) {
+                LazyHStack(alignment: alignment, spacing: spacing) {
+                    buildContent(contents: contents)
+                }
+                .padding(.horizontal, containerSpace)
+                .onChange(of: selectionValue) { _ in
+                    if scrollToCenter {
+                        withAnimation {
+                            proxy.scrollTo(contents[selectionValue].id, anchor: .center)
+                        }
+                    }
+                }
+            }
+            .frame(height: scrollViewHeight != .zero ? scrollViewHeight : nil)
+            .scrollDisabled(scrollDisabled)
+        }
+    }
+
+    @ViewBuilder
+    func buildContent(contents: [T]) -> some View {
+        ForEach(Array(contents.enumerated()), id: \.element.id) { index, content in
+            buildView(content, index)
+                .id(content.id)
+                .fixedSize()
+                .onAppear {
+                    if contents.count - 1 == index {}
+                }
+                .background(
+                    GeometryReader { geometry in
+                        Color.clear
+                            .preference(key: SizePreferenceKey.self, value: geometry.size)
+                    }
+                )
+                .onPreferenceChange(SizePreferenceKey.self) { height in
+                    if height.height > scrollViewHeight {
+                        scrollViewHeight = height.height
+                    }
+                }
+        }
+        paginationLoader()
+    }
+
+    @ViewBuilder
+    private func paginationLoader() -> some View {
+        VStack {
+            Spacer()
+            Spacer()
         }
     }
 }
