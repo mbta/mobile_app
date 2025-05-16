@@ -115,6 +115,12 @@ class NearbyViewModel: ObservableObject {
         }
     }
 
+    func popToEntrypoint() {
+        while !navigationStack.lastSafe().isEntrypoint {
+            navigationStack.popLast()
+        }
+    }
+
     // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
     // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
     /**
@@ -124,6 +130,9 @@ class NearbyViewModel: ObservableObject {
      would be popped to ensure there is only one `stopDetails` entry in the stack.
      */
     func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection _: Bool = false) {
+        if entry.isEntrypoint {
+            navigationStack.removeAll()
+        }
         let currentEntry = navigationStack.lastSafe()
         if case let .stopDetails(
             stopId: targetStop,

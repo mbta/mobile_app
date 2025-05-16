@@ -1,5 +1,5 @@
 //
-//  NearbyTransitPageViewTests.swift
+//  NearbyTransitPageTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/18/24.
@@ -17,7 +17,7 @@ import ViewInspector
 import XCTest
 
 // swiftlint:disable:next type_body_length
-final class NearbyTransitPageViewTests: XCTestCase {
+final class NearbyTransitPageTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
     private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
@@ -28,7 +28,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
     func testMessageWhenManuallyCentering() throws {
         let viewportProvider = ViewportProvider(viewport: nil,
                                                 isManuallyCentering: true)
-        let sut = NearbyTransitPageView(
+        let sut = NearbyTransitPage(
             errorBannerVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider,
@@ -46,7 +46,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0))
         nearbyVM.routeCardData = []
 
-        let sut = NearbyTransitPageView(
+        let sut = NearbyTransitPage(
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
@@ -95,7 +95,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
             XCTAssertEqual(location, newCameraState.center)
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let sut = NearbyTransitPageView(
+        let sut = NearbyTransitPage(
             errorBannerVM: .init(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider,
@@ -138,7 +138,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
-        let sut = NearbyTransitPageView(
+        let sut = NearbyTransitPage(
             errorBannerVM: .init(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider,

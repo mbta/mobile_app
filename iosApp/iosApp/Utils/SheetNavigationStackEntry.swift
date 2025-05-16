@@ -15,19 +15,40 @@ struct TripDetailsTarget: Hashable {
 }
 
 enum SheetNavigationStackEntry: Hashable, Identifiable {
-    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
-    case nearby
     case alertDetails(alertId: String, line: Line?, routes: [Route]?, stop: Stop?)
+    case favorites
+    case more
+    case nearby
+    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
 
     var id: Int {
         hashValue
     }
 
+    var isEntrypoint: Bool {
+        switch self {
+        case .favorites, .more, .nearby: true
+        default: false
+        }
+    }
+
+    var analyticsScreen: AnalyticsScreen? {
+        switch self {
+        case .favorites: .favorites
+        case .more: .settings
+        case .nearby: .nearbyTransit
+        case let .stopDetails(_, stopFilter, _): stopFilter == nil ? .stopDetailsUnfiltered : .stopDetailsFiltered
+        default: nil
+        }
+    }
+
     private var caseId: String {
         switch self {
-        case .stopDetails: "stopDetails"
-        case .nearby: "nearby"
         case .alertDetails: "alertDetails"
+        case .favorites: "favorites"
+        case .more: "more"
+        case .nearby: "nearby"
+        case .stopDetails: "stopDetails"
         }
     }
 
@@ -63,8 +84,9 @@ struct NearbySheetItem: Identifiable {
 
     var id: String {
         switch stackEntry {
-        case let .stopDetails(stopId, _, _): stopId
+        case .favorites: "favorites"
         case .nearby: "nearby"
+        case let .stopDetails(stopId, _, _): stopId
         default: ""
         }
     }
@@ -76,6 +98,7 @@ struct NearbyCoverItem: Identifiable {
     var id: String {
         switch stackEntry {
         case let .alertDetails(alertId, _, _, _): alertId
+        case .more: "more"
         default: ""
         }
     }

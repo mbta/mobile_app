@@ -1,5 +1,5 @@
 //
-//  NearbyTransitPageView.swift
+//  NearbyTransitPage.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 3/21/24.
@@ -13,7 +13,7 @@ import os
 import Shared
 import SwiftUI
 
-struct NearbyTransitPageView: View {
+struct NearbyTransitPage: View {
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
