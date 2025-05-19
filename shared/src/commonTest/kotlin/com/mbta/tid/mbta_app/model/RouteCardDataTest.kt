@@ -549,7 +549,10 @@ class RouteCardDataTest {
 
             val railPattern =
                 objects.routePattern(railRoute) {
-                    representativeTrip { headsign = "Boston College" }
+                    representativeTrip {
+                        headsign = "Boston College"
+                        typicality = RoutePattern.Typicality.Typical
+                    }
                 }
             val shuttlePattern =
                 objects.routePattern(shuttleRoute) {
@@ -667,11 +670,22 @@ class RouteCardDataTest {
                 directionDestinations = listOf("Riverside", "Union Sq")
             }
 
-        val bWestPattern = objects.routePattern(bRoute) {}
-        val bEastPattern = objects.routePattern(bRoute) { directionId = 1 }
-        val cWestPattern = objects.routePattern(cRoute) {}
-        val cEastPattern = objects.routePattern(cRoute) { directionId = 1 }
-        val dWestPattern = objects.routePattern(dRoute) {}
+        val bWestPattern =
+            objects.routePattern(bRoute) { typicality = RoutePattern.Typicality.Typical }
+        val bEastPattern =
+            objects.routePattern(bRoute) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val cWestPattern =
+            objects.routePattern(cRoute) { typicality = RoutePattern.Typicality.Typical }
+        val cEastPattern =
+            objects.routePattern(cRoute) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val dWestPattern =
+            objects.routePattern(dRoute) { typicality = RoutePattern.Typicality.Typical }
 
         val global =
             GlobalResponse(

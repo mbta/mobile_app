@@ -702,7 +702,9 @@ data class RouteCardData(
                                             lineOrRoute.directions(
                                                 globalData,
                                                 stop,
-                                                patternsForStop.allPatterns,
+                                                patternsForStop.allPatterns.filter {
+                                                    it.isTypical()
+                                                },
                                             )
                                         stop.id to
                                             RouteStopDataBuilder(
