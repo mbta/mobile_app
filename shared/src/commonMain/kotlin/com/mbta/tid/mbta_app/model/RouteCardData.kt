@@ -195,7 +195,8 @@ data class RouteCardData(
             val cutoffTime = now + 120.minutes
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
-            val tripsToConsider = if (isBus) tripsUpcoming.take(2) else tripsUpcoming
+            val tripsToConsider =
+                if (isBus) tripsUpcoming.take(TYPICAL_LEAF_ROWS) else tripsUpcoming
             for (trip in tripsToConsider) {
                 if (trip.isUpcomingWithin(now, cutoffTime)) {
                     potentialService.add(PotentialService(trip.trip.routeId, trip.headsign))
@@ -342,7 +343,7 @@ data class RouteCardData(
             val disruptedHeadsignBranches =
                 disruptedHeadsigns
                     .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
-                    .take(3)
+                    .take(BRANCHING_LEAF_ROWS)
                     .map { (headsign, groupedData) ->
                         val route =
                             if (shouldIncludeRoute)
@@ -357,7 +358,7 @@ data class RouteCardData(
                         )
                     }
 
-            var remainingRowsToShow = max(1, 3 - disruptedHeadsignBranches.size)
+            var remainingRowsToShow = max(1, BRANCHING_LEAF_ROWS - disruptedHeadsignBranches.size)
 
             val upcomingTripBranches =
                 tripsWithFormat.take(remainingRowsToShow).map { (upcomingTrip, formatted) ->
@@ -447,8 +448,8 @@ data class RouteCardData(
             val countTripsToDisplay =
                 when {
                     context == Context.StopDetailsFiltered -> null
-                    isBranching && routeType != RouteType.BUS -> 3
-                    else -> 2
+                    isBranching && routeType != RouteType.BUS -> BRANCHING_LEAF_ROWS
+                    else -> TYPICAL_LEAF_ROWS
                 }
 
             val tripsToShow =
@@ -592,6 +593,11 @@ data class RouteCardData(
     fun distanceFrom(position: Position): Double = this.stopData.first().stop.distanceFrom(position)
 
     companion object {
+        // For regular non-branching service, we always show up to 2 departure rows for each leaf
+        const val TYPICAL_LEAF_ROWS = 2
+        // For branching non-bus service we show up to 3 departure or disruption rows for each leaf
+        const val BRANCHING_LEAF_ROWS = 3
+
         /**
          * Build a sorted list of route cards containing realtime data for the given stops.
          *
@@ -882,7 +888,7 @@ data class RouteCardData(
                 val (routeOrLineId, byStopId) = entry
                 for (stopEntry in byStopId.stopData) {
                     val (stopId, byDirectionId) = stopEntry
-                    val isSubway = byStopId.lineOrRoute.isSubway
+                    val lineOrRoute = byStopId.lineOrRoute
 
                     byDirectionId.data =
                         byDirectionId.data
@@ -893,14 +899,14 @@ data class RouteCardData(
                                     filterAtTime,
                                     cutoffTime,
                                     showAllPatternsWhileLoading,
-                                    isSubway,
+                                    lineOrRoute,
                                     globalData,
                                 )
                             }
                             .mapValues {
                                 val (directionId, leafBuilder) = it
                                 leafBuilder
-                                    .filterCancellations(isSubway, context)
+                                    .filterCancellations(lineOrRoute.isSubway, context)
                                     .filterArrivalOnly()
                             }
                 }
@@ -1054,8 +1060,8 @@ data class RouteCardData(
          * true:
          * - Any pattern that it serves that isn't served by an earlier stop is typical
          * - Any pattern that it serves that isn't served by an earlier stop has an upcoming trip
-         *   within the cutoff time (if all of the upcoming trips are for patterns served by an
-         *   earlier stop, then this leaf should not be shown)
+         *   within the cutoff parameters (if all of the upcoming trips are for patterns served by
+         *   an earlier stop, then this leaf should not be shown)
          * - it has upcoming service that is not arrival-only
          */
         fun shouldShow(
@@ -1063,16 +1069,21 @@ data class RouteCardData(
             filterAtTime: Instant,
             cutoffTime: Instant?,
             showAllPatternsWhileLoading: Boolean,
-            isSubway: Boolean,
+            lineOrRoute: LineOrRoute,
             globalData: GlobalResponse,
         ): Boolean {
             if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
+            val isBus = lineOrRoute.type == RouteType.BUS
+            val isSubway = lineOrRoute.isSubway
+
+            // Only take the next 2 (if bus) or 3 upcoming trips into account, since more than that
+            // can never be shown in nearby transit.
             val upcomingTripsInCutoff =
                 when (cutoffTime) {
                     null -> this.upcomingTrips?.filter { it.isUpcoming() }
                     else ->
                         this.upcomingTrips?.filter { it.isUpcomingWithin(filterAtTime, cutoffTime) }
-                }
+                }?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)
 
             val hasUnseenUpcomingTrip =
                 upcomingTripsInCutoff?.any { upcomingTrip ->
