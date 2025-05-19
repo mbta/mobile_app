@@ -2,5 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <application
         android:label="MBTA Go Dev Orange"
-        tools:replace="android:label" />
+        tools:replace="android:label">
+        <activity android:name=".MainActivity" tools:node="merge">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="dev-green.mbtace.com" />
+                <data android:pathPrefix="/go" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="dev-blue.mbtace.com" />
+                <data android:pathPrefix="/go" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
