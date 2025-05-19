@@ -3,7 +3,7 @@
     <application
         android:label="MBTA Go Staging"
         tools:replace="android:label">
-        <activity android:name=".MainActivity" tools:node="merge">
+        <activity android:name=".MainActivity" android:exported="true" tools:node="merge">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
