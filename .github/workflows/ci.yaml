@@ -25,9 +25,9 @@ jobs:
           predicate-quantifier: 'every'
           filters: |
             android:
-              - '!iosApp'
+              - '!iosApp/**'
             ios:
-              - '!androidApp'
+              - '!androidApp/**'
     outputs:
       android: ${{ steps.changes.outputs.android == 'true' }}
       ios: ${{ steps.changes.outputs.ios == 'true' }}
