@@ -14,6 +14,7 @@ data class TileData(
     val upcoming: UpcomingTrip,
 ) {
     val id: String = upcoming.id
+    val tripId = upcoming.trip.id
 
     fun isSelected(tripFilter: TripDetailsFilter?): Boolean =
         upcoming.trip.id == tripFilter?.tripId &&

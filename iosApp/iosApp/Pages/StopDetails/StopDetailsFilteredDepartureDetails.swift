@@ -176,7 +176,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
-            selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
+            selectedDepartureFocus = tiles.first { $0.tripId == tripFilter?.tripId }?.id ?? cardFocusId
         }
         .onChange(of: leaf) { leaf in
             leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
@@ -226,7 +226,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         data: tileData,
                         onTap: {
                             nearbyVM.navigationStack.lastTripDetailsFilter = .init(
-                                tripId: tileData.upcoming.trip.id,
+                                tripId: tileData.tripId,
                                 vehicleId: tileData.upcoming.prediction?.vehicleId,
                                 stopSequence: tileData.upcoming.stopSequence,
                                 selectionLock: false
