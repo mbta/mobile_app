@@ -115,8 +115,15 @@ struct StopDetailsFilteredDepartureDetails: View {
                 if !isAllServiceDisrupted, !tiles.isEmpty {
                     departureTiles(view)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-                        .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
-                        .onChange(of: tripFilter) { filter in if let filter { view.scrollTo(filter.tripId) } }
+                        .onAppear { if let id = tiles.first(where: { $0.isSelected(tripFilter: tripFilter) })?.id {
+                            view.scrollTo(id)
+                        }
+                        }
+                        .onChange(of: tripFilter) { filter in
+                            if let id = tiles.first(where: { $0.isSelected(tripFilter: filter) })?.id {
+                                view.scrollTo(id)
+                            }
+                        }
                 }
             }
             alertCards
@@ -176,7 +183,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
-            selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
+            selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
         .onChange(of: leaf) { leaf in
             leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
