@@ -123,11 +123,14 @@ class StopDetailsViewModel(
 
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
 
+    private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
+    val globalResponse = _globalResponse.asStateFlow()
+
     private val _stopData = MutableStateFlow<StopData?>(null)
-    val stopData: StateFlow<StopData?> = _stopData
+    val stopData = _stopData.asStateFlow()
 
     private val _tripData = MutableStateFlow<TripData?>(null)
-    val tripData: StateFlow<TripData?> = _tripData
+    val tripData = _tripData.asStateFlow()
 
     private val _tripDetailsStopList = MutableStateFlow<TripDetailsStopList?>(null)
     // not accessible via a property since it needs extra params to be kept up to date
@@ -145,6 +148,10 @@ class StopDetailsViewModel(
             ::onJoinMessage,
             ::onPushMessage,
         )
+
+    fun setGlobalResponse(globalResponse: GlobalResponse?) {
+        _globalResponse.value = globalResponse
+    }
 
     fun loadStopDetails(stopId: String) {
         _stopData.value = StopData(stopId, null, null, false)
@@ -534,6 +541,8 @@ fun stopDetailsManagedVM(
             viewModel.leaveTripChannels()
         }
     }
+
+    LaunchedEffect(globalResponse) { viewModel.setGlobalResponse(globalResponse) }
 
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
         val schedules = stopData?.schedules
