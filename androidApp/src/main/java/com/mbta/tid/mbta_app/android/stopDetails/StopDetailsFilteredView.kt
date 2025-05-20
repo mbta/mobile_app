@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
@@ -40,7 +39,7 @@ fun StopDetailsFilteredView(
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
-    val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
+    val globalResponse by viewModel.globalResponse.collectAsState()
     val routeCardData by viewModel.routeCardData.collectAsState()
     val thisRouteCardData = routeCardData?.find { it.lineOrRoute.id == stopFilter.routeId }
     val routeStopData = thisRouteCardData?.stopData?.get(0)
