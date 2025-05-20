@@ -107,8 +107,10 @@ class StopDetailsViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStopDetailsViewDisplaysUnfilteredCorrectly() {
+        val global = GlobalResponse(builder)
         val viewModel = StopDetailsViewModel.mocked()
 
+        viewModel.setGlobalResponse(global)
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
@@ -132,7 +134,7 @@ class StopDetailsViewTest {
                                     context = RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
-                            GlobalResponse(builder),
+                            global,
                         )
                     ),
                     now,
@@ -250,8 +252,10 @@ class StopDetailsViewTest {
                 header = "Elevator alert header"
             }
 
+        val global = GlobalResponse(builder)
         val viewModel = StopDetailsViewModel.mocked()
 
+        viewModel.setGlobalResponse(global)
         viewModel.setRouteCardData(
             listOf(
                 RouteCardData(
@@ -275,7 +279,7 @@ class StopDetailsViewTest {
                                     RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
-                            GlobalResponse(builder),
+                            global,
                         )
                     ),
                     now,
