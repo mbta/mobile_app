@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.koin.test.KoinTest
@@ -16,7 +17,8 @@ class FavoritesUsecasesTests : KoinTest {
         val repository = MockFavoritesRepository()
         val usecase = FavoritesUsecases(repository)
         val routeStopDirection = RouteStopDirection("Red", "place-alfcl", 0)
-        assertTrue { repository.getFavorites().routeStopDirection?.isEmpty() == true }
+        println(repository.getFavorites().routeStopDirection)
+        assertNull(repository.getFavorites().routeStopDirection)
         usecase.toggleRouteStopDirection(routeStopDirection)
         assertEquals(repository.getFavorites().routeStopDirection, setOf(routeStopDirection))
         usecase.toggleRouteStopDirection(routeStopDirection)
