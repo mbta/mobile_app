@@ -43,7 +43,7 @@ class FavoritesUsecasesTests : KoinTest {
     fun testAddRouteStopDirectionFavorites() = runBlocking {
         val routeStopDirection1 = RouteStopDirection("Red", "place-alfcl", 0)
         val routeStopDirection2 = RouteStopDirection("Red", "place-pktrm", 1)
-        val routeStopDirection3 = RouteStopDirection("Red", "place-pktrm", 1)
+        val routeStopDirection3 = RouteStopDirection("Red", "place-brntn", 0)
         val favorites = setOf(routeStopDirection1, routeStopDirection2, routeStopDirection3)
         val repository = MockFavoritesRepository()
         val usecase = FavoritesUsecases(repository)
@@ -55,7 +55,7 @@ class FavoritesUsecasesTests : KoinTest {
     fun testRemoveRouteStopDirectionFavorites() = runBlocking {
         val routeStopDirection1 = RouteStopDirection("Red", "place-alfcl", 0)
         val routeStopDirection2 = RouteStopDirection("Red", "place-pktrm", 1)
-        val routeStopDirection3 = RouteStopDirection("Red", "place-pktrm", 1)
+        val routeStopDirection3 = RouteStopDirection("Red", "place-brntn", 0)
         val favorites = setOf(routeStopDirection1, routeStopDirection2, routeStopDirection3)
         val repository = MockFavoritesRepository(Favorites(favorites))
         val usecase = FavoritesUsecases(repository)
