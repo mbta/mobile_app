@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
@@ -25,7 +27,6 @@ fun StopDetailsFilteredView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    routeCardData: List<RouteCardData>?,
     allAlerts: AlertsStreamDataResponse?,
     now: Instant,
     viewModel: StopDetailsViewModel,
@@ -40,6 +41,7 @@ fun StopDetailsFilteredView(
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
+    val routeCardData by viewModel.routeCardData.collectAsState()
     val thisRouteCardData = routeCardData?.find { it.lineOrRoute.id == stopFilter.routeId }
     val routeStopData = thisRouteCardData?.stopData?.get(0)
 
