@@ -60,6 +60,17 @@ Load downloaded code signing certificates
 
 Check certificate and provisioning configuration
 
+### ios repair_provisioning_profiles
+
+```sh
+[bundle exec] fastlane ios repair_provisioning_profiles
+```
+
+Repairs provisioning profiles related to the app.
+
+This is the fix for "Provisioning Profile '...' is not valid, skipping this one..."
+and for "No profile for team '...' matching '...' found: Xcode couldn't find any provisioning profiles matching '...'".
+
 ### ios test
 
 ```sh
