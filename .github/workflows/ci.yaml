@@ -41,14 +41,14 @@ jobs:
     permissions:
       contents: read
     needs: check-changes
-    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android }}
+    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android == 'true' }}
     uses: ./.github/workflows/test-android.yaml
   test-ios:
     name: Test for iOS
     permissions:
       contents: read
     needs: check-changes
-    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.ios }}
+    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.ios == 'true' }}
     uses: ./.github/workflows/test-ios.yaml
     secrets:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -61,7 +61,7 @@ jobs:
       contents: read
       pull-requests: write
     needs: check-changes
-    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android }}
+    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android == 'true' }}
     uses: ./.github/workflows/build-android.yaml
     with:
       build-type: "Debug"
