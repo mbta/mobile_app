@@ -150,8 +150,9 @@ fun StopDetailsFilteredDeparturesView(
     }
 
     LaunchedEffect(tripFilter) {
-        if (tripFilter != null) {
-            bringIntoViewRequesters[tripFilter.tripId]?.bringIntoView()
+        val selectedTileId = tileData.firstOrNull { it.isSelected(tripFilter) }?.id
+        if (selectedTileId != null) {
+            bringIntoViewRequesters[selectedTileId]?.bringIntoView()
         }
     }
 
