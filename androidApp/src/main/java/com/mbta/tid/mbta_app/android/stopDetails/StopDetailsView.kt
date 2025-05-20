@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
@@ -37,8 +36,6 @@ fun StopDetailsView(
     val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
 
-    val routeCardData by viewModel.routeCardData.collectAsState()
-
     fun openModalAndRecord(modal: ModalRoutes) {
         openModal(modal)
         if (modal is ModalRoutes.AlertDetails) {
@@ -55,7 +52,6 @@ fun StopDetailsView(
             stopId,
             stopFilter,
             tripFilter,
-            routeCardData,
             allAlerts,
             now,
             viewModel,
