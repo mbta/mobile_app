@@ -6,3 +6,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RouteStopDirection(val route: String, val stop: String, val direction: Int)
+
+/** Temporary class while we are supporting old pinned routes & enhanced favorites */
+sealed class FavoriteBridge {
+    data class Favorite(val routeStopDirection: RouteStopDirection) : FavoriteBridge()
+
+    data class Pinned(val routeId: String) : FavoriteBridge()
+}

@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -44,14 +45,24 @@ fun StopDetailsPage(
 
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
 
-    // TODO: togglePinnedRoute as a fn that takes sealed class of routeId or RouteStopDirection
-    // to simplify the prop drilling
-    // add placeholder tickets for coming back around to the analytics
-    // should this just be moved down instead of prop drilling instead?
-    fun togglePinnedRoute(routeId: String) {
+    fun isFavorite(favorite: FavoriteBridge): Boolean {
+        // TODO: enhanced favorites support
+        if (favorite is FavoriteBridge.Pinned) {
+            return pinnedRoutes?.contains(favorite.routeId) ?: false
+        }
+        return false
+    }
+
+    fun toggleFavorite(favorite: FavoriteBridge) {
         coroutineScope.launch {
-            val pinned = rawTogglePinnedRoute(routeId)
-            analytics.toggledPinnedRoute(pinned, routeId)
+            when (favorite) {
+                // TODO: enhanced favorites support
+                is FavoriteBridge.Pinned -> {
+                    val pinned = rawTogglePinnedRoute(favorite.routeId)
+                    analytics.toggledPinnedRoute(pinned, favorite.routeId)
+                }
+                else -> {}
+            }
         }
     }
 
@@ -66,8 +77,8 @@ fun StopDetailsPage(
         filters.stopFilter,
         filters.tripFilter,
         allAlerts,
-        pinnedRoutes.orEmpty(),
-        ::togglePinnedRoute,
+        ::isFavorite,
+        ::toggleFavorite,
         onClose,
         updateStopFilter,
         updateTripFilter,

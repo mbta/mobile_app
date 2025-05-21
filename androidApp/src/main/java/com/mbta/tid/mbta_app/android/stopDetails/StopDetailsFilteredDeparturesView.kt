@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -63,8 +64,7 @@ fun StopDetailsFilteredDeparturesView(
     viewModel: StopDetailsViewModel,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
-    // TODO: Instead, pass function for isPinned. This is only used in analytics
-    pinnedRoutes: Set<String>,
+    isFavorite: (FavoriteBridge) -> Boolean,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject(),
@@ -87,7 +87,9 @@ fun StopDetailsFilteredDeparturesView(
             it.effect == Alert.Effect.ElevatorClosure
         }
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
-    val pinned = pinnedRoutes.contains(lineOrRoute.id)
+
+    // TODO: if enhanced favorites, pass RouteStopDirection
+    val pinned = isFavorite(FavoriteBridge.Pinned(lineOrRoute.id))
 
     val downstreamAlerts: List<Alert> = leaf.alertsDownstream(tripId = tripFilter?.tripId)
 
