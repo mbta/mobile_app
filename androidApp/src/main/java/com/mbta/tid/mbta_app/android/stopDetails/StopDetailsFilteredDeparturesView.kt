@@ -63,6 +63,7 @@ fun StopDetailsFilteredDeparturesView(
     viewModel: StopDetailsViewModel,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
+    // TODO: Instead, pass function for isPinned. This is only used in analytics
     pinnedRoutes: Set<String>,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,

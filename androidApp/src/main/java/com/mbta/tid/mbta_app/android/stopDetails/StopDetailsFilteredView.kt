@@ -45,6 +45,7 @@ fun StopDetailsFilteredView(
     val routeStopData = thisRouteCardData?.stopData?.get(0)
 
     if (routeStopData != null) {
+
         StopDetailsFilteredPickerView(
             stopId = stopId,
             stopFilter = stopFilter,
@@ -76,6 +77,23 @@ fun StopDetailsFilteredView(
             globalResponse,
         )
     }
+}
+
+@Composable
+private fun Header(routeStopData: RouteCardData.RouteStopData) {
+    val lineOrRoute = routeStopData.lineOrRoute
+    val stop = routeStopData.stop
+
+    val pinned = pinnedRoutes.contains(lineOrRoute.id)
+    val header =
+        StopDetailsFilteredHeader(
+            lineOrRoute.sortRoute,
+            (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
+            stop,
+            pinned = pinned,
+            onPin = { togglePinnedRoute(lineOrRoute.id) },
+            onClose = onClose,
+        )
 }
 
 @Composable
@@ -113,8 +131,6 @@ private fun Loading(
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = onClose,
                 openModal = {},
                 openSheetRoute = {},
             )

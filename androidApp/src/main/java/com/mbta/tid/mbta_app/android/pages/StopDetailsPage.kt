@@ -43,6 +43,11 @@ fun StopDetailsPage(
     val coroutineScope = rememberCoroutineScope()
 
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
+
+    // TODO: togglePinnedRoute as a fn that takes sealed class of routeId or RouteStopDirection
+    // to simplify the prop drilling
+    // add placeholder tickets for coming back around to the analytics
+    // should this just be moved down instead of prop drilling instead?
     fun togglePinnedRoute(routeId: String) {
         coroutineScope.launch {
             val pinned = rawTogglePinnedRoute(routeId)

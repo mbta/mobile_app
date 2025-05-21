@@ -50,32 +50,21 @@ fun StopDetailsFilteredPickerView(
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    onClose: () -> Unit,
+    header: @Composable () -> Unit,
 ) {
     val leaf = routeStopData.data.find { it.directionId == stopFilter.directionId }
 
     val lineOrRoute = routeStopData.lineOrRoute
-    val stop = routeStopData.stop
     val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
     val directions = routeStopData.directions
-
-    val pinned = pinnedRoutes.contains(lineOrRoute.id)
 
     val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        StopDetailsFilteredHeader(
-            lineOrRoute.sortRoute,
-            (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
-            stop,
-            pinned = pinned,
-            onPin = { togglePinnedRoute(lineOrRoute.id) },
-            onClose = onClose,
-        )
+        header()
 
         ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
 
