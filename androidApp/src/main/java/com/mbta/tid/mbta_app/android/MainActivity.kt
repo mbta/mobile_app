@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
         val deepLinkUri = intent.data?.takeIf { intent.action == Intent.ACTION_VIEW }
         when {
             deepLinkUri?.path == "/go" -> {}
+            deepLinkUri?.path == "/" -> {}
             deepLinkUri != null -> {
                 Log.w("MainActivity", "Unhandled deep link URI $deepLinkUri")
             }

@@ -5,6 +5,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:dev.mbtace.com</string>
+		<string>applinks:mobile-app-backend-staging.mbtace.com</string>
 	</array>
 </dict>
 </plist>

@@ -6,6 +6,7 @@
 	<array>
 		<string>applinks:mbta.com</string>
 		<string>applinks:www.mbta.com</string>
+		<string>applinks:mobile-app-backend.mbtace.com</string>
 	</array>
 </dict>
 </plist>

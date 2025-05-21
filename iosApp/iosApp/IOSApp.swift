@@ -31,7 +31,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return false
         }
 
-        if components.path == "/go" {
+        if components.path == "/go" || components.path == "/" {
             // just opening app, let default route happen
             return true
         } else {
