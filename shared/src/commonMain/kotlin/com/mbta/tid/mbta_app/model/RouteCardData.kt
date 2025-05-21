@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -1134,6 +1135,15 @@ data class RouteCardData(
         }
     }
 }
+
+@JvmName("optionalHasContext")
+fun List<RouteCardData>?.hasContext(context: RouteCardData.Context): Boolean =
+    this?.hasContext(context) == true
+
+fun List<RouteCardData>.hasContext(context: RouteCardData.Context): Boolean =
+    this.any {
+        it.stopData.any { stopData -> stopData.data.any { leaf -> leaf.context == context } }
+    }
 
 fun List<RouteCardData>.sort(
     distanceFrom: Position?,
