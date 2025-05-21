@@ -6,7 +6,9 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -148,8 +150,9 @@ fun StopDetailsFilteredDeparturesView(
     }
 
     LaunchedEffect(tripFilter) {
-        if (tripFilter != null) {
-            bringIntoViewRequesters[tripFilter.tripId]?.bringIntoView()
+        val selectedTileId = tileData.firstOrNull { it.isSelected(tripFilter) }?.id
+        if (selectedTileId != null) {
+            bringIntoViewRequesters[selectedTileId]?.bringIntoView()
         }
     }
 
@@ -290,7 +293,9 @@ private fun DepartureTiles(
 ) {
     val coroutineScope = rememberCoroutineScope()
     Row(
-        Modifier.horizontalScroll(scrollState).padding(horizontal = 10.dp),
+        Modifier.horizontalScroll(scrollState)
+            .padding(horizontal = 10.dp)
+            .height(IntrinsicSize.Max),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         for (tileData in tiles) {
