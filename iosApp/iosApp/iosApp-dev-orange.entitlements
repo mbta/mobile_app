@@ -5,8 +5,6 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:mobile-app-backend-dev-orange.mbtace.com</string>
-		<string>applinks:dev-blue.mbtace.com</string>
-		<string>applinks:dev-green.mbtace.com</string>
 	</array>
 </dict>
 </plist>
