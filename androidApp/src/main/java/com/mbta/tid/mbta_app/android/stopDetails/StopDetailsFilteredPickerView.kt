@@ -25,15 +25,18 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.datetime.Instant
 
 @Composable
@@ -67,8 +70,15 @@ fun StopDetailsFilteredPickerView(
     val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
 
-    // TODO: if enhanced favorites, use new favorites
-    val favoriteBridge = FavoriteBridge.Pinned(lineOrRoute.id)
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
+    val favoriteBridge =
+        if (enhancedFavorites) {
+            FavoriteBridge.Favorite(
+                RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
+            )
+        } else {
+            FavoriteBridge.Pinned(lineOrRoute.id)
+        }
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         StopDetailsFilteredHeader(

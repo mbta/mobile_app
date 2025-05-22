@@ -13,6 +13,8 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
+import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -20,6 +22,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -43,25 +46,31 @@ fun StopDetailsPage(
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
+    val (favorites, toggleFavorite) = manageFavorites()
 
     fun isFavorite(favorite: FavoriteBridge): Boolean {
-        // TODO: enhanced favorites support
-        if (favorite is FavoriteBridge.Pinned) {
+        if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
             return pinnedRoutes?.contains(favorite.routeId) ?: false
         }
+
+        if (favorite is FavoriteBridge.Favorite && enhancedFavorites) {
+            return favorites?.contains(favorite.routeStopDirection) ?: false
+        }
+
         return false
     }
 
     fun toggleFavorite(favorite: FavoriteBridge) {
         coroutineScope.launch {
-            when (favorite) {
-                // TODO: enhanced favorites support
-                is FavoriteBridge.Pinned -> {
-                    val pinned = rawTogglePinnedRoute(favorite.routeId)
-                    analytics.toggledPinnedRoute(pinned, favorite.routeId)
-                }
-                else -> {}
+            if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
+                val pinned = rawTogglePinnedRoute(favorite.routeId)
+                analytics.toggledPinnedRoute(pinned, favorite.routeId)
+            }
+
+            if (favorite is FavoriteBridge.Favorite && enhancedFavorites) {
+                toggleFavorite(favorite.routeStopDirection)
             }
         }
     }
