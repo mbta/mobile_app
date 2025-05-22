@@ -32,6 +32,7 @@
 
                 <data android:scheme="https" />
                 <data android:host="mobile-app-backend-dev-orange.mbtace.com" />
+                <data android:pathPrefix="/go" />
             </intent-filter>
         </activity>
     </application>
