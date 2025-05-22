@@ -41,17 +41,14 @@ fun StopDetailsFilteredView(
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalResponse by viewModel.globalResponse.collectAsState()
-    val routeCardData by viewModel.routeCardData.collectAsState()
-    val thisRouteCardData = routeCardData?.find { it.lineOrRoute.id == stopFilter.routeId }
-    val routeStopData = thisRouteCardData?.stopData?.get(0)
+    val routeStopData by viewModel.filteredRouteStopData.collectAsState()
 
-    if (routeStopData != null) {
-
+    routeStopData?.let {
         StopDetailsFilteredPickerView(
             stopId = stopId,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
-            routeStopData = routeStopData,
+            routeStopData = it,
             allAlerts = allAlerts,
             global = globalResponse,
             now = now,
@@ -66,8 +63,8 @@ fun StopDetailsFilteredView(
             openSheetRoute = openSheetRoute,
             onClose = onClose,
         )
-    } else {
-        Loading(
+    }
+        ?: Loading(
             stopId,
             stopFilter,
             tripFilter,
@@ -77,7 +74,6 @@ fun StopDetailsFilteredView(
             errorBannerViewModel,
             globalResponse,
         )
-    }
 }
 
 @Composable

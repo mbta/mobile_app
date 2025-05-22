@@ -155,6 +155,42 @@ platform :ios do
     get_provisioning_profile(app_identifier: app_identifier(options[:scheme]), output_path: 'iosApp/secrets')
   end
 
+  desc <<~DESC.chomp
+    Repairs provisioning profiles related to the app.
+
+    This is the fix for "Provisioning Profile '...' is not valid, skipping this one..."
+    and for "No profile for team '...' matching '...' found: Xcode couldn't find any provisioning profiles matching '...'".
+  DESC
+  lane :repair_provisioning_profiles do |_options|
+    # Unfortunately, `sigh repair` at the command line does not accept filtering, and there are
+    # provisioning profiles in the account that we don't own, so we need our own copy of this code.
+    # from https://github.com/fastlane/fastlane/blob/master/sigh/lib/sigh/repair.rb
+    require 'spaceship'
+    UI.message("Provisioning profile repair doesn't work with App Store Connect, you'll need to " \
+               'provide your credentials directly')
+    Spaceship.login(nil, nil)
+    Spaceship.select_team
+    UI.message('Successfully logged in')
+
+    # Select all 'Invalid' or 'Expired' provisioning profiles
+    broken_profiles = Spaceship.provisioning_profile.all.find_all do |profile|
+      %w[Invalid Expired].include?(profile.status) and profile.name.include?('com.mbta.tid.mbtaapp')
+    end
+
+    if broken_profiles.count.zero?
+      UI.success('All provisioning profiles are valid, nothing to do')
+    else
+      UI.success("Going to repair #{broken_profiles.count} provisioning profiles")
+
+      broken_profiles.each do |profile|
+        UI.message("Repairing profile '#{profile.name}'...")
+        profile.repair!
+      end
+
+      UI.success("Successfully repaired #{broken_profiles.count} provisioning profiles")
+    end
+  end
+
   desc 'Run tests'
   lane :test do |options|
     run_tests(

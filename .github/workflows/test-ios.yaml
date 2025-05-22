@@ -2,6 +2,12 @@ name: iOS tests
 
 on:
   workflow_call:
+    inputs:
+      skip-everything:
+        description: "Skips all the individual steps so the job passes quickly"
+        required: false
+        default: false
+        type: boolean
     secrets:
       SENTRY_DSN:
         required: true
@@ -18,10 +24,13 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        if: ${{ !inputs.skip-everything }}
       - uses: ./.github/actions/setup
+        if: ${{ !inputs.skip-everything }}
         with:
           for: ios-test
       - name: Install CocoaPods dependencies
+        if: ${{ !inputs.skip-everything }}
         run: |
           ./gradlew :shared:generateDummyFramework
           pushd iosApp
@@ -29,15 +38,17 @@ jobs:
           popd
           bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
+        if: ${{ !inputs.skip-everything }}
         run: ./gradlew shared:iosSimulatorArm64Test shared:iosX64Test
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() && !inputs.skip-everything
         with:
           name: ios-shared-reports
           path: shared/build/reports
       - name: Add build environment variables
+        if: ${{ !inputs.skip-everything }}
         run: |
           {
             echo "export SENTRY_DSN=${SENTRY_DSN}"
@@ -51,11 +62,12 @@ jobs:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
           GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
       - name: Run emulator tests
+        if: ${{ !inputs.skip-everything }}
         run: |
           bundle exec fastlane ios test \
             xcodebuild_formatter:"xcbeautify --renderer github-actions"
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() && !inputs.skip-everything
         with:
           name: ios-ios-results
           path: fastlane/test_output/*

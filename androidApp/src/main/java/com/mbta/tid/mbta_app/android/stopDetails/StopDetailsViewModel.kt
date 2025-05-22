@@ -24,6 +24,7 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.hasContext
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -135,8 +136,16 @@ class StopDetailsViewModel(
     private val _tripDetailsStopList = MutableStateFlow<TripDetailsStopList?>(null)
     // not accessible via a property since it needs extra params to be kept up to date
 
+    // The routeCardData flow is public but should only be used in stopDetailsManagedVM,
+    // filtered and unfiltered stop details should each use the specific flow for their data.
     private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
     val routeCardData = _routeCardData.asStateFlow()
+
+    private val _filteredRouteStopData = MutableStateFlow<RouteCardData.RouteStopData?>(null)
+    val filteredRouteStopData = _filteredRouteStopData.asStateFlow()
+
+    private val _unfilteredRouteCardData = MutableStateFlow<List<RouteCardData>?>(null)
+    val unfilteredRouteCardData = _unfilteredRouteCardData.asStateFlow()
 
     private val _alertSummaries = MutableStateFlow<Map<String, AlertSummary?>>(emptyMap())
     val alertSummaries = _alertSummaries.asStateFlow()
@@ -278,6 +287,22 @@ class StopDetailsViewModel(
         _routeCardData.value = routeCardData
     }
 
+    fun clearFilteredRouteStopData() {
+        _filteredRouteStopData.value = null
+    }
+
+    fun setFilteredRouteStopData(stopData: RouteCardData.RouteStopData) {
+        _filteredRouteStopData.value = stopData
+    }
+
+    private fun clearUnfilteredRouteCardData() {
+        _unfilteredRouteCardData.value = null
+    }
+
+    fun setUnfilteredRouteCardData(routeCardData: List<RouteCardData>) {
+        _unfilteredRouteCardData.value = routeCardData
+    }
+
     private fun clearStopDetails() {
         stopPredictionsFetcher.disconnect()
         _stopData.value = null
@@ -391,6 +416,8 @@ class StopDetailsViewModel(
 
     fun handleStopChange(stopId: String?) {
         clearStopDetails()
+        clearFilteredRouteStopData()
+        clearUnfilteredRouteCardData()
 
         if (stopId != null) {
             loadStopDetails(stopId)
@@ -522,6 +549,14 @@ fun stopDetailsManagedVM(
 
     var wasInBackground by rememberSaveable { mutableStateOf(false) }
 
+    fun stopDataForRoute(
+        routeId: String,
+        routeCardData: List<RouteCardData>?,
+    ): RouteCardData.RouteStopData? =
+        if (routeCardData.hasContext(RouteCardData.Context.StopDetailsFiltered))
+            routeCardData?.find { it.lineOrRoute.id == routeId }?.stopData?.get(0)
+        else null
+
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
     LaunchedEffect(filters?.tripFilter) { viewModel.handleTripFilterChange(filters?.tripFilter) }
 
@@ -574,7 +609,7 @@ fun stopDetailsManagedVM(
         }
     }
 
-    LaunchedEffect(key1 = timer) { viewModel.checkStopPredictionsStale() }
+    LaunchedEffect(timer) { viewModel.checkStopPredictionsStale() }
 
     LaunchedEffect(filters) {
         if (filters != null) {
@@ -590,6 +625,17 @@ fun stopDetailsManagedVM(
             if (autoTripFilter != filters.tripFilter) {
                 updateTripFilter(filters.stopId, autoTripFilter)
             }
+        }
+
+        // If a route ID filter exists, we want to update the filtered stop data for that route,
+        // if not, we want to clear any previously set filtered stop data
+        val filteredRouteId = filters?.stopFilter?.routeId
+        if (filteredRouteId != null) {
+            stopDataForRoute(filteredRouteId, routeCardData)?.let { stopData ->
+                viewModel.setFilteredRouteStopData(stopData)
+            }
+        } else {
+            viewModel.clearFilteredRouteStopData()
         }
     }
 
@@ -614,6 +660,21 @@ fun stopDetailsManagedVM(
 
                 if (autoTripFilter != filters.tripFilter) {
                     updateTripFilter(filters.stopId, autoTripFilter)
+                }
+            }
+        }
+
+        // If a route ID filter exists, we want to update the filtered stop data for that route,
+        // otherwise, update the unfiltered route card data.
+        val filteredRouteId = filters?.stopFilter?.routeId
+        if (filteredRouteId != null) {
+            stopDataForRoute(filteredRouteId, routeCardData)?.let { stopData ->
+                viewModel.setFilteredRouteStopData(stopData)
+            }
+        } else {
+            routeCardData?.let {
+                if (it.hasContext(RouteCardData.Context.StopDetailsUnfiltered)) {
+                    viewModel.setUnfilteredRouteCardData(it)
                 }
             }
         }

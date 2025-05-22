@@ -40,7 +40,7 @@ fun StopDetailsUnfilteredView(
 
     val analytics: Analytics = koinInject()
 
-    val routeCardData = viewModel.routeCardData.collectAsState().value
+    val routeCardData = viewModel.unfilteredRouteCardData.collectAsState().value
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)

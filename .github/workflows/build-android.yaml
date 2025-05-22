@@ -18,6 +18,11 @@ on:
       sentry-environment:
         required: true
         type: string
+      skip-everything:
+        description: "Skips all the individual steps so the job passes quickly"
+        required: false
+        default: false
+        type: boolean
     secrets:
       AWS_ROLE_ARN:
         required: false
@@ -49,7 +54,9 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        if: ${{ !inputs.skip-everything }}
       - uses: ./.github/actions/setup
+        if: ${{ !inputs.skip-everything }}
         with:
           for: android-build
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
@@ -57,6 +64,7 @@ jobs:
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Lowercase build parameters
         id: lowercase
+        if: ${{ !inputs.skip-everything }}
         run: |
           # https://stackoverflow.com/a/12487455
           buildType="${{ inputs.build-type }}"
@@ -64,6 +72,7 @@ jobs:
           flavor="${{ inputs.flavor }}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
       - name: Build Android app
+        if: ${{ !inputs.skip-everything }}
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
           GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID }}
@@ -77,18 +86,18 @@ jobs:
         run: |
           bundle exec fastlane android build flavor:${{ inputs.flavor }} build_type:${{ inputs.build-type }}
       - uses: actions/upload-artifact@v4
-        if: ${{ inputs.deploy }}
+        if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
       - uses: actions/upload-artifact@v4
-        if: ${{ inputs.deploy }}
+        if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}${{ inputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.aab
   deploy-android:
     name: Upload to Google Play
-    if: ${{ inputs.deploy }}
+    if: ${{ inputs.deploy && !inputs.skip-everything }}
     needs:
       - build-android
     runs-on: ubuntu-latest
