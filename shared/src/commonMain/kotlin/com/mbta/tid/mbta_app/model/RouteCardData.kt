@@ -218,7 +218,6 @@ data class RouteCardData(
                 for (routePattern in routePatterns) {
                     if (
                         routePattern.isTypical() &&
-                            // TODO: Does this make sense?
                             // If this pattern is already represented under a different headsign,
                             // then we don't need to represent it separately.
                             !potentialService.values
