@@ -178,7 +178,11 @@ data class RouteCardData(
                 (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
             }
 
-        private data class PotentialService(val routeId: String, val headsign: String)
+        private data class PotentialService(
+            val routeId: String,
+            val headsign: String,
+            val routePatternIds: Set<String>,
+        )
 
         /**
          * Get all routes and headsigns that might be shown for this leaf. For bus, the only
@@ -192,7 +196,8 @@ data class RouteCardData(
             representativeRoute: Route,
             globalData: GlobalResponse?,
         ): Set<PotentialService> {
-            val potentialService = mutableSetOf<PotentialService>()
+            val potentialService: MutableMap<Pair<String, String>, MutableSet<String>> =
+                mutableMapOf()
             val cutoffTime = now + 120.minutes
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
@@ -200,20 +205,37 @@ data class RouteCardData(
                 if (isBus) tripsUpcoming.take(TYPICAL_LEAF_ROWS) else tripsUpcoming
             for (trip in tripsToConsider) {
                 if (trip.isUpcomingWithin(now, cutoffTime)) {
-                    potentialService.add(PotentialService(trip.trip.routeId, trip.headsign))
+                    val existingPatterns =
+                        potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
+                            mutableSetOf()
+                        }
+                    if (trip.trip.routePatternId != null) {
+                        existingPatterns.add(trip.trip.routePatternId)
+                    }
                 }
             }
             if (!isBus) {
                 for (routePattern in routePatterns) {
-                    if (routePattern.isTypical()) {
+                    if (
+                        routePattern.isTypical() &&
+                            // If this pattern is already represented under a different headsign,
+                            // then we don't need to represent it separately.
+                            !potentialService.values
+                                .flatMapTo(mutableSetOf(), { it })
+                                .contains(routePattern.id)
+                    ) {
                         val headsign =
                             globalData?.trips?.get(routePattern.representativeTripId)?.headsign
                                 ?: continue
-                        potentialService.add(PotentialService(routePattern.routeId, headsign))
+                        potentialService
+                            .getOrPut(Pair(routePattern.routeId, headsign)) { mutableSetOf() }
+                            .add(routePattern.id)
                     }
                 }
             }
             return potentialService
+                .map { (key, patternIds) -> PotentialService(key.first, key.second, patternIds) }
+                .toSet()
         }
 
         /**
@@ -245,11 +267,9 @@ data class RouteCardData(
             globalData: GlobalResponse?,
         ): Map<String, ByHeadsignData> {
             return potentialService
-                .map { (_, headsign) ->
+                .map { (_, headsign, patternIds) ->
                     val routePatterns =
-                        routePatterns.filter {
-                            globalData?.trips?.get(it.representativeTripId)?.headsign == headsign
-                        }
+                        routePatterns.filter { pattern -> patternIds.contains(pattern.id) }
 
                     val routePatternIds = routePatterns.map { it.id }.toSet()
 
