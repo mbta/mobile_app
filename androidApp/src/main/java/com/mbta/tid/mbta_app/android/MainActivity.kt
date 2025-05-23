@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.initializeSentry
 
@@ -55,10 +54,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize().navigationBarsPadding(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    CompositionLocalProvider(
-                        LocalActivity provides this,
-                        LocalLocationClient provides fusedLocationClient,
-                    ) {
+                    CompositionLocalProvider(LocalLocationClient provides fusedLocationClient) {
                         ContentView()
                     }
                 }
