@@ -66,7 +66,9 @@ struct NearbyTransitView: View {
             getNearby(location: newLocation, globalData: globalData)
         }
         .onChange(of: nearbyVM.nearbyState.stopIds) { [oldValue = nearbyVM.nearbyState.stopIds] newNearbyStops in
-            if Set(oldValue ?? []) != Set(newNearbyStops ?? []) {
+            let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
+            let newSet = newNearbyStops != nil ? Set(newNearbyStops ?? []) : nil
+            if oldSet != newSet {
                 getSchedule()
                 joinPredictions(newNearbyStops)
                 scrollToTop()
