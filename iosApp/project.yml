@@ -133,13 +133,16 @@ targets:
         DevOrange:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDevOrange
           BUNDLE_NAME: MBTA Go Dev Orange
+          CODE_SIGN_ENTITLEMENTS: iosApp/iosApp-dev-orange.entitlements
           PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp.devorange
         Staging:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconStaging
           BUNDLE_NAME: MBTA Go Staging
+          CODE_SIGN_ENTITLEMENTS: iosApp/iosApp-staging.entitlements
           PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp.staging
         Prod:
           BUNDLE_NAME: MBTA Go
+          CODE_SIGN_ENTITLEMENTS: iosApp/iosApp-prod.entitlements
           PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp
     postBuildScripts:
       - name: Configure Build Variables

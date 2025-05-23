@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
-    <application
-        android:label="MBTA Go Staging"
-        tools:replace="android:label">
+    <application tools:node="merge">
         <activity android:name=".MainActivity" android:exported="true" tools:node="merge">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -11,7 +9,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="https" />
-                <data android:host="mobile-app-backend-staging.mbtace.com" />
+                <data android:host="mobile-app-backend.mbtace.com" />
             </intent-filter>
         </activity>
     </application>
