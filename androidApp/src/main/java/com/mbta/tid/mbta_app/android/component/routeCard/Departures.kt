@@ -60,7 +60,7 @@ fun Departures(
                     stopData.lineOrRoute.id,
                     stopData.stop.id,
                     pinned,
-                    leaf.alertsHere.isNotEmpty(),
+                    leaf.alertsHere().isNotEmpty(),
                     stopData.lineOrRoute.type,
                     noTrips,
                 )

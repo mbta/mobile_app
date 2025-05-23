@@ -52,11 +52,17 @@ struct TripStopRow: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            stopRow.background(background).overlay {
-                if targeted {
-                    Rectangle().inset(by: -1).stroke(Color.halo, lineWidth: 2)
+            stopRow
+                .background(background?.padding(.horizontal, 2))
+                .overlay {
+                    if targeted {
+                        VStack {
+                            HaloSeparator(height: 2)
+                            Spacer()
+                            HaloSeparator(height: 2)
+                        }
+                    }
                 }
-            }
             if let disruption {
                 ZStack(alignment: .leading) {
                     VStack(spacing: 0) {

@@ -20,14 +20,44 @@ struct DepartureTile: View {
         case onPrediction(route: Route)
     }
 
+    // Store the size that the tile should be for text to wrap properly.
+    // In order for wrapped text not to get cut off in the horizontal ScrollView, we need to set the fixed width
+    // rather than just using `maxWidth` (see https://stackoverflow.com/a/75331082)
+    // Calculating the size based on an approach taken in
+    // https://nilcoalescing.com/blog/AdaptiveLayoutsWithViewThatFits/#expandable-text-with-line-limit
+    // the ideal width is measured on the background in the initial render, then used on subsequent renders.
+    @State var computedMultilineSize: CGSize? = nil
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 if let headsign = data.headsign {
-                    Text(headsign)
-                        .font(Typography.footnoteSemibold)
-                        .multilineTextAlignment(.leading)
+                    if let computedMultilineSize {
+                        Text(headsign)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(width: computedMultilineSize.width)
+                            .font(Typography.footnoteSemibold)
+                            .multilineTextAlignment(.leading)
+                    } else {
+                        Text(headsign)
+                            .lineLimit(1)
+                            .frame(maxWidth: 195)
+                            .font(Typography.footnoteSemibold)
+                            .multilineTextAlignment(.leading)
+                            .background {
+                                Text(headsign).fixedSize(horizontal: false, vertical: true)
+                                    .font(Typography.footnoteSemibold)
+                                    .background(
+                                        GeometryReader { geo in
+                                            Color.clear.onAppear {
+                                                computedMultilineSize = geo.size
+                                            }
+                                        }
+                                    ).hidden()
+                            }
+                    }
                 }
+
                 HStack(spacing: 0) {
                     if case let .onPrediction(route) = pillDecoration {
                         RoutePill(route: route, type: .flex)
@@ -39,7 +69,7 @@ struct DepartureTile: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 10)
-        .frame(minHeight: 56)
+        .frame(maxWidth: 195, minHeight: 56, maxHeight: .infinity)
         .background(isSelected ? Color.fill3 : Color.deselectedToggle2.opacity(0.6))
         .foregroundStyle(isSelected ? Color.text : Color.deselectedToggleText)
         .clipShape(.rect(cornerRadius: 8))

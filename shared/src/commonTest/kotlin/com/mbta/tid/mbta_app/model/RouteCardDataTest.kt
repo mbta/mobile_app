@@ -549,7 +549,10 @@ class RouteCardDataTest {
 
             val railPattern =
                 objects.routePattern(railRoute) {
-                    representativeTrip { headsign = "Boston College" }
+                    representativeTrip {
+                        headsign = "Boston College"
+                        typicality = RoutePattern.Typicality.Typical
+                    }
                 }
             val shuttlePattern =
                 objects.routePattern(shuttleRoute) {
@@ -667,11 +670,22 @@ class RouteCardDataTest {
                 directionDestinations = listOf("Riverside", "Union Sq")
             }
 
-        val bWestPattern = objects.routePattern(bRoute) {}
-        val bEastPattern = objects.routePattern(bRoute) { directionId = 1 }
-        val cWestPattern = objects.routePattern(cRoute) {}
-        val cEastPattern = objects.routePattern(cRoute) { directionId = 1 }
-        val dWestPattern = objects.routePattern(dRoute) {}
+        val bWestPattern =
+            objects.routePattern(bRoute) { typicality = RoutePattern.Typicality.Typical }
+        val bEastPattern =
+            objects.routePattern(bRoute) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val cWestPattern =
+            objects.routePattern(cRoute) { typicality = RoutePattern.Typicality.Typical }
+        val cEastPattern =
+            objects.routePattern(cRoute) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val dWestPattern =
+            objects.routePattern(dRoute) { typicality = RoutePattern.Typicality.Typical }
 
         val global =
             GlobalResponse(
@@ -2579,6 +2593,172 @@ class RouteCardDataTest {
                                     ),
                                     global,
                                 ),
+                            ),
+                        time,
+                    )
+                ),
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop1.id, stop2.id),
+                    global,
+                    sortByDistanceFrom = null,
+                    schedules = null,
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(objects),
+                    now = time,
+                    pinnedRoutes = setOf(),
+                    context = context,
+                ),
+            )
+        }
+
+    @Test
+    fun `RouteCardData routeCardsForStopList hides stop that has nontypical service not seen at earlier stop when nontypical service won't be shown`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+
+            val stop1 = objects.stop()
+            val stop2 = objects.stop()
+
+            val route1 = objects.route()
+
+            // should be included because typical and has prediction
+            val typicalOutbound =
+                objects.routePattern(route1) {
+                    directionId = 0
+                    sortOrder = 1
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "Typical Out" }
+                }
+            // should not be included because not typical and more than 3 trips in the future
+            val deviationOutbound =
+                objects.routePattern(route1) {
+                    directionId = 0
+                    sortOrder = 4
+                    typicality = RoutePattern.Typicality.Deviation
+                    representativeTrip { headsign = "Deviation Out" }
+                }
+
+            fun makeTripFrom(trip: Trip, id: String): Trip {
+                val newTrip = trip.copy(id)
+                objects.trips[id] = newTrip
+                return newTrip
+            }
+            val typicalOutboundTrip = objects.trips[typicalOutbound.representativeTripId]!!
+            fun makeTypicalTrip(id: String) = makeTripFrom(typicalOutboundTrip, id)
+            val deviationOutboundTrip = objects.trips[deviationOutbound.representativeTripId]!!
+            fun makeDeviationTrip(id: String) = makeTripFrom(deviationOutboundTrip, id)
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop =
+                        mapOf(
+                            stop1.id to listOf(typicalOutbound.id),
+                            stop2.id to listOf(typicalOutbound.id, deviationOutbound.id),
+                        ),
+                )
+
+            val context = RouteCardData.Context.NearbyTransit
+            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+
+            val trip1 = makeTypicalTrip("trip1")
+            val trip2 = makeTypicalTrip("trip2")
+            val trip3 = makeTypicalTrip("trip3")
+            val trip4 = makeDeviationTrip("trip4")
+
+            val typicalOutboundPrediction1Stop1 =
+                objects.prediction {
+                    departureTime = time + 5.minutes
+                    routeId = route1.id
+                    stopId = stop1.id
+                    tripId = trip1.id
+                }
+
+            val typicalOutboundPrediction2Stop1 =
+                objects.prediction {
+                    departureTime = time + 15.minutes
+                    routeId = route1.id
+                    stopId = stop1.id
+                    tripId = trip2.id
+                }
+
+            val typicalOutboundPrediction3Stop1 =
+                objects.prediction {
+                    departureTime = time + 30.minutes
+                    routeId = route1.id
+                    stopId = stop1.id
+                    tripId = trip3.id
+                }
+
+            val typicalOutboundPrediction1Stop2 =
+                objects.prediction {
+                    departureTime = time + 2.minutes
+                    routeId = route1.id
+                    stopId = stop2.id
+                    tripId = trip1.id
+                }
+
+            val typicalOutboundPrediction2Stop2 =
+                objects.prediction {
+                    departureTime = time + 12.minutes
+                    routeId = route1.id
+                    stopId = stop2.id
+                    tripId = trip2.id
+                }
+
+            val typicalOutboundPrediction3Stop2 =
+                objects.prediction {
+                    departureTime = time + 27.minutes
+                    routeId = route1.id
+                    stopId = stop2.id
+                    tripId = trip3.id
+                }
+
+            val deviationOutboundPredictionStop2 =
+                objects.prediction {
+                    departureTime = time + 40.minutes
+                    routeId = route1.id
+                    stopId = stop2.id
+                    tripId = trip4.id
+                }
+            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            assertEquals(
+                listOf(
+                    RouteCardData(
+                        lineOrRoute = lineOrRoute1,
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    route1,
+                                    stop1,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            lineOrRoute = lineOrRoute1,
+                                            stop = stop1,
+                                            directionId = 0,
+                                            routePatterns = listOf(typicalOutbound),
+                                            stopIds = setOf(stop1.id),
+                                            upcomingTrips =
+                                                listOf(
+                                                    objects.upcomingTrip(
+                                                        typicalOutboundPrediction1Stop1
+                                                    ),
+                                                    objects.upcomingTrip(
+                                                        typicalOutboundPrediction2Stop1
+                                                    ),
+                                                    objects.upcomingTrip(
+                                                        typicalOutboundPrediction3Stop1
+                                                    ),
+                                                ),
+                                            alertsHere = emptyList(),
+                                            allDataLoaded = false,
+                                            hasSchedulesToday = false,
+                                            alertsDownstream = emptyList(),
+                                            context = context,
+                                        )
+                                    ),
+                                    global,
+                                )
                             ),
                         time,
                     )

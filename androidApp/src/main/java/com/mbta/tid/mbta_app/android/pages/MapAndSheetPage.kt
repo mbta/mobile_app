@@ -180,7 +180,7 @@ fun MapAndSheetPage(
     val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(previousNavEntry) {
+    LaunchedEffect(currentNavEntry) {
         if (
             previousNavEntry is SheetRoutes.StopDetails &&
                 currentNavEntry is SheetRoutes.StopDetails &&

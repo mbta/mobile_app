@@ -50,7 +50,6 @@ struct TripHeaderCard: View {
         .background(Color.fill3)
         .foregroundStyle(Color.text)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .padding(1)
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
         .padding([.horizontal], 6)
         .fixedSize(horizontal: false, vertical: true)

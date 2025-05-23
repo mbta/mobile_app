@@ -35,13 +35,14 @@ android {
         targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "1.2.2"
+        versionName = "1.2.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
         buildConfig = true
         compose = true
     }
+    lint { disable.add("NullSafeMutableLiveData") }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes { getByName("release") { isMinifyEnabled = false } }
     flavorDimensions += "environment"
