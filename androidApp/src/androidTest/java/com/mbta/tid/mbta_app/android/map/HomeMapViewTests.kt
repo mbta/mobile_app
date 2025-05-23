@@ -322,6 +322,7 @@ class HomeMapViewTests {
                     ),
             )
         }
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Recenter map on my location").assertExists()
     }
 

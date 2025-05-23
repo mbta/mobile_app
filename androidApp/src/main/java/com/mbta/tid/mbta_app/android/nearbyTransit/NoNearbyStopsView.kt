@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +29,15 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
+import kotlinx.coroutines.launch
 
 @Composable
 fun NoNearbyStopsView(
     hideMaps: Boolean,
     onOpenSearch: () -> Unit,
-    onPanToDefaultCenter: () -> Unit,
+    onPanToDefaultCenter: suspend () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier =
             Modifier.clip(RoundedCornerShape(8.dp))
@@ -83,7 +86,7 @@ fun NoNearbyStopsView(
         }
         if (!hideMaps) {
             OutlinedButton(
-                onClick = onPanToDefaultCenter,
+                onClick = { coroutineScope.launch { onPanToDefaultCenter() } },
                 modifier = Modifier.requiredHeightIn(min = 48.dp),
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, colorResource(R.color.key)),

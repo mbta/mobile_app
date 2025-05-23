@@ -123,6 +123,7 @@ fun MapAndSheetPage(
 
     val viewModel: NearbyTransitTabViewModel = viewModel()
 
+    val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
 
     val currentNavBackStackEntry by
@@ -298,7 +299,7 @@ fun MapAndSheetPage(
             if (timeSinceBackground > 1.hours) {
                 navigateToEntrypoint()
                 if (nearbyTransit.locationDataManager.hasPermission) {
-                    nearbyTransit.viewportProvider.follow()
+                    coroutineScope.launch { nearbyTransit.viewportProvider.follow() }
                 }
             }
         }

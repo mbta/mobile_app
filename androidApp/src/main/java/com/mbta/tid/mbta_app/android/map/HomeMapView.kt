@@ -76,6 +76,7 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
@@ -151,7 +152,7 @@ fun HomeMapView(
         return false
     }
 
-    fun positionViewportToStop() {
+    suspend fun positionViewportToStop() {
         if (selectedStop != null) {
             viewportProvider.stopCenter(selectedStop!!)
             viewModel.updateCenterButtonVisibility(
@@ -308,7 +309,7 @@ fun HomeMapView(
                         alignment = Alignment.BottomEnd,
                     )
                 },
-                mapViewportState = viewportProvider.viewport,
+                mapViewportState = viewportProvider.getViewportImmediate(),
                 mapState = mapState,
                 style = {
                     MapStyle(
@@ -494,7 +495,7 @@ fun HomeMapView(
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
                 if (showRecenterButton) {
                     RecenterButton(
-                        onClick = { viewportProvider.follow() },
+                        onClick = { coroutineScope.launch { viewportProvider.follow() } },
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
@@ -506,11 +507,13 @@ fun HomeMapView(
                             TripCenterButton(
                                 routeType = routeType,
                                 onClick = {
-                                    viewportProvider.vehicleOverview(
-                                        selectedVehicle,
-                                        selectedStop,
-                                        density,
-                                    )
+                                    coroutineScope.launch {
+                                        viewportProvider.vehicleOverview(
+                                            selectedVehicle,
+                                            selectedStop,
+                                            density,
+                                        )
+                                    }
                                 },
                                 modifier = Modifier.padding(horizontal = 16.dp),
                             )
