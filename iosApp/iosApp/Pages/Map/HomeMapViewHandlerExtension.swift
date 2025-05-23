@@ -146,7 +146,7 @@ extension HomeMapView {
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
-        if oldNavEntry == nil {
+        if oldNavEntry == nil || oldNavEntry?.isEntrypoint == true {
             viewportProvider.saveNearbyTransitViewport()
         }
         if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
@@ -159,7 +159,7 @@ extension HomeMapView {
             handleRouteFilterChange(stopFilter)
         }
 
-        if nextNavEntry == nil {
+        if nextNavEntry == nil || nextNavEntry?.isEntrypoint == true {
             clearSelectedStop()
             viewportProvider.restoreNearbyTransitViewport()
             mapVM.routeSourceData = mapVM.allRailSourceData
@@ -194,7 +194,7 @@ extension HomeMapView {
         resetDefaultSources()
     }
 
-    func handleTapStopLayer(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {
+    func handleTapStopLayer(feature: QueriedFeature, _: InteractionContext) -> Bool {
         guard case let .string(stopId) = feature.feature.properties?[StopFeaturesBuilder.shared.propIdKey.key] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
@@ -210,7 +210,7 @@ extension HomeMapView {
             return false
         }
         analytics.tappedOnStop(stopId: stop.id)
-        nearbyVM.navigationStack.removeAll()
+        nearbyVM.popToEntrypoint()
         nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
         return true
     }
