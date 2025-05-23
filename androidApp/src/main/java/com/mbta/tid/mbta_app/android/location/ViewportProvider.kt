@@ -264,7 +264,9 @@ class ViewportProvider(
         isFollowingPuck = savedNearbyTransitViewport?.isFollowingPuck ?: false
         isVehicleOverview = false
         isAnimating = true
-        withViewport { viewport -> savedNearbyTransitViewport?.restoreOn(viewport) }
+        animateViewport { viewport, completionListener ->
+            savedNearbyTransitViewport?.restoreOn(viewport, completionListener)
+        }
         isAnimating = false
         savedNearbyTransitViewport = null
     }
