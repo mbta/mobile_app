@@ -63,7 +63,7 @@ fun NearbyTransitPage(
         }
     }
 
-    fun panToDefaultCenter() {
+    suspend fun panToDefaultCenter() {
         nearbyTransit.viewportProvider.isManuallyCentering = true
         nearbyTransit.viewportProvider.isFollowingPuck = false
         nearbyTransit.viewportProvider.animateTo(
