@@ -536,7 +536,6 @@ fun MapAndSheetPage(
                     searchFocusRequester,
                     searchResultsViewModel,
                     onBarGloballyPositioned = { layoutCoordinates ->
-                        Log.i("KB", "ON Globally positiononed ${layoutCoordinates.size.height}")
                         with(density) { searchBarHeight = layoutCoordinates.size.height.toDp() }
                     },
                 ) {
