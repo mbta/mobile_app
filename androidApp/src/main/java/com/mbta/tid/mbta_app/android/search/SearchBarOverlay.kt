@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +57,7 @@ fun SearchBarOverlay(
     onRouteNavigation: (routeId: String) -> Unit,
     inputFieldFocusRequester: FocusRequester,
     searchResultsVm: SearchResultsViewModel,
+    onBarGloballyPositioned: (LayoutCoordinates) -> Unit,
     content: @Composable () -> Unit,
 ) {
     var searchInputState by rememberSaveable { mutableStateOf("") }
@@ -120,7 +123,10 @@ fun SearchBarOverlay(
                                         backgroundColor = colorResource(R.color.fill3),
                                     )
                                     .fillMaxWidth()
-                                    .focusRequester(inputFieldFocusRequester),
+                                    .focusRequester(inputFieldFocusRequester)
+                                    .onGloballyPositioned { layoutCoordinates ->
+                                        onBarGloballyPositioned(layoutCoordinates)
+                                    },
                             onSearch = {},
                             leadingIcon = {
                                 Icon(

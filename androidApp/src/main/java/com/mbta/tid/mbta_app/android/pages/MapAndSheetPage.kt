@@ -7,6 +7,7 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,6 +67,7 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
@@ -132,6 +135,10 @@ fun MapAndSheetPage(
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
     val (pinnedRoutes) = managePinnedRoutes()
+
+    var searchBarHeight: Dp? by rememberSaveable() { mutableStateOf(null) }
+
+    val density = LocalDensity.current
 
     val now by timer(updateInterval = 5.seconds)
 
@@ -475,6 +482,7 @@ fun MapAndSheetPage(
                 ::handleRouteNavigation,
                 searchFocusRequester,
                 searchResultsViewModel,
+                onBarGloballyPositioned = {},
             ) {
                 SheetContent(
                     Modifier.padding(top = if (showSearchBar) 94.dp else 0.dp)
@@ -487,8 +495,6 @@ fun MapAndSheetPage(
                 sheetDragHandle = { DragHandle() },
                 sheetContent = {
                     var sheetHeight by remember { mutableStateOf(0.dp) }
-                    val density = LocalDensity.current
-
                     Box(
                         modifier =
                             Modifier.onGloballyPositioned {
@@ -529,9 +535,21 @@ fun MapAndSheetPage(
                     ::handleRouteNavigation,
                     searchFocusRequester,
                     searchResultsViewModel,
+                    onBarGloballyPositioned = { layoutCoordinates ->
+                        Log.i("KB", "ON Globally positiononed ${layoutCoordinates.size.height}")
+                        with(density) { searchBarHeight = layoutCoordinates.size.height.toDp() }
+                    },
                 ) {
                     HomeMapView(
-                        sheetPadding = sheetPadding,
+                        sheetPadding =
+                            sheetPadding.plus(
+                                PaddingValues(
+                                    start = 0.dp,
+                                    end = 0.dp,
+                                    top = (searchBarHeight ?: 0.dp),
+                                    bottom = 0.dp,
+                                )
+                            ),
                         lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                         nearbyTransitSelectingLocationState =
                             nearbyTransit.nearbyTransitSelectingLocationState,
