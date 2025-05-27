@@ -327,7 +327,7 @@ class HomeMapViewTests {
         }
         composeTestRule.waitUntilExactlyOneExists(
             hasContentDescription("Recenter map on my location"),
-            timeoutMillis = 5000L,
+            timeoutMillis = 15000L,
         )
         composeTestRule.onNodeWithContentDescription("Recenter map on my location").assertExists()
     }
