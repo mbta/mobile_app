@@ -397,12 +397,7 @@ fun HomeMapView(
                 }
 
                 MapEffect(locationDataManager.hasPermission) { map ->
-                    if (
-                        locationDataManager.hasPermission &&
-                            viewportProvider.isDefault() &&
-                            (currentNavEntry ?: SheetRoutes.NearbyTransit) ==
-                                SheetRoutes.NearbyTransit
-                    ) {
+                    if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
                         viewportProvider.follow(
                             DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
                         )
