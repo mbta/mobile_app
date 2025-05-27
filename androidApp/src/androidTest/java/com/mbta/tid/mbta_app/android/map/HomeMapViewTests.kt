@@ -2,8 +2,10 @@ package com.mbta.tid.mbta_app.android.map
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -291,6 +293,7 @@ class HomeMapViewTests {
             .assertDoesNotExist()
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testOverviewShownOnStopDetails(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
@@ -322,7 +325,10 @@ class HomeMapViewTests {
                     ),
             )
         }
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExists(
+            hasContentDescription("Recenter map on my location"),
+            timeoutMillis = 5000L,
+        )
         composeTestRule.onNodeWithContentDescription("Recenter map on my location").assertExists()
     }
 
