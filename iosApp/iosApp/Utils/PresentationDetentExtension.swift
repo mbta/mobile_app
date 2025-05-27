@@ -11,7 +11,7 @@ import UIKit
 
 extension PresentationDetent {
     static let small = Self.height(150)
-    static let halfScreen = Self.fraction(0.5)
+    static let medium = Self.fraction(0.6)
     static let almostFull = Self.custom(AlmostFull.self)
 }
 

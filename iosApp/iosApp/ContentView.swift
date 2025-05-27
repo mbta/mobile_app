@@ -132,7 +132,7 @@ struct ContentView: View {
         }
     }
 
-    @State var selectedDetent: PresentationDetent = .halfScreen
+    @State var selectedDetent: PresentationDetent = .medium
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
     @State private var showingLocationPermissionAlert = false
 
@@ -286,7 +286,7 @@ struct ContentView: View {
                         GeometryReader { proxy in
                             VStack {
                                 navSheetContents
-                                    .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                                    .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
                                     .interactiveDismissDisabled()
                                     .modifier(AllowsBackgroundInteraction())
                             }
@@ -301,7 +301,7 @@ struct ContentView: View {
                                 },
                                 content: coverContents
                             )
-                            .onChange(of: sheetItemId) { _ in selectedDetent = .halfScreen }
+                            .onChange(of: sheetItemId) { _ in selectedDetent = .medium }
                             .onAppear { recordSheetHeight(proxy.size.height) }
                             .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
                         }
@@ -403,7 +403,7 @@ struct ContentView: View {
 
     struct AllowsBackgroundInteraction: ViewModifier {
         func body(content: Content) -> some View {
-            content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
+            content.presentationBackgroundInteraction(.enabled(upThrough: .medium))
         }
     }
 }
