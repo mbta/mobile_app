@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -14,8 +15,15 @@ class NearbyTransitTabViewModel : ViewModel() {
     private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
     val routeCardData: StateFlow<List<RouteCardData>?> = _routeCardData
 
+    private val _searchBarHeight = MutableStateFlow<Dp?>(null)
+    val searchBarHeight: StateFlow<Dp?> = _searchBarHeight
+
     fun setRouteCardData(routeCardData: List<RouteCardData>?) {
         _routeCardData.value = routeCardData
+    }
+
+    fun setSearchBarHeight(height: Dp) {
+        _searchBarHeight.value = height
     }
 
     fun setStopFilter(
