@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -24,6 +26,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -80,13 +83,39 @@ fun StopDetailsFilteredPickerView(
             FavoriteBridge.Pinned(lineOrRoute.id)
         }
 
+    val showFavoritesConfirmation = rememberSaveable { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+        if (showFavoritesConfirmation.value) {
+            FavoriteConfirmationDialog(
+                lineOrRoute,
+                stop,
+                directions,
+                availableDirections.associate {
+                    if (
+                        isFavorite(
+                                FavoriteBridge.Favorite(
+                                    RouteStopDirection(lineOrRoute.id, stop.id, it)
+                                )
+                            )
+                            .xor(it == stopFilter.directionId)
+                    ) {
+                        Pair(it, true)
+                    } else {
+                        Pair(it, false)
+                    }
+                },
+                toggleFavorite = { rsd -> toggleFavorite(FavoriteBridge.Favorite(rsd)) },
+            ) {
+                showFavoritesConfirmation.value = false
+            }
+        }
         StopDetailsFilteredHeader(
             lineOrRoute.sortRoute,
             (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
             stop,
             pinned = isFavorite(favoriteBridge),
-            onPin = { toggleFavorite(favoriteBridge) },
+            onPin = { showFavoritesConfirmation.value = showFavoritesConfirmation.value.not() },
             onClose = onClose,
         )
 
