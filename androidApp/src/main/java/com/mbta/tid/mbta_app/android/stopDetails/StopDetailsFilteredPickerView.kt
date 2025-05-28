@@ -90,21 +90,14 @@ fun StopDetailsFilteredPickerView(
             FavoriteConfirmationDialog(
                 lineOrRoute,
                 stop,
-                directions,
-                availableDirections.associate {
-                    if (
+                directions.filter { it.id in availableDirections },
+                currentFavorites =
+                    availableDirections.associateWith {
                         isFavorite(
-                                FavoriteBridge.Favorite(
-                                    RouteStopDirection(lineOrRoute.id, stop.id, it)
-                                )
-                            )
-                            .xor(it == stopFilter.directionId)
-                    ) {
-                        Pair(it, true)
-                    } else {
-                        Pair(it, false)
-                    }
-                },
+                            FavoriteBridge.Favorite(RouteStopDirection(lineOrRoute.id, stop.id, it))
+                        )
+                    },
+                proposedFavoritesToToggle = setOf(stopFilter.directionId),
                 toggleFavorite = { rsd -> toggleFavorite(FavoriteBridge.Favorite(rsd)) },
             ) {
                 showFavoritesConfirmation.value = false
@@ -115,7 +108,13 @@ fun StopDetailsFilteredPickerView(
             (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
             stop,
             pinned = isFavorite(favoriteBridge),
-            onPin = { showFavoritesConfirmation.value = showFavoritesConfirmation.value.not() },
+            onPin = {
+                if (isFavorite(favoriteBridge)) {
+                    toggleFavorite(favoriteBridge)
+                } else {
+                    showFavoritesConfirmation.value = showFavoritesConfirmation.value.not()
+                }
+            },
             onClose = onClose,
         )
 
