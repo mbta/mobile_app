@@ -19,7 +19,11 @@ data class StopFeatureData(val stop: MapStop, val feature: Feature)
 
 data class StopSourceData
 @DefaultArgumentInterop.Enabled
-constructor(val filteredStopIds: List<String>? = null, val selectedStopId: String? = null)
+constructor(
+    val filteredStopIds: List<String>? = null,
+    val selectedStopId: String? = null,
+    val selectedRoute: String? = null,
+)
 
 object StopFeaturesBuilder {
     val stopSourceId = "stop-source"
@@ -34,6 +38,7 @@ object StopFeaturesBuilder {
     val propRouteIdsKey = FeatureProperty<Map<String, List<String>>>("routeIds")
     val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
     val propSortOrderKey = FeatureProperty<Number>("sortOrder")
+    val propHideBelowCloseZoomKey = FeatureProperty<Boolean>("hideBelowCloseZoom")
 
     suspend fun buildCollection(
         stopData: StopSourceData,
@@ -160,6 +165,14 @@ object StopFeaturesBuilder {
                     .orEmpty()
                     .map { (routeType, alertState) -> Pair(routeType.name, alertState.name) }
                     .toMap(),
+            )
+            put(
+                propHideBelowCloseZoomKey,
+                stopData.selectedRoute != null &&
+                    mapStop.routeTypes == listOf(MapStopRoute.BUS) &&
+                    !mapStop.routes[MapStopRoute.BUS].orEmpty().any {
+                        it.id == stopData.selectedRoute
+                    },
             )
 
             // The symbolSortKey must be ascending, so higher priority icons need higher values.

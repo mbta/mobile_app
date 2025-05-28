@@ -150,10 +150,8 @@ extension HomeMapView {
             viewportProvider.saveNearbyTransitViewport()
         }
         if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
-            if oldNavEntry?.stopId() != stopId {
-                if let stop = mapVM.globalData?.getStop(stopId: stopId) {
-                    handleStopDetailsChange(stop, stopFilter)
-                }
+            if let stop = mapVM.globalData?.getStop(stopId: stopId) {
+                handleStopDetailsChange(stop, stopFilter)
             }
 
             handleRouteFilterChange(stopFilter)
@@ -170,7 +168,7 @@ extension HomeMapView {
     }
 
     func handleStopDetailsChange(_ stop: Stop, _ filter: StopDetailsFilter?) {
-        mapVM.stopSourceData = .init(selectedStopId: stop.id)
+        mapVM.stopSourceData = .init(selectedStopId: stop.id, selectedRoute: filter?.routeId)
         viewportProvider.animateTo(coordinates: stop.coordinate)
 
         Task {

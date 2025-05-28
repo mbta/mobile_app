@@ -312,6 +312,7 @@ class MapAndSheetPageTest : KoinTest {
 
             override suspend fun refreshStopFeatures(
                 selectedStop: Stop?,
+                selectedRoute: String?,
                 globalMapData: GlobalMapData?,
             ) {}
 
@@ -322,6 +323,10 @@ class MapAndSheetPageTest : KoinTest {
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
 
             override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun setSelectedRoute(routeId: String?) {
                 TODO("Not yet implemented")
             }
 

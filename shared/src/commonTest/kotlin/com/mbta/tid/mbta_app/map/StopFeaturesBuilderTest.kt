@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.map
 
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.utils.TestData
 import io.github.dellisd.spatialk.geojson.Point
@@ -348,4 +349,96 @@ class StopFeaturesBuilderTest {
         val davisIsTerminal = davisFeature?.properties?.get(StopFeaturesBuilder.propIsTerminalKey)
         assertEquals(MapTestDataHelper.mapStopDavis.isTerminal, davisIsTerminal)
     }
+
+    @Test
+    fun `non-selected bus stops are hidden below close zoom if a route is selected`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+            val subwayRoute = objects.route()
+            val subwayStop = objects.stop()
+            val selectedBusRoute = objects.route()
+            val selectedBusStop = objects.stop()
+            val unselectedBusRoute = objects.route()
+            val unselectedBusStop = objects.stop()
+
+            val subwayMapStop =
+                MapStop(
+                    subwayStop,
+                    mapOf(MapStopRoute.RED to listOf(subwayRoute)),
+                    listOf(MapStopRoute.RED),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+            val selectedBusMapStop =
+                MapStop(
+                    selectedBusStop,
+                    mapOf(MapStopRoute.BUS to listOf(selectedBusRoute)),
+                    listOf(MapStopRoute.BUS),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+            val unselectedBusMapStop =
+                MapStop(
+                    unselectedBusStop,
+                    mapOf(MapStopRoute.BUS to listOf(unselectedBusRoute)),
+                    listOf(MapStopRoute.BUS),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+
+            val stops =
+                mapOf(
+                    subwayStop.id to subwayMapStop,
+                    selectedBusStop.id to selectedBusMapStop,
+                    unselectedBusStop.id to unselectedBusMapStop,
+                )
+
+            val noSelectionCollection =
+                StopFeaturesBuilder.buildCollection(StopSourceData(), stops, emptyList())
+            run {
+                val subwayFeature = noSelectionCollection.features.first { it.id == subwayStop.id }
+                assertEquals(
+                    false,
+                    subwayFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val selectedFeature =
+                    noSelectionCollection.features.first { it.id == selectedBusStop.id }
+                assertEquals(
+                    false,
+                    selectedFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val unselectedFeature =
+                    noSelectionCollection.features.first { it.id == unselectedBusStop.id }
+                assertEquals(
+                    false,
+                    unselectedFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+            }
+
+            val selectionCollection =
+                StopFeaturesBuilder.buildCollection(
+                    StopSourceData(selectedRoute = selectedBusRoute.id),
+                    stops,
+                    emptyList(),
+                )
+            run {
+                val subwayFeature = selectionCollection.features.first { it.id == subwayStop.id }
+                assertEquals(
+                    false,
+                    subwayFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val selectedFeature =
+                    selectionCollection.features.first { it.id == selectedBusStop.id }
+                assertEquals(
+                    false,
+                    selectedFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val unselectedFeature =
+                    selectionCollection.features.first { it.id == unselectedBusStop.id }
+                assertEquals(
+                    true,
+                    unselectedFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+            }
+        }
 }

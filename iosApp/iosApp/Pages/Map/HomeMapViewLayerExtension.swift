@@ -52,7 +52,11 @@ extension HomeMapView {
                 globalMapData: globalMapData
             )
             mapVM.snappedStopRouteSources = snappedStopRouteSources
-            mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
+            let selectedRoute: String? = switch lastNavEntry {
+            case .stopDetails(stopId: _, stopFilter: let stopFilter, tripFilter: _): stopFilter?.routeId
+            default: nil
+            }
+            mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId(), selectedRoute: selectedRoute)
         }
     }
 
@@ -86,7 +90,7 @@ extension HomeMapView {
     }
 
     func resetDefaultSources() {
-        mapVM.stopSourceData = .init(selectedStopId: nil)
+        mapVM.stopSourceData = .init(selectedStopId: nil, selectedRoute: nil)
         mapVM.routeSourceData = mapVM.allRailSourceData
     }
 
