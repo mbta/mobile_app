@@ -57,7 +57,7 @@ fun SearchBarOverlay(
     onRouteNavigation: (routeId: String) -> Unit,
     inputFieldFocusRequester: FocusRequester,
     searchResultsVm: SearchResultsViewModel,
-    onBarGloballyPositioned: (LayoutCoordinates) -> Unit,
+    onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     var searchInputState by rememberSaveable { mutableStateOf("") }
