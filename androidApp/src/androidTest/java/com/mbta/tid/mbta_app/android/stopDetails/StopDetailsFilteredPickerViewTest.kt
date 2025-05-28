@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -354,8 +356,9 @@ class StopDetailsFilteredPickerViewTest {
         composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testStarSavesEnhancedFavoriteBehindFlag(): Unit = runBlocking {
+    fun testStarSavesEnhancedFavoritesWithDialogBehindFlag(): Unit = runBlocking {
         settings[Settings.EnhancedFavorites] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
@@ -407,6 +410,73 @@ class StopDetailsFilteredPickerViewTest {
             .onNodeWithContentDescription("Star route")
             .assertIsDisplayed()
             .performClick()
+
+        composeTestRule.waitUntilExactlyOneExists(hasText("Add"))
+
+        composeTestRule.onNodeWithText("Add").performClick()
+
+        composeTestRule.waitUntil {
+            toggledFavorite == FavoriteBridge.Favorite(RouteStopDirection(route.id, stop.id, 0))
+        }
+    }
+
+    @Test
+    fun testUnfavoriteWithoutDialogBehindFlag(): Unit = runBlocking {
+        settings[Settings.EnhancedFavorites] = true
+        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val viewModel = StopDetailsViewModel.mocked()
+
+        val routeCardData =
+            checkNotNull(
+                RouteCardData.routeCardsForStopList(
+                    listOf(stop.id),
+                    globalResponse,
+                    null,
+                    null,
+                    PredictionsStreamDataResponse(builder),
+                    AlertsStreamDataResponse(emptyMap()),
+                    now,
+                    emptySet(),
+                    RouteCardData.Context.StopDetailsFiltered,
+                )
+            )
+        val routeStopData = routeCardData.single().stopData.single()
+        viewModel.setRouteCardData(routeCardData)
+
+        var toggledFavorite: FavoriteBridge? = null
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                StopDetailsFilteredPickerView(
+                    stopId = stop.id,
+                    stopFilter = filterState,
+                    tripFilter = null,
+                    routeStopData = routeStopData,
+                    allAlerts = null,
+                    global = globalResponse,
+                    now = now,
+                    viewModel = viewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    updateStopFilter = {},
+                    updateTripFilter = {},
+                    tileScrollState = rememberScrollState(),
+                    isFavorite = { true },
+                    toggleFavorite = { toggledFavorite = it },
+                    openModal = {},
+                    openSheetRoute = {},
+                    onClose = {},
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Star route")
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Add").assertDoesNotExist()
 
         composeTestRule.waitUntil {
             toggledFavorite == FavoriteBridge.Favorite(RouteStopDirection(route.id, stop.id, 0))

@@ -26,7 +26,9 @@ fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
         onCheckedChange = { action() },
         modifier =
             Modifier.size(30.dp).clickable(onClickLabel = onClickLabel, onClick = { action() }),
-    ) {}
+    ) {
+        StarIcon(pinned, color)
+    }
 }
 
 @Composable
