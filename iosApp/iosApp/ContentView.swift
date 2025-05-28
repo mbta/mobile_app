@@ -397,7 +397,7 @@ struct ContentView: View {
          Only update this if we're less than half way up the users screen. Otherwise,
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
-        guard newSheetHeight < (UIScreen.main.bounds.height * PresentationDetent.MEDIUM_DETENT_FRACTION) else { return }
+        guard newSheetHeight < (UIScreen.main.bounds.height * PresentationDetent.mediumDetentFraction) else { return }
         sheetHeight = newSheetHeight - 55
     }
 
