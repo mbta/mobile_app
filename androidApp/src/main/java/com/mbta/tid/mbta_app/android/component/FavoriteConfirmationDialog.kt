@@ -56,21 +56,25 @@ fun FavoriteConfirmationDialog(
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column {
                     directions.map { direction ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            DirectionLabel(direction)
-                            PinButton(
-                                favoritesToSave.getOrDefault(direction.id, false),
-                                color = Color.fromHex(lineOrRoute.backgroundColor),
-                            ) {
+                        Button(
+                            onClick = {
                                 favoritesToSave =
                                     favoritesToSave.plus(
                                         direction.id to
                                             !favoritesToSave.getOrDefault(direction.id, false)
                                     )
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                DirectionLabel(direction)
+                                StarIcon(
+                                    favoritesToSave.getOrDefault(direction.id, false),
+                                    color = Color.fromHex(lineOrRoute.backgroundColor),
+                                )
                             }
                         }
                     }
