@@ -63,7 +63,7 @@ fun StopDetailsFilteredDeparturesView(
     viewModel: StopDetailsViewModel,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
-    pinnedRoutes: Set<String>,
+    isFavorite: Boolean,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     analytics: Analytics = koinInject(),
@@ -86,7 +86,6 @@ fun StopDetailsFilteredDeparturesView(
             it.effect == Alert.Effect.ElevatorClosure
         }
     val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
-    val pinned = pinnedRoutes.contains(lineOrRoute.id)
 
     val downstreamAlerts: List<Alert> = leaf.alertsDownstream(tripId = tripFilter?.tripId)
 
@@ -165,7 +164,7 @@ fun StopDetailsFilteredDeparturesView(
                 tileData,
                 downstreamAlerts,
                 updateTripFilter,
-                pinned,
+                isFavorite,
                 analytics,
                 bringIntoViewRequesters,
                 tileScrollState,

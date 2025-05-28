@@ -25,14 +25,18 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.datetime.Instant
 
 @Composable
@@ -49,8 +53,8 @@ fun StopDetailsFilteredPickerView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
-    pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
+    isFavorite: (FavoriteBridge) -> Boolean,
+    toggleFavorite: (FavoriteBridge) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     onClose: () -> Unit,
@@ -59,21 +63,30 @@ fun StopDetailsFilteredPickerView(
 
     val lineOrRoute = routeStopData.lineOrRoute
     val stop = routeStopData.stop
+
     val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
     val directions = routeStopData.directions
 
-    val pinned = pinnedRoutes.contains(lineOrRoute.id)
-
     val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
+
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
+    val favoriteBridge =
+        if (enhancedFavorites) {
+            FavoriteBridge.Favorite(
+                RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
+            )
+        } else {
+            FavoriteBridge.Pinned(lineOrRoute.id)
+        }
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         StopDetailsFilteredHeader(
             lineOrRoute.sortRoute,
             (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
             stop,
-            pinned = pinned,
-            onPin = { togglePinnedRoute(lineOrRoute.id) },
+            pinned = isFavorite(favoriteBridge),
+            onPin = { toggleFavorite(favoriteBridge) },
             onClose = onClose,
         )
 
@@ -109,7 +122,7 @@ fun StopDetailsFilteredPickerView(
                         viewModel = viewModel,
                         updateTripFilter = updateTripFilter,
                         tileScrollState = tileScrollState,
-                        pinnedRoutes = pinnedRoutes,
+                        isFavorite = isFavorite(favoriteBridge),
                         openModal = openModal,
                         openSheetRoute = openSheetRoute,
                     )
@@ -138,7 +151,7 @@ fun StopDetailsFilteredPickerView(
                                 viewModel = viewModel,
                                 updateTripFilter = {},
                                 tileScrollState = rememberScrollState(),
-                                pinnedRoutes = emptySet(),
+                                isFavorite = false,
                                 openModal = {},
                                 openSheetRoute = {},
                             )

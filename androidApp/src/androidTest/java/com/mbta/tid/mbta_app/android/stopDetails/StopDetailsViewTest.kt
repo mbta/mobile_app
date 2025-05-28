@@ -149,8 +149,8 @@ class StopDetailsViewTest {
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    toggleFavorite = {},
                     onClose = {},
                     stopFilter = null,
                     tripFilter = null,
@@ -211,8 +211,8 @@ class StopDetailsViewTest {
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    toggleFavorite = {},
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -286,8 +286,8 @@ class StopDetailsViewTest {
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    toggleFavorite = {},
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -346,8 +346,8 @@ class StopDetailsViewTest {
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    toggleFavorite = {},
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
