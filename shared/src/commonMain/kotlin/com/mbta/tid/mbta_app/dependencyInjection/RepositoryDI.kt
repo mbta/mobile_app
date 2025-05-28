@@ -193,7 +193,7 @@ class MockRepositories : IRepositories {
     override var vehicle: IVehicleRepository = MockVehicleRepository()
     override var vehicles: IVehiclesRepository = MockVehiclesRepository()
     override var visitHistory: IVisitHistoryRepository = VisitHistoryRepository()
-    override val favorites: IFavoritesRepository = MockFavoritesRepository()
+    override var favorites: IFavoritesRepository = MockFavoritesRepository()
 
     fun useObjects(objects: ObjectCollectionBuilder) {
         alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))

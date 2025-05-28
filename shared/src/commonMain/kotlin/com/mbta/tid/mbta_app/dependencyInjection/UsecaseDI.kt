@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
+import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
@@ -12,4 +13,5 @@ class UsecaseDI : KoinComponent {
     val featurePromoUsecase: FeaturePromoUseCase by inject()
     val toggledPinnedRouteUsecase: TogglePinnedRouteUsecase by inject()
     val visitHistoryUsecase: VisitHistoryUsecase by inject()
+    val favoritesUsecases: FavoritesUsecases by inject()
 }

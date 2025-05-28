@@ -53,6 +53,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
+import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
@@ -120,6 +121,7 @@ fun MapAndSheetPage(
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
+    favoritesViewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModel.Factory()),
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
@@ -380,7 +382,13 @@ fun MapAndSheetPage(
             },
         ) {
             composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
-                FavoritesPage(modifier = modifier, openSheetRoute = navController::navigate)
+                FavoritesPage(
+                    modifier = modifier,
+                    openSheetRoute = navController::navigate,
+                    favoritesViewModel = favoritesViewModel,
+                    errorBannerViewModel = errorBannerViewModel,
+                    nearbyTransit = nearbyTransit,
+                )
             }
 
             composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->

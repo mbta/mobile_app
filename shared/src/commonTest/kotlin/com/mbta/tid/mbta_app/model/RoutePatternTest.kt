@@ -53,6 +53,7 @@ class RoutePatternTest {
             RoutePattern.patternsGroupedByLineOrRouteAndStop(
                 Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
                 global,
+                RouteCardData.Context.NearbyTransit,
             ),
         )
     }

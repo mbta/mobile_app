@@ -48,6 +48,7 @@ data class RoutePattern(
         fun patternsGroupedByLineOrRouteAndStop(
             parentToAllStops: Map<Stop, Set<String>>,
             globalData: GlobalResponse,
+            context: RouteCardData.Context,
         ): Map<LineOrRoute, Map<Stop, PatternsForStop>> {
             val usedPatternIds = mutableSetOf<String>()
             val patternsGrouped = mutableMapOf<LineOrRoute, MutableMap<Stop, PatternsForStop>>()
@@ -60,18 +61,21 @@ data class RoutePattern(
                             .filterNot { (_key, routePatterns) ->
                                 usedPatternIds.containsAll(routePatterns.map { it.id }.toSet())
                             }
-
                     for ((lineOrRoute, routePatterns) in patternsByRouteOrLine) {
                         val routeStops = patternsGrouped.getOrPut(lineOrRoute) { mutableMapOf() }
                         val patternsNotSeenAtEarlierStops =
                             routePatterns.map { it.id }.toSet().minus(usedPatternIds)
+
                         routeStops.getOrPut(parentStop) {
                             PatternsForStop(
                                 allPatterns = routePatterns,
                                 patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops,
                             )
                         }
-                        usedPatternIds.addAll(routePatterns.map { it.id })
+                        // We need stops from the same route pattern to show up for favorites
+                        if (context != RouteCardData.Context.Favorites) {
+                            usedPatternIds.addAll(routePatterns.map { it.id })
+                        }
                     }
                 }
             }
