@@ -122,7 +122,7 @@ fun StopDetailsFilteredPickerView(
                         viewModel = viewModel,
                         updateTripFilter = updateTripFilter,
                         tileScrollState = tileScrollState,
-                        isFavorite = isFavorite,
+                        isFavorite = isFavorite(favoriteBridge),
                         openModal = openModal,
                         openSheetRoute = openSheetRoute,
                     )
@@ -151,7 +151,7 @@ fun StopDetailsFilteredPickerView(
                                 viewModel = viewModel,
                                 updateTripFilter = {},
                                 tileScrollState = rememberScrollState(),
-                                isFavorite = { false },
+                                isFavorite = false,
                                 openModal = {},
                                 openSheetRoute = {},
                             )
