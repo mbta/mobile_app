@@ -34,7 +34,6 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -135,8 +134,6 @@ fun MapAndSheetPage(
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
     val (pinnedRoutes) = managePinnedRoutes()
-
-    var searchBarHeight: Dp? by rememberSaveable() { mutableStateOf(null) }
 
     val density = LocalDensity.current
 
@@ -536,7 +533,9 @@ fun MapAndSheetPage(
                     searchFocusRequester,
                     searchResultsViewModel,
                     onBarGloballyPositioned = { layoutCoordinates ->
-                        with(density) { searchBarHeight = layoutCoordinates.size.height.toDp() }
+                        with(density) {
+                            viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
+                        }
                     },
                 ) {
                     HomeMapView(
@@ -545,7 +544,7 @@ fun MapAndSheetPage(
                                 PaddingValues(
                                     start = 0.dp,
                                     end = 0.dp,
-                                    top = (searchBarHeight ?: 0.dp),
+                                    top = (viewModel.searchBarHeight.value ?: 0.dp),
                                     bottom = 0.dp,
                                 )
                             ),
