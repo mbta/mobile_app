@@ -164,7 +164,7 @@ final class HomeMapViewTests: XCTestCase {
         XCTAssertEqual(newZoom, sut.viewportProvider.viewport.camera!.zoom)
     }
 
-    func testUpdatesStopSourceWhenStopSelected() throws {
+    func testUpdatesStopLayersWhenStopSelected() throws {
         let repositories = MockRepositories()
         repositories.stop = FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
         HelpersKt.loadKoinMocks(repositories: repositories)
@@ -191,11 +191,11 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            XCTAssertEqual(mapVM.stopSourceData, .init())
+            XCTAssertEqual(mapVM.stopLayerState, .init())
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
-            XCTAssertEqual(mapVM.stopSourceData, .init(selectedStopId: stop.id))
+            XCTAssertEqual(mapVM.stopLayerState, .init(selectedStopId: stop.id))
         }
 
         ViewHosting.host(view: sut)
@@ -548,7 +548,7 @@ final class HomeMapViewTests: XCTestCase {
                 newValue: nil as SheetNavigationStackEntry?
             )
             XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes)
-            XCTAssertEqual(mapVM.stopSourceData, .init())
+            XCTAssertEqual(mapVM.stopLayerState, .init())
         }
 
         ViewHosting.host(view: sut)
@@ -662,17 +662,17 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared, updateSourcesCalledExpectation], timeout: 5)
     }
 
-    func testUpdatesStopSourcesWhenStopDataChanges() {
-        let updateStopSourcesCalledExpectation = XCTestExpectation(description: "Update stop source called")
+    func testUpdatesStopLayersWhenStateChanges() {
+        let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
 
-        let layerManager = MockLayerManager(updateStopDataCallback: { _ in
-            updateStopSourcesCalledExpectation.fulfill()
+        let layerManager = MockLayerManager(addLayersCallback: {
+            addLayersCalledExpectation.fulfill()
         })
 
-        let stopData: StopSourceData = .init(selectedStopId: "stop1")
+        let state: StopLayerGenerator.State = .init(selectedStopId: "stop1")
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(layerManager: layerManager),
+            mapVM: .init(layerManager: layerManager, globalData: .init(objects: .init())),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
@@ -681,12 +681,12 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: stopData)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: state)
         }
 
         ViewHosting.host(view: sut)
 
-        wait(for: [hasAppeared, updateStopSourcesCalledExpectation], timeout: 5)
+        wait(for: [hasAppeared, addLayersCalledExpectation], timeout: 5)
     }
 
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {

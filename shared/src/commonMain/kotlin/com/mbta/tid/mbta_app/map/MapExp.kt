@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.map
 import com.mbta.tid.mbta_app.map.style.ArrayType
 import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.Interpolation
+import com.mbta.tid.mbta_app.map.style.LetVariable
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
@@ -46,18 +47,21 @@ object MapExp {
     fun routeAt(index: Int) = Exp.string(Exp.at(Exp(index), routesExp))
 
     // Returns true if you're currently on the stop page for this stop
-    val selectedExp = Exp.boolean(Exp.get(StopFeaturesBuilder.propIsSelectedKey))
+    fun selectedExp(state: StopLayerGenerator.State) =
+        if (state.selectedStopId != null)
+            Exp.eq(Exp.get(StopFeaturesBuilder.propIdKey), Exp(state.selectedStopId))
+        else Exp(false)
 
     // Returns the iconSize of the stop icon, interpolated by zoom level, and sized differently
     // depending on the route served by the stop.
-    val selectedSizeExp =
+    fun selectedSizeExp(state: StopLayerGenerator.State) =
         Exp.interpolate(
             Interpolation.Exponential(1.5),
             Exp.zoom(),
             Exp(MapDefaults.midZoomThreshold) to
-                withMultipliers(0.25, modeResize = listOf(0.5, 2, 1.75)),
-            Exp(13) to withMultipliers(0.625, modeResize = listOf(1, 1.5, 1.5)),
-            Exp(14) to withMultipliers(1),
+                withMultipliers(0.25, modeResize = listOf(0.5, 2, 1.75), state),
+            Exp(13) to withMultipliers(0.625, modeResize = listOf(1, 1.5, 1.5), state),
+            Exp(14) to withMultipliers(1, state = state),
         )
 
     val isBusExp = Exp.all(singleRouteTypeExp, Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)))
@@ -212,14 +216,18 @@ object MapExp {
         )
 
     // The modeResize array must contain 3 entries for [BUS, COMMUTER, fallback]
-    fun withMultipliers(base: Number, modeResize: List<Number> = listOf(1, 1, 1)): Exp<Number> {
+    fun withMultipliers(
+        base: Number,
+        modeResize: List<Number> = listOf(1, 1, 1),
+        state: StopLayerGenerator.State,
+    ): Exp<Number> {
         return Exp.product(
             Exp(base),
             modeSizeMultiplierExp(resizeWith = modeResize),
             // TODO: We actually want to give the icon a halo rather than resize, but that is only
             // supported for SDFs, which can only be one color. Alternates of stop icon SVGs with
             // halo applied?
-            Exp.case(selectedExp to Exp(1.25), Exp(1)),
+            Exp.case(selectedExp(state) to Exp(1.25), Exp(1)),
         )
     }
 
@@ -247,8 +255,25 @@ object MapExp {
         )
     }
 
+    /**
+     * Checks if the [lhs] (a dynamic list, e.g. from properties) is not equal to the [rhs] (a
+     * static list, e.g. from code).
+     */
+    fun <T> listNotEq(lhs: Exp<List<T>>, rhs: List<Exp<T>>): Exp<Boolean> {
+        val lhsVar = LetVariable<List<T>>("lhs")
+        val clauses =
+            rhs.mapIndexed { index, rhsValue ->
+                    Exp.notEq(Exp.at(Exp(index), Exp.`var`(lhsVar)), rhsValue)
+                }
+                .toTypedArray()
+        return Exp.let(
+            lhsVar boundTo lhs,
+            body = Exp.any(Exp.notEq(Exp.length(Exp.`var`(lhsVar)), Exp(rhs.size)), *clauses),
+        )
+    }
+
     // Get the label to display for this stop
-    fun stopLabelTextExp(forBus: Boolean = false): Exp<String> {
+    fun stopLabelTextExp(forBus: Boolean = false, state: StopLayerGenerator.State): Exp<String> {
         return Exp.step(
             Exp.zoom(),
             // Above mid zoom, never display any labels
@@ -257,7 +282,7 @@ object MapExp {
             Exp(MapDefaults.midZoomThreshold) to
                 Exp.case(
                     // selected label on selectedPinlayer
-                    selectedExp to Exp(""),
+                    selectedExp(state) to Exp(""),
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)) to Exp(""),
                     Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
                         busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey)),
@@ -267,7 +292,7 @@ object MapExp {
             Exp(MapDefaults.closeZoomThreshold) to
                 Exp.case(
                     // selected label on selectedPinlayer
-                    selectedExp to Exp(""),
+                    selectedExp(state) to Exp(""),
                     Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(""),
                     fallback =
                         busSwitchExp(forBus = forBus, Exp.get(StopFeaturesBuilder.propNameKey)),

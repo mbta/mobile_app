@@ -26,7 +26,6 @@ class StopFeaturesBuilderTest {
 
         val collection =
             StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(selectedStopId = null),
                 stops =
                     mapOf(
                         stop1.id to
@@ -34,6 +33,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop1,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BLUE),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -42,6 +42,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop2,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.GREEN),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -55,6 +56,7 @@ class StopFeaturesBuilderTest {
                                         MapStopRoute.MATTAPAN,
                                         MapStopRoute.BUS,
                                     ),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -63,6 +65,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop4,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -71,6 +74,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop5,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -79,6 +83,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop6,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -107,11 +112,7 @@ class StopFeaturesBuilderTest {
                 alertsByStop = emptyMap(),
             )
         val collection =
-            StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(),
-                stops = stops,
-                routeSourceDetails = routeLines,
-            )
+            StopFeaturesBuilder.buildCollection(stops = stops, routeSourceDetails = routeLines)
         val snappedStopCoordinates =
             Position(latitude = 42.3961623851223, longitude = -71.14129664101432)
 
@@ -123,71 +124,6 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `selected stop has prop set`() = runBlocking {
-        val objects = TestData.clone()
-        val selectedStop = objects.getStop("place-alfcl")
-        val otherStop = objects.getStop("place-davis")
-
-        val collection =
-            StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(selectedStopId = selectedStop.id),
-                stops =
-                    mapOf(selectedStop.id to selectedStop, otherStop.id to otherStop).mapValues {
-                        (_, stop) ->
-                        MapStop(
-                            stop = stop,
-                            routes = mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
-                            routeTypes = listOf(MapStopRoute.RED),
-                            isTerminal = false,
-                            alerts = null,
-                        )
-                    },
-                routeSourceDetails = emptyList(),
-            )
-
-        assertEquals(2, collection.features.size)
-
-        val selectedFeature = collection.features.find { it.id == selectedStop.id }
-        val otherFeature = collection.features.find { it.id == otherStop.id }
-        assertNotNull(selectedFeature)
-        assertEquals(true, selectedFeature.properties[StopFeaturesBuilder.propIsSelectedKey])
-
-        assertEquals(false, otherFeature?.properties?.get(StopFeaturesBuilder.propIsSelectedKey))
-    }
-
-    @Test
-    fun `filtered stop ids`(): Unit = runBlocking {
-        val collection =
-            StopFeaturesBuilder.buildCollection(
-                stopData =
-                    StopSourceData(
-                        filteredStopIds = listOf(MapTestDataHelper.stopAlewife.id),
-                        selectedStopId = null,
-                    ),
-                stops =
-                    mapOf(
-                            MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
-                            MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
-                        )
-                        .mapValues { (_, stop) ->
-                            MapStop(
-                                stop = stop,
-                                routes =
-                                    mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
-                                routeTypes = listOf(MapStopRoute.RED),
-                                isTerminal = false,
-                                alerts = null,
-                            )
-                        },
-                routeSourceDetails = emptyList(),
-            )
-
-        assertEquals(1, collection.features.size)
-
-        assertNotNull(collection.features.find { it.id == MapTestDataHelper.stopAlewife.id })
-    }
-
-    @Test
     fun `stops features have service status`() = runBlocking {
         val objects = MapTestDataHelper.objects
 
@@ -195,7 +131,6 @@ class StopFeaturesBuilderTest {
 
         val collection =
             StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(),
                 stops =
                     mapOf(
                         "70061" to
@@ -204,6 +139,8 @@ class StopFeaturesBuilderTest {
                                 routes =
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeRed.id to setOf(0, 1)),
                                 isTerminal = true,
                                 alerts = null,
                             ),
@@ -213,6 +150,8 @@ class StopFeaturesBuilderTest {
                                 routes =
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeRed.id to setOf(0, 1)),
                                 isTerminal = true,
                                 alerts = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                             ),
@@ -224,6 +163,8 @@ class StopFeaturesBuilderTest {
                                         MapStopRoute.ORANGE to listOf(MapTestDataHelper.routeOrange)
                                     ),
                                 routeTypes = listOf(MapStopRoute.ORANGE),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeOrange.id to setOf(0, 1)),
                                 isTerminal = false,
                                 alerts = mapOf(MapStopRoute.ORANGE to StopAlertState.Suspension),
                             ),
@@ -266,11 +207,7 @@ class StopFeaturesBuilderTest {
                 alertsByStop = emptyMap(),
             )
         val collection =
-            StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(),
-                stops = stops,
-                routeSourceDetails = routeLines,
-            )
+            StopFeaturesBuilder.buildCollection(stops = stops, routeSourceDetails = routeLines)
 
         assertEquals(4, collection.features.size)
         val assemblyFeature =
@@ -302,11 +239,7 @@ class StopFeaturesBuilderTest {
             )
 
         val collection =
-            StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(),
-                stops = stops,
-                routeSourceDetails = emptyList(),
-            )
+            StopFeaturesBuilder.buildCollection(stops = stops, routeSourceDetails = emptyList())
 
         assertEquals(2, collection.features.size)
         val assemblyFeature =
@@ -330,11 +263,7 @@ class StopFeaturesBuilderTest {
             )
 
         val collection =
-            StopFeaturesBuilder.buildCollection(
-                stopData = StopSourceData(),
-                stops = stops,
-                routeSourceDetails = emptyList(),
-            )
+            StopFeaturesBuilder.buildCollection(stops = stops, routeSourceDetails = emptyList())
 
         assertEquals(2, collection.features.size)
         val alewifeFeature = collection.features.find { it.id == MapTestDataHelper.stopAlewife.id }

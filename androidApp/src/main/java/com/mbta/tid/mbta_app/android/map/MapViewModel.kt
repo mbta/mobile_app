@@ -15,9 +15,9 @@ import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
-import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -53,6 +53,7 @@ interface IMapViewModel {
     val configLoadAttempted: StateFlow<Boolean>
     val globalMapData: Flow<GlobalMapData?>
     val selectedStop: StateFlow<Stop?>
+    val stopFilter: StateFlow<StopDetailsFilter?>
     val showRecenterButton: StateFlow<Boolean>
     val showTripCenterButton: StateFlow<Boolean>
 
@@ -64,7 +65,7 @@ interface IMapViewModel {
 
     suspend fun refreshRouteLineData(globalMapData: GlobalMapData?)
 
-    suspend fun refreshStopFeatures(selectedStop: Stop?, globalMapData: GlobalMapData?)
+    suspend fun refreshStopFeatures(globalMapData: GlobalMapData?)
 
     suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?)
 
@@ -73,6 +74,8 @@ interface IMapViewModel {
     fun setSelectedVehicle(selectedVehicle: Vehicle?)
 
     fun setSelectedStop(stop: Stop?)
+
+    fun setStopFilter(stopFilter: StopDetailsFilter?)
 
     fun updateCenterButtonVisibility(
         currentLocation: Location?,
@@ -111,6 +114,8 @@ open class MapViewModel(
     override val selectedVehicle = _selectedVehicle.asStateFlow()
     private val _selectedStop = MutableStateFlow<Stop?>(null)
     override val selectedStop = _selectedStop.asStateFlow()
+    private val _stopFilter = MutableStateFlow<StopDetailsFilter?>(null)
+    override val stopFilter = _stopFilter.asStateFlow()
     private val _showRecenterButton = MutableStateFlow(false)
     override val showRecenterButton = _showRecenterButton.asStateFlow()
     private val _showTripCenterButton = MutableStateFlow(false)
@@ -128,7 +133,7 @@ open class MapViewModel(
         merge(_globalResponse, alertsData).collectLatest {
             refreshGlobalMapData(Clock.System.now())
             refreshRouteLineData(_globalMapData.value)
-            refreshStopFeatures(_selectedStop.value, _globalMapData.value)
+            refreshStopFeatures(_globalMapData.value)
         }
     }
 
@@ -166,15 +171,10 @@ open class MapViewModel(
             )
     }
 
-    override suspend fun refreshStopFeatures(selectedStop: Stop?, globalMapData: GlobalMapData?) {
+    override suspend fun refreshStopFeatures(globalMapData: GlobalMapData?) {
         val routeLineData = railRouteSourceData.first() ?: return
         _stopSourceData.value =
-            StopFeaturesBuilder.buildCollection(
-                    StopSourceData(selectedStopId = selectedStop?.id),
-                    globalMapData,
-                    routeLineData,
-                )
-                .toMapbox()
+            StopFeaturesBuilder.buildCollection(globalMapData, routeLineData).toMapbox()
     }
 
     override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {
@@ -191,6 +191,10 @@ open class MapViewModel(
 
     override fun setSelectedStop(stop: Stop?) {
         _selectedStop.value = stop
+    }
+
+    override fun setStopFilter(stopFilter: StopDetailsFilter?) {
+        _stopFilter.value = stopFilter
     }
 
     fun setShowRecenterButton(show: Boolean) {

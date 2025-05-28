@@ -100,6 +100,7 @@ fun HomeMapView(
     val coroutineScope = rememberCoroutineScope()
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     val selectedStop by viewModel.selectedStop.collectAsState(null)
+    val stopFilter by viewModel.stopFilter.collectAsState(null)
 
     val configLoadAttempted by viewModel.configLoadAttempted.collectAsState(initial = false)
     val railRouteShapes by viewModel.railRouteShapes.collectAsState(initial = null)
@@ -126,6 +127,11 @@ fun HomeMapView(
     val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+
+    val stopLayerGeneratorState =
+        remember(selectedStop, stopFilter) {
+            StopLayerGenerator.State(selectedStopId = selectedStop?.id, stopFilter = stopFilter)
+        }
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -169,11 +175,12 @@ fun HomeMapView(
         val railRouteShapes = railRouteShapes ?: return
         val stopMapData = stopMapData ?: return
 
+        val stopFilter = stopFilter
         val filteredRoutes =
-            if (currentNavEntry is SheetRoutes.StopDetails && currentNavEntry.stopFilter != null) {
+            if (stopFilter != null) {
                 RouteFeaturesBuilder.filteredRouteShapesForStop(
                     stopMapData,
-                    currentNavEntry.stopFilter,
+                    stopFilter,
                     routeCardData,
                 )
             } else {
@@ -189,6 +196,7 @@ fun HomeMapView(
             updateRouteSourceData(newRailData)
             addLayers(
                 filteredRoutes,
+                stopLayerGeneratorState,
                 globalResponse,
                 if (isDarkMode) ColorPalette.dark else ColorPalette.light,
             )
@@ -201,6 +209,7 @@ fun HomeMapView(
             updateRouteSourceData(routeData)
             addLayers(
                 railRouteShapes ?: return@run,
+                stopLayerGeneratorState,
                 globalResponse ?: return@run,
                 if (isDarkMode) ColorPalette.dark else ColorPalette.light,
             )
@@ -229,16 +238,18 @@ fun HomeMapView(
 
     suspend fun handleNavChange() {
         handleNearbyNavRestoration()
-        val stopId =
+        val stopDetails =
             when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry.stopId
+                is SheetRoutes.StopDetails -> currentNavEntry
                 else -> null
             }
-        if (stopId == null) {
+        if (stopDetails == null) {
             viewModel.setSelectedStop(null)
+            viewModel.setStopFilter(null)
             return
         }
-        viewModel.setSelectedStop(globalResponse?.getStop(stopId))
+        viewModel.setSelectedStop(globalResponse?.getStop(stopDetails.stopId))
+        viewModel.setStopFilter(stopDetails.stopFilter)
     }
 
     val cameraZoomFlow =
@@ -270,6 +281,7 @@ fun HomeMapView(
             layerManager.run {
                 addLayers(
                     railRouteShapes ?: return@run,
+                    stopLayerGeneratorState,
                     globalResponse ?: return@run,
                     if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                 )
@@ -325,18 +337,25 @@ fun HomeMapView(
                 }
                 LaunchedEffect(railRouteSourceData) {
                     refreshRouteLineSource()
-                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
+                    viewModel.refreshStopFeatures(globalMapData)
                 }
-                LaunchedEffect(selectedStop) {
-                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
-                    positionViewportToStop()
-                }
+                LaunchedEffect(selectedStop) { positionViewportToStop() }
                 LaunchedEffect(stopSourceData) { refreshStopSource() }
                 LaunchedEffect(selectedVehicle) {
                     if (
                         selectedVehicle != null && selectedVehicle.id != previousSelectedVehicleId
                     ) {
                         viewportProvider.vehicleOverview(selectedVehicle, selectedStop, density)
+                    }
+                }
+                LaunchedEffect(stopLayerGeneratorState) {
+                    layerManager.run {
+                        addLayers(
+                            railRouteShapes ?: return@run,
+                            stopLayerGeneratorState,
+                            globalResponse ?: return@run,
+                            if (isDarkMode) ColorPalette.dark else ColorPalette.light,
+                        )
                     }
                 }
 

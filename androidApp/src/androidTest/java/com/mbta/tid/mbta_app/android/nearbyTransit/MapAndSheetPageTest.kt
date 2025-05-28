@@ -45,6 +45,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -295,6 +296,7 @@ class MapAndSheetPageTest : KoinTest {
             override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
             override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
+            override val stopFilter: StateFlow<StopDetailsFilter?> = MutableStateFlow(value = null)
             override val showRecenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val showTripCenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             var loadConfigCalledCount = 0
@@ -311,10 +313,7 @@ class MapAndSheetPageTest : KoinTest {
 
             override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {}
 
-            override suspend fun refreshStopFeatures(
-                selectedStop: Stop?,
-                globalMapData: GlobalMapData?,
-            ) {}
+            override suspend fun refreshStopFeatures(globalMapData: GlobalMapData?) {}
 
             override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
 
@@ -323,6 +322,10 @@ class MapAndSheetPageTest : KoinTest {
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
 
             override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun setStopFilter(stopFilter: StopDetailsFilter?) {
                 TODO("Not yet implemented")
             }
 
