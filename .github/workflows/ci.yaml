@@ -41,15 +41,17 @@ jobs:
     permissions:
       contents: read
     needs: check-changes
-    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android == 'true' }}
     uses: ./.github/workflows/test-android.yaml
+    with:
+      skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
   test-ios:
     name: Test for iOS
     permissions:
       contents: read
     needs: check-changes
-    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.ios == 'true' }}
     uses: ./.github/workflows/test-ios.yaml
+    with:
+      skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.ios == 'false' }}
     secrets:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
@@ -61,13 +63,13 @@ jobs:
       contents: read
       pull-requests: write
     needs: check-changes
-    if: ${{ github.event_name != 'pull_request' || needs.check-changes.outputs.android == 'true' }}
     uses: ./.github/workflows/build-android.yaml
     with:
       build-type: "Debug"
       deploy: false
       flavor: "Staging"
       sentry-environment: "debug"
+      skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
     secrets:
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
       GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}

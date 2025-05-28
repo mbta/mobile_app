@@ -468,6 +468,50 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [reorderExpectation], timeout: 1)
     }
 
+    func testFetchesPredictionsWhenNoStops() throws {
+        let joinsPredictionsExpectation = expectation(description: "joins predictions")
+
+        let objects = ObjectCollectionBuilder()
+
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(objects: objects)
+
+        var sut = NearbyTransitView(
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
+            predictionsRepository: MockPredictionsRepository(
+                onConnectV2: { _ in joinsPredictionsExpectation.fulfill() },
+                connectV2Response: .init(objects: objects)
+            ),
+            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects)),
+            location: .constant(mockLocation),
+            isReturningFromBackground: .constant(false),
+            globalData: .init(objects: objects),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            now: Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        )
+        sut.globalRepository = MockGlobalRepository(response: .init(objects: objects))
+
+        let hasAppeared = sut.on(\.didAppear) { view in
+            let cards = view.findAll(RouteCard.self)
+            XCTAssertEqual(cards.count, 5)
+            for card in cards {
+                XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
+            }
+        }
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [hasAppeared], timeout: 1)
+
+        nearbyVM.nearbyState = getNearbyState(objects: objects)
+
+        wait(for: [joinsPredictionsExpectation], timeout: 1)
+    }
+
     @MainActor func testRendersUpdatedPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()

@@ -111,7 +111,7 @@ class StopDetailsViewTest {
         val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setGlobalResponse(global)
-        viewModel.setRouteCardData(
+        viewModel.setUnfilteredRouteCardData(
             listOf(
                 RouteCardData(
                     lineOrRoute,
@@ -179,34 +179,26 @@ class StopDetailsViewTest {
     fun testStopDetailsViewDisplaysFilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setRouteCardData(
-            listOf(
-                RouteCardData(
-                    lineOrRoute,
-                    listOf(
-                        RouteCardData.RouteStopData(
-                            route,
-                            stop,
-                            listOf(
-                                RouteCardData.Leaf(
-                                    lineOrRoute,
-                                    stop,
-                                    directionId = 0,
-                                    listOf(routePatternOne),
-                                    setOf(stop.id),
-                                    listOf(UpcomingTrip(trip, prediction)),
-                                    alertsHere = emptyList(),
-                                    allDataLoaded = false,
-                                    hasSchedulesToday = true,
-                                    alertsDownstream = emptyList(),
-                                    context = RouteCardData.Context.StopDetailsUnfiltered,
-                                )
-                            ),
-                            GlobalResponse(builder),
-                        )
-                    ),
-                    now,
-                )
+        viewModel.setFilteredRouteStopData(
+            RouteCardData.RouteStopData(
+                route,
+                stop,
+                listOf(
+                    RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
+                        directionId = 0,
+                        listOf(routePatternOne),
+                        setOf(stop.id),
+                        listOf(UpcomingTrip(trip, prediction)),
+                        alertsHere = emptyList(),
+                        allDataLoaded = false,
+                        hasSchedulesToday = true,
+                        alertsDownstream = emptyList(),
+                        context = RouteCardData.Context.StopDetailsFiltered,
+                    )
+                ),
+                GlobalResponse(builder),
             )
         )
         val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
@@ -256,7 +248,7 @@ class StopDetailsViewTest {
         val viewModel = StopDetailsViewModel.mocked()
 
         viewModel.setGlobalResponse(global)
-        viewModel.setRouteCardData(
+        viewModel.setUnfilteredRouteCardData(
             listOf(
                 RouteCardData(
                     lineOrRoute,
@@ -323,34 +315,26 @@ class StopDetailsViewTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setRouteCardData(
-            listOf(
-                RouteCardData(
-                    lineOrRoute,
-                    listOf(
-                        RouteCardData.RouteStopData(
-                            route,
-                            stop,
-                            listOf(
-                                RouteCardData.Leaf(
-                                    lineOrRoute,
-                                    stop,
-                                    directionId = 0,
-                                    listOf(routePatternOne),
-                                    setOf(stop.id),
-                                    listOf(UpcomingTrip(trip, prediction)),
-                                    alertsHere = listOf(alert),
-                                    allDataLoaded = false,
-                                    hasSchedulesToday = true,
-                                    alertsDownstream = emptyList(),
-                                    RouteCardData.Context.StopDetailsUnfiltered,
-                                )
-                            ),
-                            GlobalResponse(builder),
-                        )
-                    ),
-                    now,
-                )
+        viewModel.setFilteredRouteStopData(
+            RouteCardData.RouteStopData(
+                route,
+                stop,
+                listOf(
+                    RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
+                        directionId = 0,
+                        listOf(routePatternOne),
+                        setOf(stop.id),
+                        listOf(UpcomingTrip(trip, prediction)),
+                        alertsHere = listOf(alert),
+                        allDataLoaded = false,
+                        hasSchedulesToday = true,
+                        alertsDownstream = emptyList(),
+                        RouteCardData.Context.StopDetailsFiltered,
+                    )
+                ),
+                GlobalResponse(builder),
             )
         )
         val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())

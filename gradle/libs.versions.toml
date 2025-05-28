@@ -1,19 +1,27 @@
 [versions]
 accompanist = "0.37.3"
+# changelog: https://developer.android.com/jetpack/androidx/releases/compose-material3
 android-material3 = "1.3.2"
+# changelog: https://developer.android.com/jetpack/androidx/releases/activity
 androidx-activityCompose = "1.9.1"
+# changelog: https://developer.android.com/jetpack/androidx/releases/navigation
 androidx-navigationCompose = "2.9.0"
+# changelog: https://developer.android.com/jetpack/androidx/releases/test
 androidx-test-monitor = "1.7.2"
 androidx-test-rules = "1.6.1"
+# changelog: https://developer.android.com/build/releases/past-releases
 agp = "8.7.2"
-# see https://developer.android.com/develop/ui/compose/bom/bom-mapping
-# and https://developer.android.com/jetpack/androidx/releases/compose for release notes
-compose-bom = "2025.05.00"
+# bom: https://developer.android.com/develop/ui/compose/bom/bom-mapping
+# changelog: https://developer.android.com/jetpack/androidx/releases/compose
+compose-bom = "2025.05.01"
 compose-placeholder-material3= "1.0.11"
 compose-shimmer= "1.3.2"
+# changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
 cyclonedx = "2.3.0"
-datastorePreferencesCore = "1.1.6"
-firebase-bom = "33.13.0"
+# changelog: https://developer.android.com/jetpack/androidx/releases/datastore
+datastorePreferencesCore = "1.1.7"
+# bom/changelog: https://firebase.google.com/support/release-notes/android
+firebase-bom = "33.14.0"
 kotlin = "2.1.20"
 javaphoenixclient = "1.3.1"
 junit = "4.13.2"
@@ -22,6 +30,7 @@ kotlinpoet = "2.2.0"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxDatetime = "0.6.2"
 ktor = "3.1.3"
+# changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.12.0"
 mapboxTurf = "7.4.0"
 mokkery = "2.7.2"
@@ -34,6 +43,7 @@ skie = "0.10.2-preview.2.1.20"
 spatialk = "0.3.0"
 spotless = "7.0.3"
 turbine = "1.2.0"
+# changelog: https://developer.android.com/jetpack/androidx/releases/lifecycle
 lifecycleRuntimeTesting = "2.9.0"
 
 [libraries]
