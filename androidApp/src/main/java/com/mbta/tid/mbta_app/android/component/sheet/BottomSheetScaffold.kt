@@ -227,7 +227,7 @@ private fun StandardBottomSheet(
                             SheetValue.Hidden at layoutHeight
                         }
                         SheetValue.Small at layoutHeight - smallHeightPx
-                        SheetValue.Medium at (layoutHeight * 0.4).toFloat()
+                        SheetValue.Medium at (layoutHeight * 0.44).toFloat()
                         SheetValue.Large at 0f
                     }
 
