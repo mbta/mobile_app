@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -21,15 +23,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.fromHex
-import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -48,32 +53,20 @@ fun FavoriteConfirmationDialog(
 
     var favoritesToSave: Map<Int, Boolean> by remember { mutableStateOf(proposedFavorites) }
 
-    AlertDialog(
-        containerColor = colorResource(R.color.fill1),
-        onDismissRequest = onClose,
-        confirmButton = {
-            TextButton({
-                val newFavorites =
-                    favoritesToSave.mapKeys { (directionId, _isFavorite) ->
-                        RouteStopDirection(lineOrRoute.id, stop.id, directionId)
-                    }
-                updateFavorites(newFavorites)
-                onClose()
-            }) {
-                Text(stringResource(R.string.add_confirmation_button))
-            }
-        },
-        dismissButton = { TextButton(onClose) { Text("Cancel") } },
-        title = {
+    Dialog(onDismissRequest = onClose) {
+        Column(
+            modifier =
+                Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp))
+        ) {
             Text(
                 AnnotatedString.fromHtml(
                     stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
                 ),
                 textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp).semantics { heading() },
             )
-        },
-        text = {
-            Column(modifier = Modifier.haloContainer(1.dp)) {
+            Column() {
+                HaloSeparator()
                 directions.mapIndexed { idx, direction ->
                     Button(
                         onClick = {
@@ -89,7 +82,10 @@ fun FavoriteConfirmationDialog(
                                 contentColor = colorResource(R.color.text),
                             ),
                         shape = RectangleShape,
-                        modifier = Modifier.background(color = Color.White),
+                        modifier =
+                            Modifier.background(color = Color.White).semantics {
+                                selected = favoritesToSave.getOrDefault(direction.id, false)
+                            },
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -107,9 +103,25 @@ fun FavoriteConfirmationDialog(
                         HaloSeparator()
                     }
                 }
+                HaloSeparator()
             }
-        },
-    )
+
+            Row(modifier = Modifier.padding(16.dp)) {
+                Spacer(Modifier.weight(1F))
+                TextButton(onClose) { Text("Cancel") }
+                TextButton({
+                    val newFavorites =
+                        favoritesToSave.mapKeys { (directionId, _isFavorite) ->
+                            RouteStopDirection(lineOrRoute.id, stop.id, directionId)
+                        }
+                    updateFavorites(newFavorites)
+                    onClose()
+                }) {
+                    Text(stringResource(R.string.add_confirmation_button))
+                }
+            }
+        }
+    }
 }
 
 @Preview
