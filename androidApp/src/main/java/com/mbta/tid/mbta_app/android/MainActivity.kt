@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -47,6 +48,15 @@ class MainActivity : ComponentActivity() {
                     )
                 },
         )
+
+        val deepLinkUri = intent.data?.takeIf { intent.action == Intent.ACTION_VIEW }
+        when {
+            deepLinkUri?.path == "/" -> {}
+            deepLinkUri != null -> {
+                Log.w("MainActivity", "Unhandled deep link URI $deepLinkUri")
+            }
+            else -> {}
+        }
 
         setContent {
             MyApplicationTheme {
