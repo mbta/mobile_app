@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -97,7 +98,7 @@ data class RouteCardData(
         val elevatorAlerts: List<Alert>
             get() =
                 data
-                    .flatMap { it.alertsHere }
+                    .flatMap { it.alertsHere() }
                     .filter { alert -> alert.effect == Alert.Effect.ElevatorClosure }
                     .distinct()
 
@@ -112,10 +113,10 @@ data class RouteCardData(
         val routePatterns: List<RoutePattern>,
         val stopIds: Set<String>,
         val upcomingTrips: List<UpcomingTrip>,
-        val alertsHere: List<Alert>,
+        private val alertsHere: List<Alert>,
         val allDataLoaded: Boolean,
         val hasSchedulesTodayByPattern: Map<String, Boolean>,
-        val alertsDownstream: List<Alert>,
+        private val alertsDownstream: List<Alert>,
         val context: Context,
     ) {
 
@@ -167,7 +168,21 @@ data class RouteCardData(
                     it.significance >= AlertSignificance.Secondary
             } ?: alertsDownstream.firstOrNull()
 
-        private data class PotentialService(val routeId: String, val headsign: String)
+        fun alertsHere(tripId: String? = null) =
+            alertsHere.filter { alert ->
+                (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+            }
+
+        fun alertsDownstream(tripId: String? = null) =
+            alertsDownstream.filter { alert ->
+                (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+            }
+
+        private data class PotentialService(
+            val routeId: String,
+            val headsign: String,
+            val routePatternIds: Set<String>,
+        )
 
         /**
          * Get all routes and headsigns that might be shown for this leaf. For bus, the only
@@ -181,27 +196,46 @@ data class RouteCardData(
             representativeRoute: Route,
             globalData: GlobalResponse?,
         ): Set<PotentialService> {
-            val potentialService = mutableSetOf<PotentialService>()
+            val potentialService: MutableMap<Pair<String, String>, MutableSet<String>> =
+                mutableMapOf()
             val cutoffTime = now + 120.minutes
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
-            val tripsToConsider = if (isBus) tripsUpcoming.take(2) else tripsUpcoming
+            val tripsToConsider =
+                if (isBus) tripsUpcoming.take(TYPICAL_LEAF_ROWS) else tripsUpcoming
             for (trip in tripsToConsider) {
                 if (trip.isUpcomingWithin(now, cutoffTime)) {
-                    potentialService.add(PotentialService(trip.trip.routeId, trip.headsign))
+                    val existingPatterns =
+                        potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
+                            mutableSetOf()
+                        }
+                    if (trip.trip.routePatternId != null) {
+                        existingPatterns.add(trip.trip.routePatternId)
+                    }
                 }
             }
             if (!isBus) {
                 for (routePattern in routePatterns) {
-                    if (routePattern.isTypical()) {
+                    if (
+                        routePattern.isTypical() &&
+                            // If this pattern is already represented under a different headsign,
+                            // then we don't need to represent it separately.
+                            !potentialService.values
+                                .flatMapTo(mutableSetOf(), { it })
+                                .contains(routePattern.id)
+                    ) {
                         val headsign =
                             globalData?.trips?.get(routePattern.representativeTripId)?.headsign
                                 ?: continue
-                        potentialService.add(PotentialService(routePattern.routeId, headsign))
+                        potentialService
+                            .getOrPut(Pair(routePattern.routeId, headsign)) { mutableSetOf() }
+                            .add(routePattern.id)
                     }
                 }
             }
             return potentialService
+                .map { (key, patternIds) -> PotentialService(key.first, key.second, patternIds) }
+                .toSet()
         }
 
         /**
@@ -233,11 +267,9 @@ data class RouteCardData(
             globalData: GlobalResponse?,
         ): Map<String, ByHeadsignData> {
             return potentialService
-                .map { (_, headsign) ->
+                .map { (_, headsign, patternIds) ->
                     val routePatterns =
-                        routePatterns.filter {
-                            globalData?.trips?.get(it.representativeTripId)?.headsign == headsign
-                        }
+                        routePatterns.filter { pattern -> patternIds.contains(pattern.id) }
 
                     val routePatternIds = routePatterns.map { it.id }.toSet()
 
@@ -332,7 +364,7 @@ data class RouteCardData(
             val disruptedHeadsignBranches =
                 disruptedHeadsigns
                     .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
-                    .take(3)
+                    .take(BRANCHING_LEAF_ROWS)
                     .map { (headsign, groupedData) ->
                         val route =
                             if (shouldIncludeRoute)
@@ -347,7 +379,7 @@ data class RouteCardData(
                         )
                     }
 
-            var remainingRowsToShow = max(1, 3 - disruptedHeadsignBranches.size)
+            var remainingRowsToShow = max(1, BRANCHING_LEAF_ROWS - disruptedHeadsignBranches.size)
 
             val upcomingTripBranches =
                 tripsWithFormat.take(remainingRowsToShow).map { (upcomingTrip, formatted) ->
@@ -437,8 +469,8 @@ data class RouteCardData(
             val countTripsToDisplay =
                 when {
                     context == Context.StopDetailsFiltered -> null
-                    isBranching && routeType != RouteType.BUS -> 3
-                    else -> 2
+                    isBranching && routeType != RouteType.BUS -> BRANCHING_LEAF_ROWS
+                    else -> TYPICAL_LEAF_ROWS
                 }
 
             val tripsToShow =
@@ -582,6 +614,11 @@ data class RouteCardData(
     fun distanceFrom(position: Position): Double = this.stopData.first().stop.distanceFrom(position)
 
     companion object {
+        // For regular non-branching service, we always show up to 2 departure rows for each leaf
+        const val TYPICAL_LEAF_ROWS = 2
+        // For branching non-bus service we show up to 3 departure or disruption rows for each leaf
+        const val BRANCHING_LEAF_ROWS = 3
+
         /**
          * Build a sorted list of route cards containing realtime data for the given stops.
          *
@@ -686,7 +723,9 @@ data class RouteCardData(
                                             lineOrRoute.directions(
                                                 globalData,
                                                 stop,
-                                                patternsForStop.allPatterns,
+                                                patternsForStop.allPatterns.filter {
+                                                    it.isTypical()
+                                                },
                                             )
                                         stop.id to
                                             RouteStopDataBuilder(
@@ -872,7 +911,7 @@ data class RouteCardData(
                 val (routeOrLineId, byStopId) = entry
                 for (stopEntry in byStopId.stopData) {
                     val (stopId, byDirectionId) = stopEntry
-                    val isSubway = byStopId.lineOrRoute.isSubway
+                    val lineOrRoute = byStopId.lineOrRoute
 
                     byDirectionId.data =
                         byDirectionId.data
@@ -883,14 +922,14 @@ data class RouteCardData(
                                     filterAtTime,
                                     cutoffTime,
                                     showAllPatternsWhileLoading,
-                                    isSubway,
+                                    lineOrRoute,
                                     globalData,
                                 )
                             }
                             .mapValues {
                                 val (directionId, leafBuilder) = it
                                 leafBuilder
-                                    .filterCancellations(isSubway, context)
+                                    .filterCancellations(lineOrRoute.isSubway, context)
                                     .filterArrivalOnly()
                             }
                 }
@@ -1044,8 +1083,8 @@ data class RouteCardData(
          * true:
          * - Any pattern that it serves that isn't served by an earlier stop is typical
          * - Any pattern that it serves that isn't served by an earlier stop has an upcoming trip
-         *   within the cutoff time (if all of the upcoming trips are for patterns served by an
-         *   earlier stop, then this leaf should not be shown)
+         *   within the cutoff parameters (if all of the upcoming trips are for patterns served by
+         *   an earlier stop, then this leaf should not be shown)
          * - it has upcoming service that is not arrival-only
          */
         fun shouldShow(
@@ -1053,16 +1092,21 @@ data class RouteCardData(
             filterAtTime: Instant,
             cutoffTime: Instant?,
             showAllPatternsWhileLoading: Boolean,
-            isSubway: Boolean,
+            lineOrRoute: LineOrRoute,
             globalData: GlobalResponse,
         ): Boolean {
             if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
+            val isBus = lineOrRoute.type == RouteType.BUS
+            val isSubway = lineOrRoute.isSubway
+
+            // Only take the next 2 (if bus) or 3 upcoming trips into account, since more than that
+            // can never be shown in nearby transit.
             val upcomingTripsInCutoff =
                 when (cutoffTime) {
                     null -> this.upcomingTrips?.filter { it.isUpcoming() }
                     else ->
                         this.upcomingTrips?.filter { it.isUpcomingWithin(filterAtTime, cutoffTime) }
-                }
+                }?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)
 
             val hasUnseenUpcomingTrip =
                 upcomingTripsInCutoff?.any { upcomingTrip ->
@@ -1111,6 +1155,15 @@ data class RouteCardData(
         }
     }
 }
+
+@JvmName("optionalHasContext")
+fun List<RouteCardData>?.hasContext(context: RouteCardData.Context): Boolean =
+    this?.hasContext(context) == true
+
+fun List<RouteCardData>.hasContext(context: RouteCardData.Context): Boolean =
+    this.any {
+        it.stopData.any { stopData -> stopData.data.any { leaf -> leaf.context == context } }
+    }
 
 fun List<RouteCardData>.sort(
     distanceFrom: Position?,

@@ -14,12 +14,14 @@ import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.FavoritesRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ILastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -51,6 +53,7 @@ import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
@@ -103,6 +106,7 @@ interface IRepositories {
     val vehicle: IVehicleRepository?
     val vehicles: IVehiclesRepository?
     val visitHistory: IVisitHistoryRepository
+    val favorites: IFavoritesRepository
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -129,6 +133,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val vehicle: IVehicleRepository by inject()
     override val vehicles: IVehiclesRepository by inject()
     override val visitHistory: IVisitHistoryRepository by inject()
+    override val favorites: IFavoritesRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -158,6 +163,7 @@ class RealRepositories : IRepositories {
     override val vehicle = null
     override val vehicles = null
     override val visitHistory = VisitHistoryRepository()
+    override val favorites = FavoritesRepository()
 }
 
 class MockRepositories : IRepositories {
@@ -187,6 +193,7 @@ class MockRepositories : IRepositories {
     override var vehicle: IVehicleRepository = MockVehicleRepository()
     override var vehicles: IVehiclesRepository = MockVehiclesRepository()
     override var visitHistory: IVisitHistoryRepository = VisitHistoryRepository()
+    override val favorites: IFavoritesRepository = MockFavoritesRepository()
 
     fun useObjects(objects: ObjectCollectionBuilder) {
         alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))

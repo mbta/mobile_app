@@ -66,6 +66,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -221,6 +222,13 @@ class MapAndSheetPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -245,12 +253,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -341,6 +344,12 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         val mockMapVM = MockMapVM()
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -366,12 +375,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                         mapViewModel = mockMapVM,
                     )
@@ -389,6 +393,13 @@ class MapAndSheetPageTest : KoinTest {
 
     @Test
     fun testHidesMap() {
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -413,12 +424,7 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -447,6 +453,12 @@ class MapAndSheetPageTest : KoinTest {
         locationDataManager.hasPermission = true
 
         val koinApplication = testKoinApplication(builder, clock = mockClock)
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -473,33 +485,36 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel =
-                            SearchResultsViewModel(
-                                MockAnalytics(),
-                                MockSearchResultRepository(),
-                                VisitHistoryUsecase(MockVisitHistoryRepository()),
-                            ),
+                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
             }
         }
 
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { viewportProvider.getViewportImmediate().cameraState != null }
         val updatedCamera =
             CameraState(Point.fromLngLat(1.1, 1.1), EdgeInsets(0.0, 0.0, 0.0, 0.0), 1.0, 0.0, 0.0)
         viewportProvider.setIsManuallyCentering(true)
         viewportProvider.updateCameraState(updatedCamera)
-        viewportProvider.viewport.setCameraOptions {
-            center(updatedCamera.center)
-            zoom(updatedCamera.zoom)
+        runBlocking {
+            viewportProvider.withViewport { viewport ->
+                viewport.setCameraOptions {
+                    center(updatedCamera.center)
+                    zoom(updatedCamera.zoom)
+                }
+            }
         }
         viewportProvider.setIsManuallyCentering(false)
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { viewportProvider.viewport.cameraState != null }
+        composeTestRule.waitUntil { viewportProvider.getViewportImmediate().cameraState != null }
 
         assertTrue(
-            updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
+            updatedCamera.center.isRoughlyEqualTo(
+                viewportProvider.getViewportImmediate().cameraState?.center!!
+            )
         )
         assertFalse(viewportProvider.isFollowingPuck)
 
@@ -511,7 +526,9 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.waitForIdle()
 
         assertTrue(
-            updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
+            updatedCamera.center.isRoughlyEqualTo(
+                viewportProvider.getViewportImmediate().cameraState?.center!!
+            )
         )
         assertFalse(viewportProvider.isFollowingPuck)
 
@@ -522,13 +539,17 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
         composeTestRule.waitForIdle()
         composeTestRule.waitUntil {
-            !updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState!!.center)
+            !updatedCamera.center.isRoughlyEqualTo(
+                viewportProvider.getViewportImmediate().cameraState!!.center
+            )
         }
 
         assertFalse(
-            updatedCamera.center.isRoughlyEqualTo(viewportProvider.viewport.cameraState?.center!!)
+            updatedCamera.center.isRoughlyEqualTo(
+                viewportProvider.getViewportImmediate().cameraState?.center!!
+            )
         )
-        assertTrue(viewportProvider.viewport.isFollowingPuck)
+        assertTrue(viewportProvider.getViewportImmediate().isFollowingPuck)
         assertTrue(viewportProvider.isFollowingPuck)
     }
 }

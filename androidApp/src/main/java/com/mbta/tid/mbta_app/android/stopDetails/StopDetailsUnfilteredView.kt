@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
@@ -27,21 +26,21 @@ fun StopDetailsUnfilteredView(
     stopId: String,
     now: Instant,
     viewModel: StopDetailsViewModel,
-    pinnedRoutes: Set<String>,
+    isPinned: (String) -> Boolean,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
-    val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
+    val globalResponse = viewModel.globalResponse.collectAsState().value
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()
 
-    val routeCardData = viewModel.routeCardData.collectAsState().value
+    val routeCardData = viewModel.unfilteredRouteCardData.collectAsState().value
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)
@@ -83,7 +82,7 @@ fun StopDetailsUnfilteredView(
                 showStationAccessibility,
                 now,
                 globalResponse,
-                pinnedRoutes,
+                isPinned,
                 togglePinnedRoute,
                 onClose,
                 onTapRoutePill,
@@ -110,7 +109,7 @@ fun StopDetailsUnfilteredView(
                     showStationAccessibility,
                     now,
                     globalResponse,
-                    emptySet(),
+                    { false },
                     {},
                     onClose = onClose,
                     onTapRoutePill = {},

@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -25,12 +27,11 @@ fun StopDetailsFilteredView(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    routeCardData: List<RouteCardData>?,
     allAlerts: AlertsStreamDataResponse?,
     now: Instant,
     viewModel: StopDetailsViewModel,
-    pinnedRoutes: Set<String>,
-    togglePinnedRoute: (String) -> Unit,
+    isFavorite: (FavoriteBridge) -> Boolean,
+    toggleFavorite: (FavoriteBridge) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -39,16 +40,15 @@ fun StopDetailsFilteredView(
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
-    val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
-    val thisRouteCardData = routeCardData?.find { it.lineOrRoute.id == stopFilter.routeId }
-    val routeStopData = thisRouteCardData?.stopData?.get(0)
+    val globalResponse by viewModel.globalResponse.collectAsState()
+    val routeStopData by viewModel.filteredRouteStopData.collectAsState()
 
-    if (routeStopData != null) {
+    routeStopData?.let {
         StopDetailsFilteredPickerView(
             stopId = stopId,
             stopFilter = stopFilter,
             tripFilter = tripFilter,
-            routeStopData = routeStopData,
+            routeStopData = it,
             allAlerts = allAlerts,
             global = globalResponse,
             now = now,
@@ -57,14 +57,14 @@ fun StopDetailsFilteredView(
             updateStopFilter = updateStopFilter,
             updateTripFilter = updateTripFilter,
             tileScrollState = tileScrollState,
-            pinnedRoutes = pinnedRoutes,
-            togglePinnedRoute = togglePinnedRoute,
-            onClose = onClose,
+            isFavorite = isFavorite,
+            toggleFavorite = toggleFavorite,
             openModal = openModal,
             openSheetRoute = openSheetRoute,
+            onClose = onClose,
         )
-    } else {
-        Loading(
+    }
+        ?: Loading(
             stopId,
             stopFilter,
             tripFilter,
@@ -74,7 +74,6 @@ fun StopDetailsFilteredView(
             errorBannerViewModel,
             globalResponse,
         )
-    }
 }
 
 @Composable
@@ -111,11 +110,11 @@ private fun Loading(
                 updateStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
-                pinnedRoutes = emptySet(),
-                togglePinnedRoute = {},
-                onClose = onClose,
+                isFavorite = { _ -> false },
+                toggleFavorite = {},
                 openModal = {},
                 openSheetRoute = {},
+                onClose = {},
             )
         }
     }

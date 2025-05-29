@@ -30,10 +30,11 @@ class StopDetailsPageTest : KoinTest {
         val filters = mutableStateOf(StopDetailsPageFilters("stop", null, null))
 
         var routeCardDataUpdated = false
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 var filters by remember { filters }
-                val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
                 StopDetailsPage(
                     viewModel = viewModel,

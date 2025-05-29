@@ -7,6 +7,7 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -65,6 +66,7 @@ import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
@@ -123,6 +125,7 @@ fun MapAndSheetPage(
 
     val viewModel: NearbyTransitTabViewModel = viewModel()
 
+    val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
 
     val currentNavBackStackEntry by
@@ -132,6 +135,8 @@ fun MapAndSheetPage(
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
     val (pinnedRoutes) = managePinnedRoutes()
+
+    val density = LocalDensity.current
 
     val now by timer(updateInterval = 5.seconds)
 
@@ -180,7 +185,7 @@ fun MapAndSheetPage(
     val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(previousNavEntry) {
+    LaunchedEffect(currentNavEntry) {
         if (
             previousNavEntry is SheetRoutes.StopDetails &&
                 currentNavEntry is SheetRoutes.StopDetails &&
@@ -298,7 +303,7 @@ fun MapAndSheetPage(
             if (timeSinceBackground > 1.hours) {
                 navigateToEntrypoint()
                 if (nearbyTransit.locationDataManager.hasPermission) {
-                    nearbyTransit.viewportProvider.follow()
+                    coroutineScope.launch { nearbyTransit.viewportProvider.follow() }
                 }
             }
         }
@@ -475,6 +480,7 @@ fun MapAndSheetPage(
                 ::handleRouteNavigation,
                 searchFocusRequester,
                 searchResultsViewModel,
+                onBarGloballyPositioned = {},
             ) {
                 SheetContent(
                     Modifier.padding(top = if (showSearchBar) 94.dp else 0.dp)
@@ -487,8 +493,6 @@ fun MapAndSheetPage(
                 sheetDragHandle = { DragHandle() },
                 sheetContent = {
                     var sheetHeight by remember { mutableStateOf(0.dp) }
-                    val density = LocalDensity.current
-
                     Box(
                         modifier =
                             Modifier.onGloballyPositioned {
@@ -529,9 +533,22 @@ fun MapAndSheetPage(
                     ::handleRouteNavigation,
                     searchFocusRequester,
                     searchResultsViewModel,
+                    onBarGloballyPositioned = { layoutCoordinates ->
+                        with(density) {
+                            viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
+                        }
+                    },
                 ) {
                     HomeMapView(
-                        sheetPadding = sheetPadding,
+                        sheetPadding =
+                            sheetPadding.plus(
+                                PaddingValues(
+                                    start = 0.dp,
+                                    end = 0.dp,
+                                    top = (viewModel.searchBarHeight.value ?: 0.dp),
+                                    bottom = 0.dp,
+                                )
+                            ),
                         lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                         nearbyTransitSelectingLocationState =
                             nearbyTransit.nearbyTransitSelectingLocationState,

@@ -2161,4 +2161,145 @@ class RouteCardDataLeafTest {
                     .format(now, GreenLine.global),
             )
         }
+
+    @Test
+    fun `formats suspension alert as single when there is a stop_headsign for stop`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val route = objects.route { type = RouteType.FERRY }
+
+            val stop1 = objects.stop {}
+            val stop2 = objects.stop {}
+            val stop3 = objects.stop {}
+
+            val representativeTrip =
+                objects.trip {
+                    routeId = route.id
+                    routePatternId = "rp1"
+                    directionId = 0
+                    stopIds = listOf(stop1.id, stop2.id)
+                    headsign = "Quincy Loop"
+                }
+
+            val rp1 =
+                objects.routePattern(route) {
+                    id = "rp1"
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTripId = representativeTrip.id
+                }
+
+            // Pattern 2 isn't scheduled, but because typical will treat this as branched
+            val representativeTrip2 =
+                objects.trip {
+                    routeId = route.id
+                    routePatternId = "rp2"
+                    directionId = 0
+                    stopIds = listOf(stop1.id, stop3.id)
+                    headsign = "Quincy Loop"
+                }
+
+            val rp2 =
+                objects.routePattern(route) {
+                    id = "rp2"
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTripId = representativeTrip.id
+                }
+            val now = Clock.System.now()
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Suspension
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities =
+                                    listOf(
+                                        Alert.InformedEntity.Activity.Board,
+                                        Alert.InformedEntity.Activity.Exit,
+                                        Alert.InformedEntity.Activity.Ride,
+                                    ),
+                                directionId = 0,
+                                route = route.id,
+                                routeType = RouteType.FERRY,
+                                stop = stop1.id,
+                                trip = null,
+                            )
+                        )
+                }
+
+            val schedule =
+                objects.schedule {
+                    tripId = representativeTrip.id
+                    stopId = stop1.id
+                    departureTime = now + 5.minutes
+                    stopHeadsign = "Central Wharf"
+                }
+
+            assertEquals(
+                LeafFormat.Single(
+                    route = null,
+                    headsign = null,
+                    UpcomingFormat.Disruption(alert, MapStopRoute.matching(route)),
+                ),
+                RouteCardData.Leaf(
+                        RouteCardData.LineOrRoute.Route(route),
+                        stop1,
+                        0,
+                        listOf(rp1, rp2),
+                        setOf(stop1.id),
+                        listOf(UpcomingTrip(representativeTrip, schedule)),
+                        listOf(alert),
+                        true,
+                        true,
+                        emptyList(),
+                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    )
+                    .format(now, GlobalResponse(objects)),
+            )
+        }
+
+    @Test
+    fun `filters alerts by trip`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop()
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+        val trip3 = objects.trip()
+        val generalAlert =
+            objects.alert { informedEntity(listOf(Alert.InformedEntity.Activity.Board)) }
+        val trip1Alert =
+            objects.alert {
+                informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip1.id)
+            }
+        val trip2Alert =
+            objects.alert {
+                informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip2.id)
+            }
+        val leaf =
+            RouteCardData.Leaf(
+                RouteCardData.LineOrRoute.Route(route),
+                stop,
+                directionId = 0,
+                routePatterns = emptyList(),
+                stopIds = emptySet(),
+                upcomingTrips = listOf(),
+                alertsHere = listOf(generalAlert, trip1Alert, trip2Alert),
+                hasSchedulesToday = true,
+                allDataLoaded = true,
+                alertsDownstream = listOf(generalAlert, trip1Alert, trip2Alert),
+                context = RouteCardData.Context.StopDetailsFiltered,
+            )
+
+        assertEquals(listOf(generalAlert, trip1Alert, trip2Alert), leaf.alertsHere(tripId = null))
+        assertEquals(listOf(generalAlert, trip1Alert), leaf.alertsHere(tripId = trip1.id))
+        assertEquals(listOf(generalAlert, trip2Alert), leaf.alertsHere(tripId = trip2.id))
+        assertEquals(listOf(generalAlert), leaf.alertsHere(tripId = trip3.id))
+        assertEquals(
+            listOf(generalAlert, trip1Alert, trip2Alert),
+            leaf.alertsDownstream(tripId = null),
+        )
+        assertEquals(listOf(generalAlert, trip1Alert), leaf.alertsDownstream(tripId = trip1.id))
+        assertEquals(listOf(generalAlert, trip2Alert), leaf.alertsDownstream(tripId = trip2.id))
+        assertEquals(listOf(generalAlert), leaf.alertsDownstream(tripId = trip3.id))
+    }
 }

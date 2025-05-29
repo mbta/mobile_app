@@ -10,8 +10,10 @@ import SwiftUI
 import UIKit
 
 extension PresentationDetent {
+    static let mediumDetentFraction = 0.56
+
     static let small = Self.height(150)
-    static let halfScreen = Self.fraction(0.5)
+    static let medium = Self.fraction(mediumDetentFraction)
     static let almostFull = Self.custom(AlmostFull.self)
 }
 

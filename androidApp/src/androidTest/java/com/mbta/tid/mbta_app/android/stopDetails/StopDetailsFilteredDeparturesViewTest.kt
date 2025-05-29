@@ -183,7 +183,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -232,7 +232,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = { tripFilter = it },
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -329,7 +329,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -382,7 +382,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = StopDetailsViewModel.mocked(),
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -450,7 +450,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -554,7 +554,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -621,7 +621,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -681,7 +681,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -752,7 +752,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -800,7 +800,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     viewModel = viewModel,
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
-                    pinnedRoutes = emptySet(),
+                    isFavorite = false,
                     openModal = {},
                     openSheetRoute = {},
                 )
