@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,14 +60,15 @@ fun FavoriteConfirmationDialog(
                 updateFavorites(newFavorites)
                 onClose()
             }) {
-                Text("Add")
+                Text(stringResource(R.string.add_confirmation_button))
             }
         },
         dismissButton = { TextButton(onClose) { Text("Cancel") } },
         title = {
-            // TODO: translation
             Text(
-                "Add ${lineOrRoute.name} at ${stop.name} to Favorites",
+                AnnotatedString.fromHtml(
+                    stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
+                ),
                 textAlign = TextAlign.Center,
             )
         },
