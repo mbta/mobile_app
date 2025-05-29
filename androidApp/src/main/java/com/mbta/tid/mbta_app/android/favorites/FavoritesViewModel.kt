@@ -26,13 +26,7 @@ class FavoritesViewModel(
     var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
 
     suspend fun loadFavorites() {
-        favorites =
-            setOf(
-                RouteStopDirection("Red", "place-dwnxg", 0),
-                RouteStopDirection("Mattapan", "place-cedgr", 0),
-                RouteStopDirection("Orange", "place-chncl", 0),
-            )
-        //         favoritesUsecases.getRouteStopDirectionFavorites()
+        favorites = favoritesUsecases.getRouteStopDirectionFavorites()
     }
 
     fun loadRouteCardData(
