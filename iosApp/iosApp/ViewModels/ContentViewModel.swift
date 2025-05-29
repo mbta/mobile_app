@@ -12,6 +12,7 @@ import Shared
 
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
+    @Published var enhancedFavorites: Bool
     @Published var hideMaps: Bool
     @Published var featurePromosPending: [FeaturePromo]?
     @Published var onboardingScreensPending: [OnboardingScreen]?
@@ -28,6 +29,7 @@ class ContentViewModel: ObservableObject {
          onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding,
          onboardingScreensPending: [OnboardingScreen]? = nil,
          settingsRepository: ISettingsRepository = RepositoryDI().settings,
+         enhancedFavorites: Bool = false,
          hideMaps: Bool = false) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
@@ -36,6 +38,7 @@ class ContentViewModel: ObservableObject {
         self.onboardingRepository = onboardingRepository
         self.onboardingScreensPending = onboardingScreensPending
         self.settingsRepository = settingsRepository
+        self.enhancedFavorites = enhancedFavorites
         self.hideMaps = hideMaps
     }
 
@@ -55,8 +58,10 @@ class ContentViewModel: ObservableObject {
         featurePromosPending = await (try? featurePromoUseCase.getFeaturePromos()) ?? []
     }
 
-    @MainActor func loadHideMaps() async {
-        hideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
+    @MainActor func loadSettings() async {
+        guard let settings = try? await settingsRepository.getSettings() else { return }
+        enhancedFavorites = settings[.enhancedFavorites]?.boolValue ?? false
+        hideMaps = settings[.hideMaps]?.boolValue ?? false
     }
 
     @MainActor func loadOnboardingScreens() async {
