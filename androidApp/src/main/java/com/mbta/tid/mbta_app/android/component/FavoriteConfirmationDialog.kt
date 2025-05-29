@@ -33,21 +33,12 @@ fun FavoriteConfirmationDialog(
     lineOrRoute: RouteCardData.LineOrRoute,
     stop: Stop,
     directions: List<Direction>,
-    currentFavorites: Map<Int, Boolean>,
-    proposedFavoritesToToggle: Set<Int>,
-    toggleFavorite: (RouteStopDirection) -> Unit,
+    proposedFavorites: Map<Int, Boolean>,
+    updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
     onClose: () -> Unit,
 ) {
 
-    var favoritesToSave: Map<Int, Boolean> by remember {
-        mutableStateOf(
-            currentFavorites.plus(
-                proposedFavoritesToToggle.associateWith {
-                    !currentFavorites.getOrDefault(it, false)
-                }
-            )
-        )
-    }
+    var favoritesToSave: Map<Int, Boolean> by remember { mutableStateOf(proposedFavorites) }
 
     Dialog(onDismissRequest = {}) {
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -84,13 +75,11 @@ fun FavoriteConfirmationDialog(
                 Button(onClose, modifier = Modifier.weight(1.0F)) { Text("Cancel") }
                 Button(
                     {
-                        favoritesToSave.forEach { (directionId, isFavorite) ->
-                            if (currentFavorites.getOrDefault(directionId, false) != isFavorite) {
-                                toggleFavorite(
-                                    RouteStopDirection(lineOrRoute.id, stop.id, directionId)
-                                )
+                        val newFavorites =
+                            favoritesToSave.mapKeys { (directionId, _isFavorite) ->
+                                RouteStopDirection(lineOrRoute.id, stop.id, directionId)
                             }
-                        }
+                        updateFavorites(newFavorites)
                         onClose()
                     },
                     modifier = Modifier.weight(1.0F),
@@ -118,9 +107,8 @@ private fun FavoriteConfirmationDialogPreview() {
                         Direction(id = 0, name = "West", destination = "Copley & West"),
                         Direction(id = 1, name = "East", destination = "Park St & North"),
                     ),
-                currentFavorites = mapOf(0 to false, 1 to false),
-                proposedFavoritesToToggle = setOf(0),
-                toggleFavorite = {},
+                proposedFavorites = mapOf(0 to true, 1 to false),
+                updateFavorites = {},
                 onClose = {},
             )
         }

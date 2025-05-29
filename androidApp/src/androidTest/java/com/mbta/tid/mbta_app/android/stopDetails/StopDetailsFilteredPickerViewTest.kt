@@ -11,7 +11,7 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.FavoriteBridge
+import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -182,7 +182,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     isFavorite = { false },
-                    toggleFavorite = {},
+                    updateFavorites = {},
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -234,7 +234,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = { tripFilter = it },
                     tileScrollState = rememberScrollState(),
                     isFavorite = { false },
-                    toggleFavorite = {},
+                    updateFavorites = {},
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -295,7 +295,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     isFavorite = { false },
-                    toggleFavorite = {},
+                    updateFavorites = {},
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -345,7 +345,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     isFavorite = { false },
-                    toggleFavorite = {},
+                    updateFavorites = {},
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -380,7 +380,7 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
         viewModel.setRouteCardData(routeCardData)
 
-        var toggledFavorite: FavoriteBridge? = null
+        var updatedFavorites: FavoriteUpdateBridge? = null
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -398,7 +398,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     isFavorite = { false },
-                    toggleFavorite = { toggledFavorite = it },
+                    updateFavorites = { updatedFavorites = it },
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -416,7 +416,13 @@ class StopDetailsFilteredPickerViewTest {
         composeTestRule.onNodeWithText("Add").performClick()
 
         composeTestRule.waitUntil {
-            toggledFavorite == FavoriteBridge.Favorite(RouteStopDirection(route.id, stop.id, 0))
+            updatedFavorites ==
+                FavoriteUpdateBridge.Favorites(
+                    mapOf(
+                        RouteStopDirection(route.id, stop.id, 0) to true,
+                        RouteStopDirection(route.id, stop.id, 1) to false,
+                    )
+                )
         }
     }
 
@@ -443,7 +449,7 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
         viewModel.setRouteCardData(routeCardData)
 
-        var toggledFavorite: FavoriteBridge? = null
+        var updatedFavorites: FavoriteUpdateBridge? = null
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -461,7 +467,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     isFavorite = { true },
-                    toggleFavorite = { toggledFavorite = it },
+                    updateFavorites = { updatedFavorites = it },
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -479,7 +485,10 @@ class StopDetailsFilteredPickerViewTest {
         composeTestRule.onNodeWithText("Add").assertDoesNotExist()
 
         composeTestRule.waitUntil {
-            toggledFavorite == FavoriteBridge.Favorite(RouteStopDirection(route.id, stop.id, 0))
+            updatedFavorites ==
+                FavoriteUpdateBridge.Favorites(
+                    mapOf(RouteStopDirection(route.id, stop.id, 0) to false)
+                )
         }
     }
 
@@ -506,7 +515,7 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
         viewModel.setRouteCardData(routeCardData)
 
-        var toggledFavorite: FavoriteBridge? = null
+        var updatedFavorite: FavoriteUpdateBridge? = null
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -524,7 +533,7 @@ class StopDetailsFilteredPickerViewTest {
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
                     isFavorite = { false },
-                    toggleFavorite = { toggledFavorite = it },
+                    updateFavorites = { updatedFavorite = it },
                     openModal = {},
                     openSheetRoute = {},
                     onClose = {},
@@ -537,6 +546,6 @@ class StopDetailsFilteredPickerViewTest {
             .assertIsDisplayed()
             .performClick()
 
-        composeTestRule.waitUntil { toggledFavorite == FavoriteBridge.Pinned(route.id) }
+        composeTestRule.waitUntil { updatedFavorite == FavoriteUpdateBridge.Pinned(route.id) }
     }
 }

@@ -17,6 +17,20 @@ class FavoritesUsecases(private val repository: IFavoritesRepository) : KoinComp
         return toggleRouteStopDirection(routeStopDirection)
     }
 
+    suspend fun updateRouteStopDirections(newValues: Map<RouteStopDirection, Boolean>) {
+        val storedFavorites = repository.getFavorites()
+        val currentFavorites = (storedFavorites.routeStopDirection ?: emptySet()).toMutableSet()
+
+        newValues.forEach { (routeStopDirection, isFavorite) ->
+            if (isFavorite) {
+                currentFavorites.add(routeStopDirection)
+            } else {
+                currentFavorites.remove(routeStopDirection)
+            }
+        }
+        repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
+    }
+
     // Boolean return value indicates saved state
     suspend fun toggleRouteStopDirection(routeStopDirection: RouteStopDirection): Boolean {
         val storedFavorites = repository.getFavorites()

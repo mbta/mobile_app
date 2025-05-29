@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
+import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -25,7 +26,7 @@ fun StopDetailsView(
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
     isFavorite: (FavoriteBridge) -> Boolean,
-    toggleFavorite: (FavoriteBridge) -> Unit,
+    updateFavorites: (FavoriteUpdateBridge) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
@@ -57,7 +58,7 @@ fun StopDetailsView(
             now,
             viewModel,
             isFavorite,
-            toggleFavorite,
+            updateFavorites,
             onClose,
             updateStopFilter,
             updateTripDetailsFilter,
@@ -72,7 +73,9 @@ fun StopDetailsView(
             now,
             viewModel,
             isPinned = { routeId -> isFavorite(FavoriteBridge.Pinned(routeId)) },
-            togglePinnedRoute = { routeId -> toggleFavorite(FavoriteBridge.Pinned(routeId)) },
+            togglePinnedRoute = { routeId ->
+                updateFavorites(FavoriteUpdateBridge.Pinned(routeId))
+            },
             onClose,
             updateStopFilter,
             ::openModalAndRecord,

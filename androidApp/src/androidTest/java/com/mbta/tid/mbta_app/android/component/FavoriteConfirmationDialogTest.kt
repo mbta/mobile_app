@@ -27,7 +27,7 @@ class FavoriteConfirmationDialogTest {
 
     @Test
     fun testWithoutTappingAnyButtonSavesProposedChanges() {
-        val toggleFavoritesCalledFor: MutableSet<RouteStopDirection> = mutableSetOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -35,9 +35,8 @@ class FavoriteConfirmationDialogTest {
                 lineOrRoute = line,
                 stop = stop,
                 directions = directions,
-                currentFavorites = mapOf(),
-                proposedFavoritesToToggle = setOf(0),
-                toggleFavorite = { toggleFavoritesCalledFor.add(it) },
+                proposedFavorites = mapOf(0 to true),
+                updateFavorites = { updateFavoritesCalledFor = (it) },
             ) {
                 onCloseCalled = true
             }
@@ -45,13 +44,16 @@ class FavoriteConfirmationDialogTest {
 
         composeTestRule.onNodeWithText("Add").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(toggleFavoritesCalledFor, setOf(RouteStopDirection(line.id, stop.id, 0)))
+        assertEquals(
+            updateFavoritesCalledFor,
+            mapOf(RouteStopDirection(line.id, stop.id, 0) to true),
+        )
         assertTrue(onCloseCalled)
     }
 
     @Test
-    fun testCancelDoesntToggleFavorites() {
-        var toggleFavoritesCalled = false
+    fun testCancelDoesntUpdateFavorites() {
+        var updateFavoritesCalled = false
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -59,9 +61,8 @@ class FavoriteConfirmationDialogTest {
                 lineOrRoute = line,
                 stop = stop,
                 directions = directions,
-                currentFavorites = mapOf(),
-                proposedFavoritesToToggle = setOf(0),
-                toggleFavorite = { toggleFavoritesCalled = true },
+                proposedFavorites = mapOf(0 to true),
+                updateFavorites = { updateFavoritesCalled = true },
             ) {
                 onCloseCalled = true
             }
@@ -70,21 +71,20 @@ class FavoriteConfirmationDialogTest {
         composeTestRule.onNodeWithText("Cancel").performClick()
         composeTestRule.waitForIdle()
         assertTrue(onCloseCalled)
-        assertFalse(toggleFavoritesCalled)
+        assertFalse(updateFavoritesCalled)
     }
 
     @Test
     fun testAddingOtherDirectionSavesBoth() {
-        val toggleFavoritesCalledFor: MutableSet<RouteStopDirection> = mutableSetOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
 
         composeTestRule.setContent {
             FavoriteConfirmationDialog(
                 lineOrRoute = line,
                 stop = stop,
                 directions = directions,
-                currentFavorites = mapOf(),
-                proposedFavoritesToToggle = setOf(0),
-                toggleFavorite = { toggleFavoritesCalledFor.add(it) },
+                proposedFavorites = mapOf(0 to true),
+                updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
         }
 
@@ -92,23 +92,25 @@ class FavoriteConfirmationDialogTest {
         composeTestRule.onNodeWithText("Add").performClick()
         composeTestRule.waitForIdle()
         assertEquals(
-            toggleFavoritesCalledFor,
-            setOf(RouteStopDirection(line.id, stop.id, 0), RouteStopDirection(line.id, stop.id, 1)),
+            updateFavoritesCalledFor,
+            mapOf(
+                RouteStopDirection(line.id, stop.id, 0) to true,
+                RouteStopDirection(line.id, stop.id, 1) to true,
+            ),
         )
     }
 
     @Test
     fun testRemovingOtherDirectoinSavesBoth() {
-        val toggleFavoritesCalledFor: MutableSet<RouteStopDirection> = mutableSetOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
 
         composeTestRule.setContent {
             FavoriteConfirmationDialog(
                 lineOrRoute = line,
                 stop = stop,
                 directions = directions,
-                currentFavorites = mapOf(1 to true),
-                proposedFavoritesToToggle = setOf(0),
-                toggleFavorite = { toggleFavoritesCalledFor.add(it) },
+                proposedFavorites = mapOf(0 to true, 1 to true),
+                updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
         }
 
@@ -116,14 +118,17 @@ class FavoriteConfirmationDialogTest {
         composeTestRule.onNodeWithText("Add").performClick()
         composeTestRule.waitForIdle()
         assertEquals(
-            toggleFavoritesCalledFor,
-            setOf(RouteStopDirection(line.id, stop.id, 0), RouteStopDirection(line.id, stop.id, 1)),
+            updateFavoritesCalledFor,
+            mapOf(
+                RouteStopDirection(line.id, stop.id, 0) to true,
+                RouteStopDirection(line.id, stop.id, 1) to false,
+            ),
         )
     }
 
     @Test
-    fun testRemovingProposedFavoriteDoesntToggleAnyFavorites() {
-        var toggleFavoritesCalled = false
+    fun testRemovingProposedFavoriteUpdatesToFalse() {
+        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -131,9 +136,8 @@ class FavoriteConfirmationDialogTest {
                 lineOrRoute = line,
                 stop = stop,
                 directions = directions,
-                currentFavorites = mapOf(),
-                proposedFavoritesToToggle = setOf(0),
-                toggleFavorite = { toggleFavoritesCalled = true },
+                proposedFavorites = mapOf(0 to true),
+                updateFavorites = { updateFavoritesCalledFor = it },
             ) {
                 onCloseCalled = true
             }
@@ -143,6 +147,9 @@ class FavoriteConfirmationDialogTest {
         composeTestRule.onNodeWithText("Add").performClick()
         composeTestRule.waitForIdle()
         assertTrue(onCloseCalled)
-        assertFalse(toggleFavoritesCalled)
+        assertEquals(
+            updateFavoritesCalledFor,
+            mapOf(RouteStopDirection(line.id, stop.id, 0) to false),
+        )
     }
 }

@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
+import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -31,7 +32,7 @@ fun StopDetailsFilteredView(
     now: Instant,
     viewModel: StopDetailsViewModel,
     isFavorite: (FavoriteBridge) -> Boolean,
-    toggleFavorite: (FavoriteBridge) -> Unit,
+    updateFavorites: (FavoriteUpdateBridge) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -58,7 +59,7 @@ fun StopDetailsFilteredView(
             updateTripFilter = updateTripFilter,
             tileScrollState = tileScrollState,
             isFavorite = isFavorite,
-            toggleFavorite = toggleFavorite,
+            updateFavorites = updateFavorites,
             openModal = openModal,
             openSheetRoute = openSheetRoute,
             onClose = onClose,
@@ -111,7 +112,7 @@ private fun Loading(
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 isFavorite = { _ -> false },
-                toggleFavorite = {},
+                updateFavorites = {},
                 openModal = {},
                 openSheetRoute = {},
                 onClose = {},
