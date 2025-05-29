@@ -14,9 +14,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import io.github.dellisd.spatialk.geojson.Position
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 
 class FavoritesViewModel(
@@ -29,7 +26,7 @@ class FavoritesViewModel(
         favorites = favoritesUsecases.getRouteStopDirectionFavorites()
     }
 
-    fun loadRouteCardData(
+    suspend fun loadRouteCardData(
         global: GlobalResponse?,
         location: Position?,
         schedules: ScheduleResponse?,
@@ -46,21 +43,19 @@ class FavoritesViewModel(
         if (global == null || location == null) {
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            val loadedRouteCardData =
-                RouteCardData.routeCardsForStopList(
-                    stopIds,
-                    global,
-                    location,
-                    schedules,
-                    predictions,
-                    alerts,
-                    now,
-                    emptySet(),
-                    RouteCardData.Context.Favorites,
-                )
-            routeCardData = filterRouteAndDirection(loadedRouteCardData, global)
-        }
+        val loadedRouteCardData =
+            RouteCardData.routeCardsForStopList(
+                stopIds,
+                global,
+                location,
+                schedules,
+                predictions,
+                alerts,
+                now,
+                emptySet(),
+                RouteCardData.Context.Favorites,
+            )
+        routeCardData = filterRouteAndDirection(loadedRouteCardData, global)
     }
 
     fun filterRouteAndDirection(
