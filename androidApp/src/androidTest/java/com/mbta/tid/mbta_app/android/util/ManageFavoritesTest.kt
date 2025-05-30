@@ -24,9 +24,11 @@ class ManageFavoritesTest {
 
     @Test
     fun testManageFavorites() = runBlocking {
+        val rsd0 = RouteStopDirection("route1", "stop1", 0)
+        val rsd1 = RouteStopDirection("route1", "stop1", 1)
         val favoritesRepo =
             object : IFavoritesRepository {
-                var favorites = Favorites()
+                var favorites = Favorites(routeStopDirection = setOf(rsd0))
 
                 override suspend fun getFavorites(): Favorites {
                     return favorites
@@ -45,28 +47,20 @@ class ManageFavoritesTest {
                 Button(
                     onClick = {
                         CoroutineScope(Dispatchers.Default).launch {
-                            managedFavorites!!.toggleFavorite(
-                                RouteStopDirection("route1", "stop1", 1)
-                            )
+                            managedFavorites!!.updateFavorites(mapOf(rsd0 to false, rsd1 to true))
                         }
                     }
                 ) {
-                    Text("Toggle Me")
+                    Text("Click me")
                 }
             }
         }
 
         composeTestRule.awaitIdle()
         assertNotNull(managedFavorites)
-        assertEquals(emptySet<RouteStopDirection>(), managedFavorites!!.favoriteRoutes)
-        composeTestRule.onNodeWithText("Toggle Me").performClick()
+        assertEquals(setOf(rsd0), managedFavorites!!.favoriteRoutes)
+        composeTestRule.onNodeWithText("Click me").performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.waitUntil {
-            managedFavorites!!.favoriteRoutes?.firstOrNull() ==
-                RouteStopDirection("route1", "stop1", 1)
-        }
-        composeTestRule.onNodeWithText("Toggle Me").performClick()
-        composeTestRule.awaitIdle()
-        composeTestRule.waitUntil { managedFavorites!!.favoriteRoutes?.isEmpty() == true }
+        composeTestRule.waitUntil { managedFavorites!!.favoriteRoutes == setOf(rsd1) }
     }
 }

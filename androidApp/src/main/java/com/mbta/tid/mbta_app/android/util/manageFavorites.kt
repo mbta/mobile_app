@@ -12,7 +12,7 @@ import org.koin.compose.koinInject
 
 data class ManagedFavorites(
     val favoriteRoutes: Set<RouteStopDirection>?,
-    val toggleFavorite: suspend (RouteStopDirection) -> Boolean,
+    val updateFavorites: suspend (Map<RouteStopDirection, Boolean>) -> Unit,
 )
 
 @Composable
@@ -21,11 +21,10 @@ fun manageFavorites(favoritesUseCases: FavoritesUsecases = koinInject()): Manage
 
     LaunchedEffect(null) { favorites = favoritesUseCases.getRouteStopDirectionFavorites() }
 
-    val toggleFavorite: suspend (RouteStopDirection) -> Boolean = { rsd ->
-        val isFavorite = favoritesUseCases.toggleRouteStopDirection(rsd)
+    val updateFavorites: suspend (Map<RouteStopDirection, Boolean>) -> Unit = { newValues ->
+        favoritesUseCases.updateRouteStopDirections(newValues)
         favorites = favoritesUseCases.getRouteStopDirectionFavorites()
-        isFavorite
     }
 
-    return ManagedFavorites(favorites, toggleFavorite)
+    return ManagedFavorites(favorites, updateFavorites)
 }

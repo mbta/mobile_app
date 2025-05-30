@@ -2408,6 +2408,114 @@
         }
       }
     },
+    "Add" : {
+      "comment" : "Text for confirmation button when user is adding to their favorites",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Agregar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajouter"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicionar"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm vào"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加"
+          }
+        }
+      }
+    },
+    "Add **%1$@** at **%2$@** to Favorites" : {
+      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add **%1$@** at **%2$@** to Favorites"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadir **%1$@** en **%2$@** a Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajouter **%1$@** à **%2$@** aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute **%1$@** nan **%2$@** nan Favorites"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicione **%1$@** em **%2$@** aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm **%1$@** tại **%2$@** vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将 **%2$@** 的 **%1$@** 添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "將 **%2$@** 的 **%1$@** 加入到收藏夾"
+          }
+        }
+      }
+    },
     "Additional service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
