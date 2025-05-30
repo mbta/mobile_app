@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.model.FavoriteBridge
+import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -48,7 +49,7 @@ fun StopDetailsPage(
 
     val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
-    val (favorites, toggleFavorite) = manageFavorites()
+    val (favorites, updateFavorites) = manageFavorites()
 
     fun isFavorite(favorite: FavoriteBridge): Boolean {
         if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
@@ -62,15 +63,15 @@ fun StopDetailsPage(
         return false
     }
 
-    fun toggleFavorite(favorite: FavoriteBridge) {
+    fun updateFavorites(favoritesUpdate: FavoriteUpdateBridge) {
         coroutineScope.launch {
-            if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
-                val pinned = rawTogglePinnedRoute(favorite.routeId)
-                analytics.toggledPinnedRoute(pinned, favorite.routeId)
+            if (favoritesUpdate is FavoriteUpdateBridge.Pinned && !enhancedFavorites) {
+                val pinned = rawTogglePinnedRoute(favoritesUpdate.routeId)
+                analytics.toggledPinnedRoute(pinned, favoritesUpdate.routeId)
             }
 
-            if (favorite is FavoriteBridge.Favorite && enhancedFavorites) {
-                toggleFavorite(favorite.routeStopDirection)
+            if (favoritesUpdate is FavoriteUpdateBridge.Favorites && enhancedFavorites) {
+                updateFavorites(favoritesUpdate.updatedValues)
             }
         }
     }
@@ -87,7 +88,7 @@ fun StopDetailsPage(
         filters.tripFilter,
         allAlerts,
         ::isFavorite,
-        ::toggleFavorite,
+        ::updateFavorites,
         onClose,
         updateStopFilter,
         updateTripFilter,
