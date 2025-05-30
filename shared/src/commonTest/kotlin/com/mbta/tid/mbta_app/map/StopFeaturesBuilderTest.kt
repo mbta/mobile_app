@@ -2,7 +2,9 @@ package com.mbta.tid.mbta_app.map
 
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.utils.TestData
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
@@ -34,6 +36,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop1,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BLUE),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -42,6 +45,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop2,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.GREEN),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -55,6 +59,7 @@ class StopFeaturesBuilderTest {
                                         MapStopRoute.MATTAPAN,
                                         MapStopRoute.BUS,
                                     ),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -63,6 +68,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop4,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -71,6 +77,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop5,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -79,6 +86,7 @@ class StopFeaturesBuilderTest {
                                 stop = stop6,
                                 routes = emptyMap(),
                                 routeTypes = listOf(MapStopRoute.BUS),
+                                routeDirections = emptyMap(),
                                 isTerminal = false,
                                 alerts = null,
                             ),
@@ -138,6 +146,7 @@ class StopFeaturesBuilderTest {
                             stop = stop,
                             routes = mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                             routeTypes = listOf(MapStopRoute.RED),
+                            routeDirections = mapOf(MapTestDataHelper.routeRed.id to setOf(0, 1)),
                             isTerminal = false,
                             alerts = null,
                         )
@@ -175,6 +184,8 @@ class StopFeaturesBuilderTest {
                                 routes =
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeRed.id to setOf(0, 1)),
                                 isTerminal = false,
                                 alerts = null,
                             )
@@ -204,6 +215,8 @@ class StopFeaturesBuilderTest {
                                 routes =
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeRed.id to setOf(0, 1)),
                                 isTerminal = true,
                                 alerts = null,
                             ),
@@ -213,6 +226,8 @@ class StopFeaturesBuilderTest {
                                 routes =
                                     mapOf(MapStopRoute.RED to listOf(MapTestDataHelper.routeRed)),
                                 routeTypes = listOf(MapStopRoute.RED),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeRed.id to setOf(0, 1)),
                                 isTerminal = true,
                                 alerts = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                             ),
@@ -224,6 +239,8 @@ class StopFeaturesBuilderTest {
                                         MapStopRoute.ORANGE to listOf(MapTestDataHelper.routeOrange)
                                     ),
                                 routeTypes = listOf(MapStopRoute.ORANGE),
+                                routeDirections =
+                                    mapOf(MapTestDataHelper.routeOrange.id to setOf(0, 1)),
                                 isTerminal = false,
                                 alerts = mapOf(MapStopRoute.ORANGE to StopAlertState.Suspension),
                             ),
@@ -348,4 +365,129 @@ class StopFeaturesBuilderTest {
         val davisIsTerminal = davisFeature?.properties?.get(StopFeaturesBuilder.propIsTerminalKey)
         assertEquals(MapTestDataHelper.mapStopDavis.isTerminal, davisIsTerminal)
     }
+
+    @Test
+    fun `non-selected bus stops are hidden below close zoom if a route is selected`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+            val subwayRoute = objects.route()
+            val subwayStop = objects.stop()
+            val selectedDirection = 0
+            val selectedBusRoute = objects.route()
+            val selectedBusStop = objects.stop()
+            val wrongDirectionBusStop = objects.stop()
+            val wrongRouteBusRoute = objects.route()
+            val wrongRouteBusStop = objects.stop()
+
+            val subwayMapStop =
+                MapStop(
+                    subwayStop,
+                    mapOf(MapStopRoute.RED to listOf(subwayRoute)),
+                    listOf(MapStopRoute.RED),
+                    mapOf(subwayRoute.id to setOf(0, 1)),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+            val selectedBusMapStop =
+                MapStop(
+                    selectedBusStop,
+                    mapOf(MapStopRoute.BUS to listOf(selectedBusRoute)),
+                    listOf(MapStopRoute.BUS),
+                    mapOf(selectedBusRoute.id to setOf(selectedDirection)),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+            val wrongDirectionBusMapStop =
+                MapStop(
+                    wrongDirectionBusStop,
+                    mapOf(MapStopRoute.BUS to listOf(selectedBusRoute)),
+                    listOf(MapStopRoute.BUS),
+                    mapOf(selectedBusRoute.id to setOf(0, 1) - selectedDirection),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+            val wrongRouteBusMapStop =
+                MapStop(
+                    wrongRouteBusStop,
+                    mapOf(MapStopRoute.BUS to listOf(wrongRouteBusRoute)),
+                    listOf(MapStopRoute.BUS),
+                    mapOf(wrongRouteBusRoute.id to setOf(0, 1)),
+                    isTerminal = false,
+                    alerts = emptyMap(),
+                )
+
+            val stops =
+                mapOf(
+                    subwayStop.id to subwayMapStop,
+                    selectedBusStop.id to selectedBusMapStop,
+                    wrongDirectionBusStop.id to wrongDirectionBusMapStop,
+                    wrongRouteBusStop.id to wrongRouteBusMapStop,
+                )
+
+            val noSelectionCollection =
+                StopFeaturesBuilder.buildCollection(StopSourceData(), stops, emptyList())
+            run {
+                val subwayFeature = noSelectionCollection.features.first { it.id == subwayStop.id }
+                assertEquals(
+                    false,
+                    subwayFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val selectedFeature =
+                    noSelectionCollection.features.first { it.id == selectedBusStop.id }
+                assertEquals(
+                    false,
+                    selectedFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val wrongDirectionFeature =
+                    noSelectionCollection.features.first { it.id == wrongDirectionBusStop.id }
+                assertEquals(
+                    false,
+                    wrongDirectionFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val wrongRouteFeature =
+                    noSelectionCollection.features.first { it.id == wrongRouteBusStop.id }
+                assertEquals(
+                    false,
+                    wrongRouteFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+            }
+
+            val selectionCollection =
+                StopFeaturesBuilder.buildCollection(
+                    StopSourceData(
+                        stopFilter =
+                            StopDetailsFilter(
+                                routeId = selectedBusRoute.id,
+                                directionId = selectedDirection,
+                            )
+                    ),
+                    stops,
+                    emptyList(),
+                )
+            run {
+                val subwayFeature = selectionCollection.features.first { it.id == subwayStop.id }
+                assertEquals(
+                    false,
+                    subwayFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val selectedFeature =
+                    selectionCollection.features.first { it.id == selectedBusStop.id }
+                assertEquals(
+                    false,
+                    selectedFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val wrongDirectionFeature =
+                    selectionCollection.features.first { it.id == wrongDirectionBusStop.id }
+                assertEquals(
+                    true,
+                    wrongDirectionFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+                val wrongRouteFeature =
+                    selectionCollection.features.first { it.id == wrongRouteBusStop.id }
+                assertEquals(
+                    true,
+                    wrongRouteFeature.properties[StopFeaturesBuilder.propHideBelowCloseZoomKey],
+                )
+            }
+        }
 }

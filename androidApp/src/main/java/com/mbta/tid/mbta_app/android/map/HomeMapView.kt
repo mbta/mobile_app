@@ -122,6 +122,14 @@ fun HomeMapView(
     val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
 
+    val stopFilter =
+        remember(currentNavEntry) {
+            when (currentNavEntry) {
+                is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
+                else -> null
+            }
+        }
+
     val analytics: Analytics = koinInject()
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -229,16 +237,17 @@ fun HomeMapView(
 
     suspend fun handleNavChange() {
         handleNearbyNavRestoration()
-        val stopId =
+        val stopDetails =
             when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry.stopId
+                is SheetRoutes.StopDetails -> currentNavEntry
                 else -> null
             }
-        if (stopId == null) {
+        if (stopDetails == null) {
             viewModel.setSelectedStop(null)
             return
         }
-        viewModel.setSelectedStop(globalResponse?.getStop(stopId))
+        viewModel.setSelectedStop(globalResponse?.getStop(stopDetails.stopId))
+        viewModel.setStopFilter(stopDetails.stopFilter)
     }
 
     val cameraZoomFlow =
@@ -325,11 +334,14 @@ fun HomeMapView(
                 }
                 LaunchedEffect(railRouteSourceData) {
                     refreshRouteLineSource()
-                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                 }
                 LaunchedEffect(selectedStop) {
-                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                     positionViewportToStop()
+                }
+                LaunchedEffect(stopFilter) {
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                 }
                 LaunchedEffect(stopSourceData) { refreshStopSource() }
                 LaunchedEffect(selectedVehicle) {

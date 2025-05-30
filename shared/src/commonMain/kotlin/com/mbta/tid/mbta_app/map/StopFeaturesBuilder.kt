@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
@@ -19,7 +20,11 @@ data class StopFeatureData(val stop: MapStop, val feature: Feature)
 
 data class StopSourceData
 @DefaultArgumentInterop.Enabled
-constructor(val filteredStopIds: List<String>? = null, val selectedStopId: String? = null)
+constructor(
+    val filteredStopIds: List<String>? = null,
+    val selectedStopId: String? = null,
+    val stopFilter: StopDetailsFilter? = null,
+)
 
 object StopFeaturesBuilder {
     val stopSourceId = "stop-source"
@@ -34,6 +39,7 @@ object StopFeaturesBuilder {
     val propRouteIdsKey = FeatureProperty<Map<String, List<String>>>("routeIds")
     val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
     val propSortOrderKey = FeatureProperty<Number>("sortOrder")
+    val propHideBelowCloseZoomKey = FeatureProperty<Boolean>("hideBelowCloseZoom")
 
     suspend fun buildCollection(
         stopData: StopSourceData,
@@ -160,6 +166,14 @@ object StopFeaturesBuilder {
                     .orEmpty()
                     .map { (routeType, alertState) -> Pair(routeType.name, alertState.name) }
                     .toMap(),
+            )
+            put(
+                propHideBelowCloseZoomKey,
+                stopData.stopFilter != null &&
+                    mapStop.routeTypes == listOf(MapStopRoute.BUS) &&
+                    !mapStop.routeDirections[stopData.stopFilter.routeId]
+                        .orEmpty()
+                        .contains(stopData.stopFilter.directionId),
             )
 
             // The symbolSortKey must be ascending, so higher priority icons need higher values.

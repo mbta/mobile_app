@@ -44,6 +44,16 @@ class StopLayerGeneratorTest {
                         TestData.getRoute("CR-Newburyport"),
                     ),
             )
+        val routeDirections =
+            mapOf(
+                "Orange" to setOf(0, 1),
+                "Green-D" to setOf(0, 1),
+                "Green-E" to setOf(0, 1),
+                "CR-Fitchburg" to setOf(0, 1),
+                "CR-Haverhill" to setOf(0, 1),
+                "CR-Lowell" to setOf(0, 1),
+                "CR-Newburyport" to setOf(0, 1),
+            )
 
         val mapStops =
             mapOf(
@@ -53,6 +63,7 @@ class StopLayerGeneratorTest {
                         routes = routes,
                         routeTypes =
                             listOf(MapStopRoute.ORANGE, MapStopRoute.GREEN, MapStopRoute.COMMUTER),
+                        routeDirections = routeDirections,
                         isTerminal = true,
                         alerts =
                             mapOf(

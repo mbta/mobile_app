@@ -123,6 +123,11 @@ object StopLayerGenerator {
         layer.iconAllowOverlap = true
         layer.minZoom = if (forBus) busStopZoomThreshold else stopZoomThreshold
         layer.symbolSortKey = Exp.get(StopFeaturesBuilder.propSortOrderKey)
+        layer.filter =
+            Exp.any(
+                Exp.not(Exp.get(StopFeaturesBuilder.propHideBelowCloseZoomKey)),
+                Exp.ge(Exp.zoom(), Exp(MapDefaults.closeZoomThreshold)),
+            )
     }
 
     fun offsetAlertValue(index: Int): Exp<List<Number>> {

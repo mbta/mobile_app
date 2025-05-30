@@ -45,6 +45,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -313,6 +314,7 @@ class MapAndSheetPageTest : KoinTest {
 
             override suspend fun refreshStopFeatures(
                 selectedStop: Stop?,
+                stopFilter: StopDetailsFilter?,
                 globalMapData: GlobalMapData?,
             ) {}
 
@@ -323,6 +325,10 @@ class MapAndSheetPageTest : KoinTest {
             override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
 
             override fun setSelectedStop(stop: Stop?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun setStopFilter(stopFilter: StopDetailsFilter?) {
                 TODO("Not yet implemented")
             }
 
