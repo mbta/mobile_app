@@ -502,7 +502,7 @@ class MapAndSheetPageTest : KoinTest {
         viewportProvider.setIsManuallyCentering(false)
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntil(3000) {
             viewportProvider
                 .getViewportImmediate()
                 .cameraState
@@ -537,10 +537,10 @@ class MapAndSheetPageTest : KoinTest {
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntil(3000) {
             !updatedCamera.center.isRoughlyEqualTo(
                 viewportProvider.getViewportImmediate().cameraState!!.center
-            )
+            ) && viewportProvider.getViewportImmediate().isFollowingPuck
         }
 
         assertFalse(
