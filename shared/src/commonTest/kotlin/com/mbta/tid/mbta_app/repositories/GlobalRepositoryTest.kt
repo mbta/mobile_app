@@ -177,6 +177,7 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val expectedResponse =
                 GlobalResponse(
+                    facilities = emptyMap(),
                     lines = emptyMap(),
                     patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
                     routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
