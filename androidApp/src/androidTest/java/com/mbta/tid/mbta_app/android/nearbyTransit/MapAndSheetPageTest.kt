@@ -509,7 +509,13 @@ class MapAndSheetPageTest : KoinTest {
         viewportProvider.setIsManuallyCentering(false)
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { viewportProvider.getViewportImmediate().cameraState != null }
+        composeTestRule.waitUntil {
+            viewportProvider
+                .getViewportImmediate()
+                .cameraState
+                ?.center
+                ?.isRoughlyEqualTo(updatedCamera.center) == true
+        }
 
         assertTrue(
             updatedCamera.center.isRoughlyEqualTo(
