@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.usecases
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
@@ -12,7 +13,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class AlertsUsecase(
+class AlertsUsecase
+@DefaultArgumentInterop.Enabled
+constructor(
     private val alertsRepository: IAlertsRepository,
     globalRepository: IGlobalRepository,
     private val globalUpdateDispatcher: CoroutineDispatcher = Dispatchers.IO,
