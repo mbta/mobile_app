@@ -41,37 +41,37 @@ fun StopDetailsFilteredHeader(
     stop: Stop?,
     pinned: Boolean = false,
     onPin: (() -> Unit)? = null,
-    onClose: (() -> Unit)? = null
+    onClose: (() -> Unit)? = null,
 ) {
     Row(
         Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1F).semantics(mergeDescendants = true) { heading() }
+            modifier = Modifier.weight(1F).semantics(mergeDescendants = true) { heading() },
         ) {
             if (line != null) {
                 RoutePill(
                     route = null,
                     line = line,
                     type = RoutePillType.Fixed,
-                    modifier = Modifier.placeholderIfLoading()
+                    modifier = Modifier.placeholderIfLoading(),
                 )
             } else if (route != null) {
                 RoutePill(
                     route = route,
                     type = RoutePillType.Fixed,
-                    modifier = Modifier.placeholderIfLoading()
+                    modifier = Modifier.placeholderIfLoading(),
                 )
             }
             if (stop != null) {
                 Text(
                     AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
                     modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                    style = Typography.headline
+                    style = Typography.headline,
                 )
             } else {
                 Spacer(Modifier.weight(1f))
@@ -80,7 +80,7 @@ fun StopDetailsFilteredHeader(
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (onPin != null) {
                 PinButton(pinned, colorResource(R.color.text), onPin)
@@ -112,7 +112,7 @@ private fun StopDetailsFilteredHeaderPreview() {
                 stop = stop,
                 pinned = true,
                 onPin = {},
-                onClose = {}
+                onClose = {},
             )
             HorizontalDivider()
             StopDetailsFilteredHeader(
@@ -120,7 +120,7 @@ private fun StopDetailsFilteredHeaderPreview() {
                 line = null,
                 stop = stop,
                 pinned = true,
-                onPin = {}
+                onPin = {},
             )
         }
     }

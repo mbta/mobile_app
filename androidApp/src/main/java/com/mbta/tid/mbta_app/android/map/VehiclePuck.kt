@@ -35,19 +35,14 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Vehicle
 
 @Composable
-fun VehiclePuck(
-    vehicle: Vehicle,
-    route: Route,
-    selected: Boolean,
-    onClick: (() -> Unit)?,
-) {
+fun VehiclePuck(vehicle: Vehicle, route: Route, selected: Boolean, onClick: (() -> Unit)?) {
     val routeColor = Color.fromHex(route.color)
     Box(
         modifier =
             Modifier.size(56.dp)
                 .clip(CircleShape)
                 .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         if (selected) {
             val haloPulseAnimation = rememberInfiniteTransition(label = "haloPulseAnimation")
@@ -60,29 +55,29 @@ fun VehiclePuck(
                     56.dp,
                     Dp.VectorConverter,
                     haloPulseSpec(),
-                    label = "size"
+                    label = "size",
                 )
             Box(Modifier.size(size).border(1.dp, routeColor.copy(alpha = strokeAlpha), CircleShape))
         }
         Box(
             modifier = Modifier.rotate(45f + (vehicle.bearing?.toFloat() ?: 0f)),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.vehicle_halo),
-                contentDescription = null
+                contentDescription = null,
             )
             Image(
                 painter = painterResource(id = R.drawable.vehicle_puck),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(routeColor)
+                colorFilter = ColorFilter.tint(routeColor),
             )
         }
         val (modeIcon, modeDescription) = routeIcon(route = route)
         Image(
             painter = modeIcon,
             contentDescription = modeDescription,
-            colorFilter = ColorFilter.tint(Color.fromHex(route.textColor))
+            colorFilter = ColorFilter.tint(Color.fromHex(route.textColor)),
         )
     }
 }
@@ -90,7 +85,7 @@ fun VehiclePuck(
 private fun <T> haloPulseSpec() =
     infiniteRepeatable<T>(
         tween(durationMillis = 2000, delayMillis = 2000, easing = EaseOut),
-        repeatMode = RepeatMode.Restart
+        repeatMode = RepeatMode.Restart,
     )
 
 @Preview

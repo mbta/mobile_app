@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.utils.ServiceDateRounding
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlinx.datetime.Instant
-import kotlinx.datetime.minus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -23,7 +22,7 @@ data class Alert(
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle,
     val severity: Int,
-    @SerialName("updated_at") val updatedAt: Instant
+    @SerialName("updated_at") val updatedAt: Instant,
 ) : BackendObject {
     init {
         // This is done on init to avoid having to pass it in for any call to format an ActivePeriod
@@ -38,7 +37,7 @@ data class Alert(
                 Effect.Suspension,
                 Effect.StationClosure,
                 Effect.StopClosure,
-                Effect.DockClosure
+                Effect.DockClosure,
             ) -> StopAlertState.Suspension
             else -> StopAlertState.Issue
         }
@@ -55,7 +54,7 @@ data class Alert(
                 Effect.StopClosure,
                 Effect.DockClosure,
                 Effect.Detour,
-                Effect.SnowRoute
+                Effect.SnowRoute,
             ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
             // service changes are always secondary
             Effect.ServiceChange -> AlertSignificance.Secondary
@@ -70,12 +69,14 @@ data class Alert(
             else -> AlertSignificance.None
         }
 
+    val hasNoThroughService = effect in setOf(Effect.Shuttle, Effect.Suspension)
+
     suspend fun summary(
         stopId: String,
         directionId: Int,
         patterns: List<RoutePattern>,
         atTime: Instant,
-        global: GlobalResponse
+        global: GlobalResponse,
     ) = AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, global)
 
     @Serializable
@@ -225,7 +226,7 @@ data class Alert(
         val route: String? = null,
         @SerialName("route_type") val routeType: RouteType? = null,
         val stop: String? = null,
-        val trip: String? = null
+        val trip: String? = null,
     ) {
         @Serializable
         enum class Activity {
@@ -245,7 +246,7 @@ data class Alert(
             routeId: String? = null,
             routeType: RouteType? = null,
             stopId: String? = null,
-            tripId: String? = null
+            tripId: String? = null,
         ): Boolean {
             fun <T> matches(expected: T?, actual: T?) =
                 expected == null || actual == null || expected == actual
@@ -372,7 +373,7 @@ data class Alert(
             directionId: Int?,
             routeIds: List<String>,
             stopIds: Set<String>?,
-            tripId: String?
+            tripId: String?,
         ): List<Alert> {
             return alerts
                 .filter { alert ->
@@ -438,7 +439,7 @@ data class Alert(
                         it.anyInformedEntitySatisfies {
                             checkActivityIn(
                                 InformedEntity.Activity.Exit,
-                                InformedEntity.Activity.Ride
+                                InformedEntity.Activity.Ride,
                             )
                             checkDirection(trip.directionId)
                             checkRoute(trip.routeId)
@@ -459,7 +460,7 @@ data class Alert(
                                 it.anyInformedEntitySatisfies {
                                     checkActivityIn(
                                         InformedEntity.Activity.Exit,
-                                        InformedEntity.Activity.Ride
+                                        InformedEntity.Activity.Ride,
                                     )
                                     checkDirection(trip.directionId)
                                     checkRoute(trip.routeId)
@@ -467,12 +468,36 @@ data class Alert(
                                 } && !targetStopAlertIds.contains(it.id)
                             }
                         }
-                        .firstOrNull { it.isNotEmpty() }
-                        ?: listOf()
+                        .firstOrNull { it.isNotEmpty() } ?: listOf()
                 return firstStopAlerts
             } else {
                 return listOf()
             }
         }
+
+        /**
+         * A unique list of all the alerts that are downstream from the target stop for each route
+         * pattern
+         */
+        fun alertsDownstreamForPatterns(
+            alerts: Collection<Alert>,
+            patterns: List<RoutePattern>,
+            targetStopWithChildren: Set<String>,
+            tripsById: Map<String, Trip>,
+        ): List<Alert> {
+            return patterns
+                .flatMap {
+                    val trip = tripsById[it.representativeTripId]
+                    if (trip != null) {
+                        downstreamAlerts(alerts, trip, targetStopWithChildren)
+                    } else {
+                        listOf()
+                    }
+                }
+                .distinct()
+        }
     }
 }
+
+fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+    if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this

@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,30 +29,32 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
+import kotlinx.coroutines.launch
 
 @Composable
 fun NoNearbyStopsView(
     hideMaps: Boolean,
     onOpenSearch: () -> Unit,
-    onPanToDefaultCenter: () -> Unit
+    onPanToDefaultCenter: suspend () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier =
             Modifier.clip(RoundedCornerShape(8.dp))
                 .background(colorResource(R.color.fill3))
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painterResource(R.drawable.mbta_logo),
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             Text(stringResource(R.string.no_stops_nearby_title), style = Typography.title2Bold)
         }
@@ -65,40 +68,40 @@ fun NoNearbyStopsView(
                     containerColor = colorResource(R.color.key),
                     disabledContainerColor = colorResource(R.color.key),
                     contentColor = colorResource(R.color.fill3),
-                    disabledContentColor = colorResource(R.color.fill3)
-                )
+                    disabledContentColor = colorResource(R.color.fill3),
+                ),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(stringResource(R.string.no_stops_nearby_search), style = Typography.body)
                 Icon(
                     painterResource(R.drawable.fa_magnifying_glass_solid),
                     contentDescription = null,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(16.dp),
                 )
             }
         }
         if (!hideMaps) {
             OutlinedButton(
-                onClick = onPanToDefaultCenter,
+                onClick = { coroutineScope.launch { onPanToDefaultCenter() } },
                 modifier = Modifier.requiredHeightIn(min = 48.dp),
                 shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, colorResource(R.color.key))
+                border = BorderStroke(1.dp, colorResource(R.color.key)),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement =
                         Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(stringResource(R.string.no_stops_nearby_pan), style = Typography.body)
                     Icon(
                         painterResource(R.drawable.fa_map),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
                     )
                 }
             }

@@ -156,7 +156,7 @@ final class StopDetailsPageTests: XCTestCase {
     }
 
     @MainActor
-    func testUpdatesDeparturesOnPredictionsChange() async throws {
+    func testUpdatesRouteCardDataOnPredictionsChange() async throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -196,7 +196,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        XCTAssertNil(nearbyVM.departures)
+        XCTAssertNil(nearbyVM.routeCardData)
 
         ViewHosting.host(view: sut)
         stopDetailsVM.stopData = .init(
@@ -207,12 +207,97 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let hasSetDepartures = sut.inspection.inspect(after: 1) { view in
-            XCTAssertNotNil(nearbyVM.departures)
+            XCTAssertNotNil(nearbyVM.routeCardData)
             // Keeps internal departures in sync with VM departures
-            XCTAssertEqual(try view.actualView().internalDepartures, nearbyVM.departures)
+            XCTAssertEqual(try view.actualView().internalRouteCardData, nearbyVM.routeCardData)
         }
 
         await fulfillment(of: [hasSetDepartures], timeout: 2)
+    }
+
+    @MainActor
+    func testUpdatesRouteCardDataWhenParamsChange() async throws {
+        let objects = ObjectCollectionBuilder()
+
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let tripId = "trip"
+        let routePattern = objects.routePattern(route: route) { pattern in
+            pattern.representativeTripId = tripId
+        }
+        let trip = objects.trip(routePattern: routePattern) { trip in
+            trip.id = tripId
+            trip.directionId = 0
+            trip.stopIds = [stop.id]
+            trip.routePatternId = routePattern.id
+        }
+        objects.schedule { schedule in
+            schedule.trip = trip
+            schedule.routeId = route.id
+            schedule.stopId = stop.id
+            schedule.stopSequence = 0
+            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+        }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
+        )
+        nearbyVM.alerts = .init(alerts: [:])
+
+        let stopDetailsVM = StopDetailsViewModel(
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
+            schedulesRepository: MockScheduleRepository(
+                scheduleResponse: .init(objects: objects),
+                callback: { _ in }
+            )
+        )
+
+        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
+
+        let sut = StopDetailsPage(
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: nil,
+                tripFilter: nil
+            ),
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: viewportProvider
+        )
+
+        let updatePublisher = PassthroughSubject<Void, Never>()
+
+        let onChangeCalledExp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNil(nearbyVM.routeCardData)
+            XCTAssertNil(try view.actualView().internalRouteCardData)
+
+            try view.implicitAnyView().callOnChange(newValue: RouteCardParams(alerts: nil,
+                                                                              global: nil,
+                                                                              now: Date.now,
+                                                                              pinnedRoutes: [],
+                                                                              stopData: nil,
+                                                                              stopFilter: nil,
+                                                                              stopId: stop.id))
+            updatePublisher.send()
+        }
+
+        let routeCardDataSetExp = sut.inspection.inspect(onReceive: updatePublisher, after: 1) { view in
+
+            XCTAssertEqual([], nearbyVM.routeCardData)
+            try XCTAssertEqual(view.actualView().internalRouteCardData, [])
+        }
+        ViewHosting.host(view: sut)
     }
 
     @MainActor

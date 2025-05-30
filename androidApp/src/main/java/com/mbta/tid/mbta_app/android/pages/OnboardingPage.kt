@@ -20,7 +20,7 @@ fun OnboardingPage(
     onFinish: () -> Unit,
     onAdvance: () -> Unit = {},
     onboardingRepository: IOnboardingRepository = koinInject(),
-    skipLocationDialogue: Boolean = false
+    skipLocationDialogue: Boolean = false,
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
@@ -40,6 +40,6 @@ fun OnboardingPage(
             }
         },
         locationDataManager,
-        skipLocationDialogue
+        skipLocationDialogue,
     )
 }

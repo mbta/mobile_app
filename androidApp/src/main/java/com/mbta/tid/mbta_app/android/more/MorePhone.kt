@@ -40,6 +40,6 @@ fun MorePhone(label: String, phoneNumber: String) {
                 Log.i("More", "Failed to dial number on MorePhone click")
             }
         },
-        icon = { PhoneIcon() }
+        icon = { PhoneIcon() },
     )
 }

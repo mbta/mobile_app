@@ -19,5 +19,5 @@ data class SegmentedRouteShape(
     @SerialName("source_route_id") val sourceRouteId: String,
     @SerialName("direction_id") val directionId: Int,
     @SerialName("route_segments") val routeSegments: List<RouteSegment>,
-    val shape: Shape
+    val shape: Shape,
 )

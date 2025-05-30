@@ -36,7 +36,7 @@ class SubscribeToVehiclesTest {
         val vehiclesRepo =
             MockVehiclesRepository(
                 VehiclesStreamDataResponse(mapOf(vehicle.id to vehicle)),
-                onConnect = { routeId, directionId -> connectProps = Pair(routeId, directionId) }
+                onConnect = { routeId, directionId -> connectProps = Pair(routeId, directionId) },
             )
 
         var vehicles: List<Vehicle> = emptyList()
@@ -68,7 +68,7 @@ class SubscribeToVehiclesTest {
             MockVehiclesRepository(
                 VehiclesStreamDataResponse(mapOf(vehicle.id to vehicle)),
                 onConnect = { _, _ -> connectCount += 1 },
-                onDisconnect = { disconnectCount += 1 }
+                onDisconnect = { disconnectCount += 1 },
             )
 
         var vehicles: List<Vehicle> = emptyList()

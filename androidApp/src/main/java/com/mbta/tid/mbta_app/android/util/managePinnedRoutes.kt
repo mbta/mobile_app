@@ -12,13 +12,13 @@ import org.koin.compose.koinInject
 
 data class ManagedPinnedRoutes(
     val pinnedRoutes: Set<String>?,
-    val togglePinnedRoute: suspend (String) -> Boolean
+    val togglePinnedRoute: suspend (String) -> Boolean,
 )
 
 @Composable
 fun managePinnedRoutes(
     pinnedRoutesRepository: IPinnedRoutesRepository = koinInject(),
-    togglePinnedRouteUsecase: TogglePinnedRouteUsecase = koinInject()
+    togglePinnedRouteUsecase: TogglePinnedRouteUsecase = koinInject(),
 ): ManagedPinnedRoutes {
     var pinnedRoutes: Set<String>? by remember { mutableStateOf(null) }
 

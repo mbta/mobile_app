@@ -41,27 +41,27 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
         Row(
             Modifier.background(routeAccents.color).padding(16.dp).safeDrawingPadding(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             val (icon, description) = routeIcon(routeAccents.type)
             Image(
                 icon,
                 description,
                 Modifier.clearAndSetSemantics {}.size(24.dp),
-                colorFilter = ColorFilter.tint(routeAccents.textColor)
+                colorFilter = ColorFilter.tint(routeAccents.textColor),
             )
             Text(
                 stringResource(R.string.details),
                 color = routeAccents.textColor,
                 style = Typography.headline,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             ActionButton(ActionButtonKind.Close) { goBack() }
         }
         Column(
             Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             ExplanationHeadline(type, routeAccents.type)
             ExplanationImage(type, routeAccents)
@@ -82,14 +82,14 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
             ExplainerType.NoVehicle ->
                 stringResource(
                         R.string.explainer_headline_no_vehicle,
-                        routeType.typeText(context, true)
+                        routeType.typeText(context, true),
                     )
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
                     }
         },
         modifier,
-        style = Typography.title2Bold
+        style = Typography.title2Bold,
     )
 }
 
@@ -97,7 +97,7 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
 fun ExplanationImage(
     type: ExplainerType,
     routeAccents: TripRouteAccents,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when (type) {
         ExplainerType.FinishingAnotherTrip ->
@@ -138,7 +138,7 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
             ExplainerType.FinishingAnotherTrip ->
                 stringResource(
                         R.string.explainer_text_finishing_another,
-                        routeType.typeText(context, true)
+                        routeType.typeText(context, true),
                     )
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
@@ -147,13 +147,13 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
             ExplainerType.NoVehicle ->
                 stringResource(
                         R.string.explainer_text_no_vehicle,
-                        routeType.typeText(context, true)
+                        routeType.typeText(context, true),
                     )
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
                     }
         },
         modifier,
-        style = Typography.body
+        style = Typography.body,
     )
 }

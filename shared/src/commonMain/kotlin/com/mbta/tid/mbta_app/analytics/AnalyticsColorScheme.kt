@@ -8,5 +8,5 @@ enum class AnalyticsColorScheme(val recordedValue: String) {
      * planning to implement an [Aing-Tii](https://starwars.fandom.com/wiki/Aing-Tii/Legends) color
      * scheme in iOS 50.
      */
-    Unknown("unknown")
+    Unknown("unknown"),
 }

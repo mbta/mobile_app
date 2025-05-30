@@ -73,6 +73,7 @@ struct TripStops: View {
         ForEach(list, id: \.stopSequence) { stop in
             TripStopRow(
                 stop: stop,
+                trip: stops.trip,
                 now: now.toKotlinInstant(),
                 onTapLink: onTapLink,
                 onOpenAlertDetails: onOpenAlertDetails,
@@ -108,6 +109,7 @@ struct TripStops: View {
                 if showFirstStopSeparately, let firstStop = splitStops.firstStop {
                     TripStopRow(
                         stop: firstStop,
+                        trip: stops.trip,
                         now: now.toKotlinInstant(),
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
@@ -129,6 +131,7 @@ struct TripStops: View {
                                         ColoredRouteLine(routeAccents.color).padding(.leading, 42)
                                     }
                                 }
+                                .padding(.horizontal, 6)
                                 stopList(list: collapsedStops)
                             }
                         },
@@ -183,6 +186,7 @@ struct TripStops: View {
                     // it's already displayed in the trip header
                     TripStopRow(
                         stop: target,
+                        trip: stops.trip,
                         now: now.toKotlinInstant(),
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
@@ -227,7 +231,7 @@ struct TripStops: View {
     let alertStartIndex = 7
     let alert = objects.alert { $0.effect = .shuttle }
     let stopList = TripDetailsStopList(
-        tripId: trip.id,
+        trip: trip,
         stops: stops.enumerated().map { index, stop in
             .init(
                 stop: stop,
@@ -237,7 +241,6 @@ struct TripStops: View {
                 schedule: nil,
                 prediction: objects
                     .prediction { $0.departureTime = (now + TimeInterval(2 * 60 * index)).toKotlinInstant() },
-                predictionStop: nil,
                 vehicle: nil,
                 routes: []
             )

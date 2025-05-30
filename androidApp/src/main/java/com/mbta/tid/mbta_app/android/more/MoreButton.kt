@@ -24,7 +24,7 @@ fun MoreButton(
     action: () -> Unit,
     note: String? = null,
     icon: (@Composable () -> Unit)? = null,
-    isKey: Boolean = false
+    isKey: Boolean = false,
 ) {
     Row(
         modifier =
@@ -42,7 +42,7 @@ fun MoreButton(
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -51,7 +51,7 @@ fun MoreButton(
                     color =
                         if (isKey) {
                             colorResource(R.color.fill3)
-                        } else colorResource(R.color.text)
+                        } else colorResource(R.color.text),
                 )
                 if (note != null) {
                     Text(
@@ -61,7 +61,7 @@ fun MoreButton(
                             if (isKey) {
                                 colorResource(R.color.fill3)
                             } else colorResource(R.color.text),
-                        style = Typography.footnote
+                        style = Typography.footnote,
                     )
                 }
             }

@@ -93,14 +93,14 @@ extension HomeMapView {
     func updateStopDetailsLayers(
         _ stopMapData: StopMapResponse,
         _ filter: StopDetailsFilter?,
-        _ departures: StopDetailsDepartures?
+        _ routeCardData: [RouteCardData]?
     ) {
         Task {
             if let filter {
                 mapVM.routeSourceData = RouteFeaturesBuilder.shared.filteredRouteShapesForStop(
                     stopMapData: stopMapData,
                     filter: filter,
-                    departures: departures
+                    routeCardData: routeCardData
                 )
             } else {
                 mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(

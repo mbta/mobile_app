@@ -33,7 +33,7 @@ object Polyline {
                         val thisPoint =
                             Position(
                                 latitude = lastPoint.latitude + state.latitude,
-                                longitude = lastPoint.longitude + thisValue
+                                longitude = lastPoint.longitude + thisValue,
                             )
                         result.add(thisPoint)
                         lastPoint = thisPoint

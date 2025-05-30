@@ -32,15 +32,22 @@ class RouteCardTest {
             RouteCard(
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route),
-                    listOf(RouteCardData.RouteStopData(stop, emptyList(), emptyList())),
-                    RouteCardData.Context.NearbyTransit,
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                        )
+                    ),
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
-                false
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -66,15 +73,22 @@ class RouteCardTest {
             RouteCard(
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route),
-                    listOf(RouteCardData.RouteStopData(stop, emptyList(), emptyList())),
-                    RouteCardData.Context.NearbyTransit,
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                        )
+                    ),
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = { onPinCalled = true },
-                false
+                showStopHeader = true,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -101,15 +115,22 @@ class RouteCardTest {
             RouteCard(
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route),
-                    listOf(RouteCardData.RouteStopData(stop, emptyList(), emptyList())),
-                    RouteCardData.Context.StopDetailsUnfiltered,
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                        )
+                    ),
                     now,
                 ),
                 GlobalResponse(objects),
                 now,
                 pinned = false,
                 onPin = {},
-                false
+                showStopHeader = false,
+                showStationAccessibility = false,
             ) { _, _ ->
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -22,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,37 +30,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.search.results.RouteResultsView
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import com.mbta.tid.mbta_app.repositories.Settings
 
 @ExperimentalMaterial3Api
 @Composable
 fun SearchBarOverlay(
     expanded: Boolean,
+    showSearchBar: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
-    currentNavEntry: SheetRoutes?,
+    onRouteNavigation: (routeId: String) -> Unit,
     inputFieldFocusRequester: FocusRequester,
     searchResultsVm: SearchResultsViewModel,
-    content: @Composable () -> Unit
+    onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
-    var visible =
-        remember(currentNavEntry) {
-            currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
-        }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
+    val includeRoutes = SettingsCache.get(Settings.SearchRouteResults)
 
     val buttonColors =
         ButtonColors(
@@ -69,11 +72,11 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, visible, globalResponse) {
+    LaunchedEffect(searchInputState, showSearchBar, globalResponse) {
         searchResultsVm.getSearchResults(searchInputState, globalResponse)
     }
-    LaunchedEffect(visible, expanded) {
-        if (visible) {
+    LaunchedEffect(showSearchBar, expanded) {
+        if (showSearchBar) {
             onExpandedChange(expanded)
             if (!expanded) {
                 searchInputState = ""
@@ -82,11 +85,8 @@ fun SearchBarOverlay(
     }
 
     Box(contentAlignment = Alignment.TopCenter) {
-        Box(
-            modifier = Modifier.zIndex(1f),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (visible) {
+        Box(modifier = Modifier.zIndex(1f), contentAlignment = Alignment.Center) {
+            if (showSearchBar) {
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
                     colors =
@@ -109,7 +109,7 @@ fun SearchBarOverlay(
                                     stringResource(R.string.stops),
                                     // This will be drawn in bodyLarge if we don't
                                     // re-override it here
-                                    style = Typography.callout
+                                    style = Typography.callout,
                                 )
                             },
                             expanded = expanded,
@@ -120,16 +120,19 @@ fun SearchBarOverlay(
                                     .haloContainer(
                                         2.dp,
                                         borderRadius = 8.dp,
-                                        backgroundColor = colorResource(R.color.fill3)
+                                        backgroundColor = colorResource(R.color.fill3),
                                     )
                                     .fillMaxWidth()
-                                    .focusRequester(inputFieldFocusRequester),
+                                    .focusRequester(inputFieldFocusRequester)
+                                    .onGloballyPositioned { layoutCoordinates ->
+                                        onBarGloballyPositioned(layoutCoordinates)
+                                    },
                             onSearch = {},
                             leadingIcon = {
                                 Icon(
                                     painterResource(R.drawable.magnifying_glass),
                                     null,
-                                    tint = colorResource(R.color.deemphasized)
+                                    tint = colorResource(R.color.deemphasized),
                                 )
                             },
                             trailingIcon = {
@@ -141,11 +144,11 @@ fun SearchBarOverlay(
                                         Icon(
                                             painterResource(R.drawable.fa_xmark),
                                             stringResource(R.string.close_button_label),
-                                            tint = colorResource(R.color.deemphasized)
+                                            tint = colorResource(R.color.deemphasized),
                                         )
                                     }
                                 }
-                            }
+                            },
                         )
                     },
                     expanded = expanded,
@@ -153,14 +156,14 @@ fun SearchBarOverlay(
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         if (searchInputState.isEmpty()) {
                             item {
                                 Text(
                                     modifier = Modifier.padding(bottom = 10.dp),
                                     text = stringResource(R.string.recently_viewed),
-                                    style = Typography.subheadlineSemibold
+                                    style = Typography.subheadlineSemibold,
                                 )
                             }
                         }
@@ -179,6 +182,29 @@ fun SearchBarOverlay(
                                 HorizontalDivider(color = colorResource(R.color.fill1))
                             }
                             StopResultsView(shape, stop, globalResponse, onStopNavigation)
+                        }
+                        if (includeRoutes && !searchResults?.routes.isNullOrEmpty()) {
+                            item {
+                                Text(
+                                    stringResource(R.string.routes),
+                                    Modifier.padding(vertical = 8.dp),
+                                    style = Typography.subheadlineSemibold,
+                                )
+                            }
+                            items(searchResults?.routes.orEmpty()) { route ->
+                                val shape =
+                                    if (searchResults?.routes?.size == 1) {
+                                        RoundedCornerShape(10.dp)
+                                    } else if (searchResults?.routes?.first() == route) {
+                                        RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                                    } else if (searchResults?.routes?.last() == route) {
+                                        RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
+                                    } else {
+                                        RoundedCornerShape(0.dp)
+                                    }
+                                HorizontalDivider(color = colorResource(R.color.fill1))
+                                RouteResultsView(shape, route, globalResponse, onRouteNavigation)
+                            }
                         }
                     }
                 }

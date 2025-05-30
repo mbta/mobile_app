@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
@@ -42,6 +43,7 @@ import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -98,7 +100,7 @@ fun endToEndModule(): Module {
     val globalData =
         GlobalResponse(
             objects,
-            mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
+            mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id)),
         )
     return module {
         single<IAccessibilityStatusRepository> {
@@ -113,7 +115,10 @@ fun endToEndModule(): Module {
         single<IGlobalRepository> { MockGlobalRepository(globalData) }
         single<ILastLaunchedAppVersionRepository> { MockLastLaunchedAppVersionRepository(null) }
         single<INearbyRepository> {
-            MockNearbyRepository(NearbyResponse(listOf(stopParkStreet.id)))
+            MockNearbyRepository(
+                NearbyResponse(listOf(stopParkStreet.id)),
+                listOf(stopParkStreet.id),
+            )
         }
         single<IOnboardingRepository> { MockOnboardingRepository() }
         single<IPinnedRoutesRepository> {
@@ -133,6 +138,7 @@ fun endToEndModule(): Module {
             // debug.
             IdleRailRouteShapeRepository()
         }
+        single<IRouteStopsRepository> { MockRouteStopsRepository(emptyList()) }
         single<ISchedulesRepository> {
             MockScheduleRepository(scheduleResponse = ScheduleResponse(objects))
         }

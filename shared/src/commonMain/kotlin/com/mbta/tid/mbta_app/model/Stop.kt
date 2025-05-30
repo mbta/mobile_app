@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
+import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
+import io.github.dellisd.spatialk.turf.distance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,7 +21,7 @@ data class Stop(
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList(),
     @SerialName("connecting_stop_ids") val connectingStopIds: List<String> = emptyList(),
     @SerialName("parent_station_id") val parentStationId: String? = null,
-    @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null
+    @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null,
 ) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
 
@@ -44,6 +46,9 @@ data class Stop(
 
     fun resolveParent(global: GlobalResponse) = resolveParent(global.stops)
 
+    @OptIn(ExperimentalTurfApi::class)
+    fun distanceFrom(position: Position): Double = distance(position, this.position)
+
     companion object {
         /**
          * Checks if the given stop IDs (as resolved in [stops]) refer to stops which are the same,
@@ -59,5 +64,27 @@ data class Stop(
         }
 
         val crCoreStations = setOf("place-north", "place-sstat", "place-bbsta", "place-rugg")
+
+        /**
+         * A map of a stop to itself and any children. for standalone stops, an entry will be
+         * <standaloneStop, [standaloneStopId]>. for stations, an entry will be <station,
+         * [stationId, child1Id, child2Id, etc.]>
+         */
+        fun resolvedParentToAllStops(
+            stopIds: List<String>,
+            globalData: GlobalResponse,
+        ): Map<Stop, Set<String>> {
+            return stopIds
+                .mapNotNull { stopId ->
+                    val stop = globalData.stops[stopId]
+                    if (stop != null) {
+                        Pair(stop.resolveParent(globalData), stop)
+                    } else {
+                        null
+                    }
+                }
+                .groupBy({ it.first }, { it.second.id })
+                .mapValues { it.value.toSet().plus(it.key.id) }
+        }
     }
 }

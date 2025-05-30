@@ -22,9 +22,9 @@ class RoutePillSpecTest {
                 "FFC72C",
                 RoutePillSpec.Content.Text("62/76"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Rectangle
+                RoutePillSpec.Shape.Rectangle,
             ),
-            fixedPill
+            fixedPill,
         )
         val flexPill = RoutePillSpec(busRoute, null, RoutePillSpec.Type.Flex)
         assertEquals(
@@ -33,9 +33,9 @@ class RoutePillSpecTest {
                 "FFC72C",
                 RoutePillSpec.Content.Text("62/76"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Rectangle
+                RoutePillSpec.Shape.Rectangle,
             ),
-            flexPill
+            flexPill,
         )
 
         val searchStationPill =
@@ -43,7 +43,7 @@ class RoutePillSpecTest {
                 busRoute,
                 null,
                 RoutePillSpec.Type.FlexCompact,
-                RoutePillSpec.Context.SearchStation
+                RoutePillSpec.Context.SearchStation,
             )
         assertEquals(
             RoutePillSpec(
@@ -51,9 +51,9 @@ class RoutePillSpecTest {
                 "FFC72C",
                 RoutePillSpec.Content.ModeImage(RouteType.BUS),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Rectangle
+                RoutePillSpec.Shape.Rectangle,
             ),
-            searchStationPill
+            searchStationPill,
         )
     }
 
@@ -85,9 +85,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("RL"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            redLineFixed
+            redLineFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -95,9 +95,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("RL"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            redLineFlex
+            redLineFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -105,9 +105,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("RL"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            redLineFlexCompact
+            redLineFlexCompact,
         )
         assertEquals(
             RoutePillSpec(
@@ -115,9 +115,9 @@ class RoutePillSpecTest {
                 "003DA5",
                 RoutePillSpec.Content.Text("BL"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            blueLineFixed
+            blueLineFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -125,9 +125,9 @@ class RoutePillSpecTest {
                 "003DA5",
                 RoutePillSpec.Content.Text("BL"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            blueLineFlex
+            blueLineFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -135,9 +135,9 @@ class RoutePillSpecTest {
                 "003DA5",
                 RoutePillSpec.Content.Text("BL"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            blueLineFlexCompact
+            blueLineFlexCompact,
         )
     }
 
@@ -170,9 +170,9 @@ class RoutePillSpecTest {
                 "00843D",
                 RoutePillSpec.Content.Text("GL C"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            greenLineCFixed
+            greenLineCFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -180,9 +180,9 @@ class RoutePillSpecTest {
                 "00843D",
                 RoutePillSpec.Content.Text("C"),
                 RoutePillSpec.Size.Circle,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            greenLineCFlex
+            greenLineCFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -190,9 +190,9 @@ class RoutePillSpecTest {
                 "00843D",
                 RoutePillSpec.Content.Text("C"),
                 RoutePillSpec.Size.CircleSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            greenLineCFlexCompact
+            greenLineCFlexCompact,
         )
         assertEquals(
             RoutePillSpec(
@@ -200,9 +200,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("M"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            mattapanFixed
+            mattapanFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -210,9 +210,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("M"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            mattapanFlex
+            mattapanFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -220,9 +220,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("M"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            mattapanFlexCompact
+            mattapanFlexCompact,
         )
     }
 
@@ -255,9 +255,9 @@ class RoutePillSpecTest {
                 "80276C",
                 RoutePillSpec.Content.Text("CR"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            middleboroughFixed
+            middleboroughFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -265,9 +265,9 @@ class RoutePillSpecTest {
                 "80276C",
                 RoutePillSpec.Content.Text("Middleborough/Lakeville"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            middleboroughFlex
+            middleboroughFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -275,9 +275,9 @@ class RoutePillSpecTest {
                 "80276C",
                 RoutePillSpec.Content.Text("CR"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            middleboroughFlexCompact
+            middleboroughFlexCompact,
         )
         assertEquals(
             RoutePillSpec(
@@ -285,9 +285,9 @@ class RoutePillSpecTest {
                 "80276C",
                 RoutePillSpec.Content.Text("CR"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            providenceFixed
+            providenceFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -295,9 +295,9 @@ class RoutePillSpecTest {
                 "80276C",
                 RoutePillSpec.Content.Text("Providence/Stoughton"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            providenceFlex
+            providenceFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -305,9 +305,9 @@ class RoutePillSpecTest {
                 "80276C",
                 RoutePillSpec.Content.Text("CR"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            providenceFlexCompact
+            providenceFlexCompact,
         )
     }
 
@@ -330,9 +330,9 @@ class RoutePillSpecTest {
                 "008EAA",
                 RoutePillSpec.Content.ModeImage(RouteType.FERRY),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            ferryFixed
+            ferryFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -340,9 +340,9 @@ class RoutePillSpecTest {
                 "008EAA",
                 RoutePillSpec.Content.Text("Hingham/Hull Ferry"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            ferryFlex
+            ferryFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -350,9 +350,9 @@ class RoutePillSpecTest {
                 "008EAA",
                 RoutePillSpec.Content.ModeImage(RouteType.FERRY),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            ferryFlexCompact
+            ferryFlexCompact,
         )
     }
 
@@ -382,9 +382,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("Red Line"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            rlFixed
+            rlFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -392,9 +392,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("Red Line"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            rlFlex
+            rlFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -402,9 +402,9 @@ class RoutePillSpecTest {
                 "DA291C",
                 RoutePillSpec.Content.Text("Red Line"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            rlFlexCompact
+            rlFlexCompact,
         )
         assertEquals(
             RoutePillSpec(
@@ -412,9 +412,9 @@ class RoutePillSpecTest {
                 "00843D",
                 RoutePillSpec.Content.Text("GL"),
                 RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            glFixed
+            glFixed,
         )
         assertEquals(
             RoutePillSpec(
@@ -422,9 +422,9 @@ class RoutePillSpecTest {
                 "00843D",
                 RoutePillSpec.Content.Text("GL"),
                 RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            glFlex
+            glFlex,
         )
         assertEquals(
             RoutePillSpec(
@@ -432,9 +432,9 @@ class RoutePillSpecTest {
                 "00843D",
                 RoutePillSpec.Content.Text("GL"),
                 RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule
+                RoutePillSpec.Shape.Capsule,
             ),
-            glFlexCompact
+            glFlexCompact,
         )
     }
 }

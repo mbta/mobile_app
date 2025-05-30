@@ -10,4 +10,16 @@ data class RouteResult(
     @SerialName("long_name") val longName: String,
     @SerialName("name") val shortName: String,
     @SerialName("route_type") val routeType: RouteType,
-)
+) {
+    /** Convenience constructor for testing */
+    constructor(
+        route: Route,
+        rank: Int = 1,
+    ) : this(
+        id = route.id,
+        rank = rank,
+        longName = route.longName,
+        shortName = route.shortName,
+        routeType = route.type,
+    )
+}

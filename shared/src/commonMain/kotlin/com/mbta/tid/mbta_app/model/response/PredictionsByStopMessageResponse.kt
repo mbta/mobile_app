@@ -13,11 +13,11 @@ data class PredictionsByStopMessageResponse(
     @SerialName("stop_id") val stopId: String,
     internal val predictions: Map<String, Prediction>,
     internal val trips: Map<String, Trip>,
-    internal val vehicles: Map<String, Vehicle>
+    internal val vehicles: Map<String, Vehicle>,
 ) {
     @DefaultArgumentInterop.Enabled
     constructor(
         objects: ObjectCollectionBuilder,
-        stopId: String = objects.stops.keys.single()
+        stopId: String = objects.stops.keys.single(),
     ) : this(stopId, objects.predictions, objects.trips, objects.vehicles)
 }

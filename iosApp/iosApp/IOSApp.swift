@@ -17,11 +17,34 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         return true
     }
+
+    /// from https://developer.apple.com/documentation/xcode/supporting-universal-links-in-your-app
+    func application(
+        _: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler _: @escaping ([any UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        // Get URL components from the incoming user activity.
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let incomingURL = userActivity.webpageURL,
+              let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+
+        if components.path == "/" {
+            // just opening app, let default route happen
+            return true
+        } else {
+            // unhandled path
+            debugPrint("Unhandled deep link URI", components)
+            return false
+        }
+    }
 }
 
 @main
 struct IOSApp: App {
-    // register app delegate for Firebase setup
+    // register app delegate for Firebase setup and deep linking
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     // When running unit tests or previews, don't mount the entire app which makes real API requests.

@@ -20,7 +20,6 @@ struct StopDetailsView: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var departures: StopDetailsDepartures?
     var routeCardData: [RouteCardData]?
     var now: Date
 
@@ -38,7 +37,6 @@ struct StopDetailsView: View {
         tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        departures: StopDetailsDepartures?,
         routeCardData: [RouteCardData]?,
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
@@ -51,7 +49,6 @@ struct StopDetailsView: View {
         self.tripFilter = tripFilter
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
-        self.departures = departures
         self.routeCardData = routeCardData
         self.now = now
         self.errorBannerVM = errorBannerVM
@@ -68,7 +65,7 @@ struct StopDetailsView: View {
                 tripFilter: tripFilter,
                 setStopFilter: setStopFilter,
                 setTripFilter: setTripFilter,
-                departures: departures,
+                routeCardData: routeCardData,
                 now: now,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
@@ -81,7 +78,6 @@ struct StopDetailsView: View {
             StopDetailsUnfilteredView(
                 stopId: stopId,
                 setStopFilter: setStopFilter,
-                departures: departures,
                 routeCardData: routeCardData,
                 now: now,
                 errorBannerVM: errorBannerVM,

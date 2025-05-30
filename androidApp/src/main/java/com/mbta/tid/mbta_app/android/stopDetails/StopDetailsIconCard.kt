@@ -30,7 +30,7 @@ fun StopDetailsIconCard(
     accentColor: Color,
     details: (@Composable() () -> Unit)?,
     header: @Composable() (modifier: Modifier) -> Unit,
-    icon: @Composable() (modifier: Modifier) -> Unit
+    icon: @Composable() (modifier: Modifier) -> Unit,
 ) {
 
     Column(
@@ -39,7 +39,7 @@ fun StopDetailsIconCard(
             Modifier.clip(RoundedCornerShape(8.dp))
                 .border(1.dp, colorResource(R.color.halo), shape = RoundedCornerShape(8.dp))
                 .background(colorResource(R.color.fill3))
-                .padding(16.dp)
+                .padding(16.dp),
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),

@@ -22,7 +22,7 @@ class BottomNavIconButtonTest {
                 onClick = {},
                 icon = icon,
                 label = label,
-                active = active
+                active = active,
             )
         }
 

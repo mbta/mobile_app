@@ -4,7 +4,7 @@ data class AppVersion(val major: UInt, val minor: UInt, val patch: UInt) {
     operator fun compareTo(otherVersion: AppVersion): Int {
         return major.compareTo(otherVersion.major).takeUnless { it == 0 }
             ?: minor.compareTo(otherVersion.minor).takeUnless { it == 0 }
-                ?: patch.compareTo(otherVersion.patch)
+            ?: patch.compareTo(otherVersion.patch)
     }
 
     override fun toString() = "$major.$minor.$patch"

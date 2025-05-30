@@ -1,90 +1,36 @@
 package com.mbta.tid.mbta_app.map
 
-import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteSegment
-import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
+import com.mbta.tid.mbta_app.utils.TestData
 
 object MapTestDataHelper {
-    val objects = ObjectCollectionBuilder()
-    val routeRed =
-        objects.route {
-            id = "Red"
-            color = "DA291C"
-            type = RouteType.HEAVY_RAIL
-            routePatternIds = mutableListOf("Red-1-0", "Red-3-0")
-            sortOrder = 10010
-        }
-
-    val routeOrange =
-        objects.route {
-            id = "Orange"
-            color = "ED8B00"
-            routePatternIds = mutableListOf("Orange-3-0", "Orange-7-0")
-        }
-
-    val route67 =
-        objects.route {
-            id = "67"
-            color = "FFC72C"
-            type = RouteType.BUS
-            routePatternIds = mutableListOf("67-4-0")
-        }
+    val objects = TestData.clone()
+    val routeRed = objects.getRoute("Red")
+    val routeOrange = objects.getRoute("Orange")
+    val route67 = objects.getRoute("67")
 
     val routesById = mapOf(routeRed.id to routeRed, routeOrange.id to routeOrange)
 
-    val stopAlewife =
-        objects.stop {
-            id = "place-alfcl"
-            latitude = 42.39583
-            longitude = -71.141287
-            locationType = LocationType.STATION
-            childStopIds = mutableListOf("70061")
-        }
-
-    val stopAlewifeChild =
-        objects.stop {
-            id = "70061"
-            latitude = 42.39583
-            longitude = -71.141287
-            locationType = LocationType.STATION
-            parentStationId = stopAlewife.id
-        }
+    val stopAlewife = objects.getStop("place-alfcl")
+    val stopAlewifeChild = objects.getStop("70061")
 
     val mapStopAlewife: MapStop =
         MapStop(
             stopAlewife,
-            mapOf(
-                MapStopRoute.RED to listOf(routeRed),
-                MapStopRoute.BUS to listOf(route67),
-            ),
+            mapOf(MapStopRoute.RED to listOf(routeRed), MapStopRoute.BUS to listOf(route67)),
             listOf(MapStopRoute.RED, MapStopRoute.BUS),
             true,
-            null
+            null,
         )
 
-    val stopDavis =
-        objects.stop {
-            id = "place-davis"
-            latitude = 42.39674
-            longitude = -71.121815
-            locationType = LocationType.STATION
-        }
-
-    val stopDavisChild =
-        objects.stop {
-            id = "70063"
-            latitude = 42.39674
-            longitude = -71.121815
-            locationType = LocationType.STOP
-            parentStationId = stopDavis.id
-        }
+    val stopDavis = objects.getStop("place-davis")
+    val stopDavisChild = objects.getStop("70063")
 
     val mapStopDavis =
         MapStop(
@@ -92,16 +38,10 @@ object MapTestDataHelper {
             routes = mapOf(MapStopRoute.RED to listOf(routeRed)),
             routeTypes = listOf(MapStopRoute.RED),
             isTerminal = false,
-            alerts = null
+            alerts = null,
         )
 
-    val stopPorter =
-        objects.stop {
-            id = "place-porter"
-            latitude = 42.3884
-            longitude = -71.119149
-            locationType = LocationType.STATION
-        }
+    val stopPorter = objects.getStop("place-portr")
 
     val mapStopPorter =
         MapStop(
@@ -109,16 +49,10 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
             false,
-            null
+            null,
         )
 
-    val stopHarvard =
-        objects.stop {
-            id = "place-harsq"
-            latitude = 42.373362
-            longitude = -71.118956
-            locationType = LocationType.STATION
-        }
+    val stopHarvard = objects.getStop("place-harsq")
 
     val mapStopHarvard =
         MapStop(
@@ -126,16 +60,10 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
             false,
-            null
+            null,
         )
 
-    val stopCentral =
-        objects.stop {
-            id = "place-cntsq"
-            latitude = 42.365486
-            longitude = -71.103802
-            locationType = LocationType.STATION
-        }
+    val stopCentral = objects.getStop("place-cntsq")
 
     val mapStopCentral =
         MapStop(
@@ -143,25 +71,12 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
             false,
-            null
+            null,
         )
 
-    val stopAssembly =
-        objects.stop {
-            id = "place-astao"
-            latitude = 42.392811
-            longitude = -71.077257
-            locationType = LocationType.STATION
-        }
+    val stopAssembly = objects.getStop("place-astao")
 
-    val stopAssemblyChild =
-        objects.stop {
-            id = "70279"
-            latitude = 42.392811
-            longitude = -71.077257
-            locationType = LocationType.STOP
-            parentStationId = stopAssembly.id
-        }
+    val stopAssemblyChild = objects.getStop("70279")
 
     val mapStopAssembly =
         MapStop(
@@ -169,16 +84,10 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.ORANGE to listOf(routeOrange)),
             listOf(MapStopRoute.ORANGE),
             false,
-            null
+            null,
         )
 
-    val stopSullivan =
-        objects.stop {
-            id = "place-sull"
-            latitude = 42.383975
-            longitude = -71.076994
-            locationType = LocationType.STATION
-        }
+    val stopSullivan = objects.getStop("place-sull")
 
     val mapStopSullivan =
         MapStop(
@@ -186,30 +95,13 @@ object MapTestDataHelper {
             mapOf(MapStopRoute.ORANGE to listOf(routeOrange)),
             listOf(MapStopRoute.ORANGE),
             false,
-            null
+            null,
         )
 
-    val patternRed10 =
-        objects.routePattern(routeRed) {
-            id = "Red-1-0"
-            typicality = RoutePattern.Typicality.Typical
-            representativeTripId = "canonical-Red-C2-0"
-        }
+    val patternRed10 = objects.getRoutePattern("Red-1-0")
+    val patternRed30 = objects.getRoutePattern("Red-3-0")
 
-    val patternRed30 =
-        objects.routePattern(routeRed) {
-            id = "Red-3-0"
-            typicality = RoutePattern.Typicality.Typical
-            representativeTripId = "canonical-Red-C1-0"
-        }
-
-    val patternOrange30 =
-        objects.routePattern(routeOrange) {
-            id = "Orange-3-0"
-            typicality = RoutePattern.Typicality.Typical
-            representativeTripId = "canonical-Orange-C1-0"
-        }
-
+    val patternOrange30 = objects.getRoutePattern("Orange-3-0")
     val patternOrange70 =
         objects.routePattern(routeOrange) {
             id = "Orange-7-0"
@@ -217,39 +109,11 @@ object MapTestDataHelper {
             representativeTripId = "61746557"
         }
 
-    val pattern67 =
-        objects.routePattern(route67) {
-            id = "67-4-0"
-            typicality = RoutePattern.Typicality.Typical
-            representativeTripId = "61846289"
-        }
+    val pattern67 = objects.getRoutePattern("67-4-0")
 
-    val tripRedC1 =
-        objects.trip(patternRed30) {
-            id = "canonical-Red-C1-0"
-            shapeId = "canonical-933_0009"
-        }
-
-    val tripRedC2 =
-        objects.trip(patternRed10) {
-            id = "canonical-Red-C2-0"
-            shapeId = "canonical-931_0009"
-            stopIds =
-                listOf(
-                    stopAlewifeChild.id,
-                    stopDavis.id,
-                    stopPorter.id,
-                    stopHarvard.id,
-                    stopCentral.id
-                )
-        }
-
-    val tripOrangeC1 =
-        objects.trip(patternOrange30) {
-            id = "canonical-Orange-C1-0"
-            shapeId = "canonical-903_0018"
-        }
-
+    val tripRedC1 = objects.getTrip("canonical-Red-C1-0")
+    val tripRedC2 = objects.getTrip("canonical-Red-C2-0")
+    val tripOrangeC1 = objects.getTrip("canonical-Orange-C1-0")
     val tripOrangeAtypical =
         objects.trip(patternOrange30) {
             id = "61746557"
@@ -301,10 +165,10 @@ object MapTestDataHelper {
                                     patternRed10.id,
                                     patternRed10.routeId,
                                     listOf(stopAlewife.id, stopDavis.id),
-                                    emptyMap()
+                                    emptyMap(),
                                 )
                             ),
-                            shapeRedC1
+                            shapeRedC1,
                         ),
                         SegmentedRouteShape(
                             patternRed30.id,
@@ -315,17 +179,13 @@ object MapTestDataHelper {
                                     "segment2",
                                     patternRed30.id,
                                     patternRed30.routeId,
-                                    listOf(
-                                        stopPorter.id,
-                                        stopHarvard.id,
-                                        stopCentral.id,
-                                    ),
-                                    emptyMap()
+                                    listOf(stopPorter.id, stopHarvard.id, stopCentral.id),
+                                    emptyMap(),
                                 )
                             ),
-                            shapeRedC1
+                            shapeRedC1,
                         ),
-                    )
+                    ),
                 ),
                 MapFriendlyRouteResponse.RouteWithSegmentedShapes(
                     routeOrange.id,
@@ -340,12 +200,12 @@ object MapTestDataHelper {
                                     patternOrange30.id,
                                     patternOrange30.routeId,
                                     listOf(stopAssembly.id, stopSullivan.id),
-                                    emptyMap()
+                                    emptyMap(),
                                 )
                             ),
-                            shapeOrangeC1
-                        ),
-                    )
+                            shapeOrangeC1,
+                        )
+                    ),
                 ),
             )
         )

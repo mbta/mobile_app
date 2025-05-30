@@ -46,7 +46,7 @@ object AlertIcons {
                     // Or if the alert status at this index is empty
                     alertEmpty(index),
                     // Or if it's normal
-                    Exp.eq(alertStatus(index), Exp(StopAlertState.Normal.name))
+                    Exp.eq(alertStatus(index), Exp(StopAlertState.Normal.name)),
                 ) to
                     // If any of the above are true, don't display an alert icon
                     Exp(""),
@@ -56,9 +56,9 @@ object AlertIcons {
                     Exp(zoomPrefix),
                     Exp.downcase(MapExp.routeAt(index)),
                     Exp("-"),
-                    Exp.downcase(alertStatus(index))
-                )
-            )
+                    Exp.downcase(alertStatus(index)),
+                ),
+            ),
         )
     }
 
@@ -67,7 +67,7 @@ object AlertIcons {
                 Exp.zoom(),
                 getAlertIconName(alertZoomWidePrefix, index, forBus),
                 Exp(MapDefaults.closeZoomThreshold) to
-                    getAlertIconName(alertZoomClosePrefix, index, forBus)
+                    getAlertIconName(alertZoomClosePrefix, index, forBus),
             )
             .downcastToResolvedImage()
     }

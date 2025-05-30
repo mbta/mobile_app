@@ -35,7 +35,7 @@ class MainApplication : Application() {
             makeNativeModule(
                 AccessibilityStatusRepository(applicationContext),
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
-                socket.wrapped()
+                socket.wrapped(),
             ) +
                 module {
                     single<Analytics> {
@@ -45,7 +45,7 @@ class MainApplication : Application() {
                     }
                 } +
                 koinViewModelModule(),
-            this
+            this,
         )
     }
 

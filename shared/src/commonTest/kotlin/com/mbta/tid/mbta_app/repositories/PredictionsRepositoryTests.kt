@@ -40,7 +40,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connect(stopIds = listOf("1"), onReceive = { /* no-op */})
+        predictionsRepo.connect(stopIds = listOf("1"), onReceive = { /* no-op */ })
         assertNotNull(predictionsRepo.channel)
     }
 
@@ -76,7 +76,7 @@ class PredictionsRepositoryTests : KoinTest {
         class MockPush : PhoenixPush {
             override fun receive(
                 status: PhoenixPushStatus,
-                callback: (PhoenixMessage) -> Unit
+                callback: (PhoenixMessage) -> Unit,
             ): PhoenixPush {
                 if (status == PhoenixPushStatus.Ok) {
                     callback(
@@ -100,9 +100,9 @@ class PredictionsRepositoryTests : KoinTest {
             onReceive = { outcome ->
                 assertEquals(
                     PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
-                    outcome.dataOrThrow()
+                    outcome.dataOrThrow(),
                 )
-            }
+            },
         )
     }
 
@@ -139,7 +139,7 @@ class PredictionsRepositoryTests : KoinTest {
             onReceive = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertEquals(outcome.message, SocketError.FAILURE)
-            }
+            },
         )
     }
 
@@ -156,8 +156,8 @@ class PredictionsRepositoryTests : KoinTest {
         assertNull(predictionsRepo.channel)
         predictionsRepo.connectV2(
             stopIds = listOf("1", "2"),
-            onJoin = { /* no-op */},
-            onMessage = { /* no-op */}
+            onJoin = { /* no-op */ },
+            onMessage = { /* no-op */ },
         )
 
         assertNotNull(predictionsRepo.channel)
@@ -176,16 +176,16 @@ class PredictionsRepositoryTests : KoinTest {
         assertNull(predictionsRepo.channel)
         predictionsRepo.connectV2(
             stopIds = listOf("1", "2"),
-            onJoin = { /* no-op */},
-            onMessage = { /* no-op */}
+            onJoin = { /* no-op */ },
+            onMessage = { /* no-op */ },
         )
 
         assertNotNull(predictionsRepo.channel)
 
         predictionsRepo.connectV2(
             stopIds = listOf("3", "4"),
-            onJoin = { /* no-op */},
-            onMessage = { /* no-op */}
+            onJoin = { /* no-op */ },
+            onMessage = { /* no-op */ },
         )
 
         verify { channel.detach() }
@@ -204,8 +204,8 @@ class PredictionsRepositoryTests : KoinTest {
         assertNull(predictionsRepo.channel)
         predictionsRepo.connectV2(
             stopIds = listOf("1", "2"),
-            onJoin = { /* no-op */},
-            onMessage = { /* no-op */}
+            onJoin = { /* no-op */ },
+            onMessage = { /* no-op */ },
         )
 
         assertNotNull(predictionsRepo.channel)
@@ -220,7 +220,7 @@ class PredictionsRepositoryTests : KoinTest {
         class MockPush : PhoenixPush {
             override fun receive(
                 status: PhoenixPushStatus,
-                callback: (PhoenixMessage) -> Unit
+                callback: (PhoenixMessage) -> Unit,
             ): PhoenixPush {
                 if (status == PhoenixPushStatus.Ok) {
                     callback(
@@ -303,7 +303,7 @@ class PredictionsRepositoryTests : KoinTest {
                 assertEquals(1, data.vehicles.size)
                 assertEquals("v_1", data.vehicles["v_1"]?.id)
             },
-            onMessage = { /* no-op */}
+            onMessage = { /* no-op */ },
         )
     }
 
@@ -379,7 +379,7 @@ class PredictionsRepositoryTests : KoinTest {
 
                 assertEquals(1, data.vehicles.size)
                 assertEquals("v_1", data.vehicles["v_1"]?.id)
-            }
+            },
         )
     }
 
@@ -417,7 +417,7 @@ class PredictionsRepositoryTests : KoinTest {
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertEquals(SocketError.RECEIVED_ERROR, outcome.message)
             },
-            onMessage = { /* no-op */}
+            onMessage = { /* no-op */ },
         )
     }
 
@@ -432,7 +432,7 @@ class PredictionsRepositoryTests : KoinTest {
             onMessage = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertEquals(SocketError.FAILED_TO_PARSE, outcome.message)
-            }
+            },
         )
     }
 

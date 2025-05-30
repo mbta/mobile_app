@@ -9,12 +9,12 @@ data class MapStop(
     val routes: Map<MapStopRoute, List<Route>>,
     val routeTypes: List<MapStopRoute>,
     val isTerminal: Boolean,
-    val alerts: Map<MapStopRoute, StopAlertState>?
+    val alerts: Map<MapStopRoute, StopAlertState>?,
 )
 
 data class GlobalMapData(
     internal val mapStops: Map<String, MapStop>,
-    internal val alertsByStop: Map<String, AlertAssociatedStop>?
+    internal val alertsByStop: Map<String, AlertAssociatedStop>?,
 ) {
     companion object {
         /*
@@ -25,7 +25,7 @@ data class GlobalMapData(
         internal fun getAlertsByStop(
             globalData: GlobalResponse,
             alerts: AlertsStreamDataResponse?,
-            filterAtTime: Instant
+            filterAtTime: Instant,
         ): Map<String, AlertAssociatedStop>? {
             val activeAlerts =
                 alerts?.alerts?.values?.filter { it.isActive(filterAtTime) } ?: return null
@@ -61,14 +61,14 @@ data class GlobalMapData(
             stop: Stop,
             alertsByStop: Map<String, Set<Alert>>,
             nullStopAlerts: Set<Alert>,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): AlertAssociatedStop? {
             val alertingStop =
                 AlertAssociatedStop(
                     stop = stop,
                     alertsByStop = alertsByStop,
                     nullStopAlerts = nullStopAlerts,
-                    global = globalData
+                    global = globalData,
                 )
 
             // Return null for any stops without alerts or child alerts
@@ -82,12 +82,12 @@ data class GlobalMapData(
     constructor(
         globalData: GlobalResponse,
         alerts: AlertsStreamDataResponse?,
-        filterAtTime: Instant
+        filterAtTime: Instant,
     ) : this(globalData, getAlertsByStop(globalData, alerts, filterAtTime))
 
     constructor(
         globalData: GlobalResponse,
-        alertsByStop: Map<String, AlertAssociatedStop>?
+        alertsByStop: Map<String, AlertAssociatedStop>?,
     ) : this(
         globalData.stops.values
             .map { stop ->
@@ -159,10 +159,10 @@ data class GlobalMapData(
                         routes = categorizedRoutes,
                         routeTypes = mapRouteList,
                         isTerminal = isTerminal,
-                        alerts = categorizedAlerts
+                        alerts = categorizedAlerts,
                     )
             }
             .toMap(),
-        alertsByStop
+        alertsByStop,
     )
 }

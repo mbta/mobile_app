@@ -57,8 +57,8 @@ final class NearbyTransitViewTests: XCTestCase {
             isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
             noNearbyStops: noNearbyStops
-        ).withFixedSettings([.groupByDirection: true])
-        let cards = try sut.inspect().findAll(NearbyRouteView.self)
+        )
+        let cards = try sut.inspect().findAll(RouteCard.self)
         XCTAssertEqual(cards.count, 5)
         for card in cards {
             XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
@@ -81,7 +81,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            let cards = view.findAll(NearbyRouteView.self)
+            let cards = view.findAll(RouteCard.self)
             XCTAssertEqual(cards.count, 5)
             for card in cards {
                 XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
@@ -442,6 +442,77 @@ final class NearbyTransitViewTests: XCTestCase {
         try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-lech"])
 
         wait(for: [lechmereExpectation], timeout: 1)
+    }
+
+    func testDoesntRefetchPredictionsOnStopReorder() throws {
+        let sawmillAtWalshExpectation = expectation(description: "joins predictions for Sawmill @ Walsh")
+        let reorderExpectation = expectation(description: "doesn't rejoin when stop order changes")
+        reorderExpectation.isInverted = true
+
+        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
+        loadPublisher.sink { loaded in
+            let stopIds = loaded.predictionStops.sorted()
+            if stopIds == ["84791", "8552"] {
+                sawmillAtWalshExpectation.fulfill()
+            } else if stopIds == ["8552", "84791"] {
+                reorderExpectation.fulfill()
+            } else {
+                XCTFail("unexpected stop IDs \(stopIds)")
+            }
+        }.store(in: &cancellables)
+
+        let sut = setUpSut(route52Objects(), loadPublisher)
+        ViewHosting.host(view: sut)
+
+        wait(for: [sawmillAtWalshExpectation], timeout: 1)
+
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["8552", "84791"])
+
+        wait(for: [reorderExpectation], timeout: 1)
+    }
+
+    func testFetchesPredictionsWhenNoStops() throws {
+        let joinsPredictionsExpectation = expectation(description: "joins predictions")
+
+        let objects = ObjectCollectionBuilder()
+
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(objects: objects)
+
+        var sut = NearbyTransitView(
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
+            predictionsRepository: MockPredictionsRepository(
+                onConnectV2: { _ in joinsPredictionsExpectation.fulfill() },
+                connectV2Response: .init(objects: objects)
+            ),
+            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects)),
+            location: .constant(mockLocation),
+            isReturningFromBackground: .constant(false),
+            globalData: .init(objects: objects),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            now: Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        )
+        sut.globalRepository = MockGlobalRepository(response: .init(objects: objects))
+
+        let hasAppeared = sut.on(\.didAppear) { view in
+            let cards = view.findAll(RouteCard.self)
+            XCTAssertEqual(cards.count, 5)
+            for card in cards {
+                XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
+            }
+        }
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [hasAppeared], timeout: 1)
+
+        nearbyVM.nearbyState = getNearbyState(objects: objects)
+
+        wait(for: [joinsPredictionsExpectation], timeout: 1)
     }
 
     @MainActor func testRendersUpdatedPredictions() throws {

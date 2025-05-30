@@ -11,14 +11,14 @@ class MapHttpInterceptor(val updateLastErrorTimestamp: () -> Unit) :
     HttpServiceInterceptorInterface {
     override fun onRequest(
         request: HttpRequest,
-        continuation: HttpServiceInterceptorRequestContinuation
+        continuation: HttpServiceInterceptorRequestContinuation,
     ) {
         continuation.run(HttpRequestOrResponse(request))
     }
 
     override fun onResponse(
         response: HttpResponse,
-        continuation: HttpServiceInterceptorResponseContinuation
+        continuation: HttpServiceInterceptorResponseContinuation,
     ) {
 
         val responseData = response.result.value

@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 @Composable
 inline fun <T> rememberSuspend(
     vararg keys: Any?,
-    crossinline computation: @DisallowComposableCalls suspend () -> T?
+    crossinline computation: @DisallowComposableCalls suspend () -> T?,
 ): T? {
     var state by remember { mutableStateOf<T?>(null) }
 

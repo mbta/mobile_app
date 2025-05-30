@@ -34,7 +34,7 @@ class MobileBackendClientTest : KoinTest {
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 

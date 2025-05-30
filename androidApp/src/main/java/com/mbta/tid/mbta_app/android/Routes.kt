@@ -4,19 +4,17 @@ import androidx.navigation.NavBackStackEntry
 import kotlinx.serialization.Serializable
 
 sealed class Routes {
-    @Serializable object NearbyTransit : Routes()
+    @Serializable data object MapAndSheet : Routes()
 
-    @Serializable object More : Routes()
+    @Serializable data object More : Routes()
 
     companion object {
         fun fromNavBackStackEntry(backStackEntry: NavBackStackEntry?): Routes {
-
-            return if (
-                backStackEntry != null && backStackEntry.destination.route?.contains("More") == true
-            ) {
+            val route = backStackEntry?.destination?.route
+            return if (route?.contains("More") == true) {
                 Routes.More
             } else {
-                Routes.NearbyTransit
+                Routes.MapAndSheet
             }
         }
     }

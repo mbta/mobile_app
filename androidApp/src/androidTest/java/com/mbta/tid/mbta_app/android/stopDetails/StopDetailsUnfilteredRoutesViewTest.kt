@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.Alert
@@ -13,7 +12,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -106,92 +104,12 @@ class StopDetailsUnfilteredRoutesViewTest {
     val globalResponse =
         GlobalResponse(
             builder,
-            mutableMapOf(
-                stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-            )
+            mutableMapOf(stop.id to listOf(routePatternOne.id, routePatternTwo.id)),
         )
 
     private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
     @get:Rule val composeTestRule = createComposeRule()
-
-    @Test
-    fun testStopDetailsRoutesViewDisplaysCorrectly(): Unit = runBlocking {
-        val departures =
-            checkNotNull(
-                StopDetailsDepartures.fromData(
-                    stop,
-                    globalResponse,
-                    null,
-                    PredictionsStreamDataResponse(builder),
-                    AlertsStreamDataResponse(emptyMap()),
-                    emptySet(),
-                    now,
-                )
-            )
-
-        composeTestRule.setContent {
-            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
-
-            StopDetailsUnfilteredRoutesView(
-                stop = stop,
-                departures = departures,
-                servedRoutes = emptyList(),
-                errorBannerViewModel = errorBannerViewModel,
-                showStationAccessibility = true,
-                now = now,
-                pinRoute = {},
-                pinnedRoutes = emptySet(),
-                onClose = {},
-                onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
-        }
-
-        composeTestRule.onNodeWithText("Sample Route").assertExists()
-        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
-        composeTestRule.onNodeWithText("1 min").assertExists()
-        composeTestRule.onNodeWithText("This stop is not accessible").assertDoesNotExist()
-    }
-
-    @Test
-    fun testNotAccessibleStopDetails(): Unit = runBlocking {
-        val departures =
-            checkNotNull(
-                StopDetailsDepartures.fromData(
-                    inaccessibleStop,
-                    globalResponse,
-                    null,
-                    PredictionsStreamDataResponse(builder),
-                    AlertsStreamDataResponse(emptyMap()),
-                    emptySet(),
-                    now,
-                )
-            )
-
-        composeTestRule.setContent {
-            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
-
-            StopDetailsUnfilteredRoutesView(
-                stop = inaccessibleStop,
-                departures = departures,
-                servedRoutes = emptyList(),
-                errorBannerViewModel = errorBannerViewModel,
-                showStationAccessibility = true,
-                now = now,
-                pinRoute = {},
-                pinnedRoutes = emptySet(),
-                onClose = {},
-                onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
-        }
-
-        composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertExists()
-    }
 
     @Test
     fun testGroupsByDirection() = runBlocking {
@@ -206,7 +124,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
 
@@ -221,7 +139,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 showStationAccessibility = true,
                 now = now,
                 globalData = globalResponse,
-                pinnedRoutes = emptySet(),
+                isPinned = { false },
                 pinRoute = {},
                 onClose = {},
                 onTapRoutePill = {},
@@ -249,7 +167,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
 
@@ -264,7 +182,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 showStationAccessibility = true,
                 now = now,
                 globalData = globalResponse,
-                pinnedRoutes = emptySet(),
+                isPinned = { false },
                 pinRoute = {},
                 onClose = {},
                 onTapRoutePill = {},
@@ -285,7 +203,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
         val routeCardData =
@@ -299,7 +217,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
                     emptySet(),
-                    RouteCardData.Context.StopDetailsUnfiltered
+                    RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
 
@@ -314,7 +232,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 showStationAccessibility = true,
                 now = now,
                 globalData = globalResponse,
-                pinnedRoutes = emptySet(),
+                isPinned = { false },
                 pinRoute = {},
                 onClose = {},
                 onTapRoutePill = {},

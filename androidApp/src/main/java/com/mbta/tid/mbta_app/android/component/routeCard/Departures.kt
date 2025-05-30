@@ -43,7 +43,6 @@ import org.koin.compose.koinInject
 @Composable
 fun Departures(
     stopData: RouteCardData.RouteStopData,
-    cardData: RouteCardData,
     globalData: GlobalResponse?,
     now: Instant,
     pinned: Boolean,
@@ -58,17 +57,16 @@ fun Departures(
                 val format = (leafFormat as? LeafFormat.Single)?.format
                 val noTrips = (format as? UpcomingFormat.NoTrips)?.noTripsFormat
                 analytics.tappedDeparture(
-                    cardData.lineOrRoute.id,
+                    stopData.lineOrRoute.id,
                     stopData.stop.id,
                     pinned,
-                    leaf.alertsHere.isNotEmpty(),
-                    cardData.lineOrRoute.type,
-                    noTrips
+                    leaf.alertsHere().isNotEmpty(),
+                    stopData.lineOrRoute.type,
+                    noTrips,
                 )
             }
 
-            val formatted =
-                leaf.format(now, cardData.lineOrRoute.sortRoute, globalData, cardData.context)
+            val formatted = leaf.format(now, globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
 
             NavDrilldownRow(
@@ -77,12 +75,12 @@ fun Departures(
                     analyticsTappedDeparture(formatted)
                 },
                 onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
             ) { modifier ->
                 Column(
                     modifier = modifier,
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically)
+                    verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                 ) {
                     when (formatted) {
                         is LeafFormat.Single -> {
@@ -90,7 +88,11 @@ fun Departures(
                                 direction.copy(
                                     destination = formatted.headsign ?: direction.destination
                                 ),
-                                formatted.format
+                                formatted.format,
+                                pillDecoration =
+                                    formatted.route?.let {
+                                        PillDecoration.OnDirectionDestination(it)
+                                    },
                             )
                         }
                         is LeafFormat.Branched -> {
@@ -100,7 +102,7 @@ fun Departures(
                                         painterResource(drawableByName(secondaryAlert.iconName)),
                                         stringResource(R.string.alert),
                                         modifier =
-                                            Modifier.placeholderIfLoading().padding(end = 8.dp)
+                                            Modifier.placeholderIfLoading().padding(end = 8.dp),
                                     )
                                 }
                                 DirectionLabel(direction, showDestination = false)
@@ -174,10 +176,12 @@ private fun DeparturesPreview() {
     val lineOrRoute = RouteCardData.LineOrRoute.Route(redLine)
     val stopData =
         RouteCardData.RouteStopData(
-            jfkUmass,
             lineOrRoute,
+            jfkUmass,
             listOf(
                 RouteCardData.Leaf(
+                    lineOrRoute,
+                    jfkUmass,
                     0,
                     listOf(redLineAshmontSouthbound, redLineBraintreeSouthbound),
                     setOf(jfkUmass.id),
@@ -204,9 +208,12 @@ private fun DeparturesPreview() {
                     emptyList(),
                     true,
                     true,
-                    emptyList()
+                    emptyList(),
+                    context,
                 ),
                 RouteCardData.Leaf(
+                    lineOrRoute,
+                    jfkUmass,
                     1,
                     listOf(redLineAshmontNorthbound, redLineBraintreeNorthbound),
                     setOf(jfkUmass.id),
@@ -222,29 +229,21 @@ private fun DeparturesPreview() {
                                 trip = objects.trip(redLineBraintreeNorthbound)
                                 departureTime = now + 12.minutes
                             }
-                        )
+                        ),
                     ),
                     emptyList(),
                     true,
                     true,
-                    emptyList()
-                )
+                    emptyList(),
+                    context,
+                ),
             ),
-            global
+            global,
         )
-    val card = RouteCardData(lineOrRoute, listOf(stopData), context, now)
 
     MyApplicationTheme {
         Column(Modifier.background(MaterialTheme.colorScheme.background)) {
-            Departures(
-                card.stopData.single(),
-                card,
-                global,
-                now,
-                false,
-                MockAnalytics(),
-                onClick = {}
-            )
+            Departures(stopData, global, now, false, MockAnalytics(), onClick = {})
         }
     }
 }

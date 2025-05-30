@@ -7,24 +7,27 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
+import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.FavoriteBridge
+import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-@MapboxExperimental
 fun StopDetailsPage(
     modifier: Modifier = Modifier,
     viewModel: StopDetailsViewModel,
@@ -33,28 +36,49 @@ fun StopDetailsPage(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
-    updateDepartures: (StopDetailsDepartures?) -> Unit,
+    updateRouteCardData: (List<RouteCardData>?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val stopId = filters.stopId
 
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
-    fun togglePinnedRoute(routeId: String) {
+    val (favorites, updateFavorites) = manageFavorites()
+
+    fun isFavorite(favorite: FavoriteBridge): Boolean {
+        if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
+            return pinnedRoutes?.contains(favorite.routeId) ?: false
+        }
+
+        if (favorite is FavoriteBridge.Favorite && enhancedFavorites) {
+            return favorites?.contains(favorite.routeStopDirection) ?: false
+        }
+
+        return false
+    }
+
+    fun updateFavorites(favoritesUpdate: FavoriteUpdateBridge) {
         coroutineScope.launch {
-            val pinned = rawTogglePinnedRoute(routeId)
-            analytics.toggledPinnedRoute(pinned, routeId)
+            if (favoritesUpdate is FavoriteUpdateBridge.Pinned && !enhancedFavorites) {
+                val pinned = rawTogglePinnedRoute(favoritesUpdate.routeId)
+                analytics.toggledPinnedRoute(pinned, favoritesUpdate.routeId)
+            }
+
+            if (favoritesUpdate is FavoriteUpdateBridge.Favorites && enhancedFavorites) {
+                updateFavorites(favoritesUpdate.updatedValues)
+            }
         }
     }
 
-    val departures by viewModel.stopDepartures.collectAsState()
+    val routeCardData by viewModel.routeCardData.collectAsState()
 
-    LaunchedEffect(departures) { updateDepartures(departures) }
+    LaunchedEffect(routeCardData) { updateRouteCardData(routeCardData) }
 
     StopDetailsView(
         modifier,
@@ -63,14 +87,14 @@ fun StopDetailsPage(
         filters.stopFilter,
         filters.tripFilter,
         allAlerts,
-        pinnedRoutes.orEmpty(),
-        ::togglePinnedRoute,
+        ::isFavorite,
+        ::updateFavorites,
         onClose,
         updateStopFilter,
         updateTripFilter,
         tileScrollState,
         openModal,
         openSheetRoute,
-        errorBannerViewModel
+        errorBannerViewModel,
     )
 }

@@ -10,6 +10,6 @@ fun platformModule() = module {
     includes(
         module { single { createDataStore() } },
         module { single<SystemPaths> { IOSSystemPaths() } },
-        module { single<INetworkConnectivityMonitor> { NetworkConnectivityMonitor() } }
+        module { single<INetworkConnectivityMonitor> { NetworkConnectivityMonitor() } },
     )
 }

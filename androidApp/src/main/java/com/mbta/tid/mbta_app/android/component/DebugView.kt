@@ -35,8 +35,8 @@ fun DebugView(modifier: Modifier = Modifier, content: @Composable ColumnScope.()
                             pathEffect =
                                 PathEffect.dashPathEffect(
                                     with(density) { floatArrayOf(10.dp.toPx(), 10.dp.toPx()) }
-                                )
-                        )
+                                ),
+                        ),
                 )
             }
             .padding(4.dp)

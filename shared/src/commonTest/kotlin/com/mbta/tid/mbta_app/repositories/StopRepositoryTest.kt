@@ -80,7 +80,7 @@ class StopRepositoryTest : KoinTest {
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -110,19 +110,19 @@ class StopRepositoryTest : KoinTest {
                                                             stopIds =
                                                                 listOf(
                                                                     "place-wondl",
-                                                                    "place-bomnl"
+                                                                    "place-bomnl",
                                                                 ),
                                                             otherPatternsByStopId = mapOf(),
-                                                            sourceRoutePatternId = "Blue-6-0"
+                                                            sourceRoutePatternId = "Blue-6-0",
                                                         )
                                                     ),
                                                 shape =
                                                     Shape(
                                                         id = "canonical-946_0013",
-                                                        polyline = "s|zaG~phpLpBwO"
-                                                    )
+                                                        polyline = "s|zaG~phpLpBwO",
+                                                    ),
                                             )
-                                        )
+                                        ),
                                 )
                             ),
                         childStops =
@@ -138,13 +138,13 @@ class StopRepositoryTest : KoinTest {
                                         longitude = -70.991685,
                                         platformName = "Exit Only",
                                         vehicleType = RouteType.HEAVY_RAIL,
-                                        parentStationId = "place-wondl"
-                                    )
+                                        parentStationId = "place-wondl",
+                                    ),
                                 )
-                            )
+                            ),
                     )
                 ),
-                response
+                response,
             )
         }
         stopKoin()

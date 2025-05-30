@@ -65,30 +65,30 @@ final class TripStopsTests: XCTestCase {
         let schedule5 = makeSchedule(stop: stop5)
         let prediction5 = makePrediction(schedule: schedule5)
 
-        let stops = TripDetailsStopList(tripId: trip.id, stops: [
+        let stops = TripDetailsStopList(trip: trip, stops: [
             .init(
                 stop: stop1, stopSequence: 1, disruption: nil,
-                schedule: schedule1, prediction: prediction1, predictionStop: nil,
+                schedule: schedule1, prediction: prediction1,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
             .init(
                 stop: stop2, stopSequence: 2, disruption: nil,
-                schedule: schedule2, prediction: prediction2, predictionStop: nil,
+                schedule: schedule2, prediction: prediction2,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
             .init(
                 stop: stop3Target, stopSequence: 3, disruption: nil,
-                schedule: schedule3, prediction: prediction3, predictionStop: nil,
+                schedule: schedule3, prediction: prediction3,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
             .init(
                 stop: stop4, stopSequence: 4, disruption: nil,
-                schedule: schedule4, prediction: prediction4, predictionStop: nil,
+                schedule: schedule4, prediction: prediction4,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
             .init(
                 stop: stop5, stopSequence: 5, disruption: nil,
-                schedule: schedule5, prediction: prediction5, predictionStop: nil,
+                schedule: schedule5, prediction: prediction5,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
         ])
@@ -157,20 +157,20 @@ final class TripStopsTests: XCTestCase {
         let schedule3 = makeSchedule(stop: stop3)
         let prediction3 = makePrediction(schedule: schedule3)
 
-        let stops = TripDetailsStopList(tripId: trip.id, stops: [
+        let stops = TripDetailsStopList(trip: trip, stops: [
             .init(
                 stop: stop1, stopSequence: 1, disruption: nil,
-                schedule: schedule1, prediction: prediction1, predictionStop: nil,
+                schedule: schedule1, prediction: prediction1,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
             .init(
                 stop: stop2, stopSequence: 2, disruption: nil,
-                schedule: schedule2, prediction: prediction2, predictionStop: nil,
+                schedule: schedule2, prediction: prediction2,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
             .init(
                 stop: stop3, stopSequence: 3, disruption: nil,
-                schedule: schedule3, prediction: prediction3, predictionStop: nil,
+                schedule: schedule3, prediction: prediction3,
                 vehicle: vehicle, routes: [route], elevatorAlerts: []
             ),
         ])
@@ -237,16 +237,16 @@ final class TripStopsTests: XCTestCase {
 
         let firstStop: TripDetailsStopList.Entry = .init(
             stop: stop1, stopSequence: 1, disruption: nil,
-            schedule: schedule1, prediction: prediction1, predictionStop: nil,
+            schedule: schedule1, prediction: prediction1,
             vehicle: vehicle, routes: [route], elevatorAlerts: []
         )
         let stops = TripDetailsStopList(
-            tripId: trip.id,
+            trip: trip,
             stops: [
                 firstStop,
                 .init(
                     stop: stop2, stopSequence: 2, disruption: nil,
-                    schedule: schedule2, prediction: prediction2, predictionStop: nil,
+                    schedule: schedule2, prediction: prediction2,
                     vehicle: vehicle, routes: [route], elevatorAlerts: []
                 ),
             ],
@@ -316,21 +316,21 @@ final class TripStopsTests: XCTestCase {
 
         let firstStop: TripDetailsStopList.Entry = .init(
             stop: stop1, stopSequence: 1, disruption: nil,
-            schedule: schedule1, prediction: prediction1, predictionStop: nil,
+            schedule: schedule1, prediction: prediction1,
             vehicle: vehicle, routes: [route], elevatorAlerts: []
         )
         let stops = TripDetailsStopList(
-            tripId: trip.id,
+            trip: trip,
             stops: [
                 firstStop,
                 .init(
                     stop: stop2, stopSequence: 2, disruption: nil,
-                    schedule: schedule2, prediction: prediction2, predictionStop: nil,
+                    schedule: schedule2, prediction: prediction2,
                     vehicle: vehicle, routes: [route], elevatorAlerts: []
                 ),
                 .init(
                     stop: stop3, stopSequence: 3, disruption: nil,
-                    schedule: schedule3, prediction: prediction3, predictionStop: nil,
+                    schedule: schedule3, prediction: prediction3,
                     vehicle: vehicle, routes: [route], elevatorAlerts: []
                 ),
             ],
@@ -356,7 +356,103 @@ final class TripStopsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "1 stop away"))
     }
 
-    func testDownstreamAlert() {
+    func testDownstreamShuttleAlert() {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let pattern = objects.routePattern(route: route) { _ in }
+        let trip = objects.trip(routePattern: pattern)
+
+        let stop1 = objects.stop { $0.name = "Stop A" }
+        let stop2Target = objects.stop { $0.name = "Stop B" }
+        let stop3 = objects.stop { $0.name = "Stop C" }
+
+        let alert = objects.alert { $0.effect = .shuttle }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.routeId = route.id
+            vehicle.currentStatus = .stoppedAt
+            vehicle.stopId = stop1.id
+        }
+
+        func makeSchedule(stop: Stop) -> Schedule {
+            objects.schedule { schedule in
+                schedule.routeId = route.id
+                schedule.stopId = stop.id
+                schedule.trip = trip
+            }
+        }
+
+        var predictionTime = now
+
+        func makePrediction(schedule: Schedule) -> Prediction {
+            predictionTime += 5
+            return objects.prediction(schedule: schedule) { prediction in
+                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.vehicleId = vehicle.id
+            }
+        }
+
+        let schedule1 = makeSchedule(stop: stop1)
+        let prediction1 = makePrediction(schedule: schedule1)
+        let schedule2 = makeSchedule(stop: stop2Target)
+        let prediction2 = makePrediction(schedule: schedule2)
+        let schedule3 = makeSchedule(stop: stop3)
+        let prediction3 = makePrediction(schedule: schedule3)
+
+        let stops = TripDetailsStopList(trip: trip, stops: [
+            .init(
+                stop: stop1,
+                stopSequence: 1,
+                disruption: nil,
+                schedule: schedule1,
+                prediction: prediction1,
+                vehicle: vehicle,
+                routes: [route]
+            ),
+            .init(
+                stop: stop2Target,
+                stopSequence: 2,
+                disruption: nil,
+                schedule: schedule2,
+                prediction: prediction2,
+                vehicle: vehicle,
+                routes: [route]
+            ),
+            .init(
+                stop: stop3,
+                stopSequence: 3,
+                disruption: .init(alert: alert, mapStopRoute: nil),
+                schedule: schedule3,
+                prediction: prediction3,
+                vehicle: vehicle,
+                routes: [route]
+            ),
+        ])
+
+        let sut = TripStops(
+            targetId: stop2Target.id,
+            stops: stops,
+            stopSequence: 1,
+            headerSpec: .vehicle(vehicle, stop1, nil, false),
+            now: now,
+            alertSummaries: [alert.id: .init(
+                effect: alert.effect,
+                location: AlertSummary.LocationSingleStop(stopName: stop3.name),
+                timeframe: AlertSummary.TimeframeEndOfService.shared
+            )],
+            onTapLink: { _ in },
+            onOpenAlertDetails: { _ in },
+            routeAccents: .init(route: route),
+            showStationAccessibility: false,
+            global: .init(objects: objects)
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses at Stop C through end of service"))
+    }
+
+    func testDownstreamClosureAlert() {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
@@ -401,14 +497,13 @@ final class TripStopsTests: XCTestCase {
         let schedule3 = makeSchedule(stop: stop3)
         let prediction3 = makePrediction(schedule: schedule3)
 
-        let stops = TripDetailsStopList(tripId: trip.id, stops: [
+        let stops = TripDetailsStopList(trip: trip, stops: [
             .init(
                 stop: stop1,
                 stopSequence: 1,
                 disruption: nil,
                 schedule: schedule1,
                 prediction: prediction1,
-                predictionStop: stop1,
                 vehicle: vehicle,
                 routes: [route]
             ),
@@ -418,7 +513,6 @@ final class TripStopsTests: XCTestCase {
                 disruption: nil,
                 schedule: schedule2,
                 prediction: prediction2,
-                predictionStop: stop2Target,
                 vehicle: vehicle,
                 routes: [route]
             ),
@@ -428,7 +522,6 @@ final class TripStopsTests: XCTestCase {
                 disruption: .init(alert: alert, mapStopRoute: nil),
                 schedule: schedule3,
                 prediction: prediction3,
-                predictionStop: stop3,
                 vehicle: vehicle,
                 routes: [route]
             ),
@@ -451,7 +544,7 @@ final class TripStopsTests: XCTestCase {
             global: .init(objects: objects)
         ).withFixedSettings([:])
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Stop closed at Stop C through end of service"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Stop closed at Stop C through end of service"))
     }
 
     func testUpstreamAlert() {
@@ -499,14 +592,13 @@ final class TripStopsTests: XCTestCase {
         let schedule3 = makeSchedule(stop: stop3)
         let prediction3 = makePrediction(schedule: schedule3)
 
-        let stops = TripDetailsStopList(tripId: trip.id, stops: [
+        let stops = TripDetailsStopList(trip: trip, stops: [
             .init(
                 stop: stop1,
                 stopSequence: 1,
                 disruption: .init(alert: alert, mapStopRoute: nil),
                 schedule: schedule1,
                 prediction: prediction1,
-                predictionStop: stop1,
                 vehicle: vehicle,
                 routes: [route]
             ),
@@ -516,7 +608,6 @@ final class TripStopsTests: XCTestCase {
                 disruption: nil,
                 schedule: schedule2,
                 prediction: prediction2,
-                predictionStop: stop2Target,
                 vehicle: vehicle,
                 routes: [route]
             ),
@@ -526,7 +617,6 @@ final class TripStopsTests: XCTestCase {
                 disruption: nil,
                 schedule: schedule3,
                 prediction: prediction3,
-                predictionStop: stop3,
                 vehicle: vehicle,
                 routes: [route]
             ),

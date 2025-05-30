@@ -19,7 +19,7 @@ import org.koin.dsl.module
 fun makeNativeModule(
     accessibilityStatus: IAccessibilityStatusRepository,
     currentAppVersion: ICurrentAppVersionRepository,
-    socket: PhoenixSocket
+    socket: PhoenixSocket,
 ): Module {
     return module {
         single<IAccessibilityStatusRepository> { accessibilityStatus }

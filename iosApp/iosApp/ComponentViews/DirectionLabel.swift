@@ -12,10 +12,12 @@ import SwiftUI
 struct DirectionLabel: View {
     let direction: Direction
     let showDestination: Bool
+    let pillDecoration: PredictionRowView.PillDecoration
 
-    init(direction: Direction, showDestination: Bool = true) {
+    init(direction: Direction, showDestination: Bool = true, pillDecoration: PredictionRowView.PillDecoration = .none) {
         self.direction = direction
         self.showDestination = showDestination
+        self.pillDecoration = pillDecoration
     }
 
     private static let localizedDirectionNames: [String: String] = [
@@ -28,7 +30,8 @@ struct DirectionLabel: View {
     ]
 
     static func directionNameFormatted(_ direction: Direction) -> String {
-        localizedDirectionNames[direction.name] ?? NSLocalizedString("Heading", comment: "A route direction label")
+        localizedDirectionNames[direction.name ?? ""] ??
+            NSLocalizedString("Heading", comment: "A route direction label")
     }
 
     @ViewBuilder
@@ -45,14 +48,19 @@ struct DirectionLabel: View {
 
     @ViewBuilder
     func destinationLabel(_ destination: String) -> some View {
-        Text(destination)
-            .font(Typography.bodySemibold)
-            .multilineTextAlignment(.leading)
-            .textCase(.none)
+        HStack(alignment: .center, spacing: 8) {
+            if case let .onDirectionDestination(route: route) = pillDecoration {
+                RoutePill(route: route, type: .flex)
+            }
+            Text(destination)
+                .font(Typography.bodySemibold)
+                .multilineTextAlignment(.leading)
+                .textCase(.none)
+        }
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 6) {
             if !showDestination {
                 directionTo(direction)
             } else if let destination = direction.destination {

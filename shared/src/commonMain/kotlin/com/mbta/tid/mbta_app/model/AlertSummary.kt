@@ -15,7 +15,7 @@ import kotlinx.datetime.plus
 data class AlertSummary(
     val effect: Alert.Effect,
     val location: Location? = null,
-    val timeframe: Timeframe? = null
+    val timeframe: Timeframe? = null,
 ) {
     sealed class Location {
         data class DirectionToStop(val direction: Direction, val endStopName: String) : Location()
@@ -47,7 +47,7 @@ data class AlertSummary(
             directionId: Int,
             patterns: List<RoutePattern>,
             atTime: Instant,
-            global: GlobalResponse
+            global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
                 if (alert.significance < AlertSignificance.Secondary) return@withContext null
@@ -89,7 +89,7 @@ data class AlertSummary(
             stopId: String,
             directionId: Int,
             patterns: List<RoutePattern>,
-            global: GlobalResponse
+            global: GlobalResponse,
         ): Location? {
             val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
             val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
@@ -146,7 +146,7 @@ data class AlertSummary(
             directionId: Int,
             patterns: List<RoutePattern>,
             routes: List<Route>,
-            global: GlobalResponse
+            global: GlobalResponse,
         ): Map<RoutePattern, List<String>> {
             val patternStops =
                 patterns
@@ -181,9 +181,9 @@ data class AlertSummary(
                                             0,
                                             RoutePattern.Typicality.Typical,
                                             representativeTripId = "",
-                                            routeId = routes[0].id
+                                            routeId = routes[0].id,
                                         ),
-                                        earlier + branched
+                                        earlier + branched,
                                     )
                                 }
                         } else emptyList()
@@ -240,7 +240,7 @@ data class AlertSummary(
                         "70157",
                         "70155",
                         "70153",
-                        "71151" // Kenmore
+                        "71151", // Kenmore
                     ),
                     listOf(
                         "70149", // Blandford Street
@@ -258,8 +258,8 @@ data class AlertSummary(
                         "70115",
                         "70113",
                         "70111",
-                        "70107" // Boston College
-                    )
+                        "70107", // Boston College
+                    ),
                 ),
                 Pair( // C Branch
                     listOf(
@@ -273,7 +273,7 @@ data class AlertSummary(
                         "70157",
                         "70155",
                         "70153",
-                        "70151" // Kenmore
+                        "70151", // Kenmore
                     ),
                     listOf(
                         "70211", // Saint Mary's Street
@@ -288,8 +288,8 @@ data class AlertSummary(
                         "70231",
                         "70233",
                         "70235",
-                        "70237" // Cleveland Circle
-                    )
+                        "70237", // Cleveland Circle
+                    ),
                 ),
                 Pair( // D Branch
                     listOf(
@@ -303,7 +303,7 @@ data class AlertSummary(
                         "70157",
                         "70155",
                         "70153",
-                        "70151" // Kenmore
+                        "70151", // Kenmore
                     ),
                     listOf(
                         "70187", // Fenway
@@ -318,8 +318,8 @@ data class AlertSummary(
                         "70167",
                         "70165",
                         "70163",
-                        "70161" // Riverside
-                    )
+                        "70161", // Riverside
+                    ),
                 ),
                 Pair( // E Branch
                     listOf(
@@ -331,7 +331,7 @@ data class AlertSummary(
                         "70199",
                         "70159",
                         "70157",
-                        "70155" // Copley
+                        "70155", // Copley
                     ),
                     listOf(
                         "70239", // Prudential
@@ -344,8 +344,8 @@ data class AlertSummary(
                         "70253",
                         "70255",
                         "70257",
-                        "70260" // Heath Street
-                    )
+                        "70260", // Heath Street
+                    ),
                 ),
             )
 
@@ -363,15 +363,15 @@ data class AlertSummary(
                         "70203",
                         "70205",
                         "70207",
-                        "70501" // Lechmere
+                        "70501", // Lechmere
                     ),
                     listOf(
                         "70513", // East Somerville
                         "70505",
                         "70507",
                         "70509",
-                        "70511" // Medford/Tufts
-                    )
+                        "70511", // Medford/Tufts
+                    ),
                 ),
                 Pair( // Union
                     listOf(
@@ -385,9 +385,9 @@ data class AlertSummary(
                         "70203",
                         "70205",
                         "70207",
-                        "70501" // Lechmere
+                        "70501", // Lechmere
                     ),
-                    listOf("70503") // Union Square
+                    listOf("70503"), // Union Square
                 ),
             )
     }

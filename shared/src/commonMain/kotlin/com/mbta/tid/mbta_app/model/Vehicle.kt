@@ -25,6 +25,6 @@ data class Vehicle(
     enum class CurrentStatus {
         @SerialName("incoming_at") IncomingAt,
         @SerialName("stopped_at") StoppedAt,
-        @SerialName("in_transit_to") InTransitTo
+        @SerialName("in_transit_to") InTransitTo,
     }
 }

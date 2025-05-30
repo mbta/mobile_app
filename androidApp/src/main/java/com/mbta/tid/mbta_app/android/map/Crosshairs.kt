@@ -16,7 +16,7 @@ fun Crosshairs(sheetPadding: PaddingValues) {
         Icon(
             painterResource(R.drawable.map_nearby_location_cursor),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
     }
 }

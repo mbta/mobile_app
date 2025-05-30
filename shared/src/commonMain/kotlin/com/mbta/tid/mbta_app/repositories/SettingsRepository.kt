@@ -37,10 +37,10 @@ class SettingsRepository : ISettingsRepository, KoinComponent {
 
 enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),
-    StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
-    GroupByDirection(booleanPreferencesKey("groupByDirection_featureFlag")),
+    EnhancedFavorites(booleanPreferencesKey("enhanced_favorites_feature_flag")),
     HideMaps(booleanPreferencesKey("hide_maps")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
+    StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
 }
 
 class MockSettingsRepository
@@ -48,7 +48,7 @@ class MockSettingsRepository
 constructor(
     private var settings: Map<Settings, Boolean> = emptyMap(),
     private var onGetSettings: () -> Unit = {},
-    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {}
+    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {},
 ) : ISettingsRepository {
     override suspend fun getSettings(): Map<Settings, Boolean> {
         onGetSettings()

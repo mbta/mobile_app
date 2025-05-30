@@ -12,8 +12,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -34,7 +33,6 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -84,7 +82,7 @@ class StopDetailsViewModelTest {
         val predictionsRepo =
             MockPredictionsRepository(
                 connectV2Response = PredictionsByStopJoinResponse(objects),
-                onConnectV2 = { connectCount += 1 }
+                onConnectV2 = { connectCount += 1 },
             )
 
         val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
@@ -117,7 +115,7 @@ class StopDetailsViewModelTest {
         val predictionsRepo =
             MockPredictionsRepository(
                 connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
-                onConnectV2 = { connectCount += 1 }
+                onConnectV2 = { connectCount += 1 },
             )
 
         val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
@@ -155,7 +153,7 @@ class StopDetailsViewModelTest {
             MockPredictionsRepository(
                 connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
                 onConnectV2 = { connectCount += 1 },
-                onDisconnect = { disconnectCount += 1 }
+                onDisconnect = { disconnectCount += 1 },
             )
 
         val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
@@ -176,14 +174,14 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testSetDepartures() {
+    fun testSetRouteCardData() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        assertNull(viewModel.stopDepartures.value)
+        assertNull(viewModel.routeCardData.value)
 
-        viewModel.setDepartures(StopDetailsDepartures(emptyList()))
+        viewModel.setRouteCardData(emptyList())
 
-        assertEquals(emptyList<PatternsByStop>(), viewModel.stopDepartures.value?.routes)
+        assertEquals(emptyList<RouteCardData>(), viewModel.routeCardData.value)
     }
 
     @Test
@@ -197,7 +195,7 @@ class StopDetailsViewModelTest {
             MockPredictionsRepository(
                 connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
                 onConnectV2 = { connectCount += 1 },
-                onDisconnect = { disconnectCount += 1 }
+                onDisconnect = { disconnectCount += 1 },
             )
 
         val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
@@ -259,19 +257,19 @@ class StopDetailsViewModelTest {
                     MockTripPredictionsRepository(
                         { tripPredictionsConnectedCount += 1 },
                         { tripPredictionsDisconnectedCount += 1 },
-                        tripPredictions
+                        tripPredictions,
                     ),
                 tripRepo =
                     MockTripRepository(
                         tripSchedulesResponse = tripSchedules,
-                        tripResponse = TripResponse(trip1)
+                        tripResponse = TripResponse(trip1),
                     ),
                 vehicleRepo =
                     MockVehicleRepository(
                         { vehicleConnectedCount += 1 },
                         { vehicleDisconnectedCount += 1 },
-                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
-                    )
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle)),
+                    ),
             )
 
         val tripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
@@ -345,19 +343,19 @@ class StopDetailsViewModelTest {
                     MockTripPredictionsRepository(
                         { tripPredictionsConnectedCount += 1 },
                         { tripPredictionsDisconnectedCount += 1 },
-                        tripPredictions
+                        tripPredictions,
                     ),
                 tripRepo =
                     MockTripRepository(
                         tripSchedulesResponse = tripSchedules,
-                        tripResponse = TripResponse(trip1)
+                        tripResponse = TripResponse(trip1),
                     ),
                 vehicleRepo =
                     MockVehicleRepository(
                         { vehicleConnectedCount += 1 },
                         { vehicleDisconnectedCount += 1 },
-                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
-                    )
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle)),
+                    ),
             )
 
         val tripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
@@ -440,19 +438,19 @@ class StopDetailsViewModelTest {
                     MockTripPredictionsRepository(
                         { tripPredictionsConnectedCount += 1 },
                         { tripPredictionsDisconnectedCount += 1 },
-                        tripPredictions
+                        tripPredictions,
                     ),
                 tripRepo =
                     MockTripRepository(
                         tripSchedulesResponse = tripSchedules,
-                        tripResponse = TripResponse(trip1)
+                        tripResponse = TripResponse(trip1),
                     ),
                 vehicleRepo =
                     MockVehicleRepository(
                         { vehicleConnectedCount += 1 },
                         { vehicleDisconnectedCount += 1 },
-                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
-                    )
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle)),
+                    ),
             )
 
         val tripFilter = TripDetailsFilter(trip0.id, vehicle.id, 0, false)
@@ -540,19 +538,19 @@ class StopDetailsViewModelTest {
                     MockTripPredictionsRepository(
                         { tripPredictionsConnectedCount += 1 },
                         { tripPredictionsDisconnectedCount += 1 },
-                        tripPredictions
+                        tripPredictions,
                     ),
                 tripRepo =
                     MockTripRepository(
                         tripSchedulesResponse = tripSchedules,
-                        tripResponse = TripResponse(trip0)
+                        tripResponse = TripResponse(trip0),
                     ),
                 vehicleRepo =
                     MockVehicleRepository(
                         { vehicleConnectedCount += 1 },
                         { vehicleDisconnectedCount += 1 },
-                        ApiResult.Ok(VehicleStreamDataResponse(vehicle1))
-                    )
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle1)),
+                    ),
             )
 
         val tripFilter = TripDetailsFilter(trip0.id, vehicle0.id, 0, false)
@@ -629,19 +627,19 @@ class StopDetailsViewModelTest {
                     MockTripPredictionsRepository(
                         { tripPredictionsConnectedCount += 1 },
                         { tripPredictionsDisconnectedCount += 1 },
-                        tripPredictions
+                        tripPredictions,
                     ),
                 tripRepo =
                     MockTripRepository(
                         tripSchedulesResponse = tripSchedules,
-                        tripResponse = TripResponse(trip1)
+                        tripResponse = TripResponse(trip1),
                     ),
                 vehicleRepo =
                     MockVehicleRepository(
                         { vehicleConnectedCount += 1 },
                         { vehicleDisconnectedCount += 1 },
-                        ApiResult.Ok(VehicleStreamDataResponse(vehicle))
-                    )
+                        ApiResult.Ok(VehicleStreamDataResponse(vehicle)),
+                    ),
             )
 
         val tripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
@@ -679,7 +677,7 @@ class StopDetailsViewModelTest {
             MockPredictionsRepository(
                 connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
                 onConnectV2 = { connectCount += 1 },
-                onDisconnect = { disconnectCount += 1 }
+                onDisconnect = { disconnectCount += 1 },
             )
 
         val viewModel = StopDetailsViewModel.mocked(objects, predictionsRepo = predictionsRepo)
@@ -700,7 +698,7 @@ class StopDetailsViewModelTest {
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
-                    setMapSelectedVehicle = {}
+                    setMapSelectedVehicle = {},
                 )
             }
         }
@@ -755,10 +753,10 @@ class StopDetailsViewModelTest {
                 tripRepo =
                     MockTripRepository(
                         tripSchedulesResponse = tripSchedules,
-                        tripResponse = TripResponse(trip1)
+                        tripResponse = TripResponse(trip1),
                     ),
                 vehicleRepo =
-                    MockVehicleRepository({}, {}, ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
+                    MockVehicleRepository({}, {}, ApiResult.Ok(VehicleStreamDataResponse(vehicle))),
             )
 
         val newTripFilter = TripDetailsFilter(trip1.id, vehicle.id, 0, false)
@@ -781,7 +779,7 @@ class StopDetailsViewModelTest {
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
-                    setMapSelectedVehicle = {}
+                    setMapSelectedVehicle = {},
                 )
             }
         }
@@ -839,20 +837,20 @@ class StopDetailsViewModelTest {
             MockPredictionsRepository(
                 connectV2Outcome = ApiResult.Ok(PredictionsByStopJoinResponse(objects)),
                 onConnectV2 = { stopPredictionsConnectCount += 1 },
-                onDisconnect = { stopPredictionsDisconnectCount += 1 }
+                onDisconnect = { stopPredictionsDisconnectCount += 1 },
             )
 
         val tripPredictionsRepo =
             MockTripPredictionsRepository(
                 { tripPredictionsConnectCount += 1 },
                 { tripPredictionsDisconnectCount += 1 },
-                PredictionsStreamDataResponse(objects)
+                PredictionsStreamDataResponse(objects),
             )
         val vehicleRepo =
             MockVehicleRepository(
                 { vehicleConnectCount += 1 },
                 { vehicleDisconnectCount += 1 },
-                ApiResult.Ok(VehicleStreamDataResponse(vehicle0))
+                ApiResult.Ok(VehicleStreamDataResponse(vehicle0)),
             )
 
         val viewModel =
@@ -860,7 +858,7 @@ class StopDetailsViewModelTest {
                 objects,
                 predictionsRepo = predictionsRepo,
                 tripPredictionsRepo = tripPredictionsRepo,
-                vehicleRepo = vehicleRepo
+                vehicleRepo = vehicleRepo,
             )
 
         val stopFilters =
@@ -868,7 +866,7 @@ class StopDetailsViewModelTest {
                 StopDetailsPageFilters(
                     "stop1",
                     StopDetailsFilter("route", 0),
-                    TripDetailsFilter("tripId", "vehicleId", 0)
+                    TripDetailsFilter("tripId", "vehicleId", 0),
                 )
             )
 
@@ -885,7 +883,7 @@ class StopDetailsViewModelTest {
                     pinnedRoutes = setOf(),
                     updateStopFilter = { _, _ -> },
                     updateTripFilter = { _, _ -> },
-                    setMapSelectedVehicle = {}
+                    setMapSelectedVehicle = {},
                 )
             }
         }
@@ -938,7 +936,7 @@ class StopDetailsViewModelTest {
     }
 
     @Test
-    fun testManagerSetsDeparturesOnChange() {
+    fun testManagerSetsRouteCardDataOnChange() {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
@@ -946,7 +944,7 @@ class StopDetailsViewModelTest {
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
-        assertNull(viewModel.stopDepartures.value)
+        assertNull(viewModel.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -958,20 +956,19 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
             )
         }
 
-        while (viewModel.stopDepartures.value == null) {
+        while (viewModel.routeCardData.value == null) {
             composeTestRule.waitForIdle()
         }
 
-        composeTestRule.waitUntil { viewModel.stopDepartures.value != null }
+        composeTestRule.waitUntil { viewModel.routeCardData.value != null }
 
-        assertNotNull(viewModel.stopDepartures.value)
+        assertNotNull(viewModel.routeCardData.value)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testManagerDoesNotSetDeparturesWhenNothingLoaded() {
         val objects = ObjectCollectionBuilder()
@@ -983,7 +980,7 @@ class StopDetailsViewModelTest {
 
         val viewModelNothingLoaded = StopDetailsViewModel.mocked(schedulesRepo = emptySchedulesRepo)
 
-        assertNull(viewModelNothingLoaded.stopDepartures.value)
+        assertNull(viewModelNothingLoaded.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -995,11 +992,11 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
             )
         }
 
-        assertNull(viewModelNothingLoaded.stopDepartures.value)
+        assertNull(viewModelNothingLoaded.routeCardData.value)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -1015,7 +1012,7 @@ class StopDetailsViewModelTest {
         val viewModelSchedulesLoaded =
             StopDetailsViewModel.mocked(objects, predictionsRepo = emptyPredictionsRepo)
 
-        assertNull(viewModelSchedulesLoaded.stopDepartures.value)
+        assertNull(viewModelSchedulesLoaded.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -1027,11 +1024,11 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
             )
         }
 
-        assertNull(viewModelSchedulesLoaded.stopDepartures.value)
+        assertNull(viewModelSchedulesLoaded.routeCardData.value)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -1047,7 +1044,7 @@ class StopDetailsViewModelTest {
         val viewModelPredictionsLoaded =
             StopDetailsViewModel.mocked(objects, schedulesRepo = emptySchedulesRepo)
 
-        assertNull(viewModelPredictionsLoaded.stopDepartures.value)
+        assertNull(viewModelPredictionsLoaded.routeCardData.value)
 
         composeTestRule.setContent {
             var stopFilters by remember { stopFilters }
@@ -1059,11 +1056,11 @@ class StopDetailsViewModelTest {
                 pinnedRoutes = setOf(),
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
             )
         }
 
-        assertNull(viewModelPredictionsLoaded.stopDepartures.value)
+        assertNull(viewModelPredictionsLoaded.routeCardData.value)
     }
 
     @Test
@@ -1088,7 +1085,7 @@ class StopDetailsViewModelTest {
             StopDetailsViewModel.mocked(
                 objects,
                 errorBannerRepo = errorBannerRepo,
-                predictionsRepo = predictionsRepo
+                predictionsRepo = predictionsRepo,
             )
 
         composeTestRule.setContent {
@@ -1102,7 +1099,7 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
             )
         }
 
@@ -1138,16 +1135,15 @@ class StopDetailsViewModelTest {
 
         objects.prediction()
 
-        val stopFilters = mutableStateOf(StopDetailsPageFilters(stop.id, null, null))
-
         val viewModel = StopDetailsViewModel.mocked(objects)
 
         var newStopFilter: StopDetailsFilter? = null
 
+        val expectedFilter = StopDetailsFilter(route.id, routePattern.directionId, true)
+
         composeTestRule.setContent {
-            var stopFilters by remember { stopFilters }
             stopDetailsManagedVM(
-                stopFilters,
+                StopDetailsPageFilters(stop.id, null, null),
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
@@ -1155,29 +1151,30 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, filter -> newStopFilter = filter },
                 updateTripFilter = { _, _ -> },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
+                now = now,
             )
 
             LaunchedEffect(null) {
-                viewModel.setDepartures(
-                    StopDetailsDepartures.fromData(
-                        stop,
+                viewModel.setRouteCardData(
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stop.id),
                         GlobalResponse(objects),
+                        null,
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
+                        now,
                         setOf(),
-                        now
+                        RouteCardData.Context.StopDetailsUnfiltered,
                     )
                 )
             }
         }
 
-        composeTestRule.waitUntil {
-            newStopFilter == StopDetailsFilter(route.id, routePattern.directionId, true)
-        }
-
-        assertEquals(StopDetailsFilter(route.id, routePattern.directionId, true), newStopFilter)
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil(2000) { newStopFilter == expectedFilter }
+        kotlin.test.assertEquals(expectedFilter, newStopFilter)
     }
 
     @Test
@@ -1212,15 +1209,11 @@ class StopDetailsViewModelTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        val stopFilters =
-            mutableStateOf(StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null))
-
         var newTripFilter: TripDetailsFilter? = null
 
         composeTestRule.setContent {
-            var stopFilters by remember { stopFilters }
             stopDetailsManagedVM(
-                stopFilters,
+                StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null),
                 viewModel = viewModel,
                 globalResponse = GlobalResponse(objects),
                 alertData = AlertsStreamDataResponse(objects),
@@ -1228,19 +1221,22 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
+                now = now,
             )
 
             LaunchedEffect(null) {
-                viewModel.setDepartures(
-                    StopDetailsDepartures.fromData(
-                        stop,
+                viewModel.setRouteCardData(
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stop.id),
                         GlobalResponse(objects),
+                        null,
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
+                        now,
                         setOf(),
-                        now
+                        RouteCardData.Context.StopDetailsUnfiltered,
                     )
                 )
             }
@@ -1301,19 +1297,22 @@ class StopDetailsViewModelTest {
                 checkPredictionsStaleInterval = 1.seconds,
                 updateStopFilter = { _, _ -> },
                 updateTripFilter = { _, tripFilter -> newTripFilter = tripFilter },
-                setMapSelectedVehicle = {}
+                setMapSelectedVehicle = {},
+                now = now,
             )
 
             LaunchedEffect(null) {
-                viewModel.setDepartures(
-                    StopDetailsDepartures.fromData(
-                        stop,
+                viewModel.setRouteCardData(
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stop.id),
                         GlobalResponse(objects),
+                        null,
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
                         AlertsStreamDataResponse(objects),
+                        now,
                         setOf(),
-                        now
+                        RouteCardData.Context.StopDetailsUnfiltered,
                     )
                 )
 
@@ -1362,7 +1361,7 @@ class StopDetailsViewModelTest {
                     StopDetailsPageFilters(
                         stop.id,
                         StopDetailsFilter(route.id, routePattern.directionId),
-                        tripFilter
+                        tripFilter,
                     ),
                 globalResponse,
                 alertData,
@@ -1371,7 +1370,7 @@ class StopDetailsViewModelTest {
                 updateTripFilter = { _, _ -> },
                 setMapSelectedVehicle = mapSelectedVehicleValues::add,
                 now,
-                viewModel = viewModel
+                viewModel = viewModel,
             )
         }
 
@@ -1384,9 +1383,7 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         objects.stop { id = "stop1" }
 
-        val koinApplication = testKoinApplication {
-            settings = MockSettingsRepository(mapOf(Settings.GroupByDirection to true))
-        }
+        val koinApplication = testKoinApplication { settings = MockSettingsRepository() }
         val viewModel = StopDetailsViewModel.mocked(objects)
 
         val stopFilters = StopDetailsPageFilters("stop1", null, null)

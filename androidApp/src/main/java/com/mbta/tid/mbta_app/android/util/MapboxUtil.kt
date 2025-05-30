@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.android.util
 
 import com.mapbox.geojson.Point
-import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.plugin.viewport.CompletionListener
 import com.mapbox.maps.plugin.viewport.ViewportStatus
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
@@ -11,8 +11,10 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.math.pow
 import kotlin.math.round
 
-@OptIn(MapboxExperimental::class)
-fun MapViewportState.followPuck(zoom: Double? = null) {
+fun MapViewportState.followPuck(
+    zoom: Double? = null,
+    completionListener: CompletionListener? = null,
+) {
     this.transitionToFollowPuckState(
         followPuckViewportStateOptions =
             FollowPuckViewportStateOptions.Builder()
@@ -21,7 +23,8 @@ fun MapViewportState.followPuck(zoom: Double? = null) {
                     pitch(null)
                     zoom(zoom)
                 }
-                .build()
+                .build(),
+        completionListener = completionListener,
     )
 }
 
@@ -34,7 +37,6 @@ val MapViewportState.isFollowingPuck: Boolean
             null -> false
         }
 
-@OptIn(MapboxExperimental::class)
 val MapViewportState.isOverview: Boolean
     get() =
         when (val status = this.mapViewportStatus) {

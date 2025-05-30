@@ -43,7 +43,7 @@ fun StopResultsView(
     shape: RoundedCornerShape,
     stop: StopResult,
     globalResponse: GlobalResponse?,
-    handleSearch: (String) -> Unit
+    handleSearch: (String) -> Unit,
 ) {
 
     val routes = globalResponse?.getTypicalRoutesFor(stop.id) ?: emptyList()
@@ -57,7 +57,7 @@ fun StopResultsView(
     stop: StopResult,
     routes: List<Route>,
     globalResponse: GlobalResponse?,
-    handleSearch: (String) -> Unit
+    handleSearch: (String) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -68,7 +68,7 @@ fun StopResultsView(
                     .background(colorResource(id = R.color.fill3), shape = shape)
                     .padding(12.dp)
                     .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             val iconModifier = Modifier.height(32.dp).width(32.dp)
 
@@ -96,14 +96,14 @@ fun StopResultsView(
                                     id = R.string.route_with_type,
                                     stringResource(R.string.silver_line),
                                     route?.type?.typeText(LocalContext.current, isOnly = false)
-                                        ?: ""
+                                        ?: "",
                                 )
                             } else if (route.type == RouteType.COMMUTER_RAIL && stop.isStation) {
                                 stringResource(
                                     id = R.string.route_with_type,
                                     stringResource(R.string.commuter_rail),
                                     route?.type?.typeText(LocalContext.current, isOnly = false)
-                                        ?: ""
+                                        ?: "",
                                 )
                             } else if (route.type == RouteType.BUS && stop.isStation) {
                                 route.type.typeText(LocalContext.current, isOnly = false)
@@ -111,7 +111,7 @@ fun StopResultsView(
                                 stringResource(
                                     id = R.string.route_with_type,
                                     route.label,
-                                    route?.type?.typeText(LocalContext.current, isOnly = true) ?: ""
+                                    route?.type?.typeText(LocalContext.current, isOnly = true) ?: "",
                                 )
                             }
 
@@ -122,7 +122,7 @@ fun StopResultsView(
                                 line,
                                 RoutePillSpec.Type.FlexCompact,
                                 context,
-                                contentDescription
+                                contentDescription,
                             ),
                         )
                     }
@@ -131,31 +131,31 @@ fun StopResultsView(
             val routesContentDescription =
                 stringResource(
                     R.string.serves_route_list,
-                    routePillsData.joinToString(",") { (_, spec) -> spec.contentDescription ?: "" }
+                    routePillsData.joinToString(",") { (_, spec) -> spec.contentDescription ?: "" },
                 )
             if (stop.isStation) {
                 Icon(
                     painter = painterResource(R.drawable.mbta_logo),
                     contentDescription = null,
                     modifier = iconModifier,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
             } else {
                 Icon(
                     painter = painterResource(R.drawable.stop_bus),
                     contentDescription = null,
                     modifier = iconModifier,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
             }
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.semantics(mergeDescendants = true) {}
+                modifier = Modifier.semantics(mergeDescendants = true) {},
             ) {
                 Text(
                     text = stop.name,
                     modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 16.dp),
-                    style = Typography.bodySemibold
+                    style = Typography.bodySemibold,
                 )
                 Row(
                     modifier =
@@ -167,7 +167,7 @@ fun StopResultsView(
                         RoutePill(
                             route = route,
                             spec = spec,
-                            modifier = Modifier.padding(end = 4.dp)
+                            modifier = Modifier.padding(end = 4.dp),
                         )
                     }
                 }

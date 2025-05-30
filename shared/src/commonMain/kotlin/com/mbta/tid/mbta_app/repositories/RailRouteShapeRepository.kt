@@ -42,7 +42,7 @@ class MockRailRouteShapeRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     val response: MapFriendlyRouteResponse = MapFriendlyRouteResponse(emptyList()),
-    val onGet: () -> Unit = {}
+    val onGet: () -> Unit = {},
 ) : IRailRouteShapeRepository {
     override val state = MutableStateFlow(response)
 

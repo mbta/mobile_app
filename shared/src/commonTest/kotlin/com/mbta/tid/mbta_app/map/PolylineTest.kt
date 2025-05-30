@@ -12,9 +12,9 @@ class PolylineTest {
             listOf(
                 Position(latitude = 38.5, longitude = -120.2),
                 Position(latitude = 40.7, longitude = -120.95),
-                Position(latitude = 43.252, longitude = -126.453)
+                Position(latitude = 43.252, longitude = -126.453),
             ),
-            Polyline.decode(data)
+            Polyline.decode(data),
         )
     }
 
@@ -25,9 +25,9 @@ class PolylineTest {
             listOf(
                 Position(latitude = 42.35193, longitude = -71.07067),
                 Position(latitude = 42.35275, longitude = -71.06501),
-                Position(latitude = 42.35665, longitude = -71.06286)
+                Position(latitude = 42.35665, longitude = -71.06286),
             ),
-            Polyline.decode(data)
+            Polyline.decode(data),
         )
     }
 
@@ -42,7 +42,7 @@ class PolylineTest {
                 Position(latitude = 42.36008, longitude = -71.02805),
                 Position(latitude = 42.36014, longitude = -71.02748),
             ),
-            Polyline.decode(data)
+            Polyline.decode(data),
         )
     }
 
@@ -53,13 +53,13 @@ class PolylineTest {
                 expectedPosition.latitude,
                 actualPosition.latitude,
                 1e-6,
-                "latitude mismatch at index $index"
+                "latitude mismatch at index $index",
             )
             assertEquals(
                 expectedPosition.longitude,
                 actualPosition.longitude,
                 1e-6,
-                "longitude mismatch at index $index"
+                "longitude mismatch at index $index",
             )
         }
     }

@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ILastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -14,6 +15,7 @@ import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
@@ -25,6 +27,7 @@ import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
+import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
@@ -38,7 +41,7 @@ fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
-        repositoriesModule(RealRepositories())
+        repositoriesModule(RealRepositories()),
     )
 }
 
@@ -52,6 +55,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IOnboardingRepository> { repositories.onboarding }
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }
         single<IRailRouteShapeRepository> { repositories.railRouteShapes }
+        single<IRouteStopsRepository> { repositories.routeStops }
         single<ISchedulesRepository> { repositories.schedules }
         single<ISearchResultRepository> { repositories.searchResults }
         single<ISentryRepository> { repositories.sentry }
@@ -74,9 +78,11 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
+        single<IFavoritesRepository> { repositories.favorites }
         single { ConfigUseCase(get(), get()) }
         single { FeaturePromoUseCase(get(), get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
+        single { FavoritesUsecases(get()) }
     }
 }

@@ -30,7 +30,7 @@ struct TripDetailsDisclosureGroup: DisclosureGroupStyle {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     caretRotation = expanded ? .degrees(90) : .zero
                 }
-            }
+            }.simultaneousGesture(TapGesture())
             configuration.content
                 .frame(height: configuration.isExpanded ? nil : 0, alignment: .top)
                 .clipped()

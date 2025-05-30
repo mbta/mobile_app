@@ -131,8 +131,11 @@ extension HomeMapView {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                if let departures = nearbyVM.departures {
-                    vehiclesData = Array(departures.filterVehiclesByUpcoming(vehicles: result.data).values)
+                if let routeCardData = nearbyVM.routeCardData {
+                    vehiclesData = Array(StopDetailsUtils.shared.filterVehiclesByUpcoming(
+                        routeCardData: routeCardData,
+                        vehicles: result.data
+                    ).values)
                 }
             }
         }
@@ -143,7 +146,7 @@ extension HomeMapView {
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
-        if oldNavEntry == nil {
+        if oldNavEntry == nil || oldNavEntry?.isEntrypoint == true {
             viewportProvider.saveNearbyTransitViewport()
         }
         if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
@@ -156,7 +159,7 @@ extension HomeMapView {
             handleRouteFilterChange(stopFilter)
         }
 
-        if nextNavEntry == nil {
+        if nextNavEntry == nil || nextNavEntry?.isEntrypoint == true {
             clearSelectedStop()
             viewportProvider.restoreNearbyTransitViewport()
             mapVM.routeSourceData = mapVM.allRailSourceData
@@ -174,7 +177,7 @@ extension HomeMapView {
             if case let .ok(result) = try await onEnum(of: stopRepository.getStopMapData(stopId: stop.id)) {
                 stopMapData = result.data
                 if let stopMapData {
-                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
                 }
             }
         }
@@ -182,7 +185,7 @@ extension HomeMapView {
 
     func handleRouteFilterChange(_ filter: StopDetailsFilter?) {
         if let stopMapData {
-            updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+            updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
         }
     }
 
@@ -191,7 +194,7 @@ extension HomeMapView {
         resetDefaultSources()
     }
 
-    func handleTapStopLayer(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {
+    func handleTapStopLayer(feature: QueriedFeature, _: InteractionContext) -> Bool {
         guard case let .string(stopId) = feature.feature.properties?[StopFeaturesBuilder.shared.propIdKey.key] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
@@ -207,7 +210,7 @@ extension HomeMapView {
             return false
         }
         analytics.tappedOnStop(stopId: stop.id)
-        nearbyVM.navigationStack.removeAll()
+        nearbyVM.popToEntrypoint()
         nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
         return true
     }
@@ -216,15 +219,15 @@ extension HomeMapView {
         guard let tripId = vehicle.tripId else { return }
         guard case .stopDetails = nearbyVM.navigationStack.lastSafe() else { return }
 
-        let departures = nearbyVM.departures
-        let patterns = departures?.routes.first(where: { patterns in
-            patterns.routes.contains { $0.id == vehicle.routeId }
-        })
-        let trip = patterns?.allUpcomingTrips().first(where: { upcoming in
+        let routeCardData = nearbyVM.routeCardData
+        let route = routeCardData?.first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
+        let stop = route?.stopData.first
+        let allTrips = stop?.data.flatMap(\.upcomingTrips)
+        let trip = allTrips?.first(where: { upcoming in
             upcoming.trip.id == tripId
         })
         let stopSequence = trip?.stopSequence
-        let routeId = trip?.trip.routeId ?? vehicle.routeId ?? patterns?.routeIdentifier
+        let routeId = trip?.trip.routeId ?? vehicle.routeId ?? route?.lineOrRoute.id
 
         if let routeId { analytics.tappedVehicle(routeId: routeId) }
 

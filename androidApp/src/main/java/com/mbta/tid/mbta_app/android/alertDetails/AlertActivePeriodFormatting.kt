@@ -25,7 +25,7 @@ import com.mbta.tid.mbta_app.model.Alert
 private fun format(
     context: Context,
     period: Alert.ActivePeriod,
-    isStart: Boolean
+    isStart: Boolean,
 ): AnnotatedString {
     val instant =
         if (isStart) period.start
@@ -33,7 +33,7 @@ private fun format(
             period.end
                 ?: return AnnotatedString(
                     context.getString(R.string.until_further_notice),
-                    SpanStyle(fontWeight = FontWeight.Bold)
+                    SpanStyle(fontWeight = FontWeight.Bold),
                 )
 
     val formattedDate = instant.formattedServiceDayAndDate()

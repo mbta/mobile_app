@@ -64,7 +64,7 @@ class AlertDetailsTest {
                 listOf(route),
                 stop = null,
                 affectedStops = listOf(stop1, stop2, stop3),
-                now = now
+                now = now,
             )
         }
 
@@ -112,7 +112,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = null,
                 affectedStops = emptyList(),
-                now = now
+                now = now,
             )
         }
 
@@ -157,7 +157,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = null,
                 affectedStops = emptyList(),
-                now = now
+                now = now,
             )
         }
 
@@ -204,7 +204,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = null,
                 affectedStops = emptyList(),
-                now = now
+                now = now,
             )
         }
 
@@ -241,7 +241,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = null,
                 affectedStops = emptyList(),
-                now = now
+                now = now,
             )
         }
 
@@ -271,7 +271,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = null,
                 affectedStops = emptyList(),
-                now = now
+                now = now,
             )
         }
 
@@ -309,7 +309,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = null,
                 affectedStops = affectedStops.value,
-                now = now
+                now = now,
             )
         }
 
@@ -357,7 +357,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = stop,
                 affectedStops = listOf(stop),
-                now = now
+                now = now,
             )
         }
 
@@ -390,7 +390,7 @@ class AlertDetailsTest {
                 routes = null,
                 stop = stop,
                 affectedStops = listOf(stop),
-                now = now
+                now = now,
             )
         }
 

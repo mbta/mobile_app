@@ -20,13 +20,13 @@ import org.koin.compose.koinInject
 
 class ScheduleFetcher(
     private val schedulesRepository: ISchedulesRepository,
-    private val errorBannerRepository: IErrorBannerStateRepository
+    private val errorBannerRepository: IErrorBannerStateRepository,
 ) {
 
     fun getSchedule(
         stopIds: List<String>,
         errorKey: String,
-        onSuccess: (ScheduleResponse) -> Unit
+        onSuccess: (ScheduleResponse) -> Unit,
     ) {
         if (stopIds.isNotEmpty()) {
             CoroutineScope(Dispatchers.IO).launch {
@@ -35,7 +35,7 @@ class ScheduleFetcher(
                     errorKey = errorKey,
                     getData = { schedulesRepository.getSchedule(stopIds, Clock.System.now()) },
                     onSuccess = { onSuccess(it) },
-                    onRefreshAfterError = { getSchedule(stopIds, errorKey, onSuccess) }
+                    onRefreshAfterError = { getSchedule(stopIds, errorKey, onSuccess) },
                 )
             }
         } else {
@@ -46,7 +46,7 @@ class ScheduleFetcher(
 
 class ScheduleViewModel(
     private val schedulesRepository: ISchedulesRepository,
-    private val errorBannerRepository: IErrorBannerStateRepository
+    private val errorBannerRepository: IErrorBannerStateRepository,
 ) : ViewModel() {
 
     private val scheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
@@ -59,7 +59,7 @@ class ScheduleViewModel(
 
     class Factory(
         private val schedulesRepository: ISchedulesRepository,
-        private val errorBannerRepository: IErrorBannerStateRepository
+        private val errorBannerRepository: IErrorBannerStateRepository,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return ScheduleViewModel(schedulesRepository, errorBannerRepository) as T
@@ -74,10 +74,10 @@ fun getSchedule(
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
 ): ScheduleResponse? {
-    var viewModel: ScheduleViewModel =
+    val viewModel: ScheduleViewModel =
         viewModel(factory = ScheduleViewModel.Factory(schedulesRepository, errorBannerRepository))
 
     LaunchedEffect(key1 = stopIds) { viewModel.getSchedule(stopIds ?: emptyList(), errorKey) }
 
-    return viewModel?.schedule?.collectAsState(initial = null)?.value
+    return viewModel.schedule.collectAsState(initial = null).value
 }

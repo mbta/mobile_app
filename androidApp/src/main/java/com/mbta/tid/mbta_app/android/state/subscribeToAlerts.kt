@@ -19,9 +19,7 @@ import kotlinx.coroutines.launch
 import okhttp3.internal.notifyAll
 import org.koin.compose.koinInject
 
-class AlertsViewModel(
-    private val alertsRepository: IAlertsRepository,
-) : ViewModel() {
+class AlertsViewModel(private val alertsRepository: IAlertsRepository) : ViewModel() {
     private val _alerts = MutableStateFlow<AlertsStreamDataResponse?>(null)
     val alertFlow: StateFlow<AlertsStreamDataResponse?> = _alerts
 

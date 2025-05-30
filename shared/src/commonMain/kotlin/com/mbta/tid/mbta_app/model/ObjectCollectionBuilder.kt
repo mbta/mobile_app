@@ -65,6 +65,22 @@ private constructor(
         fun built(): Built
     }
 
+    fun put(`object`: BackendObject) {
+        when (`object`) {
+            is Alert -> alerts[`object`.id] = `object`
+            is Line -> lines[`object`.id] = `object`
+            is Prediction -> predictions[`object`.id] = `object`
+            is Route -> routes[`object`.id] = `object`
+            is RoutePattern -> routePatterns[`object`.id] = `object`
+            is Schedule -> schedules[`object`.id] = `object`
+            is Stop -> stops[`object`.id] = `object`
+            is Trip -> trips[`object`.id] = `object`
+            is Shape -> shapes[`object`.id] = `object`
+            is Vehicle -> vehicles[`object`.id] = `object`
+            else -> throw IllegalArgumentException("Can’t put unknown object ${`object`::class}")
+        }
+    }
+
     class AlertBuilder : ObjectBuilder<Alert> {
         var id = uuid()
         var activePeriod = mutableListOf<Alert.ActivePeriod>()
@@ -100,7 +116,7 @@ private constructor(
                     route,
                     routeType,
                     stop,
-                    trip
+                    trip,
                 )
             )
         }
@@ -118,11 +134,13 @@ private constructor(
                 informedEntity,
                 lifecycle,
                 severity,
-                updatedAt
+                updatedAt,
             )
     }
 
-    fun alert(block: AlertBuilder.() -> Unit) = build(alerts, AlertBuilder(), block)
+    fun alert(block: AlertBuilder.() -> Unit) = build(AlertBuilder(), block)
+
+    fun getAlert(id: String) = alerts.getValue(id)
 
     class LineBuilder : ObjectBuilder<Line> {
         var id = uuid()
@@ -136,7 +154,9 @@ private constructor(
     }
 
     @DefaultArgumentInterop.Enabled
-    fun line(block: LineBuilder.() -> Unit = {}) = build(lines, LineBuilder(), block)
+    fun line(block: LineBuilder.() -> Unit = {}) = build(LineBuilder(), block)
+
+    fun getLine(id: String) = lines.getValue(id)
 
     inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
@@ -178,20 +198,20 @@ private constructor(
     }
 
     @DefaultArgumentInterop.Enabled
-    fun prediction(block: PredictionBuilder.() -> Unit = {}) =
-        build(predictions, PredictionBuilder(), block)
+    fun prediction(block: PredictionBuilder.() -> Unit = {}) = build(PredictionBuilder(), block)
 
     fun prediction(schedule: Schedule, block: PredictionBuilder.() -> Unit = {}) =
         build(
-            predictions,
             PredictionBuilder().apply {
                 routeId = schedule.routeId
                 tripId = schedule.tripId
                 stopId = schedule.stopId
                 stopSequence = schedule.stopSequence
             },
-            block
+            block,
         )
+
+    fun getPrediction(id: String) = predictions.getValue(id)
 
     class RouteBuilder : ObjectBuilder<Route> {
         var id = uuid()
@@ -223,7 +243,9 @@ private constructor(
     }
 
     @DefaultArgumentInterop.Enabled
-    fun route(block: RouteBuilder.() -> Unit = {}) = build(routes, RouteBuilder(), block)
+    fun route(block: RouteBuilder.() -> Unit = {}) = build(RouteBuilder(), block)
+
+    fun getRoute(id: String) = routes.getValue(id)
 
     inner class RoutePatternBuilder : ObjectBuilder<RoutePattern> {
         var id: String = uuid()
@@ -256,7 +278,9 @@ private constructor(
     }
 
     fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
-        build(routePatterns, RoutePatternBuilder().apply { routeId = route.id }, block)
+        build(RoutePatternBuilder().apply { routeId = route.id }, block)
+
+    fun getRoutePattern(id: String) = routePatterns.getValue(id)
 
     inner class ScheduleBuilder : ObjectBuilder<Schedule> {
         var id = uuid()
@@ -292,12 +316,13 @@ private constructor(
                 stopSequence,
                 routeId,
                 stopId,
-                tripId
+                tripId,
             )
     }
 
-    fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
-        build(schedules, ScheduleBuilder(), block)
+    fun schedule(block: ScheduleBuilder.() -> Unit = {}) = build(ScheduleBuilder(), block)
+
+    fun getSchedule(id: String) = schedules.getValue(id)
 
     class TripBuilder : ObjectBuilder<Trip> {
         var id = uuid()
@@ -312,12 +337,11 @@ private constructor(
             Trip(id, directionId, headsign, routeId, routePatternId, shapeId, stopIds)
     }
 
-    fun trip(block: TripBuilder.() -> Unit = {}) = build(trips, TripBuilder(), block)
+    fun trip(block: TripBuilder.() -> Unit = {}) = build(TripBuilder(), block)
 
     @DefaultArgumentInterop.Enabled
     fun trip(routePattern: RoutePattern, block: TripBuilder.() -> Unit = {}) =
         build(
-            trips,
             TripBuilder().apply {
                 directionId = routePattern.directionId
                 routeId = routePattern.routeId
@@ -329,8 +353,10 @@ private constructor(
                     stopIds = representativeTrip.stopIds
                 }
             },
-            block
+            block,
         )
+
+    fun getTrip(id: String) = trips.getValue(id)
 
     class ShapeBuilder : ObjectBuilder<Shape> {
         var id = uuid()
@@ -339,7 +365,9 @@ private constructor(
         override fun built() = Shape(id, polyline)
     }
 
-    fun shape(block: ShapeBuilder.() -> Unit = {}) = build(shapes, ShapeBuilder(), block)
+    fun shape(block: ShapeBuilder.() -> Unit = {}) = build(ShapeBuilder(), block)
+
+    fun getShape(id: String) = shapes.getValue(id)
 
     inner class StopBuilder : ObjectBuilder<Stop> {
         var id = uuid()
@@ -388,7 +416,9 @@ private constructor(
             )
     }
 
-    fun stop(block: StopBuilder.() -> Unit = {}) = build(stops, StopBuilder(), block)
+    fun stop(block: StopBuilder.() -> Unit = {}) = build(StopBuilder(), block)
+
+    fun getStop(id: String) = stops.getValue(id)
 
     class VehicleBuilder : ObjectBuilder<Vehicle> {
         var id: String = uuid()
@@ -415,18 +445,20 @@ private constructor(
                 updatedAt,
                 routeId,
                 stopId,
-                tripId
+                tripId,
             )
     }
 
-    fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(vehicles, VehicleBuilder(), block)
+    fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(VehicleBuilder(), block)
+
+    fun getVehicle(id: String) = vehicles.getValue(id)
 
     @DefaultArgumentInterop.Enabled
     fun upcomingTrip(
         schedule: Schedule? = null,
         prediction: Prediction? = null,
         predictionStop: Stop? = null,
-        vehicle: Vehicle? = null
+        vehicle: Vehicle? = null,
     ): UpcomingTrip {
         if (prediction != null && schedule != null) {
             check(schedule.tripId == prediction.tripId)
@@ -439,7 +471,7 @@ private constructor(
             schedule,
             prediction,
             predictionStop ?: stops[prediction?.stopId],
-            vehicle
+            vehicle,
         )
     }
 
@@ -447,14 +479,12 @@ private constructor(
         upcomingTrip(null, prediction, predictionStop, null)
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
-        source: MutableMap<String, Built>,
         builder: Builder,
-        block: Builder.() -> Unit
+        block: Builder.() -> Unit,
     ): Built {
         builder.block()
         val result = builder.built()
-        source[result.id] = result
-        return result
+        return result.also(this::put)
     }
 
     object Single {

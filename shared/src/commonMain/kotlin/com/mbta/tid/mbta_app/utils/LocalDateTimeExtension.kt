@@ -7,7 +7,7 @@ import kotlinx.datetime.minus
 
 enum class ServiceDateRounding {
     FORWARDS,
-    BACKWARDS
+    BACKWARDS,
 }
 
 val LocalDateTime.serviceDate: LocalDate

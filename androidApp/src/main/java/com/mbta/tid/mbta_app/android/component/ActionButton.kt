@@ -22,10 +22,10 @@ import com.mbta.tid.mbta_app.android.R
 enum class ActionButtonKind(
     val iconSize: Dp,
     @StringRes val accessibilityLabel: Int,
-    @DrawableRes val image: Int
+    @DrawableRes val image: Int,
 ) {
     Back(14.dp, R.string.back_button_label, R.drawable.fa_chevron_left),
-    Close(10.dp, R.string.close_button_label, R.drawable.fa_xmark)
+    Close(10.dp, R.string.close_button_label, R.drawable.fa_xmark),
 }
 
 @Composable
@@ -37,14 +37,14 @@ fun ActionButton(kind: ActionButtonKind, size: Dp = 32.dp, action: () -> Unit) {
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = colorResource(R.color.contrast),
-                contentColor = colorResource(R.color.fill2)
+                contentColor = colorResource(R.color.fill2),
             ),
-        contentPadding = PaddingValues(5.dp)
+        contentPadding = PaddingValues(5.dp),
     ) {
         Icon(
             painterResource(kind.image),
             stringResource(kind.accessibilityLabel),
-            Modifier.size(kind.iconSize)
+            Modifier.size(kind.iconSize),
         )
     }
 }

@@ -19,7 +19,7 @@ class KdTree(elements: List<Pair<String, Position>>) {
     fun findNodesWithin(
         searchFrom: Position,
         radiusMiles: Double,
-        selectPredicate: (id: String, distance: Double) -> Boolean = { _, _ -> true }
+        selectPredicate: (id: String, distance: Double) -> Boolean = { _, _ -> true },
     ): List<Pair<String, Double>> {
         val results = mutableListOf<Pair<String, Double>>()
         root?.findNodesWithin(searchFrom, radiusMiles, selectPredicate, results)

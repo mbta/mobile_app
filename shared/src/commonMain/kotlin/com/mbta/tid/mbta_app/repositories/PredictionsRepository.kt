@@ -19,13 +19,13 @@ import org.koin.core.component.KoinComponent
 interface IPredictionsRepository {
     fun connect(
         stopIds: List<String>,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     )
 
     fun connectV2(
         stopIds: List<String>,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
-        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     )
 
     var lastUpdated: Instant?
@@ -48,7 +48,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     override fun connect(
         stopIds: List<String>,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         disconnect()
         val joinPayload = PredictionsForStopsChannel.joinPayload(stopIds)
@@ -103,7 +103,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -125,7 +125,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     private fun handleV2JoinMessage(
         message: PhoenixMessage,
-        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit
+        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -156,7 +156,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
      */
     internal fun handleV2Message(
         message: PhoenixMessage,
-        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -183,7 +183,7 @@ constructor(
     val onConnectV2: (List<String>) -> Unit = {},
     val onDisconnect: () -> Unit = {},
     private val connectOutcome: ApiResult<PredictionsStreamDataResponse>? = null,
-    private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null
+    private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null,
 ) : IPredictionsRepository {
 
     @DefaultArgumentInterop.Enabled
@@ -194,7 +194,7 @@ constructor(
         connectResponse: PredictionsStreamDataResponse? = null,
         // v2 response is required because that's the main one we actually use, and not including
         // a required param results in ambiguous constructor signatures
-        connectV2Response: PredictionsByStopJoinResponse
+        connectV2Response: PredictionsByStopJoinResponse,
     ) : this(
         onConnect,
         onConnectV2,
@@ -204,12 +204,12 @@ constructor(
         } else {
             null
         },
-        ApiResult.Ok(connectV2Response)
+        ApiResult.Ok(connectV2Response),
     )
 
     override fun connect(
         stopIds: List<String>,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         onConnect()
         if (connectOutcome != null) {
@@ -220,7 +220,7 @@ constructor(
     override fun connectV2(
         stopIds: List<String>,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
-        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
         onConnectV2(stopIds)
         if (connectV2Outcome != null) {

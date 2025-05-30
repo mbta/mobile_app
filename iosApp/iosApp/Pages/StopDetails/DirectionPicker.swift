@@ -17,16 +17,17 @@ struct DirectionPicker: View {
     let route: Route
     let line: Line?
 
-    init(patternsByStop: PatternsByStop, filter: StopDetailsFilter?,
+    init(stopData: RouteCardData.RouteStopData, filter: StopDetailsFilter?,
          setFilter: @escaping (StopDetailsFilter?) -> Void) {
         self.filter = filter
         self.setFilter = setFilter
-        availableDirections = Set(patternsByStop.patterns.map { pattern in
-            pattern.directionId()
-        }).sorted()
-        directions = patternsByStop.directions
-        route = patternsByStop.representativeRoute
-        line = patternsByStop.line
+        availableDirections = Set(stopData.data.map(\.directionId)).sorted()
+        directions = stopData.directions
+        route = stopData.lineOrRoute.sortRoute
+        line = switch onEnum(of: stopData.lineOrRoute) {
+        case let .line(line): line.line
+        default: nil
+        }
     }
 
     var body: some View {
@@ -42,6 +43,7 @@ struct DirectionPicker: View {
                             .padding(8)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
+                    .simultaneousGesture(TapGesture())
                     .accessibilityAddTraits(isSelected ? [.isSelected, .isHeader] : [])
                     .accessibilityHeading(isSelected ? .h2 : .unspecified)
                     .accessibilitySortPriority(isSelected ? 1 : 0)
@@ -82,33 +84,42 @@ struct DirectionPicker: View {
     let patternInbound = objects.routePattern(route: route) { pattern in
         pattern.directionId = 1
     }
-    return DirectionPicker(
-        patternsByStop: .init(
-            routes: [route],
-            line: nil,
-            stop: stop,
-            patterns: [
-                .ByHeadsign(
-                    route: route,
-                    headsign: "Out",
-                    line: nil,
-                    patterns: [patternOutbound],
-                    upcomingTrips: []
-                ),
-                .ByHeadsign(
-                    route: route,
-                    headsign: "In",
-                    line: nil,
-                    patterns: [patternInbound],
-                    upcomingTrips: []
-                ),
-            ],
-            directions: [
-                .init(name: "Outbound", destination: "Out", id: 0),
-                .init(name: "Inbound", destination: "In", id: 1),
-            ],
-            elevatorAlerts: []
-        ),
+
+    let lineOrRoute = RouteCardData.LineOrRoute.route(route)
+    let context = RouteCardData.Context.stopDetailsFiltered
+    let leaf0 = RouteCardData.Leaf(
+        lineOrRoute: lineOrRoute,
+        stop: stop,
+        directionId: 0,
+        routePatterns: [patternOutbound],
+        stopIds: [stop.id],
+        upcomingTrips: [],
+        alertsHere: [],
+        allDataLoaded: true,
+        hasSchedulesToday: true,
+        alertsDownstream: [],
+        context: context
+    )
+    let leaf1 = RouteCardData.Leaf(
+        lineOrRoute: lineOrRoute,
+        stop: stop,
+        directionId: 1,
+        routePatterns: [patternInbound],
+        stopIds: [stop.id],
+        upcomingTrips: [],
+        alertsHere: [],
+        allDataLoaded: true,
+        hasSchedulesToday: true,
+        alertsDownstream: [],
+        context: context
+    )
+    let stopCard = RouteCardData.RouteStopData(lineOrRoute: lineOrRoute, stop: stop, directions: [
+        .init(name: "Outbound", destination: "Out", id: 0),
+        .init(name: "Inbound", destination: "In", id: 1),
+    ], data: [leaf0, leaf1])
+
+    DirectionPicker(
+        stopData: stopCard,
         filter: .init(routeId: route.id, directionId: 0),
         setFilter: { _ in }
     )

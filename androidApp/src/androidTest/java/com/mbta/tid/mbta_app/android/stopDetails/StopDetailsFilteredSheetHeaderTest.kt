@@ -51,7 +51,7 @@ class StopDetailsFilteredSheetHeaderTest {
                 line = null,
                 stop = stop,
                 onPin = {},
-                onClose = {}
+                onClose = {},
             )
         }
 
@@ -75,7 +75,7 @@ class StopDetailsFilteredSheetHeaderTest {
                 stop = stop,
                 pinned = false,
                 onPin = { pinCalled = true },
-                onClose = { closeCalled = true }
+                onClose = { closeCalled = true },
             )
         }
 

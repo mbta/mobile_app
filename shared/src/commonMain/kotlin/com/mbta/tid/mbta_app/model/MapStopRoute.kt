@@ -8,7 +8,7 @@ val greenRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E")
 @Serializable
 enum class MapStopRoute(
     val hasBranchingTerminals: Boolean = false,
-    val branchingRoutes: Set<String> = setOf()
+    val branchingRoutes: Set<String> = setOf(),
 ) {
     RED {
         override fun matches(route: Route): Boolean {

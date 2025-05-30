@@ -5,6 +5,10 @@ import java.io.StringReader
 import java.util.Locale
 import java.util.Properties
 
+// To use debug signing keys and skip Sentry uploads for an easier time debugging
+// performance-sensitive issues, turn this on.
+val runLocalReleaseBuild = false
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
@@ -19,7 +23,7 @@ sentry {
     // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
     // This enables source context, allowing you to see your source
     // code as part of your stack traces in Sentry.
-    includeSourceContext = true
+    includeSourceContext = !runLocalReleaseBuild
 
     org = "mbtace"
     projectName = "mobile_app_android"
@@ -28,22 +32,30 @@ sentry {
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "1.2.2"
+        versionName = "1.2.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
         buildConfig = true
         compose = true
     }
+    lint { disable.add("NullSafeMutableLiveData") }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-    buildTypes { getByName("release") { isMinifyEnabled = false } }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            if (runLocalReleaseBuild) {
+                signingConfig = signingConfigs.getByName("debug")
+            }
+        }
+    }
     flavorDimensions += "environment"
     productFlavors {
         create("devOrange") {
@@ -160,7 +172,7 @@ task("envVars") {
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_DSN",
-        "\"${getPropsOrEnv("SENTRY_DSN_ANDROID") ?: ""}\""
+        "\"${getPropsOrEnv("SENTRY_DSN_ANDROID") ?: ""}\"",
     )
 
     // https://stackoverflow.com/a/53261807
@@ -169,15 +181,14 @@ task("envVars") {
             gradle.startParameter.taskNames.any {
                 it.lowercase(Locale.getDefault()).contains(env.replace("-", ""))
             }
-        }
-            ?: "debug"
+        } ?: "debug"
 
     val sentryEnvOverride: String = getPropsOrEnv("SENTRY_ENVIRONMENT") ?: sentryEnv
 
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_ENVIRONMENT",
-        "\"${sentryEnvOverride}\""
+        "\"${sentryEnvOverride}\"",
     )
 
     val firebaseKey = getPropsOrEnv("FIREBASE_KEY")
@@ -191,7 +202,7 @@ task("envVars") {
                 "    <string name=\"google_app_id\" translatable=\"false\">$googleAppId</string>",
                 "    <string name=\"google_api_key\" translatable=\"false\">$firebaseKey</string>",
                 "    <string name=\"google_crash_reporting_api_key\" translatable=\"false\">$firebaseKey</string>",
-                "</resources>"
+                "</resources>",
             )
         googleSecretsFile.writeText(lines.joinToString(separator = "\n"))
     } else {

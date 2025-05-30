@@ -30,7 +30,7 @@ class ErrorBannerViewModel(
 
     class Factory(
         var loadingWhenPredictionsStale: Boolean = false,
-        val errorRepository: IErrorBannerStateRepository
+        val errorRepository: IErrorBannerStateRepository,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return ErrorBannerViewModel(loadingWhenPredictionsStale, errorRepository) as T

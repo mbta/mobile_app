@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -74,6 +75,7 @@ fun TripStops(
 ) {
     val context = LocalContext.current
 
+    val trip = stops.trip
     val splitStops: TripDetailsStopList.TargetSplit =
         remember(targetId, stops, stopSequence, global) {
             stops.splitForTarget(targetId, stopSequence, global)
@@ -120,20 +122,21 @@ fun TripStops(
         Column(
             Modifier.padding(top = 14.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             if (showFirstStopSeparately) {
                 val firstStop = splitStops.firstStop
                 if (firstStop != null) {
                     TripStopRow(
                         stop = firstStop,
+                        trip,
                         now,
                         onTapLink,
                         onOpenAlertDetails,
                         routeAccents,
                         alertSummaries,
                         showStationAccessibility = showStationAccessibility,
-                        firstStop = true
+                        firstStop = true,
                     )
                 }
             }
@@ -153,45 +156,45 @@ fun TripStops(
                                     R.string.is_stops_away_from,
                                     routeTypeText,
                                     stopsAway,
-                                    target.stop.name
+                                    target.stop.name,
                                 )
                         }
                         .padding(horizontal = 12.dp)
                         .defaultMinSize(minHeight = 48.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AnimatedContent(
                         stopsExpanded,
                         transitionSpec = {
                             fadeIn(animationSpec = tween(500)) togetherWith
                                 fadeOut(animationSpec = tween(500))
-                        }
+                        },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp),
                         ) {
                             if (it) {
                                 Icon(
                                     painterResource(R.drawable.fa_caret_right),
                                     contentDescription = null,
                                     modifier = Modifier.size(12.dp).rotate(90f),
-                                    tint = colorResource(R.color.deemphasized)
+                                    tint = colorResource(R.color.deemphasized),
                                 )
                                 ColoredRouteLine(
                                     routeAccents.color,
-                                    Modifier.padding(start = 16.dp, end = 18.dp).fillMaxHeight()
+                                    Modifier.padding(start = 16.dp, end = 18.dp).fillMaxHeight(),
                                 )
                             } else {
                                 Icon(
                                     painterResource(R.drawable.fa_caret_right),
                                     contentDescription = null,
                                     modifier = Modifier.size(12.dp),
-                                    tint = colorResource(R.color.deemphasized)
+                                    tint = colorResource(R.color.deemphasized),
                                 )
                                 RouteLineTwist(
                                     routeAccents.color,
-                                    Modifier.padding(start = 6.dp, end = 6.dp)
+                                    Modifier.padding(start = 6.dp, end = 6.dp),
                                 )
                             }
                         }
@@ -200,7 +203,7 @@ fun TripStops(
                         pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
                         color = colorResource(R.color.text),
                         style = Typography.body,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
                 }
                 if (stopsExpanded) {
@@ -208,13 +211,14 @@ fun TripStops(
                         HaloUnderRouteLine(routeAccents.color)
                         StopList(
                             list = collapsedStops,
+                            trip,
                             lastStopSequence,
                             now,
                             onTapLink,
                             onOpenAlertDetails,
                             routeAccents,
                             alertSummaries,
-                            showStationAccessibility
+                            showStationAccessibility,
                         )
                     }
                 }
@@ -235,6 +239,7 @@ fun TripStops(
                 }
                 TripStopRow(
                     stop = target,
+                    trip,
                     now,
                     onTapLink,
                     onOpenAlertDetails,
@@ -243,7 +248,7 @@ fun TripStops(
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
-                    showStationAccessibility = showStationAccessibility
+                    showStationAccessibility = showStationAccessibility,
                 )
 
                 HaloUnderRouteLine(routeAccents.color)
@@ -251,6 +256,7 @@ fun TripStops(
             }
             StopList(
                 splitStops.followingStops,
+                trip,
                 lastStopSequence,
                 now,
                 onTapLink,
@@ -258,7 +264,7 @@ fun TripStops(
                 routeAccents,
                 alertSummaries,
                 showStationAccessibility,
-                showDownstreamAlerts = true
+                showDownstreamAlerts = true,
             )
         }
     }
@@ -277,6 +283,7 @@ private fun HaloUnderRouteLine(color: Color) {
 @Composable
 private fun StopList(
     list: List<TripDetailsStopList.Entry>,
+    trip: Trip,
     lastStopSequence: Int?,
     now: Instant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
@@ -284,11 +291,12 @@ private fun StopList(
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
     showStationAccessibility: Boolean,
-    showDownstreamAlerts: Boolean = false
+    showDownstreamAlerts: Boolean = false,
 ) {
     for (stop in list) {
         TripStopRow(
             stop,
+            trip,
             now,
             onTapLink,
             onOpenAlertDetails,
@@ -296,7 +304,7 @@ private fun StopList(
             alertSummaries,
             showStationAccessibility = showStationAccessibility,
             showDownstreamAlert = showDownstreamAlerts,
-            lastStop = stop.stopSequence == lastStopSequence
+            lastStop = stop.stopSequence == lastStopSequence,
         )
     }
 }
@@ -325,7 +333,7 @@ private fun TripStopsPreview() {
     val alert = objects.alert { effect = Alert.Effect.Shuttle }
     val stopList =
         TripDetailsStopList(
-            trip.id,
+            trip,
             stops.mapIndexed { index, stop ->
                 TripDetailsStopList.Entry(
                     stop,
@@ -336,11 +344,10 @@ private fun TripStopsPreview() {
                         else null,
                     schedule = null,
                     prediction = objects.prediction { departureTime = now + (2 * index).minutes },
-                    predictionStop = null,
                     vehicle = null,
-                    routes = emptyList()
+                    routes = emptyList(),
                 )
-            }
+            },
         )
     MyApplicationTheme {
         TripStops(
@@ -354,7 +361,7 @@ private fun TripStopsPreview() {
             onTapLink = {},
             onOpenAlertDetails = {},
             TripRouteAccents(route),
-            showStationAccessibility = true
+            showStationAccessibility = true,
         )
     }
 }

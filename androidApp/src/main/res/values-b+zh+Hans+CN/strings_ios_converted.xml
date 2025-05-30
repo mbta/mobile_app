@@ -4,6 +4,8 @@
     <string name="access_issue_sentence_case">无障碍问题</string>
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
+    <string name="add_confirmation_button">添加</string>
+    <string name="add_to_favorites_title">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
     <string name="additional_service">附加服务</string>
     <string name="additional_service_sentence_case">附加服务</string>
     <plurals name="affected_stops">
@@ -112,6 +114,7 @@
     <string name="extra_service_sentence_case">额外服务</string>
     <string name="facility_issue">设施问题</string>
     <string name="facility_issue_sentence_case">设施问题</string>
+    <string name="favorites_link">收藏夹</string>
     <string name="feature_flag_debug_mode">调试模式</string>
     <string name="feature_flag_route_search">线路搜索</string>
     <string name="feedback_link_form">发送应用程序反馈</string>
@@ -240,6 +243,7 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="routes">线路</string>
     <string name="schedule_change">时刻表变更</string>
     <string name="schedule_change_sentence_case">时刻表变更</string>
     <string name="scheduled_to_depart">计划出发</string>

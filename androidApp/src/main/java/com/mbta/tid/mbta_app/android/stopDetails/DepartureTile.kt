@@ -2,15 +2,19 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +52,7 @@ fun DepartureTile(
     modifier: Modifier = Modifier,
     showRoutePill: Boolean = false,
     showHeadsign: Boolean = true,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
 ) {
     Column(
         modifier
@@ -56,17 +60,19 @@ fun DepartureTile(
                 onClickLabel =
                     if (isSelected) null
                     else stringResource(R.string.departure_tile_on_click_label),
-                onClick = onTap
+                onClick = onTap,
             )
             .heightIn(min = 56.dp)
             .width(IntrinsicSize.Max)
+            .sizeIn(maxWidth = 195.dp)
+            .fillMaxHeight()
             .haloContainer(
                 borderWidth = 2.dp,
                 outlineColor = if (isSelected) colorResource(R.color.halo) else Color.Transparent,
                 backgroundColor =
                     if (isSelected) colorResource(R.color.fill3)
                     else colorResource(R.color.deselected_toggle_2).copy(alpha = 0.6f),
-                borderRadius = 8.dp
+                borderRadius = 8.dp,
             )
             .padding(10.dp)
             .semantics {
@@ -75,7 +81,7 @@ fun DepartureTile(
                     selected = true
                 }
             },
-        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
     ) {
         CompositionLocalProvider(
             LocalContentColor provides
@@ -118,7 +124,13 @@ private fun DepartureTilePreview() {
     val trip3 = objects.trip()
 
     MyApplicationTheme {
-        Row(Modifier.background(Color.fromHex("00843D")).padding(16.dp)) {
+        Row(
+            Modifier.background(Color.fromHex("00843D"))
+                .padding(16.dp)
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             DepartureTile(
                 TileData(
                     route1,
@@ -131,17 +143,17 @@ private fun DepartureTilePreview() {
                                 TripInstantDisplay.TimeWithStatus(
                                     Clock.System.now(),
                                     "Delay",
-                                    headline = true
-                                )
+                                    headline = true,
+                                ),
                             )
                         ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    objects.upcomingTrip(schedule1)
+                    objects.upcomingTrip(schedule1),
                 ),
                 onTap = {},
                 showHeadsign = false,
-                isSelected = true
+                isSelected = true,
             )
             DepartureTile(
                 TileData(
@@ -152,35 +164,35 @@ private fun DepartureTilePreview() {
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip2),
                                 RouteType.BUS,
-                                TripInstantDisplay.Minutes(9)
+                                TripInstantDisplay.Minutes(9),
                             )
                         ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    objects.upcomingTrip(schedule1)
+                    objects.upcomingTrip(schedule1),
                 ),
                 onTap = {},
-                showHeadsign = true
+                showHeadsign = true,
             )
             DepartureTile(
                 TileData(
                     routeB,
-                    "Government Center",
+                    "Really long headsign that should be broken onto multiple lines",
                     UpcomingFormat.Some(
                         listOf(
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip3),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(12)
+                                TripInstantDisplay.Minutes(12),
                             )
                         ),
-                        secondaryAlert = null
+                        secondaryAlert = null,
                     ),
-                    objects.upcomingTrip(schedule1)
+                    objects.upcomingTrip(schedule1),
                 ),
                 onTap = {},
                 showRoutePill = true,
-                showHeadsign = true
+                showHeadsign = true,
             )
         }
     }

@@ -9,6 +9,7 @@
 import Shared
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct StopDetailsFilteredDepartureDetails: View {
     var stopId: String
     var stopFilter: StopDetailsFilter
@@ -16,11 +17,9 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var tiles: [TileData]
-    var noPredictionsStatus: UpcomingFormat.NoTripsFormat?
-    var alerts: [Shared.Alert]
-    var downstreamAlerts: [Shared.Alert]
-    var patternsByStop: PatternsByStop
+    var leaf: RouteCardData.Leaf
+    var selectedDirection: Direction
+
     var pinned: Bool
 
     var now: Date
@@ -38,36 +37,39 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var analytics: Analytics = AnalyticsProvider.shared
 
-    var showTileHeadsigns: Bool {
-        patternsByStop.line != nil || !tiles.allSatisfy { tile in
-            tile.headsign == tiles.first?.headsign
-        }
+    @State var leafFormat: LeafFormat
+
+    var tiles: [TileData] { leafFormat.tileData(directionDestination: selectedDirection.destination) }
+    var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
+    var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
+
+    var patternsHere: [RoutePattern] { leaf.routePatterns }
+    var alerts: [Shared.Alert] { leaf.alertsHere(tripId: tripFilter?.tripId).filter { $0.effect != .elevatorClosure } }
+    var elevatorAlerts: [Shared.Alert] {
+        leaf.alertsHere(tripId: tripFilter?.tripId).filter { $0.effect == .elevatorClosure }
     }
+
+    var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream(tripId: tripFilter?.tripId) }
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
 
-    var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
-    var routeTextColor: Color { Color(hex: patternsByStop.representativeRoute.textColor) }
-    var routeType: RouteType { patternsByStop.representativeRoute.type }
+    var routeColor: Color { Color(hex: leaf.lineOrRoute.backgroundColor) }
+    var routeTextColor: Color { Color(hex: leaf.lineOrRoute.textColor) }
+    var routeType: RouteType { leaf.lineOrRoute.type }
 
     var selectedTripIsCancelled: Bool {
         if let tripFilter {
-            patternsByStop.tripIsCancelled(tripId: tripFilter.tripId)
-
+            leaf.upcomingTrips.contains { upcoming in
+                upcoming.trip.id == tripFilter.tripId && upcoming.isCancelled
+            }
         } else {
             false
         }
     }
 
-    var hasMajorAlert: Bool {
-        alerts.contains(where: { $0.significance == .major })
-    }
-
     var hasAccessibilityWarning: Bool {
-        !patternsByStop.elevatorAlerts.isEmpty || !patternsByStop.stop.isWheelchairAccessible
+        !elevatorAlerts.isEmpty || !leaf.stop.isWheelchairAccessible
     }
-
-    @State var patternsHere: [RoutePattern]?
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
@@ -82,112 +84,127 @@ struct StopDetailsFilteredDepartureDetails: View {
         let now: Date
     }
 
+    init(
+        stopId: String,
+        stopFilter: StopDetailsFilter,
+        tripFilter: TripDetailsFilter? = nil,
+        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setTripFilter: @escaping (TripDetailsFilter?) -> Void,
+        leaf: RouteCardData.Leaf, selectedDirection: Direction, pinned: Bool, now: Date,
+        errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
+        stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
+    ) {
+        self.stopId = stopId
+        self.stopFilter = stopFilter
+        self.tripFilter = tripFilter
+        self.setStopFilter = setStopFilter
+        self.setTripFilter = setTripFilter
+        self.leaf = leaf
+        self.selectedDirection = selectedDirection
+        self.pinned = pinned
+        self.now = now
+        self.errorBannerVM = errorBannerVM
+        self.nearbyVM = nearbyVM
+        self.mapVM = mapVM
+        self.stopDetailsVM = stopDetailsVM
+
+        leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
+    }
+
     var body: some View {
-        ZStack(alignment: .top) {
-            routeColor.ignoresSafeArea(.all)
-            Rectangle()
-                .fill(Color.halo)
-                .frame(height: 2)
-                .frame(maxWidth: .infinity)
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 16) {
-                    ScrollViewReader { view in
-                        DirectionPicker(
-                            patternsByStop: patternsByStop,
-                            filter: stopFilter,
-                            setFilter: { setStopFilter($0) }
-                        )
-                        .onChange(of: tripFilter) { filter in if let filter { view.scrollTo(filter.tripId) } }
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding([.horizontal, .top], 16)
-                        .padding(.bottom, 6)
-                        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-
-                        if !hasMajorAlert, !tiles.isEmpty {
-                            departureTiles(view)
-                                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-                                .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
+        VStack(spacing: 16) {
+            ScrollViewReader { view in
+                if !isAllServiceDisrupted, !tiles.isEmpty {
+                    departureTiles(view)
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                        .onAppear { if let id = tiles.first(where: { $0.isSelected(tripFilter: tripFilter) })?.id {
+                            view.scrollTo(id)
                         }
-                    }
-                    alertCards
-
-                    if hasMajorAlert {
-                        EmptyView()
-                    } else if let noPredictionsStatus {
-                        StopDetailsNoTripCard(
-                            status: noPredictionsStatus,
-                            accentColor: routeColor,
-                            routeType: routeType
-                        )
-                        .accessibilityHeading(.h3)
-                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
-                    } else if selectedTripIsCancelled {
-                        StopDetailsIconCard(
-                            accentColor: routeColor,
-                            details: Text(
-                                "This trip has been cancelled. We’re sorry for the inconvenience.",
-                                comment: "Explanation for a cancelled trip on stop details"
-                            ),
-                            header: Text(
-                                "Trip cancelled",
-                                comment: "Header for a cancelled trip card on stop details"
-                            ),
-                            icon: routeSlashIcon(routeType)
-                        )
-                        .accessibilityHeading(.h4)
-                    } else {
-                        TripDetailsView(
-                            tripFilter: tripFilter,
-                            stopId: stopId,
-                            now: now,
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM,
-                            onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() }
-                        )
-                    }
+                        }
+                        .onChange(of: tripFilter) { filter in
+                            if let id = tiles.first(where: { $0.isSelected(tripFilter: filter) })?.id {
+                                view.scrollTo(id)
+                            }
+                        }
                 }
             }
+            alertCards
+
+            if isAllServiceDisrupted {
+                EmptyView()
+            } else if let noPredictionsStatus {
+                StopDetailsNoTripCard(
+                    status: noPredictionsStatus,
+                    accentColor: routeColor,
+                    routeType: routeType
+                )
+                .accessibilityHeading(.h3)
+                .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
+            } else if selectedTripIsCancelled {
+                StopDetailsIconCard(
+                    accentColor: routeColor,
+                    details: Text(
+                        "This trip has been cancelled. We’re sorry for the inconvenience.",
+                        comment: "Explanation for a cancelled trip on stop details"
+                    ),
+                    header: Text(
+                        "Trip cancelled",
+                        comment: "Header for a cancelled trip card on stop details"
+                    ),
+                    icon: routeSlashIcon(routeType)
+                )
+                .accessibilityHeading(.h4)
+            } else {
+                TripDetailsView(
+                    tripFilter: tripFilter,
+                    stopId: stopId,
+                    now: now,
+                    errorBannerVM: errorBannerVM,
+                    nearbyVM: nearbyVM,
+                    mapVM: mapVM,
+                    stopDetailsVM: stopDetailsVM,
+                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() }
+                )
+            }
         }
-        .onAppear { handleViewportForStatus(noPredictionsStatus) }
+        .onAppear {
+            handleViewportForStatus(noPredictionsStatus)
+            setAlertSummaries(
+                AlertSummaryParams(
+                    global: stopDetailsVM.global,
+                    alerts: alerts,
+                    downstreamAlerts: downstreamAlerts,
+                    stopId: stopId,
+                    directionId: stopFilter.directionId,
+                    patternsHere: patternsHere,
+                    now: now
+                )
+            )
+        }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
-            selectedDepartureFocus = tiles.first { $0.id == tripFilter?.tripId }?.id ?? cardFocusId
+            selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
-        .onAppear {
-            patternsHere = patternsHere(patternsByStop)
-            setAlertSummaries(AlertSummaryParams(global: stopDetailsVM.global,
-                                                 alerts: alerts,
-                                                 downstreamAlerts: downstreamAlerts,
-                                                 stopId: stopId,
-                                                 directionId: stopFilter.directionId,
-                                                 patternsHere: patternsHere,
-                                                 now: now))
+        .onChange(of: leaf) { leaf in
+            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
         }
-        .onChange(of: patternsByStop) { patternsByStop in
-            patternsHere = patternsHere(patternsByStop)
-        }
-        .onChange(of: AlertSummaryParams(global: stopDetailsVM.global,
-                                         alerts: alerts,
-                                         downstreamAlerts: downstreamAlerts,
-                                         stopId: stopId,
-                                         directionId: stopFilter.directionId,
-                                         patternsHere: patternsHere,
-                                         now: now)) { newParams in
+        .onChange(of: AlertSummaryParams(
+            global: stopDetailsVM.global,
+            alerts: alerts,
+            downstreamAlerts: downstreamAlerts,
+            stopId: stopId,
+            directionId: stopFilter.directionId,
+            patternsHere: patternsHere,
+            now: now
+        )) { newParams in
             setAlertSummaries(newParams)
+        }
+        .onChange(of: stopDetailsVM.global) { global in
+            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: global)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
-    }
-
-    func patternsHere(_ patternsByStop: PatternsByStop) -> [RoutePattern] {
-        // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
-        patternsByStop.patterns.flatMap { $0.patterns
-            .compactMap { pattern in pattern as? RoutePattern }
-        }
-        .filter { $0.directionId == stopFilter.directionId }
     }
 
     func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
@@ -223,18 +240,17 @@ struct StopDetailsFilteredDepartureDetails: View {
                                 selectionLock: false
                             )
                             analytics.tappedDeparture(
-                                routeId: patternsByStop.routeIdentifier,
-                                stopId: patternsByStop.stop.id,
+                                routeId: leaf.lineOrRoute.id,
+                                stopId: leaf.stop.id,
                                 pinned: pinned,
                                 alert: alerts.count > 0,
-                                routeType: patternsByStop.representativeRoute.type,
+                                routeType: leaf.lineOrRoute.type,
                                 noTrips: nil
                             )
                             view.scrollTo(tileData.id)
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
-                        showHeadsign: showTileHeadsigns,
-                        isSelected: tileData.id == tripFilter?.tripId
+                        isSelected: tileData.isSelected(tripFilter: tripFilter)
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
                     .padding(.horizontal, 4)
@@ -260,11 +276,13 @@ struct StopDetailsFilteredDepartureDetails: View {
 
         if let global = alertSummaryParams.global, let patternsHere = alertSummaryParams.patternsHere {
             for alert in allAlerts {
-                let summary = try? await alert.summary(stopId: alertSummaryParams.stopId,
-                                                       directionId: alertSummaryParams.directionId,
-                                                       patterns: patternsHere,
-                                                       atTime: alertSummaryParams.now.toKotlinInstant(),
-                                                       global: global)
+                let summary = try? await alert.summary(
+                    stopId: alertSummaryParams.stopId,
+                    directionId: alertSummaryParams.directionId,
+                    patterns: patternsHere,
+                    atTime: alertSummaryParams.now.toKotlinInstant(),
+                    global: global
+                )
                 alertMap[alert.id] = summary
             }
         }
@@ -272,20 +290,32 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     private func pillDecoration(tileData: TileData) -> DepartureTile.PillDecoration {
-        if patternsByStop.line != nil, let route = tileData.route { .onPrediction(route: route) } else { .none }
+        if case .line = onEnum(of: leaf.lineOrRoute), let route = tileData.route {
+            .onPrediction(route: route)
+        } else {
+            .none
+        }
     }
 
     func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {
         {
+            let line: Line? = switch onEnum(of: leaf.lineOrRoute) {
+            case let .line(line): line.line
+            default: nil
+            }
+            let routes = switch onEnum(of: leaf.lineOrRoute) {
+            case let .line(line): Array(line.routes)
+            case let .route(route): [route.route]
+            }
             nearbyVM.pushNavEntry(.alertDetails(
                 alertId: alertId,
-                line: spec == .elevator ? nil : patternsByStop.line,
-                routes: spec == .elevator ? nil : patternsByStop.routes,
-                stop: patternsByStop.stop
+                line: spec == .elevator ? nil : line,
+                routes: spec == .elevator ? nil : routes,
+                stop: leaf.stop
             ))
             analytics.tappedAlertDetails(
-                routeId: patternsByStop.routeIdentifier,
-                stopId: patternsByStop.stop.id,
+                routeId: leaf.lineOrRoute.id,
+                stopId: leaf.stop.id,
                 alertId: alertId,
                 elevator: spec == .elevator
             )
@@ -296,7 +326,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     func alertCard(_ alert: Shared.Alert, _ summary: AlertSummary?, _ spec: AlertCardSpec? = nil) -> some View {
         let spec: AlertCardSpec = if let spec {
             spec
-        } else if alert.significance == .major {
+        } else if alert.significance == .major, isAllServiceDisrupted {
             .major
         } else if alert.significance == .minor, alert.effect == .delay {
             .delay
@@ -331,8 +361,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                     }
                 }
                 if settingsCache.get(.stationAccessibility), hasAccessibilityWarning {
-                    if !patternsByStop.elevatorAlerts.isEmpty {
-                        ForEach(patternsByStop.elevatorAlerts, id: \.id) { alert in
+                    if !elevatorAlerts.isEmpty {
+                        ForEach(elevatorAlerts, id: \.id) { alert in
                             alertCard(alert, nil, .elevator)
                         }
                     } else {

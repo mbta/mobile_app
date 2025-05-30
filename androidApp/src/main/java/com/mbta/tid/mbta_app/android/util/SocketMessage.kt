@@ -33,6 +33,6 @@ fun decodeMessage(rawMessage: String): Message {
         topic = topic ?: "",
         event = event ?: "",
         rawPayload = rawPayload,
-        payloadJson = payloadJson
+        payloadJson = payloadJson,
     )
 }

@@ -26,7 +26,7 @@ struct DirectionRowView: View {
 
     var body: some View {
         PredictionRowView(predictions: predictions, pillDecoration: pillDecoration) {
-            DirectionLabel(direction: direction)
+            DirectionLabel(direction: direction, pillDecoration: pillDecoration)
                 .foregroundStyle(Color.text)
         }
     }

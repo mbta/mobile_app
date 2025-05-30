@@ -43,7 +43,7 @@ class OnboardingScreenViewTest {
         composeTestRule
             .onNodeWithText(
                 "We use your location to show you nearby transit options.",
-                substring = true
+                substring = true,
             )
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("Continue").performClick()
@@ -61,7 +61,7 @@ class OnboardingScreenViewTest {
                 onSaveSettings = { settings ->
                     assertTrue(settings.getValue(Settings.StationAccessibility))
                     savedSetting = true
-                }
+                },
             )
         var advanced = false
         composeTestRule.setContent {
@@ -69,7 +69,7 @@ class OnboardingScreenViewTest {
                 screen = OnboardingScreen.StationAccessibility,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
-                settingsCache = SettingsCache(settingsRepo)
+                settingsCache = SettingsCache(settingsRepo),
             )
         }
 
@@ -79,7 +79,7 @@ class OnboardingScreenViewTest {
         composeTestRule
             .onNodeWithText(
                 " we can show you which stations are inaccessible or have elevator closures.",
-                substring = true
+                substring = true,
             )
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed()
@@ -104,7 +104,7 @@ class OnboardingScreenViewTest {
                 onSaveSettings = {
                     assertEquals(mapOf(Settings.HideMaps to false), it)
                     savedSetting = true
-                }
+                },
             )
         var advanced = false
         composeTestRule.setContent {
@@ -112,7 +112,7 @@ class OnboardingScreenViewTest {
                 screen = OnboardingScreen.HideMaps,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
-                settingsCache = SettingsCache(settingsRepo)
+                settingsCache = SettingsCache(settingsRepo),
             )
         }
         composeTestRule

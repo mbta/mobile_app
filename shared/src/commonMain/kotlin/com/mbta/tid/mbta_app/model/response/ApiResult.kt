@@ -9,7 +9,7 @@ sealed class ApiResult<out T : Any> {
 
     @Throws(IllegalStateException::class)
     fun dataOrThrow(): T {
-        check(this is Ok)
+        check(this is Ok) { this }
         return this.data
     }
 

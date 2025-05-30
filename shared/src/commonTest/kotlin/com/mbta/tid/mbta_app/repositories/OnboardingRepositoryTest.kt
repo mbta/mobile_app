@@ -20,7 +20,7 @@ import org.koin.test.KoinTest
 class OnboardingRepositoryTest : KoinTest {
     private fun startKoin(
         isScreenReaderEnabled: Boolean = true,
-        storage: Storage<Preferences> = MockDatastoreStorage()
+        storage: Storage<Preferences> = MockDatastoreStorage(),
     ) {
         startKoin {
             modules(
@@ -48,9 +48,9 @@ class OnboardingRepositoryTest : KoinTest {
                 OnboardingScreen.Location,
                 OnboardingScreen.StationAccessibility,
                 OnboardingScreen.HideMaps,
-                OnboardingScreen.Feedback
+                OnboardingScreen.Feedback,
             ),
-            repo.getPendingOnboarding()
+            repo.getPendingOnboarding(),
         )
     }
 
@@ -65,7 +65,7 @@ class OnboardingRepositoryTest : KoinTest {
                 stringSetPreferencesKey("onboardingScreensCompleted") to
                     setOf(OnboardingScreen.Location.name)
             ),
-            storage.preferences
+            storage.preferences,
         )
     }
 
@@ -83,9 +83,9 @@ class OnboardingRepositoryTest : KoinTest {
             listOf(
                 OnboardingScreen.StationAccessibility,
                 OnboardingScreen.HideMaps,
-                OnboardingScreen.Feedback
+                OnboardingScreen.Feedback,
             ),
-            repo.getPendingOnboarding()
+            repo.getPendingOnboarding(),
         )
     }
 
@@ -97,9 +97,9 @@ class OnboardingRepositoryTest : KoinTest {
             listOf(
                 OnboardingScreen.Location,
                 OnboardingScreen.StationAccessibility,
-                OnboardingScreen.Feedback
+                OnboardingScreen.Feedback,
             ),
-            repo.getPendingOnboarding()
+            repo.getPendingOnboarding(),
         )
     }
 }

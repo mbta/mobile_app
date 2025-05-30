@@ -3,17 +3,18 @@ package com.mbta.tid.mbta_app.model
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 object LoadingPlaceholders {
-    fun nearbyRoute(): StopsAssociated.WithRoute {
-        val patternsByStop = patternsByStop()
-        return StopsAssociated.WithRoute(
-            route = patternsByStop.representativeRoute,
-            patternsByStop = listOf(patternsByStop)
-        )
-    }
+    fun nearbyRoute() =
+        routeCardData(context = RouteCardData.Context.NearbyTransit, now = Clock.System.now())
 
-    fun patternsByStop(routeId: String? = null, trips: Int = 2): PatternsByStop {
+    fun routeCardData(
+        routeId: String? = null,
+        trips: Int = 2,
+        context: RouteCardData.Context,
+        now: Instant,
+    ): RouteCardData {
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
@@ -48,47 +49,64 @@ object LoadingPlaceholders {
             return UpcomingTrip(trip, prediction = prediction)
         }
 
-        return PatternsByStop(
-            route = route,
-            stop = stop,
-            patterns =
-                listOf(
-                    RealtimePatterns.ByHeadsign(
-                        route = route,
-                        headsign = "Loading 1",
-                        line = null,
-                        patterns = listOf(pattern1),
-                        upcomingTrips = (1..trips).map { newTrip(pattern1, (it * 2).minutes) },
-                        alertsHere = emptyList(),
-                        hasSchedulesToday = true,
-                        allDataLoaded = false
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        route = route,
-                        headsign = "Loading 2",
-                        line = null,
-                        patterns = listOf(pattern2),
-                        upcomingTrips = (1..trips).map { newTrip(pattern2, (it * 2).minutes) },
-                        alertsHere = emptyList(),
-                        hasSchedulesToday = true,
-                        allDataLoaded = false
-                    )
-                )
-        )
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+
+        val leaf1 =
+            RouteCardData.Leaf(
+                lineOrRoute = lineOrRoute,
+                stop = stop,
+                directionId = 0,
+                routePatterns = listOf(pattern1),
+                stopIds = setOf(stop.id),
+                upcomingTrips = (1..trips).map { newTrip(pattern1, (it * 2).minutes) },
+                alertsHere = emptyList(),
+                allDataLoaded = false,
+                hasSchedulesToday = true,
+                alertsDownstream = emptyList(),
+                context = context,
+            )
+        val leaf2 =
+            RouteCardData.Leaf(
+                lineOrRoute = lineOrRoute,
+                stop = stop,
+                directionId = 1,
+                routePatterns = listOf(pattern2),
+                stopIds = setOf(stop.id),
+                upcomingTrips = (1..trips).map { newTrip(pattern2, (it * 2).minutes) },
+                alertsHere = emptyList(),
+                allDataLoaded = false,
+                hasSchedulesToday = true,
+                alertsDownstream = emptyList(),
+                context = context,
+            )
+
+        val stopData =
+            RouteCardData.RouteStopData(
+                lineOrRoute,
+                stop,
+                listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
+                listOf(leaf1, leaf2),
+            )
+
+        val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), now)
+
+        return routeData
     }
 
-    fun stopDetailsDepartures(filter: StopDetailsFilter?) =
-        if (filter != null) {
-            StopDetailsDepartures(listOf(patternsByStop(filter.routeId, 10)))
-        } else {
-            StopDetailsDepartures((1..5).map { patternsByStop("loading-$it") })
+    fun stopDetailsRouteCards() =
+        (1..5).map {
+            routeCardData(
+                context = RouteCardData.Context.StopDetailsUnfiltered,
+                now = Clock.System.now(),
+            )
         }
 
     data class TripDetailsInfo(
         val stops: TripDetailsStopList,
+        val trip: Trip,
         val vehicle: Vehicle,
         val vehicleStop: Stop,
-        val route: Route
+        val route: Route,
     )
 
     fun tripDetailsInfo(): TripDetailsInfo {
@@ -119,7 +137,7 @@ object LoadingPlaceholders {
             }
         return TripDetailsInfo(
             TripDetailsStopList(
-                trip.id,
+                trip,
                 (1..8).map { sequence ->
                     val stop = objects.stop { name = "Loading" }
                     val prediction =
@@ -135,19 +153,15 @@ object LoadingPlaceholders {
                         disruption = null,
                         schedule = null,
                         prediction,
-                        predictionStop = null,
-                        vehicle,
-                        listOf(otherRoute)
+                        vehicle = vehicle,
+                        routes = listOf(otherRoute),
                     )
-                }
+                },
             ),
+            trip,
             vehicle,
             vehicleStop,
-            route
+            route,
         )
-    }
-
-    fun tripDetailsStops(): TripDetailsStopList {
-        return tripDetailsInfo().stops
     }
 }

@@ -37,5 +37,6 @@ struct PinButton: View {
         )
         .accessibilityIdentifier("pinButton")
         .accessibilityAddTraits(pinned ? [.isSelected] : [])
+        .simultaneousGesture(TapGesture())
     }
 }

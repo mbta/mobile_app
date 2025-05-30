@@ -44,24 +44,18 @@ class SubscribeToPredictionsTest {
                 { stops -> connectProps = stops },
                 { disconnectCount += 1 },
                 null,
-                predictionsOnJoin
+                predictionsOnJoin,
             )
 
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
             val predictionsVM =
-                subscribeToPredictions(
-                    stopIds,
-                    predictionsRepo,
-                    ErrorBannerViewModel(
-                        false,
-                        MockErrorBannerStateRepository(),
-                    )
-                )
+                subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel)
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
@@ -93,25 +87,19 @@ class SubscribeToPredictionsTest {
                 { stopIds -> connectCount += 1 },
                 { disconnectCount += 1 },
                 null,
-                null
+                null,
             )
 
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var stopIds by remember { stopIds }
                 val predictionsVM =
-                    subscribeToPredictions(
-                        stopIds,
-                        predictionsRepo,
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        )
-                    )
+                    subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel)
                 predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
             }
         }
@@ -140,21 +128,15 @@ class SubscribeToPredictionsTest {
                     connected = true
                 },
                 connectV2Response =
-                    PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
+                    PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap()),
             )
 
         var predictions: PredictionsStreamDataResponse? = null
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             val predictionsVM =
-                subscribeToPredictions(
-                    emptyList(),
-                    predictionsRepo,
-                    ErrorBannerViewModel(
-                        false,
-                        MockErrorBannerStateRepository(),
-                    )
-                )
+                subscribeToPredictions(emptyList(), predictionsRepo, errorBannerViewModel)
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
@@ -179,18 +161,11 @@ class SubscribeToPredictionsTest {
             MockErrorBannerStateRepository(
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
+        val errorBannerViewModel = ErrorBannerViewModel(false, mockErrorRepo)
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
-            subscribeToPredictions(
-                stopIds,
-                predictionsRepo,
-                ErrorBannerViewModel(
-                    false,
-                    mockErrorRepo,
-                ),
-                1.seconds
-            )
+            subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel, 1.seconds)
         }
 
         composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }

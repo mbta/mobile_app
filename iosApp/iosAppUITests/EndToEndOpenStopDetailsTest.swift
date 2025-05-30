@@ -19,6 +19,7 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
     }
 
     func testOpenStopDetails() throws {
+        app.activate()
         app.launch()
         let alewifeHeadsign = app.staticTexts["Alewife"]
         XCTAssert(alewifeHeadsign.waitForExistence(timeout: 30))

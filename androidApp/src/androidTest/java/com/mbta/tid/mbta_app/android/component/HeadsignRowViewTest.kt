@@ -31,16 +31,16 @@ class HeadsignRowViewTest {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Minutes(2)
+                        TripInstantDisplay.Minutes(2),
                     ),
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "b" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Minutes(10)
+                        TripInstantDisplay.Minutes(10),
                     ),
                 ),
-                secondaryAlert = null
-            )
+                secondaryAlert = null,
+            ),
         )
 
         composeTestRule.onNodeWithText("Headsign").assertIsDisplayed()
@@ -57,11 +57,11 @@ class HeadsignRowViewTest {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Boarding
+                        TripInstantDisplay.Boarding,
                     )
                 ),
-                secondaryAlert = null
-            )
+                secondaryAlert = null,
+            ),
         )
 
         composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
@@ -77,11 +77,11 @@ class HeadsignRowViewTest {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Boarding
+                        TripInstantDisplay.Boarding,
                     )
                 ),
-                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue")
-            )
+                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue"),
+            ),
         )
 
         composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
@@ -93,7 +93,7 @@ class HeadsignRowViewTest {
     fun showsNoPredictions() {
         init(
             "Somewhere",
-            UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable)
+            UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
         )
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
@@ -106,8 +106,8 @@ class HeadsignRowViewTest {
             "Somewhere",
             UpcomingFormat.NoTrips(
                 noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue")
-            )
+                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+            ),
         )
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
@@ -119,7 +119,7 @@ class HeadsignRowViewTest {
     fun showsAlert() {
         init(
             "Headsign",
-            UpcomingFormat.Disruption(alert { effect = Alert.Effect.Shuttle }, mapStopRoute = null)
+            UpcomingFormat.Disruption(alert { effect = Alert.Effect.Shuttle }, mapStopRoute = null),
         )
 
         composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()

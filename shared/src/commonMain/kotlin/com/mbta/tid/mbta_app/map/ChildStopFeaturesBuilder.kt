@@ -34,7 +34,7 @@ object ChildStopFeaturesBuilder {
             Feature(
                 id = childStop.id,
                 geometry = Point(childStop.position),
-                properties = generateChildStopProperties(childStop, index) ?: return null
+                properties = generateChildStopProperties(childStop, index) ?: return null,
             )
         return feature
     }

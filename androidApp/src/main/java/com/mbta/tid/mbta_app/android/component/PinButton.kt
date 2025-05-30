@@ -25,18 +25,22 @@ fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
         checked = pinned,
         onCheckedChange = { action() },
         modifier =
-            Modifier.size(30.dp).clickable(onClickLabel = onClickLabel, onClick = { action() })
+            Modifier.size(30.dp).clickable(onClickLabel = onClickLabel, onClick = { action() }),
     ) {
-        Icon(
-            painter =
-                painterResource(
-                    id =
-                        if (pinned) R.drawable.pinned_route_active
-                        else R.drawable.pinned_route_inactive
-                ),
-            contentDescription = stringResource(R.string.star_route),
-            modifier = Modifier.size(20.dp).placeholderIfLoading(),
-            tint = color
-        )
+        StarIcon(pinned, color)
     }
+}
+
+@Composable
+fun StarIcon(pinned: Boolean, color: Color) {
+    Icon(
+        painter =
+            painterResource(
+                id =
+                    if (pinned) R.drawable.pinned_route_active else R.drawable.pinned_route_inactive
+            ),
+        contentDescription = stringResource(R.string.star_route),
+        modifier = Modifier.size(20.dp).placeholderIfLoading(),
+        tint = color,
+    )
 }

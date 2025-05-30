@@ -25,13 +25,13 @@ fun DragHandle() {
     Column(
         modifier = Modifier.height(18.dp).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         val description = stringResource(R.string.drag_handle)
         Surface(
             modifier = Modifier.semantics { contentDescription = description },
             color = colorResource(R.color.drag_handle),
-            shape = MaterialTheme.shapes.extraLarge
+            shape = MaterialTheme.shapes.extraLarge,
         ) {
             Box(Modifier.size(width = 32.dp, height = 4.dp))
         }

@@ -38,9 +38,9 @@ class RouteFeaturesBuilderTest {
                         MapTestDataHelper.stopHarvard.id to MapTestDataHelper.stopHarvard,
                         MapTestDataHelper.stopCentral.id to MapTestDataHelper.stopCentral,
                         MapTestDataHelper.stopAssembly.id to MapTestDataHelper.stopAssembly,
-                        MapTestDataHelper.stopSullivan.id to MapTestDataHelper.stopSullivan
+                        MapTestDataHelper.stopSullivan.id to MapTestDataHelper.stopSullivan,
                     ),
-                alertsByStop = emptyMap()
+                alertsByStop = emptyMap(),
             )
 
         assertEquals(2, routeSources.size) // red, orange
@@ -50,7 +50,7 @@ class RouteFeaturesBuilderTest {
                 .first { it.routeId == MapTestDataHelper.routeRed.id }
                 .features
                 .features
-                .size
+                .size,
         )
         assertEquals(
             1,
@@ -58,35 +58,35 @@ class RouteFeaturesBuilderTest {
                 .first { it.routeId == MapTestDataHelper.routeOrange.id }
                 .features
                 .features
-                .size
+                .size,
         )
 
         assertEquals(
             lineSlice(
                 start = MapTestDataHelper.stopAlewife.position,
                 stop = MapTestDataHelper.stopDavis.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC2.polyline!!))
+                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC2.polyline!!)),
             ),
             routeSources
                 .first { it.routeId == MapTestDataHelper.routeRed.id }
                 .features
                 .features
                 .first()
-                .geometry
+                .geometry,
         )
 
         assertEquals(
             lineSlice(
                 start = MapTestDataHelper.stopAssembly.position,
                 stop = MapTestDataHelper.stopSullivan.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeOrangeC1.polyline!!))
+                line = LineString(Polyline.decode(MapTestDataHelper.shapeOrangeC1.polyline!!)),
             ),
             routeSources
                 .first { it.routeId == MapTestDataHelper.routeOrange.id }
                 .features
                 .features
                 .first()
-                .geometry
+                .geometry,
         )
     }
 
@@ -105,13 +105,13 @@ class RouteFeaturesBuilderTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = MapTestDataHelper.routeRed.id,
                     routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopPorter.id
+                    stop = MapTestDataHelper.stopPorter.id,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = MapTestDataHelper.routeRed.id,
                     routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopHarvard.id
+                    stop = MapTestDataHelper.stopHarvard.id,
                 )
             }
         val alertsByStop =
@@ -120,13 +120,13 @@ class RouteFeaturesBuilderTest {
                     AlertAssociatedStop(
                         stop = MapTestDataHelper.stopPorter,
                         relevantAlerts = listOf(redAlert),
-                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle)
+                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                     ),
                 MapTestDataHelper.stopHarvard.id to
                     AlertAssociatedStop(
                         stop = MapTestDataHelper.stopHarvard,
                         relevantAlerts = listOf(redAlert),
-                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle)
+                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                     ),
             )
 
@@ -139,9 +139,9 @@ class RouteFeaturesBuilderTest {
                         MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
                         MapTestDataHelper.stopPorter.id to MapTestDataHelper.stopPorter,
                         MapTestDataHelper.stopHarvard.id to MapTestDataHelper.stopHarvard,
-                        MapTestDataHelper.stopCentral.id to MapTestDataHelper.stopCentral
+                        MapTestDataHelper.stopCentral.id to MapTestDataHelper.stopCentral,
                     ),
-                alertsByStop = alertsByStop
+                alertsByStop = alertsByStop,
             )
 
         val redSource = routeSources.first { it.routeId == MapTestDataHelper.routeRed.id }
@@ -150,40 +150,40 @@ class RouteFeaturesBuilderTest {
         assertEquals(3, redFeatures.size)
         assertEquals(
             SegmentAlertState.Normal.name,
-            redFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey]
+            redFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey],
         )
         assertEquals(
             lineSlice(
                 start = MapTestDataHelper.stopAlewife.position,
                 stop = MapTestDataHelper.stopDavis.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!))
+                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)),
             ),
-            redFeatures[0].geometry
+            redFeatures[0].geometry,
         )
 
         assertEquals(
             SegmentAlertState.Shuttle.name,
-            redFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey]
+            redFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey],
         )
         assertEquals(
             lineSlice(
                 start = MapTestDataHelper.stopPorter.position,
                 stop = MapTestDataHelper.stopHarvard.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!))
+                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)),
             ),
             redFeatures[1].geometry,
         )
         assertEquals(
             SegmentAlertState.Normal.name,
-            redFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey]
+            redFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey],
         )
         assertEquals(
             lineSlice(
                 start = MapTestDataHelper.stopHarvard.position,
                 stop = MapTestDataHelper.stopCentral.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!))
+                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)),
             ),
-            redFeatures[2].geometry
+            redFeatures[2].geometry,
         )
     }
 
@@ -202,13 +202,13 @@ class RouteFeaturesBuilderTest {
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = MapTestDataHelper.routeRed.id,
                     routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopAlewife.id
+                    stop = MapTestDataHelper.stopAlewife.id,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
                     route = MapTestDataHelper.routeRed.id,
                     routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopDavis.id
+                    stop = MapTestDataHelper.stopDavis.id,
                 )
             }
         val alertsByStop =
@@ -217,13 +217,13 @@ class RouteFeaturesBuilderTest {
                     AlertAssociatedStop(
                         stop = MapTestDataHelper.stopAlewife,
                         relevantAlerts = listOf(redAlert),
-                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle)
+                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                     ),
                 MapTestDataHelper.stopDavis.id to
                     AlertAssociatedStop(
                         stop = MapTestDataHelper.stopDavis,
                         relevantAlerts = listOf(redAlert),
-                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle)
+                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
                     ),
             )
 
@@ -237,7 +237,7 @@ class RouteFeaturesBuilderTest {
                     listOf(
                         MapTestDataHelper.stopAlewifeChild.id,
                         MapTestDataHelper.stopDavisChild.id,
-                    )
+                    ),
             )
 
         val transformedShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> =
@@ -247,8 +247,8 @@ class RouteFeaturesBuilderTest {
                     MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
                     MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
                     MapTestDataHelper.stopAlewifeChild.id to MapTestDataHelper.stopAlewifeChild,
-                    MapTestDataHelper.stopDavisChild.id to MapTestDataHelper.stopDavisChild
-                )
+                    MapTestDataHelper.stopDavisChild.id to MapTestDataHelper.stopDavisChild,
+                ),
             )
 
         assertEquals(
@@ -271,16 +271,16 @@ class RouteFeaturesBuilderTest {
                                             stopIds =
                                                 listOf(
                                                     MapTestDataHelper.stopAlewife.id,
-                                                    MapTestDataHelper.stopDavis.id
+                                                    MapTestDataHelper.stopDavis.id,
                                                 ),
-                                            otherPatternsByStopId = emptyMap()
-                                        ),
+                                            otherPatternsByStopId = emptyMap(),
+                                        )
                                     ),
-                                shape = shapeWithStops.shape!!
-                            ),
-                        )
+                                shape = shapeWithStops.shape!!,
+                            )
+                        ),
                 )
-            )
+            ),
         )
     }
 
@@ -289,16 +289,16 @@ class RouteFeaturesBuilderTest {
         val basicMapResponse =
             StopMapResponse(
                 routeShapes = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                childStops = emptyMap()
+                childStops = emptyMap(),
             )
         val filteredShapes =
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 basicMapResponse,
                 StopDetailsFilter(
                     MapTestDataHelper.routeRed.id,
-                    MapTestDataHelper.patternRed10.directionId
+                    MapTestDataHelper.patternRed10.directionId,
                 ),
-                null
+                null,
             )
         assertEquals(filteredShapes.count(), 1)
 
@@ -306,7 +306,7 @@ class RouteFeaturesBuilderTest {
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 GreenLineTestHelper.stopMapResponse,
                 StopDetailsFilter("line-Green", 0),
-                null
+                null,
             )
         assertEquals(glFilteredShapes.count(), 3)
         assertEquals(glFilteredShapes.get(0).segmentedShapes.count(), 1)

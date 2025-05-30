@@ -13,6 +13,6 @@ data class MapFriendlyRouteResponse(
     @Serializable
     data class RouteWithSegmentedShapes(
         @SerialName("route_id") val routeId: String,
-        @SerialName("route_shapes") val segmentedShapes: List<SegmentedRouteShape>
+        @SerialName("route_shapes") val segmentedShapes: List<SegmentedRouteShape>,
     )
 }

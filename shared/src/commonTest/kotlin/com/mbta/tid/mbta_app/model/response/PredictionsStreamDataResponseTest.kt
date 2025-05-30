@@ -16,7 +16,7 @@ class PredictionsStreamDataResponseTest {
             PredictionsStreamDataResponse(
                 predictions = mapOf(p1.id to p1, p2.id to p2, p3.id to p3),
                 trips = emptyMap(),
-                vehicles = emptyMap()
+                vehicles = emptyMap(),
             )
 
         assertEquals(3, data.predictionQuantity())

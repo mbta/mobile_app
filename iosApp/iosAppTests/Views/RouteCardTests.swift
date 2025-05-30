@@ -22,9 +22,8 @@ final class RouteCardTests: XCTestCase {
         }
 
         let routeCardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stopData: [],
-            context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
         )
 
@@ -34,7 +33,8 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            showStopHeader: true
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "66"))
@@ -54,9 +54,8 @@ final class RouteCardTests: XCTestCase {
         }
 
         let routeCardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteLine(line: line, routes: [route]),
+            lineOrRoute: .line(line, [route]),
             stopData: [],
-            context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
         )
 
@@ -66,7 +65,8 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            showStopHeader: true
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Green Line"))
@@ -82,9 +82,8 @@ final class RouteCardTests: XCTestCase {
         }
 
         let routeCardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+            lineOrRoute: .route(route),
             stopData: [],
-            context: .nearbyTransit,
             at: Date.now.toKotlinInstant()
         )
 
@@ -100,7 +99,8 @@ final class RouteCardTests: XCTestCase {
             now: Date.now,
             onPin: onPin,
             pinned: false,
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            showStopHeader: true
         )
 
         let button =
@@ -123,31 +123,41 @@ final class RouteCardTests: XCTestCase {
 
         let nearbySut = RouteCard(
             cardData: RouteCardData(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-                stopData: [.init(stop: stop, directions: [], data: [])],
-                context: .nearbyTransit,
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    lineOrRoute: .route(route),
+                    stop: stop,
+                    directions: [],
+                    data: []
+                )],
                 at: Date.now.toKotlinInstant()
             ),
             global: .init(objects: objects),
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            showStopHeader: true
         )
         XCTAssertNotNil(try nearbySut.inspect().find(text: stop.name))
 
         let stopDetailsSut = RouteCard(
             cardData: RouteCardData(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-                stopData: [.init(stop: stop, directions: [], data: [])],
-                context: .stopDetailsUnfiltered,
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    lineOrRoute: .route(route),
+                    stop: stop,
+                    directions: [],
+                    data: []
+                )],
                 at: Date.now.toKotlinInstant()
             ),
             global: .init(objects: objects),
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            showStopHeader: false
         )
         XCTAssertThrowsError(try stopDetailsSut.inspect().find(text: stop.name))
     }
@@ -166,26 +176,61 @@ final class RouteCardTests: XCTestCase {
 
         let sut = RouteCard(
             cardData: RouteCardData(
-                lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
+                lineOrRoute: .route(route),
                 stopData: [.init(
+                    lineOrRoute: .route(route),
                     stop: stop,
                     directions: [.init(name: "Inbound", destination: "", id: 0)],
                     data: [.init(
+                        lineOrRoute: .route(route), stop: stop,
                         directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                         upcomingTrips: [], alertsHere: [], allDataLoaded: true,
-                        hasSchedulesToday: true, alertsDownstream: []
+                        hasSchedulesToday: true, alertsDownstream: [],
+                        context: .nearbyTransit
                     )]
                 )],
-                context: .nearbyTransit,
                 at: Date.now.toKotlinInstant()
             ),
             global: .init(objects: objects),
             now: Date.now,
             onPin: { _ in },
             pinned: false,
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            showStopHeader: true
         )
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
         XCTAssertNotNil(try sut.inspect().find(text: "Inbound to"))
+    }
+
+    func testBranchDisrupted() throws {
+        let data = RouteCardPreviewData()
+        let sut = RouteCard(
+            cardData: data.GL5(),
+            global: data.global,
+            now: data.now.toNSDate(),
+            onPin: { _ in },
+            pinned: false,
+            pushNavEntry: { _ in },
+            showStopHeader: true,
+            showStationAccessibility: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
+        let westDirection = try sut.inspect().find(text: "Westbound to")
+            .find(RouteCardDirection.self, relation: .parent)
+        XCTAssertNotNil(westDirection)
+        XCTAssertNotNil(try westDirection.find(text: "3 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Cleveland Circle"))
+        XCTAssertNotNil(try westDirection.find(text: "5 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Boston College"))
+        XCTAssertNotNil(try westDirection.find(text: "Shuttle Bus")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Riverside"))
+
+        let eastDirection = try sut.inspect().find(text: "Eastbound to")
+            .find(RouteCardDirection.self, relation: .parent)
+        XCTAssertNotNil(eastDirection)
+        XCTAssertNotNil(try eastDirection.find(text: "6 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Government Center"))
+        XCTAssertNotNil(try eastDirection.find(text: "12 min")
+            .find(HeadsignRowView.self, relation: .parent).find(text: "Government Center"))
     }
 }

@@ -9,5 +9,5 @@ data class StopData(
     val stopId: String,
     val schedules: ScheduleResponse?,
     val predictionsByStop: PredictionsByStopJoinResponse?,
-    val predictionsLoaded: Boolean = false
+    val predictionsLoaded: Boolean = false,
 )

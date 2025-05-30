@@ -4,6 +4,8 @@
     <string name="access_issue_sentence_case">Problème d’accès</string>
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
+    <string name="add_confirmation_button">Ajouter</string>
+    <string name="add_to_favorites_title">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b> aux favoris</string>
     <string name="additional_service">Service supplémentaire</string>
     <string name="additional_service_sentence_case">Service supplémentaire</string>
     <plurals name="affected_stops">
@@ -118,6 +120,7 @@
     <string name="extra_service_sentence_case">Service supplémentaire</string>
     <string name="facility_issue">Problème d’infrastructure</string>
     <string name="facility_issue_sentence_case">Problème d’infrastructure</string>
+    <string name="favorites_link">Favoris</string>
     <string name="feature_flag_debug_mode">Mode débogage</string>
     <string name="feature_flag_route_search">Recherche de trajet</string>
     <string name="feedback_link_form">Envoyer des commentaires sur l’application</string>
@@ -246,6 +249,7 @@
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
     <string name="route_effect">%2$s %1$s</string>
     <string name="route_with_type">%2$s %1$s</string>
+    <string name="routes">Trajets</string>
     <string name="schedule_change">Changement d’horaire</string>
     <string name="schedule_change_sentence_case">Changement d’horaire</string>
     <string name="scheduled_to_depart">Prévu au départ</string>

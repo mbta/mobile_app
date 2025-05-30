@@ -19,7 +19,6 @@ class NearbyViewModel: ObservableObject {
         var stopIds: [String]?
     }
 
-    @Published var departures: StopDetailsDepartures?
     @Published var navigationStack: [SheetNavigationStackEntry] = [] {
         didSet { Task {
             let navEntry = navigationStack.lastSafe()
@@ -38,7 +37,6 @@ class NearbyViewModel: ObservableObject {
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
-    @Published var nearbyStaticData: NearbyStaticData?
     @Published var routeCardData: [RouteCardData]?
 
     @Published var selectingLocation = false
@@ -51,7 +49,7 @@ class NearbyViewModel: ObservableObject {
     private var analytics: Analytics
 
     init(
-        departures: StopDetailsDepartures? = nil,
+        routeCardData: [RouteCardData]? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
@@ -59,7 +57,7 @@ class NearbyViewModel: ObservableObject {
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: Analytics = AnalyticsProvider.shared
     ) {
-        self.departures = departures
+        self.routeCardData = routeCardData
         self.navigationStack = navigationStack
 
         self.alertsRepository = alertsRepository
@@ -72,16 +70,6 @@ class NearbyViewModel: ObservableObject {
     func clearNearbyData() {
         nearbyState = .init()
         routeCardData = nil
-        nearbyStaticData = nil
-    }
-
-    /**
-     Set the departures from the given stop if it is the last stop in the stack.
-     */
-    func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
-        if stopId == navigationStack.lastStopId {
-            departures = newDepartures
-        }
     }
 
     /**
@@ -108,6 +96,12 @@ class NearbyViewModel: ObservableObject {
         }
     }
 
+    func popToEntrypoint() {
+        while !navigationStack.lastSafe().isEntrypoint {
+            navigationStack.popLast()
+        }
+    }
+
     // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
     // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
     /**
@@ -117,6 +111,9 @@ class NearbyViewModel: ObservableObject {
      would be popped to ensure there is only one `stopDetails` entry in the stack.
      */
     func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection _: Bool = false) {
+        if entry.isEntrypoint {
+            navigationStack.removeAll()
+        }
         let currentEntry = navigationStack.lastSafe()
         if case let .stopDetails(
             stopId: targetStop,
@@ -175,7 +172,7 @@ class NearbyViewModel: ObservableObject {
         _ = navigationStack.popLast()
     }
 
-    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D, groupByDirection: Bool) {
+    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D, groupByDirection _: Bool) {
         guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
             return
         }
@@ -188,36 +185,15 @@ class NearbyViewModel: ObservableObject {
                 analytics.refetchedNearbyTransit()
             }
             nearbyState.loading = true
-            nearbyStaticData = nil
-            routeCardData = nil
 
-            let stopIds = nearbyRepository.getStopIdsNearby(global: global, location: location.positionKt)
-            if groupByDirection {
-                nearbyState.stopIds = stopIds
-                nearbyState.loadedLocation = location
-                nearbyState.loading = false
-                selectingLocation = false
-            } else {
-                defer {
-                    self.nearbyState.loading = false
-                    self.selectingLocation = false
-                }
-                await fetchApi(
-                    errorBannerRepository,
-                    errorKey: "NearbyViewModel.getNearby",
-                    getData: { try await self.nearbyRepository.getNearby(global: global, stopIds: stopIds) },
-                    onSuccess: {
-                        self.nearbyStaticData = $0
-                        self.nearbyState.stopIds = stopIds
-                        self.nearbyState.loadedLocation = location
-                    },
-                    onRefreshAfterError: { self.getNearbyStops(
-                        global: global,
-                        location: location,
-                        groupByDirection: groupByDirection
-                    ) }
-                )
-            }
+            let stopIds = nearbyRepository.getStopIdsNearby(
+                global: global,
+                location: location.positionKt
+            )
+            nearbyState.stopIds = stopIds
+            nearbyState.loadedLocation = location
+            nearbyState.loading = false
+            selectingLocation = false
         }
     }
 

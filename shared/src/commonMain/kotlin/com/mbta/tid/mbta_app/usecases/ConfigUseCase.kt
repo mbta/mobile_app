@@ -8,7 +8,7 @@ import org.koin.core.component.KoinComponent
 
 class ConfigUseCase(
     private val configRepo: IConfigRepository,
-    private val sentryRepo: ISentryRepository
+    private val sentryRepo: ISentryRepository,
 ) : KoinComponent {
 
     suspend fun getConfig(): ApiResult<ConfigResponse> =

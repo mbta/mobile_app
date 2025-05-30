@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 enum class ExplainerType {
     NoPrediction,
     FinishingAnotherTrip,
-    NoVehicle
+    NoVehicle,
 }

@@ -65,7 +65,7 @@ class SearchResultsViewModel(
     private fun mapLatestVisitsToResult(
         index: Int,
         visit: Visit,
-        globalResponse: GlobalResponse?
+        globalResponse: GlobalResponse?,
     ): StopResult? {
         if (visit is Visit.StopVisit && globalResponse != null) {
             val stop = globalResponse.getStop(visit.stopId)

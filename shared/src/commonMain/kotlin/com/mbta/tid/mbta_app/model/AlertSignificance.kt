@@ -18,5 +18,5 @@ enum class AlertSignificance : Comparable<AlertSignificance> {
     /**
      * Replaces predictions in nearby transit, stop details, and trip details. Called out as ahead.
      */
-    Major
+    Major,
 }

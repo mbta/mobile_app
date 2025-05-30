@@ -124,9 +124,9 @@ struct HomeMapView: View {
             .onChange(of: nearbyVM.alerts) { _ in
                 handleGlobalMapDataChange(now: now)
             }
-            .onChange(of: nearbyVM.departures) { _ in
+            .onChange(of: nearbyVM.routeCardData) { _ in
                 if case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _) = lastNavEntry, let stopMapData {
-                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
                 }
             }
             .onChange(of: mapVM.selectedVehicle) { [weak previousVehicle = mapVM.selectedVehicle] nextVehicle in

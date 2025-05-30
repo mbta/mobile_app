@@ -4,6 +4,8 @@
     <string name="access_issue_sentence_case">Vấn đề về tiếp cận</string>
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
+    <string name="add_confirmation_button">Thêm vào</string>
+    <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
     <plurals name="affected_stops">
@@ -112,6 +114,7 @@
     <string name="extra_service_sentence_case">Dịch vụ bổ sung</string>
     <string name="facility_issue">Vấn đề về cơ sở vật chất</string>
     <string name="facility_issue_sentence_case">Vấn đề về cơ sở vật chất</string>
+    <string name="favorites_link">Yêu thích</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi phản hồi về ứng dụng</string>
@@ -240,6 +243,7 @@
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="routes">Tuyến đường</string>
     <string name="schedule_change">Thay đổi lịch trình</string>
     <string name="schedule_change_sentence_case">Thay đổi lịch trình</string>
     <string name="scheduled_to_depart">Đã lên lịch khởi hành</string>

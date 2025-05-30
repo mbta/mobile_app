@@ -21,10 +21,10 @@ class MapViewModelTests {
                 configUseCase =
                     ConfigUseCase(
                         MockConfigRepository(ApiResult.Ok(ConfigResponse("fake_token"))),
-                        MockSentryRepository()
+                        MockSentryRepository(),
                     ),
                 configureMapboxToken = { token -> configuredToken = token },
-                setHttpInterceptor = {}
+                setHttpInterceptor = {},
             )
 
         mapViewModel.loadConfig()
@@ -40,10 +40,10 @@ class MapViewModelTests {
                 configUseCase =
                     ConfigUseCase(
                         MockConfigRepository(ApiResult.Error(500, "oops")),
-                        MockSentryRepository()
+                        MockSentryRepository(),
                     ),
                 configureMapboxToken = { configureTokenCalled = true },
-                setHttpInterceptor = {}
+                setHttpInterceptor = {},
             )
 
         mapViewModel.loadConfig()
@@ -57,7 +57,7 @@ class MapViewModelTests {
         val mapViewModel =
             MapViewModel(
                 configureMapboxToken = {},
-                setHttpInterceptor = { httpInterceptorSet = true }
+                setHttpInterceptor = { httpInterceptorSet = true },
             )
         assertTrue { httpInterceptorSet }
     }

@@ -18,7 +18,7 @@ interface IVehiclesRepository {
     fun connect(
         routeId: String,
         directionId: Int,
-        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     )
 
     fun disconnect()
@@ -30,7 +30,7 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
     override fun connect(
         routeId: String,
         directionId: Int,
-        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         disconnect()
         val topic =
@@ -40,7 +40,7 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
                 } else {
                     listOf(routeId)
                 },
-                directionId
+                directionId,
             )
         channel = socket.getChannel(topic, emptyMap())
 
@@ -68,7 +68,7 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -93,7 +93,7 @@ class MockVehiclesRepository
 constructor(
     val response: VehiclesStreamDataResponse,
     val onConnect: (routeId: String, directionId: Int) -> Unit = { _: String, _: Int -> },
-    val onDisconnect: () -> Unit = {}
+    val onDisconnect: () -> Unit = {},
 ) : IVehiclesRepository {
     constructor(
         vehicles: List<Vehicle> = emptyList()
@@ -106,7 +106,7 @@ constructor(
     override fun connect(
         routeId: String,
         directionId: Int,
-        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         onConnect(routeId, directionId)
         onReceive(ApiResult.Ok(response))

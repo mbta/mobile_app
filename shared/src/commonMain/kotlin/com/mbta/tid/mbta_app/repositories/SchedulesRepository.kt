@@ -24,7 +24,7 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
 
     override suspend fun getSchedule(
         stopIds: List<String>,
-        now: Instant
+        now: Instant,
     ): ApiResult<ScheduleResponse> =
         ApiResult.runCatching {
             mobileBackendClient
@@ -45,24 +45,24 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
 
 class MockScheduleRepository(
     private val response: ApiResult<ScheduleResponse>,
-    private val callback: (stopIds: List<String>) -> Unit = {}
+    private val callback: (stopIds: List<String>) -> Unit = {},
 ) : ISchedulesRepository {
 
     @DefaultArgumentInterop.Enabled
     constructor(
         scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
-        callback: (stopIds: List<String>) -> Unit = {}
+        callback: (stopIds: List<String>) -> Unit = {},
     ) : this(ApiResult.Ok(scheduleResponse), callback)
 
     constructor() :
         this(
             scheduleResponse = ScheduleResponse(schedules = listOf(), trips = mapOf()),
-            callback = {}
+            callback = {},
         )
 
     override suspend fun getSchedule(
         stopIds: List<String>,
-        now: Instant
+        now: Instant,
     ): ApiResult<ScheduleResponse> {
         callback(stopIds)
         return response
@@ -77,7 +77,7 @@ class MockScheduleRepository(
 class IdleScheduleRepository : ISchedulesRepository {
     override suspend fun getSchedule(
         stopIds: List<String>,
-        now: Instant
+        now: Instant,
     ): ApiResult<ScheduleResponse> {
         return suspendCancellableCoroutine {}
     }

@@ -6,24 +6,38 @@ import kotlin.uuid.Uuid
 
 /** Represents a [RouteCardData.Leaf] ready to be displayed. */
 sealed class LeafFormat {
-    abstract fun tileData(): List<TileData>
+    abstract fun tileData(directionDestination: String?): List<TileData>
 
     abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
 
+    val isAllServiceDisrupted: Boolean
+        get() {
+            return when (this) {
+                is Single -> this.format is UpcomingFormat.Disruption
+                is Branched -> false
+            }
+        }
+
     /** A [RouteCardData.Leaf] which only has one destination within its direction. */
     data class Single(
+        /**
+         * The route to display next to [headsign] and [format]. Only set if the
+         * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
+         * set.
+         */
+        val route: Route?,
         /** The headsign to show next to [format]. Overrides [Direction.destination] if set. */
         val headsign: String?,
-        val format: UpcomingFormat
+        val format: UpcomingFormat,
     ) : LeafFormat() {
-        override fun tileData(): List<TileData> {
+        override fun tileData(directionDestination: String?): List<TileData> {
             return if (format is UpcomingFormat.Some) {
                 format.trips.map { trip ->
                     TileData(
-                        route = null,
-                        headsign = null,
+                        route = route,
+                        headsign = headsign.takeUnless { it == directionDestination },
                         UpcomingFormat.Some(trip, format.secondaryAlert),
-                        trip.trip
+                        trip.trip,
                     )
                 }
             } else {
@@ -48,7 +62,7 @@ sealed class LeafFormat {
      */
     data class Branched(
         val branchRows: List<BranchRow>,
-        val secondaryAlert: UpcomingFormat.SecondaryAlert? = null
+        val secondaryAlert: UpcomingFormat.SecondaryAlert? = null,
     ) : LeafFormat() {
         data class BranchRow
         @OptIn(ExperimentalUuidApi::class)
@@ -61,10 +75,10 @@ sealed class LeafFormat {
             val route: Route?,
             val headsign: String,
             val format: UpcomingFormat,
-            val id: String = "$headsign-$format-${Uuid.random()}"
+            val id: String = "$headsign-$format-${Uuid.random()}",
         )
 
-        override fun tileData(): List<TileData> {
+        override fun tileData(directionDestination: String?): List<TileData> {
             return branchRows.mapNotNull { branch ->
                 if (branch.format is UpcomingFormat.Some) {
                     val trip = branch.format.trips.singleOrNull() ?: return@mapNotNull null
@@ -72,7 +86,7 @@ sealed class LeafFormat {
                         branch.route,
                         branch.headsign,
                         UpcomingFormat.Some(trip, branch.format.secondaryAlert),
-                        trip.trip
+                        trip.trip,
                     )
                 } else null
             }

@@ -60,7 +60,7 @@ class SchedulesRepositoryTest : KoinTest {
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -84,7 +84,7 @@ class SchedulesRepositoryTest : KoinTest {
                                     stopSequence = 0,
                                     routeId = "Red",
                                     stopId = "70064",
-                                    tripId = "trip1"
+                                    tripId = "trip1",
                                 )
                             ),
                         trips =
@@ -97,12 +97,12 @@ class SchedulesRepositoryTest : KoinTest {
                                         routeId = "Red",
                                         routePatternId = "rp1",
                                         shapeId = "shape1",
-                                        stopIds = listOf("70064", "70065")
+                                        stopIds = listOf("70064", "70065"),
                                     )
-                            )
+                            ),
                     )
                 ),
-                response
+                response,
             )
         }
         stopKoin()

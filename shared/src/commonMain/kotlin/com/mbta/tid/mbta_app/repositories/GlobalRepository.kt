@@ -46,7 +46,7 @@ constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) :
     constructor(
         response: GlobalResponse =
             GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
-        onGet: () -> Unit = {}
+        onGet: () -> Unit = {},
     ) : this(ApiResult.Ok(response), onGet)
 
     override val state =

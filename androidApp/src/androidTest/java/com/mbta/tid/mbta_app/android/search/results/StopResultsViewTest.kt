@@ -82,11 +82,11 @@ class StopResultsViewTest {
                     name = station.name,
                     zone = null,
                     isStation = true,
-                    routes = listOf()
+                    routes = listOf(),
                 ),
                 routes = listOf(bus5, bus4, sl, cr, red),
                 globalResponse = null,
-                handleSearch = { handleSearchCalled = true }
+                handleSearch = { handleSearchCalled = true },
             )
         }
 
@@ -134,11 +134,11 @@ class StopResultsViewTest {
                     name = stop.name,
                     zone = null,
                     isStation = false,
-                    routes = listOf()
+                    routes = listOf(),
                 ),
                 routes = listOf(bus5, bus4),
                 globalResponse = null,
-                handleSearch = {}
+                handleSearch = {},
             )
         }
 

@@ -30,13 +30,20 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
+import org.koin.compose.KoinContext
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 @Composable
 fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
@@ -48,7 +55,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                 details = {
                     Text(
                         stringResource(R.string.error_loading_data),
-                        style = Typography.subheadline
+                        style = Typography.subheadline,
                     )
                     DebugView {
                         Text((state as? ErrorBannerState.DataError)?.messages?.joinToString() ?: "")
@@ -59,7 +66,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         (state as ErrorBannerState.DataError).action()
                         vm.clearState()
                     }
-                }
+                },
             )
         }
         is ErrorBannerState.NetworkError -> {
@@ -71,18 +78,18 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                         Text(
                             stringResource(R.string.unable_to_connect),
                             modifier = Modifier.padding(start = 12.dp),
-                            style = Typography.subheadline
+                            style = Typography.subheadline,
                         )
                         Spacer(Modifier.weight(1f))
                     }
-                }
+                },
             )
         }
         is ErrorBannerState.StalePredictions -> {
             if (vm.loadingWhenPredictionsStale) {
                 Row(
                     modifier = modifier.heightIn(60.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     IndeterminateLoadingIndicator(Modifier.width(48.dp))
@@ -97,9 +104,9 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                             pluralStringResource(
                                 R.plurals.updated_mins_ago,
                                 minutes.toInt(),
-                                minutes
+                                minutes,
                             ),
-                            style = Typography.subheadline
+                            style = Typography.subheadline,
                         )
                     },
                     button = {
@@ -107,7 +114,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
                             (state as ErrorBannerState.StalePredictions).action()
                             vm.clearState()
                         }
-                    }
+                    },
                 )
             }
         }
@@ -119,7 +126,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
 private fun ErrorCard(
     modifier: Modifier = Modifier,
     details: @Composable () -> Unit,
-    button: (@Composable () -> Unit)? = null
+    button: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -127,7 +134,7 @@ private fun ErrorCard(
                 .padding(horizontal = 16.dp)
                 .heightIn(60.dp)
                 .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) { details() }
         Spacer(Modifier.weight(1f))
@@ -141,12 +148,12 @@ private fun ErrorCard(
 private fun RefreshButton(
     loading: Boolean = false,
     label: String = stringResource(R.string.refresh),
-    action: () -> Unit
+    action: () -> Unit,
 ) {
     TextButton(
         onClick = action,
         contentPadding = PaddingValues(0.dp),
-        modifier = Modifier.size(20.dp)
+        modifier = Modifier.size(20.dp),
     ) {
         Box {
             if (loading) {
@@ -156,7 +163,7 @@ private fun RefreshButton(
                     Icons.Rounded.Refresh,
                     contentDescription = label,
                     modifier = Modifier.width(20.dp),
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
             }
         }
@@ -166,44 +173,52 @@ private fun RefreshButton(
 @Preview
 @Composable
 private fun ErrorBannerPreviews() {
-    val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-    val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo)
+    @Composable
+    fun PreviewBanner(vm: ErrorBannerViewModel) {
+        LaunchedEffect(null) { vm.activate() }
+        ErrorBanner(vm)
+    }
+
     val dataErrorRepo =
         MockErrorBannerStateRepository(
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
         )
-    val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
-    val dataErrorDebugVM =
-        ErrorBannerViewModel(
-            false,
-            dataErrorRepo,
-        )
+    val dataErrorVM = viewModel(key = "data") { ErrorBannerViewModel(false, dataErrorRepo) }
+
+    val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
+    val networkErrorVM =
+        viewModel(key = "network") { ErrorBannerViewModel(false, networkErrorRepo) }
+
     val staleRepo =
         MockErrorBannerStateRepository(
             state =
                 ErrorBannerState.StalePredictions(
                     lastUpdated = Clock.System.now().minus(2.minutes),
-                    action = {}
+                    action = {},
                 )
         )
-    val staleVM = ErrorBannerViewModel(false, staleRepo)
-    val staleLoadingVM = ErrorBannerViewModel(true, staleRepo)
-    LaunchedEffect(null) { networkErrorVM.activate() }
-    LaunchedEffect(null) { dataErrorVM.activate() }
-    LaunchedEffect(null) { dataErrorDebugVM.activate() }
-    LaunchedEffect(null) { staleVM.activate() }
-    LaunchedEffect(null) { staleLoadingVM.activate() }
-    MyApplicationTheme {
-        Column(
-            modifier =
-                Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ErrorBanner(networkErrorVM)
-            ErrorBanner(dataErrorVM)
-            ErrorBanner(dataErrorDebugVM)
-            ErrorBanner(staleVM)
-            ErrorBanner(staleLoadingVM)
+    val staleVM = viewModel(key = "stale") { ErrorBannerViewModel(false, staleRepo) }
+    val staleLoadingVM = viewModel(key = "loading") { ErrorBannerViewModel(true, staleRepo) }
+
+    // The preview requires Koin to contain the cache in order to render,
+    // but it won't actually use the debug value set here when displayed
+    val settingsRepo = MockSettingsRepository(mapOf(Settings.DevDebugMode to false))
+    val koinApplication = koinApplication {
+        modules(module { single<SettingsCache> { SettingsCache(settingsRepo) } })
+    }
+    KoinContext(koinApplication.koin) {
+        MyApplicationTheme {
+            Column(
+                modifier =
+                    Modifier.background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                PreviewBanner(networkErrorVM)
+                PreviewBanner(dataErrorVM)
+                PreviewBanner(staleVM)
+                PreviewBanner(staleLoadingVM)
+            }
         }
     }
 }

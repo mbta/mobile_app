@@ -114,12 +114,12 @@ class GlobalMapDataTest {
                         Pair(stopA1.id, listOf(patternRed.id, patternBlue.id, patternSilver.id)),
                         Pair(
                             stopB.id,
-                            listOf(patternShuttle.id, patternCR.id, patternBus.id, patternRed.id)
+                            listOf(patternShuttle.id, patternCR.id, patternBus.id, patternRed.id),
                         ),
                         Pair(stopC.id, listOf(patternBus.id, patternSilver.id)),
                         Pair(stopD.id, listOf(patternSilver.id)),
-                        Pair(stopE.id, listOf(patternSilver.id))
-                    )
+                        Pair(stopE.id, listOf(patternSilver.id)),
+                    ),
             )
 
         return Pair(objects, globalResponse)
@@ -136,47 +136,47 @@ class GlobalMapDataTest {
         assertContains(
             mapData.mapStops["A"]!!.routeTypes,
             MapStopRoute.RED,
-            "Route type should be associated with the stop it serves"
+            "Route type should be associated with the stop it serves",
         )
         assertContains(
             mapData.mapStops["A"]!!.routeTypes,
             MapStopRoute.SILVER,
-            "Silver line routes should be properly identified, and child routes included in parent"
+            "Silver line routes should be properly identified, and child routes included in parent",
         )
         assertContains(
             mapData.mapStops["A"]!!.routes[MapStopRoute.SILVER]!!,
             routeSilver,
-            "Route type should be associated with the specific route that it was identified from"
+            "Route type should be associated with the specific route that it was identified from",
         )
         assertEquals(
             listOf(MapStopRoute.RED, MapStopRoute.COMMUTER, MapStopRoute.BUS),
             mapData.mapStops["B"]!!.routeTypes,
-            "Route types are ordered to match the route sort order"
+            "Route types are ordered to match the route sort order",
         )
 
         assertFalse(
             mapData.mapStops["A1"]!!.routeTypes.contains(MapStopRoute.BLUE),
-            "Atypical routes should not be included"
+            "Atypical routes should not be included",
         )
         assertFalse(
             mapData.mapStops["A"]!!.routeTypes.contains(MapStopRoute.BUS),
-            "Shuttle routes should not be included"
+            "Shuttle routes should not be included",
         )
 
         assertEquals(
             listOf(MapStopRoute.BUS),
             mapData.mapStops["C"]!!.routeTypes,
-            "If a stop contains both SL and regular bus routes, only consider it a bus stop"
+            "If a stop contains both SL and regular bus routes, only consider it a bus stop",
         )
         assertEquals(
             listOf(MapStopRoute.BUS),
             mapData.mapStops["D"]!!.routeTypes,
-            "If a stop is a stop type and only has SL, only consider it a bus stop"
+            "If a stop is a stop type and only has SL, only consider it a bus stop",
         )
         assertEquals(
             listOf(MapStopRoute.SILVER),
             mapData.mapStops["E"]!!.routeTypes,
-            "If a stop is a station type and only has SL, consider it a SL station"
+            "If a stop is a station type and only has SL, consider it a SL station",
         )
     }
 

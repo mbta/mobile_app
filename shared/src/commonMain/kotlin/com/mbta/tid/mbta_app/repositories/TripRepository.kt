@@ -85,7 +85,7 @@ class MockTripRepository
 constructor(
     var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
     var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
-    var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList()))
+    var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList())),
 ) : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
         return ApiResult.Ok(tripSchedulesResponse)

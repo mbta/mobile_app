@@ -6,7 +6,7 @@ class MockAnalytics
 @DefaultArgumentInterop.Enabled
 constructor(
     val onLogEvent: (String, Map<String, String>) -> Unit = { _, _ -> },
-    val onSetUserProperty: (String, String) -> Unit = { _, _ -> }
+    val onSetUserProperty: (String, String) -> Unit = { _, _ -> },
 ) : Analytics() {
     override fun logEvent(name: String, parameters: Map<String, String>) {
         onLogEvent(name, parameters)

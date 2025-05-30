@@ -31,9 +31,9 @@ class GetRailRouteShapesTest {
                                 route.id,
                                 1,
                                 listOf(),
-                                builder.shape()
+                                builder.shape(),
                             )
-                        )
+                        ),
                     )
                 )
             )

@@ -20,7 +20,7 @@ class OnboardingPageTest {
         val onboardingRepository =
             MockOnboardingRepository(
                 pendingOnboarding = OnboardingScreen.entries,
-                onMarkComplete = completedScreens::add
+                onMarkComplete = completedScreens::add,
             )
         var finished = false
 

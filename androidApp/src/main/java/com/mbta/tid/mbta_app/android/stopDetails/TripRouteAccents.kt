@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 data class TripRouteAccents(
     @Serializable(with = ColorSerializer::class) val color: Color,
     @Serializable(with = ColorSerializer::class) val textColor: Color,
-    val type: RouteType
+    val type: RouteType,
 ) {
     constructor(
         route: Route
@@ -27,7 +27,7 @@ data class TripRouteAccents(
                 TripRouteAccents(
                     colorResource(R.color.halo),
                     colorResource(R.color.text),
-                    RouteType.BUS
+                    RouteType.BUS,
                 )
     }
 }

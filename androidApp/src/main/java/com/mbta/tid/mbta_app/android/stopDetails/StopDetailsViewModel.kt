@@ -12,19 +12,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.state.ScheduleFetcher
 import com.mbta.tid.mbta_app.android.state.StopPredictionsFetcher
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.hasContext
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -47,7 +47,6 @@ import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -73,7 +72,7 @@ class StopDetailsViewModel(
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
     companion object {
@@ -84,7 +83,7 @@ class StopDetailsViewModel(
             tripPredictionsRepo: ITripPredictionsRepository = MockTripPredictionsRepository(),
             tripRepo: ITripRepository = MockTripRepository(),
             vehicleRepo: IVehicleRepository = MockVehicleRepository(),
-            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): StopDetailsViewModel {
             return StopDetailsViewModel(
                 errorBannerRepo,
@@ -93,7 +92,7 @@ class StopDetailsViewModel(
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
-                coroutineDispatcher
+                coroutineDispatcher,
             )
         }
 
@@ -110,7 +109,7 @@ class StopDetailsViewModel(
                 MockTripPredictionsRepository(response = PredictionsStreamDataResponse(objects)),
             tripRepo: ITripRepository = MockTripRepository(),
             vehicleRepo: IVehicleRepository = MockVehicleRepository(),
-            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ) =
             mocked(
                 errorBannerRepo,
@@ -119,26 +118,34 @@ class StopDetailsViewModel(
                 tripPredictionsRepo,
                 tripRepo,
                 vehicleRepo,
-                coroutineDispatcher
+                coroutineDispatcher,
             )
     }
 
     private val stopScheduleFetcher = ScheduleFetcher(schedulesRepository, errorBannerRepository)
 
+    private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
+    val globalResponse = _globalResponse.asStateFlow()
+
     private val _stopData = MutableStateFlow<StopData?>(null)
-    val stopData: StateFlow<StopData?> = _stopData
+    val stopData = _stopData.asStateFlow()
 
     private val _tripData = MutableStateFlow<TripData?>(null)
-    val tripData: StateFlow<TripData?> = _tripData
+    val tripData = _tripData.asStateFlow()
 
     private val _tripDetailsStopList = MutableStateFlow<TripDetailsStopList?>(null)
     // not accessible via a property since it needs extra params to be kept up to date
 
-    private val _stopDepartures = MutableStateFlow<StopDetailsDepartures?>(null)
-    val stopDepartures: StateFlow<StopDetailsDepartures?> = _stopDepartures
-
+    // The routeCardData flow is public but should only be used in stopDetailsManagedVM,
+    // filtered and unfiltered stop details should each use the specific flow for their data.
     private val _routeCardData = MutableStateFlow<List<RouteCardData>?>(null)
     val routeCardData = _routeCardData.asStateFlow()
+
+    private val _filteredRouteStopData = MutableStateFlow<RouteCardData.RouteStopData?>(null)
+    val filteredRouteStopData = _filteredRouteStopData.asStateFlow()
+
+    private val _unfilteredRouteCardData = MutableStateFlow<List<RouteCardData>?>(null)
+    val unfilteredRouteCardData = _unfilteredRouteCardData.asStateFlow()
 
     private val _alertSummaries = MutableStateFlow<Map<String, AlertSummary?>>(emptyMap())
     val alertSummaries = _alertSummaries.asStateFlow()
@@ -148,8 +155,12 @@ class StopDetailsViewModel(
             predictionsRepository,
             errorBannerRepository,
             ::onJoinMessage,
-            ::onPushMessage
+            ::onPushMessage,
         )
+
+    fun setGlobalResponse(globalResponse: GlobalResponse?) {
+        _globalResponse.value = globalResponse
+    }
 
     fun loadStopDetails(stopId: String) {
         _stopData.value = StopData(stopId, null, null, false)
@@ -173,7 +184,7 @@ class StopDetailsViewModel(
                         it.schedules,
                         (it.predictionsByStop ?: PredictionsByStopJoinResponse(message))
                             .mergePredictions(message),
-                        true
+                        true,
                     )
                 }
             }
@@ -272,12 +283,24 @@ class StopDetailsViewModel(
         _alertSummaries.value = alertSummaries
     }
 
-    fun setDepartures(departures: StopDetailsDepartures?) {
-        _stopDepartures.value = departures
-    }
-
     fun setRouteCardData(routeCardData: List<RouteCardData>?) {
         _routeCardData.value = routeCardData
+    }
+
+    fun clearFilteredRouteStopData() {
+        _filteredRouteStopData.value = null
+    }
+
+    fun setFilteredRouteStopData(stopData: RouteCardData.RouteStopData) {
+        _filteredRouteStopData.value = stopData
+    }
+
+    private fun clearUnfilteredRouteCardData() {
+        _unfilteredRouteCardData.value = null
+    }
+
+    fun setUnfilteredRouteCardData(routeCardData: List<RouteCardData>) {
+        _unfilteredRouteCardData.value = routeCardData
     }
 
     private fun clearStopDetails() {
@@ -298,7 +321,7 @@ class StopDetailsViewModel(
     fun getTripDetailsStopList(
         tripFilter: TripDetailsFilter?,
         allAlerts: AlertsStreamDataResponse?,
-        globalResponse: GlobalResponse?
+        globalResponse: GlobalResponse?,
     ): StateFlow<TripDetailsStopList?> {
         val tripData = this.tripData.collectAsState().value
         LaunchedEffect(tripFilter, tripData, allAlerts, globalResponse) {
@@ -311,13 +334,12 @@ class StopDetailsViewModel(
                         globalResponse != null
                 ) {
                     TripDetailsStopList.fromPieces(
-                        tripFilter.tripId,
-                        tripData.trip.directionId,
+                        tripData.trip,
                         tripData.tripSchedules,
                         tripData.tripPredictions,
                         tripData.vehicle,
                         allAlerts,
-                        globalResponse
+                        globalResponse,
                     )
                 } else {
                     null
@@ -350,7 +372,7 @@ class StopDetailsViewModel(
                     trip = trip,
                     tripSchedules = schedules,
                     tripPredictions = null,
-                    vehicle = null
+                    vehicle = null,
                 )
             }
         }
@@ -385,7 +407,7 @@ class StopDetailsViewModel(
                     "TripDetailsView.loadTripSchedules",
                     { tripRepository.getTripSchedules(tripFilter.tripId) },
                     { schedules -> result = schedules },
-                    { clearAndLoadTripDetails(tripFilter) }
+                    { clearAndLoadTripDetails(tripFilter) },
                 )
                 result
             }
@@ -394,6 +416,8 @@ class StopDetailsViewModel(
 
     fun handleStopChange(stopId: String?) {
         clearStopDetails()
+        clearFilteredRouteStopData()
+        clearUnfilteredRouteCardData()
 
         if (stopId != null) {
             loadStopDetails(stopId)
@@ -513,7 +537,7 @@ fun stopDetailsManagedVM(
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    clock: Clock = koinInject()
+    clock: Clock = koinInject(),
 ): StopDetailsViewModel {
     val now = now ?: clock.now()
     val stopId = filters?.stopId
@@ -521,10 +545,17 @@ fun stopDetailsManagedVM(
 
     val stopData by viewModel.stopData.collectAsState()
 
-    val groupByDirection = SettingsCache.get(Settings.GroupByDirection)
-    val departures by viewModel.stopDepartures.collectAsState()
+    val routeCardData by viewModel.routeCardData.collectAsState()
 
     var wasInBackground by rememberSaveable { mutableStateOf(false) }
+
+    fun stopDataForRoute(
+        routeId: String,
+        routeCardData: List<RouteCardData>?,
+    ): RouteCardData.RouteStopData? =
+        if (routeCardData.hasContext(RouteCardData.Context.StopDetailsFiltered))
+            routeCardData?.find { it.lineOrRoute.id == routeId }?.stopData?.get(0)
+        else null
 
     LaunchedEffect(stopId) { viewModel.handleStopChange(stopId) }
     LaunchedEffect(filters?.tripFilter) { viewModel.handleTripFilterChange(filters?.tripFilter) }
@@ -546,87 +577,71 @@ fun stopDetailsManagedVM(
         }
     }
 
+    LaunchedEffect(globalResponse) { viewModel.setGlobalResponse(globalResponse) }
+
     LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
         val schedules = stopData?.schedules
-        viewModel.setDepartures(
-            if (
-                globalResponse != null &&
-                    stopId != null &&
-                    stopId == stopData?.stopId &&
-                    schedules != null &&
-                    stopData?.predictionsLoaded == true
-            ) {
-                StopDetailsDepartures.fromData(
-                    stopId,
-                    globalResponse,
-                    schedules,
-                    stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
-                    alertData,
-                    pinnedRoutes,
-                    now,
-                    coroutineDispatcher
-                )
-            } else null
-        )
-    }
-
-    LaunchedEffect(
-        groupByDirection,
-        stopId,
-        globalResponse,
-        stopData,
-        filters,
-        alertData,
-        pinnedRoutes,
-        now
-    ) {
-        if (groupByDirection) {
-            val schedules = stopData?.schedules
-            withContext(Dispatchers.Default) {
-                viewModel.setRouteCardData(
-                    if (
-                        globalResponse != null &&
-                            stopId != null &&
-                            stopId == stopData?.stopId &&
-                            schedules != null &&
-                            stopData?.predictionsLoaded == true
-                    ) {
-                        RouteCardData.routeCardsForStopList(
-                            listOf(stopId) + globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
-                            globalResponse,
-                            sortByDistanceFrom = null,
-                            schedules,
-                            stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
-                            alertData,
-                            now,
-                            pinnedRoutes,
-                            context =
-                                if (filters.stopFilter != null)
-                                    RouteCardData.Context.StopDetailsFiltered
-                                else RouteCardData.Context.StopDetailsUnfiltered
-                        )
-                    } else null
-                )
-            }
+        withContext(Dispatchers.Default) {
+            viewModel.setRouteCardData(
+                if (
+                    globalResponse != null &&
+                        stopId != null &&
+                        stopId == stopData?.stopId &&
+                        schedules != null &&
+                        stopData?.predictionsLoaded == true
+                ) {
+                    RouteCardData.routeCardsForStopList(
+                        listOf(stopId) + globalResponse.getStop(stopId)?.childStopIds.orEmpty(),
+                        globalResponse,
+                        sortByDistanceFrom = null,
+                        schedules,
+                        stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
+                        alertData,
+                        now,
+                        pinnedRoutes,
+                        context =
+                            if (filters.stopFilter != null)
+                                RouteCardData.Context.StopDetailsFiltered
+                            else RouteCardData.Context.StopDetailsUnfiltered,
+                    )
+                } else null
+            )
         }
     }
 
-    LaunchedEffect(key1 = timer) { viewModel.checkStopPredictionsStale() }
+    LaunchedEffect(timer) { viewModel.checkStopPredictionsStale() }
 
     LaunchedEffect(filters) {
         if (filters != null) {
             val autoTripFilter =
-                departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
+                StopDetailsUtils.autoTripFilter(
+                    routeCardData,
+                    filters.stopFilter,
+                    filters.tripFilter,
+                    now,
+                    globalResponse,
+                )
 
             if (autoTripFilter != filters.tripFilter) {
                 updateTripFilter(filters.stopId, autoTripFilter)
             }
         }
+
+        // If a route ID filter exists, we want to update the filtered stop data for that route,
+        // if not, we want to clear any previously set filtered stop data
+        val filteredRouteId = filters?.stopFilter?.routeId
+        if (filteredRouteId != null) {
+            stopDataForRoute(filteredRouteId, routeCardData)?.let { stopData ->
+                viewModel.setFilteredRouteStopData(stopData)
+            }
+        } else {
+            viewModel.clearFilteredRouteStopData()
+        }
     }
 
-    LaunchedEffect(departures) {
-        if (filters != null && departures != null) {
-            val stopFilter = filters.stopFilter ?: departures?.autoStopFilter()
+    LaunchedEffect(routeCardData) {
+        if (filters != null && routeCardData != null) {
+            val stopFilter = filters.stopFilter ?: StopDetailsUtils.autoStopFilter(routeCardData)
 
             if (stopFilter != filters.stopFilter) {
                 updateStopFilter(filters.stopId, stopFilter)
@@ -635,10 +650,31 @@ fun stopDetailsManagedVM(
             // to ensure that tripFilter doesn't overwrite the new stopFilter
             if (filters.stopFilter == stopFilter) {
                 val autoTripFilter =
-                    departures?.autoTripFilter(filters.stopFilter, filters.tripFilter, now)
+                    StopDetailsUtils.autoTripFilter(
+                        routeCardData,
+                        filters.stopFilter,
+                        filters.tripFilter,
+                        now,
+                        globalResponse,
+                    )
 
                 if (autoTripFilter != filters.tripFilter) {
                     updateTripFilter(filters.stopId, autoTripFilter)
+                }
+            }
+        }
+
+        // If a route ID filter exists, we want to update the filtered stop data for that route,
+        // otherwise, update the unfiltered route card data.
+        val filteredRouteId = filters?.stopFilter?.routeId
+        if (filteredRouteId != null) {
+            stopDataForRoute(filteredRouteId, routeCardData)?.let { stopData ->
+                viewModel.setFilteredRouteStopData(stopData)
+            }
+        } else {
+            routeCardData?.let {
+                if (it.hasContext(RouteCardData.Context.StopDetailsUnfiltered)) {
+                    viewModel.setUnfilteredRouteCardData(it)
                 }
             }
         }

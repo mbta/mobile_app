@@ -1,11 +1,6 @@
 package com.mbta.tid.mbta_app.utils
 
-import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.NearbyStaticData
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteSegment
-import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -14,141 +9,22 @@ typealias RouteWithSegmentedShapes = MapFriendlyRouteResponse.RouteWithSegmented
 
 class GreenLineTestHelper {
     companion object {
+        val objects = TestData.clone()
+        val line = objects.getLine("line-Green")
+        val routeB = objects.getRoute("Green-B")
+        val routeC = objects.getRoute("Green-C")
+        val routeE = objects.getRoute("Green-E")
 
-        val objects = ObjectCollectionBuilder()
+        val stopArlington = objects.getStop("place-armnl")
+        val stopEastbound = objects.getStop("70156")
+        val stopWestbound = objects.getStop("70157")
 
-        val line = objects.line { id = "line-Green" }
-
-        val routeB =
-            objects.route {
-                id = "Green-B"
-                type = RouteType.LIGHT_RAIL
-                shortName = "B"
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
-            }
-
-        val routeC =
-            objects.route {
-                id = "Green-C"
-                type = RouteType.LIGHT_RAIL
-                shortName = "C"
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
-            }
-
-        val routeE =
-            objects.route {
-                id = "Green-E"
-                type = RouteType.LIGHT_RAIL
-                shortName = "E"
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath Street", "Park St & North")
-            }
-
-        val stopArlington =
-            objects.stop {
-                id = "place-armnl"
-                name = "Arlington"
-                childStopIds = listOf("70156", "70157")
-            }
-
-        val stopEastbound =
-            objects.stop {
-                id = "70156"
-                name = "Arlington"
-                description = "Arlington - Green Line - Park Street & North"
-                parentStationId = "place-armnl"
-            }
-
-        val stopWestbound =
-            objects.stop {
-                id = "70157"
-                name = "Arlington"
-                description = "Arlington - Green Line - Copley & West"
-                parentStationId = "place-armnl"
-            }
-
-        val rpB0 =
-            objects.routePattern(routeB) {
-                id = "Green-B-812-0"
-                sortOrder = 100_320_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    headsign = "Boston College"
-                    directionId = 0
-                    stopIds = listOf(stopWestbound.id)
-                }
-            }
-
-        val rpB1 =
-            objects.routePattern(routeB) {
-                id = "Green-B-812-1"
-                sortOrder = 100_321_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-                representativeTrip {
-                    headsign = "Government Center"
-                    directionId = 1
-                    stopIds = listOf(stopEastbound.id)
-                }
-            }
-
-        val rpC0 =
-            objects.routePattern(routeC) {
-                id = "Green-C-832-0"
-                sortOrder = 100_330_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    headsign = "Cleveland Circle"
-                    directionId = 0
-                    stopIds = listOf(stopWestbound.id)
-                }
-            }
-
-        val rpC1 =
-            objects.routePattern(routeC) {
-                id = "Green-C-832-1"
-                sortOrder = 100_331_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-                representativeTrip {
-                    headsign = "Government Center"
-                    directionId = 1
-                    stopIds = listOf(stopEastbound.id)
-                }
-            }
-
-        val rpE0 =
-            objects.routePattern(routeE) {
-                id = "Green-E-886-0"
-                sortOrder = 100_350_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 0
-                representativeTrip {
-                    headsign = "Heath Street"
-                    directionId = 0
-                    stopIds = listOf(stopWestbound.id)
-                }
-            }
-
-        val rpE1 =
-            objects.routePattern(routeE) {
-                id = "Green-E-886-1"
-                sortOrder = 100_351_000
-                typicality = RoutePattern.Typicality.Typical
-                directionId = 1
-                representativeTrip {
-                    headsign = "Medford/Tufts"
-                    directionId = 1
-                    stopIds = listOf(stopEastbound.id)
-                }
-            }
+        val rpB0 = objects.getRoutePattern("Green-B-812-0")
+        val rpB1 = objects.getRoutePattern("Green-B-812-1")
+        val rpC0 = objects.getRoutePattern("Green-C-832-0")
+        val rpC1 = objects.getRoutePattern("Green-C-832-1")
+        val rpE0 = objects.getRoutePattern("Green-E-886-0")
+        val rpE1 = objects.getRoutePattern("Green-E-886-1")
 
         val shapeB0 =
             objects.shape {
@@ -192,29 +68,6 @@ class GreenLineTestHelper {
                     "awyaG|~`qLZSLKNMl@a@jCeBpCkBhDaCrA}@NKzAgA^Uz@k@bAs@f@_@f@]TOf@]d@Yb@[f@]`@YRM\\W~@k@bAo@n@c@j@c@d@[JG??l@a@v@i@~@o@^Wx@i@l@c@v@g@b@[l@a@bAq@r@i@r@e@fBmALK`@Yh@]x@i@POJGf@]d@[f@]`@Wp@e@z@k@bAs@z@m@TM??DEp@a@p@g@TQr@u@z@}@l@m@r@_AJQZi@n@eAl@eAZm@`@aANe@xAwDhCsHd@sA`A_Dj@wAX}@j@yAz@yBDO??h@yAv@}B`B{En@eBbAwBdAqBj@w@r@_ApAwAt@q@j@q@jAqAhBoAhA{@rDgDzH}HzCyC??zByBd@o@`AsAr@{@vKeK~@_AbAeAz@_A^g@LYN_@H[Z{@d@aA\\i@V]XS~@_@PE`@Gd@SXSx@w@r@w@n@_BlEkLTgAVkAPk@Zi@T[NOVQ\\Y??@?n@a@tAkBr@oBN_@rBgFv@kBpA_DjBoEdBmEn@{A@C??z@iCvAgDDMd@kAPe@Ti@To@Rq@Ru@TuAJcAJs@^aC\\_ABO@OCc@Ea@Mm@g@}AcB_FK[CWCi@?SBOFQtCsCNO??lIkHxAcBLQh@c@LIZQ??NGREZC`@I`GSf@AT@TNtE|Dp@n@PPRN??XVZTdElCt@p@tB~Bn@t@`@b@VPTXp@z@??T\\z@dAZ^^b@VZh@b@n@\\\\BXNp@TfBv@RH`@PPFNPh@R`@T\\LB@??tAZHJDJBLB^Y`LJbBRbCd@bDvArI??F^bJng@??Lr@^`CXbBX`AHRPFlBg@NBhHhAv@Z^XV\\xEzG^h@??RXxMfQ??l@v@`@f@~C|DfAzAVd@d@`ANd@Pl@\\jAXbAr@xB??Ph@f@~AzAbFHVp@bCp@|B^nAT`AfAxDX`A~A`FXhA??d@dBbB~F|B|Hl@|Bj@dB??JZNh@\\dAj@lBLj@l@lCRv@|AtFDNj@nBPh@DL??Rr@Nh@`@dAZr@??HPNX\\|@Nh@Lp@Dd@?Z?pA@tCB~@?v@@v@?v@@l@D^??@L@FFXH`@Xt@N^L\\n@nAZh@T`@P\\PZPXDDD@ZGTI??tDcA~Bq@??VG`Bo@fAa@d@Uf@Bd@CT?b@MBa@CYG]"
             }
 
-        val nearbyData =
-            NearbyStaticData.build {
-                line(line, listOf(routeB, routeC, routeE)) {
-                    stop(
-                        stopArlington,
-                        listOf(routeB, routeC, routeE),
-                        listOf(stopEastbound.id, stopWestbound.id)
-                    ) {
-                        direction(
-                            Direction("West", "Kenmore & West", 0),
-                            listOf(routeB, routeC),
-                            listOf(rpB0, rpC0)
-                        )
-                        headsign(routeE, "Heath Street", listOf(rpE0))
-                        direction(
-                            Direction("East", "Park St & North", 1),
-                            listOf(routeB, routeC, routeE),
-                            listOf(rpB1, rpC1, rpE1)
-                        )
-                    }
-                }
-            }
-
         val stopMapResponse =
             StopMapResponse(
                 listOf(
@@ -234,12 +87,12 @@ class GreenLineTestHelper {
                                             "place-gover",
                                             "place-pktrm",
                                             stopArlington.id,
-                                            "place-lake"
+                                            "place-lake",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeB0
+                                shapeB0,
                             ),
                             SegmentedRouteShape(
                                 rpB1.id,
@@ -254,14 +107,14 @@ class GreenLineTestHelper {
                                             "place-lake",
                                             stopArlington.id,
                                             "place-pktrm",
-                                            "place-gover"
+                                            "place-gover",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeB1
+                                shapeB1,
                             ),
-                        )
+                        ),
                     ),
                     RouteWithSegmentedShapes(
                         routeC.id,
@@ -279,12 +132,12 @@ class GreenLineTestHelper {
                                             "place-gover",
                                             "place-pktrm",
                                             stopArlington.id,
-                                            "place-clmnl"
+                                            "place-clmnl",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeC0
+                                shapeC0,
                             ),
                             SegmentedRouteShape(
                                 rpC1.id,
@@ -299,14 +152,14 @@ class GreenLineTestHelper {
                                             "place-clmnl",
                                             stopArlington.id,
                                             "place-pktrm",
-                                            "place-gover"
+                                            "place-gover",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeC1
+                                shapeC1,
                             ),
-                        )
+                        ),
                     ),
                     RouteWithSegmentedShapes(
                         routeE.id,
@@ -324,12 +177,12 @@ class GreenLineTestHelper {
                                             "place-gover",
                                             "place-pktrm",
                                             stopArlington.id,
-                                            "place-hsmnl"
+                                            "place-hsmnl",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeE0
+                                shapeE0,
                             ),
                             SegmentedRouteShape(
                                 rpE1.id,
@@ -344,17 +197,17 @@ class GreenLineTestHelper {
                                             "place-hsmnl",
                                             stopArlington.id,
                                             "place-pktrm",
-                                            "place-gover"
+                                            "place-gover",
                                         ),
-                                        emptyMap()
+                                        emptyMap(),
                                     )
                                 ),
-                                shapeE1
+                                shapeE1,
                             ),
-                        )
-                    )
+                        ),
+                    ),
                 ),
-                emptyMap()
+                emptyMap(),
             )
     }
 }

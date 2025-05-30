@@ -52,7 +52,7 @@ internal fun <T> Modifier.draggableAnchors(
 private class DraggableAnchorsElement<T>(
     private val state: AnchoredDraggableState<T>,
     private val anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
-    private val orientation: Orientation
+    private val orientation: Orientation,
 ) : ModifierNodeElement<DraggableAnchorsNode<T>>() {
     override fun create() = DraggableAnchorsNode(state, anchors, orientation)
 
@@ -95,7 +95,7 @@ private class DraggableAnchorsElement<T>(
 private class DraggableAnchorsNode<T>(
     var state: AnchoredDraggableState<T>,
     var anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
-    var orientation: Orientation
+    var orientation: Orientation,
 ) : Modifier.Node(), LayoutModifierNode {
     private var didLookahead: Boolean = false
 
@@ -105,7 +105,7 @@ private class DraggableAnchorsNode<T>(
 
     override fun MeasureScope.measure(
         measurable: Measurable,
-        constraints: Constraints
+        constraints: Constraints,
     ): MeasureResult {
         val placeable = measurable.measure(constraints)
         // If we are in a lookahead pass, we only want to update the anchors here and not in

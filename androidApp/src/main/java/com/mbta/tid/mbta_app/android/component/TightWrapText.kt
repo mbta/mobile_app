@@ -45,6 +45,6 @@ fun TightWrapText(text: String, modifier: Modifier = Modifier, style: TextStyle 
                 }
             },
         onTextLayout = { textLayoutResult = it },
-        style = style
+        style = style,
     )
 }

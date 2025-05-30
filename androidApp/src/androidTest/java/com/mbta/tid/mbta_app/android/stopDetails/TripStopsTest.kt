@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.Alert
@@ -73,7 +74,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -81,9 +82,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -91,9 +91,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3Target,
@@ -101,9 +100,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3Target,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop4,
@@ -111,9 +109,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule4,
                         prediction4,
-                        stop4,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop5,
@@ -121,11 +118,10 @@ class TripStopsTest {
                         disruption = null,
                         schedule5,
                         prediction5,
-                        stop5,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -139,7 +135,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -194,7 +190,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -202,9 +198,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2,
@@ -212,9 +207,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -222,11 +216,10 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -240,7 +233,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -296,13 +289,12 @@ class TripStopsTest {
                 disruption = null,
                 schedule1,
                 prediction1,
-                stop1,
-                vehicle,
-                listOf(route)
+                vehicle = vehicle,
+                routes = listOf(route),
             )
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     firstStop,
                     TripDetailsStopList.Entry(
@@ -311,12 +303,11 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
-                startTerminalEntry = firstStop
+                startTerminalEntry = firstStop,
             )
 
         composeTestRule.setContent {
@@ -330,7 +321,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -387,13 +378,12 @@ class TripStopsTest {
                 disruption = null,
                 schedule1,
                 prediction1,
-                stop1,
-                vehicle,
-                listOf(route)
+                vehicle = vehicle,
+                routes = listOf(route),
             )
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     firstStop,
                     TripDetailsStopList.Entry(
@@ -402,9 +392,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -412,12 +401,11 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                 ),
-                startTerminalEntry = firstStop
+                startTerminalEntry = firstStop,
             )
 
         composeTestRule.setContent {
@@ -431,7 +419,7 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
@@ -440,7 +428,114 @@ class TripStopsTest {
     }
 
     @Test
-    fun testDownstreamAlert() {
+    fun testDownstreamShuttleAlert() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val pattern = objects.routePattern(route)
+        val trip = objects.trip(pattern)
+
+        val stop1 = objects.stop { name = "Stop A" }
+        val stop2Target = objects.stop { name = "Stop B" }
+        val stop3 = objects.stop { name = "Stop C" }
+
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+
+        val vehicle =
+            objects.vehicle {
+                tripId = trip.id
+                routeId = route.id
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                stopId = stop1.id
+            }
+
+        fun makeSchedule(stop: Stop) =
+            objects.schedule {
+                routeId = route.id
+                stopId = stop.id
+                this.trip = trip
+            }
+
+        var predictionTime = now
+        fun makePrediction(schedule: Schedule): Prediction {
+            predictionTime += 5.seconds
+            return objects.prediction(schedule) {
+                departureTime = predictionTime
+                vehicleId = vehicle.id
+            }
+        }
+
+        val schedule1 = makeSchedule(stop1)
+        val prediction1 = makePrediction(schedule1)
+        val schedule2 = makeSchedule(stop2Target)
+        val prediction2 = makePrediction(schedule2)
+        val schedule3 = makeSchedule(stop3)
+        val prediction3 = makePrediction(schedule3)
+
+        val stops =
+            TripDetailsStopList(
+                trip,
+                listOf(
+                    TripDetailsStopList.Entry(
+                        stop1,
+                        stopSequence = 1,
+                        disruption = null,
+                        schedule1,
+                        prediction1,
+                        vehicle = vehicle,
+                        routes = listOf(route),
+                    ),
+                    TripDetailsStopList.Entry(
+                        stop2Target,
+                        stopSequence = 2,
+                        disruption = null,
+                        schedule2,
+                        prediction2,
+                        vehicle = vehicle,
+                        routes = listOf(route),
+                    ),
+                    TripDetailsStopList.Entry(
+                        stop3,
+                        stopSequence = 3,
+                        disruption = UpcomingFormat.Disruption(alert, null),
+                        schedule3,
+                        prediction3,
+                        vehicle = vehicle,
+                        routes = listOf(route),
+                    ),
+                ),
+            )
+
+        composeTestRule.setContent {
+            TripStops(
+                targetId = stop2Target.id,
+                stops,
+                stopSequence = 1,
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop1, null, false),
+                now,
+                onTapLink = {},
+                onOpenAlertDetails = {},
+                routeAccents = TripRouteAccents(route),
+                alertSummaries =
+                    mapOf(
+                        alert.id to
+                            AlertSummary(
+                                alert.effect,
+                                AlertSummary.Location.SingleStop(stop3.name),
+                                AlertSummary.Timeframe.EndOfService,
+                            )
+                    ),
+                global = GlobalResponse(objects),
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("Shuttle buses at Stop C through end of service")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testDownstreamClosureAlert() {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
@@ -486,7 +581,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -494,9 +589,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -504,9 +598,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2Target,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -514,11 +607,10 @@ class TripStopsTest {
                         disruption = UpcomingFormat.Disruption(alert, null),
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -537,16 +629,16 @@ class TripStopsTest {
                             AlertSummary(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService
+                                AlertSummary.Timeframe.EndOfService,
                             )
                     ),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 
         composeTestRule
             .onNodeWithText("Stop closed at Stop C through end of service")
-            .assertIsDisplayed()
+            .assertIsNotDisplayed()
     }
 
     @Test
@@ -596,7 +688,7 @@ class TripStopsTest {
 
         val stops =
             TripDetailsStopList(
-                trip.id,
+                trip,
                 listOf(
                     TripDetailsStopList.Entry(
                         stop1,
@@ -604,9 +696,8 @@ class TripStopsTest {
                         disruption = UpcomingFormat.Disruption(alert, null),
                         schedule1,
                         prediction1,
-                        stop1,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop2Target,
@@ -614,9 +705,8 @@ class TripStopsTest {
                         disruption = null,
                         schedule2,
                         prediction2,
-                        stop2Target,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
                     TripDetailsStopList.Entry(
                         stop3,
@@ -624,11 +714,10 @@ class TripStopsTest {
                         disruption = null,
                         schedule3,
                         prediction3,
-                        stop3,
-                        vehicle,
-                        listOf(route)
+                        vehicle = vehicle,
+                        routes = listOf(route),
                     ),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -647,10 +736,10 @@ class TripStopsTest {
                             AlertSummary(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop1.name),
-                                AlertSummary.Timeframe.EndOfService
+                                AlertSummary.Timeframe.EndOfService,
                             )
                     ),
-                global = GlobalResponse(objects)
+                global = GlobalResponse(objects),
             )
         }
 

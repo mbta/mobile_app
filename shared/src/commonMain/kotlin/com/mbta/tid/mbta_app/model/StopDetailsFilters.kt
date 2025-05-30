@@ -14,7 +14,7 @@ data class StopDetailsFilter
 constructor(
     override val routeId: String,
     override val directionId: Int,
-    val autoFilter: Boolean = false
+    val autoFilter: Boolean = false,
 ) : RouteDirection {
     companion object {
         /**
@@ -25,7 +25,7 @@ constructor(
          */
         fun shouldPopLastStopEntry(
             lastFilter: StopDetailsFilter?,
-            newFilter: StopDetailsFilter?
+            newFilter: StopDetailsFilter?,
         ): Boolean {
             return (lastFilter != null) || (lastFilter == null && newFilter?.autoFilter == true)
         }
@@ -39,12 +39,12 @@ data class TripDetailsFilter(
     val stopSequence: Int?,
     // This is true when manually selecting a vehicle, so that stop details continues focusing on
     // a vehicle selected from the map, even after the prediction for that vehicle isn't displayed
-    val selectionLock: Boolean = false
+    val selectionLock: Boolean = false,
 )
 
 @Serializable
 data class StopDetailsPageFilters(
     val stopId: String,
     val stopFilter: StopDetailsFilter?,
-    val tripFilter: TripDetailsFilter?
+    val tripFilter: TripDetailsFilter?,
 )

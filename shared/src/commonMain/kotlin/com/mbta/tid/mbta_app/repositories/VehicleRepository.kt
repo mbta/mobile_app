@@ -22,7 +22,7 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
 
     override fun connect(
         vehicleId: String,
-        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit,
     ) {
         disconnect()
         channel = socket.getChannel(VehicleChannel.topic(vehicleId), emptyMap())
@@ -51,7 +51,7 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit,
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -76,11 +76,11 @@ class MockVehicleRepository
 constructor(
     var onConnect: () -> Unit = {},
     var onDisconnect: () -> Unit = {},
-    private val outcome: ApiResult<VehicleStreamDataResponse>? = null
+    private val outcome: ApiResult<VehicleStreamDataResponse>? = null,
 ) : IVehicleRepository {
     override fun connect(
         vehicleId: String,
-        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit,
     ) {
         outcome?.let { onReceive(it) }
         onConnect()

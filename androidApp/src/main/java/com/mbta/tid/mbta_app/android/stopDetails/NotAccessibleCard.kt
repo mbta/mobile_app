@@ -29,11 +29,11 @@ fun NotAccessibleCard() {
     Column(
         modifier = Modifier.haloContainer(2.dp).padding(horizontal = 12.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 painterResource(R.drawable.accessibility_icon_not_accessible),
@@ -42,12 +42,12 @@ fun NotAccessibleCard() {
                     Modifier.size(36.dp)
                         .placeholderIfLoading()
                         .testTag("wheelchair_not_accessible")
-                        .clearAndSetSemantics {}
+                        .clearAndSetSemantics {},
             )
             Text(
                 stringResource(R.string.not_accessible_stop_card),
                 Modifier.weight(1f),
-                style = Typography.callout
+                style = Typography.callout,
             )
         }
     }

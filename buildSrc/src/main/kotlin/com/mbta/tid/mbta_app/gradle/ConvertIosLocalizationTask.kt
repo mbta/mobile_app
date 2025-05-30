@@ -85,7 +85,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                 ?.mapNotNull {
                     Pair(
                         convertIosTemplate(it.key),
-                        it.value.resource()?.convertIosTemplate() ?: return@mapNotNull null
+                        it.value.resource()?.convertIosTemplate() ?: return@mapNotNull null,
                     )
                 }
                 ?.toMap()
@@ -157,7 +157,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         two,
         few,
         many,
-        other
+        other,
     }
 
     /** @return A map from IDs to resources. */

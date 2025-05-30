@@ -28,7 +28,7 @@ class TripRepositoryTest : KoinTest {
         val mockEngine = MockEngine {
             respond(
                 """{"type": "stop_ids", "stop_ids": ["1", "2", "3"]}""",
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -41,7 +41,7 @@ class TripRepositoryTest : KoinTest {
 
             assertEquals(
                 ApiResult.Ok(TripSchedulesResponse.StopIds(listOf("1", "2", "3"))),
-                response
+                response,
             )
         }
 
@@ -64,7 +64,7 @@ class TripRepositoryTest : KoinTest {
               }
           """
                     .trimIndent(),
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -84,11 +84,11 @@ class TripRepositoryTest : KoinTest {
                                 routeId = "66",
                                 routePatternId = "66_rp",
                                 shape = Shape(id = "shape_id", polyline = "shape_polyline"),
-                                stopIds = listOf("1", "2", "3")
+                                stopIds = listOf("1", "2", "3"),
                             )
                     )
                 ),
-                response
+                response,
             )
         }
 
@@ -107,7 +107,7 @@ class TripRepositoryTest : KoinTest {
           """
                     .trimIndent(),
                 status = HttpStatusCode.NotFound,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 
@@ -133,7 +133,7 @@ class TripRepositoryTest : KoinTest {
                 """{"field": "Can't parse me!"}
                     """
                     .trimIndent(),
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
         }
 

@@ -24,6 +24,7 @@ import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -47,7 +48,7 @@ fun TripDetailsView(
     openModal: (ModalRoutes) -> Unit,
     now: Instant,
     analytics: Analytics = koinInject(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
@@ -66,7 +67,7 @@ fun TripDetailsView(
             routeId = tripData?.trip?.routeId ?: "",
             stopId = parentStationId,
             tripId = tripFilter?.tripId ?: "",
-            connectingRouteId = null
+            connectingRouteId = null,
         )
     }
 
@@ -106,7 +107,7 @@ fun TripDetailsView(
             }
 
         TripDetailsView(
-            tripId,
+            tripData.trip,
             headerSpec,
             onHeaderTap,
             ::onTapStop,
@@ -119,12 +120,12 @@ fun TripDetailsView(
             alertSummaries,
             globalResponse,
             showStationAccessibility,
-            modifier
+            modifier,
         )
     } else {
         val placeholderTripInfo = LoadingPlaceholders.tripDetailsInfo()
-        val placeholderTripStops = LoadingPlaceholders.tripDetailsStops()
-        val placeholderTripId = placeholderTripInfo.vehicle.tripId ?: ""
+        val placeholderTripStops = placeholderTripInfo.stops
+        val placeholderTripId = placeholderTripInfo.trip.id
 
         val placeholderHeaderSpec =
             TripHeaderSpec.getSpec(
@@ -132,14 +133,14 @@ fun TripDetailsView(
                 placeholderTripInfo.stops,
                 null,
                 placeholderTripInfo.vehicle,
-                placeholderTripInfo.vehicleStop
+                placeholderTripInfo.vehicleStop,
             )
         val placeholderRouteAccents = TripRouteAccents(placeholderTripInfo.route)
 
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = modifier.loadingShimmer()) {
                 TripDetailsView(
-                    placeholderTripId,
+                    placeholderTripInfo.trip,
                     placeholderHeaderSpec,
                     null,
                     onTapStop = {},
@@ -151,7 +152,7 @@ fun TripDetailsView(
                     now,
                     emptyMap(),
                     globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
-                    showStationAccessibility
+                    showStationAccessibility,
                 )
             }
         }
@@ -160,7 +161,7 @@ fun TripDetailsView(
 
 @Composable
 private fun TripDetailsView(
-    tripId: String,
+    trip: Trip,
     headerSpec: TripHeaderSpec?,
     onHeaderTap: (() -> Unit)?,
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
@@ -173,20 +174,20 @@ private fun TripDetailsView(
     alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
     showStationAccessibility: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         DebugView {
             Column(
                 Modifier.align(Alignment.CenterHorizontally),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text("trip id: ${tripFilter?.tripId ?: "null"}")
                 Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
             }
         }
         Column(Modifier.zIndex(1F)) {
-            TripHeaderCard(tripId, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
+            TripHeaderCard(trip, headerSpec, stopId, routeAccents, now, onTap = onHeaderTap)
         }
         Column(Modifier.offset(y = (-16).dp)) {
             TripStops(
@@ -200,7 +201,7 @@ private fun TripDetailsView(
                 onTapStop,
                 onOpenAlertDetails,
                 routeAccents,
-                showStationAccessibility
+                showStationAccessibility,
             )
         }
     }

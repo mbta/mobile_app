@@ -33,7 +33,7 @@ class ErrorBannerTests {
         errorRepo.mutableFlow.tryEmit(
             ErrorBannerState.StalePredictions(
                 lastUpdated = Clock.System.now().minus(2.minutes),
-                action = {}
+                action = {},
             )
         )
 
@@ -76,7 +76,7 @@ class ErrorBannerTests {
                 state =
                     ErrorBannerState.StalePredictions(
                         lastUpdated = Clock.System.now().minus(2.minutes),
-                        action = {}
+                        action = {},
                     )
             )
         val staleVM = ErrorBannerViewModel(false, staleRepo)
@@ -95,7 +95,7 @@ class ErrorBannerTests {
                 state =
                     ErrorBannerState.StalePredictions(
                         lastUpdated = Clock.System.now().minus(1.minutes),
-                        action = {}
+                        action = {},
                     )
             )
         val staleVM = ErrorBannerViewModel(false, staleRepo)
@@ -114,7 +114,7 @@ class ErrorBannerTests {
                 state =
                     ErrorBannerState.StalePredictions(
                         lastUpdated = Clock.System.now().minus(2.minutes),
-                        action = {}
+                        action = {},
                     )
             )
         val staleVM = ErrorBannerViewModel(true, staleRepo)

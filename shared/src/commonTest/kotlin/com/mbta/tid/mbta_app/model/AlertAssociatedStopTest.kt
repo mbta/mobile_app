@@ -26,13 +26,13 @@ class AlertAssociatedStopTest {
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     routeType = route.type,
-                    stop = platform1!!.id
+                    stop = platform1!!.id,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     route = route.id,
                     routeType = route.type,
-                    stop = stop.id
+                    stop = stop.id,
                 )
             }
 
@@ -45,9 +45,9 @@ class AlertAssociatedStopTest {
                     objects,
                     mapOf(
                         platform1!!.id to listOf(routePattern.id),
-                        platform2!!.id to listOf(routePattern.id)
-                    )
-                )
+                        platform2!!.id to listOf(routePattern.id),
+                    ),
+                ),
             )
         assertEquals(mapOf(MapStopRoute.RED to StopAlertState.Shuttle), result.stateByRoute)
     }
@@ -83,10 +83,10 @@ class AlertAssociatedStopTest {
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                     route = route.id,
-                    routeType = route.type
+                    routeType = route.type,
                 )
             }
 

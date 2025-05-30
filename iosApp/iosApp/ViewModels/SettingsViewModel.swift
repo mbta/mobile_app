@@ -83,11 +83,8 @@ class SettingsViewModel: ObservableObject {
                     setting: .devDebugMode
                 ),
                 .toggle(
-                    label: NSLocalizedString(
-                        "Group by Direction",
-                        comment: "A setting on the More page to group departures by direction (only visible for developers)"
-                    ),
-                    setting: .groupByDirection
+                    label: "Enhanced Favorites",
+                    setting: .enhancedFavorites
                 ),
                 .toggle(
                     label: NSLocalizedString(

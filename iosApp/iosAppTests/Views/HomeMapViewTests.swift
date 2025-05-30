@@ -355,19 +355,27 @@ final class HomeMapViewTests: XCTestCase {
 
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
 
-        let nearbyVM: NearbyViewModel = .init(departures: StopDetailsDepartures(
-            routes: [.init(
-                route: MapTestDataHelper.shared.routeOrange, stop: stop,
-                patterns: [.ByHeadsign(
-                    route: MapTestDataHelper.shared.routeOrange,
-                    headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
-                    line: nil,
-                    patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
-                )],
-                elevatorAlerts: []
-            )]
-        ))
+        let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
+            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+            stopData: [
+                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
+                    .init(
+                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        stop: stop,
+                        directionId: 0,
+                        routePatterns: [MapTestDataHelper.shared.patternOrange30],
+                        stopIds: [stop.id],
+                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: [],
+                        context: .stopDetailsFiltered
+                    ),
+                ], globalData: .init(objects: objects)),
+            ],
+            at: Date.now.toKotlinInstant()
+        )])
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
@@ -447,19 +455,27 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.directionId = 0
         }
 
-        let nearbyVM: NearbyViewModel = .init(departures: StopDetailsDepartures(
-            routes: [.init(
-                route: MapTestDataHelper.shared.routeOrange, stop: stop,
-                patterns: [.ByHeadsign(
-                    route: MapTestDataHelper.shared.routeOrange,
-                    headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
-                    line: nil,
-                    patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
-                )],
-                elevatorAlerts: []
-            )]
-        ))
+        let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
+            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+            stopData: [
+                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
+                    .init(
+                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        stop: stop,
+                        directionId: 0,
+                        routePatterns: [MapTestDataHelper.shared.patternOrange30],
+                        stopIds: [stop.id],
+                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: [],
+                        context: .stopDetailsFiltered
+                    ),
+                ], globalData: .init(objects: objectCollection)),
+            ],
+            at: Date.now.toKotlinInstant()
+        )])
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(
             stopId: stop.id,

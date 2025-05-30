@@ -28,9 +28,9 @@ class ParametricTestTest {
                 listOf(false, false),
                 listOf(false, true),
                 listOf(true, false),
-                listOf(true, true)
+                listOf(true, true),
             ),
-            calls
+            calls,
         )
     }
 
@@ -38,7 +38,7 @@ class ParametricTestTest {
         A,
         B,
         C,
-        D
+        D,
     }
 
     @Test
@@ -63,7 +63,7 @@ class ParametricTestTest {
                 listOf<Any>(
                     anyBoolean(),
                     anyEnumValue<TestEnum>(),
-                    anyEnumValueExcept(TestEnum.A, TestEnum.B)
+                    anyEnumValueExcept(TestEnum.A, TestEnum.B),
                 )
             )
         }
@@ -86,7 +86,7 @@ class ParametricTestTest {
                 listOf(true, TestEnum.D, TestEnum.C),
                 listOf(true, TestEnum.D, TestEnum.D),
             ),
-            calls
+            calls,
         )
     }
 }

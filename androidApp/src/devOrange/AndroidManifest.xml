@@ -2,5 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <application
         android:label="MBTA Go Dev Orange"
-        tools:replace="android:label" />
+        tools:replace="android:label">
+        <activity android:name=".MainActivity" android:exported="true" tools:node="merge">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="mobile-app-backend-dev-orange.mbtace.com" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

@@ -14,14 +14,12 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -47,6 +45,7 @@ class StopDetailsViewTest {
             lineId = "line_1"
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
+    val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -108,52 +107,50 @@ class StopDetailsViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStopDetailsViewDisplaysUnfilteredCorrectly() {
+        val global = GlobalResponse(builder)
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
+        viewModel.setGlobalResponse(global)
+        viewModel.setUnfilteredRouteCardData(
+            listOf(
+                RouteCardData(
+                    lineOrRoute,
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route,
+                            stop,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
+                                RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
+                                    directionId = 0,
+                                    listOf(routePatternOne),
+                                    setOf(stop.id),
+                                    listOf(UpcomingTrip(trip, prediction)),
                                     alertsHere = emptyList(),
+                                    allDataLoaded = false,
+                                    hasSchedulesToday = true,
                                     alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
+                                    context = RouteCardData.Context.StopDetailsUnfiltered,
                                 )
-                            )
-                    )
+                            ),
+                            global,
+                        )
+                    ),
+                    now,
                 )
             )
         )
+
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    updateFavorites = {},
                     onClose = {},
                     stopFilter = null,
                     tripFilter = null,
@@ -161,13 +158,9 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                    errorBannerViewModel = errorBannerVM,
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -186,42 +179,30 @@ class StopDetailsViewTest {
     fun testStopDetailsViewDisplaysFilteredCorrectly() {
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
+        viewModel.setFilteredRouteStopData(
+            RouteCardData.RouteStopData(
+                route,
+                stop,
                 listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
-                                    alertsHere = emptyList(),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
-                                )
-                            )
+                    RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
+                        directionId = 0,
+                        listOf(routePatternOne),
+                        setOf(stop.id),
+                        listOf(UpcomingTrip(trip, prediction)),
+                        alertsHere = emptyList(),
+                        allDataLoaded = false,
+                        hasSchedulesToday = true,
+                        alertsDownstream = emptyList(),
+                        context = RouteCardData.Context.StopDetailsFiltered,
                     )
-                )
+                ),
+                GlobalResponse(builder),
             )
         )
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember {
@@ -230,8 +211,8 @@ class StopDetailsViewTest {
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    updateFavorites = {},
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -239,13 +220,9 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                    errorBannerViewModel = errorBannerViewModel,
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -267,53 +244,50 @@ class StopDetailsViewTest {
                 header = "Elevator alert header"
             }
 
+        val global = GlobalResponse(builder)
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
+        viewModel.setGlobalResponse(global)
+        viewModel.setUnfilteredRouteCardData(
+            listOf(
+                RouteCardData(
+                    lineOrRoute,
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route,
+                            stop,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
-                                    alertsHere = emptyList(),
+                                RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
+                                    directionId = 0,
+                                    listOf(routePatternOne),
+                                    setOf(stop.id),
+                                    listOf(UpcomingTrip(trip, prediction)),
+                                    alertsHere = listOf(alert),
+                                    allDataLoaded = false,
+                                    hasSchedulesToday = true,
                                     alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
+                                    RouteCardData.Context.StopDetailsUnfiltered,
                                 )
                             ),
-                        listOf(alert)
-                    )
+                            global,
+                        )
+                    ),
+                    now,
                 )
             )
         )
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    updateFavorites = {},
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -321,13 +295,9 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                    errorBannerViewModel = errorBannerViewModel,
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }
@@ -345,43 +315,29 @@ class StopDetailsViewTest {
 
         val viewModel = StopDetailsViewModel.mocked()
 
-        viewModel.setDepartures(
-            StopDetailsDepartures(
+        viewModel.setFilteredRouteStopData(
+            RouteCardData.RouteStopData(
+                route,
+                stop,
                 listOf(
-                    PatternsByStop(
-                        route = route,
-                        stop = stop,
-                        patterns =
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    staticData =
-                                        NearbyStaticData.StaticPatterns.ByHeadsign(
-                                            route = route,
-                                            headsign = trip.headsign,
-                                            line = line,
-                                            patterns = listOf(routePatternOne, routePatternTwo),
-                                            stopIds = setOf(stop.id),
-                                        ),
-                                    upcomingTripsMap =
-                                        mapOf(
-                                            RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                trip.routeId,
-                                                routePatternOne.id,
-                                                stop.id
-                                            ) to listOf(UpcomingTrip(trip, prediction))
-                                        ),
-                                    parentStopId = stop.id,
-                                    alertsHere = emptyList(),
-                                    alertsDownstream = emptyList(),
-                                    hasSchedulesTodayByPattern = null,
-                                    allDataLoaded = false
-                                )
-                            ),
-                        listOf(alert)
+                    RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
+                        directionId = 0,
+                        listOf(routePatternOne),
+                        setOf(stop.id),
+                        listOf(UpcomingTrip(trip, prediction)),
+                        alertsHere = listOf(alert),
+                        allDataLoaded = false,
+                        hasSchedulesToday = true,
+                        alertsDownstream = emptyList(),
+                        RouteCardData.Context.StopDetailsFiltered,
                     )
-                )
+                ),
+                GlobalResponse(builder),
             )
         )
+        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember {
@@ -390,8 +346,8 @@ class StopDetailsViewTest {
                 StopDetailsView(
                     stopId = stop.id,
                     viewModel = viewModel,
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = {},
+                    isFavorite = { false },
+                    updateFavorites = {},
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -399,13 +355,9 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel =
-                        ErrorBannerViewModel(
-                            false,
-                            MockErrorBannerStateRepository(),
-                        ),
+                    errorBannerViewModel = errorBannerViewModel,
                     openModal = {},
-                    openSheetRoute = {}
+                    openSheetRoute = {},
                 )
             }
         }

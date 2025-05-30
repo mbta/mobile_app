@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.initializeSentry
 
@@ -31,20 +31,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(
             navigationBarStyle =
                 if (isDarkModeOn()) {
-                    SystemBarStyle.dark(
-                        scrim = getColor(R.color.fill2),
-                    )
+                    SystemBarStyle.dark(scrim = getColor(R.color.fill2))
                 } else {
                     SystemBarStyle.light(
                         scrim = getColor(R.color.fill2),
-                        darkScrim = getColor(R.color.fill2)
+                        darkScrim = getColor(R.color.fill2),
                     )
                 },
             statusBarStyle =
                 if (isDarkModeOn()) {
-                    SystemBarStyle.dark(
-                        scrim = Color(0x00000000).toArgb(),
-                    )
+                    SystemBarStyle.dark(scrim = Color(0x00000000).toArgb())
                 } else {
                     SystemBarStyle.light(
                         scrim = Color(0x00000000).toArgb(),
@@ -53,16 +49,22 @@ class MainActivity : ComponentActivity() {
                 },
         )
 
+        val deepLinkUri = intent.data?.takeIf { intent.action == Intent.ACTION_VIEW }
+        when {
+            deepLinkUri?.path == "/" -> {}
+            deepLinkUri != null -> {
+                Log.w("MainActivity", "Unhandled deep link URI $deepLinkUri")
+            }
+            else -> {}
+        }
+
         setContent {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize().navigationBarsPadding(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
-                    CompositionLocalProvider(
-                        LocalActivity provides this,
-                        LocalLocationClient provides fusedLocationClient,
-                    ) {
+                    CompositionLocalProvider(LocalLocationClient provides fusedLocationClient) {
                         ContentView()
                     }
                 }

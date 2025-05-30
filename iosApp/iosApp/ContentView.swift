@@ -34,22 +34,14 @@ struct ContentView: View {
 
     let inspection = Inspection<Self>()
 
+    @State var selectedDetent: PresentationDetent = .medium
     @State private var selectedTab = SelectedTab.nearby
-    @State private var sheetTabBarVisibility = Visibility.hidden
-    @State private var baseTabBarVisibility = Visibility.hidden
+    @State private var showingLocationPermissionAlert = false
+    @State private var tabBarVisibility = Visibility.hidden
 
-    func updateTabBarVisibility(_ tab: SelectedTab) {
-        let shouldShowSheetTabBar = !hideMaps
-            && tab == SelectedTab.nearby
-            && nearbyVM.navigationStack.lastSafe() == .nearby
-            && !searchObserver.isSearching
-
-        sheetTabBarVisibility = shouldShowSheetTabBar ? .visible : .hidden
-
-        let shouldShowBaseTabBar = !searchObserver.isSearching && (
-            !hideMaps || nearbyVM.navigationStack.lastSafe() == .nearby
-        )
-        baseTabBarVisibility = shouldShowBaseTabBar ? .visible : .hidden
+    struct AnalyticsParams: Equatable {
+        let stopId: String?
+        let analyticsScreen: AnalyticsScreen?
     }
 
     var body: some View {
@@ -64,6 +56,10 @@ struct ContentView: View {
             analytics.recordSession(voiceOver: voiceOver)
             analytics.recordSession(hideMaps: hideMaps)
             updateTabBarVisibility(selectedTab)
+
+            if let screen = nearbyVM.navigationStack.lastSafe().analyticsScreen {
+                analytics.track(screen: screen)
+            }
         }
         .task {
             // We can't set stale caches in ResponseCache on init because of our Koin setup,
@@ -73,10 +69,16 @@ struct ContentView: View {
             } catch {}
         }
         .onChange(of: selectedTab) { nextTab in
+            nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
             updateTabBarVisibility(nextTab)
         }
-        .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in updateTabBarVisibility(selectedTab) }
-        .onChange(of: hideMaps) { _ in updateTabBarVisibility(selectedTab) }
+        .onChange(of: AnalyticsParams(
+            stopId: nearbyVM.navigationStack.lastSafe().stopId(),
+            analyticsScreen: nearbyVM.navigationStack.lastSafe().analyticsScreen
+        )) { params in
+            guard let screen = params.analyticsScreen else { return }
+            analytics.track(screen: screen)
+        }
         .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility(selectedTab) }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -119,73 +121,18 @@ struct ContentView: View {
                 contentVM.featurePromosPending = []
             })
         } else {
-            TabView(selection: $selectedTab) {
-                nearbyTab
-                    .toolbar(baseTabBarVisibility, for: .tabBar)
-                    .tag(SelectedTab.nearby)
-                    .tabItem { TabLabel(tab: SelectedTab.nearby) }
-                MorePage(viewModel: settingsVM)
-                    .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tab: SelectedTab.more) }
-                    .onAppear { analytics.track(screen: .settings) }
-            }
-        }
-    }
-
-    @State var selectedDetent: PresentationDetent = .halfScreen
-    @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
-    @State private var showingLocationPermissionAlert = false
-
-    @ViewBuilder
-    var nearbySheetContents: some View {
-        if hideMaps {
-            nearbyPage
-        } else {
-            // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
-            // when re-opening nearby transit
-            VStack {
-                TabView(selection: $selectedTab) {
-                    nearbyPage
-                        .toolbar(sheetTabBarVisibility, for: .tabBar)
-                        .tag(SelectedTab.nearby)
-                        .tabItem { TabLabel(tab: SelectedTab.nearby) }
-                    // we want to show nothing in the sheet when the settings tab is open,
-                    // but an EmptyView here causes the tab to not be listed
-                    VStack {}
-                        .tag(SelectedTab.more)
-                        .tabItem { TabLabel(tab: SelectedTab.more) }
-                }
-            }
+            mainContent
         }
     }
 
     @ViewBuilder
-    var nearbyPage: some View {
-        NearbyTransitPageView(
-            errorBannerVM: errorBannerVM,
-            nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider,
-            noNearbyStops: { NoNearbyStopsView(
-                onOpenSearch: { searchObserver.isFocused = true },
-                onPanToDefaultCenter: {
-                    viewportProvider.setIsManuallyCentering(true)
-                    viewportProvider.animateTo(
-                        coordinates: ViewportProvider.Defaults.center,
-                        zoom: 13.75
-                    )
-                }
-            ) }
-        )
-    }
-
-    @ViewBuilder
-    var nearbyTab: some View {
+    var mainContent: some View {
         VStack {
             if hideMaps {
                 ZStack(alignment: .top) {
                     searchHeaderBackground
                     VStack {
-                        if nearbyVM.navigationStack.lastSafe() == .nearby {
+                        if nearbyVM.navigationStack.lastSafe().isEntrypoint {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                                 .padding(.top, 12)
                             if !searchObserver.isSearching {
@@ -194,7 +141,7 @@ struct ContentView: View {
                             }
                         }
 
-                        if !(nearbyVM.navigationStack.lastSafe() == .nearby && searchObserver.isSearching) {
+                        if !(nearbyVM.navigationStack.lastSafe().isEntrypoint && searchObserver.isSearching) {
                             mapWithSheets
                         }
                     }
@@ -204,7 +151,7 @@ struct ContentView: View {
                     mapWithSheets.accessibilityHidden(searchObserver.isSearching)
                     searchHeaderBackground
                     VStack(alignment: .center, spacing: 20) {
-                        if nearbyVM.navigationStack.lastSafe() == .nearby {
+                        if nearbyVM.navigationStack.lastSafe().isEntrypoint {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
 
                             if !searchObserver.isSearching {
@@ -240,7 +187,103 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    var mapSection: some View {
+    var navSheetContents: some View {
+        let navEntry = nearbyVM.navigationStack.lastSafe()
+        NavigationStack {
+            VStack {
+                switch navEntry {
+                case .favorites, .nearby:
+                    tabbedSheetContents.transition(transition)
+
+                case let .stopDetails(stopId, stopFilter, tripFilter):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        StopDetailsPage(
+                            filters: .init(
+                                stopId: stopId,
+                                stopFilter: stopFilter,
+                                tripFilter: tripFilter
+                            ),
+                            errorBannerVM: errorBannerVM,
+                            nearbyVM: nearbyVM,
+                            mapVM: mapVM,
+                            stopDetailsVM: stopDetailsVM,
+                            viewportProvider: viewportProvider
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
+                    .id(stopId)
+                    .transition(transition)
+                    .animation(.easeOut, value: stopId)
+                    .onChange(of: stopId) { nextStopId in stopDetailsVM.handleStopChange(nextStopId) }
+                    .onAppear { stopDetailsVM.handleStopAppear(stopId) }
+                    .onDisappear { stopDetailsVM.leaveStopPredictions() }
+
+                default: EmptyView()
+                }
+            }
+            .animation(.easeOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
+            .background { Color.fill2.ignoresSafeArea(edges: .all).animation(nil, value: "") }
+        }
+    }
+
+    @ViewBuilder
+    var tabbedSheetContents: some View {
+        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
+        // when re-opening nearby transit
+        VStack {
+            TabView(selection: $selectedTab) {
+                if contentVM.enhancedFavorites {
+                    favoritesPage
+                        .toolbar(tabBarVisibility, for: .tabBar)
+                        .tag(SelectedTab.favorites)
+                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
+                }
+
+                nearbyPage
+                    .toolbar(tabBarVisibility, for: .tabBar)
+                    .tag(SelectedTab.nearby)
+                    .tabItem { TabLabel(tab: SelectedTab.nearby) }
+
+                VStack {}
+                    .toolbar(.hidden, for: .tabBar)
+                    .onAppear { selectedTab = .more }
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel(tab: SelectedTab.more) }
+            }
+        }
+    }
+
+    @ViewBuilder
+    var favoritesPage: some View {
+        FavoritesPage()
+    }
+
+    @ViewBuilder
+    var nearbyPage: some View {
+        NearbyTransitPage(
+            errorBannerVM: errorBannerVM,
+            nearbyVM: nearbyVM,
+            viewportProvider: viewportProvider,
+            noNearbyStops: { NoNearbyStopsView(
+                hideMaps: contentVM.hideMaps,
+                onOpenSearch: { searchObserver.isFocused = true },
+                onPanToDefaultCenter: {
+                    viewportProvider.setIsManuallyCentering(true)
+                    viewportProvider.animateTo(
+                        coordinates: ViewportProvider.Defaults.center,
+                        zoom: 13.75
+                    )
+                }
+            ) }
+        )
+    }
+
+    @ViewBuilder
+    var map: some View {
         HomeMapView(
             contentVM: contentVM,
             mapVM: mapVM,
@@ -258,7 +301,7 @@ struct ContentView: View {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
                     switch nearbyVM.navigationStack.last {
-                    case .alertDetails: nearbyVM.goBack()
+                    case .alertDetails, .more: nearbyVM.goBack()
                     default: break
                     }
                 }, content: coverContents)
@@ -271,97 +314,81 @@ struct ContentView: View {
                     viewportProvider.updateCameraState(location)
                 }
         } else {
-            mapSection
-                .sheet(
-                    isPresented: .constant(
-                        !(searchObserver.isSearching && nav == .nearby)
-                            && selectedTab == .nearby
-                            && !showingLocationPermissionAlert
-                            && contentVM.onboardingScreensPending != nil
-                    ),
-                    content: {
-                        GeometryReader { proxy in
-                            VStack {
-                                navSheetContents
-                                    .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                                    .interactiveDismissDisabled()
-                                    .modifier(AllowsBackgroundInteraction())
-                            }
-                            // within the sheet to prevent issues on iOS 16 with two modal views open at once
-                            .fullScreenCover(
-                                item: .constant(nav.coverItemIdentifiable()),
-                                onDismiss: {
-                                    switch nearbyVM.navigationStack.last {
-                                    case .alertDetails: nearbyVM.goBack()
-                                    default: break
-                                    }
-                                },
-                                content: coverContents
-                            )
-                            .onChange(of: sheetItemId) { _ in selectedDetent = .halfScreen }
-                            .onAppear { recordSheetHeight(proxy.size.height) }
-                            .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
+            map.sheet(
+                isPresented: .constant(
+                    !(searchObserver.isSearching && nav.isEntrypoint)
+                        && !showingLocationPermissionAlert
+                        && contentVM.onboardingScreensPending != nil
+                ),
+                content: {
+                    GeometryReader { proxy in
+                        VStack {
+                            navSheetContents
+                                .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
+                                .interactiveDismissDisabled()
+                                .modifier(AllowsBackgroundInteraction())
                         }
+                        // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                        .fullScreenCover(
+                            item: .constant(nav.coverItemIdentifiable()),
+                            onDismiss: {
+                                switch nearbyVM.navigationStack.last {
+                                case .alertDetails, .more: nearbyVM.goBack()
+                                default: break
+                                }
+                            },
+                            content: coverContents
+                        )
+                        .onChange(of: sheetItemId) { _ in selectedDetent = .medium }
+                        .onAppear { recordSheetHeight(proxy.size.height) }
+                        .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
                     }
-                )
+                }
+            )
         }
     }
 
     @ViewBuilder
-    var navSheetContents: some View {
-        let navEntry = nearbyVM.navigationStack.lastSafe()
+    private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {
+        let entry = coverIdentityEntry.stackEntry
         NavigationStack {
-            VStack {
-                switch navEntry {
-                case let .stopDetails(stopId, stopFilter, tripFilter):
-                    // Wrapping in a TabView helps the page to animate in as a single unit
-                    // Otherwise only the header animates
-                    TabView {
-                        StopDetailsPage(
-                            filters: .init(
-                                stopId: stopId,
-                                stopFilter: stopFilter,
-                                tripFilter: tripFilter
-                            ),
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM,
-                            viewportProvider: viewportProvider
-                        )
-                        .onAppear {
-                            analytics.track(
-                                screen: stopFilter != nil ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                            )
-                        }
-                        .toolbar(.hidden, for: .tabBar)
+            switch entry {
+            case let .alertDetails(alertId, line, routes, stop):
+                AlertDetailsPage(alertId: alertId, line: line, routes: routes, stop: stop, nearbyVM: nearbyVM)
+
+            case .more:
+                TabView(selection: $selectedTab) {
+                    if contentVM.enhancedFavorites {
+                        VStack {}
+                            .onAppear { selectedTab = .favorites }
+                            .toolbar(.hidden, for: .tabBar)
+                            .tag(SelectedTab.favorites)
+                            .tabItem { TabLabel(tab: SelectedTab.favorites) }
                     }
-                    // Set id per stop so that transitioning from one stop to another is handled by removing
-                    // the existing stop view & creating a new one
-                    .id(stopId)
-                    .transition(transition)
-                    .animation(.easeOut(duration: 0.5), value: stopId)
-                    .onChange(of: stopId) { nextStopId in stopDetailsVM.handleStopChange(nextStopId) }
-                    .onAppear { stopDetailsVM.handleStopAppear(stopId) }
-                    .onDisappear { stopDetailsVM.leaveStopPredictions() }
 
-                case .nearby:
-                    nearbySheetContents
-                        .transition(transition)
-                        .onAppear { analytics.track(screen: .nearbyTransit) }
+                    VStack {}
+                        .onAppear { selectedTab = .nearby }
+                        .toolbar(.hidden, for: .tabBar)
+                        .tag(SelectedTab.nearby)
+                        .tabItem { TabLabel(tab: SelectedTab.nearby) }
 
-                default: EmptyView()
+                    MorePage(viewModel: settingsVM)
+                        .toolbar(tabBarVisibility, for: .tabBar)
+                        .toolbarBackground(.visible, for: .tabBar)
+                        .tag(SelectedTab.more)
+                        .tabItem { TabLabel(tab: SelectedTab.more) }
                 }
+
+            default:
+                EmptyView()
             }
-            .background { Color.fill2.ignoresSafeArea(edges: .all) }
-            .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
         }
     }
 
     @ViewBuilder
     var searchHeaderBackground: some View {
         (
-            searchObserver.isSearching && nearbyVM.navigationStack.lastSafe() == .nearby
+            searchObserver.isSearching && nearbyVM.navigationStack.lastSafe().isEntrypoint
                 ? Color.fill2 : Color.clear
         ).ignoresSafeArea(.all)
     }
@@ -377,30 +404,26 @@ struct ContentView: View {
         return (route.type, selectedVehicle, stop)
     }
 
-    private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {
-        let entry = coverIdentityEntry.stackEntry
-        return NavigationStack {
-            switch entry {
-            case let .alertDetails(alertId, line, routes, stop):
-                AlertDetailsPage(alertId: alertId, line: line, routes: routes, stop: stop, nearbyVM: nearbyVM)
-            default:
-                EmptyView()
-            }
-        }
-    }
-
     private func recordSheetHeight(_ newSheetHeight: CGFloat) {
         /*
          Only update this if we're less than half way up the users screen. Otherwise,
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
-        guard newSheetHeight < (UIScreen.main.bounds.height / 2) else { return }
+        guard newSheetHeight < (UIScreen.main.bounds.height * PresentationDetent.mediumDetentFraction) else { return }
         sheetHeight = newSheetHeight - 55
+    }
+
+    private func updateTabBarVisibility(_: SelectedTab) {
+        let shouldShowTabBar =
+            nearbyVM.navigationStack.lastSafe().isEntrypoint
+                && !searchObserver.isSearching
+
+        tabBarVisibility = shouldShowTabBar ? .visible : .hidden
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {
         func body(content: Content) -> some View {
-            content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
+            content.presentationBackgroundInteraction(.enabled(upThrough: .medium))
         }
     }
 }

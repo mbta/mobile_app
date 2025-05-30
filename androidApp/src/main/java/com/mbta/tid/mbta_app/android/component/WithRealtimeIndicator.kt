@@ -21,7 +21,7 @@ fun WithRealtimeIndicator(
     modifier: Modifier = Modifier,
     hideIndicator: Boolean = false,
     alignment: Alignment.Horizontal = Alignment.End,
-    prediction: @Composable RowScope.() -> Unit
+    prediction: @Composable RowScope.() -> Unit,
 ) {
     val subjectSpacing = 4.dp
     val iconSize = 20.dp
@@ -29,7 +29,7 @@ fun WithRealtimeIndicator(
     Row(
         modifier,
         horizontalArrangement = Arrangement.spacedBy(subjectSpacing, alignment),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!hideIndicator) {
             Image(
@@ -37,7 +37,7 @@ fun WithRealtimeIndicator(
                 contentDescription = null,
                 modifier = Modifier.size(iconSize).padding(4.dp).testTag("realtimeIndicator"),
                 alpha = 0.6f,
-                colorFilter = ColorFilter.tint(LocalContentColor.current)
+                colorFilter = ColorFilter.tint(LocalContentColor.current),
             )
         }
         prediction()

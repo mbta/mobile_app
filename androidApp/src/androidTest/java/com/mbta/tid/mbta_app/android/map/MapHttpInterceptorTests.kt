@@ -40,7 +40,7 @@ class MapHttpInterceptorTests {
             HttpResponse(
                 1,
                 fakeRequest,
-                ExpectedFactory.createValue(HttpResponseData(hashMapOf(), 200, byteArrayOf()))
+                ExpectedFactory.createValue(HttpResponseData(hashMapOf(), 200, byteArrayOf())),
             )
 
         var responseUnchanged = false
@@ -62,7 +62,7 @@ class MapHttpInterceptorTests {
             HttpResponse(
                 1,
                 fakeRequest,
-                ExpectedFactory.createValue(HttpResponseData(hashMapOf(), 401, byteArrayOf()))
+                ExpectedFactory.createValue(HttpResponseData(hashMapOf(), 401, byteArrayOf())),
             )
 
         var responseUnchanged = false
@@ -86,7 +86,7 @@ class MapHttpInterceptorTests {
                 fakeRequest,
                 ExpectedFactory.createError(
                     HttpRequestError(HttpRequestErrorType.REQUEST_CANCELLED, "cancelled")
-                )
+                ),
             )
 
         var responseUnchanged = false

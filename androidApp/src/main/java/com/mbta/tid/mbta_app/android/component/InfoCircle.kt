@@ -15,6 +15,6 @@ fun InfoCircle(modifier: Modifier = Modifier) {
         painterResource(R.drawable.fa_circle_info),
         contentDescription = null,
         Modifier.size(16.dp).then(modifier),
-        tint = colorResource(R.color.deemphasized)
+        tint = colorResource(R.color.deemphasized),
     )
 }

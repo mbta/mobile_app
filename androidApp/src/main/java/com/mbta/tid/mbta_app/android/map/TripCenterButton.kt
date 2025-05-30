@@ -20,8 +20,8 @@ fun TripCenterButton(modifier: Modifier = Modifier, routeType: RouteType, onClic
         colors =
             IconButtonDefaults.iconButtonColors(
                 containerColor = colorResource(R.color.fill3),
-                contentColor = colorResource(R.color.key)
-            )
+                contentColor = colorResource(R.color.key),
+            ),
     ) {
         val painter = routeIcon(routeType).first
         Icon(painter, stringResource(R.string.recenter))

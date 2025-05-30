@@ -19,9 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-class VehiclesViewModel(
-    private val vehiclesRepository: IVehiclesRepository,
-) : ViewModel() {
+class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : ViewModel() {
     private val _vehicles = MutableStateFlow<VehiclesStreamDataResponse?>(null)
     val vehiclesFlow: StateFlow<VehiclesStreamDataResponse?> = _vehicles
 
@@ -64,7 +62,7 @@ class VehiclesViewModel(
 @Composable
 fun subscribeToVehicles(
     routeDirection: RouteDirection?,
-    vehiclesRepository: IVehiclesRepository = koinInject()
+    vehiclesRepository: IVehiclesRepository = koinInject(),
 ): List<Vehicle> {
     val viewModel: VehiclesViewModel =
         viewModel(factory = VehiclesViewModel.Factory(vehiclesRepository))

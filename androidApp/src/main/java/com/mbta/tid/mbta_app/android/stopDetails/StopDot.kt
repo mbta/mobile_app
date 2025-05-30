@@ -29,7 +29,7 @@ fun StopDot(routeAccents: TripRouteAccents, targeted: Boolean, modifier: Modifie
             Image(
                 painterResource(R.drawable.stop_pin_indicator),
                 null,
-                Modifier.padding(bottom = 32.dp)
+                Modifier.padding(bottom = 32.dp),
             )
         }
     }

@@ -67,52 +67,52 @@ class AlertDetailsPageTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     route = route.id,
-                    stop = stop1.id
+                    stop = stop1.id,
                 )
                 informedEntity(
                     activities =
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
                     route = route.id,
-                    stop = stop1a.id
+                    stop = stop1a.id,
                 )
                 informedEntity(
                     activities =
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 1,
                     route = route.id,
-                    stop = stop1b.id
+                    stop = stop1b.id,
                 )
                 informedEntity(
                     activities =
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     route = route.id,
-                    stop = stop2a.id
+                    stop = stop2a.id,
                 )
                 informedEntity(
                     activities =
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                     route = route.id,
-                    stop = stop3.id
+                    stop = stop3.id,
                 )
             }
 
@@ -126,7 +126,7 @@ class AlertDetailsPageTest {
                     routeIds = listOf(route.id),
                     stopId = null,
                     alerts = AlertsStreamDataResponse(objects),
-                    goBack = {}
+                    goBack = {},
                 )
             }
         }

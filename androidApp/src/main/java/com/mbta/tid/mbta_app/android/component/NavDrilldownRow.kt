@@ -26,7 +26,7 @@ fun NavDrilldownRow(
     onClick: () -> Unit,
     onClickLabel: String,
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.(Modifier) -> Unit
+    content: @Composable RowScope.(Modifier) -> Unit,
 ) {
     Row(
         Modifier.background(color = MaterialTheme.colorScheme.background)
@@ -35,16 +35,14 @@ fun NavDrilldownRow(
             .clickable(onClickLabel = onClickLabel, onClick = onClick)
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         content(Modifier.weight(1f))
-        Column(
-            modifier = Modifier.padding(start = 8.dp).widthIn(max = 8.dp),
-        ) {
+        Column(modifier = Modifier.padding(start = 8.dp).widthIn(max = 8.dp)) {
             Icon(
                 painterResource(id = R.drawable.baseline_chevron_right_24),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.tertiary
+                tint = MaterialTheme.colorScheme.tertiary,
             )
         }
     }

@@ -11,7 +11,7 @@ import kotlinx.datetime.Instant
 
 data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
-constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
+constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
 
     data class Entry
     @DefaultArgumentInterop.Enabled
@@ -23,28 +23,45 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val prediction: Prediction?,
         // The prediction stop can be the same as `stop`, but it can also be a child stop which
         // contains more specific boarding information for a prediction, like the track number
-        val predictionStop: Stop?,
+        val predictionStop: Stop? = stop.takeIf { prediction != null },
         val vehicle: Vehicle?,
         val routes: List<Route>,
-        val elevatorAlerts: List<Alert> = emptyList()
+        val elevatorAlerts: List<Alert> = emptyList(),
     ) {
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
+        val isTruncating = disruption?.alert?.hasNoThroughService == true
+
         fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
 
-        fun isTruncating() =
-            disruption?.alert?.effect in setOf(Alert.Effect.Shuttle, Alert.Effect.Suspension)
+        /**
+         * Gets the time to display for this entry, or an alert to be displayed instead.
+         *
+         * @return [disruption], an [UpcomingFormat.Some] with a single entry, or null
+         */
+        fun format(trip: Trip, now: Instant, routeType: RouteType): UpcomingFormat? {
+            if (disruption != null) {
+                // ignore activities on platforms since they may be wrong or they may be correct in
+                // a way that doesn’t match how service is being run
+                if (isTruncating) {
+                    // if the alert represents a truncation of service, either this is the first
+                    // stop of the alert and we want to show its arrival time or this is a later
+                    // stop in the alert and it was discarded in splitForTarget so this was never
+                    // called
+                } else {
+                    // if the alert does not represent a truncation of service (e.g. stop closure),
+                    // we do want to replace the time with the alert
+                    return disruption
+                }
+            }
 
-        fun format(now: Instant, routeType: RouteType?) =
-            TripInstantDisplay.from(
-                prediction,
-                schedule,
-                vehicle,
-                routeType,
-                now,
-                context = TripInstantDisplay.Context.TripDetails
+            return UpcomingFormat.Some(
+                UpcomingTrip(trip, schedule, prediction, predictionStop, vehicle)
+                    .format(now, routeType, TripInstantDisplay.Context.TripDetails) ?: return null,
+                secondaryAlert = null,
             )
+        }
     }
 
     /**
@@ -56,7 +73,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
     fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int?,
-        globalData: GlobalResponse?
+        globalData: GlobalResponse?,
     ): TargetSplit {
         val targetStopIndex =
             stops
@@ -78,7 +95,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val firstCollapsed = collapsedStops?.firstOrNull()
         if (
             firstCollapsed == startTerminalEntry &&
-                (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.tripId)
+                (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.trip.id)
         ) {
             collapsedStops = collapsedStops?.drop(1)
             firstStop = firstCollapsed
@@ -91,7 +108,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         val truncatedStopIndex =
             followingStops
-                .indexOfFirst { it.isTruncating() }
+                .indexOfFirst { it.isTruncating }
                 .takeUnless { it == -1 || it == followingStops.lastIndex }
         val isTruncated = truncatedStopIndex != null
         val truncatedFollowingStops =
@@ -104,7 +121,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             collapsedStops,
             targetStop,
             truncatedFollowingStops,
-            isTruncated
+            isTruncated,
         )
     }
 
@@ -113,7 +130,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         val collapsedStops: List<Entry>?,
         val targetStop: Entry?,
         val followingStops: List<Entry>,
-        val isTruncatedByLastAlert: Boolean = false
+        val isTruncatedByLastAlert: Boolean = false,
     )
 
     private data class WorkingEntry(
@@ -143,20 +160,20 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                 "9701",
                 "9702",
                 "9703",
-                "Boat-F3"
+                "Boat-F3",
             )
 
         private fun MutableMap<Int, WorkingEntry>.putSchedule(schedule: Schedule) {
             put(
                 schedule.stopSequence,
                 get(schedule.stopSequence)?.copy(schedule = schedule)
-                    ?: WorkingEntry(schedule.stopId, schedule.stopSequence, schedule = schedule)
+                    ?: WorkingEntry(schedule.stopId, schedule.stopSequence, schedule = schedule),
             )
         }
 
         private fun MutableMap<Int, WorkingEntry>.putPrediction(
             prediction: Prediction,
-            vehicle: Vehicle?
+            vehicle: Vehicle?,
         ) {
             put(
                 prediction.stopSequence,
@@ -165,8 +182,8 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                         prediction.stopId,
                         prediction.stopSequence,
                         prediction = prediction,
-                        vehicle = vehicle
-                    )
+                        vehicle = vehicle,
+                    ),
             )
         }
 
@@ -177,8 +194,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         }
 
         suspend fun fromPieces(
-            tripId: String,
-            directionId: Int,
+            trip: Trip,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
@@ -203,7 +219,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                         deduplicatePredictionsByStopSequence(
                             tripPredictionsWithCorrectRoute,
                             tripSchedules,
-                            globalData
+                            globalData,
                         )
 
                     predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
@@ -216,13 +232,13 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                             tripSchedules.stopIds,
                             predictions,
                             globalData,
-                            entries
+                            entries,
                         )
                     aligner.run()
                 }
 
                 if (entries.isEmpty()) {
-                    return@withContext TripDetailsStopList(tripId, emptyList())
+                    return@withContext TripDetailsStopList(trip, emptyList())
                 }
 
                 val sortedEntries = entries.entries.sortedBy { it.key }
@@ -239,7 +255,14 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                     val parent = stop.resolveParent(globalData.stops)
                     val parentAndChildStopIds = setOf(parent.id) + parent.childStopIds
                     val disruption =
-                        getDisruption(working, fallbackTime, alertsData, route, tripId, directionId)
+                        getDisruption(
+                            working,
+                            fallbackTime,
+                            alertsData,
+                            route,
+                            trip.id,
+                            trip.directionId,
+                        )
                     return Entry(
                         stop,
                         working.stopSequence,
@@ -249,18 +272,18 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                         globalData.stops[working.prediction?.stopId],
                         working.vehicle,
                         getTransferRoutes(working, globalData),
-                        Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds)
+                        Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds),
                     )
                 }
 
                 val startTerminalEntry = getEntry(sortedEntries.firstOrNull()?.value)
                 TripDetailsStopList(
-                    tripId,
+                    trip,
                     sortedEntries
                         .dropWhile {
                             if (
                                 vehicle == null ||
-                                    vehicle.tripId != tripId ||
+                                    vehicle.tripId != trip.id ||
                                     vehicle.currentStopSequence == null
                             ) {
                                 false
@@ -271,7 +294,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                             }
                         }
                         .mapNotNull { getEntry(it.value) },
-                    startTerminalEntry
+                    startTerminalEntry,
                 )
             }
 
@@ -280,7 +303,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
         private fun deduplicatePredictionsByStopSequence(
             predictions: Collection<Prediction>,
             tripSchedules: TripSchedulesResponse?,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ) =
             predictions
                 .groupBy { it.stopSequence }
@@ -310,16 +333,27 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
          */
         private fun getTransferRoutes(
             entry: WorkingEntry,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): List<Route> {
-            val stop = globalData.stops[entry.stopId] ?: return emptyList()
+            return getTransferRoutes(
+                entry.stopId,
+                entry.prediction?.routeId ?: entry.schedule?.routeId,
+                globalData,
+            )
+        }
+
+        fun getTransferRoutes(
+            stopId: String,
+            currentRouteId: String?,
+            globalData: GlobalResponse,
+        ): List<Route> {
+            val stop = globalData.stops[stopId] ?: return emptyList()
             val selfOrParent =
                 if (stop.parentStationId == null) stop
                 else globalData.stops[stop.parentStationId] ?: return emptyList()
             // Bail if stop is not a parent but its parent stop can't be found
 
-            val currentRoute =
-                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]
+            val currentRoute = globalData.routes[currentRouteId]
 
             val transferStopIds =
                 listOf(selfOrParent.id) +
@@ -339,13 +373,12 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         private fun getFilteredRoutesForStop(
             stopId: String,
-            globalData: GlobalResponse
+            globalData: GlobalResponse,
         ): Set<Route> {
             return globalData.patternIdsByStop[stopId]
                 ?.map { globalData.routePatterns[it] }
                 ?.mapNotNull { if (shouldExclude(it)) null else globalData.routes[it?.routeId] }
-                ?.toSet()
-                ?: emptySet()
+                ?.toSet() ?: emptySet()
         }
 
         /**
@@ -364,7 +397,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             val stopIds: List<String>,
             val predictions: List<Prediction>,
             val globalData: GlobalResponse,
-            val entries: MutableMap<Int, WorkingEntry>
+            val entries: MutableMap<Int, WorkingEntry>,
         ) {
             var lastStopSequence: Int? = null
             var lastDelta: Int? = null
@@ -389,7 +422,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
                             !Stop.equalOrFamily(
                                 stopIds[scheduleIndex],
                                 lastPrediction.stopId,
-                                globalData.stops
+                                globalData.stops,
                             )
                     ) {
                         scheduleIndex--
@@ -448,22 +481,21 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             alertsData: AlertsStreamDataResponse?,
             route: Route?,
             tripId: String,
-            directionId: Int
+            directionId: Int,
         ): UpcomingFormat.Disruption? {
             val entryTime = (entry.prediction ?: entry.schedule)?.stopTime ?: fallbackTime
             val entryRouteType = route?.type
 
             val alert =
                 alertsData?.alerts?.values?.find { alert ->
-                    (entryTime?.let { alert.isActive(it) }
-                        ?: true) &&
+                    (entryTime?.let { alert.isActive(it) } ?: true) &&
                         alert.anyInformedEntity {
                             it.appliesTo(
                                 directionId = directionId,
                                 routeId = route?.id,
                                 routeType = entryRouteType,
                                 stopId = entry.stopId,
-                                tripId = tripId
+                                tripId = tripId,
                             )
                         } &&
                         // there's no UI yet for secondary alerts in trip details

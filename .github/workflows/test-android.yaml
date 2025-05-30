@@ -2,6 +2,12 @@ name: Android tests
 
 on:
   workflow_call:
+    inputs:
+      skip-everything:
+        description: "Skips all the individual steps so the job passes quickly"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test-android:
@@ -11,21 +17,26 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        if: ${{ !inputs.skip-everything }}
       - uses: ./.github/actions/setup
+        if: ${{ !inputs.skip-everything }}
         with:
           for: android-test
       - run: ./gradlew spotlessCheck
+        if: ${{ !inputs.skip-everything }}
       - name: shared checks & unit tests
         run: ./gradlew shared:check
+        if: ${{ !inputs.skip-everything }}
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() && !inputs.skip-everything
         with:
           name: android-shared-reports
           path: shared/build/reports
       - name: android checks & unit tests
         run: ./gradlew androidApp:check
+        if: ${{ !inputs.skip-everything }}
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() && !inputs.skip-everything
         with:
           name: android-android-reports
           path: androidApp/build/reports
@@ -46,7 +57,9 @@ jobs:
           #   arch: x86_64
     steps:
       - uses: actions/checkout@v4
+        if: ${{ !inputs.skip-everything }}
       - uses: ./.github/actions/setup
+        if: ${{ !inputs.skip-everything }}
         with:
           for: android-test
       # full setup including AVD snapshot caching from https://github.com/ReactiveCircus/android-emulator-runner/blob/a3dcdb348bb02349cd939d168a74e31a9094b7f0/README.md
@@ -55,8 +68,10 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+        if: ${{ !inputs.skip-everything }}
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
+        if: ${{ !inputs.skip-everything }}
         timeout-minutes: 30
         with:
           api-level: ${{ matrix.api-level }}
@@ -66,7 +81,7 @@ jobs:
           disable-animations: true
           script: ./bin/android-instrumented-test-ci.sh
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() && !inputs.skip-everything
         with:
           name: android-connected-reports-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
           path: androidApp/build/reports

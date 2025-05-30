@@ -33,7 +33,7 @@ class AlertsRepositoryTests {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(alertsRepo.channel)
-        alertsRepo.connect(onReceive = { /* no-op */})
+        alertsRepo.connect(onReceive = { /* no-op */ })
         assertNotNull(alertsRepo.channel)
     }
 

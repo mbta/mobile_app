@@ -51,7 +51,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -75,7 +75,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -99,7 +99,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -124,7 +124,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.Tomorrow),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -149,7 +149,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -174,7 +174,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.LaterDate(endTime)),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -202,10 +202,10 @@ class AlertSummaryTest {
                     listOf(
                         Alert.InformedEntity.Activity.Board,
                         Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
+                        Alert.InformedEntity.Activity.Ride,
                     ),
                     route = route.id,
-                    stop = childStop?.id
+                    stop = childStop?.id,
                 )
             }
 
@@ -214,7 +214,7 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, AlertSummary.Location.SingleStop(stop.name), null),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -246,10 +246,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stop.id
+                        stop = stop.id,
                     )
                 }
             }
@@ -261,9 +261,9 @@ class AlertSummaryTest {
             AlertSummary(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops(firstStop.name, lastStop.name),
-                null
+                null,
             ),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -296,10 +296,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stop.id
+                        stop = stop.id,
                     )
                 }
             }
@@ -358,10 +358,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stop.id
+                        stop = stop.id,
                     )
                 }
             }
@@ -373,7 +373,7 @@ class AlertSummaryTest {
                 0,
                 listOf(branch1, branch2),
                 now,
-                GlobalResponse(objects)
+                GlobalResponse(objects),
             )
 
         assertEquals(
@@ -381,11 +381,11 @@ class AlertSummaryTest {
                 alert.effect,
                 AlertSummary.Location.StopToDirection(
                     firstStop.name,
-                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
+                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0),
                 ),
-                null
+                null,
             ),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -437,10 +437,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stop.id
+                        stop = stop.id,
                     )
                 }
             }
@@ -452,7 +452,7 @@ class AlertSummaryTest {
                 0,
                 listOf(branch1, branch2),
                 now,
-                GlobalResponse(objects)
+                GlobalResponse(objects),
             )
 
         assertEquals(
@@ -462,9 +462,9 @@ class AlertSummaryTest {
                     Direction(route.directionNames[1]!!, route.directionDestinations[1]!!, 1),
                     lastStop.name,
                 ),
-                null
+                null,
             ),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -516,10 +516,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stop.id
+                        stop = stop.id,
                     )
                 }
             }
@@ -531,7 +531,7 @@ class AlertSummaryTest {
                 0,
                 listOf(bBranch, cBranch),
                 now,
-                GlobalResponse(objects)
+                GlobalResponse(objects),
             )
 
         assertEquals(
@@ -539,11 +539,11 @@ class AlertSummaryTest {
                 alert.effect,
                 AlertSummary.Location.StopToDirection(
                     firstStop.name,
-                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
+                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0),
                 ),
-                null
+                null,
             ),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -591,10 +591,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stop.id
+                        stop = stop.id,
                     )
                 }
             }
@@ -606,16 +606,16 @@ class AlertSummaryTest {
                 1,
                 listOf(cBranch),
                 now,
-                GlobalResponse(objects)
+                GlobalResponse(objects),
             )
 
         assertEquals(
             AlertSummary(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops(cBranchStop.name, trunkStop.name),
-                null
+                null,
             ),
-            alertSummary
+            alertSummary,
         )
     }
 
@@ -689,10 +689,10 @@ class AlertSummaryTest {
                         listOf(
                             Alert.InformedEntity.Activity.Board,
                             Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride
+                            Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id,
-                        stop = stopId
+                        stop = stopId,
                     )
                 }
             }
@@ -704,7 +704,7 @@ class AlertSummaryTest {
                 0,
                 listOf(eBranch),
                 now,
-                GlobalResponse(objects)
+                GlobalResponse(objects),
             )
 
         assertEquals(
@@ -712,11 +712,11 @@ class AlertSummaryTest {
                 alert.effect,
                 AlertSummary.Location.StopToDirection(
                     trunkAlertingStop.name,
-                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0)
+                    Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0),
                 ),
-                null
+                null,
             ),
-            alertSummary
+            alertSummary,
         )
     }
 }

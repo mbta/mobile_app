@@ -35,7 +35,7 @@ class VehiclesRepositoryTest : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(vehiclesRepo.channel)
-        vehiclesRepo.connect(routeId = "Red", directionId = 0, onReceive = { /* no-op */})
+        vehiclesRepo.connect(routeId = "Red", directionId = 0, onReceive = { /* no-op */ })
         assertNotNull(vehiclesRepo.channel)
     }
 
@@ -71,7 +71,7 @@ class VehiclesRepositoryTest : KoinTest {
         class MockPush : PhoenixPush {
             override fun receive(
                 status: PhoenixPushStatus,
-                callback: (PhoenixMessage) -> Unit
+                callback: (PhoenixMessage) -> Unit,
             ): PhoenixPush {
                 if (status == PhoenixPushStatus.Ok) {
                     callback(MockMessage(jsonBody = "{\"vehicles\": {}}"))
@@ -91,7 +91,7 @@ class VehiclesRepositoryTest : KoinTest {
             directionId = 0,
             onReceive = { outcome ->
                 assertEquals(VehiclesStreamDataResponse(emptyMap()), outcome.dataOrThrow())
-            }
+            },
         )
     }
 
@@ -129,7 +129,7 @@ class VehiclesRepositoryTest : KoinTest {
             onReceive = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertEquals(outcome.message, SocketError.FAILURE)
-            }
+            },
         )
     }
 }

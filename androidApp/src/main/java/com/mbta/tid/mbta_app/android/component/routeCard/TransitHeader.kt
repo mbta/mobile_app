@@ -31,7 +31,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 @Composable
 fun TransitHeader(
     transit: RouteCardData.LineOrRoute,
-    rightContent: (@Composable (textColor: Color) -> Unit)? = null
+    rightContent: (@Composable (textColor: Color) -> Unit)? = null,
 ) {
     val (modeIcon, modeDescription) = routeIcon(transit.sortRoute)
     TransitHeader(
@@ -41,7 +41,7 @@ fun TransitHeader(
         textColor = Color.fromHex(transit.textColor),
         modeIcon = modeIcon,
         modeDescription = modeDescription,
-        rightContent
+        rightContent,
     )
 }
 
@@ -53,24 +53,24 @@ fun TransitHeader(
     textColor: Color,
     modeIcon: Painter,
     modeDescription: String?,
-    rightContent: (@Composable (textColor: Color) -> Unit)? = null
+    rightContent: (@Composable (textColor: Color) -> Unit)? = null,
 ) {
     val routeContentDescription =
         stringResource(
             id = R.string.route_with_type,
             name,
-            routeType.typeText(LocalContext.current, isOnly = true)
+            routeType.typeText(LocalContext.current, isOnly = true),
         )
 
     Row(
         modifier = Modifier.background(backgroundColor).fillMaxWidth().padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modeIcon,
             contentDescription = modeDescription,
             tint = textColor,
-            modifier = Modifier.placeholderIfLoading()
+            modifier = Modifier.placeholderIfLoading(),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -84,7 +84,7 @@ fun TransitHeader(
                     }
                     .weight(1.0f)
                     .placeholderIfLoading(),
-            style = Typography.bodySemibold
+            style = Typography.bodySemibold,
         )
         if (rightContent != null) {
             rightContent(textColor)

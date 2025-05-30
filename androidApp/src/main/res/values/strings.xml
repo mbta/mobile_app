@@ -4,6 +4,8 @@
     <string name="access_issue_sentence_case">Access issue</string>
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
+    <string name="add_confirmation_button">Add</string>
+    <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
     <string name="additional_service_sentence_case">Additional service</string>
     <plurals name="affected_stops">
@@ -117,6 +119,7 @@
     <string name="extra_service_sentence_case">Extra service</string>
     <string name="facility_issue">Facility Issue</string>
     <string name="facility_issue_sentence_case">Facility issue</string>
+    <string name="favorites_link">Favorites</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send App Feedback</string>
@@ -246,6 +249,7 @@
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="routes">Routes</string>
     <string name="schedule_change">Schedule Change</string>
     <string name="schedule_change_sentence_case">Schedule change</string>
     <string name="scheduled_to_depart">Scheduled to depart</string>

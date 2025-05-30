@@ -28,20 +28,21 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
         val vehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
-                tripId = ""
+                tripId = trip.id
             }
         val route = objects.route {}
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -53,12 +54,13 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
+        val trip = objects.trip()
 
         val vehicleState =
             mutableStateOf<Vehicle>(
                 objects.vehicle {
                     currentStatus = Vehicle.CurrentStatus.InTransitTo
-                    tripId = ""
+                    tripId = trip.id
                 }
             )
         val route = objects.route {}
@@ -66,11 +68,11 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             val vehicle: Vehicle by vehicleState
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -79,7 +81,7 @@ class TripHeaderCardTest {
         val incomingVehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.IncomingAt
-                tripId = ""
+                tripId = trip.id
             }
 
         vehicleState.value = incomingVehicle
@@ -89,7 +91,7 @@ class TripHeaderCardTest {
         val stoppedVehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
-                tripId = ""
+                tripId = trip.id
             }
 
         vehicleState.value = stoppedVehicle
@@ -104,14 +106,15 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val route = objects.route {}
+        val trip = objects.trip()
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "selected",
+                trip,
                 TripHeaderSpec.FinishingAnotherTrip,
                 "",
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -125,9 +128,10 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val route = objects.route {}
+        val trip = objects.trip()
 
         composeTestRule.setContent {
-            TripHeaderCard("selected", TripHeaderSpec.NoVehicle, "", TripRouteAccents(route), now)
+            TripHeaderCard(trip, TripHeaderSpec.NoVehicle, "", TripRouteAccents(route), now)
         }
         composeTestRule
             .onNodeWithText("Location not available yet", useUnmergedTree = true)
@@ -140,11 +144,12 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
+        val trip = objects.trip()
 
         val vehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
-                tripId = ""
+                tripId = trip.id
                 stopId = stop.id
             }
 
@@ -152,11 +157,11 @@ class TripHeaderCardTest {
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -171,6 +176,7 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route = objects.route {}
+        val trip = objects.trip()
 
         val predictionDeparture = now.plus(5.minutes)
 
@@ -178,7 +184,7 @@ class TripHeaderCardTest {
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
 
-                tripId = ""
+                tripId = trip.id
                 stopId = stop.id
                 currentStopSequence = 0
             }
@@ -186,7 +192,7 @@ class TripHeaderCardTest {
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(
                     vehicle,
                     stop,
@@ -196,15 +202,14 @@ class TripHeaderCardTest {
                         disruption = null,
                         schedule = null,
                         prediction = prediction,
-                        predictionStop = stop,
                         vehicle = vehicle,
-                        routes = listOf()
+                        routes = listOf(),
                     ),
-                    true
+                    true,
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -232,6 +237,7 @@ class TripHeaderCardTest {
                 parentStationId = stop.id
             }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val trip = objects.trip()
 
         val predictionDeparture = now.plus(5.minutes)
 
@@ -239,7 +245,7 @@ class TripHeaderCardTest {
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
 
-                tripId = ""
+                tripId = trip.id
                 stopId = stop.id
                 currentStopSequence = 0
             }
@@ -251,7 +257,7 @@ class TripHeaderCardTest {
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(
                     vehicle,
                     stop,
@@ -263,13 +269,13 @@ class TripHeaderCardTest {
                         prediction = prediction,
                         predictionStop = platformStop,
                         vehicle = vehicle,
-                        routes = listOf()
+                        routes = listOf(),
                     ),
-                    false
+                    false,
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -281,15 +287,20 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
 
         val scheduledTime = now.plus(5.minutes)
-        val route = objects.route {}
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
 
-        val schedule = objects.schedule { departureTime = scheduledTime }
+        val schedule =
+            objects.schedule {
+                this.trip = trip
+                departureTime = scheduledTime
+            }
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.Scheduled(
                     stop,
                     TripDetailsStopList.Entry(
@@ -298,14 +309,13 @@ class TripHeaderCardTest {
                         disruption = null,
                         schedule = schedule,
                         prediction = null,
-                        predictionStop = null,
                         vehicle = null,
-                        routes = listOf()
-                    )
+                        routes = listOf(),
+                    ),
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
@@ -320,6 +330,7 @@ class TripHeaderCardTest {
             .onNodeWithText(formatTime(scheduledTime), useUnmergedTree = true)
             .assertIsDisplayed()
     }
+
     /*
     @Test
     fun testScheduledTap()  {
@@ -363,23 +374,28 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
-        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.IncomingAt }
+        val trip = objects.trip()
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                tripId = trip.id
+            }
         val route = objects.route { type = RouteType.BUS }
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus Approaching stop, selected stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }
@@ -399,7 +415,12 @@ class TripHeaderCardTest {
                 vehicleType = RouteType.COMMUTER_RAIL
                 parentStationId = stop.id
             }
-        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val trip = objects.trip()
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                tripId = trip.id
+            }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val prediction =
             objects.prediction {
@@ -409,7 +430,7 @@ class TripHeaderCardTest {
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(
                     vehicle,
                     stop,
@@ -421,20 +442,20 @@ class TripHeaderCardTest {
                         prediction = prediction,
                         predictionStop = platformStop,
                         vehicle = vehicle,
-                        routes = listOf()
+                        routes = listOf(),
                     ),
-                    false
+                    false,
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected train Now at Ruggles, selected stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
         composeTestRule
@@ -447,25 +468,30 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
-        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.IncomingAt }
+        val trip = objects.trip()
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                tripId = trip.id
+            }
         val route = objects.route { type = RouteType.BUS }
 
         val otherStop = objects.stop { name = "other stop" }
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, otherStop, null, false),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus Approaching other stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }
@@ -475,13 +501,18 @@ class TripHeaderCardTest {
         val now = Clock.System.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
-        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.IncomingAt }
+        val trip = objects.trip()
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                tripId = trip.id
+            }
         val route = objects.route { type = RouteType.BUS }
         val schedule = objects.schedule { departureTime = now.plus(5.minutes) }
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.Scheduled(
                     stop,
                     TripDetailsStopList.Entry(
@@ -490,21 +521,20 @@ class TripHeaderCardTest {
                         disruption = null,
                         schedule = schedule,
                         prediction = null,
-                        predictionStop = null,
-                        vehicle = null,
-                        routes = listOf()
-                    )
+                        vehicle = vehicle,
+                        routes = listOf(),
+                    ),
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus scheduled to depart stop, selected stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }
@@ -516,13 +546,18 @@ class TripHeaderCardTest {
         val stop = objects.stop { name = "stop" }
         val other = objects.stop { name = "other stop" }
 
-        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.IncomingAt }
+        val trip = objects.trip()
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                tripId = trip.id
+            }
         val route = objects.route { type = RouteType.BUS }
         val schedule = objects.schedule { departureTime = now.plus(5.minutes) }
 
         composeTestRule.setContent {
             TripHeaderCard(
-                "",
+                trip,
                 TripHeaderSpec.Scheduled(
                     other,
                     TripDetailsStopList.Entry(
@@ -531,21 +566,20 @@ class TripHeaderCardTest {
                         disruption = null,
                         schedule = schedule,
                         prediction = null,
-                        predictionStop = null,
-                        vehicle = null,
-                        routes = listOf()
-                    )
+                        vehicle = vehicle,
+                        routes = listOf(),
+                    ),
                 ),
                 stop.id,
                 TripRouteAccents(route),
-                now
+                now,
             )
         }
 
         composeTestRule
             .onNodeWithContentDescription(
                 "Selected bus scheduled to depart other stop",
-                useUnmergedTree = true
+                useUnmergedTree = true,
             )
             .assertIsDisplayed()
     }

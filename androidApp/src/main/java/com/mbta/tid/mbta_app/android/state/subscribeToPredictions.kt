@@ -32,7 +32,7 @@ class StopPredictionsFetcher(
     private val predictionsRepository: IPredictionsRepository,
     private val errorRepository: IErrorBannerStateRepository,
     private val onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
-    private val onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?
+    private val onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
 ) {
 
     private var currentStopIds: List<String>? = null
@@ -53,7 +53,7 @@ class StopPredictionsFetcher(
             is ApiResult.Error -> {
                 Log.e(
                     "PredictionsViewModel",
-                    "Predictions stream failed to join: ${message.message}"
+                    "Predictions stream failed to join: ${message.message}",
                 )
             }
         }
@@ -68,7 +68,7 @@ class StopPredictionsFetcher(
             is ApiResult.Error -> {
                 Log.e(
                     "PredictionsViewModel",
-                    "Predictions stream failed on message: ${message.message}"
+                    "Predictions stream failed on message: ${message.message}",
                 )
             }
         }
@@ -87,7 +87,7 @@ class StopPredictionsFetcher(
                     action = {
                         disconnect()
                         connect(currentStopIds)
-                    }
+                    },
                 )
             }
         }
@@ -96,7 +96,7 @@ class StopPredictionsFetcher(
 
 class PredictionsViewModel(
     private val predictionsRepository: IPredictionsRepository,
-    private val errorBannerViewModel: ErrorBannerViewModel
+    private val errorBannerViewModel: ErrorBannerViewModel,
 ) : KoinComponent, ViewModel() {
     private val _predictions = MutableStateFlow<PredictionsByStopJoinResponse?>(null)
     val predictions: StateFlow<PredictionsByStopJoinResponse?> = _predictions
@@ -108,7 +108,7 @@ class PredictionsViewModel(
             predictionsRepository,
             errorBannerViewModel.errorRepository,
             ::onJoinResponse,
-            ::onPushMessage
+            ::onPushMessage,
         )
 
     fun onJoinResponse(joinResponse: PredictionsByStopJoinResponse) {
@@ -150,7 +150,7 @@ class PredictionsViewModel(
 
     class Factory(
         private val predictionsRepository: IPredictionsRepository,
-        private val errorBannerViewModel: ErrorBannerViewModel
+        private val errorBannerViewModel: ErrorBannerViewModel,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PredictionsViewModel(predictionsRepository, errorBannerViewModel) as T
@@ -163,7 +163,7 @@ fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject(),
     errorBannerViewModel: ErrorBannerViewModel,
-    checkPredictionsStaleInterval: Duration = 5.seconds
+    checkPredictionsStaleInterval: Duration = 5.seconds,
 ): PredictionsViewModel {
     val viewModel: PredictionsViewModel =
         viewModel(

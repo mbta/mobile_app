@@ -17,7 +17,7 @@ fun Modifier.haloContainer(
     borderWidth: Dp,
     outlineColor: Color = MaterialTheme.colorScheme.outline,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
-    borderRadius: Dp = 8.dp
+    borderRadius: Dp = 8.dp,
 ): Modifier {
     return border(borderWidth, outlineColor, RoundedCornerShape(borderWidth + borderRadius))
         .padding(borderWidth)

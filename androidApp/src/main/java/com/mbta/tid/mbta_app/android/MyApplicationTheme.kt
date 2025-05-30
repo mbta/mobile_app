@@ -17,7 +17,7 @@ import com.mbta.tid.mbta_app.android.util.Typography as AppTypography
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colors =
         if (darkTheme) {
@@ -117,7 +117,7 @@ fun MyApplicationTheme(
         Shapes(
             small = RoundedCornerShape(4.dp),
             medium = RoundedCornerShape(8.dp),
-            large = RoundedCornerShape(0.dp)
+            large = RoundedCornerShape(0.dp),
         )
 
     MaterialTheme(colorScheme = colors, typography = typography, shapes = shapes) {

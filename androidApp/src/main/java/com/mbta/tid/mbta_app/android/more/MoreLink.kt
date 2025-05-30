@@ -62,11 +62,5 @@ fun MoreLink(label: String, callback: () -> Unit, note: String? = null, isKey: B
                 } else colorResource(R.color.deemphasized),
         )
     }
-    MoreButton(
-        label,
-        callback,
-        note,
-        { LinkIcon() },
-        isKey,
-    )
+    MoreButton(label, callback, note, { LinkIcon() }, isKey)
 }

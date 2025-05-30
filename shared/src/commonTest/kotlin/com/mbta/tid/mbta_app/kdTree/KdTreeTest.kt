@@ -412,11 +412,11 @@ class KdTreeTest {
                 Pair("NEC-2287-10", 0.59),
                 Pair("NEC-2287-11", 0.59),
                 Pair("NEC-2287-12", 0.592),
-                Pair("NEC-2287-13", 0.592)
+                Pair("NEC-2287-13", 0.592),
             ),
             tree.findNodesWithin(queryPoint, 1.0).map {
                 Pair(it.first, round(it.second * 1000) / 1000)
-            }
+            },
         )
     }
 
@@ -446,9 +446,9 @@ class KdTreeTest {
                 feature(
                     io.github.dellisd.spatialk.geojson.dsl.point(
                         latitude = position.latitude,
-                        longitude = position.longitude
+                        longitude = position.longitude,
                     ),
-                    id
+                    id,
                 ) {
                     put("ids", JsonArray(ids.map(::JsonPrimitive)))
                 },
@@ -457,19 +457,19 @@ class KdTreeTest {
                         +boundingBox.southwest.butWith(splitAxis, position[splitAxis])
                         +boundingBox.northeast.butWith(splitAxis, position[splitAxis])
                     },
-                    id = "$id-line"
+                    id = "$id-line",
                 ),
                 feature(boundingBox.toPolygon(), id = "$id-box") {
                     put("fill-opacity", 0.1)
                     put("stroke-opacity", 0)
-                }
+                },
             )
         var lowFeatures: List<Feature>? = null
         if (lowChild != null) {
             val lowBox =
                 BoundingBox(
                     boundingBox.southwest,
-                    boundingBox.northeast.butWith(splitAxis, position[splitAxis])
+                    boundingBox.northeast.butWith(splitAxis, position[splitAxis]),
                 )
             lowFeatures = lowChild.asFeatures(lowBox)
         }
@@ -478,7 +478,7 @@ class KdTreeTest {
             val highBox =
                 BoundingBox(
                     boundingBox.southwest.butWith(splitAxis, position[splitAxis]),
-                    boundingBox.northeast
+                    boundingBox.northeast,
                 )
             highFeatures = highChild.asFeatures(highBox)
         }

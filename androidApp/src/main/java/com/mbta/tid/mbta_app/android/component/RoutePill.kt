@@ -45,14 +45,14 @@ fun RoutePill(
     type: RoutePillType,
     isActive: Boolean = true,
     contentDescription: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     RoutePill(
         route,
         line,
         isActive,
         RoutePillSpec(route, line, type, contentDescription = contentDescription),
-        modifier
+        modifier,
     )
 }
 
@@ -62,7 +62,7 @@ fun RoutePill(
     line: Line? = null,
     isActive: Boolean = true,
     spec: RoutePillSpec,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val textColor = Color.fromHex(spec.textColor)
     val routeColor = Color.fromHex(spec.routeColor)
@@ -114,7 +114,7 @@ fun RoutePill(
             ?: stringResource(
                 id = R.string.route_with_type,
                 route?.label ?: line?.longName ?: "",
-                typeText ?: ""
+                typeText ?: "",
             )
 
     val finalModifier =
@@ -137,7 +137,7 @@ fun RoutePill(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
                 textAlign = TextAlign.Center,
-                maxLines = 1
+                maxLines = 1,
             )
         is RoutePillSpec.Content.ModeImage -> {
             val (painter, contentDescription) = routeIcon(routeType = pillContent.mode)
@@ -145,7 +145,7 @@ fun RoutePill(
                 painter = painter,
                 contentDescription = contentDescription,
                 modifier = finalModifier.size(iconSize),
-                tint = if (isActive) textColor else LocalContentColor.current
+                tint = if (isActive) textColor else LocalContentColor.current,
             )
         }
     }
@@ -381,8 +381,8 @@ private fun RoutePillPreviews() {
                     longName = "Red Line",
                     shortName = "",
                     sortOrder = 10010,
-                    textColor = "FFFFFF"
-                )
+                    textColor = "FFFFFF",
+                ),
         )
     }
 }

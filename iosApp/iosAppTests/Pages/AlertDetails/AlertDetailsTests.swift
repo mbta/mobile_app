@@ -135,7 +135,7 @@ final class AlertDetailsTests: XCTestCase {
         let now = Date.now
 
         let start = now.addingTimeInterval(-20)
-        let end = now.addingTimeInterval(60 * 60 * 2)
+        let end = now.addingTimeInterval(60 * 60 * 2 + 10 * 60)
 
         let alert = objects.alert { alert in
             alert.durationCertainty = .estimated

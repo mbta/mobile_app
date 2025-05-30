@@ -27,23 +27,19 @@ final class RouteCardDeparturesTests: XCTestCase {
         }
 
         let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: .route(route),
             stop: stop,
             directions: [.init(name: "Outbound", destination: "Harvard", id: 0)],
             data: [.init(
+                lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: .nearbyTransit
             )]
-        )
-        let cardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-            stopData: [stopData],
-            context: .nearbyTransit,
-            at: Date.now.toKotlinInstant()
         )
 
         let sut = RouteCardDepartures(
-            cardData: cardData,
             stopData: stopData,
             global: .init(objects: objects),
             now: Date.now,
@@ -74,23 +70,19 @@ final class RouteCardDeparturesTests: XCTestCase {
         }
 
         let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: .route(route),
             stop: stop,
             directions: [.init(name: "South", destination: "Forest Hills", id: 0)],
             data: [.init(
+                lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [.init(trip: trip, schedule: schedule)], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: .nearbyTransit
             )]
-        )
-        let cardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteRoute(route: route),
-            stopData: [stopData],
-            context: .nearbyTransit,
-            at: Date.now.toKotlinInstant()
         )
 
         let sut = RouteCardDepartures(
-            cardData: cardData,
             stopData: stopData,
             global: .init(objects: objects),
             now: Date.now,
@@ -197,13 +189,22 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.tripId = tripE1.id
         }
 
+        let lineOrRoute = RouteCardData.LineOrRoute.line(
+            Green.shared.line,
+            [Green.shared.routeB, Green.shared.routeC, Green.shared.routeE]
+        )
+
+        let context = RouteCardData.Context.nearbyTransit
         let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: lineOrRoute,
             stop: stop,
             directions: [
                 .init(name: "West", destination: "Copley & West", id: 0),
                 .init(name: "East", destination: "Park St & North", id: 1),
             ],
             data: [.init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
                 directionId: 0,
                 routePatterns: [Green.shared.rpB0, Green.shared.rpC0, Green.shared.rpE0],
                 stopIds: [stop.id],
@@ -213,9 +214,12 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE0, prediction: predE0),
                     .init(trip: tripC02, prediction: predC02),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [downstreamAlert]
+                hasSchedulesToday: true, alertsDownstream: [downstreamAlert],
+                context: context
             ),
             .init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
                 directionId: 1,
                 routePatterns: [Green.shared.rpB1, Green.shared.rpC1, Green.shared.rpE1],
                 stopIds: [stop.id],
@@ -225,21 +229,12 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE1, prediction: predE1),
                     .init(trip: tripC12, prediction: predC12),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: []
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: context
             )]
-        )
-        let cardData = RouteCardData(
-            lineOrRoute: RouteCardDataLineOrRouteLine(
-                line: Green.shared.line,
-                routes: [Green.shared.routeB, Green.shared.routeC, Green.shared.routeE]
-            ),
-            stopData: [stopData],
-            context: .nearbyTransit,
-            at: now.toKotlinInstant()
         )
 
         let sut = RouteCardDepartures(
-            cardData: cardData,
             stopData: stopData,
             global: .init(objects: objects),
             now: now,
@@ -268,5 +263,53 @@ final class RouteCardDeparturesTests: XCTestCase {
             .find(HeadsignRowView.self, relation: .parent).find(text: "Government Center"))
         XCTAssertNotNil(try eastDirection.find(text: "6 min")
             .find(HeadsignRowView.self, relation: .parent).find(text: "Medford/Tufts"))
+    }
+
+    func testSinglePill() throws {
+        let now = Date.now
+        let objects = TestData.clone()
+
+        let stop = objects.getStop(id: "place-rsmnl")
+        let line = objects.getLine(id: "line-Green")
+        let route = objects.getRoute(id: "Green-D")
+        let routePattern = objects.getRoutePattern(id: "Green-D-855-0")
+
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePattern)
+            prediction.departureTime = (now + 5 * 60).toKotlinInstant()
+        })
+
+        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+
+        let context = RouteCardData.Context.nearbyTransit
+        let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: lineOrRoute,
+            stop: stop,
+            directions: [
+                .init(name: "West", destination: "Riverside", id: 0),
+                .init(name: "East", destination: "Park St & North", id: 1),
+            ],
+            data: [.init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
+                directionId: 0,
+                routePatterns: [routePattern],
+                stopIds: [stop.id],
+                upcomingTrips: [trip],
+                alertsHere: [], allDataLoaded: true,
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: context
+            )]
+        )
+
+        let sut = RouteCardDepartures(
+            stopData: stopData,
+            global: .init(objects: objects),
+            now: now,
+            pinned: false,
+            pushNavEntry: { _ in }
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
     }
 }

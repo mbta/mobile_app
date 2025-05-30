@@ -23,25 +23,25 @@ fun BottomNavIconButton(
     onClick: () -> Unit,
     icon: Int,
     label: String,
-    active: Boolean = false
+    active: Boolean = false,
 ) {
     val iconButtonColors =
         IconButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             disabledContentColor = MaterialTheme.colorScheme.primary,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
         )
 
     IconButton(
         modifier = modifier,
         onClick = onClick,
         colors = iconButtonColors,
-        enabled = !active
+        enabled = !active,
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.height(4.dp))

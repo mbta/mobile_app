@@ -21,13 +21,13 @@ object RouteLayerGenerator {
     suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalResponse: GlobalResponse,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
     ): List<LineLayer> = createAllRouteLayers(routesWithShapes, globalResponse.routes, colorPalette)
 
     private suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
     ): List<LineLayer> =
         withContext(Dispatchers.Default) {
             val sortedRoutes =
@@ -64,7 +64,7 @@ object RouteLayerGenerator {
         shuttledLayer.filter =
             Exp.eq(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
-                Exp(SegmentAlertState.Shuttle.name)
+                Exp(SegmentAlertState.Shuttle.name),
             )
         shuttledLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
         shuttledLayer.lineDasharray = listOf(2.0, 1.33)
@@ -73,7 +73,7 @@ object RouteLayerGenerator {
         suspendedLayer.filter =
             Exp.eq(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
-                Exp(SegmentAlertState.Suspension.name)
+                Exp(SegmentAlertState.Suspension.name),
             )
         suspendedLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
         suspendedLayer.lineDasharray = listOf(1.33, 2.0)
@@ -83,7 +83,7 @@ object RouteLayerGenerator {
         alertBackgroundLayer.filter =
             Exp.`in`(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
-                Exp.Bare.arrayOf(SegmentAlertState.Suspension.name, SegmentAlertState.Shuttle.name)
+                Exp.Bare.arrayOf(SegmentAlertState.Suspension.name, SegmentAlertState.Shuttle.name),
             )
         alertBackgroundLayer.lineWidth =
             Exp.step(Exp.zoom(), Exp(8), Exp(closeZoomCutoff) to Exp(10))

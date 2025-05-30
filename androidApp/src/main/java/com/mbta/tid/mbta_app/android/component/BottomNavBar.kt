@@ -22,17 +22,36 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.Routes
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.util.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavBar(
     currentDestination: Routes,
+    sheetNavEntrypoint: SheetRoutes.Entrypoint,
+    navigateToFavorites: () -> Unit,
     navigateToNearby: () -> Unit,
-    navigateToMore: () -> Unit
+    navigateToMore: () -> Unit,
+    enhancedFavorites: Boolean = false,
 ) {
 
-    val selectedTabIndex = if (currentDestination == Routes.NearbyTransit) 0 else 1
+    val selectedTabIndex =
+        if (enhancedFavorites) {
+            when (currentDestination) {
+                is Routes.MapAndSheet ->
+                    when (sheetNavEntrypoint) {
+                        SheetRoutes.Favorites -> 0
+                        SheetRoutes.NearbyTransit -> 1
+                    }
+                is Routes.More -> 2
+            }
+        } else {
+            when (currentDestination) {
+                is Routes.MapAndSheet -> 0
+                is Routes.More -> 1
+            }
+        }
 
     CompositionLocalProvider(
         LocalDensity provides
@@ -41,22 +60,35 @@ fun BottomNavBar(
                 // Override the system font scale so that the tab size doesn't scale up at larger
                 // display sizes
                 // https://stackoverflow.com/a/74290870
-                1f
+                1f,
             )
     ) {
         TabRow(selectedTabIndex = selectedTabIndex, indicator = {}) {
+            if (enhancedFavorites) {
+                BottomNavTab(
+                    selected =
+                        currentDestination is Routes.MapAndSheet &&
+                            sheetNavEntrypoint == SheetRoutes.Favorites,
+                    onClick = { navigateToFavorites() },
+                    icon = painterResource(R.drawable.tab_star),
+                    text = stringResource(R.string.favorites_link),
+                )
+            }
+
             BottomNavTab(
-                selected = currentDestination == Routes.NearbyTransit,
+                selected =
+                    currentDestination is Routes.MapAndSheet &&
+                        sheetNavEntrypoint == SheetRoutes.NearbyTransit,
                 onClick = { navigateToNearby() },
                 icon = painterResource(R.drawable.map_pin),
-                text = stringResource(R.string.nearby_transit_link)
+                text = stringResource(R.string.nearby_transit_link),
             )
 
             BottomNavTab(
                 selected = currentDestination == Routes.More,
                 onClick = { navigateToMore() },
                 icon = painterResource(R.drawable.more),
-                text = stringResource(R.string.more_link)
+                text = stringResource(R.string.more_link),
             )
         }
     }
@@ -69,11 +101,11 @@ private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, 
         onClick = onClick,
         selectedContentColor = colorResource(R.color.key),
         unselectedContentColor = colorResource(R.color.text),
-        modifier = Modifier.background(colorResource(R.color.fill2))
+        modifier = Modifier.background(colorResource(R.color.fill2)),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp),
         ) {
             Icon(icon, contentDescription = null, modifier = Modifier.padding(4.dp))
             Text(
@@ -81,7 +113,7 @@ private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, 
                 style =
                     Typography.caption2.copy(
                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                    )
+                    ),
             )
         }
     }

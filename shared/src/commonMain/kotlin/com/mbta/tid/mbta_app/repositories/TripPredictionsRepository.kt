@@ -37,7 +37,7 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
 
     override fun connect(
         tripId: String,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         disconnect()
         channel = socket.getChannel("predictions:trip:$tripId", emptyMap())
@@ -66,7 +66,7 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -93,12 +93,12 @@ constructor(
     var onConnect: () -> Unit = {},
     var onDisconnect: () -> Unit = {},
     var response: PredictionsStreamDataResponse =
-        PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap())
+        PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
 ) : ITripPredictionsRepository {
 
     override fun connect(
         tripId: String,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         onReceive(ApiResult.Ok(response))
         onConnect()

@@ -4,6 +4,8 @@
     <string name="access_issue_sentence_case">Pwoblèm aksè</string>
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
+    <string name="add_confirmation_button">Ajoute</string>
+    <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>
     <string name="additional_service_sentence_case">Plis sèvis</string>
     <plurals name="affected_stops">
@@ -127,6 +129,7 @@
     <string name="extra_service_sentence_case">Sèvis anplis</string>
     <string name="facility_issue">Pwoblèm Lokal</string>
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
+    <string name="favorites_link">Favori</string>
     <string name="feature_flag_debug_mode">Mòd Debogaj</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye Feedback sou aplikasyon an</string>
@@ -255,6 +258,7 @@
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_with_type">%1$s %2$s</string>
+    <string name="routes">Wout</string>
     <string name="schedule_change">Chanjman Orè</string>
     <string name="schedule_change_sentence_case">Chanjman orè</string>
     <string name="scheduled_to_depart">Pwograme pou ale</string>

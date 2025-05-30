@@ -44,8 +44,8 @@ class PredictionsForStopsChannelTest {
             PredictionsStreamDataResponse(
                 predictions = mapOf(prediction1.id to prediction1),
                 trips = mapOf(trip1.id to trip1),
-                vehicles = mapOf(vehicle1.id to vehicle1)
-            )
+                vehicles = mapOf(vehicle1.id to vehicle1),
+            ),
         )
     }
 }

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.IntentSender
 import android.location.Location
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +29,6 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsLocationAccess
-import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,7 @@ open class LocationDataManager {
     @Composable
     fun running(
         lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-        analytics: Analytics = koinInject()
+        analytics: Analytics = koinInject(),
     ): LocationDataManager {
         val permissions = rememberPermissions()
         val locationRequest =
@@ -61,8 +61,8 @@ open class LocationDataManager {
                         it.permission == Manifest.permission.ACCESS_FINE_LOCATION
                     }
                 LocationRequest.Builder(5.seconds.inWholeMilliseconds)
-                    // ignore updates less than 0.1km
-                    .setMinUpdateDistanceMeters(100F)
+                    // ignore updates less than 10m
+                    .setMinUpdateDistanceMeters(10F)
                     .setPriority(
                         if (finePermission?.status?.isGranted == true)
                             Priority.PRIORITY_HIGH_ACCURACY
@@ -114,7 +114,7 @@ open class LocationDataManager {
 
                 task.addOnSuccessListener { settingsCorrect = true }
                 task.addOnFailureListener { exception ->
-                    if (exception is ResolvableApiException) {
+                    if (exception is ResolvableApiException && activity != null) {
                         try {
                             exception.startResolutionForResult(activity, 1)
                         } catch (sendEx: IntentSender.SendIntentException) {
@@ -135,7 +135,7 @@ open class LocationDataManager {
                         locationClient.requestLocationUpdates(
                             locationRequest,
                             locationCallback,
-                            Looper.getMainLooper()
+                            Looper.getMainLooper(),
                         )
                     } else if (event == Lifecycle.Event.ON_STOP) {
                         locationClient.removeLocationUpdates(locationCallback)
@@ -160,9 +160,9 @@ open class LocationDataManager {
         rememberMultiplePermissionsState(
             listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
             ),
-            onPermissionsResult
+            onPermissionsResult,
         )
 
     open val currentLocation = _currentLocation.asStateFlow()

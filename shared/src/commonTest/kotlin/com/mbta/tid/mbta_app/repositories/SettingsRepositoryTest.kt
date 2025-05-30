@@ -38,12 +38,12 @@ class SettingsRepositoryTest : KoinTest {
         assertEquals(
             mapOf(
                 Settings.DevDebugMode to true,
-                Settings.GroupByDirection to false,
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
                 Settings.HideMaps to false,
+                Settings.EnhancedFavorites to false,
             ),
-            repo.getSettings()
+            repo.getSettings(),
         )
     }
 

@@ -48,7 +48,7 @@ class MockOnboardingRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     private val pendingOnboarding: List<OnboardingScreen> = emptyList(),
-    private val onMarkComplete: (OnboardingScreen) -> Unit = {}
+    private val onMarkComplete: (OnboardingScreen) -> Unit = {},
 ) : IOnboardingRepository, KoinComponent {
     override suspend fun getPendingOnboarding(): List<OnboardingScreen> {
         return pendingOnboarding

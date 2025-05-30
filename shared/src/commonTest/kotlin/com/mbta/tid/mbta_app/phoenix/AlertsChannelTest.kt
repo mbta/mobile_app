@@ -83,22 +83,22 @@ class AlertsChannelTest {
                                     listOf(Alert.InformedEntity.Activity.Board),
                                     route = "Green-D",
                                     routeType = RouteType.LIGHT_RAIL,
-                                    stop = "70511"
+                                    stop = "70511",
                                 ),
                                 Alert.InformedEntity(
                                     listOf(Alert.InformedEntity.Activity.Board),
                                     route = "88",
                                     routeType = RouteType.BUS,
-                                    stop = "place-lech"
-                                )
+                                    stop = "place-lech",
+                                ),
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
-                            Instant.parse("2023-05-26T16:46:13-04:00")
+                            Instant.parse("2023-05-26T16:46:13-04:00"),
                         )
                 )
             ),
-            parsed
+            parsed,
         )
     }
 
@@ -160,16 +160,16 @@ class AlertsChannelTest {
                                     listOf(Alert.InformedEntity.Activity.Board),
                                     route = "Red",
                                     routeType = RouteType.HEAVY_RAIL,
-                                    stop = "place-pktrm"
-                                ),
+                                    stop = "place-pktrm",
+                                )
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
-                            Instant.parse("2023-05-26T16:46:13-04:00")
+                            Instant.parse("2023-05-26T16:46:13-04:00"),
                         )
                 )
             ),
-            parsed
+            parsed,
         )
     }
 }

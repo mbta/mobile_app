@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.TestData
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -21,7 +22,6 @@ import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
-import org.koin.dsl.koinApplication
 
 class DeparturesTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -42,53 +42,55 @@ class DeparturesTest {
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
+                lineOrRoute,
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
                             UpcomingTrip(
                                 aTrip,
-                                objects.prediction { departureTime = now.plus(5.minutes) }
+                                objects.prediction { departureTime = now.plus(5.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
+                        context,
                     ),
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
                             UpcomingTrip(
                                 bTrip,
-                                objects.prediction { departureTime = now.plus(20.minutes) }
+                                objects.prediction { departureTime = now.plus(20.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        listOf(downstreamAlert)
-                    )
-                )
-            )
-        val cardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(stopData),
-                RouteCardData.Context.NearbyTransit,
-                now,
+                        listOf(downstreamAlert),
+                        context,
+                    ),
+                ),
             )
 
         composeTestRule.setContent {
-            Departures(stopData, cardData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
         }
 
         composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
@@ -116,12 +118,17 @@ class DeparturesTest {
         val aSchedule = objects.schedule { stopHeadsign = "A Stop Headsign" }
         val bTrip = objects.trip { headsign = "B" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
+                lineOrRoute,
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
@@ -129,46 +136,92 @@ class DeparturesTest {
                             UpcomingTrip(
                                 aTrip,
                                 aSchedule,
-                                objects.prediction { departureTime = now.plus(5.minutes) }
+                                objects.prediction { departureTime = now.plus(5.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
+                        context,
                     ),
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
                             UpcomingTrip(
                                 bTrip,
-                                objects.prediction { departureTime = now.plus(20.minutes) }
+                                objects.prediction { departureTime = now.plus(20.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
-                    )
-                )
-            )
-        val cardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(stopData),
-                RouteCardData.Context.NearbyTransit,
-                now,
+                        emptyList(),
+                        context,
+                    ),
+                ),
             )
 
         composeTestRule.setContent {
-            Departures(stopData, cardData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
         }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
         composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertIsDisplayed()
         composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+    }
+
+    @Test
+    fun testSinglePill() {
+        val now = Clock.System.now()
+        val objects = TestData.clone()
+
+        val stop = objects.getStop("place-rsmnl")
+        val line = objects.getLine("line-Green")
+        val route = objects.getRoute("Green-D")
+        val routePattern = objects.getRoutePattern("Green-D-855-0")
+
+        val trip =
+            objects.upcomingTrip(
+                objects.prediction {
+                    trip = objects.trip(routePattern)
+                    departureTime = now + 5.minutes
+                }
+            )
+
+        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
+        val context = RouteCardData.Context.NearbyTransit
+        val stopData =
+            RouteCardData.RouteStopData(
+                lineOrRoute,
+                stop,
+                listOf(Direction("West", "Riverside", 0), Direction("East", "Park St & North", 1)),
+                listOf(
+                    RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
+                        0,
+                        listOf(routePattern),
+                        setOf(stop.id),
+                        listOf(trip),
+                        emptyList(),
+                        true,
+                        true,
+                        emptyList(),
+                        context,
+                    )
+                ),
+            )
+
+        composeTestRule.setContent {
+            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
+        }
+
+        composeTestRule.onNodeWithText("D").assertIsDisplayed()
     }
 
     @Test
@@ -185,49 +238,51 @@ class DeparturesTest {
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
 
+        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
+                lineOrRoute,
                 stop,
                 listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         0,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
                             UpcomingTrip(
                                 aTrip,
-                                objects.prediction { departureTime = now.plus(5.minutes) }
+                                objects.prediction { departureTime = now.plus(5.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
+                        emptyList(),
+                        context,
                     ),
                     RouteCardData.Leaf(
+                        lineOrRoute,
+                        stop,
                         1,
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
                             UpcomingTrip(
                                 bTrip,
-                                objects.prediction { departureTime = now.plus(20.minutes) }
+                                objects.prediction { departureTime = now.plus(20.minutes) },
                             )
                         ),
                         emptyList(),
                         true,
                         true,
-                        emptyList()
-                    )
-                )
-            )
-        val cardData =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route),
-                listOf(stopData),
-                RouteCardData.Context.NearbyTransit,
-                now,
+                        emptyList(),
+                        context,
+                    ),
+                ),
             )
 
         var tapAnalytics: Pair<String, Map<String, String>>? = null
@@ -240,7 +295,7 @@ class DeparturesTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                Departures(stopData, cardData, GlobalResponse(objects), now, pinned = true) {
+                Departures(stopData, GlobalResponse(objects), now, pinned = true) {
                     onClickCalled = true
                 }
             }
@@ -259,9 +314,9 @@ class DeparturesTest {
                     "pinned" to "true",
                     "alert" to "false",
                     "mode" to "subway",
-                    "no_trips" to ""
-                )
-            )
+                    "no_trips" to "",
+                ),
+            ),
         )
     }
 }

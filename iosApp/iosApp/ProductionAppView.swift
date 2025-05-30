@@ -20,7 +20,6 @@ import SwiftUI
 #endif
 
 struct ProductionAppView: View {
-    // ignore updates less than 0.1km
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var contentVM: ContentViewModel = .init()
@@ -43,7 +42,8 @@ struct ProductionAppView: View {
     }
 
     init(socket: PhoenixSocket) {
-        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 1))
+        // ignore updates less than 10m
+        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 10))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }

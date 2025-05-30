@@ -10,5 +10,5 @@ data class ShapeWithStops(
     @SerialName("route_id") val routeId: String,
     @SerialName("route_pattern_id") val routePatternId: String,
     @SerialName("shape") val shape: Shape?,
-    @SerialName("stop_ids") val stopIds: List<String>
+    @SerialName("stop_ids") val stopIds: List<String>,
 )

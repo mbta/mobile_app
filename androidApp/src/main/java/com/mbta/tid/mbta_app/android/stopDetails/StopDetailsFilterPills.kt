@@ -56,7 +56,7 @@ fun StopDetailsFilterPills(
     servedRoutes: List<PillFilter>,
     filter: StopDetailsFilter? = null,
     onTapRoutePill: (PillFilter) -> Unit,
-    onClearFilter: () -> Unit
+    onClearFilter: () -> Unit,
 ) {
 
     @Composable
@@ -100,7 +100,7 @@ fun StopDetailsFilterPills(
                             line = filterBy.line,
                             type = RoutePillType.Flex,
                             isActive = isActive,
-                            modifier = pillModifier
+                            modifier = pillModifier,
                         )
                     }
                     is PillFilter.ByLine -> {
@@ -109,7 +109,7 @@ fun StopDetailsFilterPills(
                             line = filterBy.line,
                             type = RoutePillType.Flex,
                             isActive = isActive,
-                            modifier = pillModifier
+                            modifier = pillModifier,
                         )
                     }
                 }
@@ -130,9 +130,9 @@ fun StopDetailsFilterPills(
                 colors =
                     ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.contrast),
-                        contentColor = colorResource(R.color.fill1)
+                        contentColor = colorResource(R.color.fill1),
                     ),
-                border = BorderStroke(2.dp, colorResource(R.color.halo))
+                border = BorderStroke(2.dp, colorResource(R.color.halo)),
             ) {
                 Text(
                     stringResource(R.string.filterShowAll),
