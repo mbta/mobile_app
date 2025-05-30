@@ -203,8 +203,9 @@ data class RouteCardData(
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
             val tripsToConsider =
-                if (isBus && context == Context.StopDetailsFiltered) tripsUpcoming
-                else tripsUpcoming.take(TYPICAL_LEAF_ROWS)
+                if (isBus && context != Context.StopDetailsFiltered)
+                    tripsUpcoming.take(TYPICAL_LEAF_ROWS)
+                else tripsUpcoming
 
             for (trip in tripsToConsider) {
                 if (trip.isUpcomingWithin(now, cutoffTime)) {
