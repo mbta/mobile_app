@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.IntentSender
 import android.location.Location
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +29,6 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsLocationAccess
-import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,7 +114,7 @@ open class LocationDataManager {
 
                 task.addOnSuccessListener { settingsCorrect = true }
                 task.addOnFailureListener { exception ->
-                    if (exception is ResolvableApiException) {
+                    if (exception is ResolvableApiException && activity != null) {
                         try {
                             exception.startResolutionForResult(activity, 1)
                         } catch (sendEx: IntentSender.SendIntentException) {

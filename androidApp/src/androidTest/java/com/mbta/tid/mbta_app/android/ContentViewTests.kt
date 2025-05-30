@@ -1,8 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
-import android.app.Activity
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -12,7 +10,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
-import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import org.junit.Rule
@@ -34,8 +31,7 @@ class ContentViewTests : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
-                    LocalActivity provides (LocalContext.current as Activity),
-                    LocalLocationClient provides MockFusedLocationProviderClient(),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
                 ) {
                     ContentView()
                 }
@@ -63,7 +59,6 @@ class ContentViewTests : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
-                    LocalActivity provides (LocalContext.current as Activity),
                     LocalLocationClient provides MockFusedLocationProviderClient(),
                     LocalLifecycleOwner provides lifecycleOwner,
                 ) {
