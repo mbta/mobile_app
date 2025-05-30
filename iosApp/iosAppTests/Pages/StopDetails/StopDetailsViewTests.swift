@@ -67,7 +67,7 @@ final class StopDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([.groupByDirection: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }

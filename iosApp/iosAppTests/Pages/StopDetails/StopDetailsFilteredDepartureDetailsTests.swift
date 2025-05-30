@@ -391,7 +391,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
@@ -455,7 +455,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
@@ -706,7 +706,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "5 min"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         await fulfillment(of: [exp], timeout: 3)
     }
 }

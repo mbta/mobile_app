@@ -81,7 +81,7 @@ final class ErrorBannerTests: XCTestCase {
             initialLoadingWhenPredictionsStale: true
         ))
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         XCTAssertThrowsError(try sut.inspect().find(text: "Fake message"))
     }

@@ -66,7 +66,7 @@ final class MorePageTests: XCTestCase {
             try XCTAssertNotNil(view.find(text: "617-222-3200"))
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         await fulfillment(of: [exp], timeout: 5)
     }

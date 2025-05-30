@@ -172,7 +172,7 @@ class NearbyViewModel: ObservableObject {
         _ = navigationStack.popLast()
     }
 
-    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D, groupByDirection _: Bool) {
+    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D) {
         guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
             return
         }

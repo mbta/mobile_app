@@ -32,8 +32,6 @@ struct NearbyTransitView: View {
     var errorBannerRepository = RepositoryDI().errorBanner
     let noNearbyStops: () -> NoNearbyStopsView
 
-    @EnvironmentObject var settingsCache: SettingsCache
-    var groupByDirection: Bool { settingsCache.get(.groupByDirection) }
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
@@ -231,7 +229,7 @@ struct NearbyTransitView: View {
             scheduleResponse = nil
             return
         }
-        nearbyVM.getNearbyStops(global: globalData, location: location, groupByDirection: groupByDirection)
+        nearbyVM.getNearbyStops(global: globalData, location: location)
     }
 
     func getSchedule() {

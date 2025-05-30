@@ -133,7 +133,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        ).withFixedSettings([.groupByDirection: true])
+        )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Sample Route"))
         XCTAssertNotNil(try sut.inspect().find(text: "Sample Headsign"))
@@ -166,7 +166,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        ).withFixedSettings([.stationAccessibility: true, .groupByDirection: true])
+        ).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
@@ -210,7 +210,7 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        ).withFixedSettings([.stationAccessibility: true, .groupByDirection: true])
+        ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "Elevator alert"))
     }
 }

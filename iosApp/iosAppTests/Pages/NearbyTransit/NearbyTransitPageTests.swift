@@ -69,11 +69,7 @@ final class NearbyTransitPageTests: XCTestCase {
                 super.init()
             }
 
-            override func getNearbyStops(
-                global _: GlobalResponse,
-                location: CLLocationCoordinate2D,
-                groupByDirection _: Bool
-            ) {
+            override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
                 debugPrint("ViewModel getting nearby")
                 closure(location)
                 expectation.fulfill()
@@ -115,7 +111,7 @@ final class NearbyTransitPageTests: XCTestCase {
                 .callOnChange(newValue: newCameraState.center)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, getNearbyExpectation], timeout: 10)
     }
 
@@ -128,11 +124,7 @@ final class NearbyTransitPageTests: XCTestCase {
                 super.init(navigationStack: navigationStack)
             }
 
-            override func getNearbyStops(
-                global _: GlobalResponse,
-                location _: CLLocationCoordinate2D,
-                groupByDirection _: Bool
-            ) {
+            override func getNearbyStops(global _: GlobalResponse, location _: CLLocationCoordinate2D) {
                 expectation.fulfill()
             }
         }
@@ -166,7 +158,7 @@ final class NearbyTransitPageTests: XCTestCase {
             try view.actualView().viewportProvider.updateCameraState(newCameraState)
             appearancePublisher.send(true)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, getNearbyNotCalledExpectation], timeout: 5)
     }
 }

@@ -17,16 +17,7 @@ struct StopDetailsUnfilteredView: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
 
     var routeCardData: [RouteCardData]?
-    var departuresServedRoutes: [StopDetailsFilterPills.FilterBy] = []
-    var routeCardDataServedRoutes: [StopDetailsFilterPills.FilterBy] = []
-
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] {
-        if groupByDirection {
-            routeCardDataServedRoutes
-        } else {
-            departuresServedRoutes
-        }
-    }
+    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -34,7 +25,6 @@ struct StopDetailsUnfilteredView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
 
-    var groupByDirection: Bool { settingsCache.get(.groupByDirection) }
     var debugMode: Bool { settingsCache.get(.devDebugMode) }
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
@@ -184,8 +174,7 @@ struct StopDetailsUnfilteredView: View {
                     onPin: { _ in },
                     pinned: false,
                     pushNavEntry: { _ in },
-                    showStopHeader: false,
-                    showStationAccessibility: false
+                    showStopHeader: false
                 )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)

@@ -65,8 +65,7 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
         onPin: { _ in },
         pinned: false,
         pushNavEntry: { _ in },
-        showStopHeader: true,
-        showStationAccessibility: true
+        showStopHeader: true
     )
 }
 

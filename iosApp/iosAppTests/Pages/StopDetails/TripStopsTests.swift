@@ -445,7 +445,6 @@ final class TripStopsTests: XCTestCase {
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: .init(route: route),
-            showStationAccessibility: false,
             global: .init(objects: objects)
         )
 

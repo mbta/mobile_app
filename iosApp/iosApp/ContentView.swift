@@ -28,6 +28,7 @@ struct ContentView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -236,7 +237,7 @@ struct ContentView: View {
         // when re-opening nearby transit
         VStack {
             TabView(selection: $selectedTab) {
-                if contentVM.enhancedFavorites {
+                if enhancedFavorites {
                     favoritesPage
                         .toolbar(tabBarVisibility, for: .tabBar)
                         .tag(SelectedTab.favorites)
@@ -269,7 +270,6 @@ struct ContentView: View {
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             noNearbyStops: { NoNearbyStopsView(
-                hideMaps: contentVM.hideMaps,
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
                     viewportProvider.setIsManuallyCentering(true)
@@ -358,7 +358,7 @@ struct ContentView: View {
 
             case .more:
                 TabView(selection: $selectedTab) {
-                    if contentVM.enhancedFavorites {
+                    if enhancedFavorites {
                         VStack {}
                             .onAppear { selectedTab = .favorites }
                             .toolbar(.hidden, for: .tabBar)
