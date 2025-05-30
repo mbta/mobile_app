@@ -10,7 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.isNullOrEmpty
-import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,12 +19,12 @@ import kotlinx.coroutines.launch
 import okhttp3.internal.notifyAll
 import org.koin.compose.koinInject
 
-class AlertsViewModel(private val alertsRepository: IAlertsRepository) : ViewModel() {
+class AlertsViewModel(private val alertsUsecase: AlertsUsecase) : ViewModel() {
     private val _alerts = MutableStateFlow<AlertsStreamDataResponse?>(null)
     val alertFlow: StateFlow<AlertsStreamDataResponse?> = _alerts
 
     fun connect() {
-        alertsRepository.connect {
+        alertsUsecase.connect {
             when (it) {
                 is ApiResult.Ok -> {
                     val oldAlerts = _alerts.value
@@ -41,7 +41,7 @@ class AlertsViewModel(private val alertsRepository: IAlertsRepository) : ViewMod
     }
 
     fun disconnect() {
-        alertsRepository.disconnect()
+        alertsUsecase.disconnect()
     }
 
     override fun onCleared() {
@@ -49,18 +49,16 @@ class AlertsViewModel(private val alertsRepository: IAlertsRepository) : ViewMod
         disconnect()
     }
 
-    class Factory(private val alertsRepository: IAlertsRepository) : ViewModelProvider.Factory {
+    class Factory(private val alertsUsecase: AlertsUsecase) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AlertsViewModel(alertsRepository) as T
+            return AlertsViewModel(alertsUsecase) as T
         }
     }
 }
 
 @Composable
-fun subscribeToAlerts(
-    alertsRepository: IAlertsRepository = koinInject()
-): AlertsStreamDataResponse? {
-    val viewModel: AlertsViewModel = viewModel(factory = AlertsViewModel.Factory(alertsRepository))
+fun subscribeToAlerts(alertsUsecase: AlertsUsecase = koinInject()): AlertsStreamDataResponse? {
+    val viewModel: AlertsViewModel = viewModel(factory = AlertsViewModel.Factory(alertsUsecase))
 
     LifecycleResumeEffect(key1 = null) {
         CoroutineScope(Dispatchers.IO).launch { viewModel.connect() }

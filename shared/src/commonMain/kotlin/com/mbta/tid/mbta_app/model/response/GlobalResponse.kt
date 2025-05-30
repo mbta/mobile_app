@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.kdTree.KdTree
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -15,6 +16,7 @@ import kotlinx.serialization.Transient
 
 @Serializable
 data class GlobalResponse(
+    internal val facilities: Map<String, Facility>,
     internal val lines: Map<String, Line>,
     @SerialName("pattern_ids_by_stop") internal val patternIdsByStop: Map<String, List<String>>,
     internal val routes: Map<String, Route>,
@@ -25,6 +27,7 @@ data class GlobalResponse(
     constructor(
         objects: ObjectCollectionBuilder
     ) : this(
+        objects.facilities,
         objects.lines,
         objects.routePatterns
             .flatMap {
@@ -43,6 +46,7 @@ data class GlobalResponse(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
     ) : this(
+        objects.facilities,
         objects.lines,
         patternIdsByStop,
         objects.routes,
@@ -66,6 +70,8 @@ data class GlobalResponse(
     /** lines with their associated non-shuttle routes */
     internal val routesByLineId: Map<String, List<Route>> =
         routes.values.filter { it.lineId != null && !it.isShuttle }.groupBy { it.lineId!! }
+
+    fun getFacility(facilityId: String?) = facilities[facilityId]
 
     fun getRoute(routeId: String?) = routes[routeId]
 

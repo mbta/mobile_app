@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
+import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
@@ -79,6 +80,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
         single<IFavoritesRepository> { repositories.favorites }
+        single { AlertsUsecase(get(), get()) }
         single { ConfigUseCase(get(), get()) }
         single { FeaturePromoUseCase(get(), get()) }
         single { TogglePinnedRouteUsecase(get()) }

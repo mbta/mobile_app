@@ -44,7 +44,7 @@ class NearbyViewModel: ObservableObject {
 
     @Published var selectingLocation = false
 
-    private let alertsRepository: IAlertsRepository
+    private let alertsUsecase: AlertsUsecase
     private let errorBannerRepository: IErrorBannerStateRepository
     private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
@@ -57,7 +57,7 @@ class NearbyViewModel: ObservableObject {
         navigationStack: [SheetNavigationStackEntry] = [],
         showDebugMessages: Bool = false,
         showStationAccessibility: Bool = false,
-        alertsRepository: IAlertsRepository = RepositoryDI().alerts,
+        alertsUsecase: AlertsUsecase = UsecaseDI().alertsUsecase,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
@@ -70,7 +70,7 @@ class NearbyViewModel: ObservableObject {
         self.showDebugMessages = showDebugMessages
         self.showStationAccessibility = showStationAccessibility
 
-        self.alertsRepository = alertsRepository
+        self.alertsUsecase = alertsUsecase
         self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
@@ -254,7 +254,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     func joinAlertsChannel() {
-        alertsRepository.connect { outcome in
+        alertsUsecase.connect { outcome in
             DispatchQueue.main.async { [weak self] in
                 if case let .ok(result) = onEnum(of: outcome) {
                     self?.alerts = result.data
@@ -264,7 +264,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     func leaveAlertsChannel() {
-        alertsRepository.disconnect()
+        alertsUsecase.disconnect()
     }
 }
 

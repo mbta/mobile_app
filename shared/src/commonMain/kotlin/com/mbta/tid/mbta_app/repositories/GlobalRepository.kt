@@ -11,6 +11,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.path
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -45,7 +46,15 @@ constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) :
     @DefaultArgumentInterop.Enabled
     constructor(
         response: GlobalResponse =
-            GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
+            GlobalResponse(
+                emptyMap(),
+                emptyMap(),
+                emptyMap(),
+                emptyMap(),
+                emptyMap(),
+                emptyMap(),
+                emptyMap(),
+            ),
         onGet: () -> Unit = {},
     ) : this(ApiResult.Ok(response), onGet)
 
@@ -60,6 +69,10 @@ constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) :
     override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
         onGet()
         return result
+    }
+
+    fun updateGlobalData(newGlobal: GlobalResponse?) {
+        state.update { newGlobal }
     }
 }
 

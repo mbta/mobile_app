@@ -23,6 +23,9 @@ data class Alert(
     val lifecycle: Lifecycle,
     val severity: Int,
     @SerialName("updated_at") val updatedAt: Instant,
+    // This field is not parsed from the Alert object from the backend, it is injected from
+    // global data in the AlertsUsecase if any informed entities apply to a facility.
+    val facilities: Map<String, Facility>? = null,
 ) : BackendObject {
     init {
         // This is done on init to avoid having to pass it in for any call to format an ActivePeriod
