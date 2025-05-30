@@ -2,21 +2,16 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -26,11 +21,9 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
-import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
+import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
-import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
@@ -122,45 +115,23 @@ fun NearbyTransitView(
 
         val routeCardData = nearbyVM.routeCardData
 
-        if (routeCardData == null) {
-            CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                LazyColumn(
-                    contentPadding =
-                        PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+        RouteCardList(
+            routeCardData = routeCardData,
+            emptyView = {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    items(5) { LoadingRouteCard() }
+                    noNearbyStopsView()
+                    Spacer(Modifier.weight(1f))
                 }
-            }
-        } else if (routeCardData.isEmpty()) {
-            Column(
-                Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                noNearbyStopsView()
-                Spacer(Modifier.weight(1f))
-            }
-        } else {
-            LazyColumn(
-                contentPadding =
-                    PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                items(routeCardData) {
-                    RouteCard(
-                        it,
-                        globalResponse,
-                        now,
-                        pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
-                        ::togglePinnedRoute,
-                        showStopHeader = true,
-                        showStationAccessibility,
-                        onOpenStopDetails,
-                    )
-                }
-            }
-        }
+            },
+            global = globalResponse,
+            now = now,
+            pinnedRoutes = pinnedRoutes,
+            togglePinnedRoute = ::togglePinnedRoute,
+            showStationAccessibility = showStationAccessibility,
+            onOpenStopDetails = onOpenStopDetails,
+        )
     }
 }
