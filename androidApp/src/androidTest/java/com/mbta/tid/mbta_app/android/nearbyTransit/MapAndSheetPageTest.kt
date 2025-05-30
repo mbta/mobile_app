@@ -429,7 +429,7 @@ class MapAndSheetPageTest : KoinTest {
     }
 
     @Test
-    fun testResetAfter1hour() {
+    fun testResetAfter1hour() = runBlocking {
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
         val mockClock =
             object : Clock {
