@@ -1478,6 +1478,95 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats bus as non-branching in StopDetailsFiltered even if next two trips match`() {
+        val objects = `87`.objects()
+        val now = Clock.System.now()
+
+        val prediction1 =
+            objects.prediction {
+                departureTime = now + 3.minutes
+                trip = objects.trip(`87`.outboundTypical)
+            }
+        val prediction2 =
+            objects.prediction {
+                departureTime = now + 12.minutes
+                trip = objects.trip(`87`.outboundTypical)
+            }
+        val prediction3 =
+            objects.prediction {
+                departureTime = now + 35.minutes
+                trip = objects.trip(`87`.outboundDeviation)
+            }
+
+        assertEquals(
+            wipeBranchUUID(
+                LeafFormat.Branched(
+                    branchRows =
+                        listOf(
+                            LeafFormat.Branched.BranchRow(
+                                null,
+                                "Arlington Center",
+                                UpcomingFormat.Some(
+                                    UpcomingFormat.Some.FormattedTrip(
+                                        objects.upcomingTrip(prediction1),
+                                        RouteType.BUS,
+                                        TripInstantDisplay.Minutes(3),
+                                    ),
+                                    null,
+                                ),
+                            ),
+                            LeafFormat.Branched.BranchRow(
+                                null,
+                                "Arlington Center",
+                                UpcomingFormat.Some(
+                                    UpcomingFormat.Some.FormattedTrip(
+                                        objects.upcomingTrip(prediction2),
+                                        RouteType.BUS,
+                                        TripInstantDisplay.Minutes(12),
+                                    ),
+                                    null,
+                                ),
+                            ),
+                            LeafFormat.Branched.BranchRow(
+                                null,
+                                "Clarendon Hill",
+                                UpcomingFormat.Some(
+                                    UpcomingFormat.Some.FormattedTrip(
+                                        objects.upcomingTrip(prediction3),
+                                        RouteType.BUS,
+                                        TripInstantDisplay.Minutes(35),
+                                    ),
+                                    null,
+                                ),
+                            ),
+                        ),
+                    null,
+                )
+            ),
+            wipeBranchUUID(
+                RouteCardData.Leaf(
+                        `87`.lineOrRoute,
+                        objects.stop(),
+                        0,
+                        listOf(`87`.outboundTypical, `87`.outboundDeviation),
+                        emptySet(),
+                        listOf(
+                            objects.upcomingTrip(prediction1),
+                            objects.upcomingTrip(prediction2),
+                            objects.upcomingTrip(prediction3),
+                        ),
+                        emptyList(),
+                        allDataLoaded = true,
+                        hasSchedulesToday = true,
+                        emptyList(),
+                        RouteCardData.Context.StopDetailsFiltered,
+                    )
+                    .format(now, `87`.global)
+            ),
+        )
+    }
+
+    @Test
     fun `formats bus as branching if next trips differ and only shows 2 trips`() = parametricTest {
         val objects = `87`.objects()
         val now = Clock.System.now()
