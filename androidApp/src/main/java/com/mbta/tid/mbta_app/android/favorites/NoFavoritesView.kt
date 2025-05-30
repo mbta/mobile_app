@@ -55,7 +55,7 @@ fun NoFavoritesView() {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    "Add Stops",
+                    stringResource(R.string.add_stops),
                     style = Typography.bodySemibold,
                     color = colorResource(R.color.fill3),
                 )
