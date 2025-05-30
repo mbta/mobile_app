@@ -5,6 +5,7 @@
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Add</string>
+    <string name="add_stops" tools:ignore="MissingTranslation">Add stops</string>
     <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
     <string name="additional_service_sentence_case">Additional service</string>
@@ -53,7 +54,7 @@
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
     <string name="collapse_remaining_stops">collapse remaining stops</string>
-    <string name="commuter_rail" translatable="false"  >Commuter Rail</string>
+    <string name="commuter_rail" translatable="false">Commuter Rail</string>
     <string name="congestion">Congestion</string>
     <string name="congestion_lowercase">congestion</string>
     <string name="connection_to">Connection to %1$s</string>
@@ -194,6 +195,7 @@
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
     <string name="no_service_today">No service today</string>
+    <string name="no_stops_added" tools:ignore="MissingTranslation">No stops added</string>
     <string name="no_stops_nearby">You’re outside the MBTA service area.</string>
     <string name="no_stops_nearby_pan">View transit near Boston</string>
     <string name="no_stops_nearby_search">Search by stop</string>

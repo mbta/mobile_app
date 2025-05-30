@@ -44,7 +44,8 @@ data class RouteCardData(
     enum class Context {
         NearbyTransit,
         StopDetailsFiltered,
-        StopDetailsUnfiltered;
+        StopDetailsUnfiltered,
+        Favorites;
 
         fun isStopDetails(): Boolean {
             return this == StopDetailsFiltered || this == StopDetailsUnfiltered
@@ -52,7 +53,8 @@ data class RouteCardData(
 
         fun toTripInstantDisplayContext(): TripInstantDisplay.Context {
             return when (this) {
-                NearbyTransit -> TripInstantDisplay.Context.NearbyTransit
+                NearbyTransit,
+                Favorites -> TripInstantDisplay.Context.NearbyTransit
                 StopDetailsFiltered -> TripInstantDisplay.Context.StopDetailsFiltered
                 StopDetailsUnfiltered -> TripInstantDisplay.Context.StopDetailsUnfiltered
             }
@@ -656,14 +658,15 @@ data class RouteCardData(
                     when (context) {
                         Context.NearbyTransit -> 120.minutes
                         Context.StopDetailsUnfiltered -> 120.minutes
-                        Context.StopDetailsFiltered -> null
+                        Context.StopDetailsFiltered,
+                        Context.Favorites -> null
                     }
 
                 val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { now + it }
                 val allDataLoaded = schedules != null
 
                 ListBuilder(allDataLoaded, context, now)
-                    .addStaticStopsData(stopIds, globalData)
+                    .addStaticStopsData(stopIds, globalData, context)
                     .addUpcomingTrips(schedules, predictions, now, globalData)
                     .filterIrrelevantData(now, cutoffTime, context, globalData)
                     .addAlerts(
@@ -703,12 +706,20 @@ data class RouteCardData(
          * A stop is only included at a route if it serves any route pattern that is not served by
          * an earlier stop in the list.
          */
-        fun addStaticStopsData(stopIds: List<String>, globalData: GlobalResponse): ListBuilder {
+        fun addStaticStopsData(
+            stopIds: List<String>,
+            globalData: GlobalResponse,
+            context: Context,
+        ): ListBuilder {
 
             val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
 
             val patternsGrouped =
-                RoutePattern.patternsGroupedByLineOrRouteAndStop(parentToAllStops, globalData)
+                RoutePattern.patternsGroupedByLineOrRouteAndStop(
+                    parentToAllStops,
+                    globalData,
+                    context,
+                )
 
             val builderData =
                 patternsGrouped
