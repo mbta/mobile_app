@@ -62,23 +62,27 @@ class FavoritesViewModel(
         routeCardData: List<RouteCardData>?,
         global: GlobalResponse,
     ): List<RouteCardData>? {
-        return routeCardData?.filter { data ->
-            data.stopData =
-                data.stopData.filter { stopData ->
-                    stopData.data =
-                        stopData.data.filter { leafData ->
-                            val routeStopDirection =
-                                RouteStopDirection(
-                                    leafData.lineOrRoute.id,
-                                    leafData.stop.resolveParent(global).id,
-                                    leafData.directionId,
-                                )
-                            favorites?.contains(routeStopDirection) == true
+        return routeCardData
+            ?.map { data ->
+                val filteredStopData =
+                    data.stopData
+                        .map { stopData ->
+                            val filteredLeafData =
+                                stopData.data.filter { leafData ->
+                                    val routeStopDirection =
+                                        RouteStopDirection(
+                                            leafData.lineOrRoute.id,
+                                            leafData.stop.resolveParent(global).id,
+                                            leafData.directionId,
+                                        )
+                                    favorites?.contains(routeStopDirection) == true
+                                }
+                            stopData.copy(data = filteredLeafData)
                         }
-                    stopData.data.isNotEmpty()
-                }
-            data.stopData.any { it.data.isNotEmpty() }
-        }
+                        .filter { it.data.isNotEmpty() }
+                data.copy(stopData = filteredStopData)
+            }
+            ?.filter { it.stopData.any { it.data.isNotEmpty() } }
     }
 
     class Factory : ViewModelProvider.Factory {

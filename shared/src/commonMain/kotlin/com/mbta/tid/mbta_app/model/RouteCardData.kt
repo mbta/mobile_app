@@ -36,7 +36,7 @@ private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
  */
 data class RouteCardData(
     val lineOrRoute: LineOrRoute,
-    var stopData: List<RouteStopData>,
+    val stopData: List<RouteStopData>,
     val at: Instant,
 ) {
     val id = lineOrRoute.id
@@ -65,7 +65,7 @@ data class RouteCardData(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directions: List<Direction>,
-        var data: List<Leaf>,
+        val data: List<Leaf>,
     ) {
         // convenience constructors for when directions are not directly under test
         constructor(

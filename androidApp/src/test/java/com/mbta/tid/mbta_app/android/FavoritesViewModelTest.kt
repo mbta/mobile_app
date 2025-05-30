@@ -1,9 +1,6 @@
-package com.mbta.tid.mbta_app.android.favorites
+package com.mbta.tid.mbta_app.android
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import com.mbta.tid.mbta_app.android.testKoinApplication
-import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -12,6 +9,8 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -114,11 +113,10 @@ class FavoritesViewModelTest {
             ),
         )
 
-    val koinApplication = testKoinApplication(builder)
-
     @Test
     fun testFiltering() = runBlocking {
-        val favoritesVM = FavoritesViewModel()
+        val usecases = FavoritesUsecases(MockFavoritesRepository())
+        val favoritesVM = FavoritesViewModel(usecases)
         val position = Position(0.0, 0.0)
         favoritesVM.favorites = setOf(RouteStopDirection("route_1", "stop_1", 0))
         favoritesVM.loadRouteCardData(
