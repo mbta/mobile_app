@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
@@ -22,7 +23,7 @@ data class StopSourceData
 constructor(
     val filteredStopIds: List<String>? = null,
     val selectedStopId: String? = null,
-    val selectedRoute: String? = null,
+    val stopFilter: StopDetailsFilter? = null,
 )
 
 object StopFeaturesBuilder {
@@ -168,11 +169,11 @@ object StopFeaturesBuilder {
             )
             put(
                 propHideBelowCloseZoomKey,
-                stopData.selectedRoute != null &&
+                stopData.stopFilter != null &&
                     mapStop.routeTypes == listOf(MapStopRoute.BUS) &&
-                    !mapStop.routes[MapStopRoute.BUS].orEmpty().any {
-                        it.id == stopData.selectedRoute
-                    },
+                    !mapStop.routeDirections[stopData.stopFilter.routeId]
+                        .orEmpty()
+                        .contains(stopData.stopFilter.directionId),
             )
 
             // The symbolSortKey must be ascending, so higher priority icons need higher values.

@@ -122,10 +122,10 @@ fun HomeMapView(
     val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
 
-    val selectedRoute =
+    val stopFilter =
         remember(currentNavEntry) {
             when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry.stopFilter?.routeId
+                is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
                 else -> null
             }
         }
@@ -247,7 +247,7 @@ fun HomeMapView(
             return
         }
         viewModel.setSelectedStop(globalResponse?.getStop(stopDetails.stopId))
-        viewModel.setSelectedRoute(stopDetails.stopFilter?.routeId)
+        viewModel.setStopFilter(stopDetails.stopFilter)
     }
 
     val cameraZoomFlow =
@@ -334,14 +334,14 @@ fun HomeMapView(
                 }
                 LaunchedEffect(railRouteSourceData) {
                     refreshRouteLineSource()
-                    viewModel.refreshStopFeatures(selectedStop, selectedRoute, globalMapData)
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                 }
                 LaunchedEffect(selectedStop) {
-                    viewModel.refreshStopFeatures(selectedStop, selectedRoute, globalMapData)
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                     positionViewportToStop()
                 }
-                LaunchedEffect(selectedRoute) {
-                    viewModel.refreshStopFeatures(selectedStop, selectedRoute, globalMapData)
+                LaunchedEffect(stopFilter) {
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                 }
                 LaunchedEffect(stopSourceData) { refreshStopSource() }
                 LaunchedEffect(selectedVehicle) {

@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -66,7 +67,7 @@ interface IMapViewModel {
 
     suspend fun refreshStopFeatures(
         selectedStop: Stop?,
-        selectedRoute: String?,
+        stopFilter: StopDetailsFilter?,
         globalMapData: GlobalMapData?,
     )
 
@@ -78,7 +79,7 @@ interface IMapViewModel {
 
     fun setSelectedStop(stop: Stop?)
 
-    fun setSelectedRoute(routeId: String?)
+    fun setStopFilter(stopFilter: StopDetailsFilter?)
 
     fun updateCenterButtonVisibility(
         currentLocation: Location?,
@@ -122,7 +123,7 @@ open class MapViewModel(
     private val _showTripCenterButton = MutableStateFlow(false)
     override val showTripCenterButton = _showTripCenterButton.asStateFlow()
     private val alertsData = MutableStateFlow<AlertsStreamDataResponse?>(null)
-    private val selectedRoute = MutableStateFlow<String?>(null)
+    private val stopFilter = MutableStateFlow<StopDetailsFilter?>(null)
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
 
     init {
@@ -135,7 +136,7 @@ open class MapViewModel(
         merge(_globalResponse, alertsData).collectLatest {
             refreshGlobalMapData(Clock.System.now())
             refreshRouteLineData(_globalMapData.value)
-            refreshStopFeatures(_selectedStop.value, selectedRoute.value, _globalMapData.value)
+            refreshStopFeatures(_selectedStop.value, stopFilter.value, _globalMapData.value)
         }
     }
 
@@ -175,16 +176,13 @@ open class MapViewModel(
 
     override suspend fun refreshStopFeatures(
         selectedStop: Stop?,
-        selectedRoute: String?,
+        stopFilter: StopDetailsFilter?,
         globalMapData: GlobalMapData?,
     ) {
         val routeLineData = railRouteSourceData.first() ?: return
         _stopSourceData.value =
             StopFeaturesBuilder.buildCollection(
-                    StopSourceData(
-                        selectedStopId = selectedStop?.id,
-                        selectedRoute = selectedRoute,
-                    ),
+                    StopSourceData(selectedStopId = selectedStop?.id, stopFilter = stopFilter),
                     globalMapData,
                     routeLineData,
                 )
@@ -207,8 +205,8 @@ open class MapViewModel(
         _selectedStop.value = stop
     }
 
-    override fun setSelectedRoute(routeId: String?) {
-        selectedRoute.value = routeId
+    override fun setStopFilter(stopFilter: StopDetailsFilter?) {
+        this.stopFilter.value = stopFilter
     }
 
     fun setShowRecenterButton(show: Boolean) {

@@ -8,6 +8,7 @@ data class MapStop(
     val stop: Stop,
     val routes: Map<MapStopRoute, List<Route>>,
     val routeTypes: List<MapStopRoute>,
+    val routeDirections: Map<String, Set<Int>>,
     val isTerminal: Boolean,
     val alerts: Map<MapStopRoute, StopAlertState>?,
 )
@@ -121,16 +122,21 @@ data class GlobalMapData(
                             .isNotEmpty()
                     }
 
-                val allRoutes =
-                    typicalPatterns
-                        .mapNotNull { globalData.routes[it.routeId] }
-                        .toSet()
-                        .sortedBy { it.sortOrder }
+                val allRoutes = mutableSetOf<Route>()
+                val routeDirections = mutableMapOf<String, MutableSet<Int>>()
+
+                for (pattern in typicalPatterns.sorted()) {
+                    routeDirections
+                        .getOrPut(pattern.routeId, ::mutableSetOf)
+                        .add(pattern.directionId)
+                    val route = globalData.routes[pattern.routeId] ?: continue
+                    allRoutes.add(route)
+                }
 
                 val mapRouteList = mutableListOf<MapStopRoute>()
                 val categorizedRoutes = mutableMapOf<MapStopRoute, List<Route>>()
 
-                for (route in allRoutes) {
+                for (route in allRoutes.sorted()) {
                     val category = MapStopRoute.matching(route) ?: continue
                     if (!mapRouteList.contains(category)) {
                         mapRouteList += category
@@ -158,6 +164,7 @@ data class GlobalMapData(
                         stop = stop,
                         routes = categorizedRoutes,
                         routeTypes = mapRouteList,
+                        routeDirections = routeDirections,
                         isTerminal = isTerminal,
                         alerts = categorizedAlerts,
                     )
