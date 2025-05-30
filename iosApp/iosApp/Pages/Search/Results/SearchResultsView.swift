@@ -14,6 +14,10 @@ struct SearchResultsView: View {
     private var state: SearchViewModel.ResultsState?
     private var handleStopTap: (String) -> Void
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
+    var includeRoutes: Bool { settingsCache.get(.searchRouteResults) }
+
     init(
         state: SearchViewModel.ResultsState?,
         handleStopTap: @escaping (String) -> Void
@@ -35,20 +39,22 @@ struct SearchResultsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         StopResultsView(stops: stops, handleStopTap: handleStopTap)
                     }
-                case let .results(stopResults, routeResults, includeRoutes):
-                    VStack(spacing: 8) {
-                        StopResultsView(stops: stopResults, handleStopTap: handleStopTap)
-                        if includeRoutes, !routeResults.isEmpty {
-                            RouteResultsView(routes: routeResults)
-                                .padding(.top, 8)
+                case let .results(stopResults, routeResults):
+                    if state?.isEmpty(includeRoutes: includeRoutes) == true {
+                        EmptyStateView(
+                            headline: "No results found 🤔",
+                            subheadline: "Try a different spelling or name."
+                        )
+                        .padding(.top, 16)
+                    } else {
+                        VStack(spacing: 8) {
+                            StopResultsView(stops: stopResults, handleStopTap: handleStopTap)
+                            if includeRoutes, !routeResults.isEmpty {
+                                RouteResultsView(routes: routeResults)
+                                    .padding(.top, 8)
+                            }
                         }
                     }
-                case .empty:
-                    EmptyStateView(
-                        headline: "No results found 🤔",
-                        subheadline: "Try a different spelling or name."
-                    )
-                    .padding(.top, 16)
                 case .error:
                     EmptyStateView(
                         headline: "Results failed to load ☹️",
@@ -60,7 +66,7 @@ struct SearchResultsView: View {
                 }
             }
             .onChange(of: state) { state in
-                if case let .results(stopResults, _, _) = state {
+                if let state, case let .results(stopResults, _) = state, !state.isEmpty(includeRoutes: includeRoutes) {
                     let announcementString = String(format: NSLocalizedString(
                         "%ld results found",
                         comment: "Screen reader text that is announced when search results are returned"

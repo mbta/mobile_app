@@ -44,7 +44,6 @@ struct SearchResultsContainer: View {
             state: searchVM.resultsState,
             handleStopTap: handleStopTap
         )
-        .task { await searchVM.loadSettings() }
         .task { await searchVM.loadGlobalDataAndHistory() }
         .onAppear {
             searchVM.determineStateFor(query: query)
@@ -89,8 +88,7 @@ struct SearchResultView_Previews: PreviewProvider {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: true
+                ]
             ),
             handleStopTap: { _ in }
         ).font(Typography.body).previewDisplayName("SearchResultView")

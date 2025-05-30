@@ -23,8 +23,7 @@ struct AnnotatedMap: View {
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
-    var settingsRepository: ISettingsRepository = RepositoryDI().settings
-    @State var devDebugMode = false
+    @EnvironmentObject var settingsCache: SettingsCache
 
     @ObservedObject var viewportProvider: ViewportProvider
     @Environment(\.colorScheme) var colorScheme
@@ -45,7 +44,7 @@ struct AnnotatedMap: View {
                 panDecelerationFactor: 0.99
             ))
             .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
-            .debugOptions(devDebugMode ? .camera : [])
+            .debugOptions(settingsCache.get(.devDebugMode) ? .camera : [])
             .cameraBounds(.init(maxZoom: 18, minZoom: 6))
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(
@@ -73,13 +72,6 @@ struct AnnotatedMap: View {
                 zoomLevel = newCameraState.zoom
             }
             .withScenePhaseHandlers(onActive: onActive)
-            .task {
-                do {
-                    devDebugMode = try await settingsRepository.getSettings()[.devDebugMode]?.boolValue ?? false
-                } catch {
-                    debugPrint("Failed to load map debug", error)
-                }
-            }
     }
 
     func onActive() {

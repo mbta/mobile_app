@@ -44,8 +44,7 @@ struct MorePage: View {
                     VStack(alignment: .leading, spacing: 16) {
                         ForEach(viewModel.sections) { section in
                             MoreSectionView(
-                                section: section,
-                                toggleSetting: { key in viewModel.toggleSetting(key: key) }
+                                section: section
                             )
                         }
                         HStack(alignment: .center, spacing: 16) {

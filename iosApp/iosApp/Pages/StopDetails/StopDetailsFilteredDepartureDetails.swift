@@ -31,6 +31,8 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
     let inspection = Inspection<Self>()
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -134,8 +136,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 StopDetailsNoTripCard(
                     status: noPredictionsStatus,
                     accentColor: routeColor,
-                    routeType: routeType,
-                    hideMaps: stopDetailsVM.hideMaps
+                    routeType: routeType
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
@@ -347,7 +348,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var alertCards: some View {
         if !alerts.isEmpty ||
             !downstreamAlerts.isEmpty ||
-            (stopDetailsVM.showStationAccessibility && hasAccessibilityWarning) {
+            (settingsCache.get(.stationAccessibility) && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
                     if stopDetailsVM.alertSummaries.keys.contains(alert.id) {
@@ -359,7 +360,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         alertCard(alert, stopDetailsVM.alertSummaries[alert.id] ?? nil, .downstream)
                     }
                 }
-                if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning {
+                if settingsCache.get(.stationAccessibility), hasAccessibilityWarning {
                     if !elevatorAlerts.isEmpty {
                         ForEach(elevatorAlerts, id: \.id) { alert in
                             alertCard(alert, nil, .elevator)

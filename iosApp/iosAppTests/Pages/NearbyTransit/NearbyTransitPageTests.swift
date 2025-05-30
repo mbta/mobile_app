@@ -19,7 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
-    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
+    private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
     override func setUp() {
         executionTimeAllowance = 60
@@ -111,7 +111,7 @@ final class NearbyTransitPageTests: XCTestCase {
                 .callOnChange(newValue: newCameraState.center)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, getNearbyExpectation], timeout: 10)
     }
 
@@ -158,7 +158,7 @@ final class NearbyTransitPageTests: XCTestCase {
             try view.actualView().viewportProvider.updateCameraState(newCameraState)
             appearancePublisher.send(true)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, getNearbyNotCalledExpectation], timeout: 5)
     }
 }

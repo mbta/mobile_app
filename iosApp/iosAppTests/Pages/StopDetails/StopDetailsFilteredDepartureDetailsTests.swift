@@ -391,7 +391,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
@@ -455,7 +455,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
@@ -485,7 +485,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
         stopDetailsVM.setAlertSummaries([alert.id: nil])
 
         let leaf = makeLeaf(
@@ -512,7 +511,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
-        ).environmentObject(ViewportProvider())
+        ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
@@ -538,7 +537,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         })
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], objects: objects)
 
@@ -557,7 +555,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
-        ).environmentObject(ViewportProvider())
+        ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
     }
@@ -587,7 +585,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.showStationAccessibility = true
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
@@ -618,7 +615,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting
+            .host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true]))
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
@@ -708,7 +706,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "5 min"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         await fulfillment(of: [exp], timeout: 3)
     }
 }

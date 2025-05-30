@@ -111,7 +111,7 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testNoResults() throws {
-        let sut = SearchResultsView(state: .empty, handleStopTap: { _ in })
+        let sut = SearchResultsView(state: .results(stops: [], routes: []), handleStopTap: { _ in })
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "No results found 🤔"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try a different spelling or name."))
     }
@@ -160,11 +160,12 @@ final class SearchResultViewTests: XCTestCase {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: true
+                ]
             ),
             handleStopTap: { _ in }
         )
+
+        ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
@@ -183,11 +184,12 @@ final class SearchResultViewTests: XCTestCase {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: true
+                ]
             ),
             handleStopTap: { _ in }
         )
+
+        ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
@@ -206,8 +208,7 @@ final class SearchResultViewTests: XCTestCase {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: false
+                ]
             ),
             handleStopTap: { _ in }
         )
@@ -228,8 +229,7 @@ final class SearchResultViewTests: XCTestCase {
                         routePills: []
                     ),
                 ],
-                routes: [],
-                includeRoutes: true
+                routes: []
             ),
             handleStopTap: { _ in }
         )
@@ -251,8 +251,7 @@ final class SearchResultViewTests: XCTestCase {
                         routePills: []
                     ),
                 ],
-                routes: [],
-                includeRoutes: true
+                routes: []
             ),
             handleStopTap: { stopId in
                 XCTAssertEqual("place-haecl", stopId)

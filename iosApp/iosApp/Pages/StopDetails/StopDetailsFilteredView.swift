@@ -122,11 +122,9 @@ struct StopDetailsFilteredView: View {
                 onPin: toggledPinnedRoute,
                 onClose: { nearbyVM.goBack() }
             )
-            if nearbyVM.showDebugMessages {
-                DebugView {
-                    Text(verbatim: "stop id: \(stopId)")
-                }.padding(.horizontal, 16)
-            }
+            DebugView {
+                Text(verbatim: "stop id: \(stopId)")
+            }.padding(.horizontal, 16)
             ErrorBanner(errorBannerVM).padding(.horizontal, 16)
         }
         .fixedSize(horizontal: false, vertical: true)

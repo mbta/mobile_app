@@ -146,8 +146,7 @@ struct NearbyTransitView: View {
                                 onPin: { id in toggledPinnedRoute(id) },
                                 pinned: pinnedRoutes.contains(cardData.lineOrRoute.id),
                                 pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                showStopHeader: true,
-                                showStationAccessibility: nearbyVM.showStationAccessibility
+                                showStopHeader: true
                             )
                         }
                     }
@@ -174,8 +173,7 @@ struct NearbyTransitView: View {
                         onPin: { _ in },
                         pinned: false,
                         pushNavEntry: { _ in },
-                        showStopHeader: true,
-                        showStationAccessibility: false
+                        showStopHeader: true
                     )
                     .loadingPlaceholder()
                 }

@@ -49,8 +49,6 @@ struct TripRouteAccents: Hashable {
 // swiftlint:disable:next type_body_length
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
-    @Published var hideMaps: Bool = false
-    @Published var showStationAccessibility: Bool = false
     @Published var pinnedRoutes: Set<String> = []
     @Published var alertSummaries: [String: AlertSummary?] = [:]
 
@@ -63,7 +61,6 @@ class StopDetailsViewModel: ObservableObject {
     private let pinnedRoutesRepository: IPinnedRoutesRepository
     private let predictionsRepository: IPredictionsRepository
     private let schedulesRepository: ISchedulesRepository
-    private let settingsRepository: ISettingsRepository
     private let tripPredictionsRepository: ITripPredictionsRepository
     private let tripRepository: ITripRepository
     private let vehicleRepository: IVehicleRepository
@@ -76,7 +73,6 @@ class StopDetailsViewModel: ObservableObject {
         pinnedRoutesRepository: IPinnedRoutesRepository = RepositoryDI().pinnedRoutes,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
-        settingsRepository: ISettingsRepository = RepositoryDI().settings,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
@@ -86,7 +82,6 @@ class StopDetailsViewModel: ObservableObject {
         self.pinnedRoutesRepository = pinnedRoutesRepository
         self.predictionsRepository = predictionsRepository
         self.schedulesRepository = schedulesRepository
-        self.settingsRepository = settingsRepository
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
@@ -181,7 +176,6 @@ class StopDetailsViewModel: ObservableObject {
             loadGlobalData()
             loadPinnedRoutes()
             await handleStopChange(stopId)
-            loadSettings()
         }
     }
 
@@ -362,16 +356,6 @@ class StopDetailsViewModel: ObservableObject {
             } catch {
                 // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
-            }
-        }
-    }
-
-    func loadSettings() {
-        Task {
-            let loaded = await settingsRepository.load([.hideMaps, .stationAccessibility])
-            Task { @MainActor in
-                hideMaps = loaded.getSafe(.hideMaps)
-                showStationAccessibility = loaded.getSafe(.stationAccessibility)
             }
         }
     }
