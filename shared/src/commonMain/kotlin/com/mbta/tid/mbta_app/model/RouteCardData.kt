@@ -195,6 +195,7 @@ data class RouteCardData(
             now: Instant,
             representativeRoute: Route,
             globalData: GlobalResponse?,
+            context: Context,
         ): Set<PotentialService> {
             val potentialService: MutableMap<Pair<String, String>, MutableSet<String>> =
                 mutableMapOf()
@@ -202,7 +203,8 @@ data class RouteCardData(
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
             val tripsToConsider =
-                if (isBus) tripsUpcoming.take(TYPICAL_LEAF_ROWS) else tripsUpcoming
+                if (isBus && context == Context.NearbyTransit) tripsUpcoming.take(TYPICAL_LEAF_ROWS)
+                else tripsUpcoming
             for (trip in tripsToConsider) {
                 if (trip.isUpcomingWithin(now, cutoffTime)) {
                     val existingPatterns =
@@ -456,7 +458,7 @@ data class RouteCardData(
 
         fun format(now: Instant, globalData: GlobalResponse?): LeafFormat {
             val representativeRoute = this.lineOrRoute.sortRoute
-            val potentialService = potentialService(now, representativeRoute, globalData)
+            val potentialService = potentialService(now, representativeRoute, globalData, context)
 
             // If we are dealing with a line, then we should show the route alongside the
             // UpcomingTripFormat
