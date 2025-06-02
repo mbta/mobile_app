@@ -13,6 +13,7 @@
     </plurals>
     <string name="alert">Báo động</string>
     <string name="alert_details">Chi tiết cảnh báo</string>
+    <string name="alert_elevator_header">Đóng thang máy (%1$s)</string>
     <string name="alert_ended">Cảnh báo không còn hiệu lực</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020từ các điểm dừng &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>

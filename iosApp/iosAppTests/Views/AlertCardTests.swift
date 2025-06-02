@@ -279,6 +279,41 @@ final class AlertCardTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    func testElevatorAlertWithFacilityCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let facility = objects.facility { facility in
+            facility.type = .elevator
+            facility.shortName = "Elevator name"
+        }
+        let alert = objects.alert { alert in
+            alert.effect = .elevatorClosure
+            alert.header = "Elevator header"
+            alert.informedEntity(activities: [.usingWheelchair], facility: facility.id)
+            alert.facilities = [facility.id: facility]
+        }
+
+        let exp = XCTestExpectation(description: "Card pressed")
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: nil,
+            spec: .elevator,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {
+                exp.fulfill()
+            }
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Elevator closure (Elevator name)"))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "accessibility-icon-alert"
+        }))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
+        try sut.inspect().implicitAnyView().button().tap()
+        wait(for: [exp], timeout: 1)
+    }
+
     func testDelayAlertCard() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in

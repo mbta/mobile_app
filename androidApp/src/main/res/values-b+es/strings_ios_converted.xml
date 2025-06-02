@@ -15,6 +15,7 @@
     </plurals>
     <string name="alert">Alerta</string>
     <string name="alert_details">Detalles de la alerta</string>
+    <string name="alert_elevator_header">Cierre del ascensor (%1$s)</string>
     <string name="alert_ended">La alerta ya no está vigente</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020desde paradas en &lt;b>%1$s&lt;/b> hasta &lt;b>%2$s&lt;/b></string>

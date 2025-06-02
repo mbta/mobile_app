@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
@@ -125,6 +126,42 @@ class AlertCardTests {
         }
 
         composeTestRule.onNodeWithText("Alert header").assertIsDisplayed().performClick()
+        assertTrue { onViewDetailsClicked }
+    }
+
+    @Test
+    fun testElevatorAlertWithFacilityCard() {
+        val facility =
+            ObjectCollectionBuilder.Single.facility {
+                type = Facility.Type.Elevator
+                shortName = "Elevator name"
+            }
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.ElevatorClosure
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                    facility = facility.id,
+                )
+                facilities = mapOf(facility.id to facility)
+            }
+        var onViewDetailsClicked = false
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                null,
+                AlertCardSpec.Elevator,
+                color,
+                textColor,
+                { onViewDetailsClicked = true },
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("Elevator closure (Elevator name)")
+            .assertIsDisplayed()
+            .performClick()
         assertTrue { onViewDetailsClicked }
     }
 

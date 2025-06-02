@@ -257,15 +257,34 @@ struct FormattedAlert: Equatable {
         } else { nil }
     }
 
+    var elevatorHeader: AttributedString {
+        let facilities = alert.informedEntity.compactMap { entity in
+            if let facilityId = entity.facility { alert.facilities?[facilityId] } else { nil }
+        }.filter { $0.type == .elevator }
+        let headerString =
+            if let facility = Set(facilities).count == 1 ? facilities.first : nil,
+            let facilityName = facility.shortName {
+                String(format:
+                    NSLocalizedString(
+                        "Elevator closure (%1$@)",
+                        comment: """
+                        Alert header for elevator closure alerts, \
+                        the interpolated value is the short name field of the elevator facility, \
+                        ex "Elevator closure (Red Line platforms to lobby)"
+                        """
+                    ), facilityName)
+            } else if let header = alert.header {
+                header
+            } else {
+                effect
+            }
+        return AttributedString.tryMarkdown(headerString)
+    }
+
     func alertCardHeader(spec: AlertCardSpec) -> AttributedString {
         switch spec {
         case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
-        case .elevator:
-            if let header = alert.header {
-                AttributedString.tryMarkdown(header)
-            } else {
-                AttributedString.tryMarkdown(effect)
-            }
+        case .elevator: elevatorHeader
         case .delay: AttributedString.tryMarkdown(delaysDueToCause)
         // TODO: confirm this is desired
         case .secondary: summary ?? AttributedString.tryMarkdown(effect)

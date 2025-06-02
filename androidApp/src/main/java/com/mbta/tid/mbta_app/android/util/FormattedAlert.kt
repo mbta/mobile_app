@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.Facility
 
 data class FormattedAlert(
     val alert: Alert,
@@ -52,6 +53,21 @@ data class FormattedAlert(
             dueToCauseRes?.let { stringResource(R.string.delays_due_to_cause, stringResource(it)) }
                 ?: stringResource(R.string.delays_unknown_reason)
 
+    private val elevatorHeader
+        @Composable
+        get() =
+            AnnotatedString(
+                alert.informedEntity
+                    .mapNotNull { alert.facilities?.get(it.facility) }
+                    .filter { it.type == Facility.Type.Elevator }
+                    .distinct()
+                    .singleOrNull()
+                    ?.shortName
+                    ?.let { facilityName ->
+                        stringResource(R.string.alert_elevator_header, facilityName)
+                    } ?: alert.header ?: effect
+            )
+
     private val summary
         @Composable
         get() =
@@ -70,8 +86,7 @@ data class FormattedAlert(
     fun alertCardHeader(spec: AlertCardSpec) =
         when (spec) {
             AlertCardSpec.Downstream -> summary ?: AnnotatedString.fromHtml(downstreamEffect)
-            AlertCardSpec.Elevator ->
-                alert.header?.let { AnnotatedString(it) } ?: AnnotatedString(effect)
+            AlertCardSpec.Elevator -> elevatorHeader
             AlertCardSpec.Delay -> AnnotatedString.fromHtml(delaysDueToCause)
             AlertCardSpec.Secondary -> summary ?: AnnotatedString.fromHtml(effect)
             else -> AnnotatedString.fromHtml(effect)

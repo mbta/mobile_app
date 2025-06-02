@@ -7100,6 +7100,53 @@
         }
       }
     },
+    "Elevator closure (%1$@)" : {
+      "comment" : "Alert header for elevator closure alerts, the interpolated value is the short name field of the elevator facility, ex \"Elevator closure (Red Line platforms to lobby)\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cierre del ascensor (%1$@)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fermeture de l’ascenseur (%1$@)"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fèmti asansè (%1$@)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fechamento de elevador (%1$@)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đóng thang máy (%1$@)"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "电梯关停 (%1$@)"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "電梯關閉 (%1$@)"
+          }
+        }
+      }
+    },
     "End" : {
       "comment" : "Label for the end date of a disruption",
       "localizations" : {
