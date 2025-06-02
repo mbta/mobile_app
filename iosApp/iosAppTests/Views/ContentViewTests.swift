@@ -70,7 +70,12 @@ final class ContentViewTests: XCTestCase {
         joinAlertsExp.expectedFulfillmentCount = 1
         joinAlertsExp.assertForOverFulfill = true
 
-        let fakeNearbyVM: NearbyViewModel = .init(alertsRepository: CallbackAlertsRepository(connectExp: joinAlertsExp))
+        let fakeNearbyVM: NearbyViewModel = .init(
+            alertsUsecase: AlertsUsecase(
+                alertsRepository: CallbackAlertsRepository(connectExp: joinAlertsExp),
+                globalRepository: MockGlobalRepository()
+            )
+        )
 
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init(), nearbyVM: fakeNearbyVM),
                                                 socketProvider: SocketProvider(socket: MockSocket()))
@@ -84,9 +89,12 @@ final class ContentViewTests: XCTestCase {
 
     func testLeavesAlertsAfterBackgrounding() throws {
         let leavesAlertsExp = expectation(description: "Alerts channel left")
-
-        let fakeNearbyVM: NearbyViewModel = .init(alertsRepository:
-            CallbackAlertsRepository(disconnectExp: leavesAlertsExp))
+        let fakeNearbyVM: NearbyViewModel = .init(
+            alertsUsecase: AlertsUsecase(
+                alertsRepository: CallbackAlertsRepository(disconnectExp: leavesAlertsExp),
+                globalRepository: MockGlobalRepository()
+            )
+        )
 
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init(), nearbyVM: fakeNearbyVM),
                                                 socketProvider: SocketProvider(socket: MockSocket()))

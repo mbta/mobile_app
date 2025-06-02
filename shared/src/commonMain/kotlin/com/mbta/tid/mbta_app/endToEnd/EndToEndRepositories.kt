@@ -54,6 +54,7 @@ import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
+import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
@@ -151,6 +152,7 @@ fun endToEndModule(): Module {
         single<IVehicleRepository> { MockVehicleRepository() }
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
+        single { AlertsUsecase(get(), get()) }
         single { ConfigUseCase(get(), get()) }
         single { FeaturePromoUseCase(get(), get()) }
         single { TogglePinnedRouteUsecase(get()) }
