@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -16,6 +17,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
@@ -221,5 +223,44 @@ class RouteCardListTest : KoinTest {
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExists(hasText("This would be the empty view"))
         composeTestRule.onNodeWithText("This would be the empty view").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testOpenStopDetails(): Unit = runBlocking {
+        val routeCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(sampleStop.id),
+                globalResponse,
+                Position(0.0, 0.0),
+                ScheduleResponse(builder),
+                predictions = PredictionsStreamDataResponse(builder),
+                AlertsStreamDataResponse(emptyMap()),
+                now,
+                emptySet(),
+                RouteCardData.Context.NearbyTransit,
+            )
+
+        var clickedStopId: String? = null
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                RouteCardList(
+                    routeCardData = routeCardData,
+                    emptyView = { Text("This would be the empty view") },
+                    global = globalResponse,
+                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = { _ -> },
+                    showStationAccessibility = false,
+                    onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
+        assertEquals(clickedStopId, sampleStop.id)
     }
 }
