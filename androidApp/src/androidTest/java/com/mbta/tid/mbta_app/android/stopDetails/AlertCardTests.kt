@@ -134,7 +134,7 @@ class AlertCardTests {
         val facility =
             ObjectCollectionBuilder.Single.facility {
                 type = Facility.Type.Elevator
-                short_name = "Elevator name"
+                shortName = "Elevator name"
             }
         val alert =
             ObjectCollectionBuilder.Single.alert {
