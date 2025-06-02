@@ -18,7 +18,9 @@ struct ContentView: View {
 
     @ObservedObject var contentVM: ContentViewModel
 
-    @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
+    @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
+    @State private var sheetHeight: CGFloat = (UIScreen.current?.bounds.height ?? 0) * PresentationDetent
+        .mediumDetentFraction
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
@@ -42,8 +44,12 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            contents
+        GeometryReader { proxy in
+            VStack {
+                contents
+            }
+            .onAppear { contentHeight = proxy.size.height }
+            .onChange(of: proxy.size.height) { contentHeight = $0 }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
@@ -412,8 +418,8 @@ struct ContentView: View {
          Only update this if we're less than half way up the users screen. Otherwise,
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
-        guard newSheetHeight < (UIScreen.main.bounds.height * PresentationDetent.mediumDetentFraction) else { return }
-        sheetHeight = newSheetHeight - 55
+        guard newSheetHeight < ((contentHeight - 8) * PresentationDetent.mediumDetentFraction) else { return }
+        sheetHeight = newSheetHeight
     }
 
     private func updateTabBarVisibility(_: SelectedTab) {

@@ -207,7 +207,7 @@ struct HomeMapView: View {
         VStack {
             Image(.mapNearbyLocationCursor)
             Spacer()
-                .frame(height: sheetHeight - 12)
+                .frame(height: sheetHeight - 20)
         }
     }
 

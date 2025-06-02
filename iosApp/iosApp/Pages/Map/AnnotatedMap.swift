@@ -51,7 +51,7 @@ struct AnnotatedMap: View {
             .ornamentOptions(.init(
                 scaleBar: .init(visibility: .hidden),
                 compass: .init(visibility: .hidden),
-                attributionButton: .init(margins: .init(x: 0, y: 8))
+                attributionButton: .init(margins: .init(x: -3, y: 6))
             ))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
             .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
@@ -65,7 +65,7 @@ struct AnnotatedMap: View {
                     handleStyleLoaded()
                 }
             }
-            .additionalSafeAreaInsets(.bottom, sheetHeight + 8)
+            .additionalSafeAreaInsets(.bottom, sheetHeight)
             .additionalSafeAreaInsets(.top, 20)
             .ignoresSafeArea(.all)
             .accessibilityIdentifier("transitMap")
