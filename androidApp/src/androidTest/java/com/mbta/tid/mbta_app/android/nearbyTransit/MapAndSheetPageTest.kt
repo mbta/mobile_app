@@ -296,6 +296,7 @@ class MapAndSheetPageTest : KoinTest {
             override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
             override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
+            override val stopFilter: StateFlow<StopDetailsFilter?> = MutableStateFlow(value = null)
             override val showRecenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val showTripCenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             var loadConfigCalledCount = 0

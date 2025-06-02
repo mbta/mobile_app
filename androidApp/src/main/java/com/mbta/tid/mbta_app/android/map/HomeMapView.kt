@@ -100,6 +100,7 @@ fun HomeMapView(
     val coroutineScope = rememberCoroutineScope()
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     val selectedStop by viewModel.selectedStop.collectAsState(null)
+    val stopFilter by viewModel.stopFilter.collectAsState()
 
     val configLoadAttempted by viewModel.configLoadAttempted.collectAsState(initial = false)
     val railRouteShapes by viewModel.railRouteShapes.collectAsState(initial = null)
@@ -121,14 +122,6 @@ fun HomeMapView(
 
     val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
-
-    val stopFilter =
-        remember(currentNavEntry) {
-            when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
-                else -> null
-            }
-        }
 
     val analytics: Analytics = koinInject()
     val context = LocalContext.current
@@ -244,6 +237,7 @@ fun HomeMapView(
             }
         if (stopDetails == null) {
             viewModel.setSelectedStop(null)
+            viewModel.setStopFilter(null)
             return
         }
         viewModel.setSelectedStop(globalResponse?.getStop(stopDetails.stopId))

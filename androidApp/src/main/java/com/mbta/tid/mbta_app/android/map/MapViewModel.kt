@@ -54,6 +54,7 @@ interface IMapViewModel {
     val configLoadAttempted: StateFlow<Boolean>
     val globalMapData: Flow<GlobalMapData?>
     val selectedStop: StateFlow<Stop?>
+    val stopFilter: StateFlow<StopDetailsFilter?>
     val showRecenterButton: StateFlow<Boolean>
     val showTripCenterButton: StateFlow<Boolean>
 
@@ -118,12 +119,13 @@ open class MapViewModel(
     override val selectedVehicle = _selectedVehicle.asStateFlow()
     private val _selectedStop = MutableStateFlow<Stop?>(null)
     override val selectedStop = _selectedStop.asStateFlow()
+    private val _stopFilter = MutableStateFlow<StopDetailsFilter?>(null)
+    override val stopFilter = _stopFilter.asStateFlow()
     private val _showRecenterButton = MutableStateFlow(false)
     override val showRecenterButton = _showRecenterButton.asStateFlow()
     private val _showTripCenterButton = MutableStateFlow(false)
     override val showTripCenterButton = _showTripCenterButton.asStateFlow()
     private val alertsData = MutableStateFlow<AlertsStreamDataResponse?>(null)
-    private val stopFilter = MutableStateFlow<StopDetailsFilter?>(null)
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
 
     init {
@@ -206,7 +208,7 @@ open class MapViewModel(
     }
 
     override fun setStopFilter(stopFilter: StopDetailsFilter?) {
-        this.stopFilter.value = stopFilter
+        _stopFilter.value = stopFilter
     }
 
     fun setShowRecenterButton(show: Boolean) {
