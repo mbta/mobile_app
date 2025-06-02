@@ -71,6 +71,8 @@ fun NearbyTransitView(
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
+
     LaunchedEffect(targetLocation == null) {
         if (targetLocation == null) {
             predictionsVM.reset()
@@ -102,6 +104,13 @@ fun NearbyTransitView(
             now,
             pinnedRoutes,
         ) {
+            val pinnedRoutesForSorting =
+                if (enhancedFavorites) {
+                    emptySet<String>()
+                } else {
+                    pinnedRoutes
+                }
+
             nearbyVM.loadRouteCardData(
                 globalResponse,
                 targetLocation,
@@ -109,7 +118,7 @@ fun NearbyTransitView(
                 predictions,
                 alertData,
                 now,
-                pinnedRoutes,
+                pinnedRoutesForSorting,
             )
         }
 
