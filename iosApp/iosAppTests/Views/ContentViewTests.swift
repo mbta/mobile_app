@@ -35,8 +35,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack()
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
@@ -55,12 +54,11 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack()
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+            .callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 
@@ -82,8 +80,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+            .callOnChange(newValue: ScenePhase.active)
         wait(for: [joinAlertsExp], timeout: 5)
     }
 
@@ -101,7 +99,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().vStack()
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [leavesAlertsExp], timeout: 5)
     }
@@ -131,8 +129,7 @@ final class ContentViewTests: XCTestCase {
 
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack()
+        try sut.inspect().implicitAnyView().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: newConfig)
         wait(for: [tokenConfigExpectation], timeout: 5)
     }

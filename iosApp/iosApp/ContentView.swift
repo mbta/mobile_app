@@ -19,8 +19,8 @@ struct ContentView: View {
     @ObservedObject var contentVM: ContentViewModel
 
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
-    @State private var sheetHeight: CGFloat = (UIScreen.current?.bounds.height ?? 0) * PresentationDetent
-        .mediumDetentFraction
+    @State private var sheetHeight: CGFloat =
+        (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
