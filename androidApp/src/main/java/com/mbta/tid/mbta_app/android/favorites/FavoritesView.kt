@@ -2,19 +2,14 @@ package com.mbta.tid.mbta_app.android.favorites
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -24,11 +19,9 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
-import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
+import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
-import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.timer
@@ -84,47 +77,24 @@ fun FavoritesView(
         )
         ErrorBanner(errorBannerViewModel)
         val routeCardData = favoritesViewModel.routeCardData
-
-        if (routeCardData == null) {
-            CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                LazyColumn(
-                    contentPadding =
-                        PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+        RouteCardList(
+            routeCardData = routeCardData,
+            emptyView = {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    items(5) { LoadingRouteCard() }
+                    NoFavoritesView()
                 }
-            }
-        } else if (routeCardData.isEmpty()) {
-            Column(
-                Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                NoFavoritesView()
-            }
-        } else {
-            LazyColumn(
-                contentPadding =
-                    PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                items(routeCardData) {
-                    RouteCard(
-                        it,
-                        globalResponse,
-                        now,
-                        false,
-                        {},
-                        showStopHeader = true,
-                        showStationAccessibility,
-                        { stopId, filter ->
-                            openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
-                        },
-                    )
-                }
-            }
-        }
+            },
+            global = globalResponse,
+            now = now,
+            pinnedRoutes = emptySet(),
+            togglePinnedRoute = {},
+            showStationAccessibility = showStationAccessibility,
+            onOpenStopDetails = { stopId, filter ->
+                openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
+            },
+        )
     }
 }
