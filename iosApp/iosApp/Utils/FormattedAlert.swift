@@ -260,7 +260,7 @@ struct FormattedAlert: Equatable {
     var elevatorHeader: AttributedString {
         let facilities = alert.informedEntity.compactMap { entity in
             if let facilityId = entity.facility { alert.facilities?[facilityId] } else { nil }
-        }
+        }.filter { $0.type == .elevator }
         let headerString =
             if let facility = Set(facilities).count == 1 ? facilities.first : nil,
             let facilityName = facility.shortName {

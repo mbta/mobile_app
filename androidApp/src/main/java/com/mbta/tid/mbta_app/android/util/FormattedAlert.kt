@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.Facility
 
 data class FormattedAlert(
     val alert: Alert,
@@ -58,6 +59,7 @@ data class FormattedAlert(
             AnnotatedString(
                 alert.informedEntity
                     .mapNotNull { alert.facilities?.get(it.facility) }
+                    .filter { it.type == Facility.Type.Elevator }
                     .distinct()
                     .singleOrNull()
                     ?.shortName

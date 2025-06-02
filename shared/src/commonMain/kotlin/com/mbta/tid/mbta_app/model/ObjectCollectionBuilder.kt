@@ -104,6 +104,7 @@ private constructor(
             activePeriod.add(Alert.ActivePeriod(start, end))
         }
 
+        @DefaultArgumentInterop.Enabled
         fun informedEntity(
             activities: List<Alert.InformedEntity.Activity>,
             directionId: Int? = null,
@@ -150,11 +151,11 @@ private constructor(
 
     class FacilityBuilder : ObjectBuilder<Facility> {
         var id = uuid()
-        var long_name: String? = null
-        var short_name: String? = null
+        var longName: String? = null
+        var shortName: String? = null
         var type: Facility.Type = Facility.Type.Other
 
-        override fun built() = Facility(id, long_name, short_name, type)
+        override fun built() = Facility(id, longName, shortName, type)
     }
 
     @DefaultArgumentInterop.Enabled
@@ -509,6 +510,9 @@ private constructor(
 
     object Single {
         fun alert(block: AlertBuilder.() -> Unit = {}) = ObjectCollectionBuilder().alert(block)
+
+        fun facility(block: FacilityBuilder.() -> Unit = {}) =
+            ObjectCollectionBuilder().facility(block)
 
         fun line(block: LineBuilder.() -> Unit = {}) = ObjectCollectionBuilder().line(block)
 
