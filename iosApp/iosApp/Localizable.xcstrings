@@ -7100,6 +7100,9 @@
         }
       }
     },
+    "Elevator closure (%1$@)" : {
+      "comment" : "    Alert header for elevator closure alerts,     the interpolated value is the short name field of the elevator facility, ex \"Elevator closure (Red Line platforms to lobby)\""
+    },
     "End" : {
       "comment" : "Label for the end date of a disruption",
       "localizations" : {
