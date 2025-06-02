@@ -18,6 +18,7 @@
     </plurals>
     <string name="alert">Avètisman</string>
     <string name="alert_details">Detay Avètisman</string>
+    <string name="alert_elevator_header">Fèmti asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>

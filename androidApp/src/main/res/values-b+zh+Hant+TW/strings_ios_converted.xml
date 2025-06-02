@@ -13,6 +13,7 @@
     </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
+    <string name="alert_elevator_header">電梯關閉 (%1$s)</string>
     <string name="alert_ended">警報已失效</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020從&lt;b>%1$s&lt;/b>站到&lt;b>%2$s&lt;/b></string>
