@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.usecases
 
-import com.mbta.tid.mbta_app.mocks.MockPinnedRoutesRepository
+import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

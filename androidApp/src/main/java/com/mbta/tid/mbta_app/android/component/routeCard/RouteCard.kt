@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
@@ -31,7 +33,7 @@ fun RouteCard(
     showStationAccessibility: Boolean = false,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {
-    Column(Modifier.haloContainer(1.dp)) {
+    Column(Modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
         TransitHeader(data.lineOrRoute) { color ->
             PinButton(pinned = pinned, color = color) { onPin(data.lineOrRoute.id) }
         }
