@@ -10,6 +10,8 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import kotlin.test.assertEquals
 import org.junit.Assert
 import org.junit.Rule
@@ -30,9 +32,10 @@ class SubscribeToAlertsTest {
         var connectCount = 0
         val alertsStreamDataResponse = AlertsStreamDataResponse(builder)
         val alertsRepo = MockAlertsRepository(alertsStreamDataResponse, { connectCount += 1 })
+        val alertsUsecase = AlertsUsecase(alertsRepo, MockGlobalRepository())
 
         var actualData: AlertsStreamDataResponse? = null
-        composeRule.setContent { actualData = subscribeToAlerts(alertsRepo) }
+        composeRule.setContent { actualData = subscribeToAlerts(alertsUsecase) }
         composeRule.waitUntil { connectCount == 1 }
         composeRule.waitUntil { alertsStreamDataResponse == actualData }
         assertEquals(alertsStreamDataResponse, actualData)
@@ -59,12 +62,13 @@ class SubscribeToAlertsTest {
                 { connectCount += 1 },
                 { disconnectCount += 1 },
             )
+        val alertsUsecase = AlertsUsecase(alertsRepo, MockGlobalRepository())
 
         var actualData: AlertsStreamDataResponse? = null
 
         composeRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
-                actualData = subscribeToAlerts(alertsRepo)
+                actualData = subscribeToAlerts(alertsUsecase)
             }
         }
 

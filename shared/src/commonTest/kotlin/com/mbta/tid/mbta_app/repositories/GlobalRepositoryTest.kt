@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.model.Facility
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -44,7 +46,24 @@ class GlobalRepositoryTest : KoinTest {
                     ByteReadChannel(
                         """
 {
-  "lines": {},
+  "facilities": {
+    "808": {
+      "id": "808",
+      "type": "elevator",
+      "long_name": "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
+      "short_name": "Red Line center platform to Government Center & North platform, Winter Street Concourse"
+    }
+  },
+  "lines": {
+    "line-Green": {
+      "id": "line-Green",
+      "color": "00843D",
+      "long_name": "Green Line",
+      "short_name": "",
+      "sort_order": 10032,
+      "text_color": "FFFFFF"
+    }
+  },
   "routes": {
     "Shuttle-AirportGovernmentCenterLocal": {
       "id": "Shuttle-AirportGovernmentCenterLocal",
@@ -131,6 +150,24 @@ class GlobalRepositoryTest : KoinTest {
             val repo = GlobalRepository()
             assertNull(repo.state.value)
             val response = repo.getGlobalData()
+            val facility =
+                Facility(
+                    id = "808",
+                    longName =
+                        "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
+                    shortName =
+                        "Red Line center platform to Government Center & North platform, Winter Street Concourse",
+                    type = Facility.Type.Elevator,
+                )
+            val line =
+                Line(
+                    id = "line-Green",
+                    color = "00843D",
+                    longName = "Green Line",
+                    shortName = "",
+                    sortOrder = 10032,
+                    textColor = "FFFFFF",
+                )
             val route =
                 Route(
                     id = "Shuttle-AirportGovernmentCenterLocal",
@@ -177,7 +214,8 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val expectedResponse =
                 GlobalResponse(
-                    lines = emptyMap(),
+                    facilities = mapOf("808" to facility),
+                    lines = mapOf("line-Green" to line),
                     patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
                     routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
                     routePatterns = mapOf("39-3-0" to routePattern),

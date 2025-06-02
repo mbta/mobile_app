@@ -23,6 +23,7 @@ import kotlinx.datetime.Instant
 class ObjectCollectionBuilder
 private constructor(
     val alerts: MutableMap<String, Alert>,
+    val facilities: MutableMap<String, Facility>,
     val lines: MutableMap<String, Line>,
     val predictions: MutableMap<String, Prediction>,
     val routes: MutableMap<String, Route>,
@@ -36,6 +37,7 @@ private constructor(
     constructor() :
         this(
             alerts = mutableMapOf(),
+            facilities = mutableMapOf(),
             lines = mutableMapOf(),
             predictions = mutableMapOf(),
             routes = mutableMapOf(),
@@ -50,6 +52,7 @@ private constructor(
     fun clone() =
         ObjectCollectionBuilder(
             alerts = alerts.toMutableMap(),
+            facilities = facilities.toMutableMap(),
             lines = lines.toMutableMap(),
             predictions = predictions.toMutableMap(),
             routes = routes.toMutableMap(),
@@ -68,6 +71,7 @@ private constructor(
     fun put(`object`: BackendObject) {
         when (`object`) {
             is Alert -> alerts[`object`.id] = `object`
+            is Facility -> facilities[`object`.id] = `object`
             is Line -> lines[`object`.id] = `object`
             is Prediction -> predictions[`object`.id] = `object`
             is Route -> routes[`object`.id] = `object`
@@ -94,6 +98,7 @@ private constructor(
         var lifecycle = Alert.Lifecycle.New
         var severity = 0
         var updatedAt = Instant.fromEpochMilliseconds(0)
+        var facilities: Map<String, Facility>? = null
 
         fun activePeriod(start: Instant, end: Instant?) {
             activePeriod.add(Alert.ActivePeriod(start, end))
@@ -135,12 +140,27 @@ private constructor(
                 lifecycle,
                 severity,
                 updatedAt,
+                facilities,
             )
     }
 
     fun alert(block: AlertBuilder.() -> Unit) = build(AlertBuilder(), block)
 
     fun getAlert(id: String) = alerts.getValue(id)
+
+    class FacilityBuilder : ObjectBuilder<Facility> {
+        var id = uuid()
+        var long_name: String? = null
+        var short_name: String? = null
+        var type: Facility.Type = Facility.Type.Other
+
+        override fun built() = Facility(id, long_name, short_name, type)
+    }
+
+    @DefaultArgumentInterop.Enabled
+    fun facility(block: FacilityBuilder.() -> Unit = {}) = build(FacilityBuilder(), block)
+
+    fun getFacility(id: String) = facilities.getValue(id)
 
     class LineBuilder : ObjectBuilder<Line> {
         var id = uuid()
