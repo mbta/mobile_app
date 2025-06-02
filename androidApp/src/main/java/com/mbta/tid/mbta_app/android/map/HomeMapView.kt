@@ -331,8 +331,8 @@ fun HomeMapView(
                     viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                 }
                 LaunchedEffect(selectedStop) {
-                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                     positionViewportToStop()
+                    viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
                 }
                 LaunchedEffect(stopFilter) {
                     viewModel.refreshStopFeatures(selectedStop, stopFilter, globalMapData)
