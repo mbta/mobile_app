@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -72,7 +73,11 @@ class NearbyRepository : KoinComponent, INearbyRepository {
         val originalStopIdSet = stopIds.toSet()
         val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
 
-        return RoutePattern.patternsGroupedByLineOrRouteAndStop(parentToAllStops, globalData)
+        return RoutePattern.patternsGroupedByLineOrRouteAndStop(
+                parentToAllStops,
+                globalData,
+                context = RouteCardData.Context.NearbyTransit,
+            )
             .flatMap {
                 it.value.keys.flatMap { stop ->
                     stop.childStopIds.toSet().plus(stop.id).intersect(originalStopIdSet)
