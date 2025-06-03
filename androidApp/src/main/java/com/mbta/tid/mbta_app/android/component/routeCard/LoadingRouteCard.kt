@@ -15,7 +15,7 @@ fun LoadingRouteCard() {
             placeholderRouteData,
             null,
             Clock.System.now(),
-            false,
+            { false },
             {},
             showStopHeader = true,
             showStationAccessibility = false,

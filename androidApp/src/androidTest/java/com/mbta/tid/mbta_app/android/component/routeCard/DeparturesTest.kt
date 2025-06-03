@@ -90,7 +90,7 @@ class DeparturesTest {
             )
 
         composeTestRule.setContent {
-            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
         composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
@@ -167,7 +167,7 @@ class DeparturesTest {
             )
 
         composeTestRule.setContent {
-            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
@@ -218,7 +218,7 @@ class DeparturesTest {
             )
 
         composeTestRule.setContent {
-            Departures(stopData, GlobalResponse(objects), now, false) { _ -> }
+            Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
         composeTestRule.onNodeWithText("D").assertIsDisplayed()
@@ -295,7 +295,7 @@ class DeparturesTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                Departures(stopData, GlobalResponse(objects), now, pinned = true) {
+                Departures(stopData, GlobalResponse(objects), now, { true }) {
                     onClickCalled = true
                 }
             }

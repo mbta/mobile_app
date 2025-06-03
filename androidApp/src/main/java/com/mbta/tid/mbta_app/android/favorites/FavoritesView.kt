@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -89,7 +90,12 @@ fun FavoritesView(
             },
             global = globalResponse,
             now = now,
-            pinnedRoutes = emptySet(),
+            isFavorite = { favoriteBridge ->
+                favoriteBridge is FavoriteBridge.Favorite &&
+                    (favoritesViewModel.favorites ?: emptySet()).contains(
+                        favoriteBridge.routeStopDirection
+                    )
+            },
             togglePinnedRoute = {},
             showStationAccessibility = showStationAccessibility,
             onOpenStopDetails = { stopId, filter ->
