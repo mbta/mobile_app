@@ -5,14 +5,18 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.datetime.Clock
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class RouteCardTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -98,6 +102,53 @@ class RouteCardTest {
 
         composeTestRule.onNodeWithContentDescription("Star route").performClick()
         assertTrue(onPinCalled)
+    }
+
+    @Test
+    fun testNoPinRouteButtonWhenEnhancedFavorites() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route =
+            objects.route {
+                longName = "Route"
+                type = RouteType.LIGHT_RAIL
+            }
+
+        val koinApplication = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.EnhancedFavorites to true))
+        }
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                RouteCard(
+                    RouteCardData(
+                        RouteCardData.LineOrRoute.Route(route),
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                RouteCardData.LineOrRoute.Route(route),
+                                stop,
+                                emptyList(),
+                                emptyList(),
+                            )
+                        ),
+                        now,
+                    ),
+                    GlobalResponse(objects),
+                    now,
+                    isFavorite = { false },
+                    onPin = { false },
+                    showStopHeader = true,
+                    showStationAccessibility = false,
+                ) { _, _ ->
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithText(route.label).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Star route").assertDoesNotExist()
     }
 
     @Test

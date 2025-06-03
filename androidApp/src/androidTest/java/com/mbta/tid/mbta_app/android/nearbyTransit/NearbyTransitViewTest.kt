@@ -9,20 +9,26 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -298,6 +304,109 @@ class NearbyTransitViewTest : KoinTest {
             .onAllNodesWithTag("RouteCard")[1]
             .onChildren()
             .assertAny(hasText("Sample Route"))
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testRouteCardAnalyticsPinnedWithoutEnhanced() {
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
+        var analyticsLoggedProps: Map<String, String> = mapOf()
+
+        val koinApplication =
+            testKoinApplication(
+                builder,
+                analytics = MockAnalytics({ _event, props -> analyticsLoggedProps = props }),
+                repositoryOverrides = {
+                    nearby =
+                        MockNearbyRepository(
+                            stopIds = listOf(sampleStop.id, greenLineStop.id),
+                            response = NearbyResponse(builder),
+                        )
+                    settings =
+                        MockSettingsRepository(
+                            settings = mapOf(Settings.EnhancedFavorites to false)
+                        )
+                    pinnedRoutes = MockPinnedRoutesRepository(setOf(route.id))
+                },
+            )
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                NearbyTransitView(
+                    alertData = AlertsStreamDataResponse(emptyMap()),
+                    globalResponse = globalResponse,
+                    targetLocation = Position(0.0, 0.0),
+                    setLastLocation = {},
+                    setSelectingLocation = {},
+                    onOpenStopDetails = { _, _ -> },
+                    noNearbyStopsView = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.onNodeWithText("Sample Headsign").performClick()
+
+        assertEquals(analyticsLoggedProps.getValue("pinned"), "true")
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testRouteCardAnalyticsPinnedWithEnhanced() {
+        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+
+        var analyticsLoggedProps: Map<String, String> = mapOf()
+
+        val koinApplication =
+            testKoinApplication(
+                builder,
+                analytics = MockAnalytics({ _event, props -> analyticsLoggedProps = props }),
+                repositoryOverrides = {
+                    nearby =
+                        MockNearbyRepository(
+                            stopIds = listOf(sampleStop.id, greenLineStop.id),
+                            response = NearbyResponse(builder),
+                        )
+                    settings =
+                        MockSettingsRepository(settings = mapOf(Settings.EnhancedFavorites to true))
+                    favorites =
+                        MockFavoritesRepository(
+                            Favorites(
+                                setOf(
+                                    RouteStopDirection(
+                                        route.id,
+                                        sampleStop.id,
+                                        routePatternOne.directionId,
+                                    )
+                                )
+                            )
+                        )
+                },
+            )
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                NearbyTransitView(
+                    alertData = AlertsStreamDataResponse(emptyMap()),
+                    globalResponse = globalResponse,
+                    targetLocation = Position(0.0, 0.0),
+                    setLastLocation = {},
+                    setSelectingLocation = {},
+                    onOpenStopDetails = { _, _ -> },
+                    noNearbyStopsView = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.onNodeWithText("Sample Headsign").performClick()
+
+        assertEquals(analyticsLoggedProps.getValue("pinned"), "true")
     }
 
     @OptIn(ExperimentalTestApi::class)
