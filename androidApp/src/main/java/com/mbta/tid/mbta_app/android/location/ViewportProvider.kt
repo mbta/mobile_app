@@ -74,6 +74,12 @@ class ViewportProvider(
     private val viewportLock = Mutex()
     private var runningAnimation: Continuation<Unit>? = null
 
+    private fun Continuation<Unit>?.tryResume() =
+        try {
+            this?.resume(Unit)
+            runningAnimation = null
+        } catch (_: IllegalStateException) {}
+
     /**
      * Gets the current state of the viewport without waiting for any in-progress animations to
      * finish. If possible, prefer reading and writing via [withViewport] to avoid synchronization
@@ -99,13 +105,7 @@ class ViewportProvider(
         withViewport { viewport ->
             suspendCoroutine { continuation ->
                 runningAnimation = continuation
-                operation(
-                    viewport,
-                    CompletionListener {
-                        runningAnimation = null
-                        continuation.resume(Unit)
-                    },
-                )
+                operation(viewport, CompletionListener { continuation.tryResume() })
             }
         }
     }
@@ -283,7 +283,7 @@ class ViewportProvider(
     fun setIsManuallyCentering(isManuallyCentering: Boolean) {
         this.isManuallyCentering = isManuallyCentering
         if (isManuallyCentering) {
-            runningAnimation?.resume(Unit)
+            runningAnimation.tryResume()
             isAnimating = false
             isFollowingPuck = false
             isVehicleOverview = false
