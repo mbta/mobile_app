@@ -13,7 +13,9 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
         val patterns: List<RoutePattern>,
         val connectingRoutes: List<Route>,
     ) {
-        val minTypicality = patterns.minOf { it.typicality ?: RoutePattern.Typicality.Typical }
+        private val minTypicality =
+            patterns.minOfOrNull { it.typicality ?: RoutePattern.Typicality.Typical }
+                ?: RoutePattern.Typicality.Typical
         val isTypical = minTypicality == RoutePattern.Typicality.Typical
     }
 
@@ -98,9 +100,9 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
                     entry ->
                     if (wipSegment == null) {
                         Pair(acc, Segment(listOf(entry), entry.isTypical))
-                    } else if (entry.isTypical && wipSegment.stops.last().isTypical) {
-                        // adding to existing typical segment
-                        Pair(acc, Segment(wipSegment.stops.plus(entry), true))
+                    } else if (entry.isTypical == wipSegment.stops.last().isTypical) {
+                        // typicality match - continue building wip segment
+                        Pair(acc, Segment(wipSegment.stops.plus(entry), entry.isTypical))
                     } else {
                         // typicality change - start a new segment
                         Pair(acc.plus(wipSegment), Segment(listOf(entry), entry.isTypical))
