@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.component
 
 import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -134,6 +135,8 @@ fun StopListRow(
                 }
                 if (stopRowStyle != StopRowStyle.StandaloneStop) {
                     RouteLine(routeAccents, stateBefore, stateAfter, targeted)
+                } else {
+                    Box(modifier = Modifier.width(20.dp).background(colorResource(R.color.key))) {}
                 }
                 Column(
                     Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {

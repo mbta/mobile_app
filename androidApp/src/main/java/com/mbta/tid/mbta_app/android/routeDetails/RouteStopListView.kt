@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -184,8 +185,8 @@ fun CollapsableStopList(
 
     if (segment.stops.size == 1) {
         val stop = segment.stops.first()
-        Column {
-            Text("Less common stop")
+        Column(modifier = Modifier.haloContainer(1.dp, borderRadius = 0.dp)) {
+            Text("Less common stop", style = Typography.footnote)
             StopListRow(
                 stop.stop,
                 onClick = { onClick(stop) },
@@ -205,8 +206,9 @@ fun CollapsableStopList(
             // TODO: Click label
             .clickable() { stopsExpanded = !stopsExpanded }
             // TODO: Content description
-            .padding(horizontal = 12.dp)
-            .defaultMinSize(minHeight = 48.dp),
+            .padding(horizontal = 16.dp)
+            .defaultMinSize(minHeight = 48.dp)
+            .haloContainer(1.dp, borderRadius = 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AnimatedContent(
@@ -217,7 +219,8 @@ fun CollapsableStopList(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(start = 22.dp).width(20.dp),
             ) {
                 if (it) {
                     Icon(
@@ -236,7 +239,10 @@ fun CollapsableStopList(
                 }
             }
         }
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f).padding(vertical = 12.dp).padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Text(
                 "${segment.stops.size} less common stops",
                 color = colorResource(R.color.text),
@@ -244,8 +250,8 @@ fun CollapsableStopList(
             )
             Text(
                 "Only served at certain times of day",
-                color = colorResource(R.color.text),
-                style = Typography.body,
+                color = colorResource(R.color.deemphasized),
+                style = Typography.footnote,
             )
         }
     }
