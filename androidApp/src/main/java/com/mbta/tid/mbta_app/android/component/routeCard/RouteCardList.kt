@@ -9,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -20,7 +21,7 @@ fun RouteCardList(
     emptyView: @Composable () -> Unit,
     global: GlobalResponse?,
     now: Instant,
-    pinnedRoutes: Set<String>?,
+    isFavorite: (FavoriteBridge) -> Boolean,
     togglePinnedRoute: (String) -> Unit,
     showStationAccessibility: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
@@ -49,7 +50,7 @@ fun RouteCardList(
                     it,
                     global,
                     now,
-                    pinnedRoutes?.contains(it.lineOrRoute.id) ?: false,
+                    isFavorite,
                     togglePinnedRoute,
                     showStopHeader = true,
                     showStationAccessibility,

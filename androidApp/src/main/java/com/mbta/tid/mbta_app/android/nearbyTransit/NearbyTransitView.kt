@@ -26,8 +26,10 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -79,6 +81,7 @@ fun NearbyTransitView(
         }
     }
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
+    val (favorites) = manageFavorites()
 
     fun togglePinnedRoute(routeId: String) {
         coroutineScope.launch {
@@ -106,7 +109,7 @@ fun NearbyTransitView(
         ) {
             val pinnedRoutesForSorting =
                 if (enhancedFavorites) {
-                    emptySet<String>()
+                    emptySet()
                 } else {
                     pinnedRoutes
                 }
@@ -137,7 +140,15 @@ fun NearbyTransitView(
             },
             global = globalResponse,
             now = now,
-            pinnedRoutes = pinnedRoutes,
+            isFavorite = { favoriteBridge ->
+                if (!enhancedFavorites && favoriteBridge is FavoriteBridge.Pinned) {
+                    (pinnedRoutes ?: emptySet()).contains(favoriteBridge.routeId)
+                } else if (enhancedFavorites && favoriteBridge is FavoriteBridge.Favorite) {
+                    (favorites ?: emptySet()).contains(favoriteBridge.routeStopDirection)
+                } else {
+                    false
+                }
+            },
             togglePinnedRoute = ::togglePinnedRoute,
             showStationAccessibility = showStationAccessibility,
             onOpenStopDetails = onOpenStopDetails,

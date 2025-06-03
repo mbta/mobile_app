@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -124,7 +125,10 @@ fun StopDetailsUnfilteredRoutesView(
                         routeCardData,
                         globalData,
                         now,
-                        pinned = isPinned(routeCardData.lineOrRoute.id),
+                        isFavorite = { favoritesBridge ->
+                            favoritesBridge is FavoriteBridge.Pinned &&
+                                isPinned(favoritesBridge.routeId)
+                        },
                         onPin = pinRoute,
                         showStopHeader = false,
                         showStationAccessibility,
