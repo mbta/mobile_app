@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
@@ -71,6 +72,13 @@ class ViewportProvider(
     private var lastEdgeInsets: EdgeInsets = EdgeInsets(0.0, 0.0, 0.0, 0.0)
 
     private val viewportLock = Mutex()
+    private var runningAnimation: Continuation<Unit>? = null
+
+    private fun Continuation<Unit>?.tryResume() =
+        try {
+            this?.resume(Unit)
+            runningAnimation = null
+        } catch (_: IllegalStateException) {}
 
     /**
      * Gets the current state of the viewport without waiting for any in-progress animations to
@@ -96,7 +104,8 @@ class ViewportProvider(
     private suspend fun animateViewport(operation: (MapViewportState, CompletionListener) -> Unit) {
         withViewport { viewport ->
             suspendCoroutine { continuation ->
-                operation(viewport, CompletionListener { continuation.resume(Unit) })
+                runningAnimation = continuation
+                operation(viewport, CompletionListener { continuation.tryResume() })
             }
         }
     }
@@ -274,6 +283,8 @@ class ViewportProvider(
     fun setIsManuallyCentering(isManuallyCentering: Boolean) {
         this.isManuallyCentering = isManuallyCentering
         if (isManuallyCentering) {
+            runningAnimation.tryResume()
+            isAnimating = false
             isFollowingPuck = false
             isVehicleOverview = false
         }
