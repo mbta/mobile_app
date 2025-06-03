@@ -52,6 +52,13 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 
+enum class StopRowStyle {
+    FirstLineStop,
+    MidLineStop,
+    LastLineStop,
+    StandaloneStop,
+}
+
 @Composable
 fun StopListRow(
     stop: Stop,
@@ -62,9 +69,8 @@ fun StopListRow(
     alertSummaries: Map<String, AlertSummary?> = emptyMap(),
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
-    firstStop: Boolean = false,
     isTruncating: Boolean = false,
-    lastStop: Boolean = false,
+    stopRowStyle: StopRowStyle = StopRowStyle.MidLineStop,
     onOpenAlertDetails: (Alert) -> Unit = {},
     showDownstreamAlert: Boolean = false,
     showStationAccessibility: Boolean = false,
@@ -75,13 +81,13 @@ fun StopListRow(
     val context = LocalContext.current
 
     val stateBefore =
-        when {
-            firstStop -> RouteLineState.Empty
+        when (stopRowStyle) {
+            StopRowStyle.FirstLineStop -> RouteLineState.Empty
             else -> RouteLineState.Regular
         }
     val stateAfter =
         when {
-            lastStop -> RouteLineState.Empty
+            stopRowStyle == StopRowStyle.LastLineStop -> RouteLineState.Empty
             showDownstreamAlert && disruption?.alert?.effect == Alert.Effect.Shuttle ->
                 RouteLineState.Shuttle
             else -> RouteLineState.Regular
@@ -93,7 +99,7 @@ fun StopListRow(
                 .height(IntrinsicSize.Min)
                 .defaultMinSize(minHeight = 48.dp)
         ) {
-            if (!lastStop && !targeted && disruption == null) {
+            if (stopRowStyle != StopRowStyle.LastLineStop && !targeted && disruption == null) {
                 HaloSeparator(Modifier.align(Alignment.BottomCenter))
             }
             Row(
@@ -126,7 +132,9 @@ fun StopListRow(
                         )
                     }
                 }
-                RouteLine(routeAccents, stateBefore, stateAfter, targeted)
+                if (stopRowStyle != StopRowStyle.StandaloneStop) {
+                    RouteLine(routeAccents, stateBefore, stateAfter, targeted)
+                }
                 Column(
                     Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {
                         isTraversalGroup = true
@@ -151,7 +159,7 @@ fun StopListRow(
                                             stopAccessibilityLabel(
                                                 stop,
                                                 targeted,
-                                                firstStop,
+                                                stopRowStyle == StopRowStyle.FirstLineStop,
                                                 context,
                                             )
                                     }
