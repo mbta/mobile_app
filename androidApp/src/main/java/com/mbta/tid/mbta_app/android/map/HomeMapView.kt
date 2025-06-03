@@ -449,11 +449,12 @@ fun HomeMapView(
                     ViewAnnotation(
                         options =
                             viewAnnotationOptions {
-                                selected(isSelected)
+                                priority(if (isSelected) 1 else 0)
                                 geometry(Point.fromLngLat(vehicle.longitude, vehicle.latitude))
                                 annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                                 allowOverlap(true)
                                 allowOverlapWithPuck(true)
+                                ignoreCameraPadding(true)
                                 visible(
                                     zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected
                                 )
