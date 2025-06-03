@@ -5,8 +5,17 @@ import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteDetailsStopList(val stops: List<Entry>) {
-    data class Entry(val stop: Stop, val connectingRoutes: List<Route>)
+data class RouteDetailsStopList(val segments: List<Segment>) {
+    data class Segment(val stops: List<Entry>, val isTypical: Boolean)
+
+    data class Entry(
+        val stop: Stop,
+        val patterns: List<RoutePattern>,
+        val connectingRoutes: List<Route>,
+    ) {
+        val minTypicality = patterns.minOf { it.typicality ?: RoutePattern.Typicality.Typical }
+        val isTypical = minTypicality == RoutePattern.Typicality.Typical
+    }
 
     data class RouteParameters(
         val availableDirections: List<Int>,
@@ -52,6 +61,7 @@ data class RouteDetailsStopList(val stops: List<Entry>) {
                         line,
                         globalData.routesByLineId[line.id].orEmpty().toSet(),
                     )
+
                 route != null -> RouteCardData.LineOrRoute.Route(route)
                 else -> null
             }
@@ -70,12 +80,34 @@ data class RouteDetailsStopList(val stops: List<Entry>) {
                         val stop =
                             globalData.getStop(stopId)?.resolveParent(globalData)
                                 ?: return@mapNotNull null
+                        val patterns = globalData.getPatternsFor(stopId, routeId)
                         val transferRoutes =
                             TripDetailsStopList.getTransferRoutes(stopId, routeId, globalData)
-                        Entry(stop, transferRoutes)
+                        Entry(stop, patterns, transferRoutes)
                     }
 
-                RouteDetailsStopList(stops)
+                val segments = splitIntoSegments(stops)
+
+                RouteDetailsStopList(segments)
             }
+
+        fun splitIntoSegments(entries: List<Entry>): List<Segment> {
+            val (accSegments, lastWipSegment) =
+                entries.fold(Pair<List<Segment>, Segment?>(listOf(), null)) {
+                    (acc, wipSegment),
+                    entry ->
+                    if (wipSegment == null) {
+                        Pair(acc, Segment(listOf(entry), entry.isTypical))
+                    } else if (entry.isTypical && wipSegment.stops.last().isTypical) {
+                        // adding to existing typical segment
+                        Pair(acc, Segment(wipSegment.stops.plus(entry), true))
+                    } else {
+                        // typicality change - start a new segment
+                        Pair(acc.plus(wipSegment), Segment(listOf(entry), entry.isTypical))
+                    }
+                }
+
+            return lastWipSegment?.let { accSegments.plus(it) } ?: accSegments
+        }
     }
 }

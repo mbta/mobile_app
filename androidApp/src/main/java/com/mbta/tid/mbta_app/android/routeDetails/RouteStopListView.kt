@@ -114,7 +114,7 @@ fun RouteStopListView(
             )
             Column {
                 if (stopList != null) {
-                    for ((index, stop) in stopList.stops.withIndex()) {
+                    for ((index, stop) in stopList.segments.flatMap { it.stops }.withIndex()) {
                         StopListRow(
                             stop.stop,
                             onClick = { onClick(stop) },
@@ -122,7 +122,7 @@ fun RouteStopListView(
                             modifier = Modifier.minimumInteractiveComponentSize(),
                             connectingRoutes = stop.connectingRoutes,
                             firstStop = index == 0,
-                            lastStop = index == stopList.stops.lastIndex,
+                            lastStop = index == stopList.segments.flatMap { it.stops }.lastIndex,
                             rightSideContent = { modifier -> rightSideContent(stop, modifier) },
                         )
                     }

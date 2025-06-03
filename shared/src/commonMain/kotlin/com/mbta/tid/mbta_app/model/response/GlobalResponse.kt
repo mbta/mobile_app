@@ -84,13 +84,20 @@ data class GlobalResponse(
             null
         }
 
-    fun getTypicalRoutesFor(stopId: String): List<Route> {
+    fun getPatternsFor(stopId: String): List<RoutePattern> {
         val stop = stops[stopId] ?: return emptyList()
         val stopIds = stop.childStopIds + listOf(stopId)
         val patternIds = stopIds.flatMap { patternIdsByStop[it] ?: emptyList() }
-        return patternIds
-            .mapNotNull {
-                val routePattern = routePatterns[it] ?: return@mapNotNull null
+        return patternIds.mapNotNull { routePatterns[it] }
+    }
+
+    fun getPatternsFor(stopId: String, routeId: String): List<RoutePattern> {
+        return getPatternsFor(stopId).filter { it.routeId == routeId }
+    }
+
+    fun getTypicalRoutesFor(stopId: String): List<Route> {
+        return getPatternsFor(stopId)
+            .mapNotNull { routePattern ->
                 if (routePattern.typicality != RoutePattern.Typicality.Typical) {
                     return@mapNotNull null
                 }
