@@ -13,10 +13,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
+import kotlinx.datetime.Clock
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -45,7 +48,7 @@ class SubscribeToVehiclesTest {
 
         setContent {
             var filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, vehiclesRepo)
+            vehicles = subscribeToVehicles(filter, null, vehiclesRepo)
         }
 
         waitUntil { connectProps == Pair("route_1", 1) }
@@ -78,7 +81,7 @@ class SubscribeToVehiclesTest {
         setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var filter by remember { stateFilter }
-                vehicles = subscribeToVehicles(filter, vehiclesRepo)
+                vehicles = subscribeToVehicles(filter, null, vehiclesRepo)
             }
         }
 
@@ -97,5 +100,77 @@ class SubscribeToVehiclesTest {
         waitUntil { disconnectCount == 3 }
         waitUntil { connectCount == 2 }
         assertEquals(2, connectCount)
+    }
+
+    @Test
+    fun testFiltersIrrelevantVehicles() = runComposeUiTest {
+        val objects = ObjectCollectionBuilder()
+
+        val route1 = objects.route { id = "A" }
+        val route2 = objects.route { id = "B" }
+
+        val vehicle1 =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                routeId = route1.id
+            }
+        val vehicle2 =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                routeId = route2.id
+            }
+
+        var connectProps: Pair<String, Int>? = null
+
+        val vehiclesRepo =
+            MockVehiclesRepository(
+                VehiclesStreamDataResponse(mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2)),
+                onConnect = { routeId, directionId -> connectProps = Pair(routeId, directionId) },
+            )
+
+        val line = RouteCardData.LineOrRoute.Line(objects.line(), routes = setOf(route1, route2))
+        val stop = objects.stop()
+        val routeCardData =
+            listOf(
+                RouteCardData(
+                    lineOrRoute = line,
+                    stopData =
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                line,
+                                stop,
+                                directions = listOf(),
+                                listOf(
+                                    RouteCardData.Leaf(
+                                        line,
+                                        stop,
+                                        0,
+                                        listOf(),
+                                        setOf(stop.id),
+                                        listOf(UpcomingTrip(objects.trip { routeId = route2.id })),
+                                        emptyList(),
+                                        true,
+                                        true,
+                                        emptyList(),
+                                        RouteCardData.Context.StopDetailsFiltered,
+                                    )
+                                ),
+                            )
+                        ),
+                    at = Clock.System.now(),
+                )
+            )
+
+        var vehicles: List<Vehicle> = emptyList()
+
+        val stateFilter = mutableStateOf(StopDetailsFilter(line.id, 0))
+
+        setContent {
+            val filter by remember { stateFilter }
+            vehicles = subscribeToVehicles(filter, routeCardData, vehiclesRepo)
+        }
+
+        waitUntil { connectProps == Pair(line.id, 0) }
+        waitUntil { listOf(vehicle2) == vehicles }
     }
 }
