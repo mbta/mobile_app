@@ -80,6 +80,7 @@ fun StopListRow(
     showStationAccessibility: Boolean = false,
     targeted: Boolean = false,
     trackNumber: String? = null,
+    descriptor: @Composable () -> Unit = {},
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -174,6 +175,7 @@ fun StopListRow(
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
+                            descriptor()
                             Text(
                                 stop.name,
                                 Modifier.semantics {

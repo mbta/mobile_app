@@ -191,20 +191,17 @@ fun CollapsableStopList(
 
     if (segment.stops.size == 1) {
         val stop = segment.stops.first()
-        Column() {
-            Text("Less common stop", style = Typography.footnote)
-            StopListRow(
-                stop.stop,
-                onClick = { onClick(stop) },
-                routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
-                modifier =
-                    Modifier.minimumInteractiveComponentSize()
-                        .background(colorResource(R.color.fill1)),
-                connectingRoutes = stop.connectingRoutes,
-                stopRowStyle = StopRowStyle.StandaloneStop,
-                rightSideContent = { modifier -> rightSideContent(stop, modifier) },
-            )
-        }
+        StopListRow(
+            stop.stop,
+            onClick = { onClick(stop) },
+            routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+            modifier =
+                Modifier.minimumInteractiveComponentSize().background(colorResource(R.color.fill1)),
+            connectingRoutes = stop.connectingRoutes,
+            stopRowStyle = StopRowStyle.StandaloneStop,
+            descriptor = { Text("Less common stop", style = Typography.footnote) },
+            rightSideContent = { modifier -> rightSideContent(stop, modifier) },
+        )
     } else {
         Column(Modifier.padding(horizontal = 6.dp)) {
             Row(
