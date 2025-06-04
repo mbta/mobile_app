@@ -52,7 +52,12 @@ extension HomeMapView {
                 globalMapData: globalMapData
             )
             mapVM.snappedStopRouteSources = snappedStopRouteSources
-            mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stopId())
+            let selectedStopId = lastNavEntry?.stopId()
+            let stopFilter: StopDetailsFilter? = switch lastNavEntry {
+            case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _): stopFilter
+            default: nil
+            }
+            mapVM.stopLayerState = .init(selectedStopId: selectedStopId, stopFilter: stopFilter)
         }
     }
 
@@ -63,13 +68,13 @@ extension HomeMapView {
         addLayers(layerManager)
     }
 
-    func addLayers(_ layerManager: IMapLayerManager, recreate: Bool = false) {
+    func addLayers(_ layerManager: IMapLayerManager) {
         guard let globalData = mapVM.globalData else { return }
         layerManager.addLayers(
             routes: mapVM.routeSourceData,
+            state: mapVM.stopLayerState,
             globalResponse: globalData,
-            colorScheme: colorScheme,
-            recreate: recreate
+            colorScheme: colorScheme
         )
     }
 
@@ -78,15 +83,13 @@ extension HomeMapView {
             updateGlobalMapDataSources()
             if layerManager.currentScheme != colorScheme {
                 layerManager.addIcons(recreate: true)
-                addLayers(layerManager, recreate: true)
-            } else {
-                addLayers(layerManager)
             }
+            addLayers(layerManager)
         }
     }
 
     func resetDefaultSources() {
-        mapVM.stopSourceData = .init(selectedStopId: nil)
+        mapVM.stopLayerState = .init()
         mapVM.routeSourceData = mapVM.allRailSourceData
     }
 
@@ -109,9 +112,8 @@ extension HomeMapView {
                     globalData: mapVM.globalData
                 )
             }
-            if let layerManager = mapVM.layerManager {
-                addLayers(layerManager)
-            }
+            let selectedStopId = lastNavEntry?.stopId()
+            mapVM.stopLayerState = .init(selectedStopId: selectedStopId, stopFilter: filter)
         }
     }
 

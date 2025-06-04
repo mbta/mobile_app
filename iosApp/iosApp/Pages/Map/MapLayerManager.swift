@@ -16,9 +16,9 @@ protocol IMapLayerManager {
     func addIcons(recreate: Bool)
     func addLayers(
         routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+        state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorScheme: ColorScheme,
-        recreate: Bool
+        colorScheme: ColorScheme
     )
     func resetPuckPosition()
     func updateSourceData(routeData: [RouteSourceData])
@@ -28,15 +28,15 @@ protocol IMapLayerManager {
 extension IMapLayerManager {
     func addLayers(
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorScheme: ColorScheme,
-        recreate: Bool
+        colorScheme: ColorScheme
     ) {
         addLayers(
             routes: mapFriendlyRouteResponse.routesWithSegmentedShapes,
+            state: state,
             globalResponse: globalResponse,
-            colorScheme: colorScheme,
-            recreate: recreate
+            colorScheme: colorScheme
         )
     }
 }
@@ -89,17 +89,15 @@ class MapLayerManager: IMapLayerManager {
     }
 
     /*
-     Adds persistent layers so that they are persisted even if the underlying map style changes. To intentionally
-     re-create the layers due to a change that corresponds with a style change (such as colorScheme changing),
-     set recreate to true.
+     Adds persistent layers so that they are persisted even if the underlying map style changes.
 
      https://docs.mapbox.com/ios/maps/api/11.5.0/documentation/mapboxmaps/stylemanager/addpersistentlayer(_:layerposition:)
      */
     func addLayers(
         routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+        state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorScheme: ColorScheme,
-        recreate: Bool = false
+        colorScheme: ColorScheme
     ) {
         Task {
             let colorPalette = getColorPalette(colorScheme: colorScheme)
@@ -110,17 +108,19 @@ class MapLayerManager: IMapLayerManager {
                 colorPalette: colorPalette
             )
             .map { $0.toMapbox() }
-            let stopLayers = try await StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette)
-                .map { $0.toMapbox() }
+            let stopLayers = try await StopLayerGenerator.shared.createStopLayers(
+                colorPalette: colorPalette,
+                state: state
+            )
+            .map { $0.toMapbox() }
 
-            await setLayers(routeLayers: routeLayers, stopLayers: stopLayers, recreate: recreate)
+            await setLayers(routeLayers: routeLayers, stopLayers: stopLayers)
         }
     }
 
     @MainActor private func setLayers(
         routeLayers: [MapboxMaps.Layer],
-        stopLayers: [MapboxMaps.Layer],
-        recreate: Bool = false
+        stopLayers: [MapboxMaps.Layer]
     ) {
         if !map.layerExists(withId: Self.bufferLayerId) {
             let layer = SlotLayer(id: Self.bufferLayerId)
@@ -135,12 +135,7 @@ class MapLayerManager: IMapLayerManager {
             do {
                 oldLayers.remove(layer.id)
                 if map.layerExists(withId: layer.id) {
-                    if recreate {
-                        try map.removeLayer(withId: layer.id)
-                    } else {
-                        // Skip attempting to add layer if it already exists
-                        continue
-                    }
+                    try map.removeLayer(withId: layer.id)
                 }
 
                 try map.addPersistentLayer(layer, layerPosition: .below(Self.bufferLayerId))
@@ -152,12 +147,7 @@ class MapLayerManager: IMapLayerManager {
             do {
                 oldLayers.remove(layer.id)
                 if map.layerExists(withId: layer.id) {
-                    if recreate {
-                        try map.removeLayer(withId: layer.id)
-                    } else {
-                        // Skip attempting to add layer if it already exists
-                        continue
-                    }
+                    try map.removeLayer(withId: layer.id)
                 }
 
                 if map.layerExists(withId: "puck") {

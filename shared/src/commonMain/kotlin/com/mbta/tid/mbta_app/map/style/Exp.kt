@@ -173,6 +173,17 @@ sealed interface Exp<T> : MapboxStyleObject {
                 }
             }
 
+        fun <T> let(vararg bindings: LetVariable.Binding<*>, body: Exp<T>): Exp<T> =
+            op("let") {
+                for (binding in bindings) {
+                    add(binding.variable.name)
+                    add(binding.value)
+                }
+                add(body)
+            }
+
+        fun <T> `var`(variable: LetVariable<T>): Exp<T> = op("var", Exp(variable.name))
+
         fun concat(vararg values: Exp<String>): Exp<String> = op("concat", *values)
 
         fun downcase(value: Exp<String>): Exp<String> = op("downcase", value)

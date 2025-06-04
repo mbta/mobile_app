@@ -94,9 +94,14 @@ struct HomeMapView: View {
             }
             .onChange(of: mapVM.routeSourceData) { _ in
                 updateRouteSource()
+                if let layerManager = mapVM.layerManager {
+                    addLayers(layerManager)
+                }
             }
-            .onChange(of: mapVM.stopSourceData) { _ in
-                updateStopSource()
+            .onChange(of: mapVM.stopLayerState) { _ in
+                if let layerManager = mapVM.layerManager {
+                    addLayers(layerManager)
+                }
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
