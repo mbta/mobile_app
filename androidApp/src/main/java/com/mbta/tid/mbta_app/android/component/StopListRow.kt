@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.component
 
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -18,11 +17,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -49,7 +50,9 @@ import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 
@@ -136,7 +139,23 @@ fun StopListRow(
                 if (stopRowStyle != StopRowStyle.StandaloneStop) {
                     RouteLine(routeAccents, stateBefore, stateAfter, targeted)
                 } else {
-                    Box(modifier = Modifier.width(20.dp).background(colorResource(R.color.key))) {}
+                    Row(modifier = Modifier.width(20.dp)) {
+                        if (stop.locationType == LocationType.STATION) {
+                            Icon(
+                                painter = painterResource(R.drawable.mbta_logo),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                            )
+                        } else if (stop.vehicleType == RouteType.BUS) {
+                            Icon(
+                                painter = painterResource(R.drawable.stop_bus),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                            )
+                        } else {
+                            StopDot(routeAccents, false)
+                        }
+                    }
                 }
                 Column(
                     Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {
