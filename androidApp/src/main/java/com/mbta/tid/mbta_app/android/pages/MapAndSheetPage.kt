@@ -204,7 +204,8 @@ fun MapAndSheetPage(
                 when (currentNavEntry) {
                     is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
                     else -> null
-                }
+                },
+            routeCardData = routeCardData,
         )
 
     var searchExpanded by rememberSaveable { mutableStateOf(false) }

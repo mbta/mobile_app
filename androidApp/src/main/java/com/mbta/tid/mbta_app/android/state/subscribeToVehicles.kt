@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDirection
+import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
@@ -62,18 +64,25 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
 @Composable
 fun subscribeToVehicles(
     routeDirection: RouteDirection?,
+    routeCardData: List<RouteCardData>?,
     vehiclesRepository: IVehiclesRepository = koinInject(),
 ): List<Vehicle> {
     val viewModel: VehiclesViewModel =
         viewModel(factory = VehiclesViewModel.Factory(vehiclesRepository))
 
-    val vehicleData = viewModel?.vehiclesFlow?.collectAsState(initial = null)?.value
+    val vehicleData = viewModel.vehiclesFlow.collectAsState(initial = null).value
 
-    LifecycleResumeEffect(key1 = routeDirection) {
+    LifecycleResumeEffect(routeDirection) {
         CoroutineScope(Dispatchers.IO).launch { viewModel.connectToVehicles(routeDirection) }
 
         onPauseOrDispose { viewModel.disconnect() }
     }
 
-    return vehicleData?.vehicles?.values?.toList() ?: emptyList()
+    return vehicleData
+        ?.let { response ->
+            routeCardData?.let { StopDetailsUtils.filterVehiclesByUpcoming(it, response) }
+                ?: response.vehicles
+        }
+        ?.values
+        ?.toList() ?: emptyList()
 }
