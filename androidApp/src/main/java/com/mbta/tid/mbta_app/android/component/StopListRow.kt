@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -146,11 +147,13 @@ fun StopListRow(
                                 painter = painterResource(R.drawable.mbta_logo),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
+                                modifier = Modifier.semantics { testTag = "mbta_logo" },
                             )
                         } else if (stop.vehicleType == RouteType.BUS) {
                             Icon(
                                 painter = painterResource(R.drawable.stop_bus),
                                 contentDescription = null,
+                                modifier = Modifier.semantics { testTag = "stop_bus" },
                                 tint = Color.Unspecified,
                             )
                         } else {
