@@ -125,7 +125,7 @@ runs:
       if: steps.settings.outputs.xcode == 'true'
       shell: bash
       run: |
-        sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
+        sudo xcode-select --switch /Applications/Xcode_16.3.app/Contents/Developer
     - name: Generate Xcode project
       if: steps.settings.outputs.xcode == 'true'
       shell: bash
