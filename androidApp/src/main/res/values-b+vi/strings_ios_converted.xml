@@ -153,6 +153,7 @@
     <string name="inbound">Đến</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
     <string name="later_today">trong ngày hôm nay</string>
+    <string name="less_common_stop">Điểm dừng ít phổ biến hơn</string>
     <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="location_not_available_yet">Vị trí chưa có sẵn</string>
@@ -209,6 +210,7 @@
     <string name="onboarding_map_display_header">Đặt tùy chọn hiển thị bản đồ</string>
     <string name="onboarding_station_accessibility_body">Bằng cách chọn tham gia, chúng tôi có thể cho bạn biết ga nào không thể tiếp cận được hoặc có thang máy bị đóng.</string>
     <string name="onboarding_station_accessibility_header">Đặt tùy chọn thông tin về khả năng tiếp cận ga</string>
+    <string name="only_served_at_certain_times">Chỉ phục vụ vào một số thời điểm nhất định trong ngày</string>
     <string name="open_for_more_arrivals">Mở cửa đón thêm khách đến</string>
     <string name="other_link_privacy_policy">Chính sách bảo mật</string>
     <string name="other_link_source_code">Xem nguồn trên Github</string>

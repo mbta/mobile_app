@@ -159,6 +159,7 @@
     <string name="inbound">En direction du centre</string>
     <string name="is_stops_away_from">%1$s est à %2$d arrêts de %3$s</string>
     <string name="later_today">plus tard aujourd’hui</string>
+    <string name="less_common_stop">Arrêt moins courant</string>
     <string name="live">En temps réel</string>
     <string name="loading">Chargement...</string>
     <string name="location_not_available_yet">La localisation n’est pas encore disponible</string>
@@ -215,6 +216,7 @@
     <string name="onboarding_map_display_header">Définir les préférences d’affichage de la carte</string>
     <string name="onboarding_station_accessibility_body">En vous inscrivant, nous pouvons vous montrer quelles stations sont inaccessibles ou dont les ascenseurs sont fermés.</string>
     <string name="onboarding_station_accessibility_header">Définir les préférences d’informations sur l’accessibilité de la station</string>
+    <string name="only_served_at_certain_times">Servi uniquement à certains moments de la journée</string>
     <string name="open_for_more_arrivals">Ouvert pour plus d’arrivées</string>
     <string name="other_link_privacy_policy">Politique de confidentialité</string>
     <string name="other_link_source_code">Voir la source sur Github</string>

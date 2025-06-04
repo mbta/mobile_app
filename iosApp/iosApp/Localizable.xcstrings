@@ -408,6 +408,60 @@
         }
       }
     },
+    "**%1$ld** less common stops" : {
+      "comment" : "Header for a list of stops that vehicles don't always stop at for a given route",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%1$ld** less common stops"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** paradas menos comunes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** arrêts moins courants"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** mwens arè komen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** paradas menos comuns"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** các điểm dừng ít phổ biến hơn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** 不常见站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$ld** 不常見站點"
+          }
+        }
+      }
+    },
     "**%ld** affected stops" : {
       "comment" : "The number of stops affected by an alert",
       "localizations" : {
@@ -9760,6 +9814,60 @@
         }
       }
     },
+    "Less common stop" : {
+      "comment" : "Descriptor in a list of all stops on a route for a single stop that a vehicle doesn't stop at on every trip",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less common stop"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parada menos común"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arrêt moins courant"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mwens komen sispann"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parada menos comum"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Điểm dừng ít phổ biến hơn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不太常见的停站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "較不常見的停站"
+          }
+        }
+      }
+    },
     "Lists remaining stops" : {
       "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)",
       "localizations" : {
@@ -11537,6 +11645,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "準時"
+          }
+        }
+      }
+    },
+    "Only served at certain times of day" : {
+      "comment" : "Explainer text for \"Less common stops\" that vehicles don't always stop at",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only served at certain times of day"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sólo se sirve en determinados momentos del día."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servi uniquement à certains moments de la journée"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Yo sèvi sèlman nan sèten lè nan jounen an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servido apenas em determinados horários do dia"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chỉ phục vụ vào một số thời điểm nhất định trong ngày"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "仅在一天中的特定时间供应"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不太常见的停站"
           }
         }
       }

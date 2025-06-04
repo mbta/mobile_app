@@ -153,6 +153,7 @@
     <string name="inbound">进站</string>
     <string name="is_stops_away_from">%1$s距离%3$s还有%2$d站</string>
     <string name="later_today">今天晚些时候</string>
+    <string name="less_common_stop">不太常见的停站</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>
@@ -209,6 +210,7 @@
     <string name="onboarding_map_display_header">设置地图显示首选项</string>
     <string name="onboarding_station_accessibility_body">通过选择加入，我们可以向您显示哪些车站不适合轮椅通行或电梯关闭。</string>
     <string name="onboarding_station_accessibility_header">设置车站无障碍信息首选项</string>
+    <string name="only_served_at_certain_times">仅在一天中的特定时间供应</string>
     <string name="open_for_more_arrivals">开启获得更多到站信息</string>
     <string name="other_link_privacy_policy">隐私政策</string>
     <string name="other_link_source_code">在 Github 上查看源代码</string>
