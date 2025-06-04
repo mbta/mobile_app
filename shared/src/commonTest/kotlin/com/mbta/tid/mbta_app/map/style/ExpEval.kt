@@ -336,7 +336,7 @@ private data class EvaluationContext(
     }
 }
 
-@JvmName("evaluateString")
+@JvmName("evaluateBoolean")
 fun Exp<Boolean>.evaluate(featureProperties: FeatureProperties, zoom: Double): Boolean {
     val result = EvaluationContext(featureProperties, zoom).evaluate(this.asJson())
     return result.jsonPrimitive.boolean
