@@ -33,7 +33,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         let nearbyVM = NearbyViewModel()
 
-        var sut = StopDetailsView(
+        let sut = StopDetailsView(
             stopId: stop.id,
             stopFilter: nil,
             tripFilter: nil,
@@ -60,16 +60,11 @@ final class StopDetailsViewTests: XCTestCase {
             )
         )
 
-        let exp = sut.on(\.didAppear) { view in
-            let routePills = try view.find(StopDetailsFilterPills.self).findAll(RoutePill.self)
-            XCTAssertEqual(2, routePills.count)
-            XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
-            XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
-        }
-
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 1)
+        let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
+        XCTAssertEqual(2, routePills.count)
+        XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
+        XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
     }
 
     func testSkipsPillsIfOneRoute() throws {
