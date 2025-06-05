@@ -636,6 +636,52 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `time with schedule early`() = parametricTest {
+        val now = Clock.System.now()
+        val predictionTime = now + 2.minutes
+        val scheduleTime = now + 5.minutes
+        val prediction =
+            ObjectCollectionBuilder.Single.prediction { departureTime = predictionTime }
+
+        val schedule = ObjectCollectionBuilder.Single.schedule { departureTime = scheduleTime }
+
+        assertEquals(
+            TripInstantDisplay.TimeWithSchedule(predictionTime, scheduleTime, true),
+            TripInstantDisplay.from(
+                prediction,
+                schedule,
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
+        )
+    }
+
+    @Test
+    fun `time with schedule late`() = parametricTest {
+        val now = Clock.System.now()
+        val predictionTime = now + 2.minutes
+        val scheduleTime = now - 5.minutes
+        val prediction =
+            ObjectCollectionBuilder.Single.prediction { departureTime = predictionTime }
+
+        val schedule = ObjectCollectionBuilder.Single.schedule { departureTime = scheduleTime }
+
+        assertEquals(
+            TripInstantDisplay.TimeWithSchedule(predictionTime, scheduleTime, true),
+            TripInstantDisplay.from(
+                prediction,
+                schedule,
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
+        )
+    }
+
+    @Test
     fun `minutes less than 20 outside trip details`() = parametricTest {
         val now = Clock.System.now()
         val context = nonTripDetails()

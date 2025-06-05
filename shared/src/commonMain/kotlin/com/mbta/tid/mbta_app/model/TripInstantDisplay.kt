@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
 
@@ -28,6 +30,12 @@ sealed class TripInstantDisplay {
     data class TimeWithStatus(
         val predictionTime: Instant,
         val status: String,
+        val headline: Boolean = false,
+    ) : TripInstantDisplay()
+
+    data class TimeWithSchedule(
+        val predictionTime: Instant,
+        val scheduledTime: Instant,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
@@ -112,8 +120,19 @@ sealed class TripInstantDisplay {
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
 
             if (forceAsTime) {
+                val scheduleTime = schedule?.stopTimeAfter(now)
+                val scheduleZoned = scheduleTime?.toBostonTime()
+                val predictionZoned = predictionTime.toBostonTime()
+                val showDelayedSchedule =
+                    context == Context.StopDetailsFiltered &&
+                        scheduleZoned?.let {
+                            it.minute != predictionZoned.minute || it.hour != predictionZoned.hour
+                        } == true
+
                 return if (timeRemaining.isNegative()) {
                     Hidden
+                } else if (showDelayedSchedule && scheduleTime != null) {
+                    TimeWithSchedule(predictionTime, scheduleTime, headline = showTimeAsHeadline)
                 } else if (allowTimeWithStatus && prediction.status != null) {
                     TimeWithStatus(predictionTime, prediction.status, headline = showTimeAsHeadline)
                 } else {
