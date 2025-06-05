@@ -42,8 +42,16 @@ class RouteStopListViewTest {
                 longName = "Mauve Line"
                 type = RouteType.HEAVY_RAIL
             }
-        objects.routePattern(mainRoute) { directionId = 0 }
-        objects.routePattern(mainRoute) { directionId = 1 }
+        val pattern0 =
+            objects.routePattern(mainRoute) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop1.id, stop2.id, stop3.id) }
+            }
+        objects.routePattern(mainRoute) {
+            directionId = 1
+            typicality = RoutePattern.Typicality.Typical
+        }
         val connectingRoute =
             objects.route {
                 shortName = "32"
@@ -101,7 +109,7 @@ class RouteStopListViewTest {
 
         composeTestRule.onNodeWithText(stop2.name).performClick()
         assertEquals(
-            listOf(RouteDetailsStopList.Entry(stop2, listOf(), listOf(connectingRoute))),
+            listOf(RouteDetailsStopList.Entry(stop2, listOf(pattern0), listOf(connectingRoute))),
             clicks,
         )
 
