@@ -160,6 +160,7 @@
     <string name="is_stops_away_from">%1$s está a %2$d parada(s) antes de %3$s</string>
     <string name="later_today">más tarde hoy</string>
     <string name="less_common_stop">Parada menos común</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> paradas menos comunes</string>
     <string name="live">En vivo</string>
     <string name="loading">Cargando…</string>
     <string name="location_not_available_yet">Ubicación no disponible aún</string>

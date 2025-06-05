@@ -154,6 +154,7 @@
     <string name="is_stops_away_from">%1$s距离%3$s还有%2$d站</string>
     <string name="later_today">今天晚些时候</string>
     <string name="less_common_stop">不太常见的停站</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> 不常见站点</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>

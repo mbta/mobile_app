@@ -184,7 +184,14 @@ class RouteDetailsStopListTest {
         val mainStop = objects.stop { connectingStopIds = listOf(connectingStop.id) }
         val mainRoute = objects.route()
         val connectingRoute = objects.route()
-        val pattern =
+
+        val mainPattern =
+            objects.routePattern(mainRoute) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(mainStop.id) }
+            }
+
+        val connectingPattern =
             objects.routePattern(connectingRoute) {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { stopIds = listOf(connectingStop.id) }
@@ -200,10 +207,9 @@ class RouteDetailsStopListTest {
                             RouteDetailsStopList.Entry(
                                 mainStop,
                                 connectingRoutes = listOf(connectingRoute),
-                                patterns = listOf(),
+                                patterns = listOf(mainPattern),
                             )
-                        ),
-                        true,
+                        )
                     )
                 )
             ),
@@ -287,8 +293,7 @@ class RouteDetailsStopListTest {
                                         patternNonTypical1,
                                     ),
                             ),
-                        ),
-                        true,
+                        )
                     ),
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -302,8 +307,7 @@ class RouteDetailsStopListTest {
                                 connectingRoutes = listOf(),
                                 patterns = listOf(patternNonTypical1),
                             ),
-                        ),
-                        false,
+                        )
                     ),
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -312,8 +316,7 @@ class RouteDetailsStopListTest {
                                 connectingRoutes = listOf(),
                                 patterns = listOf(patternTypical0),
                             )
-                        ),
-                        true,
+                        )
                     ),
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -322,8 +325,7 @@ class RouteDetailsStopListTest {
                                 connectingRoutes = listOf(),
                                 patterns = listOf(patternNonTypical1),
                             )
-                        ),
-                        false,
+                        )
                     ),
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -332,8 +334,7 @@ class RouteDetailsStopListTest {
                                 connectingRoutes = listOf(),
                                 patterns = listOf(patternTypical1, patternNonTypical1),
                             )
-                        ),
-                        true,
+                        )
                     ),
                 )
             ),

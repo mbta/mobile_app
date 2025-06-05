@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.StopListRow
-import com.mbta.tid.mbta_app.android.component.StopRowStyle
+import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -48,6 +48,7 @@ fun CollapsableStopList(
     lineOrRoute: RouteCardData.LineOrRoute,
     segment: RouteDetailsStopList.Segment,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
+    isFirstSegment: Boolean = false,
     isLastSegment: Boolean = false,
     rightSideContent: @Composable RowScope.(RouteDetailsStopList.Entry, Modifier) -> Unit,
 ) {
@@ -63,7 +64,7 @@ fun CollapsableStopList(
             modifier =
                 Modifier.minimumInteractiveComponentSize().background(colorResource(R.color.fill1)),
             connectingRoutes = stop.connectingRoutes,
-            stopRowStyle = StopRowStyle.StandaloneStop,
+            stopPlacement = StopPlacement(isFirstSegment, isLastSegment, false),
             descriptor = {
                 Text(stringResource(R.string.less_common_stop), style = Typography.footnote)
             },
@@ -87,13 +88,13 @@ fun CollapsableStopList(
                             fadeIn(animationSpec = tween(500)) togetherWith
                                 fadeOut(animationSpec = tween(500))
                         },
-                    ) {
+                    ) { stopsExpanded ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.padding(start = 22.dp).width(20.dp),
                         ) {
-                            if (it) {
+                            if (stopsExpanded) {
                                 Icon(
                                     painterResource(R.drawable.fa_caret_right),
                                     contentDescription = null,
@@ -138,7 +139,7 @@ fun CollapsableStopList(
             }
 
             if (stopsExpanded) {
-                segment.stops.map { stop ->
+                segment.stops.forEachIndexed { index, stop ->
                     StopListRow(
                         stop.stop,
                         onClick = { onClick(stop) },
@@ -147,7 +148,12 @@ fun CollapsableStopList(
                             Modifier.minimumInteractiveComponentSize()
                                 .background(colorResource(R.color.fill1)),
                         connectingRoutes = stop.connectingRoutes,
-                        stopRowStyle = StopRowStyle.StandaloneStop,
+                        stopPlacement =
+                            StopPlacement(
+                                isFirstSegment && index == 0,
+                                isLastSegment && index == segment.stops.lastIndex,
+                                false,
+                            ),
                         rightSideContent = { modifier -> rightSideContent(stop, modifier) },
                     )
                 }

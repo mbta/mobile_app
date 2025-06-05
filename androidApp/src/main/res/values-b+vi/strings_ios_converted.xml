@@ -154,6 +154,7 @@
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
     <string name="later_today">trong ngày hôm nay</string>
     <string name="less_common_stop">Điểm dừng ít phổ biến hơn</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> các điểm dừng ít phổ biến hơn</string>
     <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="location_not_available_yet">Vị trí chưa có sẵn</string>

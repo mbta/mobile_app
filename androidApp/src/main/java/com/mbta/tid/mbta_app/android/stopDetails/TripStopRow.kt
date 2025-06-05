@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StopListRow
-import com.mbta.tid.mbta_app.android.component.StopRowStyle
+import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
@@ -64,12 +64,7 @@ fun TripStopRow(
         alertSummaries = alertSummaries,
         connectingRoutes = stop.routes,
         disruption = disruption,
-        stopRowStyle =
-            when {
-                firstStop -> StopRowStyle.FirstLineStop
-                lastStop -> StopRowStyle.LastLineStop
-                else -> StopRowStyle.MidLineStop
-            },
+        stopPlacement = StopPlacement(firstStop, lastStop, true),
         isTruncating = stop.isTruncating,
         onOpenAlertDetails = onOpenAlertDetails,
         showDownstreamAlert = showDownstreamAlert,

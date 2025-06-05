@@ -6,17 +6,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 data class RouteDetailsStopList(val segments: List<Segment>) {
-    data class Segment(val stops: List<Entry>, val isTypical: Boolean)
+
+    /** A subset of consecutive stops that are all typical or all non-typical. */
+    data class Segment(val stops: List<Entry>) {
+        val isTypical = stops.all { it.isTypical }
+    }
 
     data class Entry(
         val stop: Stop,
         val patterns: List<RoutePattern>,
         val connectingRoutes: List<Route>,
     ) {
-        private val minTypicality =
-            patterns.minOfOrNull { it.typicality ?: RoutePattern.Typicality.Typical }
-                ?: RoutePattern.Typicality.Typical
-        val isTypical = minTypicality == RoutePattern.Typicality.Typical
+        val isTypical =
+            patterns.any {
+                it.typicality == RoutePattern.Typicality.Typical || it.typicality == null
+            }
     }
 
     data class RouteParameters(
@@ -93,23 +97,28 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
                 RouteDetailsStopList(segments)
             }
 
-        fun splitIntoSegments(entries: List<Entry>): List<Segment> {
-            val (accSegments, lastWipSegment) =
-                entries.fold(Pair<List<Segment>, Segment?>(listOf(), null)) {
-                    (acc, wipSegment),
-                    entry ->
-                    if (wipSegment == null) {
-                        Pair(acc, Segment(listOf(entry), entry.isTypical))
-                    } else if (entry.isTypical == wipSegment.stops.last().isTypical) {
-                        // typicality match - continue building wip segment
-                        Pair(acc, Segment(wipSegment.stops.plus(entry), entry.isTypical))
+        /**
+         * Split the list of entries into segments based on whether the stop serves a typical route
+         * pattern.
+         */
+        private fun splitIntoSegments(entries: List<Entry>): List<Segment> {
+
+            val segments: MutableList<MutableList<Entry>> = mutableListOf()
+
+            entries.forEach { entry ->
+                if (segments.isEmpty()) {
+                    segments.add(mutableListOf(entry))
+                } else {
+                    val wipSegment = segments.last()
+                    if (entry.isTypical == wipSegment.last().isTypical) {
+                        wipSegment.add(entry)
                     } else {
-                        // typicality change - start a new segment
-                        Pair(acc.plus(wipSegment), Segment(listOf(entry), entry.isTypical))
+                        segments.add(mutableListOf(entry))
                     }
                 }
+            }
 
-            return lastWipSegment?.let { accSegments.plus(it) } ?: accSegments
+            return segments.map { Segment(it) }
         }
     }
 }

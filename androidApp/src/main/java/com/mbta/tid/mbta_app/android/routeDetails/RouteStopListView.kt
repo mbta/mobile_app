@@ -34,7 +34,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StopListRow
-import com.mbta.tid.mbta_app.android.component.StopRowStyle
+import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
@@ -116,21 +116,18 @@ fun RouteStopListView(
             )
             Column {
                 if (stopList != null) {
-                    stopList.segments.withIndex().map { (segmentIndex, segment) ->
+                    stopList.segments.forEachIndexed { segmentIndex, segment ->
                         if (segment.isTypical) {
 
-                            segment.stops.withIndex().map { (stopIndex, stop) ->
-                                val stopRowStyle =
-                                    if (segmentIndex == 0 && stopIndex == 0) {
-                                        StopRowStyle.FirstLineStop
-                                    } else if (
-                                        segmentIndex == stopList.segments.lastIndex &&
-                                            stopIndex == segment.stops.lastIndex
-                                    ) {
-                                        StopRowStyle.LastLineStop
-                                    } else {
-                                        StopRowStyle.MidLineStop
-                                    }
+                            segment.stops.forEachIndexed { stopIndex, stop ->
+                                val stopPlacement =
+                                    StopPlacement(
+                                        isFirst = segmentIndex == 0 && stopIndex == 0,
+                                        isLast =
+                                            segmentIndex == stopList.segments.lastIndex &&
+                                                stopIndex == segment.stops.lastIndex,
+                                        includeLineDiagram = true,
+                                    )
 
                                 StopListRow(
                                     stop.stop,
@@ -138,7 +135,7 @@ fun RouteStopListView(
                                     routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
                                     modifier = Modifier.minimumInteractiveComponentSize(),
                                     connectingRoutes = stop.connectingRoutes,
-                                    stopRowStyle = stopRowStyle,
+                                    stopPlacement = stopPlacement,
                                     rightSideContent = { modifier ->
                                         rightSideContent(stop, modifier)
                                     },
@@ -150,6 +147,7 @@ fun RouteStopListView(
                                 lineOrRoute,
                                 segment,
                                 onClick,
+                                segmentIndex == 0,
                                 segmentIndex == stopList.segments.lastIndex,
                             ) { stop, modifier ->
                                 rightSideContent(stop, modifier)

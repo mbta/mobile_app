@@ -43,10 +43,10 @@ class CollapsableStopListTest {
                 RouteCardData.LineOrRoute.Route(mainRoute),
                 segment =
                     RouteDetailsStopList.Segment(
-                        listOf(RouteDetailsStopList.Entry(stop1, listOf(), listOf())),
-                        false,
+                        listOf(RouteDetailsStopList.Entry(stop1, listOf(), listOf()))
                     ),
                 onClick = { clicked = true },
+                isFirstSegment = false,
                 isLastSegment = false,
                 { _, _ -> },
             )
@@ -88,10 +88,10 @@ class CollapsableStopListTest {
                         listOf(
                             RouteDetailsStopList.Entry(stop1, listOf(), listOf()),
                             RouteDetailsStopList.Entry(stop2, listOf(), listOf()),
-                        ),
-                        false,
+                        )
                     ),
                 onClick = {},
+                isFirstSegment = false,
                 isLastSegment = false,
                 { _, _ -> },
             )

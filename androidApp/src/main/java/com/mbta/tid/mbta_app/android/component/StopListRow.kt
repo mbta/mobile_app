@@ -57,12 +57,11 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 
-enum class StopRowStyle {
-    FirstLineStop,
-    MidLineStop,
-    LastLineStop,
-    StandaloneStop,
-}
+class StopPlacement(
+    val isFirst: Boolean = false,
+    val isLast: Boolean = false,
+    val includeLineDiagram: Boolean = true,
+)
 
 @Composable
 fun StopListRow(
@@ -75,7 +74,7 @@ fun StopListRow(
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
     isTruncating: Boolean = false,
-    stopRowStyle: StopRowStyle = StopRowStyle.MidLineStop,
+    stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
     showDownstreamAlert: Boolean = false,
     showStationAccessibility: Boolean = false,
@@ -86,18 +85,22 @@ fun StopListRow(
 ) {
     val context = LocalContext.current
 
-    val stateBefore =
-        when (stopRowStyle) {
-            StopRowStyle.FirstLineStop -> RouteLineState.Empty
+    val lineStateBefore =
+        when {
+            !stopPlacement.includeLineDiagram -> RouteLineState.Empty
+            stopPlacement.isFirst -> RouteLineState.Empty
             else -> RouteLineState.Regular
         }
-    val stateAfter =
+
+    val lineStateAfter =
         when {
-            stopRowStyle == StopRowStyle.LastLineStop -> RouteLineState.Empty
+            !stopPlacement.includeLineDiagram -> RouteLineState.Empty
+            stopPlacement.isLast -> RouteLineState.Empty
             showDownstreamAlert && disruption?.alert?.effect == Alert.Effect.Shuttle ->
                 RouteLineState.Shuttle
             else -> RouteLineState.Regular
         }
+
     Column {
         Box(
             Modifier.padding(horizontal = 6.dp)
@@ -105,7 +108,7 @@ fun StopListRow(
                 .height(IntrinsicSize.Min)
                 .defaultMinSize(minHeight = 48.dp)
         ) {
-            if (stopRowStyle != StopRowStyle.LastLineStop && !targeted && disruption == null) {
+            if (!stopPlacement.isLast && !targeted && disruption == null) {
                 HaloSeparator(Modifier.align(Alignment.BottomCenter))
             }
             Row(
@@ -138,28 +141,10 @@ fun StopListRow(
                         )
                     }
                 }
-                if (stopRowStyle != StopRowStyle.StandaloneStop) {
-                    RouteLine(routeAccents, stateBefore, stateAfter, targeted)
+                if (stopPlacement.includeLineDiagram) {
+                    RouteLine(routeAccents, lineStateBefore, lineStateAfter, targeted)
                 } else {
-                    Row(modifier = Modifier.width(20.dp)) {
-                        if (stop.locationType == LocationType.STATION) {
-                            Icon(
-                                painter = painterResource(R.drawable.mbta_logo),
-                                contentDescription = null,
-                                tint = Color.Unspecified,
-                                modifier = Modifier.semantics { testTag = "mbta_logo" },
-                            )
-                        } else if (stop.vehicleType == RouteType.BUS) {
-                            Icon(
-                                painter = painterResource(R.drawable.stop_bus),
-                                contentDescription = null,
-                                modifier = Modifier.semantics { testTag = "stop_bus" },
-                                tint = Color.Unspecified,
-                            )
-                        } else {
-                            StopDot(routeAccents, false)
-                        }
-                    }
+                    StandaloneStopIcon(stop, routeAccents)
                 }
                 Column(
                     Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {
@@ -186,7 +171,7 @@ fun StopListRow(
                                             stopAccessibilityLabel(
                                                 stop,
                                                 targeted,
-                                                stopRowStyle == StopRowStyle.FirstLineStop,
+                                                stopPlacement.isFirst,
                                                 context,
                                             )
                                     }
@@ -270,7 +255,7 @@ fun StopListRow(
                         Modifier.fillMaxHeight().padding(start = 34.dp).width(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
+                        ColoredRouteLine(routeAccents.color, Modifier.weight(1f), lineStateAfter)
                         if (isTruncating) {
                             ColoredRouteLine(
                                 routeAccents.color,
@@ -363,5 +348,28 @@ private fun RouteLine(
             ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
         }
         StopDot(routeAccents, targeted)
+    }
+}
+
+@Composable
+private fun StandaloneStopIcon(stop: Stop, routeAccents: TripRouteAccents) {
+    Row(modifier = Modifier.width(20.dp)) {
+        if (stop.locationType == LocationType.STATION) {
+            Icon(
+                painter = painterResource(R.drawable.mbta_logo),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.semantics { testTag = "mbta_logo" },
+            )
+        } else if (stop.vehicleType == RouteType.BUS) {
+            Icon(
+                painter = painterResource(R.drawable.stop_bus),
+                contentDescription = null,
+                modifier = Modifier.semantics { testTag = "stop_bus" },
+                tint = Color.Unspecified,
+            )
+        } else {
+            StopDot(routeAccents, false)
+        }
     }
 }
