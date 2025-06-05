@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -58,6 +60,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
+import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
@@ -515,8 +518,9 @@ fun HomeMapView(
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
                 if (showRecenterButton) {
                     RecenterButton(
-                        onClick = { coroutineScope.launch { viewportProvider.follow() } },
+                        Icons.Default.LocationOn,
                         modifier = Modifier.padding(horizontal = 16.dp),
+                        onClick = { coroutineScope.launch { viewportProvider.follow() } },
                     )
                 }
 
@@ -524,8 +528,8 @@ fun HomeMapView(
                     if (selectedVehicle != null) {
                         val routeType = globalResponse?.getRoute(selectedVehicle.routeId)?.type
                         if (routeType != null) {
-                            TripCenterButton(
-                                routeType = routeType,
+                            RecenterButton(
+                                routeIcon(routeType).first,
                                 onClick = {
                                     coroutineScope.launch {
                                         viewportProvider.vehicleOverview(
