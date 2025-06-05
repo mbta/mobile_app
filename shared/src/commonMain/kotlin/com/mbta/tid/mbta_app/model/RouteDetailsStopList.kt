@@ -5,8 +5,23 @@ import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteDetailsStopList(val stops: List<Entry>) {
-    data class Entry(val stop: Stop, val connectingRoutes: List<Route>)
+data class RouteDetailsStopList(val segments: List<Segment>) {
+
+    /** A subset of consecutive stops that are all typical or all non-typical. */
+    data class Segment(val stops: List<Entry>) {
+        val isTypical = stops.all { it.isTypical }
+    }
+
+    data class Entry(
+        val stop: Stop,
+        val patterns: List<RoutePattern>,
+        val connectingRoutes: List<Route>,
+    ) {
+        val isTypical =
+            patterns.any {
+                it.typicality == RoutePattern.Typicality.Typical || it.typicality == null
+            }
+    }
 
     data class RouteParameters(
         val availableDirections: List<Int>,
@@ -52,6 +67,7 @@ data class RouteDetailsStopList(val stops: List<Entry>) {
                         line,
                         globalData.routesByLineId[line.id].orEmpty().toSet(),
                     )
+
                 route != null -> RouteCardData.LineOrRoute.Route(route)
                 else -> null
             }
@@ -70,12 +86,39 @@ data class RouteDetailsStopList(val stops: List<Entry>) {
                         val stop =
                             globalData.getStop(stopId)?.resolveParent(globalData)
                                 ?: return@mapNotNull null
+                        val patterns = globalData.getPatternsFor(stopId, routeId)
                         val transferRoutes =
                             TripDetailsStopList.getTransferRoutes(stopId, routeId, globalData)
-                        Entry(stop, transferRoutes)
+                        Entry(stop, patterns, transferRoutes)
                     }
 
-                RouteDetailsStopList(stops)
+                val segments = splitIntoSegments(stops)
+
+                RouteDetailsStopList(segments)
             }
+
+        /**
+         * Split the list of entries into segments based on whether the stop serves a typical route
+         * pattern.
+         */
+        private fun splitIntoSegments(entries: List<Entry>): List<Segment> {
+
+            val segments: MutableList<MutableList<Entry>> = mutableListOf()
+
+            entries.forEach { entry ->
+                if (segments.isEmpty()) {
+                    segments.add(mutableListOf(entry))
+                } else {
+                    val wipSegment = segments.last()
+                    if (entry.isTypical == wipSegment.last().isTypical) {
+                        wipSegment.add(entry)
+                    } else {
+                        segments.add(mutableListOf(entry))
+                    }
+                }
+            }
+
+            return segments.map { Segment(it) }
+        }
     }
 }

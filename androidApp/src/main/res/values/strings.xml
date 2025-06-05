@@ -160,6 +160,8 @@
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
     <string name="later_today">later today</string>
+    <string name="less_common_stop">Less common stop</string>
+    <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -217,6 +219,7 @@
     <string name="onboarding_map_display_header">Set map display preference</string>
     <string name="onboarding_station_accessibility_body">By opting in, we can show you which stations are inaccessible or have elevator closures.</string>
     <string name="onboarding_station_accessibility_header">Set station accessibility info preference</string>
+    <string name="only_served_at_certain_times">Only served at certain times of day</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
     <string name="other_link_source_code">View Source on GitHub</string>

@@ -168,6 +168,8 @@
     <string name="inbound">Antran</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
     <string name="later_today">pita jodi a</string>
+    <string name="less_common_stop">Mwens komen sispann</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> mwens arè komen</string>
     <string name="live">An dirèk</string>
     <string name="loading">Chajman...</string>
     <string name="location_not_available_yet">Pozisyon poko disponib</string>
@@ -224,6 +226,7 @@
     <string name="onboarding_map_display_header">Mete preferans ou pou montre kat la</string>
     <string name="onboarding_station_accessibility_body">Lè ou enskri, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo.</string>
     <string name="onboarding_station_accessibility_header">Mete preferans ou pou enfòmasyon sou aksè estasyon yo</string>
+    <string name="only_served_at_certain_times">Yo sèvi sèlman nan sèten lè nan jounen an</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
     <string name="other_link_privacy_policy">Règleman sou Vi Prive</string>
     <string name="other_link_source_code">Gade sous sou Github</string>

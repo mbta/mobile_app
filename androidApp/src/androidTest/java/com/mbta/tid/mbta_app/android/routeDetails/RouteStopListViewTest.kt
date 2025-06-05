@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.routeDetails
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -41,8 +42,16 @@ class RouteStopListViewTest {
                 longName = "Mauve Line"
                 type = RouteType.HEAVY_RAIL
             }
-        objects.routePattern(mainRoute) { directionId = 0 }
-        objects.routePattern(mainRoute) { directionId = 1 }
+        val pattern0 =
+            objects.routePattern(mainRoute) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop1.id, stop2.id, stop3.id) }
+            }
+        objects.routePattern(mainRoute) {
+            directionId = 1
+            typicality = RoutePattern.Typicality.Typical
+        }
         val connectingRoute =
             objects.route {
                 shortName = "32"
@@ -99,7 +108,10 @@ class RouteStopListViewTest {
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithText(stop2.name).performClick()
-        assertEquals(listOf(RouteDetailsStopList.Entry(stop2, listOf(connectingRoute))), clicks)
+        assertEquals(
+            listOf(RouteDetailsStopList.Entry(stop2, listOf(pattern0), listOf(connectingRoute))),
+            clicks,
+        )
 
         composeTestRule.onNodeWithContentDescription("Close").performClick()
         assertTrue(closed)
@@ -168,5 +180,69 @@ class RouteStopListViewTest {
         composeTestRule.onNodeWithText(checkNotNull(route1.directionDestinations[0])).performClick()
         composeTestRule.waitForIdle()
         assertEquals(route1.id, lastSelectedRoute)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testCollapsesNonTypicalStops() {
+        val objects = ObjectCollectionBuilder()
+        val stop1 = objects.stop { name = "Stop 1" }
+        val stop2 = objects.stop { name = "Stop 2" }
+
+        val stop3NonTypical = objects.stop { name = "Stop 3" }
+        val stop4NonTypical = objects.stop { name = "Stop 4" }
+        val mainRoute =
+            objects.route {
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Here", "There")
+                longName = "Mauve Line"
+                type = RouteType.HEAVY_RAIL
+            }
+        val typicalPattern =
+            objects.routePattern(mainRoute) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop1.id, stop2.id) }
+            }
+
+        val deviationPattern =
+            objects.routePattern(mainRoute) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip {
+                    stopIds = listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id)
+                }
+            }
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(
+                        listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id)
+                    )
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(mainRoute),
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+
+        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop3NonTypical.name).assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasText(stop3NonTypical.name))
+        composeTestRule.onNodeWithText(stop4NonTypical.name).assertIsDisplayed()
     }
 }

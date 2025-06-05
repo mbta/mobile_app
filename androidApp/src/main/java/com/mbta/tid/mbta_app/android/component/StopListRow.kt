@@ -17,11 +17,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -33,6 +35,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -48,9 +51,17 @@ import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+
+class StopPlacement(
+    val isFirst: Boolean = false,
+    val isLast: Boolean = false,
+    val includeLineDiagram: Boolean = true,
+)
 
 @Composable
 fun StopListRow(
@@ -62,30 +73,34 @@ fun StopListRow(
     alertSummaries: Map<String, AlertSummary?> = emptyMap(),
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
-    firstStop: Boolean = false,
     isTruncating: Boolean = false,
-    lastStop: Boolean = false,
+    stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
     showDownstreamAlert: Boolean = false,
     showStationAccessibility: Boolean = false,
     targeted: Boolean = false,
     trackNumber: String? = null,
+    descriptor: @Composable () -> Unit = {},
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
     val context = LocalContext.current
 
-    val stateBefore =
+    val lineStateBefore =
         when {
-            firstStop -> RouteLineState.Empty
+            !stopPlacement.includeLineDiagram -> RouteLineState.Empty
+            stopPlacement.isFirst -> RouteLineState.Empty
             else -> RouteLineState.Regular
         }
-    val stateAfter =
+
+    val lineStateAfter =
         when {
-            lastStop -> RouteLineState.Empty
+            !stopPlacement.includeLineDiagram -> RouteLineState.Empty
+            stopPlacement.isLast -> RouteLineState.Empty
             showDownstreamAlert && disruption?.alert?.effect == Alert.Effect.Shuttle ->
                 RouteLineState.Shuttle
             else -> RouteLineState.Regular
         }
+
     Column {
         Box(
             Modifier.padding(horizontal = 6.dp)
@@ -93,7 +108,7 @@ fun StopListRow(
                 .height(IntrinsicSize.Min)
                 .defaultMinSize(minHeight = 48.dp)
         ) {
-            if (!lastStop && !targeted && disruption == null) {
+            if (!stopPlacement.isLast && !targeted && disruption == null) {
                 HaloSeparator(Modifier.align(Alignment.BottomCenter))
             }
             Row(
@@ -126,7 +141,11 @@ fun StopListRow(
                         )
                     }
                 }
-                RouteLine(routeAccents, stateBefore, stateAfter, targeted)
+                if (stopPlacement.includeLineDiagram) {
+                    RouteLine(routeAccents, lineStateBefore, lineStateAfter, targeted)
+                } else {
+                    StandaloneStopIcon(stop, routeAccents)
+                }
                 Column(
                     Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {
                         isTraversalGroup = true
@@ -144,6 +163,7 @@ fun StopListRow(
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
+                            descriptor()
                             Text(
                                 stop.name,
                                 Modifier.semantics {
@@ -151,7 +171,7 @@ fun StopListRow(
                                             stopAccessibilityLabel(
                                                 stop,
                                                 targeted,
-                                                firstStop,
+                                                stopPlacement.isFirst,
                                                 context,
                                             )
                                     }
@@ -235,7 +255,7 @@ fun StopListRow(
                         Modifier.fillMaxHeight().padding(start = 34.dp).width(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
+                        ColoredRouteLine(routeAccents.color, Modifier.weight(1f), lineStateAfter)
                         if (isTruncating) {
                             ColoredRouteLine(
                                 routeAccents.color,
@@ -328,5 +348,28 @@ private fun RouteLine(
             ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
         }
         StopDot(routeAccents, targeted)
+    }
+}
+
+@Composable
+private fun StandaloneStopIcon(stop: Stop, routeAccents: TripRouteAccents) {
+    Row(modifier = Modifier.width(20.dp)) {
+        if (stop.locationType == LocationType.STATION) {
+            Icon(
+                painter = painterResource(R.drawable.mbta_logo),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.semantics { testTag = "mbta_logo" },
+            )
+        } else if (stop.vehicleType == RouteType.BUS) {
+            Icon(
+                painter = painterResource(R.drawable.stop_bus),
+                contentDescription = null,
+                modifier = Modifier.semantics { testTag = "stop_bus" },
+                tint = Color.Unspecified,
+            )
+        } else {
+            StopDot(routeAccents, false)
+        }
     }
 }

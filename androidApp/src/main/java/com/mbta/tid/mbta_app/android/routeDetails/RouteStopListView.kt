@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +34,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StopListRow
+import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
@@ -114,17 +116,43 @@ fun RouteStopListView(
             )
             Column {
                 if (stopList != null) {
-                    for ((index, stop) in stopList.stops.withIndex()) {
-                        StopListRow(
-                            stop.stop,
-                            onClick = { onClick(stop) },
-                            routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
-                            modifier = Modifier.minimumInteractiveComponentSize(),
-                            connectingRoutes = stop.connectingRoutes,
-                            firstStop = index == 0,
-                            lastStop = index == stopList.stops.lastIndex,
-                            rightSideContent = { modifier -> rightSideContent(stop, modifier) },
-                        )
+                    stopList.segments.forEachIndexed { segmentIndex, segment ->
+                        if (segment.isTypical) {
+
+                            segment.stops.forEachIndexed { stopIndex, stop ->
+                                val stopPlacement =
+                                    StopPlacement(
+                                        isFirst = segmentIndex == 0 && stopIndex == 0,
+                                        isLast =
+                                            segmentIndex == stopList.segments.lastIndex &&
+                                                stopIndex == segment.stops.lastIndex,
+                                        includeLineDiagram = true,
+                                    )
+
+                                StopListRow(
+                                    stop.stop,
+                                    onClick = { onClick(stop) },
+                                    routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+                                    modifier = Modifier.minimumInteractiveComponentSize(),
+                                    connectingRoutes = stop.connectingRoutes,
+                                    stopPlacement = stopPlacement,
+                                    rightSideContent = { modifier ->
+                                        rightSideContent(stop, modifier)
+                                    },
+                                )
+                            }
+                        } else {
+
+                            CollapsableStopList(
+                                lineOrRoute,
+                                segment,
+                                onClick,
+                                segmentIndex == 0,
+                                segmentIndex == stopList.segments.lastIndex,
+                            ) { stop, modifier ->
+                                rightSideContent(stop, modifier)
+                            }
+                        }
                     }
                 } else {
                     CircularProgressIndicator()

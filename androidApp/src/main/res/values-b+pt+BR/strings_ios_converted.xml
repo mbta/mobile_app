@@ -159,6 +159,8 @@
     <string name="inbound">Entrada</string>
     <string name="is_stops_away_from">%1$s está a %2$d paradas de %3$s</string>
     <string name="later_today">mais tarde hoje</string>
+    <string name="less_common_stop">Parada menos comum</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> paradas menos comuns</string>
     <string name="live">Ao vivo</string>
     <string name="loading">Carregando...</string>
     <string name="location_not_available_yet">Localização ainda não disponível</string>
@@ -215,6 +217,7 @@
     <string name="onboarding_map_display_header">Definir preferência de exibição do mapa</string>
     <string name="onboarding_station_accessibility_body">Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados.</string>
     <string name="onboarding_station_accessibility_header">Definir preferência de informações de acessibilidade da estação</string>
+    <string name="only_served_at_certain_times">Servido apenas em determinados horários do dia</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>

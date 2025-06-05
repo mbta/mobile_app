@@ -153,6 +153,8 @@
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
     <string name="later_today">今天晚些時候</string>
+    <string name="less_common_stop">較不常見的停站</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> 不常見站點</string>
     <string name="live">即時</string>
     <string name="loading">正在載入……</string>
     <string name="location_not_available_yet">位置尚未確定</string>
@@ -209,6 +211,7 @@
     <string name="onboarding_map_display_header">設定地圖顯示首選項</string>
     <string name="onboarding_station_accessibility_body">透過選擇加入，我們可以向您顯示哪些車站不適合輪椅通行或電梯關閉。</string>
     <string name="onboarding_station_accessibility_header">設定車站無障礙資訊首選項</string>
+    <string name="only_served_at_certain_times">不太常见的停站</string>
     <string name="open_for_more_arrivals">開啟獲得更多到站資訊</string>
     <string name="other_link_privacy_policy">隱私政策</string>
     <string name="other_link_source_code">在 Github 上查看原始碼</string>
