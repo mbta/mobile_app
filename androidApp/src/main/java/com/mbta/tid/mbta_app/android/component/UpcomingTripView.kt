@@ -225,6 +225,38 @@ fun UpcomingTripView(
                             style = Typography.footnoteSemibold,
                         )
                     }
+                is TripInstantDisplay.TimeWithSchedule ->
+                    Column(modifier, horizontalAlignment = Alignment.End) {
+                        WithRealtimeIndicator(
+                            modifier.then(maxAlphaModifier),
+                            hideRealtimeIndicators,
+                        ) {
+                            Text(
+                                formatTime(state.trip.predictionTime),
+                                Modifier.semantics {
+                                        contentDescription =
+                                            UpcomingTripAccessibilityFormatters.predictedTimeLabel(
+                                                context,
+                                                time = formatTime(state.trip.predictionTime),
+                                                isFirst,
+                                                vehicleType,
+                                            )
+                                    }
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style =
+                                    if (state.trip.headline) Typography.headlineSemibold
+                                    else Typography.footnoteSemibold,
+                            )
+                        }
+                        Text(
+                            formatTime(state.trip.scheduledTime),
+                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            textAlign = TextAlign.End,
+                            textDecoration = TextDecoration.LineThrough,
+                            style = Typography.footnoteSemibold,
+                        )
+                    }
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
                         formatTime(state.trip.scheduledTime),

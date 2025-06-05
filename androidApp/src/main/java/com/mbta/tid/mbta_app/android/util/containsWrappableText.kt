@@ -30,6 +30,7 @@ fun TripInstantDisplay.containsWrappableText() =
         TripInstantDisplay.Now -> false
         is TripInstantDisplay.Time -> false
         is TripInstantDisplay.TimeWithStatus -> true
+        is TripInstantDisplay.TimeWithSchedule -> false
         is TripInstantDisplay.Minutes -> false
         is TripInstantDisplay.ScheduleTime -> false
         is TripInstantDisplay.ScheduleMinutes -> false

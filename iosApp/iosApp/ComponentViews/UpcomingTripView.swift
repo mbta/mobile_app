@@ -115,6 +115,25 @@ struct UpcomingTripView: View {
                         .opacity(min(0.6, maxTextAlpha))
                         .multilineTextAlignment(.trailing)
                 }
+            case let .timeWithSchedule(format):
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text(Date(instant: format.predictionTime), style: .time)
+                        .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                        .realtime(hideIndicator: hideRealtimeIndicators)
+                        .opacity(min(1.0, maxTextAlpha))
+                        .accessibilityLabel(isFirst
+                            ? accessibilityFormatters.distantFutureFirst(
+                                date: format.predictionTime.toNSDate(),
+                                vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                            )
+                            : accessibilityFormatters
+                            .distantFutureOther(date: format.predictionTime.toNSDate()))
+                    Text(Date(instant: format.scheduledTime), style: .time)
+                        .font(Typography.footnoteSemibold)
+                        .opacity(min(0.6, maxTextAlpha))
+                        .strikethrough()
+                        .multilineTextAlignment(.trailing)
+                }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
                     .realtime(hideIndicator: hideRealtimeIndicators)
