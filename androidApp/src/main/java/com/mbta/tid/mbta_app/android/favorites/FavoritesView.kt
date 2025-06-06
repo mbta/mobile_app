@@ -1,20 +1,23 @@
 package com.mbta.tid.mbta_app.android.favorites
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -42,7 +45,6 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun FavoritesView(
-    modifier: Modifier = Modifier,
     openSheetRoute: (SheetRoutes) -> Unit,
     favoritesViewModel: FavoritesViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
@@ -72,7 +74,7 @@ fun FavoritesView(
         stopIds,
         targetLocation,
     ) {
-        favoritesViewModel.loadRouteCardData(
+        favoritesViewModel.loadRealtimeRouteCardData(
             globalResponse,
             targetLocation,
             schedules,
@@ -86,7 +88,10 @@ fun FavoritesView(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
-            Modifier.fillMaxWidth().heightIn(min = 32.dp).padding(horizontal = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 32.dp)
+                .padding(horizontal = 16.dp),
             Arrangement.SpaceBetween,
             Alignment.CenterVertically,
         ) {
@@ -95,22 +100,29 @@ fun FavoritesView(
                 modifier = Modifier.semantics { heading() },
                 style = Typography.title2Bold,
             )
+            Spacer(Modifier.weight(1f))
             if (!routeCardData.isNullOrEmpty()) {
                 ActionButton(ActionButtonKind.Plus, action = ::onAddFavorites)
+                TextButton(onClick = { openSheetRoute(SheetRoutes.EditFavorites) }) {
+                    Text(
+                        text = stringResource(R.string.edit),
+                        modifier =
+                            Modifier
+                                .background(
+                                    colorResource(R.color.text).copy(alpha = 0.6f),
+                                    RoundedCornerShape(percent = 100),
+                                )
+                                .padding(17.dp, 5.dp),
+                        color = colorResource(R.color.fill2),
+                        style = Typography.callout,
+                    )
+                }
             }
         }
         ErrorBanner(errorBannerViewModel)
-
         RouteCardList(
             routeCardData = routeCardData,
-            emptyView = {
-                Column(
-                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    NoFavoritesView(::onAddFavorites)
-                }
-            },
+            emptyView = { NoFavoritesView(::onAddFavorites) },
             global = globalResponse,
             now = now,
             isFavorite = { favoriteBridge ->

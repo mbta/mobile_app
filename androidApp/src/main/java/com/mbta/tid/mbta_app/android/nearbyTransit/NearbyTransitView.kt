@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -130,13 +128,8 @@ fun NearbyTransitView(
         RouteCardList(
             routeCardData = routeCardData,
             emptyView = {
-                Column(
-                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    noNearbyStopsView()
-                    Spacer(Modifier.weight(1f))
-                }
+                noNearbyStopsView()
+                Spacer(Modifier.weight(1f))
             },
             global = globalResponse,
             now = now,

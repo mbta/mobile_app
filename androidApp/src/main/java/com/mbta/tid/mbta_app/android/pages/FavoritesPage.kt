@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.favorites.FavoritesView
@@ -15,7 +14,6 @@ import io.github.dellisd.spatialk.geojson.Position
 
 @Composable
 fun FavoritesPage(
-    modifier: Modifier = Modifier,
     openSheetRoute: (SheetRoutes) -> Unit,
     favoritesViewModel: FavoritesViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
@@ -29,7 +27,6 @@ fun FavoritesPage(
     )
 
     FavoritesView(
-        modifier,
         openSheetRoute,
         favoritesViewModel,
         errorBannerViewModel,

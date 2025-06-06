@@ -411,11 +411,18 @@ fun MapAndSheetPage(
                     navController.navigateFrom<SheetRoutes.Favorites>(route)
                 }
                 FavoritesPage(
-                    modifier = modifier,
                     openSheetRoute = ::navigate,
                     favoritesViewModel = favoritesViewModel,
                     errorBannerViewModel = errorBannerViewModel,
                     nearbyTransit = nearbyTransit,
+                )
+            }
+
+            composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
+                EditFavoritesPage(
+                    onClose = { navController.popBackStack() },
+                    global = nearbyTransit.globalResponse,
+                    favoritesViewModel = favoritesViewModel,
                 )
             }
 
