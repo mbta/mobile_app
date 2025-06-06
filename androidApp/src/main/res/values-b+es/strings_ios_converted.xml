@@ -49,6 +49,7 @@
     <string name="boarding_track">Embarque en la vía %1$s</string>
     <string name="bus">autobús</string>
     <string name="buses">autobuses</string>
+    <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelación</string>
     <string name="cancelled">Cancelado</string>
     <string name="close_button_label">Cerrar</string>
@@ -252,6 +253,7 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Planificador de viaje</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Añadir paradas favoritas</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Rutas</string>
     <string name="schedule_change">Cambio de horario</string>
@@ -320,6 +322,7 @@
     </plurals>
     <string name="strike">Huelga</string>
     <string name="strike_lowercase">huelga</string>
+    <string name="subway">Metro</string>
     <string name="summary">Resumen</string>
     <string name="suspension">Suspensión</string>
     <string name="switch_issue">Problema de cambio de carril</string>

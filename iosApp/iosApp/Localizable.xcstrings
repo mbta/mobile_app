@@ -2570,6 +2570,54 @@
         }
       }
     },
+    "Add favorite stops" : {
+      "comment" : "Header for the route details picker when entering from the favorites page to select favorite stops",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadir paradas favoritas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajouter des arrêts favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute arè ou pi renmen yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicionar paradas favoritas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm điểm dừng yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加最喜欢的站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "新增最喜歡的站點"
+          }
+        }
+      }
+    },
     "Additional service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -16565,6 +16613,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "罷工"
+          }
+        }
+      }
+    },
+    "Subway" : {
+      "comment" : "Header for the section of the route details picker which lists all the rail rapid transit routes",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Metro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Métro"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Metro"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Metrô"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tàu điện ngầm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "地铁"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "捷運"
           }
         }
       }

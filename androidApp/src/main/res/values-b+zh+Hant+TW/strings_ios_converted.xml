@@ -47,6 +47,7 @@
     <string name="boarding_track">在軌道%1$s登車</string>
     <string name="bus">巴士</string>
     <string name="buses">巴士</string>
+    <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
     <string name="close_button_label">關閉</string>
@@ -246,6 +247,7 @@
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">新增最喜歡的站點</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">線路</string>
     <string name="schedule_change">時刻表變更</string>
@@ -312,6 +314,7 @@
     </plurals>
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
+    <string name="subway">捷運</string>
     <string name="summary">概觀</string>
     <string name="suspension">暫停</string>
     <string name="switch_issue">道岔問題</string>
