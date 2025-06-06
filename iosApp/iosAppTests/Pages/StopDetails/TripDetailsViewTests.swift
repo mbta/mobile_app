@@ -87,7 +87,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Next stop"))
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: vehicleStop.name))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -155,7 +155,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Scheduled to depart"))
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: targetStop.name))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -233,7 +233,7 @@ final class TripDetailsViewTests: XCTestCase {
         let exp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(TripStops.self).find(text: targetStop.name))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 

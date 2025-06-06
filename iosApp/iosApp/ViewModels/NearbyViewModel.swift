@@ -35,9 +35,6 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    @Published var showDebugMessages: Bool = false
-    @Published var showStationAccessibility: Bool = false
-
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
     @Published var routeCardData: [RouteCardData]?
@@ -50,45 +47,29 @@ class NearbyViewModel: ObservableObject {
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
     private var analytics: Analytics
-    private let settingsRepository: ISettingsRepository
 
     init(
         routeCardData: [RouteCardData]? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
-        showDebugMessages: Bool = false,
-        showStationAccessibility: Bool = false,
         alertsUsecase: AlertsUsecase = UsecaseDI().alertsUsecase,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
-        analytics: Analytics = AnalyticsProvider.shared,
-        settingsRepository: ISettingsRepository = RepositoryDI().settings
+        analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.routeCardData = routeCardData
         self.navigationStack = navigationStack
-
-        self.showDebugMessages = showDebugMessages
-        self.showStationAccessibility = showStationAccessibility
 
         self.alertsUsecase = alertsUsecase
         self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
-        self.settingsRepository = settingsRepository
     }
 
     func clearNearbyData() {
         nearbyState = .init()
         routeCardData = nil
-    }
-
-    func loadSettings() async {
-        let loaded = await settingsRepository.load([.devDebugMode, .stationAccessibility])
-        Task { @MainActor in
-            showDebugMessages = loaded.getSafe(.devDebugMode)
-            showStationAccessibility = loaded.getSafe(.stationAccessibility)
-        }
     }
 
     /**
