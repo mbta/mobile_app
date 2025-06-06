@@ -14,6 +14,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -24,8 +25,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 
@@ -45,22 +44,7 @@ fun RoutePickerView(
         return
     }
 
-    val routes = globalData.getRoutesForPicker(path)
-    val displayedRoutes =
-        routes
-            .mapNotNull { route ->
-                if (route.id in greenRoutes) {
-                    globalData.getLine(route.lineId)?.let { line ->
-                        RouteCardData.LineOrRoute.Line(
-                            line,
-                            routes = routes.filter { it.lineId == line.id }.toSet(),
-                        )
-                    }
-                } else {
-                    RouteCardData.LineOrRoute.Route(route)
-                }
-            }
-            .distinct()
+    val routes = remember(globalData, path) { globalData.getRoutesForPicker(path) }
 
     Column(
         Modifier.padding(start = 14.dp, top = 0.dp, end = 14.dp).fillMaxWidth(),
@@ -107,7 +91,7 @@ fun RoutePickerView(
                     modifier = Modifier.padding(start = 16.dp, top = 22.dp, bottom = 2.dp),
                 )
             }
-            for (route in displayedRoutes) {
+            for (route in routes) {
                 RoutePickerRow(route) { onOpenRouteDetails(route.id, context) }
             }
         }
