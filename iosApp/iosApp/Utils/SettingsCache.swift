@@ -36,7 +36,12 @@ class SettingsCache: ObservableObject {
         let newSettings = [setting: value]
         cache = newSettings.merging(cache ?? [:]) { newValue, _ in newValue }
         Task {
-            try await settingsRepo.setSettings(settings: [setting: KotlinBoolean(bool: value)])
+            do {
+                try await settingsRepo.setSettings(settings: [setting: KotlinBoolean(bool: value)])
+            } catch {
+                debugPrint(error)
+                Sentry.shared.captureError(error: error)
+            }
         }
     }
 }
