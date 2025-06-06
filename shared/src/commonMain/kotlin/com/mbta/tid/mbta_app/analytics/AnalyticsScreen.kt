@@ -4,6 +4,7 @@ enum class AnalyticsScreen(val pageName: String) {
     Favorites("FavoritesPage"),
     NearbyTransit("NearbyTransitPage"),
     RouteDetails("RouteDetailsPage"),
+    RoutePicker("RoutePickerPage"),
     TripDetails("TripDetailsPage"),
     StopDetailsFiltered("StopDetailsFilteredPage"),
     StopDetailsUnfiltered("StopDetailsUnfilteredPage"),

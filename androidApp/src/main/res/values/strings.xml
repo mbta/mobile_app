@@ -49,6 +49,7 @@
     <string name="boarding_track">Boarding on track %1$s</string>
     <string name="bus">bus</string>
     <string name="buses">buses</string>
+    <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
     <string name="cancelled">Cancelled</string>
     <string name="close_button_label">Close</string>
@@ -254,6 +255,7 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Add favorite stops</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Routes</string>
     <string name="schedule_change">Schedule Change</string>
@@ -322,6 +324,7 @@
     <string name="speed_restriction_lowercase">speed restriction</string>
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
+    <string name="subway">Subway</string>
     <string name="summary" tools:ignore="MissingTranslation">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>

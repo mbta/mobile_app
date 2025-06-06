@@ -25,7 +25,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
-fun NoFavoritesView() {
+fun NoFavoritesView(onAddStops: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,7 +45,7 @@ fun NoFavoritesView() {
         )
         Row(
             modifier =
-                Modifier.clickable { /* TODO */ }
+                Modifier.clickable { onAddStops() }
                     .clip(MaterialTheme.shapes.medium)
                     .background(color = colorResource(R.color.key))
         ) {

@@ -8,8 +8,11 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.model.silverRoutes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -74,6 +77,26 @@ data class GlobalResponse(
     fun getFacility(facilityId: String?) = facilities[facilityId]
 
     fun getRoute(routeId: String?) = routes[routeId]
+
+    fun getRoutesForPicker(path: RoutePickerPath) =
+        when (path) {
+            is RoutePickerPath.Root ->
+                routes.values.filter {
+                    it.type in setOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL)
+                }
+            is RoutePickerPath.Bus ->
+                routes.values.filter { it.type == RouteType.BUS && !it.isShuttle }
+            is RoutePickerPath.Silver -> routes.values.filter { it.id in silverRoutes }
+            is RoutePickerPath.CommuterRail ->
+                routes.values.filter { it.type == RouteType.COMMUTER_RAIL }
+            is RoutePickerPath.Ferry -> routes.values.filter { it.type == RouteType.FERRY }
+        }.sortedBy {
+            when (path) {
+                is RoutePickerPath.Bus ->
+                    if (it.id in silverRoutes) it.sortOrder - 100000 else it.sortOrder
+                else -> it.sortOrder
+            }
+        }
 
     fun getStop(stopId: String?) = stops[stopId]
 

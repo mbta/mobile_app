@@ -62,13 +62,19 @@ import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
+import com.mbta.tid.mbta_app.android.routePicker.RoutePickerView
+import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
+import com.mbta.tid.mbta_app.android.util.fromRoute
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
+import com.mbta.tid.mbta_app.android.util.popBackStackFrom
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
+import com.mbta.tid.mbta_app.android.util.selectedStopId
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.history.Visit
@@ -78,6 +84,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.hours
@@ -240,16 +247,34 @@ fun MapAndSheetPage(
     }
 
     fun handleStopNavigation(stopId: String) {
+        if (navController.selectedStopId == stopId) return
+
         updateVisitHistory(stopId)
         mapViewModel.setSelectedVehicle(null)
+
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
     }
 
-    fun handleRouteNavigation(routeId: String) {
+    fun handleRouteNavigation(
+        routeId: String,
+        context: RouteDetailsContext = RouteDetailsContext.Details,
+    ) {
         mapViewModel.setSelectedVehicle(null)
-        navController.navigate(SheetRoutes.RouteDetails(routeId)) {
+        navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
+            popUpTo(SheetRoutes.NearbyTransit)
+        }
+    }
+
+    fun handlePickRouteNavigation(
+        routeId: String,
+        context: RouteDetailsContext = RouteDetailsContext.Details,
+    ) {
+        mapViewModel.setSelectedVehicle(null)
+        navController.navigateFrom<SheetRoutes.RoutePicker>(
+            SheetRoutes.RouteDetails(routeId, context)
+        ) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
     }
@@ -383,9 +408,12 @@ fun MapAndSheetPage(
             },
         ) {
             composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
+                fun navigate(route: SheetRoutes) {
+                    navController.navigateFrom<SheetRoutes.Favorites>(route)
+                }
                 FavoritesPage(
                     modifier = modifier,
-                    openSheetRoute = navController::navigate,
+                    openSheetRoute = ::navigate,
                     favoritesViewModel = favoritesViewModel,
                     errorBannerViewModel = errorBannerViewModel,
                     nearbyTransit = nearbyTransit,
@@ -428,20 +456,44 @@ fun MapAndSheetPage(
                 )
             }
 
+            composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                val navRoute: SheetRoutes.RoutePicker = backStackEntry.toRoute()
+
+                LaunchedEffect(Unit) {
+                    if (navBarVisible) hideNavBar()
+                    analytics.track(AnalyticsScreen.RoutePicker)
+                }
+
+                RoutePickerView(
+                    navRoute.path,
+                    navRoute.context,
+                    onOpenPickerPath = { newPath, context ->
+                        navController
+                            .fromRoute {
+                                if (it is SheetRoutes.RoutePicker && it.path == newPath) null
+                                else SheetRoutes.RoutePicker(newPath, context)
+                            }
+                            ?.let { navController.navigate(it) }
+                    },
+                    onOpenRouteDetails = ::handlePickRouteNavigation,
+                    onClose = { navController.popBackStackFrom<SheetRoutes.RoutePicker>() },
+                    errorBannerViewModel = errorBannerViewModel,
+                )
+            }
+
             composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.RouteDetails = backStackEntry.toRoute()
 
-                LaunchedEffect(true) {
-                    if (navBarVisible) {
-                        hideNavBar()
-                    }
+                LaunchedEffect(Unit) {
+                    if (navBarVisible) hideNavBar()
                     analytics.track(AnalyticsScreen.RouteDetails)
                 }
 
                 RouteDetailsView(
                     selectionId = navRoute.routeId,
+                    context = navRoute.context,
                     onOpenStopDetails = ::handleStopNavigation,
-                    onClose = { navController.popBackStack() },
+                    onClose = { navController.popBackStackFrom<SheetRoutes.RouteDetails>() },
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }
@@ -449,10 +501,8 @@ fun MapAndSheetPage(
             composable<SheetRoutes.NearbyTransit>(typeMap = SheetRoutes.typeMap) {
                 // for ViewModel reasons, must be within the `composable` to be the same instance
                 val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
-                LaunchedEffect(true) {
-                    if (!navBarVisible && !searchExpanded) {
-                        showNavBar()
-                    }
+                LaunchedEffect(Unit) {
+                    if (!navBarVisible && !searchExpanded) showNavBar()
                     analytics.track(AnalyticsScreen.NearbyTransit)
                 }
 
@@ -530,6 +580,7 @@ fun MapAndSheetPage(
                     when (currentNavEntry) {
                         SheetRoutes.NearbyTransit -> colorResource(R.color.sheet_background)
                         is SheetRoutes.StopDetails -> colorResource(R.color.fill2)
+                        is SheetRoutes.RoutePicker -> currentNavEntry.path.backgroundColor
                         else -> colorResource(R.color.fill1)
                     },
                 scaffoldState = nearbyTransit.scaffoldState,
