@@ -48,7 +48,9 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() }
         )
 
-        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
+        ViewHosting
+            .host(view: sut
+                .environmentObject(SettingsCache(settingsViewModel: .init(settingsRepository: settingsRepo))))
 
         XCTAssertNotNil(try sut.inspect().find(where: { view in
             try view.text().string()
@@ -75,7 +77,9 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() }
         )
 
-        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
+        ViewHosting
+            .host(view: sut
+                .environmentObject(SettingsCache(settingsViewModel: .init(settingsRepository: settingsRepo))))
 
         XCTAssertNotNil(try sut.inspect().find(
             text: "When using VoiceOver, we can hide maps to make the app easier to navigate."

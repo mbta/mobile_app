@@ -11,38 +11,31 @@ import SwiftUI
 
 /// Stores the state of the `Settings` so that they can be read instantly from anywhere once they have been loaded.
 class SettingsCache: ObservableObject {
-    var settingsRepo: ISettingsRepository
-    @Published var cache: [Settings: Bool]?
+    var settingsViewModel: SettingsViewModel
+    @Published var cache: [Settings: Bool]
 
-    init(settingsRepo: ISettingsRepository = RepositoryDI().settings, cache: [Settings: Bool]? = nil) {
-        self.settingsRepo = settingsRepo
+    init(settingsViewModel: SettingsViewModel = ViewModelDI().settings, cache: [Settings: Bool] = [:]) {
+        self.settingsViewModel = settingsViewModel
         self.cache = cache
+    }
+
+    @MainActor
+    func activate() async {
+        for await state in settingsViewModel.models {
+            cache = state.mapValues { $0.boolValue }
+        }
     }
 
     /// Retrieves the state of a `setting` from the cache.
     ///
     /// Unlike the Android version, does not transparently load in the background.
     func get(_ setting: Settings) -> Bool {
-        cache?[setting] ?? false
-    }
-
-    /// Loads the cache from the settings repository. Should be called by `SettingsCacheProvider` in the full app.
-    func load() async throws {
-        cache = try await settingsRepo.getSettings().mapValues { $0.boolValue }
+        cache[setting] ?? false
     }
 
     /// Edits the value of a single `setting` in both the cache and the settings repository.
     func set(_ setting: Settings, _ value: Bool) {
-        let newSettings = [setting: value]
-        cache = newSettings.merging(cache ?? [:]) { newValue, _ in newValue }
-        Task {
-            do {
-                try await settingsRepo.setSettings(settings: [setting: KotlinBoolean(bool: value)])
-            } catch {
-                debugPrint(error)
-                Sentry.shared.captureError(error: error)
-            }
-        }
+        settingsViewModel.set(setting: setting, value: value)
     }
 }
 
@@ -53,7 +46,7 @@ struct SettingsCacheProvider<Content: View>: View {
 
     var body: some View {
         content()
-            .task { try? await cache.load() }
+            .task { await cache.activate() }
             .environmentObject(cache)
     }
 }

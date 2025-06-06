@@ -14,7 +14,7 @@ import XCTest
 
 final class MorePageTests: XCTestCase {
     @MainActor func testLoadsState() async throws {
-        let viewModel = SettingsViewModel()
+        let viewModel = MoreViewModel()
 
         let sut = MorePage(viewModel: viewModel)
         let exp = sut.inspection.inspect(after: 1) { view in
@@ -39,20 +39,22 @@ final class MorePageTests: XCTestCase {
                 savedExp.fulfill()
             }
         )
-        let viewModel = SettingsViewModel()
+        let viewModel = MoreViewModel()
 
         let sut = MorePage(viewModel: viewModel)
         let tapExp = sut.inspection.inspect(after: 1) { view in
             try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
 
-        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepository)))
+        ViewHosting
+            .host(view: sut
+                .environmentObject(SettingsCache(settingsViewModel: .init(settingsRepository: settingsRepository))))
 
         await fulfillment(of: [tapExp, savedExp], timeout: 5)
     }
 
     @MainActor func testLinksExist() async throws {
-        let viewModel = SettingsViewModel()
+        let viewModel = MoreViewModel()
 
         let sut = MorePage(viewModel: viewModel)
         let exp = sut.inspection.inspect(after: 2) { view in

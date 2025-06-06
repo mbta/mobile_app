@@ -25,7 +25,7 @@ struct ContentView: View {
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
-    @StateObject var settingsVM = SettingsViewModel()
+    @StateObject var settingsVM = MoreViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
     @EnvironmentObject var settingsCache: SettingsCache

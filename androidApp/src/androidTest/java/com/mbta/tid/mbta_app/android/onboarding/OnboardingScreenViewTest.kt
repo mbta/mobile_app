@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.SettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -63,13 +64,14 @@ class OnboardingScreenViewTest {
                     savedSetting = true
                 },
             )
+        val settingsCache = SettingsCache(SettingsViewModel(settingsRepo))
         var advanced = false
         composeTestRule.setContent {
             OnboardingScreenView(
                 screen = OnboardingScreen.StationAccessibility,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
-                settingsCache = SettingsCache(settingsRepo),
+                settingsCache = settingsCache,
             )
         }
 
@@ -106,13 +108,14 @@ class OnboardingScreenViewTest {
                     savedSetting = true
                 },
             )
+        val settingsCache = SettingsCache(SettingsViewModel(settingsRepo))
         var advanced = false
         composeTestRule.setContent {
             OnboardingScreenView(
                 screen = OnboardingScreen.HideMaps,
                 advance = { advanced = true },
                 locationDataManager = MockLocationDataManager(),
-                settingsCache = SettingsCache(settingsRepo),
+                settingsCache = settingsCache,
             )
         }
         composeTestRule
