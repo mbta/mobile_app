@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 data class RouteDetailsStopList(val segments: List<Segment>) {
 
     /** A subset of consecutive stops that are all typical or all non-typical. */
-    data class Segment(val stops: List<Entry>) {
+    data class Segment(val stops: List<Entry>, val hasRouteLine: Boolean) {
         val isTypical = stops.all { it.isTypical }
     }
 
@@ -17,10 +17,8 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
         val patterns: List<RoutePattern>,
         val connectingRoutes: List<Route>,
     ) {
-        val isTypical =
-            patterns.any {
-                it.typicality == RoutePattern.Typicality.Typical || it.typicality == null
-            }
+        val patternIds = patterns.map { it.id }.toSet()
+        val isTypical = patterns.any { it.isTypical() }
     }
 
     data class RouteParameters(
@@ -102,6 +100,11 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
          * pattern.
          */
         private fun splitIntoSegments(entries: List<Entry>): List<Segment> {
+            val authoritativePatternId =
+                entries
+                    .flatMapTo(mutableSetOf()) { it.patterns.filter(RoutePattern::isTypical) }
+                    .minOrNull()
+                    ?.id
 
             val segments: MutableList<MutableList<Entry>> = mutableListOf()
 
@@ -110,7 +113,12 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
                     segments.add(mutableListOf(entry))
                 } else {
                     val wipSegment = segments.last()
-                    if (entry.isTypical == wipSegment.last().isTypical) {
+                    val lastEntry = wipSegment.last()
+                    val isAuthoritativePatternBoundary =
+                        authoritativePatternId != null &&
+                            (entry.patternIds.contains(authoritativePatternId) !=
+                                lastEntry.patternIds.contains(authoritativePatternId))
+                    if (entry.isTypical == lastEntry.isTypical && !isAuthoritativePatternBoundary) {
                         wipSegment.add(entry)
                     } else {
                         segments.add(mutableListOf(entry))
@@ -118,7 +126,14 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
                 }
             }
 
-            return segments.map { Segment(it) }
+            return segments.map {
+                Segment(
+                    it,
+                    hasRouteLine =
+                        authoritativePatternId == null ||
+                            it.any { it.patternIds.contains(authoritativePatternId) },
+                )
+            }
         }
     }
 }

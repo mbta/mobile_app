@@ -126,7 +126,7 @@ fun RouteStopListView(
                                         isLast =
                                             segmentIndex == stopList.segments.lastIndex &&
                                                 stopIndex == segment.stops.lastIndex,
-                                        includeLineDiagram = true,
+                                        includeLineDiagram = segment.hasRouteLine,
                                     )
 
                                 StopListRow(
