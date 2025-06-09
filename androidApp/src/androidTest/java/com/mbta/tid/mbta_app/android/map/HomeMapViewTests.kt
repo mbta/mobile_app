@@ -2,10 +2,9 @@ package com.mbta.tid.mbta_app.android.map
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -18,13 +17,22 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.utils.TestData
+import dev.mokkery.MockMode
+import dev.mokkery.answering.autofill.AutofillProvider
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import kotlin.test.assertTrue
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -254,23 +262,38 @@ class HomeMapViewTests {
             .assertDoesNotExist()
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
-    @Ignore("flaky test passing locally but failing in CI")
-    fun testOverviewShownOnStopDetails(): Unit = runBlocking {
+    fun testRecenterButtonVisibilityCalledWhenOnStopDetails(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
         locationManager.hasPermission = true
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
 
-        viewModel.setGlobalResponse(GlobalResponse(objects = TestData))
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+
+        var updateCenterButtonVisibilityCalled = false
+
+        AutofillProvider.forMockMode.types.register(StateFlow::class) { MutableStateFlow(null) }
+
+        AutofillProvider.forMockMode.types.register(StateFlow::class) { MutableStateFlow(null) }
+
+        AutofillProvider.forMockMode.types.register(Flow::class) { MutableStateFlow(null) }
+
+        val mapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mapVM.selectedStop } returns MutableStateFlow(TestData.getStop("121"))
+        every { mapVM.configLoadAttempted } returns MutableStateFlow(true)
+        every { mapVM.showRecenterButton } returns MutableStateFlow(false)
+        every { mapVM.showTripCenterButton } returns MutableStateFlow(false)
+
+        every {
+            mapVM.updateCenterButtonVisibility(any(), locationManager, searchVM, viewportProvider)
+        } calls { updateCenterButtonVisibilityCalled = true }
+
         composeTestRule.setContent {
+            val nearbyTransitSelectingLocationState = remember { mutableStateOf(false) }
+
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                nearbyTransitSelectingLocationState = nearbyTransitSelectingLocationState,
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails(TestData.getStop("121").id, null, null),
@@ -278,15 +301,13 @@ class HomeMapViewTests {
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
                 routeCardData = null,
-                viewModel = viewModel,
-                isSearchExpanded = false,
+                viewModel = mapVM,
+                isSearchExpanded = false
             )
         }
-        composeTestRule.waitUntilExactlyOneExists(
-            hasContentDescription("Recenter map on my location"),
-            timeoutMillis = 15000L,
-        )
-        composeTestRule.onNodeWithContentDescription("Recenter map on my location").assertExists()
+
+        composeTestRule.waitUntil { updateCenterButtonVisibilityCalled }
+        assertTrue(updateCenterButtonVisibilityCalled)
     }
 
     @Test

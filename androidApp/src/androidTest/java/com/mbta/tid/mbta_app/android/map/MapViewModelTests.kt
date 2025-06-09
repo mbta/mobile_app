@@ -1,10 +1,19 @@
 package com.mbta.tid.mbta_app.android.map
 
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ConfigResponse
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
+import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
+import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import io.github.dellisd.spatialk.geojson.Position
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -60,5 +69,40 @@ class MapViewModelTests {
                 setHttpInterceptor = { httpInterceptorSet = true },
             )
         assertTrue { httpInterceptorSet }
+    }
+
+    @Test
+    fun testUpdateCenterButtonVisibilityWhenLocationKnownAndNotFollowing() = runBlocking {
+        val mapViewModel =
+            MapViewModel(
+                configUseCase =
+                    ConfigUseCase(
+                        MockConfigRepository(ApiResult.Error(500, "oops")),
+                        MockSentryRepository(),
+                    )
+            )
+
+        assertEquals(false, mapViewModel.showRecenterButton.value)
+
+        val searchResultsVM =
+            SearchResultsViewModel(
+                MockAnalytics(),
+                MockSearchResultRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
+
+        val locationDataManager = MockLocationDataManager()
+        locationDataManager.hasPermission = true
+        val viewportProvider = ViewportProvider(MapViewportState())
+        viewportProvider.setIsManuallyCentering(true)
+
+        mapViewModel.updateCenterButtonVisibility(
+            MockLocationDataManager.MockLocation(Position(0.0, 0.0)),
+            locationDataManager,
+            searchResultsVM,
+            viewportProvider,
+        )
+
+        assertEquals(true, mapViewModel.showRecenterButton.value)
     }
 }

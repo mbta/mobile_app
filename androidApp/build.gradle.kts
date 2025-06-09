@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.mokkery)
     alias(libs.plugins.sentryGradle)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
