@@ -27,7 +27,7 @@ function retry() {
   done
 }
 
-RETRIES=3 retry ./gradlew :androidApp:connectedStagingDebugAndroidTest --no-daemon
+./gradlew :androidApp:connectedStagingDebugAndroidTest --no-daemon
 GRADLE_EXIT_CODE=$?
 
 if [ $GRADLE_EXIT_CODE -ne 0 ]; then
