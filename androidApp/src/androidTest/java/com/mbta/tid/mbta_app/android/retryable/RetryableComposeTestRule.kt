@@ -72,7 +72,7 @@ constructor(
 
                 Log.i(
                     "retryableTest",
-                    "${description.displayName}: Giving up after $maxRetries failures.",
+                    "${description.displayName}: Giving up after $maxRetries attempts.",
                 )
             }
         }
