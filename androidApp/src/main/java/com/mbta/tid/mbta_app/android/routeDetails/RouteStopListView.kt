@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,7 +51,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import kotlinx.coroutines.launch
 
 sealed class RouteDetailsRowContext {
-    data object Details : RouteDetailsRowContext()
+    data class Details(val stop: Stop) : RouteDetailsRowContext()
 
     data class Favorites(val isFavorited: Boolean, val onTapStar: () -> Unit) :
         RouteDetailsRowContext()
@@ -89,6 +88,7 @@ fun RouteStopListView(
         rememberSuspend(selectedRouteId, routeStops, globalData) {
             RouteDetailsStopList.fromPieces(selectedRouteId, routeStops, globalData)
         }
+    RouteDetailsContext.Details
 
     val managedFavorites = manageFavorites()
     val favorites = managedFavorites.favoriteRoutes
@@ -106,7 +106,7 @@ fun RouteStopListView(
 
     fun stopRowContext(stop: Stop) =
         when (context) {
-            is RouteDetailsContext.Details -> RouteDetailsRowContext.Details
+            is RouteDetailsContext.Details -> RouteDetailsRowContext.Details(stop)
             is RouteDetailsContext.Favorites ->
                 RouteDetailsRowContext.Favorites(
                     isFavorited =

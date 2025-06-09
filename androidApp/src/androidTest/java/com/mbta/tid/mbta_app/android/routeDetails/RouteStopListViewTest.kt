@@ -17,10 +17,12 @@ import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -75,12 +77,17 @@ class RouteStopListViewTest {
             KoinContext(koin.koin) {
                 RouteStopListView(
                     RouteCardData.LineOrRoute.Route(mainRoute),
+                    RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = clicks::add,
                     onClose = { closed = true },
                     errorBannerViewModel = errorBannerVM,
-                    rightSideContent = { entry, _ ->
-                        Text("rightSideContent for ${entry.stop.name}")
+                    rightSideContent = { context, _ ->
+                        when (context) {
+                            is RouteDetailsRowContext.Details ->
+                                Text("rightSideContent for ${context.stop.name}")
+                            else -> fail("Wrong row context provided")
+                        }
                     },
                 )
             }
@@ -160,6 +167,7 @@ class RouteStopListViewTest {
             KoinContext(koin.koin) {
                 RouteStopListView(
                     RouteCardData.LineOrRoute.Line(line, setOf(route1, route2, route3)),
+                    RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
                     onClose = {},
@@ -227,6 +235,7 @@ class RouteStopListViewTest {
             KoinContext(koin.koin) {
                 RouteStopListView(
                     RouteCardData.LineOrRoute.Route(mainRoute),
+                    RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
                     onClose = {},

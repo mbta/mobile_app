@@ -98,7 +98,7 @@ data class GlobalResponse(
                 // up in search, but since it has its own top level section, sort them to the bottom
                 when (path) {
                     is RoutePickerPath.Bus ->
-                        if (it.id in silverRoutes) it.sortOrder - 100000 else it.sortOrder
+                        if (it.id in silverRoutes) it.sortOrder + 100000 else it.sortOrder
                     else -> it.sortOrder
                 }
             }
