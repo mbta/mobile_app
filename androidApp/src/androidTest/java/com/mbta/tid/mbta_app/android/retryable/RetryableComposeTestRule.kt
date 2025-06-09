@@ -54,8 +54,13 @@ constructor(
                     Log.i("retryableTest", "${description.displayName}: run ${(i + 1)}")
                     try {
                         rule.apply(base, description).evaluate()
+                        Log.i(
+                            "retryableTest",
+                            "${description.displayName}: run ${(i + 1)} succeeded.",
+                        )
 
                         if (stopAfterSuccess) {
+
                             return
                         }
                     } catch (t: Throwable) {
