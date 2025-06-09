@@ -51,7 +51,7 @@ constructor(
         return object : Statement() {
             override fun evaluate() {
                 for (i in 0 until maxRetries) {
-                    System.out.println("${description.displayName}: run ${(i + 1)}")
+                    Log.i("retryableTest", "${description.displayName}: run ${(i + 1)}")
                     try {
                         rule.apply(base, description).evaluate()
 

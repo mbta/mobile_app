@@ -34,7 +34,6 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import com.mbta.tid.mbta_app.android.retryable.RetryableComposeTestRule
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
@@ -57,7 +56,6 @@ import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.random.Random
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration
@@ -219,8 +217,6 @@ class MapAndSheetPageTest : KoinTest {
     @get:Rule
     val runtimePermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
     @get:Rule val composeTestRule = createComposeRule()
-
-    @get:Rule val retryRule = RetryableComposeTestRule(maxRetries = 100)
 
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -463,7 +459,7 @@ class MapAndSheetPageTest : KoinTest {
                 VisitHistoryUsecase(MockVisitHistoryRepository()),
             )
 
-        retryRule.setContent {
+        composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
                     LocalLocationClient provides MockFusedLocationProviderClient(),
@@ -494,8 +490,8 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
-        retryRule.waitForIdle()
-        retryRule.waitUntil { viewportProvider.getViewportImmediate().cameraState != null }
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { viewportProvider.getViewportImmediate().cameraState != null }
         val updatedCamera =
             CameraState(Point.fromLngLat(1.1, 1.1), EdgeInsets(0.0, 0.0, 0.0, 0.0), 1.0, 0.0, 0.0)
         viewportProvider.setIsManuallyCentering(true)
@@ -510,8 +506,8 @@ class MapAndSheetPageTest : KoinTest {
         }
         viewportProvider.setIsManuallyCentering(false)
 
-        retryRule.waitForIdle()
-        retryRule.waitUntil(3000) {
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil(3000) {
             viewportProvider
                 .getViewportImmediate()
                 .cameraState
@@ -526,12 +522,12 @@ class MapAndSheetPageTest : KoinTest {
         )
         assertFalse(viewportProvider.isFollowingPuck)
 
-        retryRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
         mockClock.plus(30.minutes)
 
-        retryRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
-        retryRule.waitForIdle()
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
+        composeTestRule.waitForIdle()
 
         assertTrue(
             updatedCamera.center.isRoughlyEqualTo(
@@ -540,13 +536,13 @@ class MapAndSheetPageTest : KoinTest {
         )
         assertFalse(viewportProvider.isFollowingPuck)
 
-        retryRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
         mockClock.plus(2.hours)
 
-        retryRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
-        retryRule.waitForIdle()
-        retryRule.waitUntil(3000) {
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil(3000) {
             !updatedCamera.center.isRoughlyEqualTo(
                 viewportProvider.getViewportImmediate().cameraState!!.center
             ) && viewportProvider.getViewportImmediate().isFollowingPuck
@@ -559,13 +555,5 @@ class MapAndSheetPageTest : KoinTest {
         )
         assertTrue(viewportProvider.getViewportImmediate().isFollowingPuck)
         assertTrue(viewportProvider.isFollowingPuck)
-    }
-
-    @Test
-    fun testFakeFlakyTest() {
-        retryRule.setContent {}
-
-        val random = Random.nextInt(0, 10)
-        assertTrue(random == 2)
     }
 }
