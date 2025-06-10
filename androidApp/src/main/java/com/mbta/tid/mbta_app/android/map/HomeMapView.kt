@@ -61,6 +61,7 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.routeIcon
+import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getStopMapData
@@ -87,7 +88,7 @@ fun HomeMapView(
     lastNearbyTransitLocation: Position?,
     nearbyTransitSelectingLocationState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
-    viewportProvider: ViewportProvider,
+    viewportProvider: IViewportProvider,
     currentNavEntry: SheetRoutes?,
     handleStopNavigation: (String) -> Unit,
     handleVehicleTap: (Vehicle) -> Unit,
@@ -419,6 +420,7 @@ fun HomeMapView(
 
                 MapEffect(locationDataManager.hasPermission) { map ->
                     if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
+
                         viewportProvider.follow(
                             DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
                         )
