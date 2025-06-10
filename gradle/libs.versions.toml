@@ -45,7 +45,7 @@ spatialk = "0.3.0"
 spotless = "7.0.4"
 turbine = "1.2.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/lifecycle
-lifecycleRuntimeTesting = "2.9.0"
+lifecycleRuntimeTesting = "2.9.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
