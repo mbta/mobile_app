@@ -14,10 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.routePicker.haloColor
 
 @Composable
 fun ScrollSeparatorColumn(
@@ -26,7 +26,7 @@ fun ScrollSeparatorColumn(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     haloColor: Color = colorResource(R.color.halo),
     scrollState: ScrollState = rememberScrollState(),
-    content: @Composable() (ColumnScope.() -> Unit),
+    content: @Composable (ColumnScope.() -> Unit),
 ) {
     Box(Modifier, Alignment.TopCenter) {
         Column(
@@ -36,7 +36,7 @@ fun ScrollSeparatorColumn(
             content,
         )
         AnimatedVisibility(scrollState.canScrollBackward, enter = fadeIn(), exit = fadeOut()) {
-            HaloSeparator(color = haloColor)
+            HaloSeparator(Modifier.testTag("separator"), haloColor)
         }
     }
 }

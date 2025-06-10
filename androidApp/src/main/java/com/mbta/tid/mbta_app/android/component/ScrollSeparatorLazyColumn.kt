@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -51,7 +52,7 @@ fun ScrollSeparatorLazyColumn(
             content = content,
         )
         AnimatedVisibility(state.canScrollBackward, enter = fadeIn(), exit = fadeOut()) {
-            HaloSeparator(color = haloColor)
+            HaloSeparator(Modifier.testTag("separator"), haloColor)
         }
     }
 }
