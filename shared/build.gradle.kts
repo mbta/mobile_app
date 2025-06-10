@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.compose)
     alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
@@ -30,6 +31,8 @@ plugins {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     applyDefaultHierarchyTemplate()
+
+    compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
 
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
 
@@ -70,6 +73,7 @@ kotlin {
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.androidx.datastore.preferences.core)
+                implementation(libs.koin.compose)
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.ktor.client.content.negotiation)
@@ -77,6 +81,7 @@ kotlin {
                 implementation(libs.ktor.client.encoding)
                 implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.molecule.runtime)
                 implementation(libs.okio)
                 implementation(libs.skie.configuration.annotations)
                 implementation(libs.spatialk.turf)
@@ -94,6 +99,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(libs.androidx.lifecycle.viewmodel.android)
                 implementation(libs.koin.androidxCompose)
                 implementation(libs.ktor.client.okhttp)
             }
@@ -113,6 +119,7 @@ android {
     namespace = "com.mbta.tid.mbta_app"
     compileSdk = 34
     defaultConfig { minSdk = 28 }
+    testOptions { unitTests.isReturnDefaultValues = true }
 }
 
 skie {

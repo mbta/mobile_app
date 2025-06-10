@@ -94,6 +94,7 @@ struct ProductionAppView: View {
     private static func initKoin(socket: PhoenixSocket) {
         let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(
             accessibilityStatus: AccessibilityStatusRepository(),
+            analytics: AnalyticsProvider.shared,
             currentAppVersion: CurrentAppVersionRepository(),
             socket: socket
         )

@@ -15,7 +15,8 @@ struct SearchResultsContainer: View {
     let query: String
 
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var searchVM: SearchViewModel
+    @State var searchVM: SearchViewModel
+    @State var searchVMState: SearchViewModel.State = SearchViewModel.StateLoading.shared
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
@@ -35,26 +36,27 @@ struct SearchResultsContainer: View {
     }
 
     func handleStopTap(stopId: String) {
-        guard let stop = searchVM.getStopFor(id: stopId) else { return }
-        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil))
     }
 
     var body: some View {
         SearchResultsView(
-            state: searchVM.resultsState,
+            state: searchVMState,
             handleStopTap: handleStopTap
         )
-        .task { await searchVM.loadGlobalDataAndHistory() }
+        .task {
+            for await state in searchVM.models {
+                searchVMState = state
+            }
+        }
         .onAppear {
-            searchVM.determineStateFor(query: query)
+            searchVM.setQuery(query: query)
+            searchVM.refreshHistory()
             didAppear?(self)
         }
         .onChange(of: query) { query in
-            searchVM.determineStateFor(query: query)
+            searchVM.setQuery(query: query)
             didChange?(self)
-        }
-        .onDisappear {
-            searchVM.resultsState = nil
         }
     }
 }
@@ -62,9 +64,9 @@ struct SearchResultsContainer: View {
 struct SearchResultView_Previews: PreviewProvider {
     static var previews: some View {
         SearchResultsView(
-            state: .results(
+            state: SearchViewModel.StateResults(
                 stops: [
-                    SearchViewModel.Result(
+                    SearchViewModel.StopResult(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -75,18 +77,23 @@ struct SearchResultView_Previews: PreviewProvider {
                                 content: RoutePillSpecContentText(text: "OL"),
                                 size: RoutePillSpec.Size.flexPillSmall,
                                 shape: RoutePillSpec.Shape.capsule,
-                                contentDescription: "Orange Line"
+                                contentDescription: nil
                             ),
                         ]
                     ),
                 ],
                 routes: [
-                    RouteResult(
+                    SearchViewModel.RouteResult(
                         id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
+                        name: "Oaklandvale - Haymarket Station",
+                        routePill: .init(
+                            textColor: "#000000",
+                            routeColor: "#FFC72C",
+                            content: RoutePillSpecContentText(text: "428"),
+                            size: .fixedPill,
+                            shape: .rectangle,
+                            contentDescription: nil
+                        )
                     ),
                 ]
             ),

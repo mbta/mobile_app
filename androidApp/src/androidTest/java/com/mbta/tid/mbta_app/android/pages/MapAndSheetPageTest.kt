@@ -24,7 +24,6 @@ import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import org.junit.Rule
 import org.junit.Test
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 
 class MapAndSheetPageTest {
@@ -87,7 +86,6 @@ class MapAndSheetPageTest {
                     showNavBar = {},
                     hideNavBar = {},
                     bottomBar = {},
-                    searchResultsViewModel = koinViewModel(),
                 )
             }
         }

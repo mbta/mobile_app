@@ -30,20 +30,16 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 @ExperimentalTestApi
 @ExperimentalMaterial3Api
 class SearchBarOverlayTest : KoinTest {
-    val builder = ObjectCollectionBuilder()
-    val visitedStop =
-        builder.stop {
-            id = "visitedStopId"
-            name = "visitedStopName"
-        }
-    val route =
+    private val builder = ObjectCollectionBuilder()
+    private val visitedStop = builder.stop { name = "visitedStopName" }
+    private val searchedStop = builder.stop { name = "stopName" }
+    private val route =
         builder.route {
             longName = "Here - There"
             shortName = "3½"
@@ -64,9 +60,9 @@ class SearchBarOverlayTest : KoinTest {
                         stopResults =
                             listOf(
                                 StopResult(
-                                    id = "stopId",
+                                    id = searchedStop.id,
                                     rank = 2,
-                                    name = "stopName",
+                                    name = searchedStop.name,
                                     zone = "stopZone",
                                     isStation = false,
                                     routes =
@@ -96,7 +92,6 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = { navigated.value = true },
                     onRouteNavigation = {},
                     inputFieldFocusRequester = focusRequester,
-                    searchResultsVm = koinViewModel(),
                 ) {
                     Text("Content")
                 }
@@ -128,8 +123,8 @@ class SearchBarOverlayTest : KoinTest {
         composeTestRule.onNodeWithText(visitedStop.name).assertExists()
 
         searchNode.performTextInput("sto")
-        composeTestRule.waitUntilAtLeastOneExists(hasText("stopName"))
-        composeTestRule.onNodeWithText("stopName").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasText(searchedStop.name))
+        composeTestRule.onNodeWithText(searchedStop.name).performClick()
         composeTestRule.waitUntil { navigated.value }
     }
 
@@ -151,7 +146,6 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = {},
                     onRouteNavigation = {},
                     inputFieldFocusRequester = focusRequester,
-                    searchResultsVm = koinViewModel(),
                     content = {},
                 )
             }
@@ -188,7 +182,6 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = {},
                     onRouteNavigation = { navigated = true },
                     inputFieldFocusRequester = focusRequester,
-                    searchResultsVm = koinViewModel(),
                     content = {},
                 )
             }

@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,35 +27,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
+import com.mbta.tid.mbta_app.android.component.text
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.typeText
-import com.mbta.tid.mbta_app.model.Line
-import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.RoutePillSpec
-import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopResult
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.silverRoutes
+import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 
 @Composable
 fun StopResultsView(
     shape: RoundedCornerShape,
-    stop: StopResult,
-    globalResponse: GlobalResponse?,
-    handleSearch: (String) -> Unit,
-) {
-
-    val routes = globalResponse?.getTypicalRoutesFor(stop.id) ?: emptyList()
-
-    StopResultsView(shape, stop, routes, globalResponse, handleSearch)
-}
-
-@Composable
-fun StopResultsView(
-    shape: RoundedCornerShape,
-    stop: StopResult,
-    routes: List<Route>,
-    globalResponse: GlobalResponse?,
+    stop: SearchViewModel.StopResult,
     handleSearch: (String) -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -72,66 +50,15 @@ fun StopResultsView(
         ) {
             val iconModifier = Modifier.height(32.dp).width(32.dp)
 
-            val routePillsData =
-                routes
-                    .sortedBy { it.sortOrder }
-                    .map<Route, Pair<Route, RoutePillSpec>> { route ->
-                        val line: Line? =
-                            if (route.lineId != null) {
-                                globalResponse?.getLine(route.lineId)
-                            } else {
-                                null
-                            }
+            val routePillsData = stop.routePills
 
-                        val context: RoutePillSpec.Context =
-                            if (stop.isStation) {
-                                RoutePillSpec.Context.SearchStation
-                            } else {
-                                RoutePillSpec.Context.Default
-                            }
-
-                        val contentDescription =
-                            if (silverRoutes.contains(route.id) && stop.isStation) {
-                                stringResource(
-                                    id = R.string.route_with_type,
-                                    stringResource(R.string.silver_line),
-                                    route?.type?.typeText(LocalContext.current, isOnly = false)
-                                        ?: "",
-                                )
-                            } else if (route.type == RouteType.COMMUTER_RAIL && stop.isStation) {
-                                stringResource(
-                                    id = R.string.route_with_type,
-                                    stringResource(R.string.commuter_rail),
-                                    route?.type?.typeText(LocalContext.current, isOnly = false)
-                                        ?: "",
-                                )
-                            } else if (route.type == RouteType.BUS && stop.isStation) {
-                                route.type.typeText(LocalContext.current, isOnly = false)
-                            } else {
-                                stringResource(
-                                    id = R.string.route_with_type,
-                                    route.label,
-                                    route?.type?.typeText(LocalContext.current, isOnly = true) ?: "",
-                                )
-                            }
-
-                        Pair(
-                            route,
-                            RoutePillSpec(
-                                route,
-                                line,
-                                RoutePillSpec.Type.FlexCompact,
-                                context,
-                                contentDescription,
-                            ),
-                        )
-                    }
-                    .distinctBy { (_, spec) -> spec }
-
+            @Suppress("SimplifiableCallChain")
             val routesContentDescription =
                 stringResource(
                     R.string.serves_route_list,
-                    routePillsData.joinToString(",") { (_, spec) -> spec.contentDescription ?: "" },
+                    routePillsData
+                        .map { spec -> spec.contentDescription?.text ?: "" }
+                        .joinToString(","),
                 )
             if (stop.isStation) {
                 Icon(
@@ -163,9 +90,9 @@ fun StopResultsView(
                             .padding(start = 16.dp, bottom = 12.dp)
                             .clearAndSetSemantics { contentDescription = routesContentDescription }
                 ) {
-                    routePillsData.map { (route, spec) ->
+                    routePillsData.map { spec ->
                         RoutePill(
-                            route = route,
+                            route = null,
                             spec = spec,
                             modifier = Modifier.padding(end = 4.dp),
                         )

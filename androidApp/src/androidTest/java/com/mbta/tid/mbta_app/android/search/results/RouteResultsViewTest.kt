@@ -6,9 +6,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
-import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.test.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -22,8 +22,9 @@ class RouteResultsViewTest {
         composeTestRule.setContent {
             RouteResultsView(
                 RoundedCornerShape(0.dp),
-                RouteResult(route),
-                GlobalResponse(TestData),
+                checkNotNull(
+                    SearchViewModel.RouteResult.forLineOrRoute(route.id, GlobalResponse(TestData))
+                ),
                 handleSearch = {},
             )
         }
@@ -38,8 +39,9 @@ class RouteResultsViewTest {
         composeTestRule.setContent {
             RouteResultsView(
                 RoundedCornerShape(0.dp),
-                RouteResult(route),
-                GlobalResponse(TestData),
+                checkNotNull(
+                    SearchViewModel.RouteResult.forLineOrRoute(route.id, GlobalResponse(TestData))
+                ),
                 handleSearch = { taps.add(it) },
             )
         }

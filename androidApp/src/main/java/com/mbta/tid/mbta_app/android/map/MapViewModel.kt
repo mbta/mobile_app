@@ -10,7 +10,6 @@ import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.FeatureCollection
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
@@ -80,7 +79,7 @@ interface IMapViewModel {
     fun updateCenterButtonVisibility(
         currentLocation: Location?,
         locationDataManager: LocationDataManager,
-        searchResultsViewModel: SearchResultsViewModel,
+        isSearchExpanded: Boolean,
         viewportProvider: ViewportProvider,
     )
 
@@ -208,7 +207,7 @@ open class MapViewModel(
     override fun updateCenterButtonVisibility(
         currentLocation: Location?,
         locationDataManager: LocationDataManager,
-        searchResultsViewModel: SearchResultsViewModel,
+        isSearchExpanded: Boolean,
         viewportProvider: ViewportProvider,
     ) {
         setShowRecenterButton(
@@ -218,7 +217,7 @@ open class MapViewModel(
         )
         setShowTripCenterButton(
             selectedVehicle.value != null &&
-                !searchResultsViewModel.expanded &&
+                !isSearchExpanded &&
                 !viewportProvider.isVehicleOverview
         )
     }

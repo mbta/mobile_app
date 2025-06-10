@@ -24,7 +24,6 @@ struct ContentView: View {
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
-    @StateObject var searchVM = SearchViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
@@ -140,7 +139,7 @@ struct ContentView: View {
                     searchHeaderBackground
                     VStack {
                         if nearbyVM.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM)
                                 .padding(.top, 12)
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
@@ -159,7 +158,7 @@ struct ContentView: View {
                     searchHeaderBackground
                     VStack(alignment: .center, spacing: 20) {
                         if nearbyVM.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM)
 
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
