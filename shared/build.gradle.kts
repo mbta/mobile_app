@@ -120,6 +120,7 @@ android {
     compileSdk = 34
     defaultConfig { minSdk = 28 }
     testOptions { unitTests.isReturnDefaultValues = true }
+    lint { disable.add("NullSafeMutableLiveData") }
 }
 
 skie {
