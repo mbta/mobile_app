@@ -86,7 +86,10 @@ fun FavoritesView(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
-            Modifier.fillMaxWidth().heightIn(min = 32.dp).padding(horizontal = 16.dp),
+            Modifier.fillMaxWidth()
+                .heightIn(min = 36.dp)
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 4.dp),
             Arrangement.SpaceBetween,
             Alignment.CenterVertically,
         ) {

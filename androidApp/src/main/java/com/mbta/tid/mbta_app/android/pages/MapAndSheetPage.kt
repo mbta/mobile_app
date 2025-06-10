@@ -68,6 +68,7 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
+import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
@@ -349,7 +350,10 @@ fun MapAndSheetPage(
 
     LaunchedEffect(sheetNavEntrypoint) { navigateToEntrypoint() }
     LaunchedEffect(currentNavEntry) {
-        if (SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)) {
+        if (
+            !SheetRoutes.retainSheetSize(previousNavEntry, currentNavEntry) &&
+                SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)
+        ) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
     }
@@ -466,7 +470,13 @@ fun MapAndSheetPage(
                 RoutePickerView(
                     navRoute.path,
                     navRoute.context,
-                    onOpenPickerPath = { _, _ -> TODO("Picker path navigation") },
+                    onOpenPickerPath = { newPath, context ->
+                        val currentPickerRoute =
+                            navController.currentRouteAs<SheetRoutes.RoutePicker>()
+                        if (currentPickerRoute == null || currentPickerRoute.path != newPath) {
+                            navController.navigate(SheetRoutes.RoutePicker(newPath, context))
+                        }
+                    },
                     onOpenRouteDetails = ::handlePickRouteNavigation,
                     onClose = { navController.popBackStackFrom<SheetRoutes.RoutePicker>() },
                     errorBannerViewModel = errorBannerViewModel,
