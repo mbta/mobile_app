@@ -79,7 +79,7 @@ class SearchViewModelTest {
                 VisitHistoryUsecase(visitHistoryRepo),
             )
 
-        searchVM.modelsForUnitTests(TestFrameClock()).test(timeout = 10.seconds) {
+        searchVM.modelsForUnitTests(TestFrameClock()).test {
             assertEquals(SearchViewModel.State.Loading, awaitItem())
             searchVM.setQuery("")
             assertEquals(
