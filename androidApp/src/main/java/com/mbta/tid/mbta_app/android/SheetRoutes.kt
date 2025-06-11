@@ -8,6 +8,8 @@ import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import kotlin.reflect.typeOf
 import kotlinx.serialization.Serializable
 
@@ -27,7 +29,12 @@ sealed class SheetRoutes {
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
 
-    @Serializable data class RouteDetails(val routeId: String) : SheetRoutes()
+    @Serializable
+    data class RoutePicker(val path: RoutePickerPath, val context: RouteDetailsContext) :
+        SheetRoutes()
+
+    @Serializable
+    data class RouteDetails(val routeId: String, val context: RouteDetailsContext) : SheetRoutes()
 
     val showSearchBar: Boolean
         get() =
@@ -46,6 +53,8 @@ sealed class SheetRoutes {
 
         val typeMap =
             mapOf(
+                typeOf<RouteDetailsContext>() to RouteDetailsContextParameterType,
+                typeOf<RoutePickerPath>() to RoutePickerPathParameterType,
                 typeOf<StopDetailsFilter?>() to StopFilterParameterType,
                 typeOf<TripDetailsFilter?>() to TripFilterParameterType,
             )
@@ -67,6 +76,8 @@ sealed class SheetRoutes {
                 backStackEntry.toRoute<StopDetails>()
             } else if (backStackEntry.destination.route?.contains("RouteDetails") == true) {
                 backStackEntry.toRoute<RouteDetails>()
+            } else if (backStackEntry.destination.route?.contains("RoutePicker") == true) {
+                backStackEntry.toRoute<RoutePicker>()
             } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
                 backStackEntry.toRoute<Favorites>()
             } else {
@@ -78,6 +89,35 @@ sealed class SheetRoutes {
 
 // Defining types for type-safe navigation with custom objects
 // https://medium.com/@kosta.artur/sending-complex-type-safe-objects-in-compose-navigator-bd161e6adc09
+val RouteDetailsContextParameterType =
+    object : NavType<RouteDetailsContext>(isNullableAllowed = false) {
+        override fun get(bundle: Bundle, key: String): RouteDetailsContext =
+            bundle.getString(key)?.let { parseValue(it) } ?: RouteDetailsContext.Details
+
+        override fun put(bundle: Bundle, key: String, value: RouteDetailsContext) {
+            bundle.putString(key, serializeAsValue(value))
+        }
+
+        override fun parseValue(value: String): RouteDetailsContext = json.decodeFromString(value)
+
+        override fun serializeAsValue(value: RouteDetailsContext): String =
+            json.encodeToString(value)
+    }
+
+val RoutePickerPathParameterType =
+    object : NavType<RoutePickerPath>(isNullableAllowed = false) {
+        override fun get(bundle: Bundle, key: String): RoutePickerPath =
+            bundle.getString(key)?.let { parseValue(it) } ?: RoutePickerPath.Root
+
+        override fun put(bundle: Bundle, key: String, value: RoutePickerPath) {
+            bundle.putString(key, serializeAsValue(value))
+        }
+
+        override fun parseValue(value: String): RoutePickerPath = json.decodeFromString(value)
+
+        override fun serializeAsValue(value: RoutePickerPath): String = json.encodeToString(value)
+    }
+
 val StopFilterParameterType =
     object : NavType<StopDetailsFilter?>(isNullableAllowed = true) {
         override fun get(bundle: Bundle, key: String): StopDetailsFilter? =

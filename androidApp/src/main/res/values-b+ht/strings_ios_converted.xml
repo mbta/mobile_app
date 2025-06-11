@@ -52,6 +52,7 @@
     <string name="boarding_track">Monte sou vwa a %1$s</string>
     <string name="bus">bis</string>
     <string name="buses">bis yo</string>
+    <string name="cancel">Anile</string>
     <string name="cancellation">Anilasyon</string>
     <string name="cancelled">Anile</string>
     <string name="close_button_label">Fèmen</string>
@@ -261,6 +262,7 @@
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Ajoute arè ou pi renmen yo</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Wout</string>
     <string name="schedule_change">Chanjman Orè</string>
@@ -332,6 +334,7 @@
     </plurals>
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
+    <string name="subway">Metro</string>
     <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_issue">Pwoblèm nan switch ray</string>

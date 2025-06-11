@@ -1,7 +1,17 @@
-package com.mbta.tid.mbta_app.model
+package com.mbta.tid.mbta_app.model.response
 
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.GlobalMapData
+import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.model.silverRoutes
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -441,5 +451,74 @@ class GlobalResponseTest {
         val otherRoute = objects.route()
 
         assertEquals(mapOf(line.id to listOf(route)), GlobalResponse(objects).routesByLineId)
+    }
+
+    @Test
+    fun `getRoutesForPicker returns subway for Root path`() {
+        val objects = TestData.clone()
+        val global = GlobalResponse(objects)
+
+        // Test data does not include mattapan trolley or blue line
+        assertEquals(
+            listOf(
+                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                RouteCardData.LineOrRoute.Route(objects.getRoute("Orange")),
+                RouteCardData.LineOrRoute.Line(
+                    objects.getLine("line-Green"),
+                    setOf(
+                        objects.getRoute("Green-B"),
+                        objects.getRoute("Green-C"),
+                        objects.getRoute("Green-D"),
+                        objects.getRoute("Green-E"),
+                    ),
+                ),
+            ),
+            global.getRoutesForPicker(RoutePickerPath.Root),
+        )
+    }
+
+    @Test
+    fun `getRoutesForPicker returns bus routes`() {
+        val objects = TestData.clone()
+        val global = GlobalResponse(objects)
+
+        val busRoutes = global.getRoutesForPicker(RoutePickerPath.Bus)
+        val silverEnd =
+            busRoutes.takeLast(busRoutes.size - busRoutes.indexOfFirst { it.id in silverRoutes })
+
+        assertTrue(busRoutes.all { it.type == RouteType.BUS })
+        assertTrue(silverEnd.isNotEmpty() && silverEnd.size != busRoutes.size)
+        assertTrue(silverEnd.all { it.id in silverRoutes })
+    }
+
+    @Test
+    fun `getRoutesForPicker returns silver line routes`() {
+        val objects = TestData.clone()
+        val global = GlobalResponse(objects)
+
+        val slRoutes = global.getRoutesForPicker(RoutePickerPath.Silver)
+        assertTrue(slRoutes.isNotEmpty())
+        assertTrue(slRoutes.all { it.id in silverRoutes })
+    }
+
+    @Test
+    fun `getRoutesForPicker returns commuter routes`() {
+        val objects = TestData.clone()
+        val global = GlobalResponse(objects)
+
+        val crRoutes = global.getRoutesForPicker(RoutePickerPath.CommuterRail)
+        assertTrue(crRoutes.isNotEmpty())
+        assertTrue(crRoutes.all { it.type == RouteType.COMMUTER_RAIL })
+    }
+
+    @Test
+    fun `getRoutesForPicker returns ferry routes`() {
+        val objects = TestData.clone()
+        objects.route { type = RouteType.FERRY }
+        val global = GlobalResponse(objects)
+
+        val ferryRoutes = global.getRoutesForPicker(RoutePickerPath.Ferry)
+        assertTrue(ferryRoutes.isNotEmpty())
+        assertTrue(ferryRoutes.all { it.type == RouteType.FERRY })
     }
 }

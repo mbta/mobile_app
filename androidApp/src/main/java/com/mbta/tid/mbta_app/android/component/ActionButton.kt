@@ -26,6 +26,7 @@ enum class ActionButtonKind(
 ) {
     Back(14.dp, R.string.back_button_label, R.drawable.fa_chevron_left),
     Close(10.dp, R.string.close_button_label, R.drawable.fa_xmark),
+    Plus(24.dp, R.string.add_stops, R.drawable.plus),
 }
 
 @Composable
@@ -59,4 +60,10 @@ private fun BackButtonPreview() {
 @Composable
 private fun CloseButtonPreview() {
     ActionButton(kind = ActionButtonKind.Close) { println("Pressed") }
+}
+
+@Preview(name = "Plus Button")
+@Composable
+private fun PlusButtonPreview() {
+    ActionButton(kind = ActionButtonKind.Plus) { println("Pressed") }
 }
