@@ -88,10 +88,7 @@ fun FavoritesView(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = 32.dp)
-                .padding(horizontal = 16.dp),
+            Modifier.fillMaxWidth().heightIn(min = 32.dp).padding(horizontal = 16.dp),
             Arrangement.SpaceBetween,
             Alignment.CenterVertically,
         ) {
@@ -107,8 +104,7 @@ fun FavoritesView(
                     Text(
                         text = stringResource(R.string.edit),
                         modifier =
-                            Modifier
-                                .background(
+                            Modifier.background(
                                     colorResource(R.color.text).copy(alpha = 0.6f),
                                     RoundedCornerShape(percent = 100),
                                 )
