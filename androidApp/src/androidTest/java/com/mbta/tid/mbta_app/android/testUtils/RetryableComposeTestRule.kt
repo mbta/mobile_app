@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.retryable
+package com.mbta.tid.mbta_app.android.testUtils
 
 import android.util.Log
 import androidx.compose.runtime.Composable
