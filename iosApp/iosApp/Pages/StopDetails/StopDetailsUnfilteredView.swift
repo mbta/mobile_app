@@ -144,8 +144,16 @@ struct StopDetailsUnfilteredView: View {
                                         cardData: routeCardData,
                                         global: global,
                                         now: now,
-                                        onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } },
-                                        pinned: stopDetailsVM.pinnedRoutes.contains(routeCardData.lineOrRoute.id),
+                                        onPin: { routeId in Task {
+                                            await stopDetailsVM.updateFavorites(
+                                                .Pinned(routeId: routeId),
+                                                enhancedFavorites: false
+                                            )
+                                        } },
+                                        pinned: stopDetailsVM.isFavorite(
+                                            .Pinned(routeId: routeCardData.lineOrRoute.id),
+                                            enhancedFavorites: false
+                                        ),
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
