@@ -5,7 +5,6 @@ import androidx.compose.runtime.MonotonicFrameClock
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -42,8 +41,8 @@ abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel() {
             scope.launchMolecule(mode = RecompositionMode.ContextClock) { runLogic(events) }
         }
 
-    internal fun modelsForUnitTests(clock: MonotonicFrameClock) =
-        CoroutineScope(Dispatchers.Default + SupervisorJob() + clock).launchMolecule(
+    internal fun modelsForUnitTests(scope: CoroutineScope, clock: MonotonicFrameClock) =
+        CoroutineScope(scope.coroutineContext + SupervisorJob() + clock).launchMolecule(
             RecompositionMode.ContextClock
         ) {
             runLogic(events)

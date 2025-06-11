@@ -29,11 +29,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.timeout
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class SearchViewModelTest {
     @Test
-    fun testSearchResults() = runBlocking {
+    fun testSearchResults() = runTest {
         val objects = ObjectCollectionBuilder()
         val visitedStop = objects.stop { name = "visitedStopName" }
         val searchedStop = objects.stop { name = "stopName" }
@@ -79,7 +79,7 @@ class SearchViewModelTest {
                 VisitHistoryUsecase(visitHistoryRepo),
             )
 
-        searchVM.modelsForUnitTests(TestFrameClock()).test {
+        testViewModelFlow(searchVM).test {
             assertEquals(SearchViewModel.State.Loading, awaitItem())
             searchVM.setQuery("")
             assertEquals(
@@ -116,7 +116,7 @@ class SearchViewModelTest {
 
     @OptIn(FlowPreview::class)
     @Test
-    fun testRoutePills() = runBlocking {
+    fun testRoutePills() = runTest {
         val objects = TestData.clone()
         val station =
             objects.stop {
@@ -184,8 +184,7 @@ class SearchViewModelTest {
             )
 
         val state =
-            viewModel
-                .modelsForUnitTests(TestFrameClock())
+            testViewModelFlow(viewModel)
                 .timeout(10.seconds)
                 .filterIsInstance<SearchViewModel.State.RecentStops>()
                 .first()
