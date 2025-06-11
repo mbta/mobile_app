@@ -68,7 +68,6 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
-import com.mbta.tid.mbta_app.android.util.fromCurrentRoute
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
@@ -467,14 +466,7 @@ fun MapAndSheetPage(
                 RoutePickerView(
                     navRoute.path,
                     navRoute.context,
-                    onOpenPickerPath = { newPath, context ->
-                        navController
-                            .fromCurrentRoute {
-                                if (it is SheetRoutes.RoutePicker && it.path == newPath) null
-                                else SheetRoutes.RoutePicker(newPath, context)
-                            }
-                            ?.let { navController.navigate(it) }
-                    },
+                    onOpenPickerPath = { _, _ -> TODO("Picker path navigation") },
                     onOpenRouteDetails = ::handlePickRouteNavigation,
                     onClose = { navController.popBackStackFrom<SheetRoutes.RoutePicker>() },
                     errorBannerViewModel = errorBannerViewModel,

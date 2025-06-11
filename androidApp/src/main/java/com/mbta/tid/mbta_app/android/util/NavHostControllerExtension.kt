@@ -4,24 +4,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.mbta.tid.mbta_app.android.SheetRoutes
 
+/** The current stack entry as a SheetRoute, null if none exists */
+val NavHostController.currentRoute: SheetRoutes?
+    get() = this.currentBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
+
 /** If the current nav entry is StopDetails, this is the selected stop ID, otherwise null */
 val NavHostController.selectedStopId: String?
-    get() = this.currentRoute<SheetRoutes.StopDetails>()?.stopId
+    get() = this.currentRouteAs<SheetRoutes.StopDetails>()?.stopId
 
 /** Return the current stack entry as the provided type if they match, otherwise return null */
-inline fun <reified T : SheetRoutes> NavHostController.currentRoute(): T? =
-    this.currentBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) as? T }
+inline fun <reified T : SheetRoutes> NavHostController.currentRouteAs(): T? =
+    this.currentRoute?.let { it as? T }
 
 /** Return true if the current nav entry matches the provided type */
 inline fun <reified T : SheetRoutes> NavHostController.currentRouteMatches(): Boolean =
-    this.fromCurrentRoute { it?.let { it::class == T::class } } == true
-
-/**
- * Convert the current nav stack entry into a SheetRoute, then run the provided lambda on it and
- * return the result.
- */
-fun <T> NavHostController.fromCurrentRoute(take: (SheetRoutes?) -> T): T =
-    this.currentBackStackEntry?.let { take(SheetRoutes.fromNavBackStackEntry(it)) } ?: take(null)
+    this.currentRoute?.let { it::class == T::class } == true
 
 /** Prevent quick double taps during animation to the new route from retriggering navigation */
 inline fun <reified T : SheetRoutes> NavHostController.navigateFrom(
