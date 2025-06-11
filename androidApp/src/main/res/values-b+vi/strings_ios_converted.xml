@@ -45,6 +45,7 @@
     <string name="bike_issue_sentence_case">Vấn đề về xe đạp</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Lên tàu theo đường ray %1$s</string>
+    <string name="bus">Xe buýt</string>
     <string name="bus_lowercase">xe buýt</string>
     <string name="buses">xe buýt</string>
     <string name="cancel">Hủy bỏ</string>

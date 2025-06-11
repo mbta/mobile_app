@@ -47,6 +47,7 @@
     <string name="bike_issue_sentence_case">Problema com bicicleta</string>
     <string name="boarding_abbr">TRA</string>
     <string name="boarding_track">Embarque na plataforma %1$s</string>
+    <string name="bus">Ônibus</string>
     <string name="bus_lowercase">ônibus</string>
     <string name="buses">ônibus</string>
     <string name="cancel">Cancelar</string>

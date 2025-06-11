@@ -45,6 +45,7 @@
     <string name="bike_issue_sentence_case">自行车问题</string>
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在轨道%1$s登车</string>
+    <string name="bus">巴士</string>
     <string name="bus_lowercase">巴士</string>
     <string name="buses">巴士</string>
     <string name="cancel">取消</string>
