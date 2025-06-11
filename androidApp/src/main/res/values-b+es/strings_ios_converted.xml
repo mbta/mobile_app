@@ -128,6 +128,7 @@
     <string name="feature_flag_route_search">Buscador de rutas</string>
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
     <string name="ferries">ferris</string>
+    <string name="ferry">Ferry</string>
     <string name="ferry_lowercase">ferry</string>
     <string name="filterShowAll">Todos</string>
     <string name="finishing_another_trip">Terminando otro viaje</string>

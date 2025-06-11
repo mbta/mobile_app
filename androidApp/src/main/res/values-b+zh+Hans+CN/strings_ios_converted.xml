@@ -122,6 +122,7 @@
     <string name="feature_flag_route_search">线路搜索</string>
     <string name="feedback_link_form">发送应用程序反馈</string>
     <string name="ferries">轮渡</string>
+    <string name="ferry">轮渡</string>
     <string name="ferry_lowercase">轮渡</string>
     <string name="filterShowAll">全部</string>
     <string name="finishing_another_trip">完成其他行程</string>

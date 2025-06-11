@@ -122,6 +122,7 @@
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi phản hồi về ứng dụng</string>
     <string name="ferries">phà</string>
+    <string name="ferry">Phà</string>
     <string name="ferry_lowercase">phà</string>
     <string name="filterShowAll">Tất cả</string>
     <string name="finishing_another_trip">Kết thúc thêm một chuyến đi</string>
