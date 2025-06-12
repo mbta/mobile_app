@@ -18,7 +18,7 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testPending() throws {
-        let sut = SearchResultsView(state: .loading, handleStopTap: { _ in })
+        let sut = SearchResultsView(state: .loading, handleStopTap: { _ in }).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResults.self))
     }
 
@@ -79,7 +79,7 @@ final class SearchResultViewTests: XCTestCase {
             )
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         // On init, only the search field should be displayed
         XCTAssertNotNil(try sut.inspect().find(SearchField.self))
@@ -111,13 +111,14 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testNoResults() throws {
-        let sut = SearchResultsView(state: .empty, handleStopTap: { _ in })
+        let sut = SearchResultsView(state: .results(stops: [], routes: []), handleStopTap: { _ in })
+            .withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "No results found 🤔"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try a different spelling or name."))
     }
 
     @MainActor func testError() throws {
-        let sut = SearchResultsView(state: .error, handleStopTap: { _ in })
+        let sut = SearchResultsView(state: .error, handleStopTap: { _ in }).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Results failed to load ☹️"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try your search again."))
     }
@@ -135,7 +136,7 @@ final class SearchResultViewTests: XCTestCase {
                 ]
             ),
             handleStopTap: { _ in }
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Recently Viewed"))
@@ -160,11 +161,12 @@ final class SearchResultViewTests: XCTestCase {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: true
+                ]
             ),
             handleStopTap: { _ in }
         )
+
+        ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
@@ -183,11 +185,12 @@ final class SearchResultViewTests: XCTestCase {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: true
+                ]
             ),
             handleStopTap: { _ in }
         )
+
+        ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
@@ -206,8 +209,7 @@ final class SearchResultViewTests: XCTestCase {
                         shortName: "428",
                         routeType: RouteType.bus
                     ),
-                ],
-                includeRoutes: false
+                ]
             ),
             handleStopTap: { _ in }
         )
@@ -228,11 +230,10 @@ final class SearchResultViewTests: XCTestCase {
                         routePills: []
                     ),
                 ],
-                routes: [],
-                includeRoutes: true
+                routes: []
             ),
             handleStopTap: { _ in }
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertThrowsError(try sut.inspect().find(text: "Routes"))
@@ -251,14 +252,13 @@ final class SearchResultViewTests: XCTestCase {
                         routePills: []
                     ),
                 ],
-                routes: [],
-                includeRoutes: true
+                routes: []
             ),
             handleStopTap: { stopId in
                 XCTAssertEqual("place-haecl", stopId)
                 tapStopExpectation.fulfill()
             }
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNoThrow(
             try sut.inspect()

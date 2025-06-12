@@ -13,7 +13,6 @@ import Shared
 
 public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableObject {
     var locationFetcher: LocationFetcher
-    let settingsRepository: ISettingsRepository
     let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus: CLAuthorizationStatus?
@@ -21,14 +20,12 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
 
     init(
         locationFetcher: LocationFetcher = CLLocationManager(),
-        settingsRepository: ISettingsRepository = RepositoryDI().settings,
         subscribeToLocations: Bool = true,
         distanceFilter: Double = kCLDistanceFilterNone,
         analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.locationFetcher = locationFetcher
         self.locationFetcher.distanceFilter = distanceFilter
-        self.settingsRepository = settingsRepository
         self.subscribeToLocations = subscribeToLocations
         self.analytics = analytics
         super.init()

@@ -29,3 +29,16 @@ class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
         dataStore.edit { it[pinnedRoutesKey] = routes }
     }
 }
+
+class MockPinnedRoutesRepository(initialPinnedRoutes: Set<String> = emptySet()) :
+    IPinnedRoutesRepository, KoinComponent {
+    private var pinnedRoutes: Set<String> = initialPinnedRoutes
+
+    override suspend fun getPinnedRoutes(): Set<String> {
+        return pinnedRoutes
+    }
+
+    override suspend fun setPinnedRoutes(routes: Set<String>) {
+        pinnedRoutes = routes
+    }
+}

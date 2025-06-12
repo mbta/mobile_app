@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,8 +24,10 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -71,12 +71,15 @@ fun NearbyTransitView(
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
+
     LaunchedEffect(targetLocation == null) {
         if (targetLocation == null) {
             predictionsVM.reset()
         }
     }
     val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
+    val (favorites) = manageFavorites()
 
     fun togglePinnedRoute(routeId: String) {
         coroutineScope.launch {
@@ -102,6 +105,13 @@ fun NearbyTransitView(
             now,
             pinnedRoutes,
         ) {
+            val pinnedRoutesForSorting =
+                if (enhancedFavorites) {
+                    emptySet()
+                } else {
+                    pinnedRoutes
+                }
+
             nearbyVM.loadRouteCardData(
                 globalResponse,
                 targetLocation,
@@ -109,7 +119,7 @@ fun NearbyTransitView(
                 predictions,
                 alertData,
                 now,
-                pinnedRoutes,
+                pinnedRoutesForSorting,
             )
         }
 
@@ -118,17 +128,20 @@ fun NearbyTransitView(
         RouteCardList(
             routeCardData = routeCardData,
             emptyView = {
-                Column(
-                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    noNearbyStopsView()
-                    Spacer(Modifier.weight(1f))
-                }
+                noNearbyStopsView()
+                Spacer(Modifier.weight(1f))
             },
             global = globalResponse,
             now = now,
-            pinnedRoutes = pinnedRoutes,
+            isFavorite = { favoriteBridge ->
+                if (!enhancedFavorites && favoriteBridge is FavoriteBridge.Pinned) {
+                    (pinnedRoutes ?: emptySet()).contains(favoriteBridge.routeId)
+                } else if (enhancedFavorites && favoriteBridge is FavoriteBridge.Favorite) {
+                    (favorites ?: emptySet()).contains(favoriteBridge.routeStopDirection)
+                } else {
+                    false
+                }
+            },
             togglePinnedRoute = ::togglePinnedRoute,
             showStationAccessibility = showStationAccessibility,
             onOpenStopDetails = onOpenStopDetails,

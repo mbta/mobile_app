@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,28 +30,43 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StopListRow
+import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
+import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import kotlinx.coroutines.launch
+
+sealed class RouteDetailsRowContext {
+    data class Details(val stop: Stop) : RouteDetailsRowContext()
+
+    data class Favorites(val isFavorited: Boolean, val onTapStar: () -> Unit) :
+        RouteDetailsRowContext()
+}
 
 @Composable
 fun RouteStopListView(
     lineOrRoute: RouteCardData.LineOrRoute,
+    context: RouteDetailsContext,
     globalData: GlobalResponse,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
     defaultSelectedRouteId: String? = null,
-    rightSideContent: @Composable RowScope.(RouteDetailsStopList.Entry, Modifier) -> Unit,
+    rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
     val routes = lineOrRoute.allRoutes.sorted()
     val routeIds = routes.map { it.id }
@@ -72,6 +88,50 @@ fun RouteStopListView(
         rememberSuspend(selectedRouteId, routeStops, globalData) {
             RouteDetailsStopList.fromPieces(selectedRouteId, routeStops, globalData)
         }
+    RouteDetailsContext.Details
+
+    val managedFavorites = manageFavorites()
+    val favorites = managedFavorites.favoriteRoutes
+    val updateFavorites = managedFavorites.updateFavorites
+
+    fun isFavorite(routeStopDirection: RouteStopDirection): Boolean =
+        favorites?.contains(routeStopDirection) ?: false
+
+    val coroutineScope = rememberCoroutineScope()
+    fun confirmFavorites(updatedValues: Map<RouteStopDirection, Boolean>) {
+        coroutineScope.launch { updateFavorites(updatedValues) }
+    }
+
+    var showFavoritesStopConfirmation by rememberSaveable { mutableStateOf<Stop?>(null) }
+
+    fun stopRowContext(stop: Stop) =
+        when (context) {
+            is RouteDetailsContext.Details -> RouteDetailsRowContext.Details(stop)
+            is RouteDetailsContext.Favorites ->
+                RouteDetailsRowContext.Favorites(
+                    isFavorited =
+                        isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)),
+                    onTapStar = { showFavoritesStopConfirmation = stop },
+                )
+        }
+
+    showFavoritesStopConfirmation?.let { stop ->
+        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            FavoriteConfirmationDialog(
+                lineOrRoute,
+                stop,
+                parameters.directions.filter { it.id in parameters.availableDirections },
+                proposedFavorites =
+                    parameters.availableDirections.associateWith {
+                        it == selectedDirection ||
+                            isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it))
+                    },
+                updateFavorites = ::confirmFavorites,
+            ) {
+                showFavoritesStopConfirmation = null
+            }
+        }
+    }
 
     Column {
         SheetHeader(onClose = onClose, title = lineOrRoute.name)
@@ -114,17 +174,41 @@ fun RouteStopListView(
             )
             Column {
                 if (stopList != null) {
-                    for ((index, stop) in stopList.stops.withIndex()) {
-                        StopListRow(
-                            stop.stop,
-                            onClick = { onClick(stop) },
-                            routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
-                            modifier = Modifier.minimumInteractiveComponentSize(),
-                            connectingRoutes = stop.connectingRoutes,
-                            firstStop = index == 0,
-                            lastStop = index == stopList.stops.lastIndex,
-                            rightSideContent = { modifier -> rightSideContent(stop, modifier) },
-                        )
+                    stopList.segments.forEachIndexed { segmentIndex, segment ->
+                        if (segment.isTypical) {
+                            segment.stops.forEachIndexed { stopIndex, stop ->
+                                val stopPlacement =
+                                    StopPlacement(
+                                        isFirst = segmentIndex == 0 && stopIndex == 0,
+                                        isLast =
+                                            segmentIndex == stopList.segments.lastIndex &&
+                                                stopIndex == segment.stops.lastIndex,
+                                        includeLineDiagram = segment.hasRouteLine,
+                                    )
+
+                                StopListRow(
+                                    stop.stop,
+                                    onClick = { onClick(stop) },
+                                    routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+                                    modifier = Modifier.minimumInteractiveComponentSize(),
+                                    connectingRoutes = stop.connectingRoutes,
+                                    stopPlacement = stopPlacement,
+                                    rightSideContent = { modifier ->
+                                        rightSideContent(stopRowContext(stop.stop), modifier)
+                                    },
+                                )
+                            }
+                        } else {
+                            CollapsableStopList(
+                                lineOrRoute,
+                                segment,
+                                onClick,
+                                segmentIndex == 0,
+                                segmentIndex == stopList.segments.lastIndex,
+                            ) { stop, modifier ->
+                                rightSideContent(stopRowContext(stop.stop), modifier)
+                            }
+                        }
                     }
                 } else {
                     CircularProgressIndicator()

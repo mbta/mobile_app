@@ -34,9 +34,8 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: true,
-            showStationAccessibility: false
-        )
+            showStopHeader: true
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "66"))
         XCTAssertNotNil(try? sut.inspect().find(ViewType.Image.self) { image in
@@ -67,9 +66,8 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: true,
-            showStationAccessibility: false
-        )
+            showStopHeader: true
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Green Line"))
         XCTAssertNotNil(try? sut.inspect().find(ViewType.Image.self) { image in
@@ -102,9 +100,8 @@ final class RouteCardTests: XCTestCase {
             onPin: onPin,
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: true,
-            showStationAccessibility: false
-        )
+            showStopHeader: true
+        ).withFixedSettings([:])
 
         let button =
             try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton").button()
@@ -140,9 +137,8 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: true,
-            showStationAccessibility: false
-        )
+            showStopHeader: true
+        ).withFixedSettings([:])
         XCTAssertNotNil(try nearbySut.inspect().find(text: stop.name))
 
         let stopDetailsSut = RouteCard(
@@ -161,9 +157,8 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: false,
-            showStationAccessibility: false
-        )
+            showStopHeader: false
+        ).withFixedSettings([:])
         XCTAssertThrowsError(try stopDetailsSut.inspect().find(text: stop.name))
     }
 
@@ -201,9 +196,8 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: true,
-            showStationAccessibility: false
-        )
+            showStopHeader: true
+        ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
         XCTAssertNotNil(try sut.inspect().find(text: "Inbound to"))
     }
@@ -217,9 +211,8 @@ final class RouteCardTests: XCTestCase {
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
-            showStopHeader: true,
-            showStationAccessibility: false
-        )
+            showStopHeader: true
+        ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(RouteCardDepartures.self))
         let westDirection = try sut.inspect().find(text: "Westbound to")
             .find(RouteCardDirection.self, relation: .parent)

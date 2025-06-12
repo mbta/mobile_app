@@ -60,7 +60,7 @@ final class StopDetailsViewTests: XCTestCase {
             )
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
         XCTAssertEqual(2, routePills.count)
         XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
@@ -97,7 +97,7 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
         XCTAssertNil(try? sut.inspect().find(button: "All"))
     }
@@ -147,7 +147,7 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         XCTAssertNil(try? sut.inspect().find(AlertCard.self))
         XCTAssertNil(try? sut.inspect().find(text: alert.header!))
     }
@@ -209,11 +209,11 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
     }
 
-    func testCloseButtonCloses() throws {
+    @MainActor func testCloseButtonCloses() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
@@ -236,8 +236,8 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut)
-        try? sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
         XCTAssertEqual([oldEntry], nearbyVM.navigationStack)
     }
 
@@ -248,8 +248,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            showDebugMessages: false
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         let sut = StopDetailsView(
             stopId: stop.id,
@@ -265,7 +264,7 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         XCTAssertThrowsError(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
     }
 
@@ -276,8 +275,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
-            showDebugMessages: true
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         let sut = StopDetailsView(
             stopId: stop.id,
@@ -293,7 +291,7 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true]))
         try sut.inspect().findAll(ViewType.Text.self).forEach { view in try print(view.string()) }
         XCTAssertNotNil(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
     }

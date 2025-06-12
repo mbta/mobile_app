@@ -176,7 +176,7 @@ class AlertsUsecaseTest {
         val facility2 =
             objects.facility {
                 id = facility1.id
-                short_name = "New name"
+                shortName = "New name"
                 type = Facility.Type.Elevator
             }
         mockGlobalRepository.updateGlobalData(GlobalResponse(objects))

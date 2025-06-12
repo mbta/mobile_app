@@ -35,8 +35,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack()
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
@@ -55,12 +54,11 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack()
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+            .callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 
@@ -82,8 +80,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+            .callOnChange(newValue: ScenePhase.active)
         wait(for: [joinAlertsExp], timeout: 5)
     }
 
@@ -101,7 +99,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().vStack()
+        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [leavesAlertsExp], timeout: 5)
     }
@@ -131,8 +129,7 @@ final class ContentViewTests: XCTestCase {
 
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
-            .vStack()
+        try sut.inspect().implicitAnyView().find(ContentView.self).find(ViewType.GeometryReader.self)
             .callOnChange(newValue: newConfig)
         wait(for: [tokenConfigExpectation], timeout: 5)
     }
@@ -157,8 +154,8 @@ final class ContentViewTests: XCTestCase {
 
     @MainActor func testHidesMap() throws {
         let contentVM = FakeContentVM()
-        contentVM.hideMaps = true
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM), settings: [.hideMaps: true])
 
         XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
     }
@@ -166,7 +163,6 @@ final class ContentViewTests: XCTestCase {
     @MainActor func testHiddenMapUpdatesLocation() throws {
         let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
         let contentVM = FakeContentVM()
-        contentVM.hideMaps = true
 
         let locationFetcher = MockLocationFetcher()
         locationFetcher.authorizationStatus = .authorizedAlways
@@ -176,7 +172,8 @@ final class ContentViewTests: XCTestCase {
 
         let sutWithEnv = withDefaultEnvironmentObjects(
             sut: ContentView(contentVM: contentVM),
-            locationDataManager: locationDataManager
+            locationDataManager: locationDataManager,
+            settings: [.hideMaps: true]
         )
         let sut = try sutWithEnv.inspect().implicitAnyView().view(ContentView.self).actualView()
 
@@ -274,11 +271,13 @@ final class ContentViewTests: XCTestCase {
         sut: some View,
         locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher()),
         socketProvider: SocketProvider = SocketProvider(socket: FakeSocket()),
-        viewportProvider: ViewportProvider = .init()
+        viewportProvider: ViewportProvider = .init(),
+        settings: [Settings: Bool] = [:]
     ) -> some View {
         sut
             .environmentObject(locationDataManager)
             .environmentObject(socketProvider)
             .environmentObject(viewportProvider)
+            .withFixedSettings(settings)
     }
 }

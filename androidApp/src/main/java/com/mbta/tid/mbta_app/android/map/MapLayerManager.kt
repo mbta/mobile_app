@@ -50,14 +50,21 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
 
     suspend fun addLayers(
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
     ) {
-        addLayers(mapFriendlyRouteResponse.routesWithSegmentedShapes, globalResponse, colorPalette)
+        addLayers(
+            mapFriendlyRouteResponse.routesWithSegmentedShapes,
+            state,
+            globalResponse,
+            colorPalette,
+        )
     }
 
     suspend fun addLayers(
         routes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
     ) {
@@ -65,7 +72,8 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
             RouteLayerGenerator.createAllRouteLayers(routes, globalResponse, colorPalette).map {
                 it.toMapbox()
             }
-        val stopLayers = StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
+        val stopLayers =
+            StopLayerGenerator.createStopLayers(colorPalette, state).map { it.toMapbox() }
         setLayers(routeLayers, stopLayers)
     }
 
@@ -83,16 +91,14 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
             for (layer in routeLayers) {
                 oldLayers.remove(layer.layerId)
                 if (map.styleLayerExists(checkNotNull(layer.layerId))) {
-                    // Skip attempting to add layer if it already exists
-                    continue
+                    map.removeStyleLayer(layer.layerId)
                 }
                 map.addLayerBelow(layer, below = bufferLayerId)
             }
             for (layer in stopLayers) {
                 oldLayers.remove(layer.layerId)
                 if (map.styleLayerExists(checkNotNull(layer.layerId))) {
-                    // Skip attempting to add layer if it already exists
-                    continue
+                    map.removeStyleLayer(layer.layerId)
                 }
                 if (map.styleLayerExists("puck")) {
                     map.addLayerBelow(layer, below = "puck")

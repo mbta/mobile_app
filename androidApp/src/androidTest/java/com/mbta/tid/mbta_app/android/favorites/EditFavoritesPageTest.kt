@@ -1,30 +1,31 @@
-package com.mbta.tid.mbta_app.android.nearbyTransit
+package com.mbta.tid.mbta_app.android.favorites
 
-import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
-import io.github.dellisd.spatialk.geojson.Position
+import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
-class MapAndSheetViewTest : KoinTest {
+class EditFavoritesPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
@@ -153,73 +154,78 @@ class MapAndSheetViewTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    val koinApplication =
-        testKoinApplication(
-            builder,
-            repositoryOverrides = {
-                nearby =
-                    MockNearbyRepository(
-                        stopIds = listOf(sampleStop.id, greenLineStop.id),
-                        response = NearbyResponse(builder),
-                    )
-            },
-        )
+    val koinApplication = testKoinApplication(builder)
 
     @get:Rule val composeTestRule = createComposeRule()
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testNearbyTransitViewDisplaysCorrectly() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+    fun testFavoritesDisplayCorrectly(): Unit = runBlocking {
+        val favorites = setOf(RouteStopDirection("route_1", "stop_1", 0))
+        val repository = MockFavoritesRepository(Favorites(favorites))
+        val usecase = FavoritesUsecases(repository)
+        val viewModel = FavoritesViewModel(usecase)
+        viewModel.favorites = favorites
+
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setSelectingLocation = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
         composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Downtown").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Head Sign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        // Shouldn't be shown because it is not a favorite
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Green Line Stop").assertIsNotDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testNearbyTransitViewNoNearbyStops() {
-        val emptyNearbyKoinApplication = testKoinApplication()
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+    fun testShowsEmptyView() {
+        val repository = MockFavoritesRepository(Favorites(emptySet()))
+        val usecase = FavoritesUsecases(repository)
+        val viewModel = FavoritesViewModel(usecase)
+
         composeTestRule.setContent {
-            KoinContext(emptyNearbyKoinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setSelectingLocation = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = { Text("This would be the no nearby stops view") },
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("This would be the no nearby stops view"))
-        composeTestRule.onNodeWithText("This would be the no nearby stops view").assertIsDisplayed()
+        composeTestRule.waitUntilExactlyOneExists(hasText("No stops added"))
+        composeTestRule.onNodeWithText("No stops added").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testDeleteFavorite(): Unit = runBlocking {
+        val favorites =
+            setOf(
+                RouteStopDirection("route_1", "stop_1", 0),
+                RouteStopDirection("line-Green", "stop_2", 0),
+            )
+        val repository = MockFavoritesRepository(Favorites(favorites))
+        val usecase = FavoritesUsecases(repository)
+        val viewModel = FavoritesViewModel(usecase)
+        viewModel.favorites = favorites
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
+        }
+
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Downtown").assertIsDisplayed().performClick()
+
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
+
+        // Should be deleted
+        composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Downtown").assertIsNotDisplayed()
+
+        // Should remain
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
     }
 }

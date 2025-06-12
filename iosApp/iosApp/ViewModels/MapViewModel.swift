@@ -14,7 +14,7 @@ import Shared
 class MapViewModel: ObservableObject {
     @Published var selectedVehicle: Vehicle?
     @Published var routeSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
-    @Published var stopSourceData: StopSourceData = .init()
+    @Published var stopLayerState: StopLayerGenerator.State = .init()
     @Published var stopMapData: StopMapResponse?
     @Published var allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
     @Published var globalData: GlobalResponse?
@@ -82,7 +82,6 @@ class MapViewModel: ObservableObject {
 
     private func getStopFeatures(globalMapData: GlobalMapData) async throws -> MapboxMaps.FeatureCollection {
         try await StopFeaturesBuilder.shared.buildCollection(
-            stopData: stopSourceData,
             globalMapData: globalMapData,
             routeSourceDetails: snappedStopRouteSources
         ).toMapbox()

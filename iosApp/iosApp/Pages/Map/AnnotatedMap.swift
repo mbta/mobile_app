@@ -23,8 +23,7 @@ struct AnnotatedMap: View {
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
-    var settingsRepository: ISettingsRepository = RepositoryDI().settings
-    @State var devDebugMode = false
+    @EnvironmentObject var settingsCache: SettingsCache
 
     @ObservedObject var viewportProvider: ViewportProvider
     @Environment(\.colorScheme) var colorScheme
@@ -45,13 +44,13 @@ struct AnnotatedMap: View {
                 panDecelerationFactor: 0.99
             ))
             .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
-            .debugOptions(devDebugMode ? .camera : [])
+            .debugOptions(settingsCache.get(.devDebugMode) ? .camera : [])
             .cameraBounds(.init(maxZoom: 18, minZoom: 6))
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(
                 scaleBar: .init(visibility: .hidden),
                 compass: .init(visibility: .hidden),
-                attributionButton: .init(margins: .init(x: 0, y: 8))
+                attributionButton: .init(margins: .init(x: -3, y: 6))
             ))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
             .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
@@ -65,7 +64,7 @@ struct AnnotatedMap: View {
                     handleStyleLoaded()
                 }
             }
-            .additionalSafeAreaInsets(.bottom, sheetHeight + 8)
+            .additionalSafeAreaInsets(.bottom, sheetHeight)
             .additionalSafeAreaInsets(.top, 20)
             .ignoresSafeArea(.all)
             .accessibilityIdentifier("transitMap")
@@ -73,13 +72,6 @@ struct AnnotatedMap: View {
                 zoomLevel = newCameraState.zoom
             }
             .withScenePhaseHandlers(onActive: onActive)
-            .task {
-                do {
-                    devDebugMode = try await settingsRepository.getSettings()[.devDebugMode]?.boolValue ?? false
-                } catch {
-                    debugPrint("Failed to load map debug", error)
-                }
-            }
     }
 
     func onActive() {

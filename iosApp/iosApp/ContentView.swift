@@ -18,13 +18,19 @@ struct ContentView: View {
 
     @ObservedObject var contentVM: ContentViewModel
 
-    @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
+    @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
+    @State private var sheetHeight: CGFloat =
+        (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var hideMaps: Bool { settingsCache.get(.hideMaps) }
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -42,18 +48,20 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            contents
+        GeometryReader { proxy in
+            VStack {
+                contents
+            }
+            .onAppear { contentHeight = proxy.size.height }
+            .onChange(of: proxy.size.height) { contentHeight = $0 }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
             Task { await contentVM.loadFeaturePromos() }
             Task { await contentVM.loadOnboardingScreens() }
-            Task { await contentVM.loadSettings() }
-            Task { await nearbyVM.loadSettings() }
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
-            analytics.recordSession(hideMaps: contentVM.hideMaps)
+            analytics.recordSession(hideMaps: hideMaps)
             updateTabBarVisibility(selectedTab)
 
             if let screen = nearbyVM.navigationStack.lastSafe().analyticsScreen {
@@ -68,8 +76,6 @@ struct ContentView: View {
             } catch {}
         }
         .onChange(of: selectedTab) { nextTab in
-            Task { await nearbyVM.loadSettings() }
-            Task { await contentVM.loadSettings() }
             nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
             updateTabBarVisibility(nextTab)
         }
@@ -96,8 +102,8 @@ struct ContentView: View {
         .onChange(of: voiceOver) { _ in
             analytics.recordSession(voiceOver: voiceOver)
         }
-        .onChange(of: contentVM.hideMaps) { _ in
-            analytics.recordSession(hideMaps: contentVM.hideMaps)
+        .onChange(of: hideMaps) { _ in
+            analytics.recordSession(hideMaps: hideMaps)
         }
         .onChange(of: contentVM.configResponse) { response in
             switch onEnum(of: response) {
@@ -129,7 +135,7 @@ struct ContentView: View {
     @ViewBuilder
     var mainContent: some View {
         VStack {
-            if contentVM.hideMaps {
+            if hideMaps {
                 ZStack(alignment: .top) {
                     searchHeaderBackground
                     VStack {
@@ -184,8 +190,6 @@ struct ContentView: View {
         .background(Color.sheetBackground)
         .onAppear {
             Task { await errorBannerVM.activate() }
-            Task { await contentVM.loadSettings() }
-            Task { await settingsVM.getSections() }
         }
     }
 
@@ -239,7 +243,7 @@ struct ContentView: View {
         // when re-opening nearby transit
         VStack {
             TabView(selection: $selectedTab) {
-                if contentVM.enhancedFavorites {
+                if enhancedFavorites {
                     favoritesPage
                         .toolbar(tabBarVisibility, for: .tabBar)
                         .tag(SelectedTab.favorites)
@@ -272,7 +276,6 @@ struct ContentView: View {
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             noNearbyStops: { NoNearbyStopsView(
-                hideMaps: contentVM.hideMaps,
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
                     viewportProvider.setIsManuallyCentering(true)
@@ -300,7 +303,7 @@ struct ContentView: View {
     @ViewBuilder var mapWithSheets: some View {
         let nav = nearbyVM.navigationStack.lastSafe()
         let sheetItemId: String? = nav.sheetItemIdentifiable()?.id
-        if contentVM.hideMaps {
+        if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
                     switch nearbyVM.navigationStack.last {
@@ -361,7 +364,7 @@ struct ContentView: View {
 
             case .more:
                 TabView(selection: $selectedTab) {
-                    if contentVM.enhancedFavorites {
+                    if enhancedFavorites {
                         VStack {}
                             .onAppear { selectedTab = .favorites }
                             .toolbar(.hidden, for: .tabBar)
@@ -412,8 +415,8 @@ struct ContentView: View {
          Only update this if we're less than half way up the users screen. Otherwise,
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
-        guard newSheetHeight < (UIScreen.main.bounds.height * PresentationDetent.mediumDetentFraction) else { return }
-        sheetHeight = newSheetHeight - 55
+        guard newSheetHeight < ((contentHeight - 8) * PresentationDetent.mediumDetentFraction) else { return }
+        sheetHeight = newSheetHeight
     }
 
     private func updateTabBarVisibility(_: SelectedTab) {

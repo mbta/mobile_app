@@ -15,6 +15,7 @@
     </plurals>
     <string name="alert">Alerta</string>
     <string name="alert_details">Detalhes do alerta</string>
+    <string name="alert_elevator_header">Fechamento de elevador (%1$s)</string>
     <string name="alert_ended">O alerta não está mais em efeito</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020de &lt;b>%1$s&lt;/b> paradas a &lt;b>%2$s&lt;/b></string>
@@ -48,6 +49,7 @@
     <string name="boarding_track">Embarque na plataforma %1$s</string>
     <string name="bus">ônibus</string>
     <string name="buses">ônibus</string>
+    <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelamento</string>
     <string name="cancelled">Cancelado</string>
     <string name="close_button_label">Fechar</string>
@@ -158,6 +160,8 @@
     <string name="inbound">Entrada</string>
     <string name="is_stops_away_from">%1$s está a %2$d paradas de %3$s</string>
     <string name="later_today">mais tarde hoje</string>
+    <string name="less_common_stop">Parada menos comum</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> paradas menos comuns</string>
     <string name="live">Ao vivo</string>
     <string name="loading">Carregando...</string>
     <string name="location_not_available_yet">Localização ainda não disponível</string>
@@ -214,6 +218,7 @@
     <string name="onboarding_map_display_header">Definir preferência de exibição do mapa</string>
     <string name="onboarding_station_accessibility_body">Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados.</string>
     <string name="onboarding_station_accessibility_header">Definir preferência de informações de acessibilidade da estação</string>
+    <string name="only_served_at_certain_times">Servido apenas em determinados horários do dia</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>
@@ -248,6 +253,7 @@
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Adicionar paradas favoritas</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Rotas</string>
     <string name="schedule_change">Alteração de horário</string>
@@ -316,6 +322,7 @@
     </plurals>
     <string name="strike">Greve</string>
     <string name="strike_lowercase">greve</string>
+    <string name="subway">Metrô</string>
     <string name="summary">Resumo</string>
     <string name="suspension">Suspensão</string>
     <string name="switch_issue">Problema na agulha</string>

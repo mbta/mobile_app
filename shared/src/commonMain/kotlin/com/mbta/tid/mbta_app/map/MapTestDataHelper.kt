@@ -25,6 +25,7 @@ object MapTestDataHelper {
             stopAlewife,
             mapOf(MapStopRoute.RED to listOf(routeRed), MapStopRoute.BUS to listOf(route67)),
             listOf(MapStopRoute.RED, MapStopRoute.BUS),
+            mapOf(routeRed.id to setOf(0, 1), route67.id to setOf(0, 1)),
             true,
             null,
         )
@@ -37,6 +38,7 @@ object MapTestDataHelper {
             stop = stopDavis,
             routes = mapOf(MapStopRoute.RED to listOf(routeRed)),
             routeTypes = listOf(MapStopRoute.RED),
+            routeDirections = mapOf(routeRed.id to setOf(0, 1)),
             isTerminal = false,
             alerts = null,
         )
@@ -48,6 +50,7 @@ object MapTestDataHelper {
             stopPorter,
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
+            mapOf(routeRed.id to setOf(0, 1)),
             false,
             null,
         )
@@ -59,6 +62,7 @@ object MapTestDataHelper {
             stopHarvard,
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
+            mapOf(routeRed.id to setOf(0, 1)),
             false,
             null,
         )
@@ -70,6 +74,7 @@ object MapTestDataHelper {
             stopCentral,
             mapOf(MapStopRoute.RED to listOf(routeRed)),
             listOf(MapStopRoute.RED),
+            mapOf(routeRed.id to setOf(0, 1)),
             false,
             null,
         )
@@ -83,6 +88,7 @@ object MapTestDataHelper {
             stopAssembly,
             mapOf(MapStopRoute.ORANGE to listOf(routeOrange)),
             listOf(MapStopRoute.ORANGE),
+            mapOf(routeOrange.id to setOf(0, 1)),
             false,
             null,
         )
@@ -94,6 +100,7 @@ object MapTestDataHelper {
             stopSullivan,
             mapOf(MapStopRoute.ORANGE to listOf(routeOrange)),
             listOf(MapStopRoute.ORANGE),
+            mapOf(routeOrange.id to setOf(0, 1)),
             false,
             null,
         )

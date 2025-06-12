@@ -23,6 +23,11 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
+    var debugMode: Bool { settingsCache.get(.devDebugMode) }
+    var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+
     var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
@@ -78,7 +83,7 @@ struct StopDetailsUnfilteredView: View {
                         title: stop?.name ?? "Invalid Stop",
                         onClose: { nearbyVM.goBack() }
                     )
-                    if nearbyVM.showDebugMessages {
+                    if debugMode {
                         DebugView {
                             Text(verbatim: "stop id: \(stopId)")
                         }
@@ -99,7 +104,7 @@ struct StopDetailsUnfilteredView: View {
                     Color.fill1.ignoresSafeArea(.all)
                     ScrollView {
                         LazyVStack(spacing: 0) {
-                            if stopDetailsVM.showStationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
+                            if stationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
                                 if !elevatorAlerts.isEmpty {
                                     ForEach(elevatorAlerts, id: \.id) { alert in
                                         AlertCard(
@@ -142,8 +147,7 @@ struct StopDetailsUnfilteredView: View {
                                         onPin: { routeId in Task { await stopDetailsVM.togglePinnedRoute(routeId) } },
                                         pinned: stopDetailsVM.pinnedRoutes.contains(routeCardData.lineOrRoute.id),
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                                        showStopHeader: false,
-                                        showStationAccessibility: stopDetailsVM.showStationAccessibility
+                                        showStopHeader: false
                                     )
                                     .padding(.horizontal, 16)
                                     .padding(.bottom, 16)
@@ -170,8 +174,7 @@ struct StopDetailsUnfilteredView: View {
                     onPin: { _ in },
                     pinned: false,
                     pushNavEntry: { _ in },
-                    showStopHeader: false,
-                    showStationAccessibility: false
+                    showStopHeader: false
                 )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)

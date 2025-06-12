@@ -24,6 +24,8 @@ struct TripDetailsView: View {
 
     @State var stops: TripDetailsStopList?
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
     let onOpenAlertDetails: (Shared.Alert) -> Void
 
     let analytics: Analytics
@@ -90,7 +92,7 @@ struct TripDetailsView: View {
 
     @ViewBuilder private var content: some View {
         VStack(spacing: 16) {
-            if nearbyVM.showDebugMessages {
+            if settingsCache.get(.devDebugMode) {
                 DebugView {
                     VStack {
                         Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")
@@ -166,7 +168,6 @@ struct TripDetailsView: View {
                 onTapLink: onTapStop,
                 onOpenAlertDetails: onOpenAlertDetails,
                 routeAccents: routeAccents,
-                showStationAccessibility: stopDetailsVM.showStationAccessibility,
                 global: stopDetailsVM.global
             )
             .padding(.top, -56)

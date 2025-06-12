@@ -18,6 +18,7 @@
     </plurals>
     <string name="alert">Avètisman</string>
     <string name="alert_details">Detay Avètisman</string>
+    <string name="alert_elevator_header">Fèmti asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>
@@ -51,6 +52,7 @@
     <string name="boarding_track">Monte sou vwa a %1$s</string>
     <string name="bus">bis</string>
     <string name="buses">bis yo</string>
+    <string name="cancel">Anile</string>
     <string name="cancellation">Anilasyon</string>
     <string name="cancelled">Anile</string>
     <string name="close_button_label">Fèmen</string>
@@ -167,6 +169,8 @@
     <string name="inbound">Antran</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
     <string name="later_today">pita jodi a</string>
+    <string name="less_common_stop">Mwens komen sispann</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> mwens arè komen</string>
     <string name="live">An dirèk</string>
     <string name="loading">Chajman...</string>
     <string name="location_not_available_yet">Pozisyon poko disponib</string>
@@ -223,6 +227,7 @@
     <string name="onboarding_map_display_header">Mete preferans ou pou montre kat la</string>
     <string name="onboarding_station_accessibility_body">Lè ou enskri, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo.</string>
     <string name="onboarding_station_accessibility_header">Mete preferans ou pou enfòmasyon sou aksè estasyon yo</string>
+    <string name="only_served_at_certain_times">Yo sèvi sèlman nan sèten lè nan jounen an</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
     <string name="other_link_privacy_policy">Règleman sou Vi Prive</string>
     <string name="other_link_source_code">Gade sous sou Github</string>
@@ -257,6 +262,7 @@
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Ajoute arè ou pi renmen yo</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Wout</string>
     <string name="schedule_change">Chanjman Orè</string>
@@ -328,6 +334,7 @@
     </plurals>
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
+    <string name="subway">Metro</string>
     <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_issue">Pwoblèm nan switch ray</string>

@@ -13,7 +13,7 @@ import XCTest
 
 final class NoNearbyStopsViewTests: XCTestCase {
     func testCopy() throws {
-        let sut = NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {})
+        let sut = NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(
             ViewType.Image.self,
             where: { try $0.actualImage().name() == "mbta-logo" }
@@ -24,20 +24,20 @@ final class NoNearbyStopsViewTests: XCTestCase {
 
     func testSearch() throws {
         let exp = expectation(description: "calls onOpenSearch")
-        let sut = NoNearbyStopsView(hideMaps: false, onOpenSearch: { exp.fulfill() }, onPanToDefaultCenter: {})
+        let sut = NoNearbyStopsView(onOpenSearch: { exp.fulfill() }, onPanToDefaultCenter: {}).withFixedSettings([:])
         try sut.inspect().find(button: "Search by stop").tap()
         wait(for: [exp], timeout: 1)
     }
 
     func testPanToDefaultCenter() throws {
         let exp = expectation(description: "calls onPanToDefaultCenter")
-        let sut = NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: { exp.fulfill() })
+        let sut = NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: { exp.fulfill() }).withFixedSettings([:])
         try sut.inspect().find(button: "View transit near Boston").tap()
         wait(for: [exp], timeout: 1)
     }
 
     func testWithHideMaps() throws {
-        let sut = NoNearbyStopsView(hideMaps: true, onOpenSearch: {}, onPanToDefaultCenter: {})
+        let sut = NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}).withFixedSettings([.hideMaps: true])
         XCTAssertThrowsError(try sut.inspect().find(button: "View transit near Boston"))
     }
 }

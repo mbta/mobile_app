@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -45,7 +46,7 @@ fun Departures(
     stopData: RouteCardData.RouteStopData,
     globalData: GlobalResponse?,
     now: Instant,
-    pinned: Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean,
     analytics: Analytics = koinInject(),
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
@@ -59,7 +60,13 @@ fun Departures(
                 analytics.tappedDeparture(
                     stopData.lineOrRoute.id,
                     stopData.stop.id,
-                    pinned,
+                    isFavorite(
+                        RouteStopDirection(
+                            stopData.lineOrRoute.id,
+                            stopData.stop.id,
+                            leaf.directionId,
+                        )
+                    ),
                     leaf.alertsHere().isNotEmpty(),
                     stopData.lineOrRoute.type,
                     noTrips,
@@ -243,7 +250,7 @@ private fun DeparturesPreview() {
 
     MyApplicationTheme {
         Column(Modifier.background(MaterialTheme.colorScheme.background)) {
-            Departures(stopData, global, now, false, MockAnalytics(), onClick = {})
+            Departures(stopData, global, now, { _ -> false }, MockAnalytics(), onClick = {})
         }
     }
 }

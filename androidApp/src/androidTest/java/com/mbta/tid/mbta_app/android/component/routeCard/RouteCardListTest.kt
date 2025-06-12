@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -177,16 +178,18 @@ class RouteCardListTest : KoinTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                RouteCardList(
-                    routeCardData = routeCardData,
-                    emptyView = { Text("This would be the empty view") },
-                    global = globalResponse,
-                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = { _ -> },
-                    showStationAccessibility = false,
-                    onOpenStopDetails = { _, _ -> },
-                )
+                Column {
+                    RouteCardList(
+                        routeCardData = routeCardData,
+                        emptyView = { Text("This would be the empty view") },
+                        global = globalResponse,
+                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        isFavorite = { false },
+                        togglePinnedRoute = { _ -> },
+                        showStationAccessibility = false,
+                        onOpenStopDetails = { _, _ -> },
+                    )
+                }
             }
         }
 
@@ -207,16 +210,18 @@ class RouteCardListTest : KoinTest {
         val emptyNearbyKoinApplication = testKoinApplication()
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
-                RouteCardList(
-                    routeCardData = emptyList(),
-                    emptyView = { Text("This would be the empty view") },
-                    global = globalResponse,
-                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = { _ -> },
-                    showStationAccessibility = false,
-                    onOpenStopDetails = { _, _ -> },
-                )
+                Column {
+                    RouteCardList(
+                        routeCardData = emptyList(),
+                        emptyView = { Text("This would be the empty view") },
+                        global = globalResponse,
+                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        isFavorite = { false },
+                        togglePinnedRoute = { _ -> },
+                        showStationAccessibility = false,
+                        onOpenStopDetails = { _, _ -> },
+                    )
+                }
             }
         }
 
@@ -244,16 +249,18 @@ class RouteCardListTest : KoinTest {
         var clickedStopId: String? = null
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                RouteCardList(
-                    routeCardData = routeCardData,
-                    emptyView = { Text("This would be the empty view") },
-                    global = globalResponse,
-                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-                    pinnedRoutes = emptySet(),
-                    togglePinnedRoute = { _ -> },
-                    showStationAccessibility = false,
-                    onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
-                )
+                Column {
+                    RouteCardList(
+                        routeCardData = routeCardData,
+                        emptyView = { Text("This would be the empty view") },
+                        global = globalResponse,
+                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        isFavorite = { false },
+                        togglePinnedRoute = { _ -> },
+                        showStationAccessibility = false,
+                        onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
+                    )
+                }
             }
         }
 

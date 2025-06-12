@@ -5,15 +5,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.PinButton
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.RouteCardPreviewData
 import kotlinx.datetime.Instant
 import org.koin.compose.KoinContext
@@ -21,19 +26,26 @@ import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
 @Composable
-fun RouteCard(
+fun RouteCardContainer(
+    modifier: Modifier = Modifier,
     data: RouteCardData,
-    globalData: GlobalResponse?,
-    now: Instant,
-    pinned: Boolean,
+    isFavorite: (FavoriteBridge) -> Boolean,
     onPin: (String) -> Unit,
     showStopHeader: Boolean,
     showStationAccessibility: Boolean = false,
-    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
+    enhancedFavorites: Boolean = false,
+    departureContent: @Composable (RouteCardData.RouteStopData) -> Unit,
 ) {
-    Column(Modifier.haloContainer(1.dp)) {
+    Column(modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
         TransitHeader(data.lineOrRoute) { color ->
-            PinButton(pinned = pinned, color = color) { onPin(data.lineOrRoute.id) }
+            if (!enhancedFavorites) {
+                PinButton(
+                    pinned = isFavorite(FavoriteBridge.Pinned(data.lineOrRoute.id)),
+                    color = color,
+                ) {
+                    onPin(data.lineOrRoute.id)
+                }
+            }
         }
 
         data.stopData.forEach {
@@ -41,12 +53,44 @@ fun RouteCard(
                 StopHeader(it, showStationAccessibility)
             }
 
-            Departures(it, globalData, now, pinned) { leaf ->
-                onOpenStopDetails(
-                    it.stop.id,
-                    StopDetailsFilter(data.lineOrRoute.id, leaf.directionId),
-                )
-            }
+            departureContent(it)
+        }
+    }
+}
+
+@Composable
+fun RouteCard(
+    data: RouteCardData,
+    globalData: GlobalResponse?,
+    now: Instant,
+    isFavorite: (FavoriteBridge) -> Boolean,
+    onPin: (String) -> Unit,
+    showStopHeader: Boolean,
+    showStationAccessibility: Boolean = false,
+    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
+) {
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
+    RouteCardContainer(
+        data = data,
+        isFavorite = isFavorite,
+        onPin = onPin,
+        showStopHeader = showStopHeader,
+        showStationAccessibility = showStationAccessibility,
+        enhancedFavorites = enhancedFavorites,
+    ) {
+        Departures(
+            it,
+            globalData,
+            now,
+            { routeStopDirection ->
+                if (enhancedFavorites) {
+                    isFavorite(FavoriteBridge.Favorite(routeStopDirection))
+                } else {
+                    isFavorite(FavoriteBridge.Pinned(routeStopDirection.route))
+                }
+            },
+        ) { leaf ->
+            onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.directionId))
         }
     }
 }
@@ -63,7 +107,7 @@ class Previews() {
                     card,
                     data.global,
                     data.now,
-                    pinned = false,
+                    { false },
                     onPin = {},
                     showStopHeader = true,
                     showStationAccessibility = true,

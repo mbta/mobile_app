@@ -61,7 +61,7 @@ final class HomeMapViewTests: XCTestCase {
         let exp = sut.inspection.inspect { view in
             XCTAssertNotNil(view)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
     }
 
@@ -98,7 +98,7 @@ final class HomeMapViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { _ in
             XCTAssertNotNil(sut.viewportProvider.viewport.followPuck)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         locationFetcher.updateLocations(locations: [newLocation])
         XCTAssertEqual(locationDataManager.currentLocation, newLocation)
 
@@ -119,7 +119,7 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 5)
         wait(for: [getRailRouteShapeExpectation], timeout: 1)
     }
@@ -149,7 +149,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertEqual(ViewportProvider.Defaults.zoom, try view.actualView().viewportProvider.viewport.camera!.zoom)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 1)
 
         let newZoom = 10.0
@@ -164,7 +164,7 @@ final class HomeMapViewTests: XCTestCase {
         XCTAssertEqual(newZoom, sut.viewportProvider.viewport.camera!.zoom)
     }
 
-    func testUpdatesStopSourceWhenStopSelected() throws {
+    func testUpdatesStopLayersWhenStopSelected() throws {
         let repositories = MockRepositories()
         repositories.stop = FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
         HelpersKt.loadKoinMocks(repositories: repositories)
@@ -191,14 +191,14 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            XCTAssertEqual(mapVM.stopSourceData, .init())
+            XCTAssertEqual(mapVM.stopLayerState, .init())
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
-            XCTAssertEqual(mapVM.stopSourceData, .init(selectedStopId: stop.id))
+            XCTAssertEqual(mapVM.stopLayerState, .init(selectedStopId: stop.id))
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
@@ -248,7 +248,7 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
@@ -317,7 +317,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
 
         addTeardownBlock {
@@ -408,7 +408,7 @@ final class HomeMapViewTests: XCTestCase {
             } })
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
 
         addTeardownBlock {
@@ -507,7 +507,7 @@ final class HomeMapViewTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
@@ -548,10 +548,10 @@ final class HomeMapViewTests: XCTestCase {
                 newValue: nil as SheetNavigationStackEntry?
             )
             XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes)
-            XCTAssertEqual(mapVM.stopSourceData, .init())
+            XCTAssertEqual(mapVM.stopLayerState, .init())
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
@@ -630,7 +630,7 @@ final class HomeMapViewTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared,
                    addLayersNotCalledExpectation,
                    updateRouteSourcesExpectation,
@@ -658,21 +658,21 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: routeData)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, updateSourcesCalledExpectation], timeout: 5)
     }
 
-    func testUpdatesStopSourcesWhenStopDataChanges() {
-        let updateStopSourcesCalledExpectation = XCTestExpectation(description: "Update stop source called")
+    func testUpdatesStopLayersWhenStateChanges() {
+        let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
 
-        let layerManager = MockLayerManager(updateStopDataCallback: { _ in
-            updateStopSourcesCalledExpectation.fulfill()
+        let layerManager = MockLayerManager(addLayersCallback: {
+            addLayersCalledExpectation.fulfill()
         })
 
-        let stopData: StopSourceData = .init(selectedStopId: "stop1")
+        let state: StopLayerGenerator.State = .init(selectedStopId: "stop1")
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(layerManager: layerManager),
+            mapVM: .init(layerManager: layerManager, globalData: .init(objects: .init())),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
@@ -681,12 +681,12 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: stopData)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: state)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        wait(for: [hasAppeared, updateStopSourcesCalledExpectation], timeout: 5)
+        wait(for: [hasAppeared, addLayersCalledExpectation], timeout: 5)
     }
 
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {
@@ -713,7 +713,7 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
@@ -741,7 +741,7 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
@@ -766,7 +766,7 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
@@ -794,7 +794,7 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.background)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, leavesVehiclesExp], timeout: 5)
     }
 
@@ -829,7 +829,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertEqual(try view.actualView().vehiclesData, [vehicle])
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 5)
     }
 
@@ -867,7 +867,7 @@ final class HomeMapViewTests: XCTestCase {
             try view.findAndCallOnChange(newValue: contentVM.onboardingScreensPending)
             XCTAssertTrue(locationFetcher.didRequestAuthorization)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 

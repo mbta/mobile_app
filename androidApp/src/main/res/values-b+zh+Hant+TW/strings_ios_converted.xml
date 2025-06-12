@@ -13,6 +13,7 @@
     </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
+    <string name="alert_elevator_header">電梯關閉 (%1$s)</string>
     <string name="alert_ended">警報已失效</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020從&lt;b>%1$s&lt;/b>站到&lt;b>%2$s&lt;/b></string>
@@ -46,6 +47,7 @@
     <string name="boarding_track">在軌道%1$s登車</string>
     <string name="bus">巴士</string>
     <string name="buses">巴士</string>
+    <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
     <string name="close_button_label">關閉</string>
@@ -152,6 +154,8 @@
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
     <string name="later_today">今天晚些時候</string>
+    <string name="less_common_stop">較不常見的停站</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> 不常見站點</string>
     <string name="live">即時</string>
     <string name="loading">正在載入……</string>
     <string name="location_not_available_yet">位置尚未確定</string>
@@ -208,6 +212,7 @@
     <string name="onboarding_map_display_header">設定地圖顯示首選項</string>
     <string name="onboarding_station_accessibility_body">透過選擇加入，我們可以向您顯示哪些車站不適合輪椅通行或電梯關閉。</string>
     <string name="onboarding_station_accessibility_header">設定車站無障礙資訊首選項</string>
+    <string name="only_served_at_certain_times">不太常见的停站</string>
     <string name="open_for_more_arrivals">開啟獲得更多到站資訊</string>
     <string name="other_link_privacy_policy">隱私政策</string>
     <string name="other_link_source_code">在 Github 上查看原始碼</string>
@@ -242,6 +247,7 @@
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">新增最喜歡的站點</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">線路</string>
     <string name="schedule_change">時刻表變更</string>
@@ -308,6 +314,7 @@
     </plurals>
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
+    <string name="subway">捷運</string>
     <string name="summary">概觀</string>
     <string name="suspension">暫停</string>
     <string name="switch_issue">道岔問題</string>

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -58,6 +60,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
+import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
@@ -100,6 +103,7 @@ fun HomeMapView(
     val coroutineScope = rememberCoroutineScope()
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     val selectedStop by viewModel.selectedStop.collectAsState(null)
+    val stopFilter by viewModel.stopFilter.collectAsState(null)
 
     val configLoadAttempted by viewModel.configLoadAttempted.collectAsState(initial = false)
     val railRouteShapes by viewModel.railRouteShapes.collectAsState(initial = null)
@@ -126,6 +130,11 @@ fun HomeMapView(
     val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+
+    val stopLayerGeneratorState =
+        remember(selectedStop, stopFilter) {
+            StopLayerGenerator.State(selectedStopId = selectedStop?.id, stopFilter = stopFilter)
+        }
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -169,11 +178,12 @@ fun HomeMapView(
         val railRouteShapes = railRouteShapes ?: return
         val stopMapData = stopMapData ?: return
 
+        val stopFilter = stopFilter
         val filteredRoutes =
-            if (currentNavEntry is SheetRoutes.StopDetails && currentNavEntry.stopFilter != null) {
+            if (stopFilter != null) {
                 RouteFeaturesBuilder.filteredRouteShapesForStop(
                     stopMapData,
-                    currentNavEntry.stopFilter,
+                    stopFilter,
                     routeCardData,
                 )
             } else {
@@ -189,6 +199,7 @@ fun HomeMapView(
             updateRouteSourceData(newRailData)
             addLayers(
                 filteredRoutes,
+                stopLayerGeneratorState,
                 globalResponse,
                 if (isDarkMode) ColorPalette.dark else ColorPalette.light,
             )
@@ -201,6 +212,7 @@ fun HomeMapView(
             updateRouteSourceData(routeData)
             addLayers(
                 railRouteShapes ?: return@run,
+                stopLayerGeneratorState,
                 globalResponse ?: return@run,
                 if (isDarkMode) ColorPalette.dark else ColorPalette.light,
             )
@@ -229,16 +241,18 @@ fun HomeMapView(
 
     suspend fun handleNavChange() {
         handleNearbyNavRestoration()
-        val stopId =
+        val stopDetails =
             when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry.stopId
+                is SheetRoutes.StopDetails -> currentNavEntry
                 else -> null
             }
-        if (stopId == null) {
+        if (stopDetails == null) {
             viewModel.setSelectedStop(null)
+            viewModel.setStopFilter(null)
             return
         }
-        viewModel.setSelectedStop(globalResponse?.getStop(stopId))
+        viewModel.setSelectedStop(globalResponse?.getStop(stopDetails.stopId))
+        viewModel.setStopFilter(stopDetails.stopFilter)
     }
 
     val cameraZoomFlow =
@@ -270,6 +284,7 @@ fun HomeMapView(
             layerManager.run {
                 addLayers(
                     railRouteShapes ?: return@run,
+                    stopLayerGeneratorState,
                     globalResponse ?: return@run,
                     if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                 )
@@ -325,18 +340,25 @@ fun HomeMapView(
                 }
                 LaunchedEffect(railRouteSourceData) {
                     refreshRouteLineSource()
-                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
+                    viewModel.refreshStopFeatures(globalMapData)
                 }
-                LaunchedEffect(selectedStop) {
-                    viewModel.refreshStopFeatures(selectedStop, globalMapData)
-                    positionViewportToStop()
-                }
+                LaunchedEffect(selectedStop) { positionViewportToStop() }
                 LaunchedEffect(stopSourceData) { refreshStopSource() }
                 LaunchedEffect(selectedVehicle) {
                     if (
                         selectedVehicle != null && selectedVehicle.id != previousSelectedVehicleId
                     ) {
                         viewportProvider.vehicleOverview(selectedVehicle, selectedStop, density)
+                    }
+                }
+                LaunchedEffect(stopLayerGeneratorState) {
+                    layerManager.run {
+                        addLayers(
+                            railRouteShapes ?: return@run,
+                            stopLayerGeneratorState,
+                            globalResponse ?: return@run,
+                            if (isDarkMode) ColorPalette.dark else ColorPalette.light,
+                        )
                     }
                 }
 
@@ -449,11 +471,12 @@ fun HomeMapView(
                     ViewAnnotation(
                         options =
                             viewAnnotationOptions {
-                                selected(isSelected)
+                                priority(if (isSelected) 1 else 0)
                                 geometry(Point.fromLngLat(vehicle.longitude, vehicle.latitude))
                                 annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                                 allowOverlap(true)
                                 allowOverlapWithPuck(true)
+                                ignoreCameraPadding(true)
                                 visible(
                                     zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected
                                 )
@@ -495,8 +518,9 @@ fun HomeMapView(
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
                 if (showRecenterButton) {
                     RecenterButton(
-                        onClick = { coroutineScope.launch { viewportProvider.follow() } },
+                        Icons.Default.LocationOn,
                         modifier = Modifier.padding(horizontal = 16.dp),
+                        onClick = { coroutineScope.launch { viewportProvider.follow() } },
                     )
                 }
 
@@ -504,8 +528,8 @@ fun HomeMapView(
                     if (selectedVehicle != null) {
                         val routeType = globalResponse?.getRoute(selectedVehicle.routeId)?.type
                         if (routeType != null) {
-                            TripCenterButton(
-                                routeType = routeType,
+                            RecenterButton(
+                                routeIcon(routeType).first,
                                 onClick = {
                                     coroutineScope.launch {
                                         viewportProvider.vehicleOverview(

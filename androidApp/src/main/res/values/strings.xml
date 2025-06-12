@@ -15,6 +15,7 @@
     </plurals>
     <string name="alert">Alert</string>
     <string name="alert_details">Alert Details</string>
+    <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020from &lt;b>%1$s&lt;/b> stops to &lt;b>%2$s&lt;/b></string>
@@ -48,6 +49,7 @@
     <string name="boarding_track">Boarding on track %1$s</string>
     <string name="bus">bus</string>
     <string name="buses">buses</string>
+    <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
     <string name="cancelled">Cancelled</string>
     <string name="close_button_label">Close</string>
@@ -68,6 +70,7 @@
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
+    <string name="delete" tools:ignore="MissingTranslation">Delete</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -85,10 +88,13 @@
     <string name="dock_closure">Dock Closure</string>
     <string name="dock_issue">Dock Issue</string>
     <string name="dock_issue_sentence_case">Dock issue</string>
+    <string name="done" tools:ignore="MissingTranslation">Done</string>
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
     <string name="eastbound">Eastbound</string>
+    <string name="edit" tools:ignore="MissingTranslation">Edit</string>
+    <string name="edit_favorites" tools:ignore="MissingTranslation">Edit Favorites</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="effect_ahead">&lt;b&gt;%1$s&lt;/b&gt; ahead</string>
     <string name="electrical_work">Electrical Work</string>
@@ -159,6 +165,8 @@
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
     <string name="later_today">later today</string>
+    <string name="less_common_stop">Less common stop</string>
+    <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -216,6 +224,7 @@
     <string name="onboarding_map_display_header">Set map display preference</string>
     <string name="onboarding_station_accessibility_body">By opting in, we can show you which stations are inaccessible or have elevator closures.</string>
     <string name="onboarding_station_accessibility_header">Set station accessibility info preference</string>
+    <string name="only_served_at_certain_times">Only served at certain times of day</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
     <string name="other_link_source_code">View Source on GitHub</string>
@@ -250,6 +259,7 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Add favorite stops</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Routes</string>
     <string name="schedule_change">Schedule Change</string>
@@ -318,6 +328,7 @@
     <string name="speed_restriction_lowercase">speed restriction</string>
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
+    <string name="subway">Subway</string>
     <string name="summary" tools:ignore="MissingTranslation">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>

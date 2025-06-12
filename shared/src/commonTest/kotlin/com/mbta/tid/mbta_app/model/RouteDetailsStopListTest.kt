@@ -184,22 +184,181 @@ class RouteDetailsStopListTest {
         val mainStop = objects.stop { connectingStopIds = listOf(connectingStop.id) }
         val mainRoute = objects.route()
         val connectingRoute = objects.route()
-        objects.routePattern(connectingRoute) {
-            typicality = RoutePattern.Typicality.Typical
-            representativeTrip { stopIds = listOf(connectingStop.id) }
-        }
+
+        val mainPattern =
+            objects.routePattern(mainRoute) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(mainStop.id) }
+            }
+
+        val connectingPattern =
+            objects.routePattern(connectingRoute) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(connectingStop.id) }
+            }
 
         val globalData = GlobalResponse(objects)
 
         assertEquals(
             RouteDetailsStopList(
                 listOf(
-                    RouteDetailsStopList.Entry(mainStop, connectingRoutes = listOf(connectingRoute))
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                mainStop,
+                                connectingRoutes = listOf(connectingRoute),
+                                patterns = listOf(mainPattern),
+                            )
+                        ),
+                        hasRouteLine = true,
+                    )
                 )
             ),
             RouteDetailsStopList.fromPieces(
                 mainRoute.id,
                 RouteStopsResponse(listOf(mainStop.id)),
+                globalData,
+            ),
+        )
+    }
+
+    @Test
+    fun `fromPieces breaks segments by typicality`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val stop0 = objects.stop { id = "stop0" }
+        val stop1 = objects.stop { id = "stop1" }
+        val stop2NonTypical = objects.stop { id = "stop2NonTypical" }
+        val stop3NonTypical = objects.stop { id = "stop3NonTypical" }
+        val stop4 = objects.stop { id = "stop4" }
+        val stop5NonTypical = objects.stop { id = "stop5NonTypical" }
+        val stop6 = objects.stop { id = "stop6" }
+
+        val mainRoute = objects.route()
+        val patternTypical0 =
+            objects.routePattern(mainRoute) {
+                id = "typical_0"
+                sortOrder = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop4.id) }
+            }
+
+        val patternTypical1 =
+            objects.routePattern(mainRoute) {
+                id = "typical_1"
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop6.id) }
+            }
+
+        val patternNonTypical0 =
+            objects.routePattern(mainRoute) {
+                id = "non_typical_0"
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop2NonTypical.id) }
+            }
+
+        val patternNonTypical1 =
+            objects.routePattern(mainRoute) {
+                id = "non_typical_1"
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip {
+                    stopIds =
+                        listOf(stop0.id, stop1.id, stop3NonTypical.id, stop5NonTypical.id, stop6.id)
+                }
+            }
+
+        val globalData = GlobalResponse(objects)
+
+        assertEquals(
+            RouteDetailsStopList(
+                listOf(
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                stop0,
+                                connectingRoutes = listOf(),
+                                patterns =
+                                    listOf(
+                                        patternTypical0,
+                                        patternTypical1,
+                                        patternNonTypical0,
+                                        patternNonTypical1,
+                                    ),
+                            ),
+                            RouteDetailsStopList.Entry(
+                                stop1,
+                                connectingRoutes = listOf(),
+                                patterns =
+                                    listOf(
+                                        patternTypical0,
+                                        patternTypical1,
+                                        patternNonTypical0,
+                                        patternNonTypical1,
+                                    ),
+                            ),
+                        ),
+                        hasRouteLine = true,
+                    ),
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                stop2NonTypical,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternNonTypical0),
+                            ),
+                            RouteDetailsStopList.Entry(
+                                stop3NonTypical,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternNonTypical1),
+                            ),
+                        ),
+                        hasRouteLine = false,
+                    ),
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                stop4,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternTypical0),
+                            )
+                        ),
+                        hasRouteLine = true,
+                    ),
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                stop5NonTypical,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternNonTypical1),
+                            )
+                        ),
+                        hasRouteLine = false,
+                    ),
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                stop6,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternTypical1, patternNonTypical1),
+                            )
+                        ),
+                        hasRouteLine = false,
+                    ),
+                )
+            ),
+            RouteDetailsStopList.fromPieces(
+                mainRoute.id,
+                RouteStopsResponse(
+                    listOf(
+                        stop0.id,
+                        stop1.id,
+                        stop2NonTypical.id,
+                        stop3NonTypical.id,
+                        stop4.id,
+                        stop5NonTypical.id,
+                        stop6.id,
+                    )
+                ),
                 globalData,
             ),
         )
