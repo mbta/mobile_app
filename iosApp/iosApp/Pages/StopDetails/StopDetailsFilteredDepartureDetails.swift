@@ -20,7 +20,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var leaf: RouteCardData.Leaf
     var selectedDirection: Direction
 
-    var pinned: Bool
+    var favorite: Bool
 
     var now: Date
 
@@ -90,7 +90,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        leaf: RouteCardData.Leaf, selectedDirection: Direction, pinned: Bool, now: Date,
+        leaf: RouteCardData.Leaf, selectedDirection: Direction, favorite: Bool, now: Date,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
@@ -101,7 +101,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.setTripFilter = setTripFilter
         self.leaf = leaf
         self.selectedDirection = selectedDirection
-        self.pinned = pinned
+        self.favorite = favorite
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -242,7 +242,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             analytics.tappedDeparture(
                                 routeId: leaf.lineOrRoute.id,
                                 stopId: leaf.stop.id,
-                                pinned: pinned,
+                                pinned: favorite,
                                 alert: alerts.count > 0,
                                 routeType: leaf.lineOrRoute.type,
                                 noTrips: nil
