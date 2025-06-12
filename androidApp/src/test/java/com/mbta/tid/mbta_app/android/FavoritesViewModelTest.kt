@@ -119,7 +119,7 @@ class FavoritesViewModelTest {
         val favoritesVM = FavoritesViewModel(usecases)
         val position = Position(0.0, 0.0)
         favoritesVM.favorites = setOf(RouteStopDirection("route_1", "stop_1", 0))
-        favoritesVM.loadRouteCardData(
+        favoritesVM.loadRealtimeRouteCardData(
             globalResponse,
             position,
             null,

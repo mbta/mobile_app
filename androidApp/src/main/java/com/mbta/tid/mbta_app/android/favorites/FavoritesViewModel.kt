@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -14,6 +15,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import io.github.dellisd.spatialk.geojson.Position
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 
 class FavoritesViewModel(
@@ -26,7 +28,7 @@ class FavoritesViewModel(
         favorites = favoritesUsecases.getRouteStopDirectionFavorites()
     }
 
-    suspend fun loadRouteCardData(
+    suspend fun loadRealtimeRouteCardData(
         global: GlobalResponse?,
         location: Position?,
         schedules: ScheduleResponse?,
@@ -34,8 +36,7 @@ class FavoritesViewModel(
         alerts: AlertsStreamDataResponse?,
         now: Instant,
     ) {
-        val stops = favorites?.map { global?.getStop(it.stop) }.orEmpty()
-        val stopIds = stops.mapNotNull { it?.childStopIds?.plus(listOf(it.id)) }.flatten()
+        val stopIds = stopIds(global)
         if (stopIds.isEmpty()) {
             routeCardData = emptyList()
             return
@@ -55,12 +56,30 @@ class FavoritesViewModel(
                 emptySet(),
                 RouteCardData.Context.Favorites,
             )
-        routeCardData = filterRouteAndDirection(loadedRouteCardData, global)
+        routeCardData = filterRouteAndDirection(loadedRouteCardData, global, favorites)
+    }
+
+    suspend fun loadStaticRouteCardData(global: GlobalResponse?): List<RouteCardData>? {
+        val stopIds = stopIds(global)
+        if (stopIds.isEmpty()) {
+            return emptyList()
+        }
+        if (global == null) {
+            return null
+        }
+        val loadedRouteCardData =
+            RouteCardData.routeCardsForStaticStopList(
+                stopIds,
+                global,
+                RouteCardData.Context.Favorites,
+            )
+        return filterRouteAndDirection(loadedRouteCardData, global, favorites)
     }
 
     fun filterRouteAndDirection(
         routeCardData: List<RouteCardData>?,
         global: GlobalResponse,
+        favorites: Set<RouteStopDirection>?,
     ): List<RouteCardData>? {
         return routeCardData
             ?.map { data ->
@@ -83,6 +102,19 @@ class FavoritesViewModel(
                 data.copy(stopData = filteredStopData)
             }
             ?.filter { it.stopData.any { it.data.isNotEmpty() } }
+    }
+
+    fun updateFavorites(favorites: Map<RouteStopDirection, Boolean>?, onFinish: () -> Unit) {
+        if (favorites == null) return
+        viewModelScope.launch {
+            favoritesUsecases.updateRouteStopDirections(favorites)
+            onFinish()
+        }
+    }
+
+    private fun stopIds(global: GlobalResponse?): List<String> {
+        val stops = favorites?.map { global?.getStop(it.stop) }.orEmpty()
+        return stops.mapNotNull { it?.childStopIds?.plus(listOf(it.id)) }.flatten()
     }
 
     class Factory : ViewModelProvider.Factory {

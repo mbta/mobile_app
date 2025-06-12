@@ -13,6 +13,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 // These are used in LineOrRoute to disambiguate them from LineOrRoute.Route and LineOrRoute.Line
@@ -681,6 +682,37 @@ data class RouteCardData(
                     )
                     .build(sortByDistanceFrom)
                     .sort(sortByDistanceFrom, pinnedRoutes)
+            }
+
+        /**
+         * Build a static sorted list of route cards for the given stops.
+         *
+         * Routes are sorted in the following order
+         * 1. subway routes
+         * 2. route pattern sort order
+         */
+        suspend fun routeCardsForStaticStopList(
+            stopIds: List<String>,
+            globalData: GlobalResponse?,
+            context: Context,
+        ): List<RouteCardData>? =
+            withContext(Dispatchers.Default) {
+                // if global data was still loading, there'd be no nearby data, and null handling is
+                // annoying
+                if (globalData == null) return@withContext null
+
+                val now = Clock.System.now()
+
+                ListBuilder(true, context, now)
+                    .addStaticStopsData(stopIds, globalData, context)
+                    // We don't need alerts here, this is just to satisfy the null check
+                    .addAlerts(
+                        alerts = AlertsStreamDataResponse(emptyMap()),
+                        includeMinorAlerts = false,
+                        filterAtTime = now,
+                        globalData = globalData,
+                    )
+                    .build(null)
             }
 
         fun filterStopsByPatterns(

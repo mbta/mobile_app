@@ -36,6 +36,8 @@ sealed class SheetRoutes {
     @Serializable
     data class RouteDetails(val routeId: String, val context: RouteDetailsContext) : SheetRoutes()
 
+    @Serializable data object EditFavorites : SheetRoutes()
+
     val showSearchBar: Boolean
         get() =
             when (this) {
