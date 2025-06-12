@@ -10,13 +10,13 @@ import Shared
 import SwiftUI
 
 struct StopResultsView: View {
-    let stops: [SearchViewModel.Result]
+    let stops: [SearchViewModel.StopResult]
     let handleStopTap: (String) -> Void
 
     var body: some View {
         ResultContainer {
             VStack(spacing: .zero) {
-                ForEach(stops) { stop in
+                ForEach(stops, id: \.id) { stop in
                     Button {
                         handleStopTap(stop.id)
                     } label: {
@@ -30,7 +30,7 @@ struct StopResultsView: View {
         }
     }
 
-    private func result(_ stop: SearchViewModel.Result) -> some View {
+    private func result(_ stop: SearchViewModel.StopResult) -> some View {
         HStack(spacing: 12) {
             Image(stop.isStation ? .tLogo : .mapStopCloseBUS)
                 .frame(width: 32, height: 32)
@@ -49,7 +49,7 @@ struct StopResultsView: View {
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
-                    Text("serves \(stop.routePills.map { $0.contentDescription ?? "" }.joined(separator: ","))")
+                    Text("serves \(stop.routePills.map { $0.contentDescription?.text ?? "" }.joined(separator: ","))")
                 )
                 .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
                 .frame(maxWidth: .infinity, alignment: .leading)

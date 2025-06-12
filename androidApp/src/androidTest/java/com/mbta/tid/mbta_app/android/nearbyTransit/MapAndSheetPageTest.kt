@@ -24,7 +24,6 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -34,7 +33,6 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
@@ -52,9 +50,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -221,13 +216,6 @@ class MapAndSheetPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
-
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -251,7 +239,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -336,7 +323,7 @@ class MapAndSheetPageTest : KoinTest {
             override fun updateCenterButtonVisibility(
                 currentLocation: Location?,
                 locationDataManager: LocationDataManager,
-                searchResultsViewModel: SearchResultsViewModel,
+                isSearchExpanded: Boolean,
                 viewportProvider: ViewportProvider,
             ) {
                 TODO("Not yet implemented")
@@ -344,12 +331,6 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         val mockMapVM = MockMapVM()
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -374,7 +355,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                         mapViewModel = mockMapVM,
                     )
@@ -392,13 +372,6 @@ class MapAndSheetPageTest : KoinTest {
 
     @Test
     fun testHidesMap() {
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
-
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -422,7 +395,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -452,12 +424,6 @@ class MapAndSheetPageTest : KoinTest {
         locationDataManager.hasPermission = true
 
         val koinApplication = testKoinApplication(builder, clock = mockClock)
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -483,7 +449,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }

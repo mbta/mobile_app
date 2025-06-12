@@ -30,7 +30,6 @@ import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.OnboardingPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -76,7 +75,6 @@ fun ContentView(
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
-    val searchResultsVm = koinViewModel<SearchResultsViewModel>()
 
     LifecycleResumeEffect(null) {
         socket.attach()
@@ -134,7 +132,6 @@ fun ContentView(
                         )
                     }
                 },
-                searchResultsViewModel = searchResultsVm,
             )
         }
         composable<Routes.More> {

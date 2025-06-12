@@ -9,8 +9,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopResult
+import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -56,13 +57,6 @@ class StopResultsViewTest {
                 sortOrder = 3
             }
 
-        val bus4 =
-            objects.route {
-                id = "4"
-                shortName = "4"
-                type = RouteType.BUS
-                sortOrder = 4
-            }
         val bus5 =
             objects.route {
                 id = "5"
@@ -76,16 +70,57 @@ class StopResultsViewTest {
         composeTestRule.setContent {
             StopResultsView(
                 RoundedCornerShape(10.dp),
-                StopResult(
+                SearchViewModel.StopResult(
                     station.id,
-                    1,
-                    name = station.name,
-                    zone = null,
                     isStation = true,
-                    routes = listOf(),
+                    station.name,
+                    listOf(
+                        RoutePillSpec(
+                            red,
+                            line = null,
+                            RoutePillSpec.Type.Fixed,
+                            contentDescription =
+                                RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                                    red.label,
+                                    RouteType.HEAVY_RAIL,
+                                    isOnly = true,
+                                ),
+                        ),
+                        RoutePillSpec(
+                            cr,
+                            line = null,
+                            RoutePillSpec.Type.Fixed,
+                            contentDescription =
+                                RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                                    "Commuter Rail",
+                                    RouteType.COMMUTER_RAIL,
+                                    isOnly = false,
+                                ),
+                        ),
+                        RoutePillSpec(
+                            sl,
+                            line = null,
+                            RoutePillSpec.Type.Fixed,
+                            contentDescription =
+                                RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                                    "Silver Line",
+                                    RouteType.BUS,
+                                    isOnly = false,
+                                ),
+                        ),
+                        RoutePillSpec(
+                            bus5,
+                            line = null,
+                            RoutePillSpec.Type.Fixed,
+                            contentDescription =
+                                RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                                    routeName = null,
+                                    RouteType.BUS,
+                                    isOnly = false,
+                                ),
+                        ),
+                    ),
                 ),
-                routes = listOf(bus5, bus4, sl, cr, red),
-                globalResponse = null,
                 handleSearch = { handleSearchCalled = true },
             )
         }
@@ -128,16 +163,35 @@ class StopResultsViewTest {
         composeTestRule.setContent {
             StopResultsView(
                 RoundedCornerShape(10.dp),
-                StopResult(
+                SearchViewModel.StopResult(
                     stop.id,
-                    1,
-                    name = stop.name,
-                    zone = null,
                     isStation = false,
-                    routes = listOf(),
+                    stop.name,
+                    listOf(
+                        RoutePillSpec(
+                            bus4,
+                            line = null,
+                            RoutePillSpec.Type.Fixed,
+                            contentDescription =
+                                RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                                    routeName = bus4.label,
+                                    RouteType.BUS,
+                                    isOnly = true,
+                                ),
+                        ),
+                        RoutePillSpec(
+                            bus5,
+                            line = null,
+                            RoutePillSpec.Type.Fixed,
+                            contentDescription =
+                                RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                                    routeName = bus5.label,
+                                    RouteType.BUS,
+                                    isOnly = true,
+                                ),
+                        ),
+                    ),
                 ),
-                routes = listOf(bus5, bus4),
-                globalResponse = null,
                 handleSearch = {},
             )
         }

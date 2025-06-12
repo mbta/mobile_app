@@ -40,12 +40,12 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.search.results.RouteResultsView
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
-import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.SearchViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
@@ -56,13 +56,12 @@ fun SearchBarOverlay(
     onStopNavigation: (stopId: String) -> Unit,
     onRouteNavigation: (routeId: String) -> Unit,
     inputFieldFocusRequester: FocusRequester,
-    searchResultsVm: SearchResultsViewModel,
+    searchVM: SearchViewModel = koinViewModel(),
     onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     var searchInputState by rememberSaveable { mutableStateOf("") }
-    val globalResponse = getGlobalData("SearchBar.getGlobalData")
-    val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
+    val searchVMState by searchVM.models.collectAsState()
     val includeRoutes = SettingsCache.get(Settings.SearchRouteResults)
 
     val buttonColors =
@@ -72,11 +71,10 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, showSearchBar, globalResponse) {
-        searchResultsVm.getSearchResults(searchInputState, globalResponse)
-    }
+    LaunchedEffect(searchInputState) { searchVM.setQuery(searchInputState) }
     LaunchedEffect(showSearchBar, expanded) {
         if (showSearchBar) {
+            searchVM.refreshHistory()
             onExpandedChange(expanded)
             if (!expanded) {
                 searchInputState = ""
@@ -167,13 +165,20 @@ fun SearchBarOverlay(
                                 )
                             }
                         }
-                        itemsIndexed(searchResults?.stops ?: emptyList()) { index, stop ->
+                        val (stopResults, routeResults) =
+                            when (val state = searchVMState) {
+                                SearchViewModel.State.Loading -> Pair(null, null)
+                                is SearchViewModel.State.RecentStops -> Pair(state.stops, null)
+                                is SearchViewModel.State.Results -> Pair(state.stops, state.routes)
+                                SearchViewModel.State.Error -> Pair(null, null)
+                            }
+                        itemsIndexed(stopResults ?: emptyList()) { index, stopResult ->
                             val shape =
-                                if (searchResults?.stops?.size == 1) {
+                                if (stopResults?.size == 1) {
                                     RoundedCornerShape(10.dp)
-                                } else if (searchResults?.stops?.first() == stop) {
+                                } else if (stopResults?.first() == stopResult) {
                                     RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
-                                } else if (searchResults?.stops?.last() == stop) {
+                                } else if (stopResults?.last() == stopResult) {
                                     RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
                                 } else {
                                     RoundedCornerShape(0.dp)
@@ -181,9 +186,9 @@ fun SearchBarOverlay(
                             if (index != 0) {
                                 HorizontalDivider(color = colorResource(R.color.fill1))
                             }
-                            StopResultsView(shape, stop, globalResponse, onStopNavigation)
+                            StopResultsView(shape, stopResult, onStopNavigation)
                         }
-                        if (includeRoutes && !searchResults?.routes.isNullOrEmpty()) {
+                        if (includeRoutes && !routeResults.isNullOrEmpty()) {
                             item {
                                 Text(
                                     stringResource(R.string.routes),
@@ -191,19 +196,19 @@ fun SearchBarOverlay(
                                     style = Typography.subheadlineSemibold,
                                 )
                             }
-                            items(searchResults?.routes.orEmpty()) { route ->
+                            items(routeResults) { routeResult ->
                                 val shape =
-                                    if (searchResults?.routes?.size == 1) {
+                                    if (routeResults.size == 1) {
                                         RoundedCornerShape(10.dp)
-                                    } else if (searchResults?.routes?.first() == route) {
+                                    } else if (routeResults.first() == routeResult) {
                                         RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
-                                    } else if (searchResults?.routes?.last() == route) {
+                                    } else if (routeResults.last() == routeResult) {
                                         RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
                                     } else {
                                         RoundedCornerShape(0.dp)
                                     }
                                 HorizontalDivider(color = colorResource(R.color.fill1))
-                                RouteResultsView(shape, route, globalResponse, onRouteNavigation)
+                                RouteResultsView(shape, routeResult, onRouteNavigation)
                             }
                         }
                     }

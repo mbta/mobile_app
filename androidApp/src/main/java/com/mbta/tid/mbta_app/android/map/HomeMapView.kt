@@ -63,7 +63,6 @@ import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.plus
@@ -95,7 +94,7 @@ fun HomeMapView(
     vehiclesData: List<Vehicle>,
     routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
-    searchResultsViewModel: SearchResultsViewModel,
+    isSearchExpanded: Boolean,
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -167,7 +166,7 @@ fun HomeMapView(
             viewModel.updateCenterButtonVisibility(
                 currentLocation,
                 locationDataManager,
-                searchResultsViewModel,
+                isSearchExpanded,
                 viewportProvider,
             )
         }
@@ -370,7 +369,7 @@ fun HomeMapView(
                     viewportProvider.isAnimating,
                     viewportProvider.isFollowingPuck,
                     selectedVehicle,
-                    searchResultsViewModel.expanded,
+                    isSearchExpanded,
                     viewportProvider.isVehicleOverview,
                 ) {
                     if (viewportProvider.isAnimating) {
@@ -379,7 +378,7 @@ fun HomeMapView(
                         viewModel.updateCenterButtonVisibility(
                             currentLocation,
                             locationDataManager,
-                            searchResultsViewModel,
+                            isSearchExpanded,
                             viewportProvider,
                         )
                     }

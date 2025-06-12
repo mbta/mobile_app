@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteResultsView: View {
-    let routes: [RouteResult]
+    let routes: [SearchViewModel.RouteResult]
 
     var body: some View {
         VStack {
@@ -20,17 +20,14 @@ struct RouteResultsView: View {
             ResultContainer {
                 VStack(spacing: .zero) {
                     ForEach(routes, id: \.id) { route in
-                        Group {
-                            if route.routeType == RouteType.bus {
-                                Text(verbatim: "\(route.shortName) \(route.longName)")
-                            } else {
-                                Text(route.longName)
-                            }
+                        HStack {
+                            RoutePill(spec: route.routePill)
+                            Text(route.name)
+                                .font(Typography.bodySemibold)
+                                .foregroundStyle(Color.text)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .font(Typography.bodySemibold)
-                        .foregroundStyle(Color.text)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(12)
                         if route != routes.last {
                             Divider().overlay(Color.halo)
