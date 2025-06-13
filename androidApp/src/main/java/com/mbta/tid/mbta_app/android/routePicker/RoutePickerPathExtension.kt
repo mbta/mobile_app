@@ -65,11 +65,7 @@ val RoutePickerPath.Label
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        stringResource(R.string.silver_line),
-                        style = Typography.headlineBold,
-                        color = textColor,
-                    )
+                    Text("Silver Line", style = Typography.headlineBold, color = textColor)
                     Text(
                         stringResource(R.string.bus),
                         style = Typography.headline,
@@ -77,11 +73,7 @@ val RoutePickerPath.Label
                     )
                 }
             is CommuterRail ->
-                Text(
-                    stringResource(R.string.commuter_rail),
-                    style = Typography.headlineBold,
-                    color = textColor,
-                )
+                Text("Commuter Rail", style = Typography.headlineBold, color = textColor)
             is Ferry ->
                 Text(
                     stringResource(R.string.ferry),

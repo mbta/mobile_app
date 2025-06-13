@@ -67,8 +67,8 @@ fun RoutePickerView(
                             is RouteDetailsContext.Details -> TODO("Implement details header")
                         }
                     is RoutePickerPath.Bus -> stringResource(R.string.bus)
-                    is RoutePickerPath.Silver -> stringResource(R.string.silver_line)
-                    is RoutePickerPath.CommuterRail -> stringResource(R.string.commuter_rail)
+                    is RoutePickerPath.Silver -> "Silver Line"
+                    is RoutePickerPath.CommuterRail -> "Commuter Rail"
                     is RoutePickerPath.Ferry -> stringResource(R.string.ferry)
                 },
                 style = Typography.title2Bold,
