@@ -26,20 +26,17 @@ import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
 @Composable
-fun RouteCard(
+fun RouteCardContainer(
+    modifier: Modifier = Modifier,
     data: RouteCardData,
-    globalData: GlobalResponse?,
-    now: Instant,
     isFavorite: (FavoriteBridge) -> Boolean,
     onPin: (String) -> Unit,
     showStopHeader: Boolean,
     showStationAccessibility: Boolean = false,
-    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
+    enhancedFavorites: Boolean = false,
+    departureContent: @Composable (RouteCardData.RouteStopData) -> Unit,
 ) {
-
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
-
-    Column(Modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
+    Column(modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
         TransitHeader(data.lineOrRoute) { color ->
             if (!enhancedFavorites) {
                 PinButton(
@@ -56,23 +53,44 @@ fun RouteCard(
                 StopHeader(it, showStationAccessibility)
             }
 
-            Departures(
-                it,
-                globalData,
-                now,
-                { routeStopDirection ->
-                    if (enhancedFavorites) {
-                        isFavorite(FavoriteBridge.Favorite(routeStopDirection))
-                    } else {
-                        isFavorite(FavoriteBridge.Pinned(routeStopDirection.route))
-                    }
-                },
-            ) { leaf ->
-                onOpenStopDetails(
-                    it.stop.id,
-                    StopDetailsFilter(data.lineOrRoute.id, leaf.directionId),
-                )
-            }
+            departureContent(it)
+        }
+    }
+}
+
+@Composable
+fun RouteCard(
+    data: RouteCardData,
+    globalData: GlobalResponse?,
+    now: Instant,
+    isFavorite: (FavoriteBridge) -> Boolean,
+    onPin: (String) -> Unit,
+    showStopHeader: Boolean,
+    showStationAccessibility: Boolean = false,
+    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
+) {
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
+    RouteCardContainer(
+        data = data,
+        isFavorite = isFavorite,
+        onPin = onPin,
+        showStopHeader = showStopHeader,
+        showStationAccessibility = showStationAccessibility,
+        enhancedFavorites = enhancedFavorites,
+    ) {
+        Departures(
+            it,
+            globalData,
+            now,
+            { routeStopDirection ->
+                if (enhancedFavorites) {
+                    isFavorite(FavoriteBridge.Favorite(routeStopDirection))
+                } else {
+                    isFavorite(FavoriteBridge.Pinned(routeStopDirection.route))
+                }
+            },
+        ) { leaf ->
+            onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.directionId))
         }
     }
 }

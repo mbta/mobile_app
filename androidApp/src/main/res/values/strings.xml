@@ -57,7 +57,6 @@
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
     <string name="collapse_remaining_stops">collapse remaining stops</string>
-    <string name="commuter_rail" translatable="false">Commuter Rail</string>
     <string name="congestion">Congestion</string>
     <string name="congestion_lowercase">congestion</string>
     <string name="connection_to">Connection to %1$s</string>
@@ -71,6 +70,7 @@
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
+    <string name="delete" tools:ignore="MissingTranslation">Delete</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -88,10 +88,13 @@
     <string name="dock_closure">Dock Closure</string>
     <string name="dock_issue">Dock Issue</string>
     <string name="dock_issue_sentence_case">Dock issue</string>
+    <string name="done" tools:ignore="MissingTranslation">Done</string>
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
     <string name="eastbound">Eastbound</string>
+    <string name="edit" tools:ignore="MissingTranslation">Edit</string>
+    <string name="edit_favorites" tools:ignore="MissingTranslation">Edit Favorites</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="effect_ahead">&lt;b&gt;%1$s&lt;/b&gt; ahead</string>
     <string name="electrical_work">Electrical Work</string>
@@ -286,7 +289,6 @@
     <string name="signal_issue_lowercase">signal issue</string>
     <string name="signal_problem">Signal Problem</string>
     <string name="signal_problem_lowercase">signal problem</string>
-    <string name="silver_line" translatable="false">Silver Line</string>
     <string name="single_tracking">Single Tracking</string>
     <string name="single_tracking_lowercase">single tracking</string>
     <string name="slippery_rail">Slippery Rail</string>

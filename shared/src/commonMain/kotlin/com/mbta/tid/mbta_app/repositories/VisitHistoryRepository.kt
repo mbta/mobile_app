@@ -4,12 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.json
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.serialization.encodeToString
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -42,9 +42,9 @@ class VisitHistoryRepository : IVisitHistoryRepository, KoinComponent {
     }
 }
 
-class MockVisitHistoryRepository : IVisitHistoryRepository {
-    private var history = VisitHistory()
-
+class MockVisitHistoryRepository
+@DefaultArgumentInterop.Enabled
+constructor(private var history: VisitHistory = VisitHistory()) : IVisitHistoryRepository {
     override suspend fun getVisitHistory(): VisitHistory {
         return history
     }

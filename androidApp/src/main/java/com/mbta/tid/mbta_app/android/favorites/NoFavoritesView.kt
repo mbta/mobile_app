@@ -25,7 +25,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
-fun NoFavoritesView(onAddStops: () -> Unit) {
+fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,28 +43,30 @@ fun NoFavoritesView(onAddStops: () -> Unit) {
             modifier = Modifier.size(56.dp).clearAndSetSemantics {},
             tint = colorResource(R.color.deemphasized),
         )
-        Row(
-            modifier =
-                Modifier.clickable { onAddStops() }
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(color = colorResource(R.color.key))
-        ) {
+        if (showAddStops) {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier.clickable { onAddStops() }
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(color = colorResource(R.color.key))
             ) {
-                Text(
-                    stringResource(R.string.add_stops),
-                    style = Typography.bodySemibold,
-                    color = colorResource(R.color.fill3),
-                )
-                Icon(
-                    painterResource(R.drawable.plus),
-                    null,
-                    modifier = Modifier.size(24.dp),
-                    tint = colorResource(R.color.fill3),
-                )
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.add_stops),
+                        style = Typography.bodySemibold,
+                        color = colorResource(R.color.fill3),
+                    )
+                    Icon(
+                        painterResource(R.drawable.plus),
+                        null,
+                        modifier = Modifier.size(24.dp),
+                        tint = colorResource(R.color.fill3),
+                    )
+                }
             }
         }
     }

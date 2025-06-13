@@ -8,7 +8,7 @@ data class RoutePillSpec(
     val content: Content,
     val size: Size,
     val shape: Shape,
-    val contentDescription: String? = null,
+    val contentDescription: ContentDescription? = null,
 ) {
     enum class Type {
         Fixed,
@@ -42,13 +42,21 @@ data class RoutePillSpec(
         Default,
     }
 
+    sealed class ContentDescription {
+        data class StopSearchResultRoute(
+            val routeName: String?,
+            val routeType: RouteType,
+            val isOnly: Boolean,
+        ) : ContentDescription()
+    }
+
     @DefaultArgumentInterop.Enabled
     constructor(
         route: Route?,
         line: Line?,
         type: Type,
         context: Context = Context.Default,
-        contentDescription: String? = null,
+        contentDescription: ContentDescription? = null,
     ) : this(
         route?.textColor ?: line?.textColor ?: "FFFFFF",
         route?.color ?: line?.color ?: "000000",

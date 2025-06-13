@@ -15,18 +15,13 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
@@ -60,12 +55,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
 
@@ -96,12 +86,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
         composeTestRule
@@ -142,12 +127,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
         composeTestRule
@@ -176,12 +156,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
         composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
@@ -210,12 +185,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
 
@@ -245,12 +215,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
 
@@ -280,12 +245,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
 
@@ -319,12 +279,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
         composeTestRule.waitUntilExactlyOneExists(
@@ -352,12 +307,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                searchResultsViewModel =
-                    SearchResultsViewModel(
-                        MockAnalytics(),
-                        MockSearchResultRepository(),
-                        VisitHistoryUsecase(MockVisitHistoryRepository()),
-                    ),
+                isSearchExpanded = false,
             )
         }
         composeTestRule.onNodeWithTag("Empty map grid").assertIsDisplayed()

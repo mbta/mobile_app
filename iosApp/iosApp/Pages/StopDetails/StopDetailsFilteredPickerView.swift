@@ -19,7 +19,7 @@ struct StopDetailsFilteredPickerView: View {
     var stopData: RouteCardData.RouteStopData
     var leaf: RouteCardData.Leaf?
 
-    var pinned: Bool
+    var favorite: Bool
 
     var now: Date
 
@@ -40,7 +40,7 @@ struct StopDetailsFilteredPickerView: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        stopData: RouteCardData.RouteStopData, pinned: Bool, now: Date,
+        stopData: RouteCardData.RouteStopData, favorite: Bool, now: Date,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: MapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
@@ -50,7 +50,7 @@ struct StopDetailsFilteredPickerView: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.stopData = stopData
-        self.pinned = pinned
+        self.favorite = favorite
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -88,7 +88,7 @@ struct StopDetailsFilteredPickerView: View {
                             setTripFilter: setTripFilter,
                             leaf: leaf,
                             selectedDirection: stopData.directions[Int(stopFilter.directionId)],
-                            pinned: pinned,
+                            favorite: favorite,
                             now: now,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
@@ -113,7 +113,7 @@ struct StopDetailsFilteredPickerView: View {
                             setTripFilter: { _ in },
                             leaf: leaf,
                             selectedDirection: stopData.directions[0],
-                            pinned: false,
+                            favorite: false,
                             now: now,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,

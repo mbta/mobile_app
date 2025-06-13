@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 struct SearchResultsView: View {
-    private var state: SearchViewModel.ResultsState?
+    private var state: SearchViewModel.State
     private var handleStopTap: (String) -> Void
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -19,7 +19,7 @@ struct SearchResultsView: View {
     var includeRoutes: Bool { settingsCache.get(.searchRouteResults) }
 
     init(
-        state: SearchViewModel.ResultsState?,
+        state: SearchViewModel.State,
         handleStopTap: @escaping (String) -> Void
     ) {
         self.state = state
@@ -29,18 +29,18 @@ struct SearchResultsView: View {
     var body: some View {
         ScrollView {
             Group {
-                switch state {
+                switch onEnum(of: state) {
                 case .loading:
                     LoadingResults()
-                case let .recentStops(stops):
+                case let .recentStops(state):
                     VStack {
                         Text("Recently Viewed")
                             .font(Typography.subheadlineSemibold)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        StopResultsView(stops: stops, handleStopTap: handleStopTap)
+                        StopResultsView(stops: state.stops, handleStopTap: handleStopTap)
                     }
-                case let .results(stopResults, routeResults):
-                    if state?.isEmpty(includeRoutes: includeRoutes) == true {
+                case let .results(state):
+                    if state.isEmpty(includeRoutes: includeRoutes) == true {
                         EmptyStateView(
                             headline: "No results found 🤔",
                             subheadline: "Try a different spelling or name."
@@ -48,9 +48,9 @@ struct SearchResultsView: View {
                         .padding(.top, 16)
                     } else {
                         VStack(spacing: 8) {
-                            StopResultsView(stops: stopResults, handleStopTap: handleStopTap)
-                            if includeRoutes, !routeResults.isEmpty {
-                                RouteResultsView(routes: routeResults)
+                            StopResultsView(stops: state.stops, handleStopTap: handleStopTap)
+                            if includeRoutes, !state.routes.isEmpty {
+                                RouteResultsView(routes: state.routes)
                                     .padding(.top, 8)
                             }
                         }
@@ -61,16 +61,14 @@ struct SearchResultsView: View {
                         subheadline: "Try your search again."
                     )
                     .padding(.top, 16)
-                default:
-                    EmptyView()
                 }
             }
             .onChange(of: state) { state in
-                if let state, case let .results(stopResults, _) = state, !state.isEmpty(includeRoutes: includeRoutes) {
+                if case let .results(state) = onEnum(of: state), !state.isEmpty(includeRoutes: includeRoutes) {
                     let announcementString = String(format: NSLocalizedString(
                         "%ld results found",
                         comment: "Screen reader text that is announced when search results are returned"
-                    ), stopResults.count)
+                    ), state.stops.count)
 
                     if #available(iOS 17, *) {
                         var resultsFoundAnnouncement = AttributedString(announcementString)

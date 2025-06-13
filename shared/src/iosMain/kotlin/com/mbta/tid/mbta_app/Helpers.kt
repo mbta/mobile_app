@@ -2,15 +2,19 @@ package com.mbta.tid.mbta_app
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.IRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndModule
+import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -33,7 +37,9 @@ internal fun createDataStore(): DataStore<Preferences> =
     )
 
 fun initKoin(appVariant: AppVariant, nativeModule: Module) {
-    startKoin { modules(appModule(appVariant) + platformModule() + nativeModule) }
+    startKoin {
+        modules(appModule(appVariant) + viewModelModule() + platformModule() + nativeModule)
+    }
 }
 
 /*
@@ -56,10 +62,18 @@ Useful for IOS testing where we want to start koin once and
 subsequently load in specific modules to override these base definitions.
  */
 fun startKoinIOSTestApp() {
-    startKoin { modules(platformModule()) }
+    startKoin {
+        modules(
+            platformModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
+        )
+    }
     loadDefaultRepoModules()
 }
 
 fun startKoinE2E() {
-    startKoin { modules(endToEndModule()) }
+    startKoin {
+        modules(
+            endToEndModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
+        )
+    }
 }

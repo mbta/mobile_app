@@ -65,7 +65,6 @@ import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
 import com.mbta.tid.mbta_app.android.routePicker.RoutePickerView
 import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
@@ -123,7 +122,6 @@ fun MapAndSheetPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
-    searchResultsViewModel: SearchResultsViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
@@ -228,7 +226,6 @@ fun MapAndSheetPage(
 
     fun handleSearchExpandedChange(expanded: Boolean) {
         searchExpanded = expanded
-        searchResultsViewModel.expanded = expanded
         if (expanded) {
             hideNavBar()
             if (!nearbyTransit.hideMaps) {
@@ -415,11 +412,18 @@ fun MapAndSheetPage(
                     navController.navigateFrom<SheetRoutes.Favorites>(route)
                 }
                 FavoritesPage(
-                    modifier = modifier,
                     openSheetRoute = ::navigate,
                     favoritesViewModel = favoritesViewModel,
                     errorBannerViewModel = errorBannerViewModel,
                     nearbyTransit = nearbyTransit,
+                )
+            }
+
+            composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
+                EditFavoritesPage(
+                    onClose = { navController.popBackStack() },
+                    global = nearbyTransit.globalResponse,
+                    favoritesViewModel = favoritesViewModel,
                 )
             }
 
@@ -540,7 +544,6 @@ fun MapAndSheetPage(
                 ::handleStopNavigation,
                 ::handleRouteNavigation,
                 searchFocusRequester,
-                searchResultsViewModel,
                 onBarGloballyPositioned = {},
             ) {
                 SheetContent(
@@ -594,7 +597,6 @@ fun MapAndSheetPage(
                     ::handleStopNavigation,
                     ::handleRouteNavigation,
                     searchFocusRequester,
-                    searchResultsViewModel,
                     onBarGloballyPositioned = { layoutCoordinates ->
                         with(density) {
                             viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
@@ -622,7 +624,7 @@ fun MapAndSheetPage(
                         vehiclesData = vehiclesData,
                         routeCardData = routeCardData,
                         viewModel = mapViewModel,
-                        searchResultsViewModel = searchResultsViewModel,
+                        isSearchExpanded = searchExpanded,
                     )
                 }
             }
