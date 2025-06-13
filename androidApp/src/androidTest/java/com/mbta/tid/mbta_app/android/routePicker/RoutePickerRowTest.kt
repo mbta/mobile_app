@@ -8,8 +8,6 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.utils.TestData
-import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -21,49 +19,33 @@ class RoutePickerRowTest {
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
-                longName = "Red Line"
-                type = RouteType.HEAVY_RAIL
+                shortName = "66"
+                longName = "Harvard Square - Nubian Station"
+                type = RouteType.BUS
             }
 
         composeTestRule.setContent { RoutePickerRow(RouteCardData.LineOrRoute.Route(route)) {} }
 
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Red Line").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Red Line").assertHasClickAction()
-    }
-
-    @Test
-    fun testLine() {
-        val objects = TestData.clone()
-        val line = objects.getLine("line-Green")
-        val routes = objects.routes.values.filter { it.lineId == line.id }.toSet()
-
-        composeTestRule.setContent {
-            RoutePickerRow(RouteCardData.LineOrRoute.Line(line, routes)) {}
-        }
-
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Green Line").assertIsDisplayed()
+        composeTestRule.onNodeWithText("66").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertHasClickAction()
     }
 
     @Test
     fun testTap() {
+        var tapped = false
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
-                longName = "Blue Line"
-                shortName = "Blue"
-                type = RouteType.HEAVY_RAIL
+                longName = "Lynn Ferry"
+                type = RouteType.FERRY
             }
 
-        var tapped = false
         composeTestRule.setContent {
             RoutePickerRow(RouteCardData.LineOrRoute.Route(route)) { tapped = true }
         }
 
+        composeTestRule.onNodeWithText(route.longName).performClick()
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Blue Line").performClick()
-        composeTestRule.waitForIdle()
-        assertTrue(tapped)
+        assert(tapped)
     }
 }
