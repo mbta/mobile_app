@@ -4,17 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
@@ -28,21 +24,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.SearchInput
 import com.mbta.tid.mbta_app.android.search.results.RouteResultsView
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -64,13 +57,6 @@ fun SearchBarOverlay(
     val searchVMState by searchVM.models.collectAsState()
     val includeRoutes = SettingsCache.get(Settings.SearchRouteResults)
 
-    val buttonColors =
-        ButtonColors(
-            containerColor = colorResource(R.color.fill3),
-            disabledContainerColor = colorResource(R.color.fill3),
-            contentColor = colorResource(R.color.deemphasized),
-            disabledContentColor = colorResource(R.color.deemphasized),
-        )
     LaunchedEffect(searchInputState) { searchVM.setQuery(searchInputState) }
     LaunchedEffect(showSearchBar, expanded) {
         if (showSearchBar) {
@@ -93,64 +79,19 @@ fun SearchBarOverlay(
                                 if (expanded) colorResource(R.color.fill1) else Color.Transparent
                         ),
                     inputField = {
-                        SearchBarDefaults.InputField(
-                            colors =
-                                SearchBarDefaults.inputFieldColors(
-                                    focusedTextColor = colorResource(R.color.text),
-                                    unfocusedTextColor = colorResource(R.color.text),
-                                    focusedPlaceholderColor = colorResource(R.color.deemphasized),
-                                    unfocusedPlaceholderColor = colorResource(R.color.deemphasized),
-                                ),
-                            query = searchInputState,
-                            placeholder = {
-                                Text(
-                                    stringResource(R.string.stops),
-                                    // This will be drawn in bodyLarge if we don't
-                                    // re-override it here
-                                    style = Typography.callout,
-                                )
-                            },
-                            expanded = expanded,
-                            onQueryChange = { searchInputState = it },
-                            onExpandedChange = onExpandedChange,
-                            modifier =
-                                Modifier.padding(horizontal = 14.dp)
-                                    .haloContainer(
-                                        2.dp,
-                                        borderRadius = 8.dp,
-                                        backgroundColor = colorResource(R.color.fill3),
-                                    )
-                                    .fillMaxWidth()
-                                    .focusRequester(inputFieldFocusRequester)
-                                    .onGloballyPositioned { layoutCoordinates ->
-                                        onBarGloballyPositioned(layoutCoordinates)
-                                    },
-                            onSearch = {},
-                            leadingIcon = {
-                                Icon(
-                                    painterResource(R.drawable.magnifying_glass),
-                                    null,
-                                    tint = colorResource(R.color.deemphasized),
-                                )
-                            },
-                            trailingIcon = {
-                                if (expanded) {
-                                    Button(
-                                        colors = buttonColors,
-                                        onClick = { onExpandedChange(false) },
-                                    ) {
-                                        Icon(
-                                            painterResource(R.drawable.fa_xmark),
-                                            stringResource(R.string.close_button_label),
-                                            tint = colorResource(R.color.deemphasized),
-                                        )
-                                    }
-                                }
-                            },
-                        )
+                        SearchInput(
+                            searchInputState,
+                            { searchInputState = it },
+                            expanded,
+                            onExpandedChange,
+                            inputFieldFocusRequester,
+                            onBarGloballyPositioned,
+                        ) {
+                            Text(stringResource(R.string.stops), style = Typography.callout)
+                        }
                     },
                     expanded = expanded,
-                    onExpandedChange = {},
+                    onExpandedChange = onExpandedChange,
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
