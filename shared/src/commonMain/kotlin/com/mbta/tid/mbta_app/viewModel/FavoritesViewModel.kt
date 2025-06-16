@@ -17,11 +17,27 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
+interface IFavoritesViewModel {
+    val models: StateFlow<FavoritesViewModel.State>
+
+    fun reloadFavorites()
+
+    @DefaultArgumentInterop.Enabled
+    fun setActive(active: Boolean, isReturningFromBackground: Boolean? = null)
+
+    fun setAlerts(alerts: AlertsStreamDataResponse?)
+
+    fun setLocation(location: Position?)
+
+    fun setNow(now: Instant)
+}
+
 class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
-    MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>() {
+    MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
     sealed interface Event {
         data object ReloadFavorites : Event
 
@@ -142,20 +158,19 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
         return State(favorites, isReturningFromBackground, routeCardData, staticRouteCardData)
     }
 
-    val models
+    override val models
         get() = internalModels
 
-    fun reloadFavorites() = fireEvent(Event.ReloadFavorites)
+    override fun reloadFavorites() = fireEvent(Event.ReloadFavorites)
 
-    @DefaultArgumentInterop.Enabled
-    fun setActive(active: Boolean, isReturningFromBackground: Boolean? = null) =
+    override fun setActive(active: Boolean, isReturningFromBackground: Boolean?) =
         fireEvent(Event.SetActive(active, isReturningFromBackground))
 
-    fun setAlerts(alerts: AlertsStreamDataResponse?) = fireEvent(Event.SetAlerts(alerts))
+    override fun setAlerts(alerts: AlertsStreamDataResponse?) = fireEvent(Event.SetAlerts(alerts))
 
-    fun setLocation(location: Position?) = fireEvent(Event.SetLocation(location))
+    override fun setLocation(location: Position?) = fireEvent(Event.SetLocation(location))
 
-    fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
+    override fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
 
     companion object {
         fun filterRouteAndDirection(
