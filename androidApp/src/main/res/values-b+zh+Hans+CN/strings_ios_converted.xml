@@ -124,7 +124,7 @@
     <string name="ferries">轮渡</string>
     <string name="ferry">轮渡</string>
     <string name="ferry_lowercase">轮渡</string>
-    <string name="filterShowAll">全部</string>
+    <string name="filter_show_all">全部</string>
     <string name="finishing_another_trip">完成其他行程</string>
     <string name="fire">火灾</string>
     <string name="fire_department_activity">消防局活动</string>

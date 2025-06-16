@@ -135,7 +135,7 @@ fun StopDetailsFilterPills(
                 border = BorderStroke(2.dp, colorResource(R.color.halo)),
             ) {
                 Text(
-                    stringResource(R.string.filterShowAll),
+                    stringResource(R.string.filter_show_all),
                     style = Typography.body.merge(colorResource(R.color.fill1)),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                 )

@@ -130,7 +130,7 @@
     <string name="ferries">ferris</string>
     <string name="ferry">Ferry</string>
     <string name="ferry_lowercase">ferry</string>
-    <string name="filterShowAll">Todos</string>
+    <string name="filter_show_all">Todos</string>
     <string name="finishing_another_trip">Terminando otro viaje</string>
     <string name="fire">Incendio</string>
     <string name="fire_department_activity">Actividad del Departamento de Incendios</string>
