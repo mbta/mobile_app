@@ -9,9 +9,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
-import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -59,10 +57,6 @@ class FavoritesViewModelTest : KoinTest {
                     MockRepositories().apply {
                         useObjects(objects)
                         favorites = MockFavoritesRepository(this@FavoritesViewModelTest.favorites)
-                        predictions =
-                            MockPredictionsRepository(
-                                connectV2Response = PredictionsByStopJoinResponse(objects)
-                            )
                         repositoriesBlock()
                     }
                 ),
