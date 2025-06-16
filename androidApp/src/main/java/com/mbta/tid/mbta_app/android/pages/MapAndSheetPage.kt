@@ -67,6 +67,7 @@ import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
+import com.mbta.tid.mbta_app.android.util.currentRoute
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
@@ -84,6 +85,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.hours
@@ -221,6 +223,14 @@ fun MapAndSheetPage(
     fun updateVisitHistory(stopId: String) {
         CoroutineScope(Dispatchers.Default).launch {
             visitHistoryUsecase.addVisit(Visit.StopVisit(stopId))
+        }
+    }
+
+    fun handleRouteSearchExpandedChange(expanded: Boolean) {
+        if (expanded && !nearbyTransit.hideMaps) {
+            scope.launch {
+                nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Large)
+            }
         }
     }
 
@@ -421,7 +431,7 @@ fun MapAndSheetPage(
 
             composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
                 EditFavoritesPage(
-                    onClose = { navController.popBackStack() },
+                    onClose = { navController.popBackStackFrom<SheetRoutes.EditFavorites>() },
                     global = nearbyTransit.globalResponse,
                     favoritesViewModel = favoritesViewModel,
                 )
@@ -482,7 +492,20 @@ fun MapAndSheetPage(
                         }
                     },
                     onOpenRouteDetails = ::handlePickRouteNavigation,
-                    onClose = { navController.popBackStackFrom<SheetRoutes.RoutePicker>() },
+                    onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
+                    onBack = onBack@{
+                            val currentPickerRoute =
+                                navController.currentRouteAs<SheetRoutes.RoutePicker>()
+                                    ?: return@onBack
+                            if (currentPickerRoute.path != RoutePickerPath.Root) {
+                                navController.popBackStackFrom<SheetRoutes.RoutePicker>()
+                            }
+                        },
+                    onClose = {
+                        while (navController.currentRoute is SheetRoutes.RoutePicker) {
+                            navController.popBackStackFrom<SheetRoutes.RoutePicker>()
+                        }
+                    },
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }

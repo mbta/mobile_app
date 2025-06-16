@@ -20,6 +20,10 @@ abstract class Analytics {
         logEvent("search", "query" to query)
     }
 
+    fun performedRouteFilter(query: String) {
+        logEvent("route_filter", "query" to query)
+    }
+
     fun recordSession(colorScheme: AnalyticsColorScheme) {
         setUserProperty("color_scheme", colorScheme.recordedValue)
     }

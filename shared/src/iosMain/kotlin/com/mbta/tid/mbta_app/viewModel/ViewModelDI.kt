@@ -6,4 +6,5 @@ import org.koin.core.component.inject
 @Suppress("unused")
 class ViewModelDI : KoinComponent {
     val search: SearchViewModel by inject()
+    val searchRoutes: SearchRoutesViewModel by inject()
 }
