@@ -31,7 +31,7 @@ koin-bom = "4.0.4"
 kotlinpoet = "2.2.0"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxDatetime = "0.6.2"
-ktor = "3.1.3"
+ktor = "3.2.0"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.12.2"
 mapboxTurf = "7.4.0"
