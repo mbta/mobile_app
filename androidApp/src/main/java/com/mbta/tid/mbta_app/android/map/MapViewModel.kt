@@ -80,7 +80,7 @@ interface IMapViewModel {
         currentLocation: Location?,
         locationDataManager: LocationDataManager,
         isSearchExpanded: Boolean,
-        viewportProvider: IViewportProvider
+        viewportProvider: IViewportProvider,
     )
 
     fun hideCenterButtons()
@@ -208,7 +208,7 @@ open class MapViewModel(
         currentLocation: Location?,
         locationDataManager: LocationDataManager,
         isSearchExpanded: Boolean,
-        viewportProvider: IViewportProvider
+        viewportProvider: IViewportProvider,
     ) {
         setShowRecenterButton(
             locationDataManager.hasPermission &&

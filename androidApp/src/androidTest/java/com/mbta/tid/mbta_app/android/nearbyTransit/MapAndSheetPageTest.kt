@@ -35,7 +35,9 @@ import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
@@ -50,16 +52,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import dev.mokkery.answering.calls
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.spy
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -251,7 +249,9 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Mapbox Attribution"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasContentDescription("Mapbox Attribution")
+        )
         composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
         composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading..."))
         composeTestRule
@@ -330,7 +330,7 @@ class MapAndSheetPageTest : KoinTest {
                 currentLocation: Location?,
                 locationDataManager: LocationDataManager,
                 isSearchExpanded: Boolean,
-                viewportProvider: IViewportProvider
+                viewportProvider: IViewportProvider,
             ) {
                 TODO("Not yet implemented")
             }
@@ -491,7 +491,7 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil() { followCallCount == 0 }
+        composeTestRule.waitUntilDefaultTimeout { followCallCount == 0 }
 
         assertEquals(followCallCount, 0)
 
@@ -510,7 +510,7 @@ class MapAndSheetPageTest : KoinTest {
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil() { followCallCount == 1 }
-        assertTrue(followCallCount == 1)
+        composeTestRule.waitUntilDefaultTimeout { followCallCount == 1 }
+        assertEquals(1, followCallCount)
     }
 }

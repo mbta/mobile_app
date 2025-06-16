@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -1104,7 +1105,7 @@ class StopDetailsViewModelTest {
             )
         }
 
-        composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }
+        composeTestRule.waitUntilDefaultTimeout { checkPredictionsStaleCount >= 2 }
     }
 
     @Test
@@ -1172,7 +1173,7 @@ class StopDetailsViewModelTest {
         )
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil(2000) { newStopFilter == expectedFilter }
+        composeTestRule.waitUntilDefaultTimeout { newStopFilter == expectedFilter }
         kotlin.test.assertEquals(expectedFilter, newStopFilter)
     }
 
@@ -1322,7 +1323,7 @@ class StopDetailsViewModelTest {
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.waitUntil(2_000) { newTripFilter == expectedTripFilter }
+        composeTestRule.waitUntilDefaultTimeout { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
     }
 

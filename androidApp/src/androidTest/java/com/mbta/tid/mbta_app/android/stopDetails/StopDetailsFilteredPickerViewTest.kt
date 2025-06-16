@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LocationType
@@ -411,7 +412,7 @@ class StopDetailsFilteredPickerViewTest {
             .assertIsDisplayed()
             .performClick()
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Add"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
 
         composeTestRule.onNodeWithText("Add").performClick()
 

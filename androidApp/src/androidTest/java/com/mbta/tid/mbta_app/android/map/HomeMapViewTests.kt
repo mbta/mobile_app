@@ -284,7 +284,7 @@ class HomeMapViewTests {
         every { mapVM.showTripCenterButton } returns MutableStateFlow(false)
 
         every {
-            mapVM.updateCenterButtonVisibility(any(), locationManager, searchVM, viewportProvider)
+            mapVM.updateCenterButtonVisibility(any(), locationManager, false, viewportProvider)
         } calls { updateCenterButtonVisibilityCalled = true }
 
         composeTestRule.setContent {
@@ -302,7 +302,7 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = mapVM,
-                isSearchExpanded = false
+                isSearchExpanded = false,
             )
         }
 
