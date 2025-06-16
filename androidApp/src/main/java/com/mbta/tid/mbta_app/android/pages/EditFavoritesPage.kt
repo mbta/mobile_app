@@ -5,21 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -40,9 +36,12 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
+import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
+import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
@@ -72,7 +71,7 @@ fun EditFavoritesPage(
     var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
     LaunchedEffect(Unit) { routeCardData = favoritesViewModel.loadStaticRouteCardData(global) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Header(favoritesViewModel, favoritesState, onClose)
         EditFavoritesList(routeCardData, showStationAccessibility, global) {
             favoritesState[it] = false
@@ -93,33 +92,27 @@ private fun Header(
     currentState: MutableMap<RouteStopDirection, Boolean>?,
     onClose: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(R.string.edit_favorites),
-            modifier = Modifier.semantics { heading() }.padding(horizontal = 16.dp),
-            style = Typography.title3Semibold,
-        )
-        Spacer(Modifier.weight(1f))
-        TextButton(
-            onClick = { viewModel.updateFavorites(currentState?.toMap(), onFinish = { onClose() }) }
+    Row(
+        Modifier.semantics { heading() }.padding(horizontal = 16.dp).fillMaxWidth(),
+        Arrangement.SpaceBetween,
+        Alignment.CenterVertically,
+    ) {
+        Text(text = stringResource(R.string.edit_favorites), style = Typography.title2Bold)
+        NavTextButton(
+            stringResource(R.string.done),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.key),
+                    contentColor = colorResource(R.color.fill2),
+                ),
         ) {
-            Text(
-                text = stringResource(R.string.done),
-                modifier =
-                    Modifier.background(
-                            colorResource(R.color.key),
-                            RoundedCornerShape(percent = 100),
-                        )
-                        .padding(17.dp, 5.dp),
-                color = colorResource(R.color.fill2),
-                style = Typography.callout,
-            )
+            viewModel.updateFavorites(currentState?.toMap(), onFinish = onClose)
         }
     }
 }
 
 @Composable
-private fun ColumnScope.EditFavoritesList(
+private fun EditFavoritesList(
     routeCardData: List<RouteCardData>?,
     showStationAccessibility: Boolean,
     global: GlobalResponse?,
@@ -127,7 +120,7 @@ private fun ColumnScope.EditFavoritesList(
 ) {
     if (routeCardData == null) {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            LazyColumn(
+            ScrollSeparatorLazyColumn(
                 contentPadding =
                     PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -137,14 +130,11 @@ private fun ColumnScope.EditFavoritesList(
             }
         }
     } else if (routeCardData.isEmpty()) {
-        Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
-            verticalArrangement = Arrangement.Center,
-        ) {
+        ScrollSeparatorColumn(Modifier.padding(8.dp), Arrangement.Center) {
             NoFavoritesView({}, false)
         }
     } else {
-        LazyColumn(
+        ScrollSeparatorLazyColumn(
             contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
