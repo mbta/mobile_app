@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.viewModel
+package com.mbta.tid.mbta_app.viewModel.composeStateHelpers
 
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository

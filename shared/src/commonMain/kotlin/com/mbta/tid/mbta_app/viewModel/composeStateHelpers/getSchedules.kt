@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.viewModel
+package com.mbta.tid.mbta_app.viewModel.composeStateHelpers
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
