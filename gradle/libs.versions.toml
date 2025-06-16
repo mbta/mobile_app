@@ -46,7 +46,7 @@ skie = "0.10.2-preview.2.1.20"
 spatialk = "0.3.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 spotless = "7.0.4"
-turbine = "1.2.0"
+turbine = "1.2.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
