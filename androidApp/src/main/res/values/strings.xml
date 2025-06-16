@@ -47,7 +47,8 @@
     <string name="bike_issue_sentence_case">Bike issue</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Boarding on track %1$s</string>
-    <string name="bus">bus</string>
+    <string name="bus">Bus</string>
+    <string name="bus_lowercase">bus</string>
     <string name="buses">buses</string>
     <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
@@ -130,7 +131,8 @@
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send App Feedback</string>
     <string name="ferries">ferries</string>
-    <string name="ferry">ferry</string>
+    <string name="ferry">Ferry</string>
+    <string name="ferry_lowercase">ferry</string>
     <string name="filterShowAll">All</string>
     <string name="finishing_another_trip">Finishing another trip</string>
     <string name="fire">Fire</string>

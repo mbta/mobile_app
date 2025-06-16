@@ -1,8 +1,11 @@
 package com.mbta.tid.mbta_app.android.routePicker
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -78,6 +81,34 @@ class RoutePickerViewTest {
     }
 
     @Test
+    fun testDisplaysModePaths() {
+        val objects = ObjectCollectionBuilder()
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Root,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onAllNodesWithText("Bus").assertCountEquals(2)
+        composeTestRule.onNodeWithText("Silver Line").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Commuter Rail").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Ferry").assertIsDisplayed()
+    }
+
+    @Test
     fun testDisplaysSubwayHeader() {
         val objects = ObjectCollectionBuilder()
         objects.route {
@@ -107,7 +138,7 @@ class RoutePickerViewTest {
     }
 
     @Test
-    fun testDisplaysRoutes() {
+    fun testDisplaysSubwayRoutes() {
         val objects = ObjectCollectionBuilder()
         objects.route {
             longName = "Red Line"
@@ -138,6 +169,153 @@ class RoutePickerViewTest {
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Red Line").assertIsDisplayed()
         composeTestRule.onNodeWithText("Mattapan Trolley").assertIsDisplayed()
+    }
+
+    @Test
+    fun testDisplaysBus() {
+        val objects = ObjectCollectionBuilder()
+        objects.route {
+            shortName = "1"
+            longName = "Harvard Square - Nubian Station"
+            type = RouteType.BUS
+        }
+        objects.route {
+            shortName = "71"
+            longName = "Watertown Square - Harvard Station"
+            type = RouteType.BUS
+        }
+        objects.route {
+            id = "741"
+            shortName = "SL1"
+            longName = "Logan Airport Terminals - South Station"
+            type = RouteType.BUS
+        }
+        objects.route {
+            longName = "Mattapan Trolley"
+            type = RouteType.LIGHT_RAIL
+        }
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Bus,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Watertown Square - Harvard Station").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Logan Airport Terminals - South Station")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Mattapan Trolley").assertIsNotDisplayed()
+    }
+
+    @Test
+    fun testDisplaysSilverLineRoutes() {
+        val objects = ObjectCollectionBuilder()
+        objects.route {
+            shortName = "66"
+            longName = "Harvard Square - Nubian Station"
+            type = RouteType.BUS
+        }
+        objects.route {
+            id = "741"
+            shortName = "SL1"
+            longName = "Logan Airport Terminals - South Station"
+            type = RouteType.BUS
+        }
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Silver,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertIsNotDisplayed()
+        composeTestRule
+            .onNodeWithText("Logan Airport Terminals - South Station")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testDisplaysCommuterRailRoutes() {
+        val objects = ObjectCollectionBuilder()
+        objects.route {
+            longName = "Providence/Stoughton Line"
+            type = RouteType.COMMUTER_RAIL
+        }
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.CommuterRail,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Providence/Stoughton Line").assertIsDisplayed()
+    }
+
+    @Test
+    fun testDisplaysFerryRoutes() {
+        val objects = ObjectCollectionBuilder()
+        objects.route {
+            longName = "Lynn Ferry"
+            type = RouteType.FERRY
+        }
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Ferry,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Lynn Ferry").assertIsDisplayed()
     }
 
     @Test
