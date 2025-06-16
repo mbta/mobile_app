@@ -56,6 +56,7 @@ struct ContentView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
+            Sentry.shared.captureMessage(message: "KB Testing")
             Task { await contentVM.loadFeaturePromos() }
             Task { await contentVM.loadOnboardingScreens() }
             analytics.recordSession(colorScheme: colorScheme)
