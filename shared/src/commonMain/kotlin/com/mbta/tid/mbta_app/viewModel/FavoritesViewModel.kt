@@ -27,7 +27,7 @@ interface IFavoritesViewModel {
     fun reloadFavorites()
 
     @DefaultArgumentInterop.Enabled
-    fun setActive(active: Boolean, isReturningFromBackground: Boolean? = null)
+    fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
 
     fun setAlerts(alerts: AlertsStreamDataResponse?)
 
@@ -41,7 +41,7 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
     sealed interface Event {
         data object ReloadFavorites : Event
 
-        data class SetActive(val active: Boolean, val isReturningFromBackground: Boolean?) : Event
+        data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
 
         data class SetAlerts(val alerts: AlertsStreamDataResponse?) : Event
 
@@ -51,18 +51,18 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
     }
 
     data class State(
+        val awaitingPredictionsAfterBackground: Boolean,
         val favorites: Set<RouteStopDirection>?,
-        val isReturningFromBackground: Boolean,
         val routeCardData: List<RouteCardData>?,
         val staticRouteCardData: List<RouteCardData>?,
     ) {
-        constructor() : this(null, false, null, null)
+        constructor() : this(false, null, null, null)
     }
 
     @Composable
     override fun runLogic(events: Flow<Event>): State {
+        var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
-        var isReturningFromBackground: Boolean by remember { mutableStateOf(false) }
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var staticRouteCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
 
@@ -92,7 +92,9 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         favorites = favoritesUsecases.getRouteStopDirectionFavorites()
                     is Event.SetActive -> {
                         active = event.active
-                        event.isReturningFromBackground?.let { isReturningFromBackground = it }
+                        if (event.wasSentToBackground) {
+                            awaitingPredictionsAfterBackground = true
+                        }
                     }
                     is Event.SetAlerts -> alerts = event.alerts
                     is Event.SetLocation -> location = event.location
@@ -103,7 +105,7 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
 
         LaunchedEffect(predictions) {
             if (predictions != null) {
-                isReturningFromBackground = false
+                awaitingPredictionsAfterBackground = false
             }
         }
 
@@ -155,7 +157,12 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
             }
         }
 
-        return State(favorites, isReturningFromBackground, routeCardData, staticRouteCardData)
+        return State(
+            awaitingPredictionsAfterBackground,
+            favorites,
+            routeCardData,
+            staticRouteCardData,
+        )
     }
 
     override val models
@@ -163,8 +170,8 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
 
     override fun reloadFavorites() = fireEvent(Event.ReloadFavorites)
 
-    override fun setActive(active: Boolean, isReturningFromBackground: Boolean?) =
-        fireEvent(Event.SetActive(active, isReturningFromBackground))
+    override fun setActive(active: Boolean, wasSentToBackground: Boolean) =
+        fireEvent(Event.SetActive(active, wasSentToBackground))
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) = fireEvent(Event.SetAlerts(alerts))
 

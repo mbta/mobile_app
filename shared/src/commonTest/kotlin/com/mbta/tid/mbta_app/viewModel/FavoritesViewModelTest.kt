@@ -81,8 +81,8 @@ class FavoritesViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = null,
-                    isReturningFromBackground = false,
                     routeCardData = null,
                     staticRouteCardData = null,
                 ),
@@ -90,8 +90,8 @@ class FavoritesViewModelTest : KoinTest {
             )
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = emptySet(),
-                    isReturningFromBackground = false,
                     routeCardData = null,
                     staticRouteCardData = null,
                 ),
@@ -99,8 +99,8 @@ class FavoritesViewModelTest : KoinTest {
             )
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = emptySet(),
-                    isReturningFromBackground = false,
                     routeCardData = emptyList(),
                     staticRouteCardData = emptyList(),
                 ),
@@ -276,8 +276,8 @@ class FavoritesViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = null,
-                    isReturningFromBackground = false,
                     routeCardData = null,
                     staticRouteCardData = null,
                 ),
@@ -285,8 +285,8 @@ class FavoritesViewModelTest : KoinTest {
             )
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = favorites.routeStopDirection,
-                    isReturningFromBackground = false,
                     routeCardData = null,
                     staticRouteCardData = null,
                 ),
@@ -294,8 +294,8 @@ class FavoritesViewModelTest : KoinTest {
             )
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = favorites.routeStopDirection,
-                    isReturningFromBackground = false,
                     routeCardData = null,
                     staticRouteCardData = expectedStaticData,
                 ),
@@ -303,8 +303,8 @@ class FavoritesViewModelTest : KoinTest {
             )
             assertEquals(
                 FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
                     favorites = favorites.routeStopDirection,
-                    isReturningFromBackground = false,
                     routeCardData = expectedRealtimeData,
                     staticRouteCardData = expectedStaticData,
                 ),
