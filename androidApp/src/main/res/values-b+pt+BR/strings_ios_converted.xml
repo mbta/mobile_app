@@ -130,7 +130,9 @@
     <string name="ferries">balsas</string>
     <string name="ferry">Balsa</string>
     <string name="ferry_lowercase">balsa</string>
+    <string name="filter_routes">Filtrar rotas</string>
     <string name="filter_show_all">Tudo</string>
+    <string name="find_stops_hint">Para encontrar paradas, selecione uma rota primeiro</string>
     <string name="finishing_another_trip">Terminando outra viagem</string>
     <string name="fire">Incêndio</string>
     <string name="fire_department_activity">Atividade do corpo de bombeiros</string>
@@ -196,6 +198,7 @@
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
     <string name="next_stop">Próxima parada</string>
+    <string name="no_matching_routes">Nenhuma rota de %1$s correspondente</string>
     <string name="no_predictions">Previsões indisponíveis</string>
     <string name="no_service">Sem serviço</string>
     <string name="no_service_sentence_case">Sem serviço</string>

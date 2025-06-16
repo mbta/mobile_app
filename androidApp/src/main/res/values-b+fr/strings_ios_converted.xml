@@ -130,7 +130,9 @@
     <string name="ferries">ferrys</string>
     <string name="ferry">Ferry</string>
     <string name="ferry_lowercase">ferry</string>
+    <string name="filter_routes">Filtrer les itinéraires</string>
     <string name="filter_show_all">Tous</string>
+    <string name="find_stops_hint">Pour trouver des arrêts, sélectionnez d’abord un itinéraire</string>
     <string name="finishing_another_trip">Termine un autre voyage</string>
     <string name="fire">Incendie</string>
     <string name="fire_department_activity">Intervention des pompiers</string>
@@ -196,6 +198,7 @@
     <string name="nearby_transit">Transports à proximité</string>
     <string name="nearby_transit_link">Proche</string>
     <string name="next_stop">Prochain arrêt</string>
+    <string name="no_matching_routes">Aucun itinéraire de %1$s correspondant</string>
     <string name="no_predictions">Les prévisions ne sont pas encore disponibles</string>
     <string name="no_service">Pas de service</string>
     <string name="no_service_sentence_case">Aucun service</string>
