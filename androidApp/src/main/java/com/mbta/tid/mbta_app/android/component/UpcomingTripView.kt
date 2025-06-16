@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.component
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +35,7 @@ import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
+import com.mbta.tid.mbta_app.android.util.contentDescription
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
@@ -91,6 +90,8 @@ fun UpcomingTripView(
     val context = LocalContext.current
     // TODO: actually pull through vehicle type
     val vehicleType = routeType?.typeText(context, isOnly) ?: ""
+    val contentDescription = state.contentDescription(isFirst, vehicleType)
+
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {
@@ -108,14 +109,7 @@ fun UpcomingTripView(
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.boarding_abbr),
-                            Modifier.semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.boardingLabel(
-                                            context = context,
-                                            isFirst = isFirst,
-                                            vehicleType = vehicleType,
-                                        )
-                                }
+                            Modifier.semantics { contentDescription = contentDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = Typography.headlineBold,
@@ -125,14 +119,7 @@ fun UpcomingTripView(
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.arriving_abbr),
-                            Modifier.semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.arrivingLabel(
-                                            context,
-                                            isFirst,
-                                            vehicleType,
-                                        )
-                                }
+                            Modifier.semantics { contentDescription = contentDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = Typography.headlineBold,
@@ -142,14 +129,7 @@ fun UpcomingTripView(
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.now),
-                            Modifier.semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.arrivingLabel(
-                                            context,
-                                            isFirst,
-                                            vehicleType,
-                                        )
-                                }
+                            Modifier.semantics { contentDescription = contentDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = Typography.headlineBold,
@@ -161,16 +141,7 @@ fun UpcomingTripView(
                             text =
                                 AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
                             modifier =
-                                Modifier.semantics {
-                                        contentDescription =
-                                            UpcomingTripAccessibilityFormatters
-                                                .predictedMinutesLabel(
-                                                    context,
-                                                    minutes = 1,
-                                                    isFirst,
-                                                    vehicleType,
-                                                )
-                                    }
+                                Modifier.semantics { contentDescription = contentDescription }
                                     .placeholderIfLoading(),
                         )
                     }
@@ -178,15 +149,7 @@ fun UpcomingTripView(
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             formatTime(state.trip.predictionTime),
-                            Modifier.semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.predictedTimeLabel(
-                                            context,
-                                            time = formatTime(state.trip.predictionTime),
-                                            isFirst,
-                                            vehicleType,
-                                        )
-                                }
+                            Modifier.semantics { contentDescription = contentDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style =
@@ -202,15 +165,7 @@ fun UpcomingTripView(
                         ) {
                             Text(
                                 formatTime(state.trip.predictionTime),
-                                Modifier.semantics {
-                                        contentDescription =
-                                            UpcomingTripAccessibilityFormatters.predictedTimeLabel(
-                                                context,
-                                                time = formatTime(state.trip.predictionTime),
-                                                isFirst,
-                                                vehicleType,
-                                            )
-                                    }
+                                Modifier.semantics { contentDescription = contentDescription }
                                     .placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
@@ -233,15 +188,7 @@ fun UpcomingTripView(
                         ) {
                             Text(
                                 formatTime(state.trip.predictionTime),
-                                Modifier.semantics {
-                                        contentDescription =
-                                            UpcomingTripAccessibilityFormatters.predictedTimeLabel(
-                                                context,
-                                                time = formatTime(state.trip.predictionTime),
-                                                isFirst,
-                                                vehicleType,
-                                            )
-                                    }
+                                Modifier.semantics { contentDescription = contentDescription }
                                     .placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
@@ -262,15 +209,7 @@ fun UpcomingTripView(
                         formatTime(state.trip.scheduledTime),
                         modifier
                             .alpha(min(maxTextAlpha, 0.6F))
-                            .semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.scheduledTimeLabel(
-                                        context,
-                                        time = formatTime(state.trip.scheduledTime),
-                                        isFirst,
-                                        vehicleType,
-                                    )
-                            }
+                            .semantics { contentDescription = contentDescription }
                             .placeholderIfLoading(),
                         textAlign = TextAlign.End,
                         style =
@@ -281,20 +220,9 @@ fun UpcomingTripView(
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             text =
-                                AnnotatedString.fromHtml(
-                                    predictionTextMinutes(context, state.trip.minutes)
-                                ),
+                                AnnotatedString.fromHtml(predictionTextMinutes(state.trip.minutes)),
                             modifier =
-                                Modifier.semantics {
-                                        contentDescription =
-                                            UpcomingTripAccessibilityFormatters
-                                                .predictedMinutesLabel(
-                                                    context,
-                                                    minutes = state.trip.minutes,
-                                                    isFirst,
-                                                    vehicleType,
-                                                )
-                                    }
+                                Modifier.semantics { contentDescription = contentDescription }
                                     .placeholderIfLoading(),
                         )
                     }
@@ -307,15 +235,7 @@ fun UpcomingTripView(
                         modifier =
                             modifier
                                 .alpha(min(maxTextAlpha, 0.6F))
-                                .semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.scheduledMinutesLabel(
-                                            context,
-                                            minutes = state.trip.minutes,
-                                            isFirst,
-                                            vehicleType,
-                                        )
-                                }
+                                .semantics { contentDescription = contentDescription }
                                 .placeholderIfLoading(),
                         textAlign = TextAlign.End,
                     )
@@ -323,15 +243,7 @@ fun UpcomingTripView(
                     Row(
                         modifier
                             .alpha(min(maxTextAlpha, 0.6f))
-                            .semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.cancelledLabel(
-                                        context,
-                                        scheduledTime = formatTime(state.trip.scheduledTime),
-                                        isFirst,
-                                        vehicleType,
-                                    )
-                            }
+                            .semantics { contentDescription = contentDescription }
                             .placeholderIfLoading(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -396,18 +308,19 @@ fun UpcomingTripView(
     }
 }
 
-fun predictionTextMinutes(context: Context, minutes: Int): String {
+@Composable
+fun predictionTextMinutes(minutes: Int): String {
     val hours = Math.floorDiv(minutes, 60)
     val remainingMinutes = minutes - (hours * 60)
 
     return if (hours >= 1) {
         if (remainingMinutes == 0) {
-            context.getString(R.string.exact_hours_format_abbr, hours)
+            stringResource(R.string.exact_hours_format_abbr, hours)
         } else {
-            context.getString(R.string.hr_min_abbr, hours, remainingMinutes)
+            stringResource(R.string.hr_min_abbr, hours, remainingMinutes)
         }
     } else {
-        context.getString(R.string.minutes_abbr, minutes)
+        stringResource(R.string.minutes_abbr, minutes)
     }
 }
 
