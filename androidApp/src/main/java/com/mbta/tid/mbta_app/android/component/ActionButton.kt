@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -30,16 +31,21 @@ enum class ActionButtonKind(
 }
 
 @Composable
-fun ActionButton(kind: ActionButtonKind, size: Dp = 32.dp, action: () -> Unit) {
+fun ActionButton(
+    kind: ActionButtonKind,
+    size: Dp = 32.dp,
+    colors: ButtonColors =
+        ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.contrast),
+            contentColor = colorResource(R.color.fill2),
+        ),
+    action: () -> Unit,
+) {
     Button(
         onClick = action,
         modifier = Modifier.size(size).width(size),
         shape = CircleShape,
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.contrast),
-                contentColor = colorResource(R.color.fill2),
-            ),
+        colors = colors,
         contentPadding = PaddingValues(5.dp),
     ) {
         Icon(

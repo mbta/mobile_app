@@ -139,7 +139,9 @@
     <string name="ferries">bato yo</string>
     <string name="ferry">Bato</string>
     <string name="ferry_lowercase">bato</string>
-    <string name="filterShowAll">Tout</string>
+    <string name="filter_routes">Filtre wout yo</string>
+    <string name="filter_show_all">Tout</string>
+    <string name="find_stops_hint">Pou jwenn arè, chwazi yon wout anvan</string>
     <string name="finishing_another_trip">Ap fini yon lòt vwayaj</string>
     <string name="fire">Dife</string>
     <string name="fire_department_activity">Aktivite Ponpye</string>
@@ -205,6 +207,7 @@
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="next_stop">Pwochen arè</string>
+    <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
