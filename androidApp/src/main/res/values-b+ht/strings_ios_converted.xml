@@ -60,6 +60,7 @@
     <string name="coast_guard_restriction">Gad Kot Mete Restriksyon</string>
     <string name="coast_guard_restriction_lowercase">Restriksyon Gad Kòt</string>
     <string name="collapse_remaining_stops">retire arè ki rete yo</string>
+    <string name="collapse_stops">efondreman sispann</string>
     <string name="congestion">Blokis</string>
     <string name="congestion_lowercase">anbouteyaj</string>
     <string name="connection_to">Koneksyon ak %1$s</string>
@@ -122,6 +123,7 @@
     <string name="escalator_closure">Fèmti Eskalye</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> èdtan</string>
     <string name="expand_remaining_stops">elaji arè ki rete yo</string>
+    <string name="expand_stops">elaji arè</string>
     <string name="explainer_headline_finishing_another">Ap fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon poko disponib</string>
     <string name="explainer_headline_no_vehicle">Pozisyon %1$s poko disponib</string>

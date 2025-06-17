@@ -55,6 +55,7 @@
     <string name="coast_guard_restriction">Hạn chế của cảnh sát biển</string>
     <string name="coast_guard_restriction_lowercase">Hạn chế của Cảnh sát biển</string>
     <string name="collapse_remaining_stops">thu gọn các điểm dừng còn lại</string>
+    <string name="collapse_stops">sự sụp đổ dừng lại</string>
     <string name="congestion">Tắc nghẽn</string>
     <string name="congestion_lowercase">sự cố tắc nghẽn</string>
     <string name="connection_to">Kết nối với %1$s</string>
@@ -107,6 +108,7 @@
     <string name="escalator_closure">Thang cuốn đóng cửa</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="expand_remaining_stops">mở rộng các điểm dừng còn lại</string>
+    <string name="expand_stops">mở rộng dừng lại</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
     <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
