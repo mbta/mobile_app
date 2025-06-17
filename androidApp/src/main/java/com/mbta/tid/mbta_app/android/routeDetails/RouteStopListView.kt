@@ -85,8 +85,13 @@ fun RouteStopListView(
         getRouteStops(selectedRouteId, selectedDirection, "RouteDetailsView.routeStopIds")
 
     val stopList =
-        rememberSuspend(selectedRouteId, routeStops, globalData) {
-            RouteDetailsStopList.fromPieces(selectedRouteId, routeStops, globalData)
+        rememberSuspend(selectedRouteId, selectedDirection, routeStops, globalData) {
+            RouteDetailsStopList.fromPieces(
+                selectedRouteId,
+                selectedDirection,
+                routeStops,
+                globalData,
+            )
         }
     RouteDetailsContext.Details
 
