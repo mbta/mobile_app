@@ -61,16 +61,6 @@ class FavoritesViewModelTest : KoinTest {
             )
         )
 
-    val staticDataTime = Instant.DISTANT_FUTURE
-
-    fun FavoritesViewModel.State.tweakStaticDataTime() =
-        this.copy(
-            staticRouteCardData =
-                this.staticRouteCardData?.map { routeCardData ->
-                    routeCardData.copy(at = staticDataTime)
-                }
-        )
-
     private fun setUpKoin(
         objects: ObjectCollectionBuilder = this.objects,
         repositoriesBlock: MockRepositories.() -> Unit = {},
@@ -187,7 +177,7 @@ class FavoritesViewModelTest : KoinTest {
                             globalData,
                         )
                     ),
-                    staticDataTime,
+                    now,
                 ),
                 RouteCardData(
                     RouteCardData.LineOrRoute.Route(route2),
@@ -213,7 +203,7 @@ class FavoritesViewModelTest : KoinTest {
                             globalData,
                         )
                     ),
-                    staticDataTime,
+                    now,
                 ),
             )
         val expectedRealtimeData =
@@ -315,8 +305,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = expectedRealtimeData,
                     staticRouteCardData = expectedStaticData,
                 ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null }
-                    .tweakStaticDataTime(),
+                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
             )
         }
     }
@@ -364,7 +353,7 @@ class FavoritesViewModelTest : KoinTest {
                             globalData,
                         )
                     ),
-                    staticDataTime,
+                    now,
                 )
             )
         val expectedStaticDataAfter =
@@ -393,7 +382,7 @@ class FavoritesViewModelTest : KoinTest {
                             globalData,
                         )
                     ),
-                    staticDataTime,
+                    now,
                 )
             )
 
@@ -405,8 +394,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
                 ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null }
-                    .tweakStaticDataTime(),
+                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
             )
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
@@ -417,7 +405,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
                 ),
-                awaitItem().tweakStaticDataTime(),
+                awaitItem(),
             )
             assertEquals(
                 FavoritesViewModel.State(
@@ -426,7 +414,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataAfter,
                 ),
-                awaitItem().tweakStaticDataTime(),
+                awaitItem(),
             )
         }
     }

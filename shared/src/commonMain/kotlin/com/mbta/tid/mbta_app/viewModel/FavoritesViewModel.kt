@@ -150,6 +150,8 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         stopIds,
                         globalData,
                         RouteCardData.Context.Favorites,
+                        // not depending on now because it only matters for testing
+                        now,
                     )
                 staticRouteCardData =
                     filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
