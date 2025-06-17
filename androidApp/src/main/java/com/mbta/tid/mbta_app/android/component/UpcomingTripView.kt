@@ -87,12 +87,12 @@ fun UpcomingTripView(
 ) {
     val modifier = modifier.widthIn(min = 48.dp).padding(vertical = 2.dp)
     val maxAlphaModifier = if (maxTextAlpha < 1.0f) Modifier.alpha(maxTextAlpha) else Modifier
-    // TODO: actually pull through vehicle type
-    val vehicleType = routeType?.typeText(LocalContext.current, isOnly) ?: ""
-    var stateDescription = state.contentDescription(isFirst, vehicleType)
 
     when (state) {
-        is UpcomingTripViewState.Some ->
+        is UpcomingTripViewState.Some -> {
+            // TODO: actually pull through vehicle type
+            val vehicleType = routeType?.typeText(LocalContext.current, isOnly) ?: ""
+            val tripDescription = state.trip.contentDescription(isFirst, vehicleType)
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
@@ -102,53 +102,58 @@ fun UpcomingTripView(
                             style = Typography.footnote.merge(textAlign = TextAlign.End),
                         )
                     }
+
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
                 is TripInstantDisplay.Boarding ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.boarding_abbr),
-                            Modifier.semantics { contentDescription = stateDescription }
+                            Modifier.semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = Typography.headlineBold,
                         )
                     }
+
                 is TripInstantDisplay.Arriving ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.arriving_abbr),
-                            Modifier.semantics { contentDescription = stateDescription }
+                            Modifier.semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = Typography.headlineBold,
                         )
                     }
+
                 is TripInstantDisplay.Now ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             stringResource(R.string.now),
-                            Modifier.semantics { contentDescription = stateDescription }
+                            Modifier.semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = Typography.headlineBold,
                         )
                     }
+
                 is TripInstantDisplay.Approaching ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             text =
                                 AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
                             modifier =
-                                Modifier.semantics { contentDescription = stateDescription }
+                                Modifier.semantics { contentDescription = tripDescription }
                                     .placeholderIfLoading(),
                         )
                     }
+
                 is TripInstantDisplay.Time ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             formatTime(state.trip.predictionTime),
-                            Modifier.semantics { contentDescription = stateDescription }
+                            Modifier.semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style =
@@ -156,6 +161,7 @@ fun UpcomingTripView(
                                 else Typography.footnoteSemibold,
                         )
                     }
+
                 is TripInstantDisplay.TimeWithStatus ->
                     Column(modifier, horizontalAlignment = Alignment.End) {
                         WithRealtimeIndicator(
@@ -164,7 +170,7 @@ fun UpcomingTripView(
                         ) {
                             Text(
                                 formatTime(state.trip.predictionTime),
-                                Modifier.semantics { contentDescription = stateDescription }
+                                Modifier.semantics { contentDescription = tripDescription }
                                     .placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
@@ -179,6 +185,7 @@ fun UpcomingTripView(
                             style = Typography.footnoteSemibold,
                         )
                     }
+
                 is TripInstantDisplay.TimeWithSchedule ->
                     Column(modifier, horizontalAlignment = Alignment.End) {
                         WithRealtimeIndicator(
@@ -187,7 +194,7 @@ fun UpcomingTripView(
                         ) {
                             Text(
                                 formatTime(state.trip.predictionTime),
-                                Modifier.semantics { contentDescription = stateDescription }
+                                Modifier.semantics { contentDescription = tripDescription }
                                     .placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
@@ -203,28 +210,31 @@ fun UpcomingTripView(
                             style = Typography.footnoteSemibold,
                         )
                     }
+
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
                         formatTime(state.trip.scheduledTime),
                         modifier
                             .alpha(min(maxTextAlpha, 0.6F))
-                            .semantics { contentDescription = stateDescription }
+                            .semantics { contentDescription = tripDescription }
                             .placeholderIfLoading(),
                         textAlign = TextAlign.End,
                         style =
                             if (state.trip.headline) Typography.headlineSemibold
                             else Typography.footnoteSemibold,
                     )
+
                 is TripInstantDisplay.Minutes ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
                             text =
                                 AnnotatedString.fromHtml(predictionTextMinutes(state.trip.minutes)),
                             modifier =
-                                Modifier.semantics { contentDescription = stateDescription }
+                                Modifier.semantics { contentDescription = tripDescription }
                                     .placeholderIfLoading(),
                         )
                     }
+
                 is TripInstantDisplay.ScheduleMinutes ->
                     Text(
                         text =
@@ -234,15 +244,16 @@ fun UpcomingTripView(
                         modifier =
                             modifier
                                 .alpha(min(maxTextAlpha, 0.6F))
-                                .semantics { contentDescription = stateDescription }
+                                .semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                         textAlign = TextAlign.End,
                     )
+
                 is TripInstantDisplay.Cancelled ->
                     Row(
                         modifier
                             .alpha(min(maxTextAlpha, 0.6f))
-                            .semantics { contentDescription = stateDescription }
+                            .semantics { contentDescription = tripDescription }
                             .placeholderIfLoading(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -262,6 +273,7 @@ fun UpcomingTripView(
                         )
                     }
             }
+        }
         is UpcomingTripViewState.Disruption ->
             DisruptionView(
                 state.formattedAlert.predictionReplacement,
