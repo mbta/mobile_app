@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.RouteType
@@ -500,8 +501,9 @@ class RoutePickerViewTest {
         composeTestRule.onNodeWithText(route71.longName).assertIsDisplayed()
         composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
         composeTestRule.waitForIdle()
-
-        composeTestRule.waitUntilExactlyOneExists(hasText("To find stops, select a route first"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("To find stops, select a route first")
+        )
         composeTestRule.onNodeWithText(route1.longName).assertIsDisplayed()
         composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
     }
@@ -551,7 +553,9 @@ class RoutePickerViewTest {
         composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
         composeTestRule.waitForIdle()
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("To find stops, select a route first"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("To find stops, select a route first")
+        )
         composeTestRule.onNodeWithText("No matching bus routes").assertIsDisplayed()
         composeTestRule.onNodeWithText(route1.longName).assertIsNotDisplayed()
         composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
