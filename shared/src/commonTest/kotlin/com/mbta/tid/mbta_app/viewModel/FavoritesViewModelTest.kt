@@ -3,16 +3,22 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
@@ -24,8 +30,16 @@ import org.koin.test.KoinTest
 
 class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
-    val stop1 = objects.stop()
-    val stop2 = objects.stop()
+    val stop1 =
+        objects.stop {
+            latitude = 0.0
+            longitude = 0.0
+        }
+    val stop2 =
+        objects.stop {
+            latitude = 1.0
+            longitude = 1.0
+        }
     val route1 = objects.route { directionNames = listOf("Outbound", "Inbound") }
     val route2 = objects.route { directionNames = listOf("Outbound", "Inbound") }
     val patterns =
@@ -47,6 +61,16 @@ class FavoritesViewModelTest : KoinTest {
             )
         )
 
+    val staticDataTime = Instant.DISTANT_FUTURE
+
+    fun FavoritesViewModel.State.tweakStaticDataTime() =
+        this.copy(
+            staticRouteCardData =
+                this.staticRouteCardData?.map { routeCardData ->
+                    routeCardData.copy(at = staticDataTime)
+                }
+        )
+
     private fun setUpKoin(
         objects: ObjectCollectionBuilder = this.objects,
         repositoriesBlock: MockRepositories.() -> Unit = {},
@@ -64,6 +88,20 @@ class FavoritesViewModelTest : KoinTest {
             )
         }
     }
+
+    private fun predictionsEverywhere(objects: ObjectCollectionBuilder, now: Instant) =
+        listOf(stop1, stop2).associateWith { stop ->
+            listOf(route1, route2).associateWith { route ->
+                listOf(0, 1).associateWith { directionId ->
+                    val routePattern = patterns.getValue(route).getValue(directionId)
+                    objects.prediction {
+                        trip = objects.trip(routePattern)
+                        stopId = stop.id
+                        departureTime = now + 5.minutes
+                    }
+                }
+            }
+        }
 
     @AfterTest
     fun cleanup() {
@@ -113,22 +151,7 @@ class FavoritesViewModelTest : KoinTest {
     fun `loads full favorites with filtered predictions`() = runTest {
         val now = Clock.System.now()
         val objects = objects.clone()
-        val predictions =
-            listOf(stop1, stop2).associateWith { stop ->
-                listOf(route1, route2).associateWith { route ->
-                    listOf(0, 1).associateWith { directionId ->
-                        val routePattern =
-                            objects.routePatterns.values.first {
-                                it.routeId == route.id && it.directionId == directionId
-                            }
-                        objects.prediction {
-                            trip = objects.trip(routePattern)
-                            stopId = stop.id
-                            departureTime = now + 5.minutes
-                        }
-                    }
-                }
-            }
+        val predictions = predictionsEverywhere(objects, now)
 
         val globalData = GlobalResponse(objects)
         setUpKoin(objects)
@@ -138,7 +161,6 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
 
-        val staticDataTime = Instant.DISTANT_FUTURE
         val expectedStaticData =
             listOf(
                 RouteCardData(
@@ -265,13 +287,6 @@ class FavoritesViewModelTest : KoinTest {
                     now,
                 ),
             )
-        fun FavoritesViewModel.State.tweakStaticDataTime() =
-            this.copy(
-                staticRouteCardData =
-                    this.staticRouteCardData?.map { routeCardData ->
-                        routeCardData.copy(at = staticDataTime)
-                    }
-            )
 
         testViewModelFlow(viewModel).test {
             assertEquals(
@@ -292,15 +307,7 @@ class FavoritesViewModelTest : KoinTest {
                 ),
                 awaitItem(),
             )
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favorites.routeStopDirection,
-                    routeCardData = null,
-                    staticRouteCardData = expectedStaticData,
-                ),
-                awaitItem().tweakStaticDataTime(),
-            )
+            // static data usually loads before realtime, but not always
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
@@ -308,8 +315,262 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = expectedRealtimeData,
                     staticRouteCardData = expectedStaticData,
                 ),
+                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null }
+                    .tweakStaticDataTime(),
+            )
+        }
+    }
+
+    @Test
+    fun `reloads favorites`() = runTest {
+        val now = Clock.System.now()
+
+        val favoritesBefore = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
+        val favoritesAfter = Favorites(setOf(RouteStopDirection(route2.id, stop2.id, 1)))
+
+        val favoritesRepo = MockFavoritesRepository(favoritesBefore)
+
+        val globalData = GlobalResponse(objects)
+        setUpKoin { favorites = favoritesRepo }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        val expectedStaticDataBefore =
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route1),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route1,
+                            stop1,
+                            listOf(
+                                RouteCardData.Leaf(
+                                    RouteCardData.LineOrRoute.Route(route1),
+                                    stop1,
+                                    0,
+                                    listOf(patterns.getValue(route1).getValue(0)),
+                                    setOf(stop1.id),
+                                    upcomingTrips = emptyList(),
+                                    alertsHere = emptyList(),
+                                    allDataLoaded = true,
+                                    hasSchedulesToday = false,
+                                    alertsDownstream = emptyList(),
+                                    RouteCardData.Context.Favorites,
+                                )
+                            ),
+                            globalData,
+                        )
+                    ),
+                    staticDataTime,
+                )
+            )
+        val expectedStaticDataAfter =
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route2),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route2,
+                            stop2,
+                            listOf(
+                                RouteCardData.Leaf(
+                                    RouteCardData.LineOrRoute.Route(route2),
+                                    stop2,
+                                    1,
+                                    listOf(patterns.getValue(route2).getValue(1)),
+                                    setOf(stop2.id),
+                                    upcomingTrips = emptyList(),
+                                    alertsHere = emptyList(),
+                                    allDataLoaded = true,
+                                    hasSchedulesToday = false,
+                                    alertsDownstream = emptyList(),
+                                    RouteCardData.Context.Favorites,
+                                )
+                            ),
+                            globalData,
+                        )
+                    ),
+                    staticDataTime,
+                )
+            )
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
+                    favorites = favoritesBefore.routeStopDirection,
+                    routeCardData = emptyList(),
+                    staticRouteCardData = expectedStaticDataBefore,
+                ),
+                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null }
+                    .tweakStaticDataTime(),
+            )
+            favoritesRepo.setFavorites(favoritesAfter)
+            viewModel.reloadFavorites()
+            assertEquals(
+                FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
+                    favorites = favoritesAfter.routeStopDirection,
+                    routeCardData = emptyList(),
+                    staticRouteCardData = expectedStaticDataBefore,
+                ),
                 awaitItem().tweakStaticDataTime(),
             )
+            assertEquals(
+                FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
+                    favorites = favoritesAfter.routeStopDirection,
+                    routeCardData = emptyList(),
+                    staticRouteCardData = expectedStaticDataAfter,
+                ),
+                awaitItem().tweakStaticDataTime(),
+            )
+        }
+    }
+
+    @Test
+    fun `disconnects when inactive and awaits predictions in background`() = runTest {
+        var predictionsConnected = false
+
+        setUpKoin {
+            predictions =
+                MockPredictionsRepository(
+                    onConnectV2 = { predictionsConnected = true },
+                    onDisconnect = { predictionsConnected = false },
+                    connectV2Response = PredictionsByStopJoinResponse.empty,
+                )
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setLocation(Position(0.0, 0.0))
+
+        testViewModelFlow(viewModel).test {
+            assertFalse(
+                awaitItemSatisfying { it.routeCardData != null }.awaitingPredictionsAfterBackground
+            )
+            assertTrue(predictionsConnected)
+            viewModel.setActive(false, wasSentToBackground = true)
+            assertTrue(awaitItem().awaitingPredictionsAfterBackground)
+            assertFalse(predictionsConnected)
+            viewModel.setActive(true)
+            assertFalse(awaitItem().awaitingPredictionsAfterBackground)
+            assertTrue(predictionsConnected)
+        }
+    }
+
+    @Test
+    fun `updates alerts`() = runTest {
+        val now = Clock.System.now()
+        val objects = objects.clone()
+        predictionsEverywhere(objects, now)
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now - 10.minutes, now + 10.minutes)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    stop = stop1.id,
+                )
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    stop = stop2.id,
+                )
+            }
+
+        setUpKoin(objects)
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                emptyList(),
+                awaitItemSatisfying { it.routeCardData != null }
+                    .routeCardData!!
+                    .flatMap { it.stopData }
+                    .flatMap { it.data }
+                    .flatMap { it.alertsHere(tripId = null) },
+            )
+            viewModel.setAlerts(AlertsStreamDataResponse(objects))
+            assertEquals(
+                listOf(alert, alert),
+                awaitItem()
+                    .routeCardData!!
+                    .flatMap { it.stopData }
+                    .flatMap { it.data }
+                    .flatMap { it.alertsHere(tripId = null) },
+            )
+        }
+    }
+
+    @Test
+    fun `updates location`() = runTest {
+        val now = Clock.System.now()
+        val objects = objects.clone()
+        predictionsEverywhere(objects, now)
+
+        setUpKoin(objects)
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                listOf(stop1, stop2),
+                awaitItemSatisfying { it.routeCardData != null }
+                    .routeCardData!!
+                    .flatMap { it.stopData }
+                    .map { it.stop },
+            )
+            viewModel.setLocation(stop2.position)
+            assertEquals(
+                listOf(stop2, stop1),
+                awaitItem().routeCardData!!.flatMap { it.stopData }.map { it.stop },
+            )
+        }
+    }
+
+    @Test
+    fun `updates now`() = runTest {
+        val now = Clock.System.now()
+        val later = now + 2.minutes
+        val objects = objects.clone()
+        predictionsEverywhere(objects, now)
+
+        setUpKoin(objects)
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                listOf(now),
+                awaitItemSatisfying { it.routeCardData != null }
+                    .routeCardData!!
+                    .map { it.at }
+                    .distinct(),
+            )
+            viewModel.setNow(later)
+            assertEquals(listOf(later), awaitItem().routeCardData!!.map { it.at }.distinct())
         }
     }
 }

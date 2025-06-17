@@ -20,12 +20,14 @@ import org.koin.compose.koinInject
 fun subscribeToPredictions(
     stopIds: List<String>?,
     active: Boolean,
+    onAnyMessageReceived: () -> Unit = {},
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     predictionsRepository: IPredictionsRepository = koinInject(),
 ): PredictionsStreamDataResponse? {
     var predictions: PredictionsByStopJoinResponse? by remember { mutableStateOf(null) }
 
     fun onJoin(message: ApiResult<PredictionsByStopJoinResponse>) {
+        onAnyMessageReceived()
         when (message) {
             is ApiResult.Ok -> predictions = message.data
             is ApiResult.Error -> println("Predictions stream failed to join: ${message.message}")
@@ -33,6 +35,7 @@ fun subscribeToPredictions(
     }
 
     fun onMessage(message: ApiResult<PredictionsByStopMessageResponse>) {
+        onAnyMessageReceived()
         when (message) {
             is ApiResult.Ok -> predictions = predictions.orEmpty().mergePredictions(message.data)
             is ApiResult.Error ->

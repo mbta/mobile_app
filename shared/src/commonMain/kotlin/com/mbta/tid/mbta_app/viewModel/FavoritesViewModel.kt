@@ -81,7 +81,12 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                 }
             }
         val schedules = getSchedules(stopIds, "FavoritesViewModel.getSchedules")
-        val predictions = subscribeToPredictions(stopIds, active)
+        val predictions =
+            subscribeToPredictions(
+                stopIds,
+                active,
+                onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
+            )
 
         LaunchedEffect(Unit) { favorites = favoritesUsecases.getRouteStopDirectionFavorites() }
 
@@ -100,12 +105,6 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
                 }
-            }
-        }
-
-        LaunchedEffect(predictions) {
-            if (predictions != null) {
-                awaitingPredictionsAfterBackground = false
             }
         }
 
