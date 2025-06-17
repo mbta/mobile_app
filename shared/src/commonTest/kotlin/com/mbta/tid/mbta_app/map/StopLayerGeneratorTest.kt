@@ -13,6 +13,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
 class StopLayerGeneratorTest {
@@ -154,7 +156,11 @@ class StopLayerGeneratorTest {
                 StopLayerGenerator.State(selectedStopId = alewifeFeature.id),
             )
 
+        val stopLayer = stopLayers[3]
         val selectedPinLayer = stopLayers[10]
+
+        assertTrue(stopLayer.filter!!.evaluate(alewifeFeature.properties, zoom = 2.0))
+        assertFalse(stopLayer.filter!!.evaluate(assemblyFeature.properties, zoom = 2.0))
 
         assertEquals(
             StopIcons.stopPinIcon,
