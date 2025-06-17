@@ -375,6 +375,10 @@
     <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
     <string name="vehicle_desc_accessibility_desc">Selected %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Selected %1$s %2$s %3$s, selected stop</string>
+    <string name="vehicle_prediction_hours_first">%1$s arriving in %2$d hr</string>
+    <string name="vehicle_prediction_hours_other">and in %1$d hr</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s arriving in %2$d hr %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">and in %1$d hr %2$d min</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>

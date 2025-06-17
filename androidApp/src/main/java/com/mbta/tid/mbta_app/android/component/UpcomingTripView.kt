@@ -45,6 +45,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.utils.MinutesFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.min
@@ -237,10 +238,7 @@ fun UpcomingTripView(
 
                 is TripInstantDisplay.ScheduleMinutes ->
                     Text(
-                        text =
-                            AnnotatedString.fromHtml(
-                                stringResource(R.string.minutes_abbr, state.trip.minutes)
-                            ),
+                        text = AnnotatedString.fromHtml(predictionTextMinutes(state.trip.minutes)),
                         modifier =
                             modifier
                                 .alpha(min(maxTextAlpha, 0.6F))
@@ -320,20 +318,13 @@ fun UpcomingTripView(
 }
 
 @Composable
-fun predictionTextMinutes(minutes: Int): String {
-    val hours = Math.floorDiv(minutes, 60)
-    val remainingMinutes = minutes - (hours * 60)
-
-    return if (hours >= 1) {
-        if (remainingMinutes == 0) {
-            stringResource(R.string.exact_hours_format_abbr, hours)
-        } else {
-            stringResource(R.string.hr_min_abbr, hours, remainingMinutes)
-        }
-    } else {
-        stringResource(R.string.minutes_abbr, minutes)
+fun predictionTextMinutes(minutes: Int): String =
+    when (val format = MinutesFormat.from(minutes)) {
+        is MinutesFormat.Hour -> stringResource(R.string.exact_hours_format_abbr, format.hours)
+        is MinutesFormat.HourMinute ->
+            stringResource(R.string.hr_min_abbr, format.hours, format.minutes)
+        is MinutesFormat.Minute -> stringResource(R.string.minutes_abbr, format.minutes)
     }
-}
 
 @Composable
 fun DisruptionView(
