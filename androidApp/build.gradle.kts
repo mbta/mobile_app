@@ -1,6 +1,8 @@
+import com.diffplug.spotless.FormatterFunc
 import com.mbta.tid.mbta_app.gradle.ConvertIosLocalizationTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
 import java.io.BufferedReader
+import java.io.Serializable
 import java.io.StringReader
 import java.util.Locale
 import java.util.Properties
@@ -14,6 +16,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.mokkery)
     alias(libs.plugins.sentryGradle)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
@@ -121,6 +124,43 @@ dependencies {
 tasks.cyclonedxBom {
     includeConfigs =
         listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
+}
+
+spotless {
+    kotlin {
+        custom(
+            "use custom default wait timeout in android UI tests",
+            object : Serializable, FormatterFunc.NeedsFile {
+                override fun applyWithFile(text: String, file: File): String {
+                    if (
+                        !file.path.contains("androidTest") ||
+                            file.name == "ComposeTestRuleExtension.kt" ||
+                            file.name == "RetryableComposeTestRule.kt"
+                    )
+                        return text
+                    val lines = text.lines()
+                    for (line in lines.withIndex()) {
+                        for (fnText in
+                            arrayOf(
+                                "waitUntil(",
+                                "waitUntilAtLeastOneExists(",
+                                "waitUntilDoesNotExist(",
+                                "waitUntilExactlyOneExists(",
+                                "waitUntilNodeCount(",
+                            )) {
+                            val column = line.value.indexOf(fnText, 0, false)
+                            if (column != -1) {
+                                throw IllegalStateException(
+                                    "${file.path}:${line.index + 1}:${column + 1} calls $fnText. Replace with ${fnText.dropLast(1)}DefaultTimeout( to prevent CI flakiness."
+                                )
+                            }
+                        }
+                    }
+                    return text
+                }
+            },
+        )
+    }
 }
 
 task<ConvertIosMapIconsTask>("convertIosIconsToAssets") {

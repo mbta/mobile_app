@@ -29,6 +29,7 @@ fun SearchInput(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     inputFieldFocusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
     onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},
     placeholder: @Composable () -> Unit,
 ) {
@@ -56,7 +57,8 @@ fun SearchInput(
         onQueryChange = onQueryChange,
         onExpandedChange = onExpandedChange,
         modifier =
-            Modifier.heightIn(min = 44.dp)
+            modifier
+                .heightIn(min = 44.dp)
                 .padding(horizontal = 14.dp)
                 .haloContainer(
                     2.dp,

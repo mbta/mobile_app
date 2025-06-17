@@ -82,3 +82,5 @@ data class PredictionsByStopJoinResponse(
         val empty = PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
     }
 }
+
+fun PredictionsByStopJoinResponse?.orEmpty() = this ?: PredictionsByStopJoinResponse.empty

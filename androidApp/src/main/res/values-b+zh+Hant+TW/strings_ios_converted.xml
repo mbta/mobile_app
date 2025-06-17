@@ -126,7 +126,9 @@
     <string name="ferries">輪渡</string>
     <string name="ferry">輪渡</string>
     <string name="ferry_lowercase">輪渡</string>
-    <string name="filterShowAll">全部</string>
+    <string name="filter_routes">過濾路線</string>
+    <string name="filter_show_all">全部</string>
+    <string name="find_stops_hint">若要尋找站點，請先選擇路線</string>
     <string name="finishing_another_trip">結束另一趟行程</string>
     <string name="fire">火災</string>
     <string name="fire_department_activity">消防局活動</string>
@@ -192,6 +194,7 @@
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="next_stop">下一站</string>
+    <string name="no_matching_routes">沒有符合的%1$s路線</string>
     <string name="no_predictions">預測不可用</string>
     <string name="no_service">無服務</string>
     <string name="no_service_sentence_case">無服務</string>

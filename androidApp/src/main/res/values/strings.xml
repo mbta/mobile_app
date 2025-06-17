@@ -135,7 +135,9 @@
     <string name="ferries">ferries</string>
     <string name="ferry">Ferry</string>
     <string name="ferry_lowercase">ferry</string>
-    <string name="filterShowAll">All</string>
+    <string name="filter_routes">Filter routes</string>
+    <string name="filter_show_all">All</string>
+    <string name="find_stops_hint">To find stops, select a route first</string>
     <string name="finishing_another_trip">Finishing another trip</string>
     <string name="fire">Fire</string>
     <string name="fire_department_activity">Fire Department Activity</string>
@@ -202,6 +204,7 @@
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="next_stop">Next stop</string>
+    <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>

@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.FlowPreview
@@ -71,6 +72,12 @@ class SearchViewModelTest {
                 MockAnalytics(),
                 MockGlobalRepository(GlobalResponse(objects)),
                 object : ISearchResultRepository {
+                    override suspend fun getRouteFilterResults(
+                        query: String
+                    ): ApiResult<SearchResults>? {
+                        fail("Route search should not be called here")
+                    }
+
                     override suspend fun getSearchResults(query: String): ApiResult<SearchResults> {
                         delay(10.milliseconds)
                         return ApiResult.Ok(searchResults)

@@ -9,6 +9,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasClickActionLabel
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -54,7 +56,7 @@ class CollapsableStopListTest {
             )
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNodeWithText("Less common stop").assertIsDisplayed()
         composeTestRule.onNodeWithTag("mbta_logo").assertIsDisplayed()
         composeTestRule.onNodeWithText(stop1.name).performClick()
@@ -103,14 +105,13 @@ class CollapsableStopListTest {
         composeTestRule.onNode(hasClickActionLabel("expand stops")).assertExists()
 
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNode(hasClickActionLabel("collapse stops")).assertExists()
-
         composeTestRule.onNodeWithTag("mbta_logo").assertIsDisplayed()
         composeTestRule.onNodeWithTag("stop_bus").assertIsDisplayed()
         composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
 
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
-        composeTestRule.waitUntilDoesNotExist(hasText(stop1.name))
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasText(stop1.name))
     }
 }
