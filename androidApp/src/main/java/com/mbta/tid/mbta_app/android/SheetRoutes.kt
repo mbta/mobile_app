@@ -87,6 +87,8 @@ sealed class SheetRoutes {
                 backStackEntry.toRoute<RouteDetails>()
             } else if (backStackEntry.destination.route?.contains("RoutePicker") == true) {
                 backStackEntry.toRoute<RoutePicker>()
+            } else if (backStackEntry.destination.route?.contains("EditFavorites") == true) {
+                backStackEntry.toRoute<EditFavorites>()
             } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
                 backStackEntry.toRoute<Favorites>()
             } else {
