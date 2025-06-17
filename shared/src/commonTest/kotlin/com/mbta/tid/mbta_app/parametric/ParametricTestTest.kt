@@ -3,12 +3,15 @@ package com.mbta.tid.mbta_app.parametric
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class ParametricTestTest {
     @Test
-    fun `handles zero booleans`() {
+    fun `does not handle zero booleans`() {
         var callCount = 0
-        parametricTest { callCount++ }
+        assertFails("parametricTest has no parameters, don’t use it") {
+            parametricTest { callCount++ }
+        }
         assertEquals(1, callCount)
     }
 
@@ -32,6 +35,14 @@ class ParametricTestTest {
             ),
             calls,
         )
+    }
+
+    @Test
+    fun `does not handle 14 booleans`() {
+        var callCount = 0
+        assertFails("parametricTest has 16384 iterations, that’s too many") {
+            parametricTest { callCount += (1..14).map { anyBoolean() }.filter { it }.size }
+        }
     }
 
     enum class TestEnum {
