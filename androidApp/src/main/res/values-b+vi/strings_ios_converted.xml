@@ -45,7 +45,8 @@
     <string name="bike_issue_sentence_case">Vấn đề về xe đạp</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Lên tàu theo đường ray %1$s</string>
-    <string name="bus">xe buýt</string>
+    <string name="bus">Xe buýt</string>
+    <string name="bus_lowercase">xe buýt</string>
     <string name="buses">xe buýt</string>
     <string name="cancel">Hủy bỏ</string>
     <string name="cancellation">Hủy</string>
@@ -121,8 +122,11 @@
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi phản hồi về ứng dụng</string>
     <string name="ferries">phà</string>
-    <string name="ferry">phà</string>
-    <string name="filterShowAll">Tất cả</string>
+    <string name="ferry">Phà</string>
+    <string name="ferry_lowercase">phà</string>
+    <string name="filter_routes">Lọc tuyến đường</string>
+    <string name="filter_show_all">Tất cả</string>
+    <string name="find_stops_hint">Để tìm điểm dừng, trước tiên hãy chọn một tuyến đường</string>
     <string name="finishing_another_trip">Kết thúc thêm một chuyến đi</string>
     <string name="fire">Hỏa hoạn</string>
     <string name="fire_department_activity">Hoạt động của Sở Cứu Hỏa</string>
@@ -188,6 +192,7 @@
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
     <string name="next_stop">Điểm dừng tiếp theo</string>
+    <string name="no_matching_routes">Không có tuyến xe %1$s nào phù hợp</string>
     <string name="no_predictions">Dự đoán không có sẵn</string>
     <string name="no_service">Không có dịch vụ</string>
     <string name="no_service_sentence_case">Không có dịch vụ</string>

@@ -7,8 +7,9 @@ import com.mbta.tid.mbta_app.model.RouteType
 /** Pluralized text description of the route type */
 fun RouteType.typeText(context: Context, isOnly: Boolean): String {
     return when (this) {
-        RouteType.BUS -> context.getString(if (isOnly) R.string.bus else R.string.buses)
-        RouteType.FERRY -> context.getString(if (isOnly) R.string.ferry else R.string.ferries)
+        RouteType.BUS -> context.getString(if (isOnly) R.string.bus_lowercase else R.string.buses)
+        RouteType.FERRY ->
+            context.getString(if (isOnly) R.string.ferry_lowercase else R.string.ferries)
         else -> context.getString(if (isOnly) R.string.train else R.string.trains)
     }
 }

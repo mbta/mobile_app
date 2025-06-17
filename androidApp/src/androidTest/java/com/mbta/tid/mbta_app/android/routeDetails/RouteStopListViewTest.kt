@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
@@ -93,7 +94,7 @@ class RouteStopListViewTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
         composeTestRule.onNodeWithText(mainRoute.longName).assertIsDisplayed()
 
@@ -245,13 +246,13 @@ class RouteStopListViewTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
         composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop3NonTypical.name).assertIsNotDisplayed()
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop3NonTypical.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop3NonTypical.name))
         composeTestRule.onNodeWithText(stop4NonTypical.name).assertIsDisplayed()
     }
 }

@@ -50,7 +50,8 @@
     <string name="bike_issue_sentence_case">Pwoblèm bisiklèt</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Monte sou vwa a %1$s</string>
-    <string name="bus">bis</string>
+    <string name="bus">Bis</string>
+    <string name="bus_lowercase">bis</string>
     <string name="buses">bis yo</string>
     <string name="cancel">Anile</string>
     <string name="cancellation">Anilasyon</string>
@@ -136,8 +137,11 @@
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye Feedback sou aplikasyon an</string>
     <string name="ferries">bato yo</string>
-    <string name="ferry">bato</string>
-    <string name="filterShowAll">Tout</string>
+    <string name="ferry">Bato</string>
+    <string name="ferry_lowercase">bato</string>
+    <string name="filter_routes">Filtre wout yo</string>
+    <string name="filter_show_all">Tout</string>
+    <string name="find_stops_hint">Pou jwenn arè, chwazi yon wout anvan</string>
     <string name="finishing_another_trip">Ap fini yon lòt vwayaj</string>
     <string name="fire">Dife</string>
     <string name="fire_department_activity">Aktivite Ponpye</string>
@@ -203,6 +207,7 @@
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="next_stop">Pwochen arè</string>
+    <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>

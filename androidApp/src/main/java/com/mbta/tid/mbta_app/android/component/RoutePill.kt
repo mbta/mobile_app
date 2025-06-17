@@ -44,7 +44,7 @@ fun RoutePill(
     line: Line? = null,
     type: RoutePillType,
     isActive: Boolean = true,
-    contentDescription: String? = null,
+    contentDescription: RoutePillSpec.ContentDescription? = null,
     modifier: Modifier = Modifier,
 ) {
     RoutePill(
@@ -110,7 +110,7 @@ fun RoutePill(
     val typeText = route?.type?.typeText(LocalContext.current, true)
 
     val contentDescription =
-        spec.contentDescription
+        spec.contentDescription?.text
             ?: stringResource(
                 id = R.string.route_with_type,
                 route?.label ?: line?.longName ?: "",
@@ -150,6 +150,24 @@ fun RoutePill(
         }
     }
 }
+
+val RoutePillSpec.ContentDescription.text: String
+    @Composable
+    get() =
+        when (this) {
+            is RoutePillSpec.ContentDescription.StopSearchResultRoute -> {
+                val routeName = this.routeName
+                if (routeName == null) {
+                    routeType.typeText(LocalContext.current, isOnly = isOnly)
+                } else {
+                    stringResource(
+                        id = R.string.route_with_type,
+                        routeName,
+                        routeType.typeText(LocalContext.current, isOnly = isOnly),
+                    )
+                }
+            }
+        }
 
 @Preview
 @Composable

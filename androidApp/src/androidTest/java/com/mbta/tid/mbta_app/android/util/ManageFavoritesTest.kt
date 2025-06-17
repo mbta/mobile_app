@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,18 +26,7 @@ class ManageFavoritesTest {
     fun testManageFavorites() = runBlocking {
         val rsd0 = RouteStopDirection("route1", "stop1", 0)
         val rsd1 = RouteStopDirection("route1", "stop1", 1)
-        val favoritesRepo =
-            object : IFavoritesRepository {
-                var favorites = Favorites(routeStopDirection = setOf(rsd0))
-
-                override suspend fun getFavorites(): Favorites {
-                    return favorites
-                }
-
-                override suspend fun setFavorites(favorites: Favorites) {
-                    this.favorites = favorites
-                }
-            }
+        val favoritesRepo = MockFavoritesRepository(Favorites(routeStopDirection = setOf(rsd0)))
         val favoritesUseCases = FavoritesUsecases(favoritesRepo)
 
         var managedFavorites: ManagedFavorites? = null

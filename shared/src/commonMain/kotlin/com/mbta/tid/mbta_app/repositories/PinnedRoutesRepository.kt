@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
@@ -30,15 +31,22 @@ class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
     }
 }
 
-class MockPinnedRoutesRepository(initialPinnedRoutes: Set<String> = emptySet()) :
-    IPinnedRoutesRepository, KoinComponent {
-    private var pinnedRoutes: Set<String> = initialPinnedRoutes
+class MockPinnedRoutesRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    initialPinnedRoutes: Set<String> = emptySet(),
+    private val onGet: (() -> Unit)? = null,
+    private val onSet: ((Set<String>) -> Unit)? = null,
+) : IPinnedRoutesRepository, KoinComponent {
+    var pinnedRoutes: Set<String> = initialPinnedRoutes
 
     override suspend fun getPinnedRoutes(): Set<String> {
+        onGet?.invoke()
         return pinnedRoutes
     }
 
     override suspend fun setPinnedRoutes(routes: Set<String>) {
+        onSet?.invoke(routes)
         pinnedRoutes = routes
     }
 }

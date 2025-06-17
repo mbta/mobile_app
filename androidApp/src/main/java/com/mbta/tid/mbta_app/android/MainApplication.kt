@@ -3,12 +3,10 @@ package com.mbta.tid.mbta_app.android
 import android.app.Application
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.decodeMessage
@@ -34,17 +32,12 @@ class MainApplication : Application() {
             appVariant,
             makeNativeModule(
                 AccessibilityStatusRepository(applicationContext),
+                if (R.string::class.members.any { it.name == "google_app_id" })
+                    AnalyticsProvider(Firebase.analytics)
+                else MockAnalytics(),
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
                 socket.wrapped(),
-            ) +
-                module {
-                    single<Analytics> {
-                        if (R.string::class.members.any { it.name == "google_app_id" })
-                            AnalyticsProvider(Firebase.analytics)
-                        else MockAnalytics()
-                    }
-                } +
-                koinViewModelModule(),
+            ) + koinViewModelModule(),
             this,
         )
     }
@@ -54,7 +47,6 @@ class MainApplication : Application() {
             single { SettingsCache(get()) }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
-            viewModelOf(::SearchResultsViewModel)
             viewModel {
                 StopDetailsViewModel(get(), get(), get(), get(), get(), get(), Dispatchers.Default)
             }

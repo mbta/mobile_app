@@ -47,7 +47,8 @@
     <string name="bike_issue_sentence_case">Problema con la bicicleta</string>
     <string name="boarding_abbr">ABORD.</string>
     <string name="boarding_track">Embarque en la vía %1$s</string>
-    <string name="bus">autobús</string>
+    <string name="bus">Autobús</string>
+    <string name="bus_lowercase">autobús</string>
     <string name="buses">autobuses</string>
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelación</string>
@@ -127,8 +128,11 @@
     <string name="feature_flag_route_search">Buscador de rutas</string>
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
     <string name="ferries">ferris</string>
-    <string name="ferry">ferry</string>
-    <string name="filterShowAll">Todos</string>
+    <string name="ferry">Ferry</string>
+    <string name="ferry_lowercase">ferry</string>
+    <string name="filter_routes">Filtrar rutas</string>
+    <string name="filter_show_all">Todos</string>
+    <string name="find_stops_hint">Para encontrar paradas, primero seleccione una ruta</string>
     <string name="finishing_another_trip">Terminando otro viaje</string>
     <string name="fire">Incendio</string>
     <string name="fire_department_activity">Actividad del Departamento de Incendios</string>
@@ -194,6 +198,7 @@
     <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
     <string name="next_stop">Próxima parada</string>
+    <string name="no_matching_routes">No hay rutas de %1$s que coincidan</string>
     <string name="no_predictions">Las predicciones no están disponibles</string>
     <string name="no_service">Sin servicio</string>
     <string name="no_service_sentence_case">Sin servicio</string>

@@ -54,8 +54,8 @@ import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
+import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
-import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.MapViewModel
@@ -65,9 +65,10 @@ import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
 import com.mbta.tid.mbta_app.android.routePicker.RoutePickerView
 import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
+import com.mbta.tid.mbta_app.android.util.currentRoute
+import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
@@ -84,6 +85,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.hours
@@ -105,7 +107,7 @@ data class NearbyTransit(
     val nearbyTransitSelectingLocationState: MutableState<Boolean>,
     val scaffoldState: BottomSheetScaffoldState,
     val locationDataManager: LocationDataManager,
-    val viewportProvider: ViewportProvider,
+    val viewportProvider: IViewportProvider,
 ) {
     var lastNearbyTransitLocation by this.lastNearbyTransitLocationState
     var nearbyTransitSelectingLocation by this.nearbyTransitSelectingLocationState
@@ -122,7 +124,6 @@ fun MapAndSheetPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
-    searchResultsViewModel: SearchResultsViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
@@ -225,9 +226,16 @@ fun MapAndSheetPage(
         }
     }
 
+    fun handleRouteSearchExpandedChange(expanded: Boolean) {
+        if (expanded && !nearbyTransit.hideMaps) {
+            scope.launch {
+                nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Large)
+            }
+        }
+    }
+
     fun handleSearchExpandedChange(expanded: Boolean) {
         searchExpanded = expanded
-        searchResultsViewModel.expanded = expanded
         if (expanded) {
             hideNavBar()
             if (!nearbyTransit.hideMaps) {
@@ -349,7 +357,10 @@ fun MapAndSheetPage(
 
     LaunchedEffect(sheetNavEntrypoint) { navigateToEntrypoint() }
     LaunchedEffect(currentNavEntry) {
-        if (SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)) {
+        if (
+            !SheetRoutes.retainSheetSize(previousNavEntry, currentNavEntry) &&
+                SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)
+        ) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
     }
@@ -420,7 +431,7 @@ fun MapAndSheetPage(
 
             composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
                 EditFavoritesPage(
-                    onClose = { navController.popBackStack() },
+                    onClose = { navController.popBackStackFrom<SheetRoutes.EditFavorites>() },
                     global = nearbyTransit.globalResponse,
                     favoritesViewModel = favoritesViewModel,
                 )
@@ -473,9 +484,28 @@ fun MapAndSheetPage(
                 RoutePickerView(
                     navRoute.path,
                     navRoute.context,
-                    onOpenPickerPath = { _, _ -> TODO("Picker path navigation") },
+                    onOpenPickerPath = { newPath, context ->
+                        val currentPickerRoute =
+                            navController.currentRouteAs<SheetRoutes.RoutePicker>()
+                        if (currentPickerRoute == null || currentPickerRoute.path != newPath) {
+                            navController.navigate(SheetRoutes.RoutePicker(newPath, context))
+                        }
+                    },
                     onOpenRouteDetails = ::handlePickRouteNavigation,
-                    onClose = { navController.popBackStackFrom<SheetRoutes.RoutePicker>() },
+                    onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
+                    onBack = onBack@{
+                            val currentPickerRoute =
+                                navController.currentRouteAs<SheetRoutes.RoutePicker>()
+                                    ?: return@onBack
+                            if (currentPickerRoute.path != RoutePickerPath.Root) {
+                                navController.popBackStackFrom<SheetRoutes.RoutePicker>()
+                            }
+                        },
+                    onClose = {
+                        while (navController.currentRoute is SheetRoutes.RoutePicker) {
+                            navController.popBackStackFrom<SheetRoutes.RoutePicker>()
+                        }
+                    },
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }
@@ -537,7 +567,6 @@ fun MapAndSheetPage(
                 ::handleStopNavigation,
                 ::handleRouteNavigation,
                 searchFocusRequester,
-                searchResultsViewModel,
                 onBarGloballyPositioned = {},
             ) {
                 SheetContent(
@@ -591,7 +620,6 @@ fun MapAndSheetPage(
                     ::handleStopNavigation,
                     ::handleRouteNavigation,
                     searchFocusRequester,
-                    searchResultsViewModel,
                     onBarGloballyPositioned = { layoutCoordinates ->
                         with(density) {
                             viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
@@ -619,7 +647,7 @@ fun MapAndSheetPage(
                         vehiclesData = vehiclesData,
                         routeCardData = routeCardData,
                         viewModel = mapViewModel,
-                        searchResultsViewModel = searchResultsViewModel,
+                        isSearchExpanded = searchExpanded,
                     )
                 }
             }

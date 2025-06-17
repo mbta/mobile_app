@@ -46,6 +46,7 @@
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在軌道%1$s登車</string>
     <string name="bus">巴士</string>
+    <string name="bus_lowercase">巴士</string>
     <string name="buses">巴士</string>
     <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
@@ -122,7 +123,10 @@
     <string name="feedback_link_form">發送應用程式回饋</string>
     <string name="ferries">輪渡</string>
     <string name="ferry">輪渡</string>
-    <string name="filterShowAll">全部</string>
+    <string name="ferry_lowercase">輪渡</string>
+    <string name="filter_routes">過濾路線</string>
+    <string name="filter_show_all">全部</string>
+    <string name="find_stops_hint">若要尋找站點，請先選擇路線</string>
     <string name="finishing_another_trip">結束另一趟行程</string>
     <string name="fire">火災</string>
     <string name="fire_department_activity">消防局活動</string>
@@ -188,6 +192,7 @@
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="next_stop">下一站</string>
+    <string name="no_matching_routes">沒有符合的%1$s路線</string>
     <string name="no_predictions">預測不可用</string>
     <string name="no_service">無服務</string>
     <string name="no_service_sentence_case">無服務</string>

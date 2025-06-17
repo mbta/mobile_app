@@ -24,9 +24,9 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
@@ -34,11 +34,11 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.android.util.isFollowingPuck
-import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
@@ -52,12 +52,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
-import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
-import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import dev.mokkery.answering.calls
+import dev.mokkery.everySuspend
+import dev.mokkery.matcher.any
+import dev.mokkery.spy
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -67,7 +67,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -221,13 +220,6 @@ class MapAndSheetPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
-
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -251,16 +243,17 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Mapbox Attribution"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasContentDescription("Mapbox Attribution")
+        )
         composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
-        composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading..."))
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading..."))
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
             .performSemanticsAction(SemanticsActions.Expand)
@@ -336,20 +329,14 @@ class MapAndSheetPageTest : KoinTest {
             override fun updateCenterButtonVisibility(
                 currentLocation: Location?,
                 locationDataManager: LocationDataManager,
-                searchResultsViewModel: SearchResultsViewModel,
-                viewportProvider: ViewportProvider,
+                isSearchExpanded: Boolean,
+                viewportProvider: IViewportProvider,
             ) {
                 TODO("Not yet implemented")
             }
         }
 
         val mockMapVM = MockMapVM()
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -374,7 +361,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                         mapViewModel = mockMapVM,
                     )
@@ -382,7 +368,9 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading...", substring = true))
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(
+            hasContentDescription("Loading...", substring = true)
+        )
 
         composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 1 }
         mockMapVM.mutableLastErrorTimestamp.value = Clock.System.now()
@@ -392,13 +380,6 @@ class MapAndSheetPageTest : KoinTest {
 
     @Test
     fun testHidesMap() {
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
-            )
-
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -422,7 +403,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -433,8 +413,7 @@ class MapAndSheetPageTest : KoinTest {
     }
 
     @Test
-    @Ignore("flaky test passing locally but failing in CI")
-    fun testResetAfter1hour() = runBlocking {
+    fun testResetToFollowingAfter1hour() = runBlocking {
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
         val mockClock =
             object : Clock {
@@ -451,13 +430,35 @@ class MapAndSheetPageTest : KoinTest {
         val locationDataManager = MockLocationDataManager(startLocation)
         locationDataManager.hasPermission = true
 
-        val koinApplication = testKoinApplication(builder, clock = mockClock)
-        val searchResultsVM =
-            SearchResultsViewModel(
-                MockAnalytics(),
-                MockSearchResultRepository(),
-                VisitHistoryUsecase(MockVisitHistoryRepository()),
+        val viewportProvider =
+            spy<IViewportProvider>(
+                ViewportProvider(
+                    MapViewportState(
+                        CameraState(
+                            // Specifically setting zoom so that we don't fall back to using the
+                            // default
+                            // center location. If default center is used, then since `hasPermission
+                            // = true`,
+                            // A MapEffect will also call follow and throw off the count of calls to
+                            // follow.
+                            Point.fromLngLat(sampleStop.longitude, sampleStop.latitude),
+                            EdgeInsets(0.0, 0.0, 0.0, 0.0),
+                            /* zoom = */ ViewportProvider.Companion.Defaults.zoom,
+                            /* bearing = */ 0.0,
+                            /* pitch = */ 0.0,
+                        )
+                    )
+                )
             )
+        // setting to false so that the only calls to `follow()` will come from backgrounding.
+        // Otherwise, HomeMapView LaunchedEffect will sometimes also call `follow()` within the
+        // duration of the test and throw off the count.
+        viewportProvider.isFollowingPuck = false
+        var followCallCount = 0
+
+        everySuspend { viewportProvider.follow(any()) } calls { followCallCount += 1 }
+
+        val koinApplication = testKoinApplication(builder, clock = mockClock)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -483,7 +484,6 @@ class MapAndSheetPageTest : KoinTest {
                         false,
                         {},
                         {},
-                        searchResultsViewModel = searchResultsVM,
                         bottomBar = {},
                     )
                 }
@@ -491,36 +491,9 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { viewportProvider.getViewportImmediate().cameraState != null }
-        val updatedCamera =
-            CameraState(Point.fromLngLat(1.1, 1.1), EdgeInsets(0.0, 0.0, 0.0, 0.0), 1.0, 0.0, 0.0)
-        viewportProvider.setIsManuallyCentering(true)
-        viewportProvider.updateCameraState(updatedCamera)
-        runBlocking {
-            viewportProvider.withViewport { viewport ->
-                viewport.setCameraOptions {
-                    center(updatedCamera.center)
-                    zoom(updatedCamera.zoom)
-                }
-            }
-        }
-        viewportProvider.setIsManuallyCentering(false)
+        composeTestRule.waitUntilDefaultTimeout { followCallCount == 0 }
 
-        composeTestRule.waitForIdle()
-        composeTestRule.waitUntil(3000) {
-            viewportProvider
-                .getViewportImmediate()
-                .cameraState
-                ?.center
-                ?.isRoughlyEqualTo(updatedCamera.center) == true
-        }
-
-        assertTrue(
-            updatedCamera.center.isRoughlyEqualTo(
-                viewportProvider.getViewportImmediate().cameraState?.center!!
-            )
-        )
-        assertFalse(viewportProvider.isFollowingPuck)
+        assertEquals(followCallCount, 0)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
@@ -529,12 +502,7 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
         composeTestRule.waitForIdle()
 
-        assertTrue(
-            updatedCamera.center.isRoughlyEqualTo(
-                viewportProvider.getViewportImmediate().cameraState?.center!!
-            )
-        )
-        assertFalse(viewportProvider.isFollowingPuck)
+        assertEquals(followCallCount, 0)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
@@ -542,18 +510,7 @@ class MapAndSheetPageTest : KoinTest {
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil(3000) {
-            !updatedCamera.center.isRoughlyEqualTo(
-                viewportProvider.getViewportImmediate().cameraState!!.center
-            ) && viewportProvider.getViewportImmediate().isFollowingPuck
-        }
-
-        assertFalse(
-            updatedCamera.center.isRoughlyEqualTo(
-                viewportProvider.getViewportImmediate().cameraState?.center!!
-            )
-        )
-        assertTrue(viewportProvider.getViewportImmediate().isFollowingPuck)
-        assertTrue(viewportProvider.isFollowingPuck)
+        composeTestRule.waitUntilDefaultTimeout { followCallCount == 1 }
+        assertEquals(1, followCallCount)
     }
 }

@@ -39,7 +39,7 @@ jobs:
           bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         if: ${{ !inputs.skip-everything }}
-        run: ./gradlew shared:iosSimulatorArm64Test shared:iosX64Test
+        run: ./gradlew shared:iosSimulatorArm64Test
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: actions/upload-artifact@v4

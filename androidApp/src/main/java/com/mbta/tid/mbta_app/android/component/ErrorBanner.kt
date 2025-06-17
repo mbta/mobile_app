@@ -123,7 +123,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ErrorCard(
+fun ErrorCard(
     modifier: Modifier = Modifier,
     details: @Composable () -> Unit,
     button: (@Composable () -> Unit)? = null,

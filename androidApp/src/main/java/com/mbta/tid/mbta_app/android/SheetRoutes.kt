@@ -73,6 +73,13 @@ sealed class SheetRoutes {
             }
         }
 
+        /** When transitioning between certain routes, we don't want to resize the sheet */
+        fun retainSheetSize(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+            val transitionSet = setOf(first?.let { it::class }, second?.let { it::class })
+            return transitionSet == setOf(RoutePicker::class) ||
+                transitionSet == setOf(RouteDetails::class, RoutePicker::class)
+        }
+
         fun fromNavBackStackEntry(backStackEntry: NavBackStackEntry): SheetRoutes {
             return if (backStackEntry.destination.route?.contains("StopDetails") == true) {
                 backStackEntry.toRoute<StopDetails>()
@@ -80,6 +87,8 @@ sealed class SheetRoutes {
                 backStackEntry.toRoute<RouteDetails>()
             } else if (backStackEntry.destination.route?.contains("RoutePicker") == true) {
                 backStackEntry.toRoute<RoutePicker>()
+            } else if (backStackEntry.destination.route?.contains("EditFavorites") == true) {
+                backStackEntry.toRoute<EditFavorites>()
             } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
                 backStackEntry.toRoute<Favorites>()
             } else {

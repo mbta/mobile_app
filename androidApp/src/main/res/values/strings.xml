@@ -47,7 +47,8 @@
     <string name="bike_issue_sentence_case">Bike issue</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Boarding on track %1$s</string>
-    <string name="bus">bus</string>
+    <string name="bus">Bus</string>
+    <string name="bus_lowercase">bus</string>
     <string name="buses">buses</string>
     <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
@@ -56,7 +57,6 @@
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
     <string name="collapse_remaining_stops">collapse remaining stops</string>
-    <string name="commuter_rail" translatable="false">Commuter Rail</string>
     <string name="congestion">Congestion</string>
     <string name="congestion_lowercase">congestion</string>
     <string name="connection_to">Connection to %1$s</string>
@@ -131,8 +131,11 @@
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send App Feedback</string>
     <string name="ferries">ferries</string>
-    <string name="ferry">ferry</string>
-    <string name="filterShowAll">All</string>
+    <string name="ferry">Ferry</string>
+    <string name="ferry_lowercase">ferry</string>
+    <string name="filter_routes">Filter routes</string>
+    <string name="filter_show_all">All</string>
+    <string name="find_stops_hint">To find stops, select a route first</string>
     <string name="finishing_another_trip">Finishing another trip</string>
     <string name="fire">Fire</string>
     <string name="fire_department_activity">Fire Department Activity</string>
@@ -199,6 +202,7 @@
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="next_stop">Next stop</string>
+    <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
@@ -288,7 +292,6 @@
     <string name="signal_issue_lowercase">signal issue</string>
     <string name="signal_problem">Signal Problem</string>
     <string name="signal_problem_lowercase">signal problem</string>
-    <string name="silver_line" translatable="false">Silver Line</string>
     <string name="single_tracking">Single Tracking</string>
     <string name="single_tracking_lowercase">single tracking</string>
     <string name="slippery_rail">Slippery Rail</string>

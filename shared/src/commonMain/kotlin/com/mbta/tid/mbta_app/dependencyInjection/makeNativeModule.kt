@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.AlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
@@ -18,11 +19,13 @@ import org.koin.dsl.module
 
 fun makeNativeModule(
     accessibilityStatus: IAccessibilityStatusRepository,
+    analytics: Analytics,
     currentAppVersion: ICurrentAppVersionRepository,
     socket: PhoenixSocket,
 ): Module {
     return module {
         single<IAccessibilityStatusRepository> { accessibilityStatus }
+        single<Analytics> { analytics }
         single<ICurrentAppVersionRepository> { currentAppVersion }
         single<PhoenixSocket> { socket }
         factory<IAlertsRepository> { AlertsRepository(get()) }

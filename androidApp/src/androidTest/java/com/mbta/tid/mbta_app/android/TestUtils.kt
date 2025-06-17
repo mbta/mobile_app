@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.math.abs
 import kotlinx.datetime.Clock
 import org.junit.Assert.fail
@@ -119,6 +120,7 @@ fun testKoinApplication(
                 repositoryOverrides()
             }
         ),
+        viewModelModule(),
         MainApplication.koinViewModelModule(),
     )
 }
