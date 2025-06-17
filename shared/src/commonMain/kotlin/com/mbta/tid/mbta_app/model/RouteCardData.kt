@@ -695,13 +695,12 @@ data class RouteCardData(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             context: Context,
+            now: Instant = Clock.System.now(),
         ): List<RouteCardData>? =
             withContext(Dispatchers.Default) {
                 // if global data was still loading, there'd be no nearby data, and null handling is
                 // annoying
                 if (globalData == null) return@withContext null
-
-                val now = Clock.System.now()
 
                 ListBuilder(true, context, now)
                     .addStaticStopsData(stopIds, globalData, context)
