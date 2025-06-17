@@ -25,7 +25,7 @@ import org.koin.dsl.module
 
 fun hasClickActionLabel(expected: String?) =
     SemanticsMatcher("has click action label $expected") { node ->
-        node.config[SemanticsActions.OnClick].label == expected
+        node.config.getOrNull(SemanticsActions.OnClick)?.label == expected
     }
 
 fun hasTextMatching(regex: Regex): SemanticsMatcher {

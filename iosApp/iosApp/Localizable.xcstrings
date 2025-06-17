@@ -5312,6 +5312,60 @@
         }
       }
     },
+    "collapse stops" : {
+      "comment" : "Android TalkBack hint explaining what will happen when the user taps on an expanded accordion showing a list of stops along a route",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "collapse stops"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "colapsar paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "réduire les arrêts"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "efondreman sispann"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "paradas de colapso"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự sụp đổ dừng lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "崩溃停止"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "崩潰停止"
+          }
+        }
+      }
+    },
     "Commuter Rail and Ferry Tickets" : {
       "comment" : "Label for a More page link to the MBTA mTicket app",
       "localizations" : {
@@ -7576,6 +7630,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "展開剩餘站點"
+          }
+        }
+      }
+    },
+    "expand stops" : {
+      "comment" : "Android TalkBack hint explaining what will happen when the user taps on a closed accordion that contains a list of more stops along a route",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "expand stops"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ampliar las paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "étendre les arrêts"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "elaji arè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "expandir paradas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mở rộng dừng lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "扩展停止"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "擴充停止"
           }
         }
       }

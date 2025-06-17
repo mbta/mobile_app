@@ -57,6 +57,7 @@
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
     <string name="collapse_remaining_stops">recolher paradas restantes</string>
+    <string name="collapse_stops">paradas de colapso</string>
     <string name="congestion">Congestionamento</string>
     <string name="congestion_lowercase">congestionamento</string>
     <string name="connection_to">Conexão para %1$s</string>
@@ -113,6 +114,7 @@
     <string name="escalator_closure">Fechamento de escada rolante</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="expand_remaining_stops">expandir as paradas restantes</string>
+    <string name="expand_stops">expandir paradas</string>
     <string name="explainer_headline_finishing_another">Terminando outra viagem</string>
     <string name="explainer_headline_no_prediction">Previsão ainda não disponível</string>
     <string name="explainer_headline_no_vehicle">localização do %1$s ainda não disponível</string>

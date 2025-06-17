@@ -57,6 +57,7 @@
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
     <string name="collapse_remaining_stops">collapse remaining stops</string>
+    <string name="collapse_stops">collapse stops</string>
     <string name="congestion">Congestion</string>
     <string name="congestion_lowercase">congestion</string>
     <string name="connection_to">Connection to %1$s</string>
@@ -116,6 +117,7 @@
     <string name="escalator_closure">Escalator Closure</string>
     <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
     <string name="expand_remaining_stops">expand remaining stops</string>
+    <string name="expand_stops">expand stops</string>
     <string name="explainer_headline_finishing_another">Finishing another trip</string>
     <string name="explainer_headline_no_prediction">Prediction not available yet</string>
     <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
