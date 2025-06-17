@@ -207,7 +207,7 @@
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
     <string name="no_service_today">No service today</string>
-    <string name="no_stops_added" tools:ignore="MissingTranslation">No stops added</string>
+    <string name="no_stops_added">No stops added</string>
     <string name="no_stops_nearby">You’re outside the MBTA service area.</string>
     <string name="no_stops_nearby_pan">View transit near Boston</string>
     <string name="no_stops_nearby_search">Search by stop</string>

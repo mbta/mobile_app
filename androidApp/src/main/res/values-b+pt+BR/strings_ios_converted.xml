@@ -203,6 +203,7 @@
     <string name="no_service">Sem serviço</string>
     <string name="no_service_sentence_case">Sem serviço</string>
     <string name="no_service_today">Sem serviço hoje</string>
+    <string name="no_stops_added">Nenhuma parada adicionada</string>
     <string name="no_stops_nearby">Você está fora da área de serviço da MBTA.</string>
     <string name="no_stops_nearby_pan">Ver trânsito perto de Boston</string>
     <string name="no_stops_nearby_search">Pesquisar por parada</string>

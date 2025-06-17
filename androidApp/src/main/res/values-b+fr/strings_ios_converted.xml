@@ -203,6 +203,7 @@
     <string name="no_service">Pas de service</string>
     <string name="no_service_sentence_case">Aucun service</string>
     <string name="no_service_today">Aucun service aujourd’hui</string>
+    <string name="no_stops_added">Aucun arrêt ajouté</string>
     <string name="no_stops_nearby">Vous vous situez en dehors de la zone de service de MBTA.</string>
     <string name="no_stops_nearby_pan">Voir les transports près de Boston</string>
     <string name="no_stops_nearby_search">Rechercher par arrêt</string>
