@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -39,6 +40,7 @@ import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
@@ -1103,12 +1105,11 @@ class StopDetailsViewModelTest {
             )
         }
 
-        composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }
+        composeTestRule.waitUntilDefaultTimeout { checkPredictionsStaleCount >= 2 }
     }
 
     @Test
-    fun testManagersAppliesStopFilterAutomaticallyOnDepartureChange() {
-
+    fun testManagersAppliesStopFilterAutomaticallyOnDepartureChange() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val now = Clock.System.now()
@@ -1154,32 +1155,30 @@ class StopDetailsViewModelTest {
                 setMapSelectedVehicle = {},
                 now = now,
             )
-
-            LaunchedEffect(null) {
-                viewModel.setRouteCardData(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        GlobalResponse(objects),
-                        null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        now,
-                        setOf(),
-                        RouteCardData.Context.StopDetailsUnfiltered,
-                    )
-                )
-            }
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil(2000) { newStopFilter == expectedFilter }
+        viewModel.setRouteCardData(
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                GlobalResponse(objects),
+                null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                now,
+                setOf(),
+                RouteCardData.Context.StopDetailsUnfiltered,
+            )
+        )
+
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilDefaultTimeout { newStopFilter == expectedFilter }
         kotlin.test.assertEquals(expectedFilter, newStopFilter)
     }
 
     @Test
-    fun testManagerAppliesTripFilterAutomaticallyOnDepartureChange() {
-
+    fun testManagerAppliesTripFilterAutomaticallyOnDepartureChange() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
 
@@ -1211,6 +1210,19 @@ class StopDetailsViewModelTest {
 
         var newTripFilter: TripDetailsFilter? = null
 
+        val newRouteCardData =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                GlobalResponse(objects),
+                null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                now,
+                setOf(),
+                RouteCardData.Context.StopDetailsUnfiltered,
+            )
+
         composeTestRule.setContent {
             stopDetailsManagedVM(
                 StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null),
@@ -1224,33 +1236,21 @@ class StopDetailsViewModelTest {
                 setMapSelectedVehicle = {},
                 now = now,
             )
-
-            LaunchedEffect(null) {
-                viewModel.setRouteCardData(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        GlobalResponse(objects),
-                        null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        now,
-                        setOf(),
-                        RouteCardData.Context.StopDetailsUnfiltered,
-                    )
-                )
-            }
         }
+
+        composeTestRule.waitForIdle()
+
+        viewModel.setRouteCardData(newRouteCardData)
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil(2000) { newTripFilter == expectedTripFilter }
+        composeTestRule.waitUntil { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
     }
 
     @Test
-    fun testManagerAppliesTripFilterAutomaticallyOnFilterChange() {
+    fun testManagerAppliesTripFilterAutomaticallyOnFilterChange() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
 
@@ -1300,32 +1300,30 @@ class StopDetailsViewModelTest {
                 setMapSelectedVehicle = {},
                 now = now,
             )
-
-            LaunchedEffect(null) {
-                viewModel.setRouteCardData(
-                    RouteCardData.routeCardsForStopList(
-                        listOf(stop.id),
-                        GlobalResponse(objects),
-                        null,
-                        ScheduleResponse(objects),
-                        PredictionsStreamDataResponse(objects),
-                        AlertsStreamDataResponse(objects),
-                        now,
-                        setOf(),
-                        RouteCardData.Context.StopDetailsUnfiltered,
-                    )
-                )
-
-                stopFilters.value =
-                    StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null)
-            }
         }
+        composeTestRule.waitForIdle()
+
+        viewModel.setRouteCardData(
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                GlobalResponse(objects),
+                null,
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                now,
+                setOf(),
+                RouteCardData.Context.StopDetailsUnfiltered,
+            )
+        )
+
+        stopFilters.value = StopDetailsPageFilters(stop.id, StopDetailsFilter(route.id, 0), null)
 
         val expectedTripFilter = TripDetailsFilter(trip1.id, null, 0, false)
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.waitUntil(2_000) { newTripFilter == expectedTripFilter }
+        composeTestRule.waitUntilDefaultTimeout { newTripFilter == expectedTripFilter }
         kotlin.test.assertEquals(expectedTripFilter, newTripFilter)
     }
 

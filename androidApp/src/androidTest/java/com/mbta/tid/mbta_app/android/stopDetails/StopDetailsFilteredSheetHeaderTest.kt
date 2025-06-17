@@ -7,6 +7,7 @@ import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -55,7 +56,7 @@ class StopDetailsFilteredSheetHeaderTest {
             )
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("at Sample Stop"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("at Sample Stop"))
 
         composeTestRule.onNode(hasText(route.shortName)).assertExists()
         composeTestRule.onNodeWithContentDescription("Star route").assertExists()
