@@ -15,7 +15,7 @@ androidx-test-rules = "1.6.1"
 agp = "8.7.2"
 # bom: https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # changelog: https://developer.android.com/jetpack/androidx/releases/compose
-compose-bom = "2025.05.01"
+compose-bom = "2025.06.00"
 compose-placeholder-material3= "1.0.11"
 compose-shimmer= "1.3.3"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
@@ -38,7 +38,7 @@ mapboxTurf = "7.4.0"
 mokkery = "2.8.0"
 molecule = "2.1.0"
 okhttp = "4.12.0"
-okio = "3.12.0"
+okio = "3.13.0"
 playServicesLocation = "21.3.0"
 sentry = "0.11.0"
 sentryGradle = "5.3.0"
@@ -46,7 +46,7 @@ skie = "0.10.2-preview.2.1.20"
 spatialk = "0.3.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 spotless = "7.0.4"
-turbine = "1.2.0"
+turbine = "1.2.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }

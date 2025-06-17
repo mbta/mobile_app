@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -165,7 +166,7 @@ class StopDetailsViewTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Stop"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Stop"))
 
         composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertIsDisplayed()
 
@@ -227,7 +228,7 @@ class StopDetailsViewTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("at Sample Stop"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("at Sample Stop"))
 
         composeTestRule.onNodeWithContentDescription("Star route").assertExists()
         composeTestRule.onNodeWithContentDescription("Close").assertExists()

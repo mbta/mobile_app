@@ -54,8 +54,8 @@ import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
+import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
-import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.MapViewModel
@@ -107,7 +107,7 @@ data class NearbyTransit(
     val nearbyTransitSelectingLocationState: MutableState<Boolean>,
     val scaffoldState: BottomSheetScaffoldState,
     val locationDataManager: LocationDataManager,
-    val viewportProvider: ViewportProvider,
+    val viewportProvider: IViewportProvider,
 ) {
     var lastNearbyTransitLocation by this.lastNearbyTransitLocationState
     var nearbyTransitSelectingLocation by this.nearbyTransitSelectingLocationState
