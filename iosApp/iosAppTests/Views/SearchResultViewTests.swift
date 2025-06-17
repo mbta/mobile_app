@@ -41,6 +41,11 @@ final class SearchResultViewTests: XCTestCase {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
             }
 
+            func __getRouteFilterResults(query _: String) async throws -> ApiResult<SearchResults>? {
+                XCTFail("Route filter should not be queried")
+                return nil
+            }
+
             func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults>? {
                 getSearchResultsExpectation.fulfill()
                 return nil
@@ -73,6 +78,11 @@ final class SearchResultViewTests: XCTestCase {
 
             init(getSearchResultsExpectation: XCTestExpectation) {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
+            }
+
+            func __getRouteFilterResults(query _: String) async throws -> ApiResult<SearchResults>? {
+                XCTFail("Route filter should not be queried")
+                return nil
             }
 
             func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults>? {

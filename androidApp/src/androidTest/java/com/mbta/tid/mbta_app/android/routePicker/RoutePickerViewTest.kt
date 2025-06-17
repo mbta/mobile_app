@@ -1,16 +1,22 @@
 package com.mbta.tid.mbta_app.android.routePicker
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -18,6 +24,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -40,6 +47,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -69,6 +78,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -77,7 +88,7 @@ class RoutePickerViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Add favorite stops").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Done").assertIsDisplayed()
     }
 
     @Test
@@ -95,6 +106,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -127,6 +140,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -160,6 +175,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -206,6 +223,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -247,6 +266,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -279,6 +300,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -308,6 +331,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -344,6 +369,8 @@ class RoutePickerViewTest {
                         selectedRouteId = routeId
                         selectedContext = context
                     },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -359,7 +386,43 @@ class RoutePickerViewTest {
     }
 
     @Test
-    fun testCancelButton() {
+    fun testBackButton() {
+        val objects = ObjectCollectionBuilder()
+        objects.route {
+            longName = "Bus"
+            type = RouteType.BUS
+        }
+
+        var backCalled = false
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Bus,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = { backCalled = true },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        composeTestRule.waitForIdle()
+
+        assertTrue(backCalled)
+    }
+
+    @Test
+    fun testDoneButton() {
         val objects = ObjectCollectionBuilder()
         objects.route {
             longName = "Green Line"
@@ -379,6 +442,8 @@ class RoutePickerViewTest {
                     context = RouteDetailsContext.Favorites,
                     onOpenPickerPath = { _, _ -> },
                     onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
                     onClose = { closeCalled = true },
                     errorBannerViewModel = errorBannerVM,
                 )
@@ -386,9 +451,149 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Cancel").performClick()
+        composeTestRule.onNodeWithText("Done").performClick()
         composeTestRule.waitForIdle()
 
         assertTrue(closeCalled)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testFilterInputRequests() {
+        val objects = ObjectCollectionBuilder()
+        val route1 =
+            objects.route {
+                shortName = "1"
+                longName = "Harvard Square - Nubian Station"
+                type = RouteType.BUS
+            }
+        val route71 =
+            objects.route {
+                shortName = "71"
+                longName = "Watertown Square - Harvard Station"
+                type = RouteType.BUS
+            }
+
+        val koin =
+            testKoinApplication(objects) {
+                global = MockGlobalRepository(GlobalResponse(objects))
+                searchResults =
+                    MockSearchResultRepository(routeResults = listOf(RouteResult(route = route1)))
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Bus,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(route71.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("To find stops, select a route first")
+        )
+        composeTestRule.onNodeWithText(route1.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testNoFilterResults() {
+        val objects = ObjectCollectionBuilder()
+        val route1 =
+            objects.route {
+                shortName = "1"
+                longName = "Harvard Square - Nubian Station"
+                type = RouteType.BUS
+            }
+        val route71 =
+            objects.route {
+                shortName = "71"
+                longName = "Watertown Square - Harvard Station"
+                type = RouteType.BUS
+            }
+
+        val koin =
+            testKoinApplication(objects) {
+                global = MockGlobalRepository(GlobalResponse(objects))
+                searchResults = MockSearchResultRepository(routeResults = emptyList())
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Bus,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(route1.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route71.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("To find stops, select a route first")
+        )
+        composeTestRule.onNodeWithText("No matching bus routes").assertIsDisplayed()
+        composeTestRule.onNodeWithText(route1.longName).assertIsNotDisplayed()
+        composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testFilterFocusCallback() {
+        val objects = ObjectCollectionBuilder()
+
+        val koin =
+            testKoinApplication(objects) {
+                global = MockGlobalRepository(GlobalResponse(objects))
+                searchResults = MockSearchResultRepository(routeResults = emptyList())
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        var filterExpanded = false
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Bus,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = { filterExpanded = it },
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Filter routes").performClick()
+        composeTestRule.waitForIdle()
+
+        assert(filterExpanded)
     }
 }

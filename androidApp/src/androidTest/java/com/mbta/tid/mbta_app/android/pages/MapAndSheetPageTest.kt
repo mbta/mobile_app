@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffold
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
@@ -90,12 +91,12 @@ class MapAndSheetPageTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
 
         locationDataManager.moveTo(stop2.position)
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop2.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop2.name))
         composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
     }
 }

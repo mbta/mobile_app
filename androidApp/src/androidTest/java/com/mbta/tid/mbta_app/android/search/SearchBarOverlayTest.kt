@@ -16,6 +16,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilAtLeastOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -113,17 +115,17 @@ class SearchBarOverlayTest : KoinTest {
 
         currentNavEntry.value = null
 
-        composeTestRule.waitUntilAtLeastOneExists(hasText("Stops"))
+        composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText("Stops"))
         val searchNode = composeTestRule.onNodeWithText("Stops")
         searchNode.assertExists()
         searchNode.requestFocus()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Recently Viewed").assertExists()
-        composeTestRule.waitUntilAtLeastOneExists(hasText(visitedStop.name))
+        composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText(visitedStop.name))
         composeTestRule.onNodeWithText(visitedStop.name).assertExists()
 
         searchNode.performTextInput("sto")
-        composeTestRule.waitUntilAtLeastOneExists(hasText(searchedStop.name))
+        composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText(searchedStop.name))
         composeTestRule.onNodeWithText(searchedStop.name).performClick()
         composeTestRule.waitUntil { navigated.value }
     }
@@ -194,7 +196,7 @@ class SearchBarOverlayTest : KoinTest {
 
         searchNode.performTextInput("anything")
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Routes"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Routes"))
         composeTestRule.onNodeWithText("3½").assertIsDisplayed()
         composeTestRule.onNodeWithText("Here - There").assertIsDisplayed().performClick()
         composeTestRule.waitUntil { navigated }

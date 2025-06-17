@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -171,7 +172,7 @@ class EditFavoritesPageTest : KoinTest {
             KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertIsDisplayed()
 
@@ -192,7 +193,7 @@ class EditFavoritesPageTest : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("No stops added"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("No stops added"))
         composeTestRule.onNodeWithText("No stops added").assertIsDisplayed()
     }
 
@@ -213,7 +214,7 @@ class EditFavoritesPageTest : KoinTest {
             KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertIsDisplayed().performClick()
 

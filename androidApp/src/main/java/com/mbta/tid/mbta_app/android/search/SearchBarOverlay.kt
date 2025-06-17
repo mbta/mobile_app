@@ -3,7 +3,8 @@ package com.mbta.tid.mbta_app.android.search
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -69,7 +70,7 @@ fun SearchBarOverlay(
     }
 
     Box(contentAlignment = Alignment.TopCenter) {
-        Box(modifier = Modifier.zIndex(1f), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.imePadding().zIndex(1f), contentAlignment = Alignment.Center) {
             if (showSearchBar) {
                 SearchBar(
                     shape = RoundedCornerShape(10.dp),
@@ -85,7 +86,7 @@ fun SearchBarOverlay(
                             expanded,
                             onExpandedChange,
                             inputFieldFocusRequester,
-                            onBarGloballyPositioned,
+                            onBarGloballyPositioned = onBarGloballyPositioned,
                         ) {
                             Text(stringResource(R.string.stops), style = Typography.callout)
                         }
@@ -94,7 +95,7 @@ fun SearchBarOverlay(
                     onExpandedChange = onExpandedChange,
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill1)),
+                        modifier = Modifier.fillMaxWidth().background(colorResource(R.color.fill1)),
                         contentPadding = PaddingValues(16.dp),
                     ) {
                         if (searchInputState.isEmpty()) {

@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.android.retryable
+package com.mbta.tid.mbta_app.android.testUtils
 
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -50,6 +50,8 @@ constructor(
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {
+                var successCount = 0
+                var failureCount = 0
                 for (i in 0 until maxRetries) {
                     Log.i("retryableTest", "${description.displayName}: run ${(i + 1)}")
                     try {
@@ -58,13 +60,18 @@ constructor(
                             "retryableTest",
                             "${description.displayName}: run ${(i + 1)} succeeded.",
                         )
+                        successCount += 1
 
                         if (stopAfterSuccess) {
 
                             return
                         }
                     } catch (t: Throwable) {
-                        Log.i("retryableTest", "${description.displayName}: run ${(i + 1)} failed.")
+                        Log.i(
+                            "retryableTest",
+                            "${description.displayName}: run ${(i + 1)} failed.\n ${t.stackTraceToString()}",
+                        )
+                        failureCount += 1
                     } finally {
                         rule = ruleProvider.invoke()
                     }
@@ -72,7 +79,7 @@ constructor(
 
                 Log.i(
                     "retryableTest",
-                    "${description.displayName}: Giving up after $maxRetries failures.",
+                    "${description.displayName}: $maxRetries attempts complete. Success: $successCount Failure: $failureCount",
                 )
             }
         }

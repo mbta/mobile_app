@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -193,7 +194,7 @@ class RouteCardListTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
@@ -226,7 +227,9 @@ class RouteCardListTest : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("This would be the empty view"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("This would be the empty view")
+        )
         composeTestRule.onNodeWithText("This would be the empty view").assertIsDisplayed()
     }
 
@@ -264,7 +267,7 @@ class RouteCardListTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed().performClick()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()

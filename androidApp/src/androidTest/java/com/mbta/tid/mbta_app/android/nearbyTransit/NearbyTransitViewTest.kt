@@ -13,6 +13,7 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -201,7 +202,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
@@ -246,7 +247,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
 
         composeTestRule
             .onAllNodesWithTag("RouteCard")[0]
@@ -294,7 +295,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
 
         composeTestRule
             .onAllNodesWithTag("RouteCard")[0]
@@ -347,7 +348,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Headsign").performClick()
 
         assertEquals(analyticsLoggedProps.getValue("pinned"), "true")
@@ -403,7 +404,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Headsign").performClick()
 
         assertEquals(analyticsLoggedProps.getValue("pinned"), "true")
@@ -430,7 +431,9 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("This would be the no nearby stops view"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("This would be the no nearby stops view")
+        )
         composeTestRule.onNodeWithText("This would be the no nearby stops view").assertIsDisplayed()
     }
 }
