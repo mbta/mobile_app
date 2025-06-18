@@ -1824,8 +1824,7 @@
       }
     },
     "%1$@ %2$@ delayed" : {
-      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
-      "extractionState" : "manual",
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1872,8 +1871,7 @@
       }
     },
     "%1$@ %2$@ early" : {
-      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, '10:00 PM train early[, arriving at 9:55 PM]'",
-      "extractionState" : "manual",
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train early[, arriving at 9:55 PM]'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3561,8 +3559,7 @@
       }
     },
     "and %1$@ %2$@ delayed" : {
-      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time, as the second or later arrival in a list of upcoming arrivals. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, 'and 10:00 PM train delayed[, arriving at 10:05 PM]'",
-      "extractionState" : "manual",
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing\nthe delayed predicted time, as the second or later arrival in a list of upcoming arrivals.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, 'and 10:00 PM train delayed[, arriving at 10:05 PM]'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3609,8 +3606,7 @@
       }
     },
     "and %1$@ %2$@ early" : {
-      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time, as the second or later arrival in a list of upcoming arrivals. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, 'and 10:00 PM train early[, arriving at 9:55 PM]'",
-      "extractionState" : "manual",
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing\nthe early predicted time, as the second or later arrival in a list of upcoming arrivals.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, 'and 10:00 PM train early[, arriving at 9:55 PM]'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4375,8 +4371,7 @@
       }
     },
     "arriving at %1$@" : {
-      "comment" : "Screen reader text appended to another string containing an originally scheduled time which is running early or delayed compared to the actual predicted time (contained in this string). ex, '[10:00 PM train delayed, ]arriving at 10:05 PM'",
-      "extractionState" : "manual",
+      "comment" : "Screen reader text appended to another string containing an originally scheduled time which is running early or delayed\ncompared to the actual predicted time (contained in this string).\nex, '[10:00 PM train delayed, ]arriving at 10:05 PM'",
       "localizations" : {
         "es" : {
           "stringUnit" : {

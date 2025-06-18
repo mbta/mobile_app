@@ -124,7 +124,9 @@ private fun predictedTimeDescription(
     isFirst: Boolean,
     vehicleType: String,
 ): String {
-    if (trip is TripInstantDisplay.TimeWithStatus && trip.status in setOf("Delay", "Late")) {
+    if (
+        trip is TripInstantDisplay.TimeWithStatus && trip.status in TripInstantDisplay.delayStatuses
+    ) {
         return delayDescription(trip.predictionTime, isFirst, vehicleType)
     }
     val predictionTime =
@@ -148,7 +150,7 @@ private fun predictedWithScheduleDescription(
     vehicleType: String,
 ): String {
     val scheduleStatus =
-        if (trip.predictionTime > trip.scheduledTime)
+        if (trip.predictionTime >= trip.scheduledTime)
             delayDescription(trip.scheduledTime, isFirst, vehicleType)
         else {
             val scheduledTime = formatTime(trip.scheduledTime)

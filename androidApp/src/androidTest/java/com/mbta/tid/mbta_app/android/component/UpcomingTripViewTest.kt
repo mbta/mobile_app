@@ -164,10 +164,8 @@ class UpcomingTripViewTest {
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
-        composeTestRule
-            .onNodeWithText(formatTime(instant))
-            .assertIsDisplayed()
-            .assertContentDescriptionContains("$shortTime train delayed")
+        composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
@@ -181,10 +179,8 @@ class UpcomingTripViewTest {
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
-        composeTestRule
-            .onNodeWithText(formatTime(instant))
-            .assertIsDisplayed()
-            .assertContentDescriptionContains("$shortTime train delayed")
+        composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
@@ -204,13 +200,19 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant))
+            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
             .assertIsDisplayed()
-            .assertContentDescriptionContains(
+        composeTestRule
+            .onNodeWithContentDescription(
                 "$scheduleShortTime train delayed, arriving at $predictionShortTime"
             )
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -229,13 +231,19 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant))
+            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
             .assertIsDisplayed()
-            .assertContentDescriptionContains(
+        composeTestRule
+            .onNodeWithContentDescription(
                 "$scheduleShortTime train early, arriving at $predictionShortTime"
             )
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -254,14 +262,21 @@ class UpcomingTripViewTest {
                 isFirst = false,
             )
         }
+
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant))
-            .assertIsDisplayed()
-            .assertContentDescriptionContains(
+            .onNodeWithContentDescription(
                 "and $scheduleShortTime train delayed, arriving at $predictionShortTime"
             )
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(predictionShortTime, useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(scheduleShortTime, useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -281,13 +296,19 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant))
+            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
             .assertIsDisplayed()
-            .assertContentDescriptionContains(
+        composeTestRule
+            .onNodeWithContentDescription(
                 "and $scheduleShortTime train early, arriving at $predictionShortTime"
             )
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test

@@ -88,6 +88,64 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
     }
 
+    func testTimeWithStatusLate() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date.toKotlinInstant(),
+                status: "Late",
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed"))
+    }
+
+    func testTimeWithStatusDelayed() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date.toKotlinInstant(),
+                status: "Delay",
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed"))
+    }
+
+    func testTimeWithScheduleEarly() throws {
+        let scheduleDate = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let predictionDate = ISO8601DateFormatter().date(from: "2024-05-01T19:55:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithSchedule(
+                predictionTime: predictionDate.toKotlinInstant(),
+                scheduledTime: scheduleDate.toKotlinInstant(),
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabel: "4:00\u{202F}PM train early, arriving at 3:55\u{202F}PM"
+        ))
+    }
+
+    func testTimeWithScheduleDelayed() throws {
+        let scheduleDate = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let predictionDate = ISO8601DateFormatter().date(from: "2024-05-01T20:05:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithSchedule(
+                predictionTime: predictionDate.toKotlinInstant(),
+                scheduledTime: scheduleDate.toKotlinInstant(),
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed, arriving at 4:05\u{202F}PM"
+        ))
+    }
+
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
         let sut = UpcomingTripView(
