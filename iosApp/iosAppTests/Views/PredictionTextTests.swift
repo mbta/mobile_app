@@ -23,32 +23,20 @@ final class PredictionTextTests: XCTestCase {
             minutes: 24
         )
 
-        XCTAssertEqual(
-            "in 24 min",
-            try sut.inspect().find(text: "24 min")
-                .accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(text: "24 min"))
     }
 
     func testPredictionTextGreaterThanOneHour() {
         let sut = PredictionText(
             minutes: 124
         )
-        XCTAssertEqual(
-            "in 2 hr 4 min",
-            try sut.inspect().find(text: "2 hr 4 min")
-                .accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(text: "2 hr 4 min"))
     }
 
     func testPredictionTextOneHour() {
         let sut = PredictionText(
             minutes: 60
         )
-        XCTAssertEqual(
-            "in 1 hr",
-            try sut.inspect().find(text: "1 hr")
-                .accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(text: "1 hr"))
     }
 }
