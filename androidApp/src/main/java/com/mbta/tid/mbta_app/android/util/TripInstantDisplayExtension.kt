@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.android.component.formatTime
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.utils.MinutesFormat
 import io.sentry.Sentry
+import kotlinx.datetime.Instant
 
 @Composable
 fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String): String =
@@ -43,31 +44,31 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
             else stringResource(R.string.vehicle_schedule_time_other, time)
         }
         is TripInstantDisplay.Time,
-        is TripInstantDisplay.TimeWithSchedule,
         is TripInstantDisplay.TimeWithStatus -> predictedTimeDescription(this, isFirst, vehicleType)
+        is TripInstantDisplay.TimeWithSchedule ->
+            predictedWithScheduleDescription(this, isFirst, vehicleType)
         else -> ""
     }
 
 @Composable
-private fun predictedTimeDescription(
-    trip: TripInstantDisplay,
+private fun delayDescription(
+    scheduledInstant: Instant,
     isFirst: Boolean,
     vehicleType: String,
 ): String {
-    val predictionTime =
-        formatTime(
-            when (trip) {
-                is TripInstantDisplay.Time -> trip.predictionTime
-                is TripInstantDisplay.TimeWithSchedule -> trip.predictionTime
-                is TripInstantDisplay.TimeWithStatus -> trip.predictionTime
-                else -> return ""
-            }
+    val scheduledTime = formatTime(scheduledInstant)
+    return if (isFirst)
+        stringResource(
+            R.string.vehicle_prediction_schedule_status_delay_first,
+            scheduledTime,
+            vehicleType,
         )
-    return if (isFirst) {
-        stringResource(R.string.vehicle_prediction_time_first, vehicleType, predictionTime)
-    } else {
-        stringResource(R.string.vehicle_prediction_time_other, predictionTime)
-    }
+    else
+        stringResource(
+            R.string.vehicle_prediction_schedule_status_delay_other,
+            scheduledTime,
+            vehicleType,
+        )
 }
 
 @Composable
@@ -115,4 +116,56 @@ private fun predictedMinutesDescription(
             is MinutesFormat.Minute ->
                 stringResource(R.string.vehicle_prediction_minutes_other, format.minutes)
         }
+}
+
+@Composable
+private fun predictedTimeDescription(
+    trip: TripInstantDisplay,
+    isFirst: Boolean,
+    vehicleType: String,
+): String {
+    if (trip is TripInstantDisplay.TimeWithStatus && trip.status in setOf("Delay", "Late")) {
+        return delayDescription(trip.predictionTime, isFirst, vehicleType)
+    }
+    val predictionTime =
+        formatTime(
+            when (trip) {
+                is TripInstantDisplay.Time -> trip.predictionTime
+                is TripInstantDisplay.TimeWithSchedule -> trip.predictionTime
+                is TripInstantDisplay.TimeWithStatus -> trip.predictionTime
+                else -> return ""
+            }
+        )
+    return if (isFirst)
+        stringResource(R.string.vehicle_prediction_time_first, vehicleType, predictionTime)
+    else stringResource(R.string.vehicle_prediction_time_other, predictionTime)
+}
+
+@Composable
+private fun predictedWithScheduleDescription(
+    trip: TripInstantDisplay.TimeWithSchedule,
+    isFirst: Boolean,
+    vehicleType: String,
+): String {
+    val scheduleStatus =
+        if (trip.predictionTime > trip.scheduledTime)
+            delayDescription(trip.scheduledTime, isFirst, vehicleType)
+        else {
+            val scheduledTime = formatTime(trip.scheduledTime)
+            if (isFirst)
+                stringResource(
+                    R.string.vehicle_prediction_schedule_status_early_first,
+                    scheduledTime,
+                    vehicleType,
+                )
+            else
+                stringResource(
+                    R.string.vehicle_prediction_schedule_status_early_other,
+                    scheduledTime,
+                    vehicleType,
+                )
+        }
+    val predictionTime = formatTime(trip.predictionTime)
+    val actualArrival = stringResource(R.string.vehicle_prediction_actual_arrival, predictionTime)
+    return "$scheduleStatus, $actualArrival"
 }

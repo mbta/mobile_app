@@ -1823,6 +1823,102 @@
         }
       }
     },
+    "%1$@ %2$@ delayed" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ retrasado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ retardé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ atrasado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ bị trì hoãn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ 延迟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@延遲"
+          }
+        }
+      }
+    },
+    "%1$@ %2$@ early" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, '10:00 PM train early[, arriving at 9:55 PM]'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ temprano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ tôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ byen bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ cedo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@提前"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@提前"
+          }
+        }
+      }
+    },
     "%1$@ has departed %2$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] has departed [Central]\", \"[bus] has departed [Harvard]\"",
       "localizations" : {
@@ -3464,6 +3560,102 @@
         }
       }
     },
+    "and %1$@ %2$@ delayed" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time, as the second or later arrival in a list of upcoming arrivals. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, 'and 10:00 PM train delayed[, arriving at 10:05 PM]'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y %1$@ %2$@ retrasado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et %1$@ %2$@ retardé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi %1$@ %2$@ an reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e %1$@ %2$@ atrasado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và %1$@ %2$@ bị trì hoãn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@延迟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@延遲"
+          }
+        }
+      }
+    },
+    "and %1$@ %2$@ early" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time, as the second or later arrival in a list of upcoming arrivals. The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry'). ex, 'and 10:00 PM train early[, arriving at 9:55 PM]'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y %1$@ %2$@ temprano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et %1$@ %2$@ tôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ak %1$@ %2$@ byen bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e %1$@ %2$@ cedo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và %1$@ %2$@ sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@提前"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@提前"
+          }
+        }
+      }
+    },
     "and arriving now" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n For example, '[bus arriving in 1 minute], and arriving now'",
       "localizations" : {
@@ -4178,6 +4370,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即將到達"
+          }
+        }
+      }
+    },
+    "arriving at %1$@" : {
+      "comment" : "Screen reader text appended to another string containing an originally scheduled time which is running early or delayed compared to the actual predicted time (contained in this string). ex, '[10:00 PM train delayed, ]arriving at 10:05 PM'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "llegará a la(s) %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "arrivant à %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ap rive a %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "chegando às %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sẽ đến lúc %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "于%2$@到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "於%2$@到站"
           }
         }
       }

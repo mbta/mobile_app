@@ -155,7 +155,66 @@ class UpcomingTripViewTest {
     }
 
     @Test
-    fun testUpcomingTripViewWithSomeAsTimeWithSchedule() {
+    fun testUpcomingTripViewWithSomeAsTimeWithStatusDelay() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Delay")),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(instant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("$shortTime train delayed")
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithStatusLate() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Late")),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(instant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("$shortTime train delayed")
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleDelay() {
+        val predictionInstant = Instant.fromEpochSeconds(1722535784)
+        val predictionShortTime = formatTime(predictionInstant)
+
+        val scheduleInstant = Instant.fromEpochSeconds(1722535384)
+        val scheduleShortTime = formatTime(scheduleInstant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(predictionInstant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains(
+                "$scheduleShortTime train delayed, arriving at $predictionShortTime"
+            )
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleEarly() {
         val predictionInstant = Instant.fromEpochSeconds(1722535384)
         val predictionShortTime = formatTime(predictionInstant)
 
@@ -165,13 +224,68 @@ class UpcomingTripViewTest {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
                     TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
-                )
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
             )
         }
         composeTestRule
             .onNodeWithText(formatTime(predictionInstant))
             .assertIsDisplayed()
-            .assertContentDescriptionContains("arriving at $predictionShortTime", substring = true)
+            .assertContentDescriptionContains(
+                "$scheduleShortTime train early, arriving at $predictionShortTime"
+            )
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleDelayOther() {
+        val predictionInstant = Instant.fromEpochSeconds(1722535784)
+        val predictionShortTime = formatTime(predictionInstant)
+
+        val scheduleInstant = Instant.fromEpochSeconds(1722535384)
+        val scheduleShortTime = formatTime(scheduleInstant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(predictionInstant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains(
+                "and $scheduleShortTime train delayed, arriving at $predictionShortTime"
+            )
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleEarlyOther() {
+        val predictionInstant = Instant.fromEpochSeconds(1722535384)
+        val predictionShortTime = formatTime(predictionInstant)
+
+        val scheduleInstant = Instant.fromEpochSeconds(1722535784)
+        val scheduleShortTime = formatTime(scheduleInstant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(predictionInstant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains(
+                "and $scheduleShortTime train early, arriving at $predictionShortTime"
+            )
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
         composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
     }
