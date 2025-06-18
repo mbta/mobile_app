@@ -139,25 +139,35 @@ object StopLayerGenerator {
         layer.iconSize = MapExp.selectedSizeExp(state)
 
         layer.iconAllowOverlap = true
-        layer.minZoom = if (forBus) busStopZoomThreshold else stopZoomThreshold
         layer.symbolSortKey = Exp.get(StopFeaturesBuilder.propSortOrderKey)
-        if (state.stopFilter != null) {
-            // we hide bus stops on unselected routes at zoom levels < 15, so we show non-bus stops,
-            // selected routes, or zoom > 15
-            layer.filter =
-                Exp.any(
-                    MapExp.listNotEq(
-                        Exp.get(StopFeaturesBuilder.propMapRoutesKey),
-                        listOf(Exp(MapStopRoute.BUS.name)),
+        layer.filter =
+            if (state.stopFilter != null) {
+                Exp.all(
+                    selectedOrBeyondThresholdExp(state, forBus),
+                    // we hide bus stops on unselected routes at zoom levels < 15, so we show
+                    // non-bus stops, selected routes, or zoom > 15
+                    Exp.any(
+                        MapExp.listNotEq(
+                            Exp.get(StopFeaturesBuilder.propMapRoutesKey),
+                            listOf(Exp(MapStopRoute.BUS.name)),
+                        ),
+                        Exp.`in`(
+                            Exp("${state.stopFilter.routeId}/${state.stopFilter.directionId}"),
+                            Exp.get(StopFeaturesBuilder.propAllRouteDirectionsKey),
+                        ),
+                        Exp.ge(Exp.zoom(), Exp(MapDefaults.closeZoomThreshold)),
                     ),
-                    Exp.`in`(
-                        Exp("${state.stopFilter.routeId}/${state.stopFilter.directionId}"),
-                        Exp.get(StopFeaturesBuilder.propAllRouteDirectionsKey),
-                    ),
-                    Exp.ge(Exp.zoom(), Exp(MapDefaults.closeZoomThreshold)),
                 )
-        }
+            } else {
+                selectedOrBeyondThresholdExp(state, forBus)
+            }
     }
+
+    private fun selectedOrBeyondThresholdExp(state: State, forBus: Boolean) =
+        Exp.any(
+            MapExp.selectedExp(state),
+            Exp.ge(Exp.zoom(), if (forBus) Exp(busStopZoomThreshold) else Exp(stopZoomThreshold)),
+        )
 
     fun offsetAlertValue(index: Int): Exp<List<Number>> {
         return Exp.step(
