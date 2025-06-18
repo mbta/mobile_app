@@ -118,9 +118,6 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
             now,
             favorites,
         ) {
-            println(
-                "AAAAA hit FavoritesVM realtime LaunchedEffect with stopIds=$stopIds globalData=$globalData location=$location schedules=$schedules predictions=$predictions alerts=$alerts now=$now favorites=$favorites"
-            )
             if (stopIds == null || globalData == null || location == null) {
                 routeCardData = null
             } else if (stopIds.isEmpty()) {
