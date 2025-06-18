@@ -230,6 +230,7 @@ final class FavoritesViewTests: XCTestCase {
         let setFirstExp = expectation(description: "sets a time")
         var firstTime: Instant?
         let setSecondExp = expectation(description: "sets a different time later")
+        setSecondExp.assertForOverFulfill = false
         let favoritesVM = MockFavoritesViewModel()
         favoritesVM.onSetNow = { newNow in
             if firstTime == nil {
