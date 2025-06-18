@@ -116,11 +116,17 @@ fun RouteStopListView(
         }
 
     showFavoritesStopConfirmation?.let { stop ->
+        val stopDirections =
+            lineOrRoute.directions(
+                globalData,
+                stop,
+                globalData.getPatternsFor(stop.id, lineOrRoute).filter { it.isTypical() },
+            )
         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
             FavoriteConfirmationDialog(
                 lineOrRoute,
                 stop,
-                parameters.directions.filter { it.id in parameters.availableDirections },
+                stopDirections.filter { it.id in parameters.availableDirections },
                 proposedFavorites =
                     parameters.availableDirections.associateWith {
                         it == selectedDirection ||
