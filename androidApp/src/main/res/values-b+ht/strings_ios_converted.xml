@@ -109,7 +109,7 @@
         <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="zero">This stop has %1$d elevators closed</item>
+        <item quantity="zero">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="one">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="two">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="few">Estasyon sa a gen %1$d asansè fèmen</item>
@@ -214,6 +214,7 @@
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
+    <string name="no_stops_added">Pa gen arè te ajoute</string>
     <string name="no_stops_nearby">Ou deyò zòn sèvis MBTA a.</string>
     <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
     <string name="no_stops_nearby_search">Chèche dapre arè a</string>

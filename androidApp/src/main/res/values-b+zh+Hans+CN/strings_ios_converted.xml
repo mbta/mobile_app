@@ -199,6 +199,7 @@
     <string name="no_service">无服务</string>
     <string name="no_service_sentence_case">无服务</string>
     <string name="no_service_today">今日无服务</string>
+    <string name="no_stops_added">未添加停靠站</string>
     <string name="no_stops_nearby">您不在MBTA服务区内。</string>
     <string name="no_stops_nearby_pan">查看波士顿车站附近的交通运输服务</string>
     <string name="no_stops_nearby_search">按站点搜索</string>

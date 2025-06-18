@@ -88,9 +88,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             try view.find(button: "Continue").tap()
         }
 
-        ViewHosting.host(view: sut)
-
-        wait(for: [saveSettingExp, advanceExp], timeout: 1)
+        wait(for: [exp, saveSettingExp, advanceExp], timeout: 2)
     }
 
     func testFeedbackFlow() throws {

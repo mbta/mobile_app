@@ -11565,6 +11565,53 @@
         }
       }
     },
+    "No stops added" : {
+      "comment" : "Indicates the absence of favorites",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se agregaron paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aucun arrêt ajouté"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pa gen arè te ajoute"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nenhuma parada adicionada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không có điểm dừng nào được thêm vào"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未添加停靠站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未添加停靠站"
+          }
+        }
+      }
+    },
     "Northbound" : {
       "comment" : "A route direction label",
       "localizations" : {
@@ -17474,8 +17521,8 @@
               },
               "zero" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "This stop has %ld elevators closed"
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
                 }
               }
             }
