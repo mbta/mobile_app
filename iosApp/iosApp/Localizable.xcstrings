@@ -17621,8 +17621,8 @@
               },
               "zero" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "This stop has %ld elevators closed"
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
                 }
               }
             }
