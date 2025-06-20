@@ -165,15 +165,17 @@ fun UpcomingTripView(
                     }
 
                 is TripInstantDisplay.TimeWithStatus ->
-                    Column(modifier, horizontalAlignment = Alignment.End) {
+                    Column(
+                        modifier.clearAndSetSemantics { contentDescription = tripDescription },
+                        horizontalAlignment = Alignment.End,
+                    ) {
                         WithRealtimeIndicator(
                             modifier.then(maxAlphaModifier),
                             hideRealtimeIndicators,
                         ) {
                             Text(
                                 formatTime(state.trip.predictionTime),
-                                Modifier.semantics { contentDescription = tripDescription }
-                                    .placeholderIfLoading(),
+                                Modifier.placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
                                     if (state.trip.headline) Typography.headlineSemibold
@@ -182,13 +184,6 @@ fun UpcomingTripView(
                         }
                         Text(
                             state.trip.status,
-                            modifier =
-                                Modifier.semantics {
-                                    contentDescription =
-                                        if (state.trip.status in TripInstantDisplay.delayStatuses)
-                                            ""
-                                        else state.trip.status
-                                },
                             color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
                             textAlign = TextAlign.End,
                             style = Typography.footnoteSemibold,

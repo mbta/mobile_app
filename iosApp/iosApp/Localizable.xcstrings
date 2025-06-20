@@ -964,15 +964,9 @@
         }
       }
     },
-    "%@ arriving at %@" : {
+    "%1$@ arriving at %2$@" : {
       "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ arriving at %2$@"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3699,49 +3693,49 @@
         }
       }
     },
-    "and at %@" : {
+    "and at %1$@" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y a la(s) %@"
+            "value" : "y a la(s) %1$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "et à %@"
+            "value" : "et à %1$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi a %@"
+            "value" : "epi a %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %@"
+            "value" : "e às %1$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và lúc %@"
+            "value" : "và lúc %1$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车将于%@到站"
+            "value" : "下一趟车将于%1$@到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將於%@到站"
+            "value" : "下一趟車將於%1$@到站"
           }
         }
       }

@@ -126,21 +126,23 @@ private fun predictedTimeDescription(
 ): String {
     if (
         trip is TripInstantDisplay.TimeWithStatus && trip.status in TripInstantDisplay.delayStatuses
-    ) {
+    )
         return delayDescription(trip.predictionTime, isFirst, vehicleType)
-    }
+
     val predictionTime =
         formatTime(
             when (trip) {
                 is TripInstantDisplay.Time -> trip.predictionTime
-                is TripInstantDisplay.TimeWithSchedule -> trip.predictionTime
                 is TripInstantDisplay.TimeWithStatus -> trip.predictionTime
                 else -> return ""
             }
         )
-    return if (isFirst)
-        stringResource(R.string.vehicle_prediction_time_first, vehicleType, predictionTime)
-    else stringResource(R.string.vehicle_prediction_time_other, predictionTime)
+    val timeString =
+        if (isFirst)
+            stringResource(R.string.vehicle_prediction_time_first, vehicleType, predictionTime)
+        else stringResource(R.string.vehicle_prediction_time_other, predictionTime)
+    return if (trip is TripInstantDisplay.TimeWithStatus) "$timeString, ${trip.status}"
+    else timeString
 }
 
 @Composable

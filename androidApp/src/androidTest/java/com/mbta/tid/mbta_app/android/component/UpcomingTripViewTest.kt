@@ -143,15 +143,23 @@ class UpcomingTripViewTest {
         val shortTime = formatTime(instant)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "All aboard"))
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithStatus(instant, "All aboard")
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
             )
         }
+
         composeTestRule
-            .onNodeWithText(formatTime(instant))
+            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
             .assertIsDisplayed()
-            .assertContentDescriptionContains("arriving at $shortTime", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText("All aboard").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("train arriving at $shortTime, All aboard")
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("All aboard", useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test
@@ -164,9 +172,13 @@ class UpcomingTripViewTest {
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
-        composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -179,9 +191,13 @@ class UpcomingTripViewTest {
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
-        composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test

@@ -84,7 +84,9 @@ final class UpcomingTripViewTests: XCTestCase {
             )),
             routeType: .commuterRail
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM, All aboard"
+        ))
         XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
     }
 

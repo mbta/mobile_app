@@ -171,24 +171,18 @@ extension TripInstantDisplay {
 
         guard let predictionInstant: Instant = switch onEnum(of: self) {
         case let .time(trip): trip.predictionTime
-        case let .timeWithSchedule(trip): trip.predictionTime
         case let .timeWithStatus(trip): trip.predictionTime
         default: nil
         } else { return Text(verbatim: "") }
 
         let predictionTime = timeFormatter.string(from: Date(instant: predictionInstant))
-        return isFirst
-            ? Text("\(vehicleType) arriving at \(predictionTime)",
-                   comment: """
-                   Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.
-                   First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
-                   For example, 'bus arriving at 10:30AM'
-                   """)
-            : Text("and at \(predictionTime)",
-                   comment: """
-                   The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                   For example, '[bus arriving at 10:30AM], and at 10:45 AM'
-                   """)
+        let timeString = predictedTimeString(predictionTime, isFirst, vehicleType)
+        let finalLabel = if case let .timeWithStatus(trip) = onEnum(of: self) {
+            "\(timeString), \(trip.status)"
+        } else {
+            timeString
+        }
+        return Text(verbatim: finalLabel)
     }
 
     private func predictedTimeWithScheduleLabel(
@@ -229,6 +223,25 @@ extension TripInstantDisplay {
             """
         ), predictionTime)
         return Text(verbatim: "\(scheduleStatus), \(actualArrival)")
+    }
+
+    private func predictedTimeString(_ predictionTime: String, _ isFirst: Bool, _ vehicleType: String) -> String {
+        isFirst
+            ? String(format: NSLocalizedString(
+                "%1$@ arriving at %2$@",
+                comment: """
+                Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
+                For example, 'bus arriving at 10:30AM'
+                """
+            ), vehicleType, predictionTime)
+            : String(format: NSLocalizedString(
+                "and at %1$@",
+                comment: """
+                The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving at 10:30AM], and at 10:45 AM'
+                """
+            ), predictionTime)
     }
 
     private func scheduledMinutesLabel(_ minutes: Int32, _ isFirst: Bool, _ vehicleType: String) -> Text {
