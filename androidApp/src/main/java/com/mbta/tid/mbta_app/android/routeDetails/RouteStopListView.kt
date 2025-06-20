@@ -121,17 +121,17 @@ fun RouteStopListView(
         }
 
     showFavoritesStopConfirmation?.let { stop ->
+        val allPatternsForStop = globalData.getPatternsFor(stop.id, lineOrRoute)
         val stopDirections =
-            lineOrRoute.directions(
-                globalData,
-                stop,
-                globalData.getPatternsFor(stop.id, lineOrRoute).filter { it.isTypical() },
-            )
+            lineOrRoute.directions(globalData, stop, allPatternsForStop.filter { it.isTypical() })
         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
             FavoriteConfirmation(
                 lineOrRoute,
                 stop,
-                stopDirections.filter { it.id in parameters.availableDirections },
+                stopDirections.filter {
+                    it.id in parameters.availableDirections &&
+                        !stop.isLastStopForAllPatterns(it.id, allPatternsForStop, globalData)
+                },
                 selectedDirection = selectedDirection,
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,

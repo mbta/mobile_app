@@ -52,9 +52,8 @@ fun FavoriteConfirmation(
     onClose: () -> Unit,
 ) {
 
-    if (directions.size < 2) {
+    if ((directions.size < 2) && directions.all { it.id == selectedDirection }) {
         // If this is the only possible direction, toggle the favorite for that direction
-        // even if it isn't the currently selected one
         // without presenting the dialog.
         updateFavorites(
             directions.associateBy({ RouteStopDirection(lineOrRoute.id, stop.id, it.id) }) {
@@ -102,75 +101,65 @@ fun FavoriteConfirmationDialog(
         onClose()
     }
 
-    // If there is only one possible favorite, skip presenting the dialog.
-    if (directions.size < 2) {
-        saveAndClose()
-    } else {
-
-        Dialog(onDismissRequest = onClose) {
-            Column(
-                modifier =
-                    Modifier.background(
-                        colorResource(R.color.fill1),
-                        shape = RoundedCornerShape(28.dp),
-                    )
-            ) {
-                Text(
-                    AnnotatedString.fromHtml(
-                        stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(16.dp).semantics { heading() },
-                )
-                Column() {
-                    HaloSeparator()
-                    directions.mapIndexed { idx, direction ->
-                        Button(
-                            onClick = {
-                                favoritesToSave =
-                                    favoritesToSave.plus(
-                                        direction.id to
-                                            !favoritesToSave.getOrDefault(direction.id, false)
-                                    )
-                            },
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(R.color.fill3),
-                                    contentColor = colorResource(R.color.text),
-                                ),
-                            shape = RectangleShape,
-                            modifier =
-                                Modifier.background(color = colorResource(R.color.fill3))
-                                    .semantics {
-                                        selected = favoritesToSave.getOrDefault(direction.id, false)
-                                    },
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                DirectionLabel(direction, Modifier.weight(1f))
-                                StarIcon(
-                                    favoritesToSave.getOrDefault(direction.id, false),
-                                    color = Color.fromHex(lineOrRoute.backgroundColor),
-                                    Modifier.padding(start = 16.dp),
+    Dialog(onDismissRequest = onClose) {
+        Column(
+            modifier =
+                Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp))
+        ) {
+            Text(
+                AnnotatedString.fromHtml(
+                    stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp).semantics { heading() },
+            )
+            Column() {
+                HaloSeparator()
+                directions.mapIndexed { idx, direction ->
+                    Button(
+                        onClick = {
+                            favoritesToSave =
+                                favoritesToSave.plus(
+                                    direction.id to
+                                        !favoritesToSave.getOrDefault(direction.id, false)
                                 )
-                            }
-                        }
-                        if (idx + 1 < directions.size) {
-                            HaloSeparator()
+                        },
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.fill3),
+                                contentColor = colorResource(R.color.text),
+                            ),
+                        shape = RectangleShape,
+                        modifier =
+                            Modifier.background(color = colorResource(R.color.fill3)).semantics {
+                                selected = favoritesToSave.getOrDefault(direction.id, false)
+                            },
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            DirectionLabel(direction, Modifier.weight(1f))
+                            StarIcon(
+                                favoritesToSave.getOrDefault(direction.id, false),
+                                color = Color.fromHex(lineOrRoute.backgroundColor),
+                                Modifier.padding(start = 16.dp),
+                            )
                         }
                     }
-                    HaloSeparator()
+                    if (idx + 1 < directions.size) {
+                        HaloSeparator()
+                    }
                 }
+                HaloSeparator()
+            }
 
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Spacer(Modifier.weight(1F))
-                    TextButton(onClose) { Text("Cancel") }
-                    TextButton({ saveAndClose() }) {
-                        Text(stringResource(R.string.add_confirmation_button))
-                    }
+            Row(modifier = Modifier.padding(16.dp)) {
+                Spacer(Modifier.weight(1F))
+                TextButton(onClose) { Text("Cancel") }
+                TextButton({ saveAndClose() }) {
+                    Text(stringResource(R.string.add_confirmation_button))
                 }
             }
         }
