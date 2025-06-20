@@ -85,6 +85,10 @@ class NearbyViewModel: ObservableObject {
         navigationStack.lastSafe() == .nearby
     }
 
+    func isFavoritesVisible() -> Bool {
+        navigationStack.lastSafe() == .favorites
+    }
+
     /*
      Directly append the given entry to the stack without considering the previous entries.
      This should be done with caution as it can result in multiple entries of the same type within the stack,

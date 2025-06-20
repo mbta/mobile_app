@@ -22,6 +22,7 @@ struct ContentView: View {
     @State private var sheetHeight: CGFloat =
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @StateObject var errorBannerVM = ErrorBannerViewModel()
+    @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
@@ -265,7 +266,12 @@ struct ContentView: View {
 
     @ViewBuilder
     var favoritesPage: some View {
-        FavoritesPage()
+        FavoritesPage(
+            errorBannerVM: errorBannerVM,
+            favoritesVM: favoritesVM,
+            nearbyVM: nearbyVM,
+            viewportProvider: viewportProvider
+        )
     }
 
     @ViewBuilder

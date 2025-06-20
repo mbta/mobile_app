@@ -57,6 +57,7 @@ struct PredictionRowView: View {
                 ForEach(Array(trips.trips.enumerated()), id: \.1.id) { index, trip in
                     UpcomingTripView(
                         prediction: .some(trip.format),
+                        routeType: trip.routeType,
                         isFirst: index == 0,
                         isOnly: index == 0 && trips.trips.count == 1
                     )

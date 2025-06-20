@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -26,7 +27,6 @@ interface IFavoritesViewModel {
 
     fun reloadFavorites()
 
-    @DefaultArgumentInterop.Enabled
     fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
 
     fun setAlerts(alerts: AlertsStreamDataResponse?)
@@ -208,5 +208,38 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                 }
                 ?.filter { it.stopData.any { it.data.isNotEmpty() } }
         }
+    }
+}
+
+class MockFavoritesViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State()) :
+    IFavoritesViewModel {
+    var onReloadFavorites = {}
+    var onSetActive = { _: Boolean, _: Boolean -> }
+    var onSetAlerts = { _: AlertsStreamDataResponse? -> }
+    var onSetLocation = { _: Position? -> }
+    var onSetNow = { _: Instant -> }
+
+    override val models = MutableStateFlow(initialState)
+
+    override fun reloadFavorites() {
+        onReloadFavorites()
+    }
+
+    override fun setActive(active: Boolean, wasSentToBackground: Boolean) {
+        onSetActive(active, wasSentToBackground)
+    }
+
+    override fun setAlerts(alerts: AlertsStreamDataResponse?) {
+        onSetAlerts(alerts)
+    }
+
+    override fun setLocation(location: Position?) {
+        onSetLocation(location)
+    }
+
+    override fun setNow(now: Instant) {
+        onSetNow(now)
     }
 }

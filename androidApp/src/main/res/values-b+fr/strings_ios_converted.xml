@@ -205,6 +205,7 @@
     <string name="no_service">Pas de service</string>
     <string name="no_service_sentence_case">Aucun service</string>
     <string name="no_service_today">Aucun service aujourd’hui</string>
+    <string name="no_stops_added">Aucun arrêt ajouté</string>
     <string name="no_stops_nearby">Vous vous situez en dehors de la zone de service de MBTA.</string>
     <string name="no_stops_nearby_pan">Voir les transports près de Boston</string>
     <string name="no_stops_nearby_search">Rechercher par arrêt</string>
@@ -374,6 +375,10 @@
     <string name="vehicle_cancelled_other">et à %1$s est annulé</string>
     <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s sélectionné</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">%1$s %2$s %3$s sélectionné, arrêt sélectionné</string>
+    <string name="vehicle_prediction_hours_first">%1$s arrive dans %2$d h</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s arrive dans %2$d h et %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">et dans %1$d h et %2$d min</string>
+    <string name="vehicle_prediction_hours_other">et dans %1$d h</string>
     <string name="vehicle_prediction_minutes_first">%1$s arrive dans %2$d min</string>
     <string name="vehicle_prediction_minutes_other">et dans %1$d min</string>
     <string name="vehicle_prediction_time_first">%1$s arrivant à %2$s</string>

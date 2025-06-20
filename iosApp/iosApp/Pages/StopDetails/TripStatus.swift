@@ -17,7 +17,8 @@ struct TripStatus: View {
         case let .some(trips):
             if let trip = trips.trips.first {
                 UpcomingTripView(
-                    prediction: .some(trip.format)
+                    prediction: .some(trip.format),
+                    routeType: trip.routeType
                 )
             } else {
                 EmptyView()

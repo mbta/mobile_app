@@ -210,7 +210,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)))
         }
-        composeTestRule.onNodeWithText("1 hr 5 min").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("1 hr 5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 hr 5 min", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -218,7 +222,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)))
         }
-        composeTestRule.onNodeWithText("1 hr").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("1 hr")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 hr", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -248,6 +256,40 @@ class UpcomingTripViewTest {
             .onNodeWithText("5 min")
             .assertIsDisplayed()
             .assertContentDescriptionContains("and in 5 min", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeHoursAndMinutesOtherBus() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)),
+                routeType = RouteType.BUS,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText("1 hr 5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("and in 1 hr 5 min", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeHoursOtherBus() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)),
+                routeType = RouteType.BUS,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText("1 hr")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("and in 1 hr", substring = true)
             .assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }

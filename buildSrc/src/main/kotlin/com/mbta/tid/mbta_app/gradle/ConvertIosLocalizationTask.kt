@@ -47,6 +47,9 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
     private fun readIosStrings(): Map<IosKey, Map<String, Resource>> {
         val inputData = xcstrings.asFile.readText()
         val strings = Json.decodeFromString<XcStrings>(inputData)
+
+        strings.checkNoMissingTranslations()
+
         return strings.resourcesByKey()
     }
 
@@ -56,6 +59,12 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val strings: Map<String, XcStringInfo>,
         val version: String,
     ) {
+        fun checkNoMissingTranslations() {
+            for ((stringKey, stringInfo) in strings) {
+                stringInfo.checkNoMissingTranslations(stringKey)
+            }
+        }
+
         fun resourcesByKey(): Map<IosKey, Map<String, Resource>> {
             return strings
                 .mapNotNull {
@@ -79,6 +88,13 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val extractionState: String? = null,
         val localizations: Map<String, Localization>? = null,
     ) {
+        fun checkNoMissingTranslations(stringKey: String) {
+            for ((languageTag, localization) in localizations.orEmpty()) {
+                if (languageTag != "en") {
+                    localization.checkNoMissingTranslations(stringKey, languageTag)
+                }
+            }
+        }
 
         fun resources() =
             localizations
@@ -96,6 +112,33 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val stringUnit: StringUnit? = null,
         val variations: Variations? = null,
     ) {
+        fun checkNoMissingTranslations(
+            stringKey: String,
+            languageTag: String,
+            quantity: Quantity? = null,
+        ) {
+            if (stringUnit != null) {
+                check(stringUnit.state != "new") {
+                    buildString {
+                        append("iOS string \"")
+                        append(stringKey)
+                        append("\" language \"")
+                        append(languageTag)
+                        if (quantity != null) {
+                            append("\" quantity \"")
+                            append(quantity)
+                        }
+                        append("\" missing translation")
+                    }
+                }
+            }
+            if (variations != null) {
+                for ((thisQuantity, localization) in variations.plural) {
+                    localization.checkNoMissingTranslations(stringKey, languageTag, thisQuantity)
+                }
+            }
+        }
+
         fun resource(): Resource? = stringUnit?.resource() ?: variations?.resource()
     }
 
