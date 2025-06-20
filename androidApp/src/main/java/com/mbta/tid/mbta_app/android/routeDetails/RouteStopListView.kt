@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
+import com.mbta.tid.mbta_app.android.component.FavoriteConfirmation
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SheetHeader
@@ -128,15 +128,12 @@ fun RouteStopListView(
                 globalData.getPatternsFor(stop.id, lineOrRoute).filter { it.isTypical() },
             )
         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            FavoriteConfirmationDialog(
+            FavoriteConfirmation(
                 lineOrRoute,
                 stop,
                 stopDirections.filter { it.id in parameters.availableDirections },
-                proposedFavorites =
-                    parameters.availableDirections.associateWith {
-                        it == selectedDirection ||
-                            isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it))
-                    },
+                selectedDirection = selectedDirection,
+                isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {
                 showFavoritesStopConfirmation = null

@@ -28,7 +28,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
+import com.mbta.tid.mbta_app.android.component.FavoriteConfirmation
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -86,28 +86,21 @@ fun StopDetailsFilteredPickerView(
             FavoriteBridge.Pinned(lineOrRoute.id)
         }
 
-    var showFavoritesConfirmation by rememberSaveable { mutableStateOf(false) }
+    var isFavoritingStop by rememberSaveable { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        if (showFavoritesConfirmation) {
-            FavoriteConfirmationDialog(
+        if (isFavoritingStop) {
+            FavoriteConfirmation(
                 lineOrRoute,
                 stop,
                 directions.filter { it.id in availableDirections },
-                proposedFavorites =
-                    availableDirections.associateWith {
-                        it == stopFilter.directionId ||
-                            isFavorite(
-                                FavoriteBridge.Favorite(
-                                    RouteStopDirection(lineOrRoute.id, stop.id, it)
-                                )
-                            )
-                    },
+                selectedDirection = stopFilter.directionId,
                 updateFavorites = { newValues ->
                     updateFavorites(FavoriteUpdateBridge.Favorites(newValues))
                 },
+                isFavorite = { rsd -> isFavorite(FavoriteBridge.Favorite(rsd)) },
             ) {
-                showFavoritesConfirmation = false
+                isFavoritingStop = false
             }
         }
         StopDetailsFilteredHeader(
@@ -127,7 +120,7 @@ fun StopDetailsFilteredPickerView(
                         )
                     )
                 } else {
-                    showFavoritesConfirmation = !showFavoritesConfirmation
+                    isFavoritingStop = !isFavoritingStop
                 }
             },
             onClose = onClose,
