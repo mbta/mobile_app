@@ -365,12 +365,17 @@
     <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
     <string name="vehicle_desc_accessibility_desc">选定%1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">选定%1$s %2$s %3$s，选定站点</string>
+    <string name="vehicle_prediction_actual_arrival">于%2$s到站</string>
     <string name="vehicle_prediction_hours_first">%1$s将于%2$d小时内到站</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s将于%2$d小时%3$d分钟内到站</string>
     <string name="vehicle_prediction_hours_minutes_other">下一趟车将在%1$d小时%2$d分钟内抵达</string>
     <string name="vehicle_prediction_hours_other">下一趟车将在%1$d小时内抵达</string>
     <string name="vehicle_prediction_minutes_first">%1$s将在%2$d分钟内到站</string>
     <string name="vehicle_prediction_minutes_other">下一趟车将在%1$d分钟内抵达</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s 延迟</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">下一趟%1$s%2$s延迟</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s%2$s提前</string>
+    <string name="vehicle_prediction_schedule_status_early_other">下一趟%1$s%2$s提前</string>
     <string name="vehicle_prediction_time_first">%1$s于%2$s到站</string>
     <string name="vehicle_prediction_time_other">下一趟车将于%1$s到站</string>
     <string name="vehicle_schedule_minutes_first">%1$s预定将于%2$d分钟内到站</string>

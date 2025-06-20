@@ -94,6 +94,7 @@ fun PredictionRowView(
                                     UpcomingTripView(
                                         UpcomingTripViewState.Some(prediction.format),
                                         modifier = Modifier.weight(1f, fill = false),
+                                        routeType = prediction.routeType,
                                         isFirst = index == 0,
                                         isOnly = index == 0 && predictions.trips.count() == 1,
                                     )

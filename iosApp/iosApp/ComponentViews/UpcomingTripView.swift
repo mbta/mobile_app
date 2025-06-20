@@ -89,25 +89,27 @@ struct UpcomingTripView: View {
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
                     .opacity(min(1.0, maxTextAlpha))
-                    .accessibilityLabel(label)
                 Text(format.status)
                     .font(Typography.footnoteSemibold)
                     .opacity(min(0.6, maxTextAlpha))
                     .multilineTextAlignment(.trailing)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
         case let .timeWithSchedule(format):
             VStack(alignment: .trailing, spacing: 0) {
                 Text(Date(instant: format.predictionTime), style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
                     .opacity(min(1.0, maxTextAlpha))
-                    .accessibilityLabel(label)
                 Text(Date(instant: format.scheduledTime), style: .time)
                     .font(Typography.footnoteSemibold)
                     .opacity(min(0.6, maxTextAlpha))
                     .strikethrough()
                     .multilineTextAlignment(.trailing)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
         case let .minutes(format):
             PredictionText(minutes: format.minutes)
                 .realtime(hideIndicator: hideRealtimeIndicators)

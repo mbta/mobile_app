@@ -57,6 +57,8 @@ sealed class TripInstantDisplay {
     }
 
     companion object {
+        val delayStatuses = setOf("Delay", "Late")
+
         fun from(
             prediction: Prediction?,
             schedule: Schedule?,

@@ -68,7 +68,7 @@ struct FavoritesView: View {
         .withScenePhaseHandlers(
             onActive: { favoritesVM.setActive(active: true, wasSentToBackground: false) },
             onInactive: { favoritesVM.setActive(active: false, wasSentToBackground: false) },
-            onBackground: { favoritesVM.setActive(active: false, wasSentToBackground: true) },
+            onBackground: { favoritesVM.setActive(active: false, wasSentToBackground: true) }
         )
     }
 
