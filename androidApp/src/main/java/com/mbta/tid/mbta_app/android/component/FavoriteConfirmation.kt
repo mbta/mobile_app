@@ -42,6 +42,45 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.utils.TestData
 
 @Composable
+fun FavoriteConfirmation(
+    lineOrRoute: RouteCardData.LineOrRoute,
+    stop: Stop,
+    directions: List<Direction>,
+    selectedDirection: Int,
+    isFavorite: (routeStopDirection: RouteStopDirection) -> Boolean,
+    updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
+    onClose: () -> Unit,
+) {
+
+    if ((directions.size < 2) && directions.all { it.id == selectedDirection }) {
+        // If this is the only possible direction, toggle the favorite for that direction
+        // without presenting the dialog.
+        updateFavorites(
+            directions.associateBy({ RouteStopDirection(lineOrRoute.id, stop.id, it.id) }) {
+                !isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))
+            }
+        )
+        onClose()
+    } else {
+
+        FavoriteConfirmationDialog(
+            lineOrRoute,
+            stop,
+            directions,
+            proposedFavorites =
+                directions.associateBy({ it.id }) {
+                    // if selectedDirection and already a favorite, then removing favorite.
+                    // if not selected direction and already a favorite, then keep it.
+                    (it.id == selectedDirection) xor
+                        isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it.id))
+                },
+            updateFavorites = updateFavorites,
+            onClose = onClose,
+        )
+    }
+}
+
+@Composable
 fun FavoriteConfirmationDialog(
     lineOrRoute: RouteCardData.LineOrRoute,
     stop: Stop,
@@ -52,6 +91,15 @@ fun FavoriteConfirmationDialog(
 ) {
 
     var favoritesToSave: Map<Int, Boolean> by remember { mutableStateOf(proposedFavorites) }
+
+    fun saveAndClose() {
+        val newFavorites =
+            favoritesToSave.mapKeys { (directionId, _isFavorite) ->
+                RouteStopDirection(lineOrRoute.id, stop.id, directionId)
+            }
+        updateFavorites(newFavorites)
+        onClose()
+    }
 
     Dialog(onDismissRequest = onClose) {
         Column(
@@ -110,14 +158,7 @@ fun FavoriteConfirmationDialog(
             Row(modifier = Modifier.padding(16.dp)) {
                 Spacer(Modifier.weight(1F))
                 TextButton(onClose) { Text("Cancel") }
-                TextButton({
-                    val newFavorites =
-                        favoritesToSave.mapKeys { (directionId, _isFavorite) ->
-                            RouteStopDirection(lineOrRoute.id, stop.id, directionId)
-                        }
-                    updateFavorites(newFavorites)
-                    onClose()
-                }) {
+                TextButton({ saveAndClose() }) {
                     Text(stringResource(R.string.add_confirmation_button))
                 }
             }

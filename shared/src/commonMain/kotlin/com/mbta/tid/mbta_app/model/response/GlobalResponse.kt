@@ -132,6 +132,15 @@ data class GlobalResponse(
         return patternIds.mapNotNull { routePatterns[it] }
     }
 
+    fun getPatternsFor(stopId: String, lineOrRoute: RouteCardData.LineOrRoute): List<RoutePattern> {
+        val stop = stops[stopId] ?: return emptyList()
+        val stopIds = stop.childStopIds + listOf(stopId)
+        val patternIds = stopIds.flatMap { patternIdsByStop[it] ?: emptyList() }
+        return patternIds
+            .mapNotNull { routePatterns[it] }
+            .filter { lineOrRoute.containsRoute(it.routeId) }
+    }
+
     fun getPatternsFor(stopId: String, routeId: String): List<RoutePattern> {
         return getPatternsFor(stopId).filter { it.routeId == routeId }
     }
