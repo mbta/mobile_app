@@ -12,7 +12,11 @@ fun TripStatus(predictions: UpcomingFormat) {
         is UpcomingFormat.Some ->
             when (val trip = predictions.trips.firstOrNull()) {
                 null -> {}
-                else -> UpcomingTripView(UpcomingTripViewState.Some(trip.format))
+                else ->
+                    UpcomingTripView(
+                        UpcomingTripViewState.Some(trip.format),
+                        routeType = trip.routeType,
+                    )
             }
         is UpcomingFormat.Disruption ->
             UpcomingTripView(

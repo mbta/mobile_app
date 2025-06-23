@@ -964,15 +964,9 @@
         }
       }
     },
-    "%@ arriving at %@" : {
+    "%1$@ arriving at %2$@" : {
       "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ arriving at %2$@"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1819,6 +1813,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@，選定站點，第一站"
+          }
+        }
+      }
+    },
+    "%1$@ %2$@ delayed" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ retrasado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ retardé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ atrasado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ bị trì hoãn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ 延迟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@延遲"
+          }
+        }
+      }
+    },
+    "%1$@ %2$@ early" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train early[, arriving at 9:55 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ temprano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ tôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ byen bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ cedo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@提前"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@提前"
           }
         }
       }
@@ -3464,6 +3552,100 @@
         }
       }
     },
+    "and %1$@ %2$@ delayed" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing\nthe delayed predicted time, as the second or later arrival in a list of upcoming arrivals.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, 'and 10:00 PM train delayed[, arriving at 10:05 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y %1$@ %2$@ retrasado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et %1$@ %2$@ retardé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi %1$@ %2$@ an reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e %1$@ %2$@ atrasado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và %1$@ %2$@ bị trì hoãn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@延迟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@延遲"
+          }
+        }
+      }
+    },
+    "and %1$@ %2$@ early" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing\nthe early predicted time, as the second or later arrival in a list of upcoming arrivals.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, 'and 10:00 PM train early[, arriving at 9:55 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y %1$@ %2$@ temprano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et %1$@ %2$@ tôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ak %1$@ %2$@ byen bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e %1$@ %2$@ cedo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và %1$@ %2$@ sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@提前"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@提前"
+          }
+        }
+      }
+    },
     "and arriving now" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n For example, '[bus arriving in 1 minute], and arriving now'",
       "localizations" : {
@@ -3511,49 +3693,49 @@
         }
       }
     },
-    "and at %@" : {
+    "and at %1$@" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y a la(s) %@"
+            "value" : "y a la(s) %1$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "et à %@"
+            "value" : "et à %1$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi a %@"
+            "value" : "epi a %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %@"
+            "value" : "e às %1$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và lúc %@"
+            "value" : "và lúc %1$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车将于%@到站"
+            "value" : "下一趟车将于%1$@到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將於%@到站"
+            "value" : "下一趟車將於%1$@到站"
           }
         }
       }
@@ -4178,6 +4360,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即將到達"
+          }
+        }
+      }
+    },
+    "arriving at %1$@" : {
+      "comment" : "Screen reader text appended to another string containing an originally scheduled time which is running early or delayed\ncompared to the actual predicted time (contained in this string).\nex, '[10:00 PM train delayed, ]arriving at 10:05 PM'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "llegará a la(s) %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "arrivant à %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ap rive a %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "chegando às %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sẽ đến lúc %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "于%2$@到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "於%2$@到站"
           }
         }
       }

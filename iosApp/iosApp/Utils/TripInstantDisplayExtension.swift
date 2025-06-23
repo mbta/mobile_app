@@ -20,7 +20,8 @@ extension TripInstantDisplay {
         case let .cancelled(trip): cancelledLabel(trip.scheduledTime, isFirst, vehicleType)
         case let .scheduleMinutes(trip): scheduledMinutesLabel(trip.minutes, isFirst, vehicleType)
         case let .scheduleTime(trip): scheduleTimeLabel(trip.scheduledTime, isFirst, vehicleType)
-        case .time, .timeWithSchedule, .timeWithStatus: predictedTimeLabel(isFirst, vehicleType)
+        case .time, .timeWithStatus: predictedTimeLabel(isFirst, vehicleType)
+        case let .timeWithSchedule(trip): predictedTimeWithScheduleLabel(trip, isFirst, vehicleType)
         default: Text(verbatim: "")
         }
     }
@@ -71,6 +72,29 @@ extension TripInstantDisplay {
                 For example, '[bus arriving at 10:30AM], and at 10:45 AM cancelled'
                 """
             )
+    }
+
+    private func delayString(_ scheduledTime: Instant, _ isFirst: Bool, _ vehicleType: String) -> String {
+        let time = timeFormatter.string(from: Date(instant: scheduledTime))
+        return isFirst
+            ? String(format: NSLocalizedString(
+                "%1$@ %2$@ delayed",
+                comment: """
+                Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.
+                The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').
+                ex, '10:00 PM train delayed[, arriving at 10:05 PM]'
+                """
+            ), time, vehicleType)
+
+            : String(format: NSLocalizedString(
+                "and %1$@ %2$@ delayed",
+                comment: """
+                Screen reader text containing an originally scheduled time, which precedes another string containing
+                the delayed predicted time, as the second or later arrival in a list of upcoming arrivals.
+                The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').
+                ex, 'and 10:00 PM train delayed[, arriving at 10:05 PM]'
+                """
+            ), time, vehicleType)
     }
 
     private func predictedMinutesLabel(_ isFirst: Bool, _ vehicleType: String) -> Text {
@@ -140,26 +164,84 @@ extension TripInstantDisplay {
     }
 
     private func predictedTimeLabel(_ isFirst: Bool, _ vehicleType: String) -> Text {
+        if case let .timeWithStatus(trip) = onEnum(of: self),
+           TripInstantDisplay.companion.delayStatuses.contains(trip.status) {
+            return Text(delayString(trip.predictionTime, isFirst, vehicleType))
+        }
+
         guard let predictionInstant: Instant = switch onEnum(of: self) {
         case let .time(trip): trip.predictionTime
-        case let .timeWithSchedule(trip): trip.predictionTime
         case let .timeWithStatus(trip): trip.predictionTime
         default: nil
         } else { return Text(verbatim: "") }
 
         let predictionTime = timeFormatter.string(from: Date(instant: predictionInstant))
-        return isFirst
-            ? Text("\(vehicleType) arriving at \(predictionTime)",
-                   comment: """
-                   Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.
-                   First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
-                   For example, 'bus arriving at 10:30AM'
-                   """)
-            : Text("and at \(predictionTime)",
-                   comment: """
-                   The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                   For example, '[bus arriving at 10:30AM], and at 10:45 AM'
-                   """)
+        let timeString = predictedTimeString(predictionTime, isFirst, vehicleType)
+        let finalLabel = if case let .timeWithStatus(trip) = onEnum(of: self) {
+            "\(timeString), \(trip.status)"
+        } else {
+            timeString
+        }
+        return Text(verbatim: finalLabel)
+    }
+
+    private func predictedTimeWithScheduleLabel(
+        _ trip: TripInstantDisplay.TimeWithSchedule,
+        _ isFirst: Bool,
+        _ vehicleType: String
+    ) -> Text {
+        let scheduledTime = timeFormatter.string(from: Date(instant: trip.scheduledTime))
+        let scheduleStatus = if trip.predictionTime.epochSeconds >= trip.scheduledTime.epochSeconds {
+            delayString(trip.scheduledTime, isFirst, vehicleType)
+        } else {
+            isFirst
+                ? String(format: NSLocalizedString(
+                    "%1$@ %2$@ early",
+                    comment: """
+                    Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time.
+                    The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').
+                    ex, '10:00 PM train early[, arriving at 9:55 PM]'
+                    """
+                ), scheduledTime, vehicleType)
+                : String(format: NSLocalizedString(
+                    "and %1$@ %2$@ early",
+                    comment: """
+                    Screen reader text containing an originally scheduled time, which precedes another string containing
+                    the early predicted time, as the second or later arrival in a list of upcoming arrivals.
+                    The first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').
+                    ex, 'and 10:00 PM train early[, arriving at 9:55 PM]'
+                    """
+                ), scheduledTime, vehicleType)
+        }
+        let predictionTime = timeFormatter.string(from: Date(instant: trip.predictionTime))
+        let actualArrival = String(format: NSLocalizedString(
+            "arriving at %1$@",
+            comment: """
+            Screen reader text appended to another string containing an originally scheduled time which is running early or delayed
+            compared to the actual predicted time (contained in this string).
+            ex, '[10:00 PM train delayed, ]arriving at 10:05 PM'
+            """
+        ), predictionTime)
+        return Text(verbatim: "\(scheduleStatus), \(actualArrival)")
+    }
+
+    private func predictedTimeString(_ predictionTime: String, _ isFirst: Bool, _ vehicleType: String) -> String {
+        isFirst
+            ? String(format: NSLocalizedString(
+                "%1$@ arriving at %2$@",
+                comment: """
+                Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
+                For example, 'bus arriving at 10:30AM'
+                """
+            ), vehicleType, predictionTime)
+            : String(format: NSLocalizedString(
+                "and at %1$@",
+                comment: """
+                The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving at 10:30AM], and at 10:45 AM'
+                """
+            ), predictionTime)
     }
 
     private func scheduledMinutesLabel(_ minutes: Int32, _ isFirst: Bool, _ vehicleType: String) -> Text {
