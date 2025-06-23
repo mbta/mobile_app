@@ -55,6 +55,7 @@ import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
+import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.map.HomeMapView
@@ -90,6 +91,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.hours
@@ -127,7 +129,7 @@ fun MapAndSheetPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    mapViewModel: IMapViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
@@ -191,7 +193,9 @@ fun MapAndSheetPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
-            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
+            setMapSelectedVehicle = { vehicle ->
+                vehicle?.let { mapViewModel.selectedVehicle(it, null, null) }
+            },
             now = now,
         )
 
@@ -262,8 +266,6 @@ fun MapAndSheetPage(
         if (navController.selectedStopId == stopId) return
 
         updateVisitHistory(stopId)
-        mapViewModel.setSelectedVehicle(null)
-
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -273,7 +275,7 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.setSelectedVehicle(null)
+        mapViewModel.clearSelectedVehicle()
         navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -283,7 +285,7 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.setSelectedVehicle(null)
+        mapViewModel.clearSelectedVehicle()
         navController.navigateFrom(
             SheetRoutes.RoutePicker::class,
             SheetRoutes.RouteDetails(routeId, context),
@@ -305,7 +307,6 @@ fun MapAndSheetPage(
                 else -> null
             } ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
-
         val routeCard =
             viewModel.routeCardData.value?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
 
@@ -368,11 +369,7 @@ fun MapAndSheetPage(
     ) {
         mapboxConfigManager.loadConfig()
     }
-    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.setAlertsData(nearbyTransit.alertData) }
-
-    LaunchedEffect(nearbyTransit.globalResponse) {
-        mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
-    }
+    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) { navigateToEntrypoint() }
     LaunchedEffect(currentNavEntry) {
@@ -665,6 +662,7 @@ fun MapAndSheetPage(
                         viewModel = mapViewModel,
                         isSearchExpanded = searchExpanded,
                         mapboxConfigManager = mapboxConfigManager,
+                        nearbyTransit.globalResponse,
                     )
                 }
             }
