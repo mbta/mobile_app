@@ -51,13 +51,11 @@ import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.routeIcon
@@ -74,6 +72,7 @@ import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -173,6 +172,7 @@ fun HomeMapView(
         }
     }
 
+    // Move logic that doesn't rely on layer manager to shared view model
     suspend fun updateDisplayedRoutesBasedOnStop() {
         val globalResponse = globalResponse ?: return
         val railRouteShapes = railRouteShapes ?: return
@@ -421,9 +421,7 @@ fun HomeMapView(
                 MapEffect(locationDataManager.hasPermission) { map ->
                     if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
 
-                        viewportProvider.follow(
-                            DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
-                        )
+                        viewportProvider.follow(0)
                         layerManager.run { resetPuckPosition() }
                     }
                 }

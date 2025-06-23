@@ -59,10 +59,7 @@ interface IViewportProvider {
 
     fun setIsManuallyCentering(isManuallyCentering: Boolean)
 
-    suspend fun follow(
-        defaultTransitionOptions: DefaultViewportTransitionOptions =
-            ViewportProvider.Companion.Defaults.viewportTransition
-    )
+    suspend fun follow(transitionAnimationDuration: Long? = null)
 
     suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density)
 
@@ -70,22 +67,7 @@ interface IViewportProvider {
 
     suspend fun isDefault(): Boolean
 
-    suspend fun animateTo(
-        coordinates: Point,
-        animation: MapAnimationOptions = MapAnimationDefaults.options,
-        zoom: Double? = null,
-    )
-
-    suspend fun animateToCamera(
-        options: CameraOptions,
-        animation: MapAnimationOptions = MapAnimationDefaults.options,
-    )
-
-    suspend fun animateToOverview(
-        options: OverviewViewportStateOptions,
-        defaultTransitionOptions: DefaultViewportTransitionOptions =
-            ViewportProvider.Companion.Defaults.viewportTransition,
-    )
+    suspend fun panToDefaultCenter()
 
     fun updateCameraState(location: Location?)
 
@@ -190,7 +172,13 @@ class ViewportProvider(
         lastEdgeInsets = insets
     }
 
-    override suspend fun follow(defaultTransitionOptions: DefaultViewportTransitionOptions) {
+    override suspend fun follow(transitionAnimationDuration: Long?) {
+        val transitionOptions =
+            transitionAnimationDuration?.let {
+                DefaultViewportTransitionOptions.Builder()
+                    .maxDurationMs(transitionAnimationDuration)
+                    .build()
+            } ?: Defaults.viewportTransition
         isFollowingPuck = true
         isVehicleOverview = false
         isAnimating = true
@@ -204,7 +192,7 @@ class ViewportProvider(
                             zoom(_cameraState.value.zoom)
                         }
                         .build(),
-                defaultTransitionOptions = defaultTransitionOptions,
+                defaultTransitionOptions = transitionOptions,
                 completionListener,
             )
         }
@@ -243,10 +231,16 @@ class ViewportProvider(
         viewport.cameraState?.center?.isRoughlyEqualTo(Defaults.center) != false
     }
 
-    override suspend fun animateTo(
+    override suspend fun panToDefaultCenter() {
+        isManuallyCentering = true
+        isFollowingPuck = false
+        animateTo(Defaults.center, zoom = 13.75)
+    }
+
+    suspend fun animateTo(
         coordinates: Point,
-        animation: MapAnimationOptions,
-        zoom: Double?,
+        animation: MapAnimationOptions = MapAnimationDefaults.options,
+        zoom: Double? = null,
     ) {
         isAnimating = true
         animateToCamera(
@@ -260,7 +254,7 @@ class ViewportProvider(
         isAnimating = false
     }
 
-    override suspend fun animateToCamera(options: CameraOptions, animation: MapAnimationOptions) {
+    suspend fun animateToCamera(options: CameraOptions, animation: MapAnimationOptions) {
         animateViewport { viewport, completionListener ->
             viewport.easeTo(
                 options,
@@ -273,9 +267,9 @@ class ViewportProvider(
         }
     }
 
-    override suspend fun animateToOverview(
+    suspend fun animateToOverview(
         options: OverviewViewportStateOptions,
-        defaultTransitionOptions: DefaultViewportTransitionOptions,
+        defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition,
     ) {
         isAnimating = true
         animateViewport { viewport, completionListener ->
