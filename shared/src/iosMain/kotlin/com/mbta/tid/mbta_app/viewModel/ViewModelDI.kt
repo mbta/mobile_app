@@ -8,5 +8,5 @@ class ViewModelDI : KoinComponent {
     val favorites: FavoritesViewModel by inject()
     val search: SearchViewModel by inject()
     val searchRoutes: SearchRoutesViewModel by inject()
-    val toastViewModel: ToastViewModel by inject()
+    val toast: ToastViewModel by inject()
 }
