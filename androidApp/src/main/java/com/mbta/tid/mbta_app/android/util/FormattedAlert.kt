@@ -53,6 +53,17 @@ data class FormattedAlert(
             dueToCauseRes?.let { stringResource(R.string.delays_due_to_cause, stringResource(it)) }
                 ?: stringResource(R.string.delays_unknown_reason)
 
+    private val delayHeader
+        @Composable
+        get() =
+            // Show "Single Tracking" if there is an informational delay alert with that cause
+            // (Any other information severity delay alerts are never shown)
+            cause?.let {
+                if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
+                    AnnotatedString.fromHtml(stringResource(R.string.effect, it))
+                } else null
+            } ?: AnnotatedString.fromHtml(delaysDueToCause)
+
     private val elevatorHeader
         @Composable
         get() =
@@ -87,7 +98,7 @@ data class FormattedAlert(
         when (spec) {
             AlertCardSpec.Downstream -> summary ?: AnnotatedString.fromHtml(downstreamEffect)
             AlertCardSpec.Elevator -> elevatorHeader
-            AlertCardSpec.Delay -> AnnotatedString.fromHtml(delaysDueToCause)
+            AlertCardSpec.Delay -> delayHeader
             AlertCardSpec.Secondary -> summary ?: AnnotatedString.fromHtml(effect)
             else -> AnnotatedString.fromHtml(effect)
         }

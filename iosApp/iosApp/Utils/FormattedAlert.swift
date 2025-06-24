@@ -126,7 +126,7 @@ struct FormattedAlert: Equatable {
     var summaryTimeframe: String {
         if let alertSummary, let timeframe = alertSummary.timeframe {
             switch onEnum(of: timeframe) {
-            case let .endOfService(timeframe):
+            case .endOfService:
                 NSLocalizedString(" through end of service",
                                   comment: """
                                   Alert summary timeframe ending at the end of service on the current day. \
@@ -134,7 +134,7 @@ struct FormattedAlert: Equatable {
                                   of the "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
                                   timeframe fragment.
                                   """)
-            case let .tomorrow(timeframe):
+            case .tomorrow:
                 NSLocalizedString(" through tomorrow",
                                   comment: """
                                   Alert summary timeframe ending tomorrow. The leading space should be retained, \
@@ -190,6 +190,18 @@ struct FormattedAlert: Equatable {
         } else { nil }
     }
 
+    var delayHeader: AttributedString {
+        // Show "Single Tracking" if there is an informational delay alert with that cause
+        // (Any other information severity delay alerts are never shown)
+        guard let cause = alert.causeString,
+              alert.cause == .singleTracking,
+              alert.severity < 3
+        else {
+            return AttributedString.tryMarkdown(delaysDueToCause)
+        }
+        return AttributedString.tryMarkdown("**\(cause)**")
+    }
+
     var elevatorHeader: AttributedString {
         let facilities = alert.informedEntity.compactMap { entity in
             if let facilityId = entity.facility { alert.facilities?[facilityId] } else { nil }
@@ -216,10 +228,9 @@ struct FormattedAlert: Equatable {
 
     func alertCardHeader(spec: AlertCardSpec) -> AttributedString {
         switch spec {
+        case .delay: delayHeader
         case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
         case .elevator: elevatorHeader
-        case .delay: AttributedString.tryMarkdown(delaysDueToCause)
-        // TODO: confirm this is desired
         case .secondary: summary ?? AttributedString.tryMarkdown(effect)
         default: AttributedString.tryMarkdown(effect)
         }
