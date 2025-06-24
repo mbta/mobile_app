@@ -50,14 +50,17 @@
     <string name="bike_issue_sentence_case">Pwoblèm bisiklèt</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Monte sou vwa a %1$s</string>
-    <string name="bus">bis</string>
+    <string name="bus">Bis</string>
+    <string name="bus_lowercase">bis</string>
     <string name="buses">bis yo</string>
+    <string name="cancel">Anile</string>
     <string name="cancellation">Anilasyon</string>
     <string name="cancelled">Anile</string>
     <string name="close_button_label">Fèmen</string>
     <string name="coast_guard_restriction">Gad Kot Mete Restriksyon</string>
     <string name="coast_guard_restriction_lowercase">Restriksyon Gad Kòt</string>
     <string name="collapse_remaining_stops">retire arè ki rete yo</string>
+    <string name="collapse_stops">efondreman sispann</string>
     <string name="congestion">Blokis</string>
     <string name="congestion_lowercase">anbouteyaj</string>
     <string name="connection_to">Koneksyon ak %1$s</string>
@@ -106,7 +109,7 @@
         <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="zero">This stop has %1$d elevators closed</item>
+        <item quantity="zero">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="one">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="two">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="few">Estasyon sa a gen %1$d asansè fèmen</item>
@@ -120,6 +123,7 @@
     <string name="escalator_closure">Fèmti Eskalye</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> èdtan</string>
     <string name="expand_remaining_stops">elaji arè ki rete yo</string>
+    <string name="expand_stops">elaji arè</string>
     <string name="explainer_headline_finishing_another">Ap fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon poko disponib</string>
     <string name="explainer_headline_no_vehicle">Pozisyon %1$s poko disponib</string>
@@ -135,8 +139,11 @@
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye Feedback sou aplikasyon an</string>
     <string name="ferries">bato yo</string>
-    <string name="ferry">bato</string>
-    <string name="filterShowAll">Tout</string>
+    <string name="ferry">Bato</string>
+    <string name="ferry_lowercase">bato</string>
+    <string name="filter_routes">Filtre wout yo</string>
+    <string name="filter_show_all">Tout</string>
+    <string name="find_stops_hint">Pou jwenn arè, chwazi yon wout anvan</string>
     <string name="finishing_another_trip">Ap fini yon lòt vwayaj</string>
     <string name="fire">Dife</string>
     <string name="fire_department_activity">Aktivite Ponpye</string>
@@ -202,10 +209,12 @@
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="next_stop">Pwochen arè</string>
+    <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
+    <string name="no_stops_added">Pa gen arè te ajoute</string>
     <string name="no_stops_nearby">Ou deyò zòn sèvis MBTA a.</string>
     <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
     <string name="no_stops_nearby_search">Chèche dapre arè a</string>
@@ -261,6 +270,7 @@
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Ajoute arè ou pi renmen yo</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Wout</string>
     <string name="schedule_change">Chanjman Orè</string>
@@ -332,6 +342,7 @@
     </plurals>
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
+    <string name="subway">Metro</string>
     <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_issue">Pwoblèm nan switch ray</string>
@@ -379,8 +390,17 @@
     <string name="vehicle_cancelled_other">epi a %1$s anile</string>
     <string name="vehicle_desc_accessibility_desc">Chwazi %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Chwazi %1$s %2$s %3$s, arè ou chwazi a</string>
+    <string name="vehicle_prediction_actual_arrival">ap rive a %2$s</string>
+    <string name="vehicle_prediction_hours_first">%1$s ap rive nan %2$d èdtan</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s rive nan %2$d è %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">epi nan %1$d è %2$d min</string>
+    <string name="vehicle_prediction_hours_other">epi nan %1$d èdtan</string>
     <string name="vehicle_prediction_minutes_first">%1$s ap rive nan %2$d minit</string>
     <string name="vehicle_prediction_minutes_other">epi nan %1$d min</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s reta</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">epi %1$s %2$s an reta</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s byen bonè</string>
+    <string name="vehicle_prediction_schedule_status_early_other">ak %1$s %2$s byen bonè</string>
     <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>
     <string name="vehicle_prediction_time_other">epi a %1$s</string>
     <string name="vehicle_schedule_minutes_first">%1$s ap rive nan %2$d min pwograme</string>

@@ -526,7 +526,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `seconds less than 60 in trip details`() = parametricTest {
+    fun `seconds less than 60 in trip details`() {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Time(now + 45.seconds),
@@ -613,7 +613,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `time with status`() = parametricTest {
+    fun `time with status`() {
         val now = Clock.System.now()
         val predictionTime = now + 2.minutes
         val prediction =
@@ -636,7 +636,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `time with schedule early`() = parametricTest {
+    fun `time with schedule early`() {
         val now = Clock.System.now()
         val predictionTime = now + 2.minutes
         val scheduleTime = now + 5.minutes
@@ -659,7 +659,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `time with schedule late`() = parametricTest {
+    fun `time with schedule late`() {
         val now = Clock.System.now()
         val predictionTime = now + 2.minutes
         val scheduleTime = now - 5.minutes
@@ -787,7 +787,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `minutes less than 20 in trip details`() = parametricTest {
+    fun `minutes less than 20 in trip details`() {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Time(now + 90.seconds),
@@ -834,7 +834,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `scheduled trip cancelled`() = parametricTest {
+    fun `scheduled trip cancelled`() {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Cancelled(now + 15.minutes),
@@ -856,7 +856,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `scheduled trip cancelled in past is hidden`() = parametricTest {
+    fun `scheduled trip cancelled in past is hidden`() {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Hidden,
@@ -878,7 +878,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `cancelled subway trip is hidden`() = parametricTest {
+    fun `cancelled subway trip is hidden`() {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Hidden,

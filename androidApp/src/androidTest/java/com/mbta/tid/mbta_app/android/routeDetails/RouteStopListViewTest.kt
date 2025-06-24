@@ -1,26 +1,34 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -75,18 +83,23 @@ class RouteStopListViewTest {
             KoinContext(koin.koin) {
                 RouteStopListView(
                     RouteCardData.LineOrRoute.Route(mainRoute),
+                    RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = clicks::add,
                     onClose = { closed = true },
                     errorBannerViewModel = errorBannerVM,
-                    rightSideContent = { entry, _ ->
-                        Text("rightSideContent for ${entry.stop.name}")
+                    rightSideContent = { context, _ ->
+                        when (context) {
+                            is RouteDetailsRowContext.Details ->
+                                Text("rightSideContent for ${context.stop.name}")
+                            else -> fail("Wrong row context provided")
+                        }
                     },
                 )
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
         composeTestRule.onNodeWithText(mainRoute.longName).assertIsDisplayed()
 
@@ -160,6 +173,7 @@ class RouteStopListViewTest {
             KoinContext(koin.koin) {
                 RouteStopListView(
                     RouteCardData.LineOrRoute.Line(line, setOf(route1, route2, route3)),
+                    RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
                     onClose = {},
@@ -227,6 +241,7 @@ class RouteStopListViewTest {
             KoinContext(koin.koin) {
                 RouteStopListView(
                     RouteCardData.LineOrRoute.Route(mainRoute),
+                    RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
                     onClose = {},
@@ -236,13 +251,65 @@ class RouteStopListViewTest {
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop1.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
         composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop3NonTypical.name).assertIsNotDisplayed()
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasText(stop3NonTypical.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop3NonTypical.name))
         composeTestRule.onNodeWithText(stop4NonTypical.name).assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testFavoritesWithConfirmationDialog() {
+        val objects = TestData.clone()
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    RouteDetailsContext.Favorites,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    rightSideContent = { rowContext, _ ->
+                        Text(
+                            "Tap me",
+                            modifier =
+                                Modifier.clickable {
+                                    when (rowContext) {
+                                        is RouteDetailsRowContext.Details -> {}
+                                        is RouteDetailsRowContext.Favorites ->
+                                            rowContext.onTapStar()
+                                    }
+                                },
+                        )
+                    },
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Davis"))
+        // Direction toggle on route page
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Southbound to"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Ashmont/Braintree"))
+
+        composeTestRule.onAllNodesWithText("Tap me")[1].performClick()
+
+        // 2 sets of direction labels - one on toggle, and one in favorites confirmation modal
+        composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Southbound to"), 2)
+        composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Ashmont/Braintree"), 2)
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
     }
 }

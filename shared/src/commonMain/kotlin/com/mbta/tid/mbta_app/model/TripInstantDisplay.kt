@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
 
@@ -58,6 +57,8 @@ sealed class TripInstantDisplay {
     }
 
     companion object {
+        val delayStatuses = setOf("Delay", "Late")
+
         fun from(
             prediction: Prediction?,
             schedule: Schedule?,

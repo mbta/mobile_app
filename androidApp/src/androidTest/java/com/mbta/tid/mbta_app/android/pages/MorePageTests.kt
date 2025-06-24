@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -51,7 +52,7 @@ class MorePageTests : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Settings"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Settings"))
         composeTestRule.onNodeWithText("Settings").performScrollTo()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Map Display").assertIsOn().performClick()
@@ -70,7 +71,7 @@ class MorePageTests : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Send App Feedback"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Send App Feedback"))
         composeTestRule.onNodeWithText("Send App Feedback").assertIsDisplayed()
         composeTestRule.onNodeWithText("Trip Planner").assertIsDisplayed()
         composeTestRule.onNodeWithText("Fare Information").assertIsDisplayed()
@@ -99,13 +100,13 @@ class MorePageTests : KoinTest {
         val dependencies = Dependency.getAllDependencies()
         val dependency = dependencies.first()
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Send App Feedback"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Send App Feedback"))
         composeTestRule.onNodeWithText("Software Licenses").performScrollTo()
         composeTestRule.onNodeWithText("Software Licenses").performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasText(dependency.name))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(dependency.name))
         composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(dependency.name).performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasText(dependency.licenseText))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(dependency.licenseText))
         composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(dependency.licenseText).assertIsDisplayed()
     }

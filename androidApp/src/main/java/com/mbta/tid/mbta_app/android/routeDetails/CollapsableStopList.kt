@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
@@ -75,9 +76,16 @@ fun CollapsableStopList(
             Column(Modifier.padding(horizontal = 6.dp)) {
                 Row(
                     Modifier.height(IntrinsicSize.Min)
-                        // TODO: Click label
-                        .clickable() { stopsExpanded = !stopsExpanded }
-                        // TODO: Content description
+                        .clickable(
+                            onClickLabel =
+                                stringResource(
+                                    if (stopsExpanded) R.string.collapse_stops
+                                    else R.string.expand_stops
+                                ),
+                            role = Role.Button,
+                        ) {
+                            stopsExpanded = !stopsExpanded
+                        }
                         .padding(horizontal = 10.dp)
                         .defaultMinSize(minHeight = 48.dp),
                     verticalAlignment = Alignment.CenterVertically,

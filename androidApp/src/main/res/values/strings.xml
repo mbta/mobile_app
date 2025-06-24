@@ -47,15 +47,17 @@
     <string name="bike_issue_sentence_case">Bike issue</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Boarding on track %1$s</string>
-    <string name="bus">bus</string>
+    <string name="bus">Bus</string>
+    <string name="bus_lowercase">bus</string>
     <string name="buses">buses</string>
+    <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
     <string name="cancelled">Cancelled</string>
     <string name="close_button_label">Close</string>
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
     <string name="collapse_remaining_stops">collapse remaining stops</string>
-    <string name="commuter_rail" translatable="false">Commuter Rail</string>
+    <string name="collapse_stops">collapse stops</string>
     <string name="congestion">Congestion</string>
     <string name="congestion_lowercase">congestion</string>
     <string name="connection_to">Connection to %1$s</string>
@@ -69,6 +71,7 @@
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
+    <string name="delete" tools:ignore="MissingTranslation">Delete</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -86,10 +89,13 @@
     <string name="dock_closure">Dock Closure</string>
     <string name="dock_issue">Dock Issue</string>
     <string name="dock_issue_sentence_case">Dock issue</string>
+    <string name="done" tools:ignore="MissingTranslation">Done</string>
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
     <string name="eastbound">Eastbound</string>
+    <string name="edit" tools:ignore="MissingTranslation">Edit</string>
+    <string name="edit_favorites" tools:ignore="MissingTranslation">Edit Favorites</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="effect_ahead">&lt;b&gt;%1$s&lt;/b&gt; ahead</string>
     <string name="electrical_work">Electrical Work</string>
@@ -111,6 +117,7 @@
     <string name="escalator_closure">Escalator Closure</string>
     <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
     <string name="expand_remaining_stops">expand remaining stops</string>
+    <string name="expand_stops">expand stops</string>
     <string name="explainer_headline_finishing_another">Finishing another trip</string>
     <string name="explainer_headline_no_prediction">Prediction not available yet</string>
     <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
@@ -126,8 +133,11 @@
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send App Feedback</string>
     <string name="ferries">ferries</string>
-    <string name="ferry">ferry</string>
-    <string name="filterShowAll">All</string>
+    <string name="ferry">Ferry</string>
+    <string name="ferry_lowercase">ferry</string>
+    <string name="filter_routes">Filter routes</string>
+    <string name="filter_show_all">All</string>
+    <string name="find_stops_hint">To find stops, select a route first</string>
     <string name="finishing_another_trip">Finishing another trip</string>
     <string name="fire">Fire</string>
     <string name="fire_department_activity">Fire Department Activity</string>
@@ -194,11 +204,12 @@
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="next_stop">Next stop</string>
+    <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
     <string name="no_service_today">No service today</string>
-    <string name="no_stops_added" tools:ignore="MissingTranslation">No stops added</string>
+    <string name="no_stops_added">No stops added</string>
     <string name="no_stops_nearby">You’re outside the MBTA service area.</string>
     <string name="no_stops_nearby_pan">View transit near Boston</string>
     <string name="no_stops_nearby_search">Search by stop</string>
@@ -254,6 +265,7 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Add favorite stops</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Routes</string>
     <string name="schedule_change">Schedule Change</string>
@@ -282,7 +294,6 @@
     <string name="signal_issue_lowercase">signal issue</string>
     <string name="signal_problem">Signal Problem</string>
     <string name="signal_problem_lowercase">signal problem</string>
-    <string name="silver_line" translatable="false">Silver Line</string>
     <string name="single_tracking">Single Tracking</string>
     <string name="single_tracking_lowercase">single tracking</string>
     <string name="slippery_rail">Slippery Rail</string>
@@ -322,6 +333,7 @@
     <string name="speed_restriction_lowercase">speed restriction</string>
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
+    <string name="subway">Subway</string>
     <string name="summary" tools:ignore="MissingTranslation">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>
@@ -365,8 +377,17 @@
     <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
     <string name="vehicle_desc_accessibility_desc">Selected %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Selected %1$s %2$s %3$s, selected stop</string>
+    <string name="vehicle_prediction_actual_arrival">arriving at %1$s</string>
+    <string name="vehicle_prediction_hours_first">%1$s arriving in %2$d hr</string>
+    <string name="vehicle_prediction_hours_other">and in %1$d hr</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s arriving in %2$d hr %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">and in %1$d hr %2$d min</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s delayed</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">and %1$s %2$s delayed</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s early</string>
+    <string name="vehicle_prediction_schedule_status_early_other">and %1$s %2$s early</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
     <string name="vehicle_prediction_time_other">and at %1$s</string>
     <string name="vehicle_schedule_minutes_first">%1$s arriving in %2$d min scheduled</string>

@@ -46,13 +46,16 @@
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在軌道%1$s登車</string>
     <string name="bus">巴士</string>
+    <string name="bus_lowercase">巴士</string>
     <string name="buses">巴士</string>
+    <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
     <string name="close_button_label">關閉</string>
     <string name="coast_guard_restriction">海岸警衛隊警戒</string>
     <string name="coast_guard_restriction_lowercase">海岸警衛隊警戒</string>
     <string name="collapse_remaining_stops">折疊剩餘站點</string>
+    <string name="collapse_stops">崩潰停止</string>
     <string name="congestion">交通擁堵</string>
     <string name="congestion_lowercase">交通擁堵</string>
     <string name="connection_to">連接到%1$s</string>
@@ -105,6 +108,7 @@
     <string name="escalator_closure">自動扶梯關閉</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小時</string>
     <string name="expand_remaining_stops">展開剩餘站點</string>
+    <string name="expand_stops">擴充停止</string>
     <string name="explainer_headline_finishing_another">結束另一趟行程</string>
     <string name="explainer_headline_no_prediction">預測尚不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s位置尚未確定</string>
@@ -121,7 +125,10 @@
     <string name="feedback_link_form">發送應用程式回饋</string>
     <string name="ferries">輪渡</string>
     <string name="ferry">輪渡</string>
-    <string name="filterShowAll">全部</string>
+    <string name="ferry_lowercase">輪渡</string>
+    <string name="filter_routes">過濾路線</string>
+    <string name="filter_show_all">全部</string>
+    <string name="find_stops_hint">若要尋找站點，請先選擇路線</string>
     <string name="finishing_another_trip">結束另一趟行程</string>
     <string name="fire">火災</string>
     <string name="fire_department_activity">消防局活動</string>
@@ -187,10 +194,12 @@
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="next_stop">下一站</string>
+    <string name="no_matching_routes">沒有符合的%1$s路線</string>
     <string name="no_predictions">預測不可用</string>
     <string name="no_service">無服務</string>
     <string name="no_service_sentence_case">無服務</string>
     <string name="no_service_today">今日無服務</string>
+    <string name="no_stops_added">未添加停靠站</string>
     <string name="no_stops_nearby">您位於MBTA服務區域之外。</string>
     <string name="no_stops_nearby_pan">查看波士頓附近的交通</string>
     <string name="no_stops_nearby_search">按站點搜尋</string>
@@ -246,6 +255,7 @@
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">新增最喜歡的站點</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">線路</string>
     <string name="schedule_change">時刻表變更</string>
@@ -312,6 +322,7 @@
     </plurals>
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
+    <string name="subway">捷運</string>
     <string name="summary">概觀</string>
     <string name="suspension">暫停</string>
     <string name="switch_issue">道岔問題</string>
@@ -354,8 +365,17 @@
     <string name="vehicle_cancelled_other">於%1$s到站的下一趟車已取消</string>
     <string name="vehicle_desc_accessibility_desc">選定%1$s%2$s%3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">選定%1$s%2$s%3$s，選定站點</string>
+    <string name="vehicle_prediction_actual_arrival">於%2$s到站</string>
+    <string name="vehicle_prediction_hours_first">%1$s將在%2$d小時內到站</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s將在%2$d小時%3$d分鐘內到站</string>
+    <string name="vehicle_prediction_hours_minutes_other">下一趟車將在%1$d小時%2$d分鐘內抵達</string>
+    <string name="vehicle_prediction_hours_other">下一趟車將在%1$d小時內抵達</string>
     <string name="vehicle_prediction_minutes_first">%1$s將在%2$d分鐘內到站</string>
     <string name="vehicle_prediction_minutes_other">下一趟車將在%1$d分鐘內抵達</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s%2$s延遲</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">下一趟%1$s%2$s延遲</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s%2$s提前</string>
+    <string name="vehicle_prediction_schedule_status_early_other">下一趟%1$s%2$s提前</string>
     <string name="vehicle_prediction_time_first">%1$s於%2$s到站</string>
     <string name="vehicle_prediction_time_other">下一趟車將於%1$s到站</string>
     <string name="vehicle_schedule_minutes_first">%1$s預定將於%2$d分鐘內到站</string>

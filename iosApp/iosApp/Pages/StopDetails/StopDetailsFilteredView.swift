@@ -29,6 +29,8 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
     var analytics: Analytics = AnalyticsProvider.shared
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
@@ -63,16 +65,40 @@ struct StopDetailsFilteredView: View {
         stopData = routeData?.stopData.first { $0.stop.id == stopId }
     }
 
-    var pinned: Bool {
-        stopDetailsVM.pinnedRoutes.contains(stopFilter.routeId)
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
+
+    var routeStopDirection: RouteStopDirection {
+        .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
     }
 
-    func toggledPinnedRoute() {
+    var favoriteBridge: FavoriteBridge {
+        if enhancedFavorites {
+            .Favorite(routeStopDirection: routeStopDirection)
+        } else {
+            .Pinned(routeId: stopFilter.routeId)
+        }
+    }
+
+    var isFavorite: Bool {
+        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites)
+    }
+
+    var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
+        if enhancedFavorites {
+            .Favorites(updatedValues: [routeStopDirection: .init(bool: !isFavorite)])
+        } else {
+            .Pinned(routeId: stopFilter.routeId)
+        }
+    }
+
+    func toggleFavorite() {
         Task {
-            if let routeId = stopData?.lineOrRoute.id {
-                let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
-                stopDetailsVM.loadPinnedRoutes()
+            let pinned = await stopDetailsVM.updateFavorites(
+                toggleFavoriteUpdateBridge,
+                enhancedFavorites: enhancedFavorites
+            )
+            if !enhancedFavorites {
+                analytics.toggledPinnedRoute(pinned: pinned, routeId: stopFilter.routeId)
             }
         }
     }
@@ -93,7 +119,7 @@ struct StopDetailsFilteredView: View {
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
                     stopData: stopData,
-                    pinned: pinned,
+                    favorite: isFavorite,
                     now: now,
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
@@ -118,8 +144,8 @@ struct StopDetailsFilteredView: View {
                 route: stopData?.lineOrRoute.sortRoute,
                 line: line,
                 stop: stop,
-                pinned: pinned,
-                onPin: toggledPinnedRoute,
+                pinned: isFavorite,
+                onPin: toggleFavorite,
                 onClose: { nearbyVM.goBack() }
             )
             DebugView {
@@ -148,7 +174,7 @@ struct StopDetailsFilteredView: View {
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
             stopData: stopData,
-            pinned: pinned,
+            favorite: false,
             now: now,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,

@@ -17,8 +17,19 @@ final class SearchResultViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    var bus428: Route {
+        ObjectCollectionBuilder.Single.shared.route { route in
+            route.color = "FFC72C"
+            route.longName = "Oaklandvale - Haymarket Station"
+            route.shortName = "428"
+            route.textColor = "000000"
+            route.type = .bus
+        }
+    }
+
     @MainActor func testPending() throws {
-        let sut = SearchResultsView(state: .loading, handleStopTap: { _ in }).withFixedSettings([:])
+        let sut = SearchResultsView(state: SearchViewModel.StateLoading.shared, handleStopTap: { _ in })
+            .withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResults.self))
     }
 
@@ -28,6 +39,11 @@ final class SearchResultViewTests: XCTestCase {
 
             init(getSearchResultsExpectation: XCTestExpectation) {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
+            }
+
+            func __getRouteFilterResults(query _: String) async throws -> ApiResult<SearchResults>? {
+                XCTFail("Route filter should not be queried")
+                return nil
             }
 
             func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults>? {
@@ -42,7 +58,10 @@ final class SearchResultViewTests: XCTestCase {
             query: "hay",
             nearbyVM: NearbyViewModel(),
             searchVM: SearchViewModel(
-                searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+                analytics: MockAnalytics(),
+                globalRepository: MockGlobalRepository(),
+                searchResultRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation),
+                visitHistoryUsecase: .init(repository: MockVisitHistoryRepository())
             )
         )
 
@@ -61,6 +80,11 @@ final class SearchResultViewTests: XCTestCase {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
             }
 
+            func __getRouteFilterResults(query _: String) async throws -> ApiResult<SearchResults>? {
+                XCTFail("Route filter should not be queried")
+                return nil
+            }
+
             func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults>? {
                 getSearchResultsExpectation.fulfill()
                 return ApiResultOk(data: SearchResults(routes: [], stops: []))
@@ -75,7 +99,10 @@ final class SearchResultViewTests: XCTestCase {
             searchObserver: searchObserver,
             nearbyVM: NearbyViewModel(),
             searchVM: SearchViewModel(
-                searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+                analytics: MockAnalytics(),
+                globalRepository: MockGlobalRepository(),
+                searchResultRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation),
+                visitHistoryUsecase: .init(repository: MockVisitHistoryRepository())
             )
         )
 
@@ -94,7 +121,7 @@ final class SearchResultViewTests: XCTestCase {
         XCTAssert(searchObserver.isSearching)
         // Once text is entered, the search repo should be called
         searchObserver.searchText = "test"
-        wait(for: [getSearchResultsExpectation], timeout: 1)
+        wait(for: [getSearchResultsExpectation], timeout: 10)
         XCTAssertEqual("test", searchObserver.searchText)
         // Even if the focus is then lost, the result view should still be displayed
         searchObserver.isFocused = false
@@ -111,23 +138,24 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testNoResults() throws {
-        let sut = SearchResultsView(state: .results(stops: [], routes: []), handleStopTap: { _ in })
+        let sut = SearchResultsView(state: SearchViewModel.StateResults(stops: [], routes: []), handleStopTap: { _ in })
             .withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "No results found 🤔"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try a different spelling or name."))
     }
 
     @MainActor func testError() throws {
-        let sut = SearchResultsView(state: .error, handleStopTap: { _ in }).withFixedSettings([:])
+        let sut = SearchResultsView(state: SearchViewModel.StateError.shared, handleStopTap: { _ in })
+            .withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Results failed to load ☹️"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try your search again."))
     }
 
     @MainActor func testRecentStops() throws {
         let sut = SearchResultsView(
-            state: .recentStops(
+            state: SearchViewModel.StateRecentStops(
                 stops: [
-                    SearchViewModel.Result(
+                    SearchViewModel.StopResult(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -144,9 +172,9 @@ final class SearchResultViewTests: XCTestCase {
 
     @MainActor func testFullResults() throws {
         let sut = SearchResultsView(
-            state: .results(
+            state: SearchViewModel.StateResults(
                 stops: [
-                    SearchViewModel.Result(
+                    SearchViewModel.StopResult(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -154,12 +182,10 @@ final class SearchResultViewTests: XCTestCase {
                     ),
                 ],
                 routes: [
-                    RouteResult(
+                    SearchViewModel.RouteResult(
                         id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
+                        name: "Oaklandvale - Haymarket Station",
+                        routePill: .init(route: bus428, line: nil, type: .fixed)
                     ),
                 ]
             ),
@@ -170,20 +196,19 @@ final class SearchResultViewTests: XCTestCase {
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
-        XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "428"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Oaklandvale - Haymarket Station"))
     }
 
     @MainActor func testOnlyRoutes() throws {
         let sut = SearchResultsView(
-            state: .results(
+            state: SearchViewModel.StateResults(
                 stops: [],
                 routes: [
-                    RouteResult(
+                    SearchViewModel.RouteResult(
                         id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
+                        name: "Oaklandvale - Haymarket Station",
+                        routePill: .init(route: bus428, line: nil, type: .fixed)
                     ),
                 ]
             ),
@@ -193,21 +218,20 @@ final class SearchResultViewTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
-        XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "428"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Oaklandvale - Haymarket Station"))
         XCTAssertThrowsError(try sut.inspect().find(text: "Stops"))
     }
 
     @MainActor func testRoutesHidden() throws {
         let sut = SearchResultsView(
-            state: .results(
+            state: SearchViewModel.StateResults(
                 stops: [],
                 routes: [
-                    RouteResult(
+                    SearchViewModel.RouteResult(
                         id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
+                        name: "Oaklandvale - Haymarket Station",
+                        routePill: .init(route: bus428, line: nil, type: .fixed)
                     ),
                 ]
             ),
@@ -221,9 +245,9 @@ final class SearchResultViewTests: XCTestCase {
 
     @MainActor func testOnlyStops() throws {
         let sut = SearchResultsView(
-            state: .results(
+            state: SearchViewModel.StateResults(
                 stops: [
-                    SearchViewModel.Result(
+                    SearchViewModel.StopResult(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -243,9 +267,9 @@ final class SearchResultViewTests: XCTestCase {
         let tapStopExpectation = expectation(description: "stop was tapped")
 
         let sut = SearchResultsView(
-            state: .results(
+            state: SearchViewModel.StateResults(
                 stops: [
-                    SearchViewModel.Result(
+                    SearchViewModel.StopResult(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",

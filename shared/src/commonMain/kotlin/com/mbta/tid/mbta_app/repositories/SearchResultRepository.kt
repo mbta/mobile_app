@@ -13,19 +13,21 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISearchResultRepository {
+    suspend fun getRouteFilterResults(query: String): ApiResult<SearchResults>?
+
     suspend fun getSearchResults(query: String): ApiResult<SearchResults>?
 }
 
 class SearchResultRepository : KoinComponent, ISearchResultRepository {
     private val mobileBackendClient: MobileBackendClient by inject()
 
-    override suspend fun getSearchResults(query: String): ApiResult<SearchResults>? {
+    private suspend fun searchRequest(endpoint: String, query: String): ApiResult<SearchResults>? {
         if (query == "") return null
         return ApiResult.runCatching {
             mobileBackendClient
                 .get {
                     url {
-                        path("api/search/query")
+                        path(endpoint)
                         parameters.append("query", query)
                     }
                 }
@@ -33,18 +35,32 @@ class SearchResultRepository : KoinComponent, ISearchResultRepository {
                 .data
         }
     }
+
+    override suspend fun getRouteFilterResults(query: String): ApiResult<SearchResults>? =
+        searchRequest("api/search/routes", query)
+
+    override suspend fun getSearchResults(query: String): ApiResult<SearchResults>? =
+        searchRequest("api/search/query", query)
 }
 
 class MockSearchResultRepository(
     private val routeResults: List<RouteResult> = emptyList(),
     private val stopResults: List<StopResult> = emptyList(),
 ) : ISearchResultRepository {
+    override suspend fun getRouteFilterResults(query: String): ApiResult<SearchResults> {
+        return ApiResult.Ok(SearchResults(routeResults, emptyList()))
+    }
+
     override suspend fun getSearchResults(query: String): ApiResult<SearchResults> {
         return ApiResult.Ok(SearchResults(routeResults, stopResults))
     }
 }
 
 class IdleSearchResultRepository : ISearchResultRepository {
+    override suspend fun getRouteFilterResults(query: String): ApiResult<SearchResults>? {
+        return suspendCancellableCoroutine {}
+    }
+
     override suspend fun getSearchResults(query: String): ApiResult<SearchResults>? {
         return suspendCancellableCoroutine {}
     }

@@ -22,9 +22,9 @@ struct ContentView: View {
     @State private var sheetHeight: CGFloat =
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @StateObject var errorBannerVM = ErrorBannerViewModel()
+    @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
-    @StateObject var searchVM = SearchViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
@@ -140,7 +140,7 @@ struct ContentView: View {
                     searchHeaderBackground
                     VStack {
                         if nearbyVM.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM)
                                 .padding(.top, 12)
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
@@ -159,7 +159,7 @@ struct ContentView: View {
                     searchHeaderBackground
                     VStack(alignment: .center, spacing: 20) {
                         if nearbyVM.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM)
 
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
@@ -266,7 +266,12 @@ struct ContentView: View {
 
     @ViewBuilder
     var favoritesPage: some View {
-        FavoritesPage()
+        FavoritesPage(
+            errorBannerVM: errorBannerVM,
+            favoritesVM: favoritesVM,
+            nearbyVM: nearbyVM,
+            viewportProvider: viewportProvider
+        )
     }
 
     @ViewBuilder

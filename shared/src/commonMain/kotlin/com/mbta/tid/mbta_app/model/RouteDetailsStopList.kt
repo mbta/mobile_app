@@ -73,6 +73,7 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
 
         suspend fun fromPieces(
             routeId: String,
+            directionId: Int,
             routeStops: RouteStopsResponse?,
             globalData: GlobalResponse,
         ): RouteDetailsStopList? =
@@ -84,7 +85,10 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
                         val stop =
                             globalData.getStop(stopId)?.resolveParent(globalData)
                                 ?: return@mapNotNull null
-                        val patterns = globalData.getPatternsFor(stopId, routeId)
+                        val patterns =
+                            globalData.getPatternsFor(stopId, routeId).filter {
+                                it.directionId == directionId
+                            }
                         val transferRoutes =
                             TripDetailsStopList.getTransferRoutes(stopId, routeId, globalData)
                         Entry(stop, patterns, transferRoutes)

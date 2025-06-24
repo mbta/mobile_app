@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.parametric
 
 import kotlin.enums.enumEntries
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -52,6 +53,13 @@ class ParametricTest(val block: suspend ParametricTest.() -> Unit) {
     }
 
     internal suspend fun executeAll() {
+        val parameterSetCount = parameterSpace.map { it.size }.fold(1, Int::times)
+        if (parameterSetCount == 1) {
+            fail("parametricTest has no parameters, don’t use it")
+        }
+        if (parameterSetCount >= 10_000) {
+            fail("parametricTest has $parameterSetCount iterations, that’s too many")
+        }
         // constructing all these partial lists will be inefficient for more than a handful of
         // parameters
         val parameterSets =

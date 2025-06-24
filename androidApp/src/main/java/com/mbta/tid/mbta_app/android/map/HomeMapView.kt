@@ -61,9 +61,9 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.routeIcon
+import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.android.state.SearchResultsViewModel
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.plus
@@ -88,14 +88,14 @@ fun HomeMapView(
     lastNearbyTransitLocation: Position?,
     nearbyTransitSelectingLocationState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
-    viewportProvider: ViewportProvider,
+    viewportProvider: IViewportProvider,
     currentNavEntry: SheetRoutes?,
     handleStopNavigation: (String) -> Unit,
     handleVehicleTap: (Vehicle) -> Unit,
     vehiclesData: List<Vehicle>,
     routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
-    searchResultsViewModel: SearchResultsViewModel,
+    isSearchExpanded: Boolean,
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -167,7 +167,7 @@ fun HomeMapView(
             viewModel.updateCenterButtonVisibility(
                 currentLocation,
                 locationDataManager,
-                searchResultsViewModel,
+                isSearchExpanded,
                 viewportProvider,
             )
         }
@@ -370,7 +370,7 @@ fun HomeMapView(
                     viewportProvider.isAnimating,
                     viewportProvider.isFollowingPuck,
                     selectedVehicle,
-                    searchResultsViewModel.expanded,
+                    isSearchExpanded,
                     viewportProvider.isVehicleOverview,
                 ) {
                     if (viewportProvider.isAnimating) {
@@ -379,7 +379,7 @@ fun HomeMapView(
                         viewModel.updateCenterButtonVisibility(
                             currentLocation,
                             locationDataManager,
-                            searchResultsViewModel,
+                            isSearchExpanded,
                             viewportProvider,
                         )
                     }
@@ -420,6 +420,7 @@ fun HomeMapView(
 
                 MapEffect(locationDataManager.hasPermission) { map ->
                     if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
+
                         viewportProvider.follow(
                             DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
                         )

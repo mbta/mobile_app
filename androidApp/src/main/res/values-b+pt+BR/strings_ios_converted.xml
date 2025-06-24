@@ -47,14 +47,17 @@
     <string name="bike_issue_sentence_case">Problema com bicicleta</string>
     <string name="boarding_abbr">TRA</string>
     <string name="boarding_track">Embarque na plataforma %1$s</string>
-    <string name="bus">ônibus</string>
+    <string name="bus">Ônibus</string>
+    <string name="bus_lowercase">ônibus</string>
     <string name="buses">ônibus</string>
+    <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelamento</string>
     <string name="cancelled">Cancelado</string>
     <string name="close_button_label">Fechar</string>
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
     <string name="collapse_remaining_stops">recolher paradas restantes</string>
+    <string name="collapse_stops">paradas de colapso</string>
     <string name="congestion">Congestionamento</string>
     <string name="congestion_lowercase">congestionamento</string>
     <string name="connection_to">Conexão para %1$s</string>
@@ -111,6 +114,7 @@
     <string name="escalator_closure">Fechamento de escada rolante</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="expand_remaining_stops">expandir as paradas restantes</string>
+    <string name="expand_stops">expandir paradas</string>
     <string name="explainer_headline_finishing_another">Terminando outra viagem</string>
     <string name="explainer_headline_no_prediction">Previsão ainda não disponível</string>
     <string name="explainer_headline_no_vehicle">localização do %1$s ainda não disponível</string>
@@ -126,8 +130,11 @@
     <string name="feature_flag_route_search">Pesquisa de rotas</string>
     <string name="feedback_link_form">Enviar feedback sobre o aplicativo</string>
     <string name="ferries">balsas</string>
-    <string name="ferry">balsa</string>
-    <string name="filterShowAll">Tudo</string>
+    <string name="ferry">Balsa</string>
+    <string name="ferry_lowercase">balsa</string>
+    <string name="filter_routes">Filtrar rotas</string>
+    <string name="filter_show_all">Tudo</string>
+    <string name="find_stops_hint">Para encontrar paradas, selecione uma rota primeiro</string>
     <string name="finishing_another_trip">Terminando outra viagem</string>
     <string name="fire">Incêndio</string>
     <string name="fire_department_activity">Atividade do corpo de bombeiros</string>
@@ -193,10 +200,12 @@
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
     <string name="next_stop">Próxima parada</string>
+    <string name="no_matching_routes">Nenhuma rota de %1$s correspondente</string>
     <string name="no_predictions">Previsões indisponíveis</string>
     <string name="no_service">Sem serviço</string>
     <string name="no_service_sentence_case">Sem serviço</string>
     <string name="no_service_today">Sem serviço hoje</string>
+    <string name="no_stops_added">Nenhuma parada adicionada</string>
     <string name="no_stops_nearby">Você está fora da área de serviço da MBTA.</string>
     <string name="no_stops_nearby_pan">Ver trânsito perto de Boston</string>
     <string name="no_stops_nearby_search">Pesquisar por parada</string>
@@ -252,6 +261,7 @@
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_picker_header_favorites">Adicionar paradas favoritas</string>
     <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Rotas</string>
     <string name="schedule_change">Alteração de horário</string>
@@ -320,6 +330,7 @@
     </plurals>
     <string name="strike">Greve</string>
     <string name="strike_lowercase">greve</string>
+    <string name="subway">Metrô</string>
     <string name="summary">Resumo</string>
     <string name="suspension">Suspensão</string>
     <string name="switch_issue">Problema na agulha</string>
@@ -364,8 +375,17 @@
     <string name="vehicle_cancelled_other">e às %1$s cancelado</string>
     <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s selecionados</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">%1$s %2$s %3$s selecionados, parada selecionada</string>
+    <string name="vehicle_prediction_actual_arrival">chegando às %2$s</string>
+    <string name="vehicle_prediction_hours_first">%1$s chegando em %2$d h</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s chegando em %2$d hr %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">e em %1$d h %2$d min</string>
+    <string name="vehicle_prediction_hours_other">e em %1$d h</string>
     <string name="vehicle_prediction_minutes_first">%1$s chegando em %2$d min</string>
     <string name="vehicle_prediction_minutes_other">e em %1$d min</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s atrasado</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">e %1$s %2$s atrasado</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s cedo</string>
+    <string name="vehicle_prediction_schedule_status_early_other">e %1$s %2$s cedo</string>
     <string name="vehicle_prediction_time_first">%1$s chegando às %2$s</string>
     <string name="vehicle_prediction_time_other">e às %1$s</string>
     <string name="vehicle_schedule_minutes_first">%1$s chegando em %2$d min programado</string>

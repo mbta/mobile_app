@@ -93,6 +93,7 @@ class RouteCardDataLeafTest {
 
         val alert = objects.alert { effect = Alert.Effect.ServiceChange }
 
+        val context: RouteCardData.Context = anyEnumValue()
         for ((route, icon) in cases) {
             assertEquals(
                 LeafFormat.Single(
@@ -114,7 +115,7 @@ class RouteCardDataLeafTest {
                         true,
                         true,
                         emptyList(),
-                        anyEnumValue(),
+                        context,
                     )
                     .format(now, GlobalResponse(objects)),
             )

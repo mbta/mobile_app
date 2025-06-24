@@ -278,26 +278,31 @@ final class StopDetailsPageTests: XCTestCase {
 
         let updatePublisher = PassthroughSubject<Void, Never>()
 
-        let onChangeCalledExp = sut.inspection.inspect(after: 1) { view in
-            XCTAssertNil(nearbyVM.routeCardData)
-            XCTAssertNil(try view.actualView().internalRouteCardData)
+        var nowLater: Date?
 
-            try view.implicitAnyView().callOnChange(newValue: RouteCardParams(alerts: nil,
-                                                                              global: nil,
-                                                                              now: Date.now,
-                                                                              pinnedRoutes: [],
-                                                                              stopData: nil,
-                                                                              stopFilter: nil,
-                                                                              stopId: stop.id))
+        let onChangeCalledExp = sut.inspection.inspect(after: 1) { view in
+            nowLater = Date.now
+            XCTAssertLessThan(nearbyVM.routeCardData!.first!.at.toNSDate(), nowLater!)
+            XCTAssertEqual(nearbyVM.routeCardData, try view.actualView().internalRouteCardData)
+
+            try view.findAndCallOnChange(newValue: RouteCardParams(
+                alerts: nearbyVM.alerts,
+                global: stopDetailsVM.global,
+                now: nowLater!,
+                pinnedRoutes: [],
+                stopData: stopDetailsVM.stopData,
+                stopFilter: nil,
+                stopId: stop.id
+            ))
             updatePublisher.send()
         }
 
         let routeCardDataSetExp = sut.inspection.inspect(onReceive: updatePublisher, after: 1) { view in
-
-            XCTAssertEqual([], nearbyVM.routeCardData)
-            try XCTAssertEqual(view.actualView().internalRouteCardData, [])
+            XCTAssertEqual(nowLater!.toKotlinInstant(), nearbyVM.routeCardData?.first?.at)
+            XCTAssertEqual(nowLater!.toKotlinInstant(), try view.actualView().internalRouteCardData?.first?.at)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        await fulfillment(of: [onChangeCalledExp, routeCardDataSetExp], timeout: 3)
     }
 
     @MainActor

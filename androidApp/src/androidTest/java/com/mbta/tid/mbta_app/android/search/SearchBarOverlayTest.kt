@@ -16,6 +16,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilAtLeastOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -30,20 +32,16 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 @ExperimentalTestApi
 @ExperimentalMaterial3Api
 class SearchBarOverlayTest : KoinTest {
-    val builder = ObjectCollectionBuilder()
-    val visitedStop =
-        builder.stop {
-            id = "visitedStopId"
-            name = "visitedStopName"
-        }
-    val route =
+    private val builder = ObjectCollectionBuilder()
+    private val visitedStop = builder.stop { name = "visitedStopName" }
+    private val searchedStop = builder.stop { name = "stopName" }
+    private val route =
         builder.route {
             longName = "Here - There"
             shortName = "3½"
@@ -64,9 +62,9 @@ class SearchBarOverlayTest : KoinTest {
                         stopResults =
                             listOf(
                                 StopResult(
-                                    id = "stopId",
+                                    id = searchedStop.id,
                                     rank = 2,
-                                    name = "stopName",
+                                    name = searchedStop.name,
                                     zone = "stopZone",
                                     isStation = false,
                                     routes =
@@ -96,7 +94,6 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = { navigated.value = true },
                     onRouteNavigation = {},
                     inputFieldFocusRequester = focusRequester,
-                    searchResultsVm = koinViewModel(),
                 ) {
                     Text("Content")
                 }
@@ -118,18 +115,18 @@ class SearchBarOverlayTest : KoinTest {
 
         currentNavEntry.value = null
 
-        composeTestRule.waitUntilAtLeastOneExists(hasText("Stops"))
+        composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText("Stops"))
         val searchNode = composeTestRule.onNodeWithText("Stops")
         searchNode.assertExists()
         searchNode.requestFocus()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Recently Viewed").assertExists()
-        composeTestRule.waitUntilAtLeastOneExists(hasText(visitedStop.name))
+        composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText(visitedStop.name))
         composeTestRule.onNodeWithText(visitedStop.name).assertExists()
 
         searchNode.performTextInput("sto")
-        composeTestRule.waitUntilAtLeastOneExists(hasText("stopName"))
-        composeTestRule.onNodeWithText("stopName").performClick()
+        composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText(searchedStop.name))
+        composeTestRule.onNodeWithText(searchedStop.name).performClick()
         composeTestRule.waitUntil { navigated.value }
     }
 
@@ -151,7 +148,6 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = {},
                     onRouteNavigation = {},
                     inputFieldFocusRequester = focusRequester,
-                    searchResultsVm = koinViewModel(),
                     content = {},
                 )
             }
@@ -188,7 +184,6 @@ class SearchBarOverlayTest : KoinTest {
                     onStopNavigation = {},
                     onRouteNavigation = { navigated = true },
                     inputFieldFocusRequester = focusRequester,
-                    searchResultsVm = koinViewModel(),
                     content = {},
                 )
             }
@@ -201,7 +196,7 @@ class SearchBarOverlayTest : KoinTest {
 
         searchNode.performTextInput("anything")
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Routes"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Routes"))
         composeTestRule.onNodeWithText("3½").assertIsDisplayed()
         composeTestRule.onNodeWithText("Here - There").assertIsDisplayed().performClick()
         composeTestRule.waitUntil { navigated }

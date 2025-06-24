@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.math.abs
 import kotlinx.datetime.Clock
 import org.junit.Assert.fail
@@ -24,7 +25,7 @@ import org.koin.dsl.module
 
 fun hasClickActionLabel(expected: String?) =
     SemanticsMatcher("has click action label $expected") { node ->
-        node.config[SemanticsActions.OnClick].label == expected
+        node.config.getOrNull(SemanticsActions.OnClick)?.label == expected
     }
 
 fun hasTextMatching(regex: Regex): SemanticsMatcher {
@@ -119,6 +120,7 @@ fun testKoinApplication(
                 repositoryOverrides()
             }
         ),
+        viewModelModule(),
         MainApplication.koinViewModelModule(),
     )
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LocationType
@@ -458,7 +459,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("Service suspended at ${stop.name}", true)
         )
         composeTestRule.onNodeWithText("View details").assertHasClickAction()
@@ -562,7 +563,9 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("Shuttle buses at ${stop.name}", true))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("Shuttle buses at ${stop.name}", true)
+        )
         composeTestRule.onNodeWithText("5 min").assertExists()
     }
 

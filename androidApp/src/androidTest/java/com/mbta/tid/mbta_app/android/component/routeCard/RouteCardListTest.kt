@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -8,6 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -177,20 +179,22 @@ class RouteCardListTest : KoinTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                RouteCardList(
-                    routeCardData = routeCardData,
-                    emptyView = { Text("This would be the empty view") },
-                    global = globalResponse,
-                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-                    isFavorite = { false },
-                    togglePinnedRoute = { _ -> },
-                    showStationAccessibility = false,
-                    onOpenStopDetails = { _, _ -> },
-                )
+                Column {
+                    RouteCardList(
+                        routeCardData = routeCardData,
+                        emptyView = { Text("This would be the empty view") },
+                        global = globalResponse,
+                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        isFavorite = { false },
+                        togglePinnedRoute = { _ -> },
+                        showStationAccessibility = false,
+                        onOpenStopDetails = { _, _ -> },
+                    )
+                }
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
@@ -207,21 +211,25 @@ class RouteCardListTest : KoinTest {
         val emptyNearbyKoinApplication = testKoinApplication()
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
-                RouteCardList(
-                    routeCardData = emptyList(),
-                    emptyView = { Text("This would be the empty view") },
-                    global = globalResponse,
-                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-                    isFavorite = { false },
-                    togglePinnedRoute = { _ -> },
-                    showStationAccessibility = false,
-                    onOpenStopDetails = { _, _ -> },
-                )
+                Column {
+                    RouteCardList(
+                        routeCardData = emptyList(),
+                        emptyView = { Text("This would be the empty view") },
+                        global = globalResponse,
+                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        isFavorite = { false },
+                        togglePinnedRoute = { _ -> },
+                        showStationAccessibility = false,
+                        onOpenStopDetails = { _, _ -> },
+                    )
+                }
             }
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExists(hasText("This would be the empty view"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("This would be the empty view")
+        )
         composeTestRule.onNodeWithText("This would be the empty view").assertIsDisplayed()
     }
 
@@ -244,20 +252,22 @@ class RouteCardListTest : KoinTest {
         var clickedStopId: String? = null
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                RouteCardList(
-                    routeCardData = routeCardData,
-                    emptyView = { Text("This would be the empty view") },
-                    global = globalResponse,
-                    now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-                    isFavorite = { false },
-                    togglePinnedRoute = { _ -> },
-                    showStationAccessibility = false,
-                    onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
-                )
+                Column {
+                    RouteCardList(
+                        routeCardData = routeCardData,
+                        emptyView = { Text("This would be the empty view") },
+                        global = globalResponse,
+                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        isFavorite = { false },
+                        togglePinnedRoute = { _ -> },
+                        showStationAccessibility = false,
+                        onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
+                    )
+                }
             }
         }
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed().performClick()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()

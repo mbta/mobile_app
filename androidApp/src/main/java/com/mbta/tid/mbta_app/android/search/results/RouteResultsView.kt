@@ -21,15 +21,13 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.RoutePillSpec
-import com.mbta.tid.mbta_app.model.RouteResult
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 
 @Composable
 fun RouteResultsView(
     shape: RoundedCornerShape,
-    routeResult: RouteResult,
-    globalResponse: GlobalResponse?,
+    routeResult: SearchViewModel.RouteResult,
     handleSearch: (String) -> Unit,
 ) {
     val resultId =
@@ -37,11 +35,6 @@ fun RouteResultsView(
             routeResult.id == "Green" -> "line-Green"
             else -> routeResult.id
         }
-    val route = globalResponse?.getRoute(resultId)
-    val line = globalResponse?.getLine(resultId)
-
-    val routePillSpec =
-        RoutePillSpec(route, line, RoutePillSpec.Type.Fixed, RoutePillSpec.Context.Default)
 
     Column {
         Row(
@@ -55,9 +48,9 @@ fun RouteResultsView(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            RoutePill(route = route, spec = routePillSpec)
+            RoutePill(route = null, spec = routeResult.routePill)
 
-            Text(text = routeResult.longName, style = Typography.bodySemibold)
+            Text(text = routeResult.name, style = Typography.bodySemibold)
         }
     }
 }
@@ -68,8 +61,11 @@ private fun RouteResultsViewPreview() {
     val orangeLine = TestData.getRoute("Orange")
     RouteResultsView(
         RoundedCornerShape(10.dp),
-        RouteResult(orangeLine),
-        GlobalResponse(TestData),
+        SearchViewModel.RouteResult(
+            orangeLine.id,
+            orangeLine.longName,
+            RoutePillSpec(orangeLine, null, RoutePillSpec.Type.Fixed),
+        ),
         handleSearch = {},
     )
 }

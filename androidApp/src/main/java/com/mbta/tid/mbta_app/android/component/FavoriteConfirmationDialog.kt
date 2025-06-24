@@ -83,7 +83,7 @@ fun FavoriteConfirmationDialog(
                             ),
                         shape = RectangleShape,
                         modifier =
-                            Modifier.background(color = Color.White).semantics {
+                            Modifier.background(color = colorResource(R.color.fill3)).semantics {
                                 selected = favoritesToSave.getOrDefault(direction.id, false)
                             },
                     ) {
@@ -92,10 +92,11 @@ fun FavoriteConfirmationDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            DirectionLabel(direction)
+                            DirectionLabel(direction, Modifier.weight(1f))
                             StarIcon(
                                 favoritesToSave.getOrDefault(direction.id, false),
                                 color = Color.fromHex(lineOrRoute.backgroundColor),
+                                Modifier.padding(start = 16.dp),
                             )
                         }
                     }

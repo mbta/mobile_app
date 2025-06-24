@@ -964,15 +964,9 @@
         }
       }
     },
-    "%@ arriving at %@" : {
+    "%1$@ arriving at %2$@" : {
       "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ arriving at %2$@"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1823,6 +1817,100 @@
         }
       }
     },
+    "%1$@ %2$@ delayed" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ retrasado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ retardé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ atrasado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ bị trì hoãn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ 延迟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@延遲"
+          }
+        }
+      }
+    },
+    "%1$@ %2$@ early" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the early predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train early[, arriving at 9:55 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ temprano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ tôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ byen bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ cedo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@提前"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@提前"
+          }
+        }
+      }
+    },
     "%1$@ has departed %2$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] has departed [Central]\", \"[bus] has departed [Harvard]\"",
       "localizations" : {
@@ -2566,6 +2654,54 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "將 **%2$@** 的 **%1$@** 加入到收藏夾"
+          }
+        }
+      }
+    },
+    "Add favorite stops" : {
+      "comment" : "Header for the route details picker when entering from the favorites page to select favorite stops",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadir paradas favoritas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajouter des arrêts favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute arè ou pi renmen yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicionar paradas favoritas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm điểm dừng yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加最喜欢的站点"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "新增最喜歡的站點"
           }
         }
       }
@@ -3416,6 +3552,100 @@
         }
       }
     },
+    "and %1$@ %2$@ delayed" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing\nthe delayed predicted time, as the second or later arrival in a list of upcoming arrivals.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, 'and 10:00 PM train delayed[, arriving at 10:05 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y %1$@ %2$@ retrasado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et %1$@ %2$@ retardé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi %1$@ %2$@ an reta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e %1$@ %2$@ atrasado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và %1$@ %2$@ bị trì hoãn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@延迟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@延遲"
+          }
+        }
+      }
+    },
+    "and %1$@ %2$@ early" : {
+      "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing\nthe early predicted time, as the second or later arrival in a list of upcoming arrivals.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, 'and 10:00 PM train early[, arriving at 9:55 PM]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y %1$@ %2$@ temprano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et %1$@ %2$@ tôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ak %1$@ %2$@ byen bonè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e %1$@ %2$@ cedo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và %1$@ %2$@ sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@提前"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一趟%1$@%2$@提前"
+          }
+        }
+      }
+    },
     "and arriving now" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n For example, '[bus arriving in 1 minute], and arriving now'",
       "localizations" : {
@@ -3463,49 +3693,49 @@
         }
       }
     },
-    "and at %@" : {
+    "and at %1$@" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y a la(s) %@"
+            "value" : "y a la(s) %1$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "et à %@"
+            "value" : "et à %1$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi a %@"
+            "value" : "epi a %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %@"
+            "value" : "e às %1$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và lúc %@"
+            "value" : "và lúc %1$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车将于%@到站"
+            "value" : "下一趟车将于%1$@到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將於%@到站"
+            "value" : "下一趟車將於%1$@到站"
           }
         }
       }
@@ -4134,6 +4364,53 @@
         }
       }
     },
+    "arriving at %1$@" : {
+      "comment" : "Screen reader text appended to another string containing an originally scheduled time which is running early or delayed\ncompared to the actual predicted time (contained in this string).\nex, '[10:00 PM train delayed, ]arriving at 10:05 PM'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "llegará a la(s) %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "arrivant à %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ap rive a %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "chegando às %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sẽ đến lúc %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "于%2$@到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "於%2$@到站"
+          }
+        }
+      }
+    },
     "at **%1$@**" : {
       "comment" : "Label for the stop a selected route is displayed at.\nFor example \"[Red Line] at [Porter]\".\nThe station name between the asterisks is bolded",
       "localizations" : {
@@ -4541,6 +4818,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "xe buýt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴士"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴士"
+          }
+        }
+      }
+    },
+    "Bus" : {
+      "comment" : "Label for bus routes in the route picker view",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autobús"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bus"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ônibus"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xe buýt"
           }
         },
         "zh-Hans-CN" : {
@@ -5212,6 +5537,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "折疊剩餘站點"
+          }
+        }
+      }
+    },
+    "collapse stops" : {
+      "comment" : "Android TalkBack hint explaining what will happen when the user taps on an expanded accordion showing a list of stops along a route",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "collapse stops"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "colapsar paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "réduire les arrêts"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "efondreman sispann"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "paradas de colapso"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "sự sụp đổ dừng lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "崩溃停止"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "崩潰停止"
           }
         }
       }
@@ -7484,6 +7863,60 @@
         }
       }
     },
+    "expand stops" : {
+      "comment" : "Android TalkBack hint explaining what will happen when the user taps on a closed accordion that contains a list of more stops along a route",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "expand stops"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ampliar las paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "étendre les arrêts"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "elaji arè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "expandir paradas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mở rộng dừng lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "扩展停止"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "擴充停止"
+          }
+        }
+      }
+    },
     "External link" : {
       "comment" : "Screen reader text describing an external link on the more page",
       "extractionState" : "manual",
@@ -7952,6 +8385,102 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "輪渡"
+          }
+        }
+      }
+    },
+    "Ferry" : {
+      "comment" : "Label for ferry routes in the route picker view",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ferry"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ferry"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bato"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balsa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phà"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轮渡"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輪渡"
+          }
+        }
+      }
+    },
+    "Filter routes" : {
+      "comment" : "Placeholder text for the route name filter search input on the route picker page",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Filtrar rutas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Filtrer les itinéraires"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Filtre wout yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Filtrar rotas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lọc tuyến đường"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "过滤路线"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "過濾路線"
           }
         }
       }
@@ -9360,153 +9889,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "港口結冰"
-          }
-        }
-      }
-    },
-    "in %ld hr" : {
-      "comment" : "Shorthand displayed number of hours  until arrival for VoiceOver, ex 'in 1 hr'",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "en %ld h"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dans %ld h"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nan %ld èdtan"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "em %ld h"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sau %ld giờ nữa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld小时内"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld小時內"
-          }
-        }
-      }
-    },
-    "in %ld hr %ld min" : {
-      "comment" : "Shorthand displayed number of hours and minutes until arrival for VoiceOver,\nex 'in 1 hr 32 min'",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "in %1$ld hr %2$ld min"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "en %1$ld h %2$ld min"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dans %1$ld h %2$ld min"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nan %1$ld èdtan %2$ld minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "em %1$ld h %2$ld min"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sau %1$ld giờ %2$ld phút nữa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$ld小时%2$ld分钟内"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$ld小時%2$ld分鐘內"
-          }
-        }
-      }
-    },
-    "in %ld min" : {
-      "comment" : "Shorthand displayed number of minutes until arrival for VoiceOver, ex 'in 7 min'",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "en %ld min"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dans %ld min"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nan %ld minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "em %ld min"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sau %ld phút nữa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld分钟内"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld分鐘內"
           }
         }
       }
@@ -11177,6 +11559,54 @@
         }
       }
     },
+    "No matching %1$@ routes" : {
+      "comment" : "Text for the empty state on the route picker page when the filter text doesn't match any routes. The interpolated value can be \"bus\", \"ferry\", or \"train\" (localized).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No hay rutas de %1$@ que coincidan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aucun itinéraire de %1$@ correspondant"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pa gen wout %1$@ ki matche"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nenhuma rota de %1$@ correspondente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không có tuyến xe %1$@ nào phù hợp"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "没有匹配的%1$@路线"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "沒有符合的%1$@路線"
+          }
+        }
+      }
+    },
     "No nearby stops" : {
       "localizations" : {
         "es" : {
@@ -11360,6 +11790,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "今日無服務"
+          }
+        }
+      }
+    },
+    "No stops added" : {
+      "comment" : "Indicates the absence of favorites",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se agregaron paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aucun arrêt ajouté"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pa gen arè te ajoute"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nenhuma parada adicionada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không có điểm dừng nào được thêm vào"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未添加停靠站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未添加停靠站"
           }
         }
       }
@@ -16569,6 +17046,54 @@
         }
       }
     },
+    "Subway" : {
+      "comment" : "Header for the section of the route details picker which lists all the rail rapid transit routes",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Metro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Métro"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Metro"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Metrô"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tàu điện ngầm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "地铁"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "捷運"
+          }
+        }
+      }
+    },
     "Summary" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -17225,8 +17750,8 @@
               },
               "zero" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "This stop has %ld elevators closed"
+                  "state" : "needs_review",
+                  "value" : "Estasyon sa a gen %ld asansè fèmen"
                 }
               }
             }
@@ -17473,6 +17998,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更換軌枕"
+          }
+        }
+      }
+    },
+    "To find stops, select a route first" : {
+      "comment" : "Hint text on the route picker page when a search term has been entered in the filter input, in case people are searching a stop name and are trying to understand why it isn't showing up",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Para encontrar paradas, primero seleccione una ruta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pour trouver des arrêts, sélectionnez d’abord un itinéraire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pou jwenn arè, chwazi yon wout anvan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Para encontrar paradas, selecione uma rota primeiro"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Để tìm điểm dừng, trước tiên hãy chọn một tuyến đường"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "要查找站点，请先选择路线"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "若要尋找站點，請先選擇路線"
           }
         }
       }

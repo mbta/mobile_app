@@ -54,22 +54,24 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and arriving now"))
     }
 
-    func testFirstDistantAccessibilityLabel() throws {
+    func testFirstPredictionTimeAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().distantFutureFirst(date: date, vehicleText: "trains")
-        let foundText: String = try text.inspect().text()
-            .string(locale: Locale(identifier: "en"))
-
-        XCTAssertEqual("trains arriving at 4:00 PM", foundText)
+        let sut = UpcomingTripView(
+            prediction: .some(.Time(predictionTime: date.toKotlinInstant(), headline: true)),
+            routeType: .commuterRail,
+            isFirst: true
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
     }
 
-    func testDistantAccessibilityLabel() throws {
+    func testPredictionTimeAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().distantFutureOther(date: date)
-        let foundText: String = try text.inspect().text()
-            .string(locale: Locale(identifier: "en"))
-
-        XCTAssertEqual("and at 4:00 PM", foundText)
+        let sut = UpcomingTripView(
+            prediction: .some(.Time(predictionTime: date.toKotlinInstant(), headline: true)),
+            routeType: .commuterRail,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and at 4:00\u{202F}PM"))
     }
 
     func testTimeWithStatus() throws {
@@ -82,33 +84,114 @@ final class UpcomingTripViewTests: XCTestCase {
             )),
             routeType: .commuterRail
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM, All aboard"
+        ))
         XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
+    }
+
+    func testTimeWithStatusLate() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date.toKotlinInstant(),
+                status: "Late",
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed"))
+    }
+
+    func testTimeWithStatusDelayed() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date.toKotlinInstant(),
+                status: "Delay",
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed"))
+    }
+
+    func testTimeWithScheduleEarly() throws {
+        let scheduleDate = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let predictionDate = ISO8601DateFormatter().date(from: "2024-05-01T19:55:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithSchedule(
+                predictionTime: predictionDate.toKotlinInstant(),
+                scheduledTime: scheduleDate.toKotlinInstant(),
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabel: "4:00\u{202F}PM train early, arriving at 3:55\u{202F}PM"
+        ))
+    }
+
+    func testTimeWithScheduleDelayed() throws {
+        let scheduleDate = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let predictionDate = ISO8601DateFormatter().date(from: "2024-05-01T20:05:00Z")!
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithSchedule(
+                predictionTime: predictionDate.toKotlinInstant(),
+                scheduledTime: scheduleDate.toKotlinInstant(),
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed, arriving at 4:05\u{202F}PM"
+        ))
     }
 
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().scheduleTimeFirst(date: date, vehicleText: "buses")
-        let foundText: String = try text.inspect().text()
-            .string(locale: Locale(identifier: "en"))
-
-        XCTAssertEqual("buses arriving at 4:00 PM scheduled", foundText)
+        let sut = UpcomingTripView(
+            prediction: .some(.ScheduleTime(scheduledTime: date.toKotlinInstant(), headline: true)),
+            routeType: .bus,
+            isFirst: true,
+            isOnly: false
+        )
+        XCTAssertNotNil(try sut.inspect()
+            .find(viewWithAccessibilityLabel: "buses arriving at 4:00\u{202F}PM scheduled"))
     }
 
     func testScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().scheduleTimeOther(date: date)
-        let foundText: String = try text.inspect().text()
-            .string(locale: Locale(identifier: "en"))
+        let sut = UpcomingTripView(
+            prediction: .some(.ScheduleTime(scheduledTime: date.toKotlinInstant(), headline: true)),
+            routeType: .bus,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and at 4:00\u{202F}PM scheduled"))
+    }
 
-        XCTAssertEqual("and at 4:00 PM scheduled", foundText)
+    func testFirstApproachingAccessibilityLabel() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Approaching()),
+            routeType: .heavyRail,
+            isFirst: true,
+            isOnly: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 1 min"))
+    }
+
+    func testApproachingAccessibilityLabel() throws {
+        let sut = UpcomingTripView(prediction: .some(.Approaching()), isFirst: false)
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 1 min"))
     }
 
     func testFirstPredictedAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5)),
-                                   routeType: .heavyRail,
-                                   isFirst: true,
-                                   isOnly: false)
+        let sut = UpcomingTripView(
+            prediction: .some(.Minutes(minutes: 5)),
+            routeType: .heavyRail,
+            isFirst: true,
+            isOnly: false
+        )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 5 min"))
     }
 
@@ -126,13 +209,8 @@ final class UpcomingTripViewTests: XCTestCase {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!.toKotlinInstant()
         let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
                                    routeType: .heavyRail,
-                                   isFirst: false,
-                                   isOnly: false)
-        let predictionView = try sut.inspect().find(ViewType.HStack.self)
-        XCTAssertEqual(
-            "and at 4:00 PM cancelled",
-            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+                                   isFirst: false)
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and at 4:00\u{202F}PM cancelled"))
     }
 
     func testShuttleAccessibilityLabel() throws {
@@ -143,11 +221,8 @@ final class UpcomingTripViewTests: XCTestCase {
             ),
             isFirst: false
         )
-        XCTAssertEqual(
-            "Shuttle buses replace service",
-            try sut.inspect().find(text: "Shuttle Bus")
-                .accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle Bus"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Shuttle buses replace service"))
     }
 
     func testSuspensionAccessibilityLabel() throws {
@@ -158,38 +233,8 @@ final class UpcomingTripViewTests: XCTestCase {
             ),
             isFirst: false
         )
-        XCTAssertEqual(
-            "Service suspended",
-            try sut.inspect().find(text: "Suspension")
-                .accessibilityLabel().string(locale: Locale(identifier: "en"))
-        )
-    }
-
-    func testFirstCommuterRailAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().predictionTimeFirst(
-            date: date,
-            vehicleText: "trains"
-        )
-        let foundText: String = try text.inspect().text()
-            .string(locale: Locale(identifier: "en"))
-
-        XCTAssertEqual(
-            "trains arriving at 4:00 PM",
-            foundText
-        )
-    }
-
-    func testCommuterRailAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().predictionTimeOther(date: date)
-        let foundText: String = try text.inspect().text()
-            .string(locale: Locale(identifier: "en"))
-
-        XCTAssertEqual(
-            "and at 4:00 PM",
-            foundText
-        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Service suspended"))
     }
 
     func testDisruptionIconName() throws {

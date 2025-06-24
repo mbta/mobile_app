@@ -123,7 +123,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ErrorCard(
+fun ErrorCard(
     modifier: Modifier = Modifier,
     details: @Composable () -> Unit,
     button: (@Composable () -> Unit)? = null,
@@ -136,8 +136,7 @@ private fun ErrorCard(
                 .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) { details() }
-        Spacer(Modifier.weight(1f))
+        Column(modifier = Modifier.padding(horizontal = 16.dp).weight(1f)) { details() }
         if (button != null) {
             Box(modifier = Modifier.padding(horizontal = 16.dp)) { button() }
         }
