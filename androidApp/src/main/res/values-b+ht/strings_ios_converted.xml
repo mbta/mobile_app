@@ -349,6 +349,7 @@
     <string name="switch_issue_lowercase">pwoblèm nan switch ray</string>
     <string name="switch_problem">Pann nan switch ray</string>
     <string name="switch_problem_lowercase">pann nan switch ray</string>
+    <string name="tap_favorites_hint">Tape zetwal yo pou ajoute nan Favori yo</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="technical_problem_lowercase">pwoblèm teknik</string>
     <string name="tie_replacement">Ranplasman kòd</string>

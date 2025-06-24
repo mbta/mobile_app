@@ -33,6 +33,7 @@ enum class ActionButtonKind(
 @Composable
 fun ActionButton(
     kind: ActionButtonKind,
+    modifier: Modifier = Modifier,
     size: Dp = 32.dp,
     colors: ButtonColors =
         ButtonDefaults.buttonColors(
@@ -43,7 +44,7 @@ fun ActionButton(
 ) {
     Button(
         onClick = action,
-        modifier = Modifier.size(size).width(size),
+        modifier = modifier.size(size).width(size),
         shape = CircleShape,
         colors = colors,
         contentPadding = PaddingValues(5.dp),
