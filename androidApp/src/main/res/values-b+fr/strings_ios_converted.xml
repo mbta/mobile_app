@@ -78,6 +78,7 @@
     <string name="details">Détails</string>
     <string name="detour">Déviation</string>
     <string name="directionTo">%1$s vers</string>
+    <string name="direction_service_only">Service %1$s uniquement</string>
     <string name="disabled_bus">Bus hors service</string>
     <string name="disabled_bus_lowercase">autobus en panne</string>
     <string name="disabled_train">Train hors service</string>

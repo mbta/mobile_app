@@ -76,6 +76,7 @@
     <string name="details">详情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
+    <string name="direction_service_only">仅限 %1$s 服务</string>
     <string name="disabled_bus">巴士抛锚</string>
     <string name="disabled_bus_lowercase">巴士抛锚</string>
     <string name="disabled_train">列车停运</string>

@@ -143,7 +143,10 @@ fun FavoriteConfirmationDialog(
             if (directions.size == 1 && directions.first().id != selectedDirection) {
 
                 Text(
-                    "${stringResource(directionNameFormatted(directions.first()))} service only",
+                    stringResource(
+                        R.string.direction_service_only,
+                        stringResource(directionNameFormatted(directions.first())),
+                    ),
                     textAlign = TextAlign.Center,
                     style = Typography.footnoteSemibold,
                     modifier =

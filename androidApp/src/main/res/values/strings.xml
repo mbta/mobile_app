@@ -79,6 +79,7 @@
     <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
+    <string name="direction_service_only">%1$s service only</string>
     <string name="disabled_bus">Disabled Bus</string>
     <string name="disabled_bus_lowercase">disabled bus</string>
     <string name="disabled_train">Disabled Train</string>

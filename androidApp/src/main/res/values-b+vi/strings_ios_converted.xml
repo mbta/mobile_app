@@ -76,6 +76,7 @@
     <string name="details">Thông tin chi tiết</string>
     <string name="detour">Đường vòng</string>
     <string name="directionTo">%1$s đến</string>
+    <string name="direction_service_only">%1$s chỉ dịch vụ</string>
     <string name="disabled_bus">Xe buýt bị sự cố</string>
     <string name="disabled_bus_lowercase">sự cố xe buýt</string>
     <string name="disabled_train">Tàu bị sự cố</string>

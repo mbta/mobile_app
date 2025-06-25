@@ -81,6 +81,7 @@
     <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
+    <string name="direction_service_only">%1$s sèvis sèlman</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
     <string name="disabled_bus_lowercase">otobis anpann</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
