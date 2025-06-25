@@ -49,6 +49,32 @@ data class Stop(
     @OptIn(ExperimentalTurfApi::class)
     fun distanceFrom(position: Position): Double = distance(position, this.position)
 
+    /**
+     * Is this stop the last stop for all patterns in which it appears? True if for each patterns in
+     * the given direction, the following conditions are met
+     * - this stop (or its parent) only appears as the last stop
+     * - this stop does not appear at all
+     */
+    fun isLastStopForAllPatterns(
+        directionId: Int,
+        patterns: List<RoutePattern>,
+        global: GlobalResponse,
+    ): Boolean {
+        val resolvedParent = this.resolveParent(global)
+        return patterns
+            .filter { it.directionId == directionId }
+            .mapNotNull { global.trips[it.representativeTripId] }
+            .mapNotNull {
+                it.stopIds?.mapNotNull { stopId ->
+                    global.getStop(stopId)?.resolveParent(global)?.id
+                }
+            }
+            .all {
+                val stopIndex = it.indexOf(resolvedParent.id)
+                (stopIndex == it.lastIndex) || stopIndex == -1
+            }
+    }
+
     companion object {
         /**
          * Checks if the given stop IDs (as resolved in [stops]) refer to stops which are the same,

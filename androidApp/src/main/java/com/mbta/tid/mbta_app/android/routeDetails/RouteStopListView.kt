@@ -30,9 +30,10 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
+import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
@@ -121,22 +122,20 @@ fun RouteStopListView(
         }
 
     showFavoritesStopConfirmation?.let { stop ->
+        val allPatternsForStop = globalData.getPatternsFor(stop.id, lineOrRoute)
         val stopDirections =
-            lineOrRoute.directions(
-                globalData,
-                stop,
-                globalData.getPatternsFor(stop.id, lineOrRoute).filter { it.isTypical() },
-            )
+            lineOrRoute.directions(globalData, stop, allPatternsForStop.filter { it.isTypical() })
         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            FavoriteConfirmationDialog(
+            SaveFavoritesFlow(
                 lineOrRoute,
                 stop,
-                stopDirections.filter { it.id in parameters.availableDirections },
-                proposedFavorites =
-                    parameters.availableDirections.associateWith {
-                        it == selectedDirection ||
-                            isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it))
-                    },
+                stopDirections.filter {
+                    it.id in parameters.availableDirections &&
+                        !stop.isLastStopForAllPatterns(it.id, allPatternsForStop, globalData)
+                },
+                selectedDirection = selectedDirection,
+                context = SaveFavoritesContext.Favorites,
+                isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {
                 showFavoritesStopConfirmation = null

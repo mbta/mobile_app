@@ -5,7 +5,8 @@
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
     <string name="add_confirmation_button">Thêm vào</string>
-    <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
+    <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> vào &lt;b>%2$s&lt;/b></string>
+    <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
     <plurals name="affected_stops">
@@ -75,6 +76,7 @@
     <string name="details">Thông tin chi tiết</string>
     <string name="detour">Đường vòng</string>
     <string name="directionTo">%1$s đến</string>
+    <string name="direction_service_only">%1$s chỉ dịch vụ</string>
     <string name="disabled_bus">Xe buýt bị sự cố</string>
     <string name="disabled_bus_lowercase">sự cố xe buýt</string>
     <string name="disabled_train">Tàu bị sự cố</string>
