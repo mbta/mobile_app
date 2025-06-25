@@ -4,6 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
+		<string>applinks:go.mbta.com</string>
 		<string>applinks:mobile-app-backend.mbtace.com</string>
 	</array>
 </dict>
