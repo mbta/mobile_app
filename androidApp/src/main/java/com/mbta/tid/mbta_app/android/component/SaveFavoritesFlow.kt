@@ -188,11 +188,8 @@ fun FavoriteConfirmationDialog(
                             )
                         }
                     }
-                    if (idx + 1 < directions.size) {
-                        HaloSeparator()
-                    }
+                    HaloSeparator()
                 }
-                HaloSeparator()
             }
 
             Row(modifier = Modifier.padding(16.dp)) {

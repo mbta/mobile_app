@@ -70,7 +70,7 @@ class StopTest {
     }
 
     @Test
-    fun `isLastSTopForAllPatterns true when last stop in every pattern appears in`() {
+    fun `isLastStopForAllPatterns true when last stop in every pattern appears in`() {
         val objects = ObjectCollectionBuilder()
         val targetParent =
             objects.stop {
@@ -126,7 +126,7 @@ class StopTest {
     }
 
     @Test
-    fun `isLastSTopForAllPatterns false when mid-route in a pattern`() {
+    fun `isLastStopForAllPatterns false when mid-route in a pattern`() {
         val objects = ObjectCollectionBuilder()
         val targetParent =
             objects.stop {
