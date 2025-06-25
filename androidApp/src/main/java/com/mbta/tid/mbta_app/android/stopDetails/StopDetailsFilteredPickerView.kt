@@ -28,7 +28,8 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.FavoriteConfirmation
+import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
+import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -86,21 +87,22 @@ fun StopDetailsFilteredPickerView(
             FavoriteBridge.Pinned(lineOrRoute.id)
         }
 
-    var isFavoritingStop by rememberSaveable { mutableStateOf(false) }
+    var inSaveFavoritesFlow by rememberSaveable { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        if (isFavoritingStop) {
-            FavoriteConfirmation(
+        if (inSaveFavoritesFlow) {
+            SaveFavoritesFlow(
                 lineOrRoute,
                 stop,
                 directions.filter { it.id in availableDirections },
                 selectedDirection = stopFilter.directionId,
+                context = SaveFavoritesContext.StopDetails,
                 updateFavorites = { newValues ->
                     updateFavorites(FavoriteUpdateBridge.Favorites(newValues))
                 },
                 isFavorite = { rsd -> isFavorite(FavoriteBridge.Favorite(rsd)) },
             ) {
-                isFavoritingStop = false
+                inSaveFavoritesFlow = false
             }
         }
         StopDetailsFilteredHeader(
@@ -111,16 +113,8 @@ fun StopDetailsFilteredPickerView(
             onPin = {
                 if (favoriteBridge is FavoriteBridge.Pinned) {
                     updateFavorites(FavoriteUpdateBridge.Pinned(favoriteBridge.routeId))
-                } else if (
-                    favoriteBridge is FavoriteBridge.Favorite && isFavorite(favoriteBridge)
-                ) {
-                    updateFavorites(
-                        FavoriteUpdateBridge.Favorites(
-                            mapOf(favoriteBridge.routeStopDirection to false)
-                        )
-                    )
                 } else {
-                    isFavoritingStop = !isFavoritingStop
+                    inSaveFavoritesFlow = true
                 }
             },
             onClose = onClose,

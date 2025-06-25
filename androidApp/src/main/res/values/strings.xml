@@ -6,7 +6,8 @@
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Add</string>
     <string name="add_stops" tools:ignore="MissingTranslation">Add stops</string>
-    <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
+    <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="add_to_favorites_title_stop_details">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
     <string name="additional_service_sentence_case">Additional service</string>
     <plurals name="affected_stops">

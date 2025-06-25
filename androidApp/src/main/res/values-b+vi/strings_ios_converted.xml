@@ -5,7 +5,7 @@
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
     <string name="add_confirmation_button">Thêm vào</string>
-    <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
+    <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
     <plurals name="affected_stops">

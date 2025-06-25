@@ -5,7 +5,7 @@
     <string name="accident">Accidente</string>
     <string name="accident_lowercase">accidente</string>
     <string name="add_confirmation_button">Agregar</string>
-    <string name="add_to_favorites_title">Añadir &lt;b>%1$s&lt;/b> en &lt;b>%2$s&lt;/b> a Favoritos</string>
+    <string name="add_to_favorites_title_stop_details">Añadir &lt;b>%1$s&lt;/b> en &lt;b>%2$s&lt;/b> a Favoritos</string>
     <string name="additional_service">Servicio adicional</string>
     <string name="additional_service_sentence_case">Servicio adicional</string>
     <plurals name="affected_stops">

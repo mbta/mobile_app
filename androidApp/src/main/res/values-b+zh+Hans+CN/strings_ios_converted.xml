@@ -5,7 +5,7 @@
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
-    <string name="add_to_favorites_title">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
+    <string name="add_to_favorites_title_stop_details">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
     <string name="additional_service">附加服务</string>
     <string name="additional_service_sentence_case">附加服务</string>
     <plurals name="affected_stops">
