@@ -74,7 +74,7 @@ import kotlinx.coroutines.flow.map
 import org.koin.compose.koinInject
 
 @Composable
-fun NewHomeMapView(
+fun HomeMapView(
     sheetPadding: PaddingValues,
     lastNearbyTransitLocation: Position?,
     nearbyTransitSelectingLocationState: MutableState<Boolean>,

@@ -56,8 +56,8 @@ import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.MapboxConfigManager
-import com.mbta.tid.mbta_app.android.map.NewHomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
@@ -626,7 +626,7 @@ fun MapAndSheetPage(
                         }
                     },
                 ) {
-                    NewHomeMapView(
+                    HomeMapView(
                         sheetPadding =
                             sheetPadding.plus(
                                 PaddingValues(
