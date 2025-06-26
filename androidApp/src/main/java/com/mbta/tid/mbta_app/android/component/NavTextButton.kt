@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 @Composable
 fun NavTextButton(
     string: String,
+    modifier: Modifier = Modifier,
     colors: ButtonColors =
         ButtonDefaults.buttonColors(
             containerColor = colorResource(R.color.text).copy(alpha = 0.6f),
@@ -27,7 +28,7 @@ fun NavTextButton(
         onTap,
         colors = colors,
         contentPadding = PaddingValues(horizontal = 12.dp),
-        modifier = Modifier.heightIn(min = 32.dp),
+        modifier = modifier.heightIn(min = 32.dp),
     ) {
         Text(string, style = Typography.callout)
     }

@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.android.routeDetails
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -26,6 +28,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -311,5 +314,43 @@ class RouteStopListViewTest {
         composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Ashmont/Braintree"), 2)
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
+    }
+
+    @Test
+    fun testTriggersHintToast() {
+        val objects = TestData.clone()
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        val toastVM = ToastViewModel()
+
+        var toastState: State<ToastViewModel.State>? = null
+
+        composeTestRule.setContent {
+            toastState = toastVM.models.collectAsState()
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    RouteDetailsContext.Favorites,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    toastViewModel = toastVM,
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        when (val state = toastState?.value) {
+            is ToastViewModel.State.Visible ->
+                assertEquals("Tap stars to add to Favorites", state.toast.message)
+            else -> fail("Toast should not be hidden")
+        }
     }
 }
