@@ -196,6 +196,22 @@ class AlertCardTests {
     }
 
     @Test
+    fun testSingleTrackingInfoDelay() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Delay
+                cause = Alert.Cause.SingleTracking
+                severity = 1
+            }
+        composeTestRule.setContent {
+            AlertCard(alert, null, AlertCardSpec.Delay, color, textColor, {})
+        }
+
+        composeTestRule.onNodeWithText("Single Tracking").assertIsDisplayed()
+    }
+
+    @Test
     fun testMajorAlertCardSummary() {
         val alert =
             ObjectCollectionBuilder.Single.alert {

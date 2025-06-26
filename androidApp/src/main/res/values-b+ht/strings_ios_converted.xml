@@ -5,7 +5,8 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
-    <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
+    <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
+    <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>
     <string name="additional_service_sentence_case">Plis sèvis</string>
     <plurals name="affected_stops">
@@ -80,6 +81,7 @@
     <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
+    <string name="direction_service_only">%1$s sèvis sèlman</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
     <string name="disabled_bus_lowercase">otobis anpann</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
