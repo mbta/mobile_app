@@ -75,7 +75,11 @@ class RouteStopListViewTest {
 
         val koin =
             testKoinApplication(objects) {
-                routeStops = MockRouteStopsRepository(listOf(stop1.id, stop2.id, stop3.id))
+                routeStops =
+                    MockRouteStopsRepository(
+                        listOf(stop1.id, stop2.id, stop3.id),
+                        routeId = mainRoute.id,
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
@@ -86,6 +90,7 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = clicks::add,
+                    onBack = {},
                     onClose = { closed = true },
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { context, _ ->
@@ -176,6 +181,7 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     defaultSelectedRouteId = route2.id,
@@ -232,7 +238,8 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops =
                     MockRouteStopsRepository(
-                        listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id)
+                        listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id),
+                        routeId = mainRoute.id,
                     )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
@@ -244,6 +251,7 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { _, _ -> },
@@ -265,21 +273,26 @@ class RouteStopListViewTest {
     @Test
     fun testFavoritesWithConfirmationDialog() {
         val objects = TestData.clone()
+        val route = RouteCardData.LineOrRoute.Route(objects.getRoute("Red"))
 
         val koin =
             testKoinApplication(objects) {
                 routeStops =
-                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+                    MockRouteStopsRepository(
+                        listOf("place-alfcl", "place-davis", "place-portr"),
+                        routeId = route.id,
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
                 RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    route,
                     RouteDetailsContext.Favorites,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { rowContext, _ ->
