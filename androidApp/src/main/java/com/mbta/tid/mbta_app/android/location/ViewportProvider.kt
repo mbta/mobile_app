@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.utils.ViewportManager
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -61,7 +62,7 @@ interface IViewportProvider {
 
     suspend fun follow(transitionAnimationDuration: Long? = null)
 
-    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density)
+    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float)
 
     suspend fun stopCenter(stop: Stop)
 
@@ -83,7 +84,7 @@ interface IViewportProvider {
 class ViewportProvider(
     private var _rawViewport: MapViewportState,
     isManuallyCentering: Boolean = false,
-) : IViewportProvider {
+) : IViewportProvider, ViewportManager {
     override var isManuallyCentering by mutableStateOf(isManuallyCentering)
     override var isFollowingPuck by mutableStateOf(_rawViewport.isFollowingPuck)
     override var isVehicleOverview by mutableStateOf(_rawViewport.isOverview)
@@ -199,7 +200,7 @@ class ViewportProvider(
         isAnimating = false
     }
 
-    override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Density) {
+    override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float) {
         isVehicleOverview = true
         isFollowingPuck = false
         if (stop == null) {
@@ -237,7 +238,7 @@ class ViewportProvider(
         animateTo(Defaults.center, zoom = 13.75)
     }
 
-    suspend fun animateTo(
+    private suspend fun animateTo(
         coordinates: Point,
         animation: MapAnimationOptions = MapAnimationDefaults.options,
         zoom: Double? = null,
@@ -254,7 +255,7 @@ class ViewportProvider(
         isAnimating = false
     }
 
-    suspend fun animateToCamera(options: CameraOptions, animation: MapAnimationOptions) {
+    private suspend fun animateToCamera(options: CameraOptions, animation: MapAnimationOptions) {
         animateViewport { viewport, completionListener ->
             viewport.easeTo(
                 options,
@@ -267,7 +268,7 @@ class ViewportProvider(
         }
     }
 
-    suspend fun animateToOverview(
+    private suspend fun animateToOverview(
         options: OverviewViewportStateOptions,
         defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition,
     ) {
@@ -318,7 +319,6 @@ class ViewportProvider(
 
     override suspend fun restoreNearbyTransitViewport() {
         isFollowingPuck = savedNearbyTransitViewport?.isFollowingPuck ?: false
-        isVehicleOverview = false
         isAnimating = true
         animateViewport { viewport, completionListener ->
             savedNearbyTransitViewport?.restoreOn(viewport, completionListener)
@@ -346,15 +346,13 @@ class ViewportProvider(
             val center: Point = Point.fromLngLat(-71.0601, 42.3575)
             val zoom = MapDefaults.defaultZoomThreshold
 
-            fun overviewPadding(density: Density) =
-                with(density) {
-                    EdgeInsets(
-                        95.dp.toPx().toDouble(),
-                        50.dp.toPx().toDouble(),
-                        75.dp.toPx().toDouble(),
-                        50.dp.toPx().toDouble(),
-                    )
-                }
+            fun overviewPadding(density: Float) =
+                EdgeInsets(
+                    (95.dp * density).value.toDouble(),
+                    (50.dp * density).value.toDouble(),
+                    (75.dp * density).value.toDouble(),
+                    (50.dp * density).value.toDouble(),
+                )
         }
     }
 }

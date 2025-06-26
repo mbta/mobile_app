@@ -6,4 +6,5 @@ import org.koin.dsl.module
 actual fun viewModelModule() = module {
     singleOf(::SearchRoutesViewModel)
     singleOf(::SearchViewModel)
+    singleOf(::MapViewModel)
 }

@@ -7,4 +7,5 @@ import org.koin.core.component.inject
 class ViewModelDI : KoinComponent {
     val search: SearchViewModel by inject()
     val searchRoutes: SearchRoutesViewModel by inject()
+    val map: MapViewModel by inject()
 }

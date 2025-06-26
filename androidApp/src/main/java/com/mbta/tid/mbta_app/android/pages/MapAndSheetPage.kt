@@ -56,9 +56,8 @@ import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
-import com.mbta.tid.mbta_app.android.map.HomeMapView
-import com.mbta.tid.mbta_app.android.map.IMapViewModel
-import com.mbta.tid.mbta_app.android.map.MapViewModel
+import com.mbta.tid.mbta_app.android.map.MapboxConfigManager
+import com.mbta.tid.mbta_app.android.map.NewHomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
@@ -89,6 +88,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
@@ -125,12 +125,13 @@ fun MapAndSheetPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    mapViewModel: MapViewModel,
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
     favoritesViewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModel.Factory()),
+    mapboxConfigManager: MapboxConfigManager = koinInject(),
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
@@ -188,7 +189,9 @@ fun MapAndSheetPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
-            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
+            setMapSelectedVehicle = { vehicle ->
+                vehicle?.let { mapViewModel.selectedVehicle(it, null, null) }
+            },
             now = now,
         )
 
@@ -259,8 +262,6 @@ fun MapAndSheetPage(
         if (navController.selectedStopId == stopId) return
 
         updateVisitHistory(stopId)
-        mapViewModel.setSelectedVehicle(null)
-
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -270,7 +271,7 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.setSelectedVehicle(null)
+        mapViewModel.clearSelectedVehicle()
         navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -280,7 +281,7 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.setSelectedVehicle(null)
+        mapViewModel.clearSelectedVehicle()
         navController.navigateFrom<SheetRoutes.RoutePicker>(
             SheetRoutes.RouteDetails(routeId, context)
         ) {
@@ -301,7 +302,6 @@ fun MapAndSheetPage(
                 else -> null
             } ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
-
         val routeCard =
             viewModel.routeCardData.value?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
 
@@ -348,14 +348,12 @@ fun MapAndSheetPage(
         onPauseOrDispose { backgroundTimestamp = clock.now().toEpochMilliseconds() }
     }
 
-    LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
-        mapViewModel.loadConfig()
+    LaunchedEffect(
+        mapboxConfigManager.lastMapboxErrorTimestamp.collectAsState(initial = null).value
+    ) {
+        mapboxConfigManager.loadConfig()
     }
-    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.setAlertsData(nearbyTransit.alertData) }
-
-    LaunchedEffect(nearbyTransit.globalResponse) {
-        mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
-    }
+    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) { navigateToEntrypoint() }
     LaunchedEffect(currentNavEntry) {
@@ -628,7 +626,7 @@ fun MapAndSheetPage(
                         }
                     },
                 ) {
-                    HomeMapView(
+                    NewHomeMapView(
                         sheetPadding =
                             sheetPadding.plus(
                                 PaddingValues(
@@ -650,6 +648,8 @@ fun MapAndSheetPage(
                         routeCardData = routeCardData,
                         viewModel = mapViewModel,
                         isSearchExpanded = searchExpanded,
+                        mapboxConfigManager,
+                        nearbyTransit.globalResponse,
                     )
                 }
             }
