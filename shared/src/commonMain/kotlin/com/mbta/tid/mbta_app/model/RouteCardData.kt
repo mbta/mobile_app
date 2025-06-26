@@ -11,6 +11,7 @@ import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -653,7 +654,32 @@ data class RouteCardData(
             pinnedRoutes: Set<String>,
             context: Context,
         ): List<RouteCardData>? =
-            withContext(Dispatchers.Default) {
+            routeCardsForStopList(
+                stopIds,
+                globalData,
+                sortByDistanceFrom,
+                schedules,
+                predictions,
+                alerts,
+                now,
+                pinnedRoutes,
+                context,
+                Dispatchers.Default,
+            )
+
+        suspend fun routeCardsForStopList(
+            stopIds: List<String>,
+            globalData: GlobalResponse?,
+            sortByDistanceFrom: Position?,
+            schedules: ScheduleResponse?,
+            predictions: PredictionsStreamDataResponse?,
+            alerts: AlertsStreamDataResponse?,
+            now: Instant,
+            pinnedRoutes: Set<String>,
+            context: Context,
+            coroutineDispatcher: CoroutineDispatcher,
+        ): List<RouteCardData>? =
+            withContext(coroutineDispatcher) {
 
                 // if predictions or alerts are still loading, this is the loading state
                 if (predictions == null || alerts == null) return@withContext null
@@ -700,7 +726,16 @@ data class RouteCardData(
             context: Context,
             now: Instant = Clock.System.now(),
         ): List<RouteCardData>? =
-            withContext(Dispatchers.Default) {
+            routeCardsForStaticStopList(stopIds, globalData, context, now, Dispatchers.Default)
+
+        suspend fun routeCardsForStaticStopList(
+            stopIds: List<String>,
+            globalData: GlobalResponse?,
+            context: Context,
+            now: Instant = Clock.System.now(),
+            coroutineDispatcher: CoroutineDispatcher,
+        ): List<RouteCardData>? =
+            withContext(coroutineDispatcher) {
                 // if global data was still loading, there'd be no nearby data, and null handling is
                 // annoying
                 if (globalData == null) return@withContext null
