@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,8 +37,11 @@ interface IFavoritesViewModel {
     fun setNow(now: Instant)
 }
 
-class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
-    MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
+class FavoritesViewModel(
+    private val favoritesUsecases: FavoritesUsecases,
+    private val coroutineDispatcher: CoroutineDispatcher,
+) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
+
     sealed interface Event {
         data object ReloadFavorites : Event
 
@@ -134,6 +138,7 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         now,
                         emptySet(),
                         RouteCardData.Context.Favorites,
+                        coroutineDispatcher,
                     )
                 routeCardData = filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
@@ -152,6 +157,7 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         RouteCardData.Context.Favorites,
                         // not depending on now because it only matters for testing
                         now,
+                        coroutineDispatcher,
                     )
                 staticRouteCardData =
                     filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
