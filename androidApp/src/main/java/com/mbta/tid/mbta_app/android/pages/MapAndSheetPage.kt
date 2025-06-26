@@ -69,6 +69,7 @@ import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.util.currentRoute
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
+import com.mbta.tid.mbta_app.android.util.currentRouteMatches
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
@@ -522,7 +523,15 @@ fun MapAndSheetPage(
                     selectionId = navRoute.routeId,
                     context = navRoute.context,
                     onOpenStopDetails = ::handleStopNavigation,
-                    onClose = { navController.popBackStackFrom<SheetRoutes.RouteDetails>() },
+                    onBack = { navController.popBackStackFrom<SheetRoutes.RouteDetails>() },
+                    onClose = {
+                        while (
+                            navController.currentRouteMatches<SheetRoutes.RoutePicker>() ||
+                                navController.currentRouteMatches<SheetRoutes.RouteDetails>()
+                        ) {
+                            navController.popBackStack()
+                        }
+                    },
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }

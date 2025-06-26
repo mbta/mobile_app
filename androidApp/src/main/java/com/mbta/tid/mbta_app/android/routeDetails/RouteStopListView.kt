@@ -3,18 +3,15 @@ package com.mbta.tid.mbta_app.android.routeDetails
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,15 +30,19 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -63,6 +64,7 @@ fun RouteStopListView(
     context: RouteDetailsContext,
     globalData: GlobalResponse,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
+    onBack: () -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
     defaultSelectedRouteId: String? = null,
@@ -93,7 +95,6 @@ fun RouteStopListView(
                 globalData,
             )
         }
-    RouteDetailsContext.Details
 
     val managedFavorites = manageFavorites()
     val favorites = managedFavorites.favoriteRoutes
@@ -154,6 +155,7 @@ fun RouteStopListView(
             lineOrRoute.sortRoute,
             selectedDirection,
             updateDirectionId = { selectedDirection = it },
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         )
 
         if (lineOrRoute is RouteCardData.LineOrRoute.Line && routes.size > 1) {
@@ -177,54 +179,109 @@ fun RouteStopListView(
             }
         }
 
-        Box(Modifier.verticalScroll(rememberScrollState())) {
-            Box(
-                Modifier.matchParentSize()
-                    .padding(horizontal = 4.dp)
-                    .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
-            )
-            Column {
-                if (stopList != null) {
-                    stopList.segments.forEachIndexed { segmentIndex, segment ->
-                        if (segment.isTypical) {
-                            segment.stops.forEachIndexed { stopIndex, stop ->
-                                val stopPlacement =
-                                    StopPlacement(
-                                        isFirst = segmentIndex == 0 && stopIndex == 0,
-                                        isLast =
-                                            segmentIndex == stopList.segments.lastIndex &&
-                                                stopIndex == segment.stops.lastIndex,
-                                        includeLineDiagram = segment.hasRouteLine,
-                                    )
+        RouteStops(
+            lineOrRoute,
+            stopList,
+            selectedDirection,
+            context,
+            onTapStop = onClick,
+            stopRowContext = ::stopRowContext,
+            rightSideContent = rightSideContent,
+        )
+    }
+}
 
-                                StopListRow(
-                                    stop.stop,
-                                    onClick = { onClick(stop) },
-                                    routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
-                                    modifier = Modifier.minimumInteractiveComponentSize(),
-                                    connectingRoutes = stop.connectingRoutes,
-                                    stopPlacement = stopPlacement,
-                                    rightSideContent = { modifier ->
-                                        rightSideContent(stopRowContext(stop.stop), modifier)
-                                    },
-                                )
-                            }
-                        } else {
-                            CollapsableStopList(
-                                lineOrRoute,
-                                segment,
-                                onClick,
-                                segmentIndex == 0,
-                                segmentIndex == stopList.segments.lastIndex,
-                            ) { stop, modifier ->
-                                rightSideContent(stopRowContext(stop.stop), modifier)
-                            }
-                        }
-                    }
-                } else {
-                    CircularProgressIndicator()
+@Composable
+private fun RouteStops(
+    lineOrRoute: RouteCardData.LineOrRoute,
+    stopList: RouteDetailsStopList?,
+    selectedDirection: Int,
+    context: RouteDetailsContext,
+    onTapStop: (RouteDetailsStopList.Entry) -> Unit,
+    stopRowContext: (Stop) -> RouteDetailsRowContext,
+    rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
+    loading: Boolean = false,
+) {
+    if (stopList == null || stopList.directionId != selectedDirection) {
+        LoadingRouteStops(lineOrRoute, selectedDirection, context, rightSideContent)
+        return
+    }
+
+    ScrollSeparatorColumn(
+        Modifier.padding(horizontal = 14.dp)
+            .padding(top = 8.dp, bottom = 40.dp)
+            .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
+            .then(if (loading) Modifier.loadingShimmer() else Modifier),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start,
+        scrollEnabled = !loading,
+    ) {
+        stopList.segments.forEachIndexed { segmentIndex, segment ->
+            if (segment.isTypical) {
+                segment.stops.forEachIndexed { stopIndex, stop ->
+                    val stopPlacement =
+                        StopPlacement(
+                            isFirst = segmentIndex == 0 && stopIndex == 0,
+                            isLast =
+                                segmentIndex == stopList.segments.lastIndex &&
+                                    stopIndex == segment.stops.lastIndex,
+                            includeLineDiagram = segment.hasRouteLine,
+                        )
+
+                    StopListRow(
+                        stop.stop,
+                        onClick = { onTapStop(stop) },
+                        routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+                        modifier = Modifier.minimumInteractiveComponentSize().fillMaxWidth(),
+                        connectingRoutes = stop.connectingRoutes,
+                        stopPlacement = stopPlacement,
+                        rightSideContent = { modifier ->
+                            rightSideContent(stopRowContext(stop.stop), modifier)
+                        },
+                    )
+                }
+            } else {
+                CollapsableStopList(
+                    lineOrRoute,
+                    segment,
+                    onTapStop,
+                    segmentIndex == 0,
+                    segmentIndex == stopList.segments.lastIndex,
+                ) { stop, modifier ->
+                    rightSideContent(stopRowContext(stop.stop), modifier)
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingRouteStops(
+    lineOrRoute: RouteCardData.LineOrRoute,
+    selectedDirection: Int,
+    context: RouteDetailsContext,
+    rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
+) {
+    val loadingStops =
+        remember(lineOrRoute, selectedDirection) {
+            LoadingPlaceholders.routeDetailsStops(lineOrRoute, selectedDirection)
+        }
+    CompositionLocalProvider(IsLoadingSheetContents provides true) {
+        RouteStops(
+            lineOrRoute,
+            stopList = loadingStops,
+            selectedDirection = selectedDirection,
+            context = context,
+            onTapStop = { _ -> },
+            stopRowContext = { stop ->
+                when (context) {
+                    is RouteDetailsContext.Details -> RouteDetailsRowContext.Details(stop)
+                    is RouteDetailsContext.Favorites ->
+                        RouteDetailsRowContext.Favorites(isFavorited = false, onTapStar = {})
+                }
+            },
+            rightSideContent = rightSideContent,
+            loading = true,
+        )
     }
 }

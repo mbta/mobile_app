@@ -7,10 +7,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -24,28 +24,33 @@ class GetRouteStopsTest {
 
     @Test
     fun testRouteStops() {
-        fun buildSomeRouteStops(): RouteStopsResponse {
-            val objects = ObjectCollectionBuilder()
-            return RouteStopsResponse(listOf(objects.stop().id, objects.stop().id))
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route {}
+        fun buildSomeRouteStops(directionId: Int): RouteStopsResult {
+            return RouteStopsResult(
+                route.id,
+                directionId,
+                listOf(objects.stop().id, objects.stop().id),
+            )
         }
-        val expectedRouteStops1 = buildSomeRouteStops()
-        val expectedRouteStops2 = buildSomeRouteStops()
+        val expectedRouteStops1 = buildSomeRouteStops(0)
+        val expectedRouteStops2 = buildSomeRouteStops(1)
 
         val routeStopsRepo =
             object : IRouteStopsRepository {
                 override suspend fun getRouteStops(
                     routeId: String,
                     directionId: Int,
-                ): ApiResult<RouteStopsResponse> {
+                ): ApiResult<RouteStopsResult> {
                     return if (directionId == 0) ApiResult.Ok(expectedRouteStops1)
                     else ApiResult.Ok(expectedRouteStops2)
                 }
             }
 
         var directionId by mutableIntStateOf(0)
-        var actualRouteStops: RouteStopsResponse? = expectedRouteStops1
+        var actualRouteStops: RouteStopsResult? = expectedRouteStops1
         composeTestRule.setContent {
-            actualRouteStops = getRouteStops("", directionId, "errorKey", routeStopsRepo)
+            actualRouteStops = getRouteStops(route.id, directionId, "errorKey", routeStopsRepo)
         }
 
         composeTestRule.waitUntil { actualRouteStops != null }
@@ -66,12 +71,12 @@ class GetRouteStopsTest {
                 override suspend fun getRouteStops(
                     routeId: String,
                     directionId: Int,
-                ): ApiResult<RouteStopsResponse> {
+                ): ApiResult<RouteStopsResult> {
                     sync.receive()
-                    return ApiResult.Ok(RouteStopsResponse(emptyList()))
+                    return ApiResult.Ok(RouteStopsResult(routeId, directionId, emptyList()))
                 }
             }
-        var actualRouteStops: RouteStopsResponse? = null
+        var actualRouteStops: RouteStopsResult? = null
 
         var directionId by mutableIntStateOf(0)
         composeTestRule.setContent {
