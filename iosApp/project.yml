@@ -102,6 +102,7 @@ targets:
     deploymentTarget: "16.4"
     sources: [iosApp]
     dependencies:
+      - package: CustomAlert
       - package: Firebase
         product: FirebaseAnalyticsWithoutAdIdSupport
       - package: MapboxMaps

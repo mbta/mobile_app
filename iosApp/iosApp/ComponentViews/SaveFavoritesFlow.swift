@@ -79,7 +79,9 @@ struct FavoriteConfirmationDialog: View {
     let proposedFavorites: [Int32: Bool]
     let updateFavorites: ([RouteStopDirection: Bool]) -> Void
     let onClose: () -> Void
+
     @State var showDialog = false
+    @State var favoritesToSave: [Int32: Bool] = [:]
     var body: some View {
         let headerText = if context == SaveFavoritesContext.Favorites { String(format: NSLocalizedString(
             "Add **%1$@** at **%2$@**",
@@ -96,16 +98,40 @@ struct FavoriteConfirmationDialog: View {
 
         VStack {}
             .onAppear {
+                favoritesToSave = proposedFavorites
                 print("SaveFavoritesFlow: showDialog to true")
                 showDialog = true
             }
             .customAlert(
-                Text(AttributedString.tryMarkdown(headerText)).bold(false),
                 isPresented: $showDialog,
                 content: {
                     VStack {
+                        Text(AttributedString.tryMarkdown(headerText))
                         if directions.count == 1, directions.first!.id != selectedDirection {
                             Text("\(DirectionLabel.directionNameFormatted(directions.first!)) service only")
+                        }
+                    }
+                },
+                actions: {
+                    MultiButton {
+                        Button {
+                            onClose()
+                        } label: {
+                            Text("Cancel")
+                        }
+
+                        Button {
+                            updateFavorites(favoritesToSave
+                                .reduce(into: [RouteStopDirection: Bool]()) { partialResult, entry in
+                                    partialResult[RouteStopDirection(
+                                        route: lineOrRoute.id,
+                                        stop: stop.id,
+                                        direction: entry.key
+                                    )] = entry.value
+                                })
+                            onClose()
+                        } label: {
+                            Text("Add")
                         }
                     }
                 }
