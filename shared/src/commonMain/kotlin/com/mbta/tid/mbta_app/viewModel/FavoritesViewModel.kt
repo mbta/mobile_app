@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,8 +37,11 @@ interface IFavoritesViewModel {
     fun setNow(now: Instant)
 }
 
-class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
-    MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
+class FavoritesViewModel(
+    private val favoritesUsecases: FavoritesUsecases,
+    private val coroutineDispatcher: CoroutineDispatcher,
+) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
+
     sealed interface Event {
         data object ReloadFavorites : Event
 
@@ -88,10 +92,14 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
-        LaunchedEffect(Unit) { favorites = favoritesUsecases.getRouteStopDirectionFavorites() }
+        LaunchedEffect(Unit) {
+            println("LaunchedEffect 0: set favorites")
+            favorites = favoritesUsecases.getRouteStopDirectionFavorites()
+        }
 
         LaunchedEffect(Unit) {
             events.collect { event ->
+                println("LaunchedEffect 1: event received ${event}")
                 when (event) {
                     Event.ReloadFavorites ->
                         favorites = favoritesUsecases.getRouteStopDirectionFavorites()
@@ -118,9 +126,15 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
             now,
             favorites,
         ) {
+            println(
+                "LaunchedEffect 2: ${stopIds} ${globalData.hashCode()} ${location} ${schedules.hashCode()} ${predictions.hashCode()} ${alerts.hashCode()} ${now} ${favorites.hashCode()}"
+            )
+
             if (stopIds == null || globalData == null || location == null) {
+                println("LaunchedEffect 2: set routeCardData null")
                 routeCardData = null
             } else if (stopIds.isEmpty()) {
+                println("LaunchedEffect 2: set routeCardData empty")
                 routeCardData = emptyList()
             } else {
                 val loadedRouteCardData =
@@ -134,15 +148,20 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         now,
                         emptySet(),
                         RouteCardData.Context.Favorites,
+                        coroutineDispatcher,
                     )
+                println("LaunchedEffect 2: set routeCardData actual")
                 routeCardData = filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
         }
 
         LaunchedEffect(stopIds, globalData, favorites) {
+            println("LaunchedEffect 3: ${stopIds} ${globalData.hashCode()} ${favorites.hashCode()}")
             if (stopIds == null || globalData == null) {
+                println("LaunchedEffect 3: set staticRouteCardData null")
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
+                println("LaunchedEffect 3: set staticRouteCardData empty")
                 staticRouteCardData = emptyList()
             } else {
                 val loadedRouteCardData =
@@ -152,7 +171,9 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         RouteCardData.Context.Favorites,
                         // not depending on now because it only matters for testing
                         now,
+                        coroutineDispatcher,
                     )
+                println("LaunchedEffect 3: set staticRouteCardData actual")
                 staticRouteCardData =
                     filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
