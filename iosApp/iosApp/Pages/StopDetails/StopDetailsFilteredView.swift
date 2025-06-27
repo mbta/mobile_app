@@ -29,6 +29,8 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @State var inSaveFavoritesFlow = false
+
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -140,12 +142,47 @@ struct StopDetailsFilteredView: View {
         default: nil
         }
         VStack(spacing: 8) {
+            if let stopData,
+               inSaveFavoritesFlow == true {
+                SaveFavorietsFlow(lineOrRoute: stopData.lineOrRoute,
+                                  stop: stopData.stop,
+                                  directions: stopData.directions,
+                                  selectedDirection: routeStopDirection.direction,
+                                  context: .StopDetails,
+                                  isFavorite: { rsd in
+                                      stopDetailsVM.isFavorite(
+                                          .Favorite(routeStopDirection: rsd),
+                                          enhancedFavorites: true
+                                      )
+                                  },
+                                  updateFavorites: { newFavorites in
+                                      Task {
+                                          await stopDetailsVM.updateFavorites(
+                                              .Favorites(updatedValues: newFavorites
+                                                  .mapValues { KotlinBoolean(bool: $0) }),
+                                              enhancedFavorites: true
+                                          )
+                                      }
+                                  },
+                                  onClose: {
+                                      print("closing inSaveFavoritesFlow")
+
+                                      inSaveFavoritesFlow = false
+                                  })
+            }
             StopDetailsFilteredHeader(
                 route: stopData?.lineOrRoute.sortRoute,
                 line: line,
                 stop: stop,
-                pinned: isFavorite,
-                onPin: toggleFavorite,
+                pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
+                onPin: {
+                    if favoriteBridge is FavoriteBridge.Pinned {
+                        toggleFavorite()
+                    } else {
+                        print("Triggering inSaveFavoritesFlow")
+                        inSaveFavoritesFlow = true
+                    }
+                },
                 onClose: { nearbyVM.goBack() }
             )
             DebugView {
