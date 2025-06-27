@@ -403,7 +403,9 @@ class FavoritesViewModelTest : KoinTest {
             )
 
         testViewModelFlow(viewModel).test {
+            println("before advance")
             advanceUntilIdle()
+            println("after advance")
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
@@ -456,7 +458,9 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(Position(0.0, 0.0))
 
         testViewModelFlow(viewModel).test {
+            println("before advance")
             advanceUntilIdle()
+            println("after advance")
             val item = expectMostRecentItem()
             assertNotNull(item.routeCardData)
             assertFalse(item.awaitingPredictionsAfterBackground)
@@ -509,7 +513,9 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
+            println("before advance")
             advanceUntilIdle()
+            println("after advance")
             assertEquals(
                 emptyList(),
                 expectMostRecentItem()
@@ -545,7 +551,9 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
+            println("before advance")
             advanceUntilIdle()
+            println("after advance")
             assertEquals(
                 listOf(stop1, stop2),
                 expectMostRecentItem().routeCardData!!.flatMap { it.stopData }.map { it.stop },
@@ -575,7 +583,9 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
+            println("before advance")
             advanceUntilIdle()
+            println("after advance")
             assertEquals(
                 listOf(now),
                 expectMostRecentItem().routeCardData!!.map { it.at }.distinct(),
