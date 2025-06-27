@@ -18,6 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
@@ -33,6 +34,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
@@ -108,7 +110,6 @@ class FavoritesViewModelTest : KoinTest {
     @Test
     fun `loads empty favorites`() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
-        setUpKoin(objects, dispatcher)
         setUpKoin(objects, dispatcher) {
             favorites = MockFavoritesRepository(Favorites(emptySet()))
         }
@@ -291,6 +292,7 @@ class FavoritesViewModelTest : KoinTest {
             )
 
         testViewModelFlow(viewModel).test {
+            advanceUntilIdle()
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
@@ -317,7 +319,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = expectedRealtimeData,
                     staticRouteCardData = expectedStaticData,
                 ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
+                expectMostRecentItem(),
             )
         }
     }
@@ -401,6 +403,7 @@ class FavoritesViewModelTest : KoinTest {
             )
 
         testViewModelFlow(viewModel).test {
+            advanceUntilIdle()
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
@@ -408,7 +411,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
                 ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
+                expectMostRecentItem(),
             )
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
@@ -453,14 +456,17 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(Position(0.0, 0.0))
 
         testViewModelFlow(viewModel).test {
-            assertFalse(
-                awaitItemSatisfying { it.routeCardData != null }.awaitingPredictionsAfterBackground
-            )
+            advanceUntilIdle()
+            val item = expectMostRecentItem()
+            assertNotNull(item.routeCardData)
+            assertFalse(item.awaitingPredictionsAfterBackground)
             assertTrue(predictionsConnected)
             viewModel.setActive(false, wasSentToBackground = true)
+            advanceUntilIdle()
             assertTrue(awaitItem().awaitingPredictionsAfterBackground)
             assertFalse(predictionsConnected)
             viewModel.setActive(true)
+            advanceUntilIdle()
             assertFalse(awaitItem().awaitingPredictionsAfterBackground)
             assertTrue(predictionsConnected)
         }
@@ -503,6 +509,7 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
+            advanceUntilIdle()
             assertEquals(
                 emptyList(),
                 expectMostRecentItem()
@@ -538,6 +545,7 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
+            advanceUntilIdle()
             assertEquals(
                 listOf(stop1, stop2),
                 expectMostRecentItem().routeCardData!!.flatMap { it.stopData }.map { it.stop },
@@ -550,7 +558,6 @@ class FavoritesViewModelTest : KoinTest {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `updates now`() = runTest {
         val now = Clock.System.now()
