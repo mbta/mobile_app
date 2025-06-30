@@ -141,7 +141,7 @@ struct StopDetailsFilteredView: View {
         case let .line(line): line.line
         default: nil
         }
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             if let stopData,
                inSaveFavoritesFlow == true {
                 SaveFavorietsFlow(lineOrRoute: stopData.lineOrRoute,
@@ -170,28 +170,31 @@ struct StopDetailsFilteredView: View {
                                       inSaveFavoritesFlow = false
                                   })
             }
-            StopDetailsFilteredHeader(
-                route: stopData?.lineOrRoute.sortRoute,
-                line: line,
-                stop: stop,
-                pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
-                onPin: {
-                    if favoriteBridge is FavoriteBridge.Pinned {
-                        toggleFavorite()
-                    } else {
-                        print("Triggering inSaveFavoritesFlow")
-                        inSaveFavoritesFlow = true
-                    }
-                },
-                onClose: { nearbyVM.goBack() }
-            )
-            DebugView {
-                Text(verbatim: "stop id: \(stopId)")
-            }.padding(.horizontal, 16)
-            ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+
+            VStack(spacing: 8) {
+                StopDetailsFilteredHeader(
+                    route: stopData?.lineOrRoute.sortRoute,
+                    line: line,
+                    stop: stop,
+                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
+                    onPin: {
+                        if favoriteBridge is FavoriteBridge.Pinned {
+                            toggleFavorite()
+                        } else {
+                            print("Triggering inSaveFavoritesFlow")
+                            inSaveFavoritesFlow = true
+                        }
+                    },
+                    onClose: { nearbyVM.goBack() }
+                )
+                DebugView {
+                    Text(verbatim: "stop id: \(stopId)")
+                }.padding(.horizontal, 16)
+                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 
     @ViewBuilder private func loadingBody() -> some View {

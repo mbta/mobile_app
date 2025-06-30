@@ -5,6 +5,7 @@
 //  Created by Kayla Brady on 6/24/25.
 //  Copyright © 2025 MBTA. All rights reserved.
 //
+import Collections
 import CustomAlert
 import Foundation
 import Shared
@@ -35,7 +36,6 @@ struct SaveFavorietsFlow: View {
     var body: some View {
         // Save automatically without confirmation modal
         if isUnFavoriting || isBusOneDirection, directions.contains(where: { $0.id == selectedDirection }) {
-            let _ = print("SaveFavoritesFlow: Automatic")
             VStack {}
                 .onAppear {
                     let rsd = RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection)
@@ -81,7 +81,7 @@ struct FavoriteConfirmationDialog: View {
     let onClose: () -> Void
 
     @State var showDialog = false
-    @State var favoritesToSave: [Int32: Bool] = [:]
+    @State var favoritesToSave: OrderedDictionary<Direction, Bool> = [:]
     var body: some View {
         let headerText = if context == SaveFavoritesContext.Favorites { String(format: NSLocalizedString(
             "Add **%1$@** at **%2$@**",
@@ -98,8 +98,9 @@ struct FavoriteConfirmationDialog: View {
 
         VStack {}
             .onAppear {
-                favoritesToSave = proposedFavorites
-                print("SaveFavoritesFlow: showDialog to true")
+                favoritesToSave = directions.reduce(into: OrderedDictionary()) { acc, direction in
+                    acc[direction] = proposedFavorites[direction.id] ?? false
+                }
                 showDialog = true
             }
             .customAlert(
@@ -107,10 +108,16 @@ struct FavoriteConfirmationDialog: View {
                 content: {
                     VStack {
                         Text(AttributedString.tryMarkdown(headerText))
+                            .font(Typography.body)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h1)
                         if directions.count == 1, directions.first!.id != selectedDirection {
                             Text("\(DirectionLabel.directionNameFormatted(directions.first!)) service only")
                         }
-                    }
+                        VStack(spacing: 0) {
+                            directionButtons
+                        }
+                    }.accessibilityAddTraits(.isModal)
                 },
                 actions: {
                     MultiButton {
@@ -126,15 +133,61 @@ struct FavoriteConfirmationDialog: View {
                                     partialResult[RouteStopDirection(
                                         route: lineOrRoute.id,
                                         stop: stop.id,
-                                        direction: entry.key
+                                        direction: entry.key.id
                                     )] = entry.value
                                 })
                             onClose()
                         } label: {
                             Text("Add")
-                        }
+                        }.disabled(favoritesToSave.values.allSatisfy { $0 == false })
                     }
                 }
             )
+    }
+
+    /**
+     Convenience struct to support iterating through the map of favoritesToSave entries via `ForEach`.
+     Cannot use an id of direction.id, as we need to rerender each row when the value of isFavorite changes.
+     */
+    struct DirectionFavorite: Hashable {
+        let direction: Direction
+        let isFavorite: Bool
+    }
+
+    @ViewBuilder var directionButtons: some View {
+        let directionValues: [DirectionFavorite] = favoritesToSave.map { DirectionFavorite(
+            direction: $0.key,
+            isFavorite: $0.value
+        ) }
+        VStack(spacing: 0) {
+            ForEach(
+                directionValues.enumerated().sorted(by: { $0.element.direction.id < $1.element.direction.id }),
+                id: \.element.hashValue
+            ) { index, directionValue in
+                Button(action: {
+                    favoritesToSave[directionValue.direction] = !directionValue.isFavorite
+                }) {
+                    VStack(spacing: 0) {
+                        HStack(spacing: 0) {
+                            DirectionLabel(direction: directionValue.direction)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                            Spacer()
+                            StarIcon(pinned: directionValue.isFavorite, color: .init(hex: lineOrRoute.backgroundColor))
+                        }
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        if index < directionValues.count - 1 {
+                            HaloSeparator()
+                        }
+                    }
+                }
+                .accessibilityAddTraits(directionValue.isFavorite ? [.isSelected] : [])
+                .fullFocusSize()
+                .background(Color.fill3)
+            }
+        }.withRoundedBorder()
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
     }
 }
