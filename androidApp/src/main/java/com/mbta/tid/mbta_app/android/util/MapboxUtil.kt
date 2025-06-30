@@ -1,12 +1,17 @@
 package com.mbta.tid.mbta_app.android.util
 
+import android.util.Log
 import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
+import com.mapbox.maps.RenderedQueryGeometry
+import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.plugin.viewport.CompletionListener
 import com.mapbox.maps.plugin.viewport.ViewportStatus
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import com.mapbox.maps.plugin.viewport.state.OverviewViewportState
+import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.math.pow
 import kotlin.math.round
@@ -62,3 +67,26 @@ fun Position.isRoughlyEqualTo(other: Position) =
 fun Point.toPosition() = Position(longitude = longitude(), latitude = latitude())
 
 fun Position.toPoint(): Point = Point.fromLngLat(longitude, latitude)
+
+fun MapView.getStopIdAt(point: Point, onComplete: (String) -> Unit) {
+    val pixel = this.mapboxMap.pixelForCoordinate(point)
+    this.mapboxMap.queryRenderedFeatures(
+        RenderedQueryGeometry(pixel),
+        RenderedQueryOptions(
+            listOf(
+                StopLayerGenerator.stopLayerId,
+                StopLayerGenerator.busLayerId,
+                StopLayerGenerator.stopTouchTargetLayerId,
+            ),
+            null,
+        ),
+    ) { result ->
+        if (result.isError) {
+            Log.e("Map", "Failed handling tap feature query:\n${result.error}")
+            return@queryRenderedFeatures
+        }
+        val tapped = result.value?.firstOrNull() ?: return@queryRenderedFeatures
+        val stopId = tapped.queriedFeature.feature.id() ?: return@queryRenderedFeatures
+        onComplete(stopId)
+    }
+}

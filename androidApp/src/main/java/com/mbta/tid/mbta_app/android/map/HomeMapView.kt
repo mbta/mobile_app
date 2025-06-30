@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.map
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -35,9 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
-import com.mapbox.maps.MapView
-import com.mapbox.maps.RenderedQueryGeometry
-import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.compose.DisposableMapEffect
@@ -64,6 +60,7 @@ import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
+import com.mbta.tid.mbta_app.android.util.getStopIdAt
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
@@ -136,31 +133,6 @@ fun HomeMapView(
         remember(selectedStop, stopFilter) {
             StopLayerGenerator.State(selectedStopId = selectedStop?.id, stopFilter = stopFilter)
         }
-
-    fun handleStopClick(map: MapView, point: Point): Boolean {
-        val pixel = map.mapboxMap.pixelForCoordinate(point)
-        map.mapboxMap.queryRenderedFeatures(
-            RenderedQueryGeometry(pixel),
-            RenderedQueryOptions(
-                listOf(
-                    StopLayerGenerator.stopLayerId,
-                    StopLayerGenerator.busLayerId,
-                    StopLayerGenerator.stopTouchTargetLayerId,
-                ),
-                null,
-            ),
-        ) { result ->
-            if (result.isError) {
-                Log.e("Map", "Failed handling tap feature query:\n${result.error}")
-                return@queryRenderedFeatures
-            }
-            val tapped = result.value?.firstOrNull() ?: return@queryRenderedFeatures
-            val stopId = tapped.queriedFeature.feature.id() ?: return@queryRenderedFeatures
-            analytics.tappedOnStop(stopId)
-            handleStopNavigation(stopId)
-        }
-        return false
-    }
 
     suspend fun positionViewportToStop() {
         if (selectedStop != null) {
@@ -394,7 +366,13 @@ fun HomeMapView(
                 val locationProvider = remember { PassthroughLocationProvider() }
 
                 MapEffect(true) { map ->
-                    map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+                    map.mapboxMap.addOnMapClickListener { point ->
+                        map.getStopIdAt(point) {
+                            analytics.tappedOnStop(it)
+                            handleStopNavigation(it)
+                        }
+                        false
+                    }
                     map.mapboxMap.setBounds(
                         CameraBoundsOptions.Builder().maxZoom(18.0).minZoom(6.0).build()
                     )
