@@ -14,12 +14,9 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.repositories.MockConfigRepository
-import com.mbta.tid.mbta_app.repositories.MockSentryRepository
-import com.mbta.tid.mbta_app.usecases.ConfigUseCase
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.utils.TestData
 import dev.mokkery.MockMode
 import dev.mokkery.answering.autofill.AutofillProvider
@@ -33,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 
@@ -46,10 +44,10 @@ class HomeMapViewTests {
 
         locationManager.hasPermission = false
 
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -64,6 +62,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
 
@@ -77,10 +76,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
 
         locationManager.hasPermission = true
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -95,6 +94,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
         composeTestRule
@@ -112,8 +112,7 @@ class HomeMapViewTests {
             )
 
         locationManager.hasPermission = true
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider =
             ViewportProvider(
                 MapViewportState(
@@ -121,7 +120,8 @@ class HomeMapViewTests {
                         CameraState(customLocation, EdgeInsets(0.0, 0.0, 0.0, 0.0), 0.0, 0.0, 0.0)
                 )
             )
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -136,6 +136,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
         composeTestRule
@@ -147,10 +148,10 @@ class HomeMapViewTests {
     fun testLocationAuthShownWhenNoPermissions(): Unit = runBlocking {
         val locationManager = MockLocationDataManager(null)
         locationManager.hasPermission = false
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -165,6 +166,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
         composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
@@ -176,10 +178,10 @@ class HomeMapViewTests {
 
         locationManager.hasPermission = true
 
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -194,6 +196,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
 
@@ -206,10 +209,10 @@ class HomeMapViewTests {
 
         locationManager.hasPermission = false
 
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -224,6 +227,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
 
@@ -236,10 +240,10 @@ class HomeMapViewTests {
 
         locationManager.hasPermission = false
 
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
-        viewModel.loadConfig()
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -254,6 +258,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
 
@@ -278,8 +283,9 @@ class HomeMapViewTests {
         AutofillProvider.forMockMode.types.register(Flow::class) { MutableStateFlow(null) }
 
         val mapVM = mock<IMapViewModel>(MockMode.autofill)
+        val configManager = mock<IMapboxConfigManager>(MockMode.autofill)
         every { mapVM.selectedStop } returns MutableStateFlow(TestData.getStop("121"))
-        every { mapVM.configLoadAttempted } returns MutableStateFlow(true)
+        every { configManager.configLoadAttempted } returns MutableStateFlow(true)
         every { mapVM.showRecenterButton } returns MutableStateFlow(false)
         every { mapVM.showTripCenterButton } returns MutableStateFlow(false)
 
@@ -303,6 +309,7 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = mapVM,
                 isSearchExpanded = false,
+                configManager,
             )
         }
 
@@ -312,9 +319,19 @@ class HomeMapViewTests {
 
     @Test
     fun testPlaceholderGrid(): Unit = runBlocking {
-        val viewModel =
-            MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
+        val viewModel = MapViewModel()
         val viewportProvider = ViewportProvider(MapViewportState())
+        open class MockConfigManager : IMapboxConfigManager {
+            private val _configLoadAttempted = MutableStateFlow(false)
+            override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
+            override var lastMapboxErrorTimestamp: Flow<Instant?> = MutableStateFlow(value = null)
+            var loadConfigCalledCount = 0
+
+            override suspend fun loadConfig() {
+                _configLoadAttempted.value = true
+            }
+        }
+        val configManager = MockConfigManager()
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -329,10 +346,11 @@ class HomeMapViewTests {
                 routeCardData = null,
                 viewModel = viewModel,
                 isSearchExpanded = false,
+                configManager,
             )
         }
         composeTestRule.onNodeWithTag("Empty map grid").assertIsDisplayed()
-        viewModel.loadConfig()
+        configManager.loadConfig()
         composeTestRule.onNodeWithTag("Empty map grid").assertIsNotDisplayed()
     }
 }

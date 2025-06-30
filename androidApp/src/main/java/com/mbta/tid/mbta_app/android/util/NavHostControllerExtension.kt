@@ -2,7 +2,8 @@ package com.mbta.tid.mbta_app.android.util
 
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
-import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 

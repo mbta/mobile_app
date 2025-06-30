@@ -5,34 +5,27 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mapbox.common.HttpServiceFactory
-import com.mapbox.common.MapboxOptions
-import com.mapbox.geojson.FeatureCollection
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
-import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
+import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.ConfigResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
-import com.mbta.tid.mbta_app.usecases.ConfigUseCase
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -43,20 +36,16 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface IMapViewModel {
-    var lastMapboxErrorTimestamp: Flow<Instant?>
     var railRouteSourceData: Flow<List<RouteSourceData>?>
     var stopSourceData: Flow<FeatureCollection?>
     var globalResponse: Flow<GlobalResponse?>
     var railRouteShapes: Flow<MapFriendlyRouteResponse?>
     val selectedVehicle: StateFlow<Vehicle?>
-    val configLoadAttempted: StateFlow<Boolean>
     val globalMapData: Flow<GlobalMapData?>
     val selectedStop: StateFlow<Stop?>
     val stopFilter: StateFlow<StopDetailsFilter?>
     val showRecenterButton: StateFlow<Boolean>
     val showTripCenterButton: StateFlow<Boolean>
-
-    suspend fun loadConfig()
 
     suspend fun globalMapData(now: Instant): GlobalMapData?
 
@@ -86,19 +75,7 @@ interface IMapViewModel {
     fun hideCenterButtons()
 }
 
-open class MapViewModel(
-    private val configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
-    val configureMapboxToken: (String) -> Unit = { token -> MapboxOptions.accessToken = token },
-    setHttpInterceptor: (MapHttpInterceptor?) -> Unit = { interceptor ->
-        HttpServiceFactory.setHttpServiceInterceptor(interceptor)
-    },
-) : ViewModel(), IMapViewModel, KoinComponent {
-    private val _configLoadAttempted = MutableStateFlow(false)
-    override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
-    private val _config = MutableStateFlow<ApiResult<ConfigResponse>?>(null)
-    var config: StateFlow<ApiResult<ConfigResponse>?> = _config
-    private val _lastMapboxErrorTimestamp = MutableStateFlow<Instant?>(null)
-    override var lastMapboxErrorTimestamp = _lastMapboxErrorTimestamp.debounce(1.seconds)
+open class MapViewModel : ViewModel(), IMapViewModel, KoinComponent {
     private val _railRouteSourceData = MutableStateFlow<List<RouteSourceData>?>(null)
     override var railRouteSourceData: Flow<List<RouteSourceData>?> = _railRouteSourceData
     private val _stopSourceData = MutableStateFlow<FeatureCollection?>(null)
@@ -123,7 +100,6 @@ open class MapViewModel(
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
 
     init {
-        setHttpInterceptor(MapHttpInterceptor { updateLastErrorTimestamp() })
         viewModelScope.launch { _railRouteShapes.value = fetchRailRouteShapes() }
         viewModelScope.launch { setUpSubscriptions() }
     }
@@ -135,20 +111,6 @@ open class MapViewModel(
             refreshStopFeatures(_globalMapData.value)
         }
     }
-
-    private fun updateLastErrorTimestamp() {
-        _lastMapboxErrorTimestamp.value = Clock.System.now()
-    }
-
-    override suspend fun loadConfig() =
-        withContext(Dispatchers.IO) {
-            val latestConfig = configUseCase.getConfig()
-            if (latestConfig is ApiResult.Ok) {
-                configureMapboxToken(latestConfig.data.mapboxPublicToken)
-            }
-            _config.value = latestConfig
-            _configLoadAttempted.value = true
-        }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
         withContext(Dispatchers.Default) {
@@ -172,8 +134,7 @@ open class MapViewModel(
 
     override suspend fun refreshStopFeatures(globalMapData: GlobalMapData?) {
         val routeLineData = railRouteSourceData.first() ?: return
-        _stopSourceData.value =
-            StopFeaturesBuilder.buildCollection(globalMapData, routeLineData).toMapbox()
+        _stopSourceData.value = StopFeaturesBuilder.buildCollection(globalMapData, routeLineData)
     }
 
     override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {

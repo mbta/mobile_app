@@ -24,7 +24,6 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -32,6 +31,7 @@ import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
+import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.testKoinApplication
@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -277,26 +278,19 @@ class MapAndSheetPageTest : KoinTest {
     fun testReloadsMapboxConfigOnError() {
 
         open class MockMapVM : IMapViewModel {
-            var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
-            override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
             override var railRouteSourceData: Flow<List<RouteSourceData>?> =
                 MutableStateFlow(value = null)
-            override var stopSourceData: Flow<FeatureCollection?> = MutableStateFlow(value = null)
+            override var stopSourceData: Flow<com.mbta.tid.mbta_app.map.style.FeatureCollection?> =
+                MutableStateFlow(value = null)
             override var globalResponse: Flow<GlobalResponse?> = MutableStateFlow(value = null)
             override var railRouteShapes: Flow<MapFriendlyRouteResponse?> =
                 MutableStateFlow(value = null)
             override val selectedVehicle: StateFlow<Vehicle?> = MutableStateFlow(value = null)
-            override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
             override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
             override val stopFilter: StateFlow<StopDetailsFilter?> = MutableStateFlow(value = null)
             override val showRecenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
             override val showTripCenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
-            var loadConfigCalledCount = 0
-
-            override suspend fun loadConfig() {
-                loadConfigCalledCount += 1
-            }
 
             override suspend fun globalMapData(now: Instant): GlobalMapData? {
                 return null
@@ -336,7 +330,19 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
+        open class MockConfigManager : IMapboxConfigManager {
+            var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
+            override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
+            override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
+            var loadConfigCalledCount = 0
+
+            override suspend fun loadConfig() {
+                loadConfigCalledCount += 1
+            }
+        }
         val mockMapVM = MockMapVM()
+
+        val mockConfigManager = MockConfigManager()
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -363,6 +369,7 @@ class MapAndSheetPageTest : KoinTest {
                         {},
                         bottomBar = {},
                         mapViewModel = mockMapVM,
+                        mapboxConfigManager = mockConfigManager,
                     )
                 }
             }
@@ -372,10 +379,10 @@ class MapAndSheetPageTest : KoinTest {
             hasContentDescription("Loading...", substring = true)
         )
 
-        composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 1 }
-        mockMapVM.mutableLastErrorTimestamp.value = Clock.System.now()
+        composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 1 }
+        mockConfigManager.mutableLastErrorTimestamp.value = Clock.System.now()
 
-        composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 2 }
+        composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 2 }
     }
 
     @Test

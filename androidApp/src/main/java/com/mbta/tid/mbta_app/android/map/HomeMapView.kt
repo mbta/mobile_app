@@ -51,13 +51,11 @@ import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.routeIcon
@@ -74,6 +72,7 @@ import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -96,6 +95,7 @@ fun HomeMapView(
     routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
     isSearchExpanded: Boolean,
+    mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: SheetRoutes? = rememberPrevious(current = currentNavEntry)
@@ -105,7 +105,8 @@ fun HomeMapView(
     val selectedStop by viewModel.selectedStop.collectAsState(null)
     val stopFilter by viewModel.stopFilter.collectAsState(null)
 
-    val configLoadAttempted by viewModel.configLoadAttempted.collectAsState(initial = false)
+    val configLoadAttempted by
+        mapboxConfigManager.configLoadAttempted.collectAsState(initial = false)
     val railRouteShapes by viewModel.railRouteShapes.collectAsState(initial = null)
     val stopSourceData by viewModel.stopSourceData.collectAsState(initial = null)
     val globalResponse by viewModel.globalResponse.collectAsState(initial = null)
@@ -226,13 +227,15 @@ fun HomeMapView(
 
     suspend fun handleNearbyNavRestoration() {
         if (
-            previousNavEntry is SheetRoutes.NearbyTransit &&
+            (previousNavEntry is SheetRoutes.NearbyTransit ||
+                previousNavEntry is SheetRoutes.Favorites) &&
                 currentNavEntry is SheetRoutes.StopDetails
         ) {
             viewportProvider.saveNearbyTransitViewport()
         } else if (
             previousNavEntry is SheetRoutes.StopDetails &&
-                currentNavEntry is SheetRoutes.NearbyTransit
+                (currentNavEntry is SheetRoutes.NearbyTransit ||
+                    currentNavEntry is SheetRoutes.Favorites)
         ) {
             refreshRouteLineSource()
             viewportProvider.restoreNearbyTransitViewport()
@@ -348,7 +351,11 @@ fun HomeMapView(
                     if (
                         selectedVehicle != null && selectedVehicle.id != previousSelectedVehicleId
                     ) {
-                        viewportProvider.vehicleOverview(selectedVehicle, selectedStop, density)
+                        viewportProvider.vehicleOverview(
+                            selectedVehicle,
+                            selectedStop,
+                            density.density,
+                        )
                     }
                 }
                 LaunchedEffect(stopLayerGeneratorState) {
@@ -421,9 +428,7 @@ fun HomeMapView(
                 MapEffect(locationDataManager.hasPermission) { map ->
                     if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
 
-                        viewportProvider.follow(
-                            DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
-                        )
+                        viewportProvider.follow(0)
                         layerManager.run { resetPuckPosition() }
                     }
                 }
@@ -536,7 +541,7 @@ fun HomeMapView(
                                         viewportProvider.vehicleOverview(
                                             selectedVehicle,
                                             selectedStop,
-                                            density,
+                                            density.density,
                                         )
                                     }
                                 },
