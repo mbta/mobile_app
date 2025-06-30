@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation("org.cyclonedx:cyclonedx-core-java:10.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 spotless {
