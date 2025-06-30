@@ -146,7 +146,8 @@ struct StopDetailsFilteredView: View {
                inSaveFavoritesFlow == true {
                 SaveFavorietsFlow(lineOrRoute: stopData.lineOrRoute,
                                   stop: stopData.stop,
-                                  directions: stopData.directions,
+                                  directions: stopData.directions
+                                      .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
                                   selectedDirection: routeStopDirection.direction,
                                   context: .StopDetails,
                                   isFavorite: { rsd in
