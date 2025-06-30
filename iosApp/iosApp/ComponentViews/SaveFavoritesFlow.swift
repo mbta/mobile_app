@@ -113,6 +113,9 @@ struct FavoriteConfirmationDialog: View {
                             .accessibilityHeading(.h1)
                         if directions.count == 1, directions.first!.id != selectedDirection {
                             Text("\(DirectionLabel.directionNameFormatted(directions.first!)) service only")
+                                .font(Typography.footnoteSemibold)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 8)
                         }
                         VStack(spacing: 0) {
                             directionButtons
