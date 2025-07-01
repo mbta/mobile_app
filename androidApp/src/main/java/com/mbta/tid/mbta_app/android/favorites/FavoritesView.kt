@@ -94,7 +94,7 @@ fun FavoritesView(
         ) {
             Text(
                 text = stringResource(R.string.favorites_link),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.padding(start = 8.dp).weight(1f),
                 style = Typography.title2Bold,
             )
             Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {

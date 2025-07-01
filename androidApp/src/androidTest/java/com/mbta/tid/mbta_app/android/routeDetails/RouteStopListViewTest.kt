@@ -71,7 +71,8 @@ class RouteStopListViewTest {
         }
 
         val clicks = mutableListOf<RouteDetailsStopList.Entry>()
-        var closed = false
+        var backTapped = false
+        var closeTapped = false
 
         val koin =
             testKoinApplication(objects) {
@@ -90,8 +91,8 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = clicks::add,
-                    onBack = {},
-                    onClose = { closed = true },
+                    onBack = { backTapped = true },
+                    onClose = { closeTapped = true },
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { context, _ ->
                         when (context) {
@@ -131,8 +132,11 @@ class RouteStopListViewTest {
             clicks,
         )
 
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        assertTrue(backTapped)
+
         composeTestRule.onNodeWithContentDescription("Close").performClick()
-        assertTrue(closed)
+        assertTrue(closeTapped)
     }
 
     @Test
