@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -42,6 +41,7 @@ import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SearchInput
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -99,11 +99,7 @@ fun RoutePickerView(
                 if (path !is RoutePickerPath.Root)
                     ActionButton(
                         ActionButtonKind.Back,
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = colorResource(R.color.text).copy(alpha = 0.6f),
-                                contentColor = colorResource(R.color.fill2),
-                            ),
+                        colors = ButtonDefaults.contrastTranslucent(),
                         action = onBack,
                     )
                 Text(
@@ -125,7 +121,7 @@ fun RoutePickerView(
                     color = path.textColor,
                 )
             }
-            NavTextButton(stringResource(R.string.done), onTap = onClose)
+            NavTextButton(stringResource(R.string.done), action = onClose)
         }
         ErrorBanner(errorBannerViewModel, Modifier.padding(start = 14.dp, top = 6.dp, end = 14.dp))
         AnimatedVisibility(searchVMState is SearchRoutesViewModel.State.Error) {
