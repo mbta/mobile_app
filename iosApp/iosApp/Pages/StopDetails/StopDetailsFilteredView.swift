@@ -144,12 +144,12 @@ struct StopDetailsFilteredView: View {
         VStack(spacing: 0) {
             if let stopData,
                inSaveFavoritesFlow == true {
-                SaveFavorietsFlow(lineOrRoute: stopData.lineOrRoute,
+                SaveFavoritesFlow(lineOrRoute: stopData.lineOrRoute,
                                   stop: stopData.stop,
                                   directions: stopData.directions
                                       .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
                                   selectedDirection: routeStopDirection.direction,
-                                  context: .StopDetails,
+                                  context: .stopDetails,
                                   isFavorite: { rsd in
                                       stopDetailsVM.isFavorite(
                                           .Favorite(routeStopDirection: rsd),
