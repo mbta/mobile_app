@@ -23,6 +23,13 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.IMapViewModel
+import com.mbta.tid.mbta_app.viewModel.MapViewModel
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -66,7 +73,8 @@ class MapAndSheetPageTest {
 
         val locationDataManager = MockLocationDataManager(stop1.position)
         val viewportProvider = ViewportProvider(MapViewportState())
-
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
         composeTestRule.setContent {
             KoinContext(koin.koin) {
                 MapAndSheetPage(
@@ -87,6 +95,7 @@ class MapAndSheetPageTest {
                     showNavBar = {},
                     hideNavBar = {},
                     bottomBar = {},
+                    mapViewModel = mockMapVM,
                 )
             }
         }
