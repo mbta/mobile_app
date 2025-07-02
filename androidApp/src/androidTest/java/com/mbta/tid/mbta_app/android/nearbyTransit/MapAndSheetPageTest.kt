@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import android.Manifest
-import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -19,18 +18,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
-import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
-import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
@@ -39,23 +35,23 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.map.RouteSourceData
-import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SheetRoutes
-import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
+import com.mbta.tid.mbta_app.viewModel.IMapViewModel
+import com.mbta.tid.mbta_app.viewModel.MapViewModel
+import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
+import dev.mokkery.mock
 import dev.mokkery.spy
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
@@ -277,59 +273,6 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testReloadsMapboxConfigOnError() {
 
-        open class MockMapVM : IMapViewModel {
-            override var railRouteSourceData: Flow<List<RouteSourceData>?> =
-                MutableStateFlow(value = null)
-            override var stopSourceData: Flow<com.mbta.tid.mbta_app.map.style.FeatureCollection?> =
-                MutableStateFlow(value = null)
-            override var globalResponse: Flow<GlobalResponse?> = MutableStateFlow(value = null)
-            override var railRouteShapes: Flow<MapFriendlyRouteResponse?> =
-                MutableStateFlow(value = null)
-            override val selectedVehicle: StateFlow<Vehicle?> = MutableStateFlow(value = null)
-            override val globalMapData: Flow<GlobalMapData?> = MutableStateFlow(value = null)
-            override val selectedStop: StateFlow<Stop?> = MutableStateFlow(value = null)
-            override val stopFilter: StateFlow<StopDetailsFilter?> = MutableStateFlow(value = null)
-            override val showRecenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
-            override val showTripCenterButton: StateFlow<Boolean> = MutableStateFlow(value = false)
-
-            override suspend fun globalMapData(now: Instant): GlobalMapData? {
-                return null
-            }
-
-            override suspend fun refreshGlobalMapData(now: Instant) {}
-
-            override suspend fun refreshRouteLineData(globalMapData: GlobalMapData?) {}
-
-            override suspend fun refreshStopFeatures(globalMapData: GlobalMapData?) {}
-
-            override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
-
-            override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {}
-
-            override fun setSelectedVehicle(selectedVehicle: Vehicle?) {}
-
-            override fun setSelectedStop(stop: Stop?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun setStopFilter(stopFilter: StopDetailsFilter?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun hideCenterButtons() {
-                TODO("Not yet implemented")
-            }
-
-            override fun updateCenterButtonVisibility(
-                currentLocation: Location?,
-                locationDataManager: LocationDataManager,
-                isSearchExpanded: Boolean,
-                viewportProvider: IViewportProvider,
-            ) {
-                TODO("Not yet implemented")
-            }
-        }
-
         open class MockConfigManager : IMapboxConfigManager {
             var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
             override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
@@ -340,8 +283,8 @@ class MapAndSheetPageTest : KoinTest {
                 loadConfigCalledCount += 1
             }
         }
-        val mockMapVM = MockMapVM()
-
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
         val mockConfigManager = MockConfigManager()
 
         composeTestRule.setContent {
@@ -435,8 +378,8 @@ class MapAndSheetPageTest : KoinTest {
 
         val startLocation = Position(0.0, 0.0)
         val locationDataManager = MockLocationDataManager(startLocation)
-        locationDataManager.hasPermission = true
-
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
         val viewportProvider =
             spy<IViewportProvider>(
                 ViewportProvider(
@@ -466,7 +409,7 @@ class MapAndSheetPageTest : KoinTest {
         everySuspend { viewportProvider.follow(any()) } calls { followCallCount += 1 }
 
         val koinApplication = testKoinApplication(builder, clock = mockClock)
-
+        locationDataManager.hasPermission = true
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -492,6 +435,7 @@ class MapAndSheetPageTest : KoinTest {
                         {},
                         {},
                         bottomBar = {},
+                        mockMapVM,
                     )
                 }
             }

@@ -60,13 +60,14 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.util.getStopIdAt
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.toPoint
+import com.mbta.tid.mbta_app.dependencyInjection.RepositoryDI
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.State
 import io.github.dellisd.spatialk.geojson.Position
@@ -87,9 +88,10 @@ fun HomeMapView(
     routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
     isSearchExpanded: Boolean,
-    mapboxConfigManager: MapboxConfigManager = koinInject(),
-    globalResponse: GlobalResponse?,
+    mapboxConfigManager: IMapboxConfigManager = koinInject(),
+    globalRepository: IGlobalRepository = RepositoryDI().global,
 ) {
+    val globalData by globalRepository.state.collectAsState()
     val state by viewModel.models.collectAsState()
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
 
@@ -201,7 +203,7 @@ fun HomeMapView(
                 MapEffect(true) { map ->
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
-                            globalResponse?.getStop(it)?.let { stop ->
+                            globalData?.getStop(it)?.let { stop ->
                                 viewModel.selectedStop(stop, null)
                             }
                             handleStopNavigation(it)
@@ -290,7 +292,7 @@ fun HomeMapView(
                     }
 
                 for (vehicle in allVehicles) {
-                    val route = globalResponse?.getRoute(vehicle.routeId) ?: continue
+                    val route = globalData?.getRoute(vehicle.routeId) ?: continue
                     val isSelected = vehicle.id == selectedVehicle?.id
                     ViewAnnotation(
                         options =
@@ -346,19 +348,21 @@ fun HomeMapView(
                 if (!following && locationDataManager.hasPermission) {
                     RecenterButton(
                         Icons.Default.LocationOn,
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp).testTag("recenterButton"),
                         onClick = { viewModel.recenter() },
                     )
                 }
 
                 if (showTripRecenterButton) {
                     if (selectedVehicle != null) {
-                        val routeType = globalResponse?.getRoute(selectedVehicle.routeId)?.type
+                        val routeType = globalData?.getRoute(selectedVehicle.routeId)?.type
                         if (routeType != null) {
                             RecenterButton(
                                 routeIcon(routeType).first,
                                 onClick = { viewModel.recenter() },
-                                modifier = Modifier.padding(horizontal = 16.dp),
+                                modifier =
+                                    Modifier.padding(horizontal = 16.dp)
+                                        .testTag("tripRecenterButton"),
                             )
                         }
                     }

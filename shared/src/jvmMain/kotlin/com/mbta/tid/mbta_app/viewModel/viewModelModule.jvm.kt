@@ -7,5 +7,5 @@ actual fun viewModelModule() = module {
     singleOf(::FavoritesViewModel)
     singleOf(::SearchRoutesViewModel)
     singleOf(::SearchViewModel)
-    singleOf<IMapViewModel>(::MapViewModel)
+    singleOf(::MapViewModel)
 }

@@ -38,7 +38,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import com.mbta.tid.mbta_app.viewModel.IMapViewModel
+import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -48,7 +48,7 @@ import org.koin.compose.koinInject
 fun ContentView(
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
-    mapViewModel: IMapViewModel = koinInject(),
+    mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
     val navController = rememberNavController()

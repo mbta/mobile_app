@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.mbta.tid.mbta_app.dependencyInjection.RepositoryDI
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
@@ -71,10 +70,9 @@ interface IMapViewModel {
 }
 
 class MapViewModel(
-    private val globalRepository: IGlobalRepository = RepositoryDI().global,
-    private val railRouteShapeRepository: IRailRouteShapeRepository =
-        RepositoryDI().railRouteShapes,
-    private val stopRepository: IStopRepository = RepositoryDI().stop,
+    private val globalRepository: IGlobalRepository,
+    private val railRouteShapeRepository: IRailRouteShapeRepository,
+    private val stopRepository: IStopRepository,
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
 
     private lateinit var viewportManager: ViewportManager
@@ -152,8 +150,10 @@ class MapViewModel(
             }
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { railRouteShapes = fetchRailRouteShapes() }
-        LaunchedEffect(now) { globalMapData = globalMapData(now, globalData, alerts) }
-        LaunchedEffect(railRouteShapes, globalData, globalMapData, alerts) {
+        LaunchedEffect(now, globalData, alerts) {
+            globalMapData = globalMapData(now, globalData, alerts)
+        }
+        LaunchedEffect(railRouteShapes, globalData, globalMapData) {
             railRouteSourceData = routeLineData(globalData, globalMapData, railRouteShapes)
             refreshRouteLineSource(
                 globalData,
@@ -164,9 +164,8 @@ class MapViewModel(
                 stopFilter,
                 layerManager,
             )
-            layerManager?.updateStopSourceData(
-                StopFeaturesBuilder.buildCollection(globalMapData, railRouteSourceData.orEmpty())
-            )
+            val stopSourceData = stopSourceData(globalMapData, railRouteSourceData)
+            layerManager?.updateStopSourceData(stopSourceData)
         }
         LaunchedEffect(null) {
             events.collect { event ->
@@ -178,6 +177,7 @@ class MapViewModel(
                     is Event.NavChanged -> {
                         state =
                             handleNavChange(
+                                state,
                                 event.currentNavEntry,
                                 previousNavEntry,
                                 globalData,
@@ -225,6 +225,7 @@ class MapViewModel(
                             isDarkMode = isDarkMode,
                             layerManager,
                         )
+                        viewportManager.saveNearbyTransitViewport()
                         viewportManager.stopCenter(event.stop)
                         state = State.StopSelected(event.stop, event.stopFilter)
                     }
@@ -322,6 +323,7 @@ class MapViewModel(
     }
 
     private suspend fun handleNavChange(
+        currentState: State,
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
         globalResponse: GlobalResponse?,
@@ -332,7 +334,21 @@ class MapViewModel(
         stopFilter: StopDetailsFilter?,
         layerManager: IMapLayerManager?,
     ): State {
-        handleNavRestoration(
+        val stopDetails =
+            when (currentNavEntry) {
+                is SheetRoutes.StopDetails -> currentNavEntry
+                else -> null
+            }
+        val stop = globalResponse?.getStop(stopDetails?.stopId)
+        val newState =
+            if (stopDetails == null) {
+                State.Unfiltered
+            } else {
+                State.StopSelected(stop, stopDetails.stopFilter)
+            }
+        // If we're already in this state, there's no need to perform these actions again
+        if (newState == currentState) return currentState
+        handleViewportRestoration(
             currentNavEntry,
             previousNavEntry,
             globalResponse,
@@ -343,19 +359,10 @@ class MapViewModel(
             stopFilter,
             layerManager,
         )
-        val stopDetails =
-            when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry
-                else -> null
-            }
-        if (stopDetails == null) {
-            return State.Unfiltered
-        }
-        val stop = globalResponse?.getStop(stopDetails.stopId)
-        return State.StopSelected(stop, stopDetails.stopFilter)
+        return newState
     }
 
-    private suspend fun handleNavRestoration(
+    private suspend fun handleViewportRestoration(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
         globalResponse: GlobalResponse?,
@@ -457,6 +464,14 @@ class MapViewModel(
             )
         }
     }
+
+    private suspend fun stopSourceData(
+        globalMapData: GlobalMapData?,
+        railRouteSourceData: List<RouteSourceData>?,
+    ) =
+        withContext(Dispatchers.Default) {
+            StopFeaturesBuilder.buildCollection(globalMapData, railRouteSourceData.orEmpty())
+        }
 
     private suspend fun stopLayerGeneratorState(
         stopId: String?,

@@ -55,13 +55,10 @@ import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
-import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.map.HomeMapView
-import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
-import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
@@ -129,7 +126,7 @@ fun MapAndSheetPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel,
+    mapViewModel: IMapViewModel = koinInject(),
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
@@ -662,7 +659,6 @@ fun MapAndSheetPage(
                         viewModel = mapViewModel,
                         isSearchExpanded = searchExpanded,
                         mapboxConfigManager = mapboxConfigManager,
-                        nearbyTransit.globalResponse,
                     )
                 }
             }
