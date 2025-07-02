@@ -103,7 +103,7 @@ class HomeMapViewTests {
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
                 routeCardData = null,
-                viewModel = mock<IMapViewModel>(MockMode.autofill),
+                viewModel = viewModel,
                 isSearchExpanded = false,
                 configManager,
             )
