@@ -359,4 +359,28 @@ final class AlertCardTests: XCTestCase {
             try image.actualImage().name() == "fa-circle-info"
         }))
     }
+
+    func testSingleTrackingInfoDelay() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .delay
+            alert.header = "header"
+            alert.severity = 1
+            alert.cause = .singleTracking
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: nil,
+            spec: .delay,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Single Tracking"))
+
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
+    }
 }

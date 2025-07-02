@@ -37,74 +37,9 @@ struct AlertDetails: View {
         alert.effect == .elevatorClosure
     }
 
-    private var effectLabel: String {
-        // Hack to strip formatting
-        String(AttributedString.tryMarkdown(FormattedAlert(alert: alert).effect).characters)
-    }
+    private var effectLabel: String { alert.effectString }
 
-    private var causeLabel: String? {
-        switch alert.cause {
-        case .accident: NSLocalizedString("Accident", comment: "Possible alert cause")
-        case .amtrak: NSLocalizedString("Amtrak", comment: "Possible alert cause")
-        case .amtrakTrainTraffic: NSLocalizedString("Amtrak Train Traffic", comment: "Possible alert cause")
-        case .anEarlierMechanicalProblem: NSLocalizedString(
-                "An Earlier Mechanical Problem",
-                comment: "Possible alert cause"
-            )
-        case .anEarlierSignalProblem: NSLocalizedString("An Earlier Signal Problem", comment: "Possible alert cause")
-        case .autosImpedingService: NSLocalizedString("Autos Impeding Service", comment: "Possible alert cause")
-        case .coastGuardRestriction: NSLocalizedString("Coast Guard Restriction", comment: "Possible alert cause")
-        case .congestion: NSLocalizedString("Congestion", comment: "Possible alert cause")
-        case .construction: NSLocalizedString("Construction", comment: "Possible alert cause")
-        case .crossingIssue: NSLocalizedString("Crossing Issue", comment: "Possible alert cause")
-        case .crossingMalfunction: NSLocalizedString("Crossing Malfunction", comment: "Possible alert cause")
-        case .demonstration: NSLocalizedString("Demonstration", comment: "Possible alert cause")
-        case .disabledBus: NSLocalizedString("Disabled Bus", comment: "Possible alert cause")
-        case .disabledTrain: NSLocalizedString("Disabled Train", comment: "Possible alert cause")
-        case .drawbridgeBeingRaised: NSLocalizedString("Drawbridge Being Raised", comment: "Possible alert cause")
-        case .electricalWork: NSLocalizedString("Electrical Work", comment: "Possible alert cause")
-        case .fire: NSLocalizedString("Fire", comment: "Possible alert cause")
-        case .fireDepartmentActivity: NSLocalizedString("Fire Department Activity", comment: "Possible alert cause")
-        case .flooding: NSLocalizedString("Flooding", comment: "Possible alert cause")
-        case .fog: NSLocalizedString("Fog", comment: "Possible alert cause")
-        case .freightTrainInterference: NSLocalizedString("Freight Train Interference", comment: "Possible alert cause")
-        case .hazmatCondition: NSLocalizedString("Hazmat Condition", comment: "Possible alert cause")
-        case .heavyRidership: NSLocalizedString("Heavy Ridership", comment: "Possible alert cause")
-        case .highWinds: NSLocalizedString("High Winds", comment: "Possible alert cause")
-        case .holiday: NSLocalizedString("Holiday", comment: "Possible alert cause")
-        case .hurricane: NSLocalizedString("Hurricane", comment: "Possible alert cause")
-        case .iceInHarbor: NSLocalizedString("Ice In Harbor", comment: "Possible alert cause")
-        case .maintenance: NSLocalizedString("Maintenance", comment: "Possible alert cause")
-        case .mechanicalIssue: NSLocalizedString("Mechanical Issue", comment: "Possible alert cause")
-        case .mechanicalProblem: NSLocalizedString("Mechanical Problem", comment: "Possible alert cause")
-        case .medicalEmergency: NSLocalizedString("Medical Emergency", comment: "Possible alert cause")
-        case .parade: NSLocalizedString("Parade", comment: "Possible alert cause")
-        case .policeAction: NSLocalizedString("Police Action", comment: "Possible alert cause")
-        case .policeActivity: NSLocalizedString("Police Activity", comment: "Possible alert cause")
-        case .powerProblem: NSLocalizedString("Power Problem", comment: "Possible alert cause")
-        case .railDefect: NSLocalizedString("Rail Defect", comment: "Possible alert cause")
-        case .severeWeather: NSLocalizedString("Severe Weather", comment: "Possible alert cause")
-        case .signalIssue: NSLocalizedString("Signal Issue", comment: "Possible alert cause")
-        case .signalProblem: NSLocalizedString("Signal Problem", comment: "Possible alert cause")
-        case .singleTracking: NSLocalizedString("Single Tracking", comment: "Possible alert cause")
-        case .slipperyRail: NSLocalizedString("Slippery Rail", comment: "Possible alert cause")
-        case .snow: NSLocalizedString("Snow", comment: "Possible alert cause")
-        case .specialEvent: NSLocalizedString("Special Event", comment: "Possible alert cause")
-        case .speedRestriction: NSLocalizedString("Speed Restriction", comment: "Possible alert cause")
-        case .strike: NSLocalizedString("Strike", comment: "Possible alert cause")
-        case .switchIssue: NSLocalizedString("Switch Issue", comment: "Possible alert cause")
-        case .switchProblem: NSLocalizedString("Switch Problem", comment: "Possible alert cause")
-        case .technicalProblem: NSLocalizedString("Technical Problem", comment: "Possible alert cause")
-        case .tieReplacement: NSLocalizedString("Tie Replacement", comment: "Possible alert cause")
-        case .trackProblem: NSLocalizedString("Track Problem", comment: "Possible alert cause")
-        case .trackWork: NSLocalizedString("Track Work", comment: "Possible alert cause")
-        case .traffic: NSLocalizedString("Traffic", comment: "Possible alert cause")
-        case .trainTraffic: NSLocalizedString("Train Traffic", comment: "Possible alert cause")
-        case .unrulyPassenger: NSLocalizedString("Unruly Passenger", comment: "Possible alert cause")
-        case .weather: NSLocalizedString("Weather", comment: "Possible alert cause")
-        default: nil
-        }
-    }
+    private var causeLabel: String? { alert.causeString }
 
     private var affectedStopsLabel: AttributedString {
         AttributedString.tryMarkdown(String(format: NSLocalizedString(

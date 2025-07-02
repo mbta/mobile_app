@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
+import com.mbta.tid.mbta_app.map.MapTestDataHelper.global
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -14,6 +15,7 @@ import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -520,5 +522,41 @@ class GlobalResponseTest {
         val ferryRoutes = global.getRoutesForPicker(RoutePickerPath.Ferry)
         assertTrue(ferryRoutes.isNotEmpty())
         assertTrue(ferryRoutes.all { it.type == RouteType.FERRY })
+    }
+
+    @Test
+    fun `getPatternsFor stop + route includes only patterns for that route`() {
+        val objects = TestData.clone()
+
+        val allPatternsForStop = global.getPatternsFor("place-haecl")
+        assertTrue(allPatternsForStop.map { it.routeId }.any { it != "Orange" })
+        val orangePatterns =
+            global.getPatternsFor(
+                "place-haecl",
+                RouteCardData.LineOrRoute.Route(objects.getRoute("Orange")),
+            )
+        assertFalse(orangePatterns.map { it.routeId }.any { it != "Orange" })
+    }
+
+    @Test
+    fun `getPatternsFor stop + line includes only patterns for that route`() {
+        val objects = TestData.clone()
+
+        val allPatternsForStop = global.getPatternsFor("place-haecl")
+        assertTrue(allPatternsForStop.map { it.routeId }.any { it == "Orange" })
+        val greenPatterns =
+            global.getPatternsFor(
+                "place-haecl",
+                RouteCardData.LineOrRoute.Line(
+                    objects.getLine("line-Green"),
+                    setOf(
+                        objects.getRoute("Green-B"),
+                        objects.getRoute("Green-C"),
+                        objects.getRoute("Green-D"),
+                        objects.getRoute("Green-E"),
+                    ),
+                ),
+            )
+        assertTrue(greenPatterns.map { it.routeId }.all { it.startsWith("Green-") })
     }
 }

@@ -26,11 +26,12 @@ fun ScrollSeparatorColumn(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     haloColor: Color = colorResource(R.color.halo),
     scrollState: ScrollState = rememberScrollState(),
+    scrollEnabled: Boolean = true,
     content: @Composable (ColumnScope.() -> Unit),
 ) {
     Box(Modifier, Alignment.TopCenter) {
         Column(
-            Modifier.verticalScroll(scrollState).then(modifier),
+            Modifier.verticalScroll(scrollState, scrollEnabled).then(modifier),
             verticalArrangement,
             horizontalAlignment,
             content,

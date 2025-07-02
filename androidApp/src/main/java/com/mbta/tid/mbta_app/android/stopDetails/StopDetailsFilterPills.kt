@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.contrast
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -127,11 +128,7 @@ fun StopDetailsFilterPills(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 onClick = onClearFilter,
                 shape = RoundedCornerShape(8.dp),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.contrast),
-                        contentColor = colorResource(R.color.fill1),
-                    ),
+                colors = ButtonDefaults.contrast(),
                 border = BorderStroke(2.dp, colorResource(R.color.halo)),
             ) {
                 Text(

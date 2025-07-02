@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.util.fetchApi
-import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +26,7 @@ class RouteStopsFetcher(
         routeId: String,
         directionId: Int,
         errorKey: String,
-        onSuccess: (RouteStopsResponse) -> Unit,
+        onSuccess: (RouteStopsResult) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             fetchApi(
@@ -46,8 +46,8 @@ class RouteStopsViewModel(
 ) : ViewModel() {
 
     private val routeStopsFetcher = RouteStopsFetcher(routeStopsRepository, errorBannerRepository)
-    private val _routeStops = MutableStateFlow<RouteStopsResponse?>(null)
-    val routeStops: StateFlow<RouteStopsResponse?> = _routeStops
+    private val _routeStops = MutableStateFlow<RouteStopsResult?>(null)
+    val routeStops: StateFlow<RouteStopsResult?> = _routeStops
 
     fun getRouteStops(routeId: String, directionId: Int, errorKey: String) {
         _routeStops.value = null
@@ -71,7 +71,7 @@ fun getRouteStops(
     errorKey: String,
     routeStopsRepository: IRouteStopsRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
-): RouteStopsResponse? {
+): RouteStopsResult? {
     val viewModel: RouteStopsViewModel =
         viewModel(
             factory = RouteStopsViewModel.Factory(routeStopsRepository, errorBannerRepository)

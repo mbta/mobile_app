@@ -143,19 +143,96 @@ class UpcomingTripViewTest {
         val shortTime = formatTime(instant)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "All aboard"))
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithStatus(instant, "All aboard")
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
             )
         }
+
         composeTestRule
-            .onNodeWithText(formatTime(instant))
+            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
             .assertIsDisplayed()
-            .assertContentDescriptionContains("arriving at $shortTime", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText("All aboard").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("train arriving at $shortTime, All aboard")
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("All aboard", useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test
-    fun testUpcomingTripViewWithSomeAsTimeWithSchedule() {
+    fun testUpcomingTripViewWithSomeAsTimeWithStatusDelay() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Delay")),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithStatusLate() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Late")),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleDelay() {
+        val predictionInstant = Instant.fromEpochSeconds(1722535784)
+        val predictionShortTime = formatTime(predictionInstant)
+
+        val scheduleInstant = Instant.fromEpochSeconds(1722535384)
+        val scheduleShortTime = formatTime(scheduleInstant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription(
+                "$scheduleShortTime train delayed, arriving at $predictionShortTime"
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleEarly() {
         val predictionInstant = Instant.fromEpochSeconds(1722535384)
         val predictionShortTime = formatTime(predictionInstant)
 
@@ -165,15 +242,89 @@ class UpcomingTripViewTest {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
                     TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
-                )
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant))
+            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
             .assertIsDisplayed()
-            .assertContentDescriptionContains("arriving at $predictionShortTime", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText(formatTime(scheduleInstant)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription(
+                "$scheduleShortTime train early, arriving at $predictionShortTime"
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleDelayOther() {
+        val predictionInstant = Instant.fromEpochSeconds(1722535784)
+        val predictionShortTime = formatTime(predictionInstant)
+
+        val scheduleInstant = Instant.fromEpochSeconds(1722535384)
+        val scheduleShortTime = formatTime(scheduleInstant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+                isFirst = false,
+            )
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription(
+                "and $scheduleShortTime train delayed, arriving at $predictionShortTime"
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(predictionShortTime, useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(scheduleShortTime, useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithScheduleEarlyOther() {
+        val predictionInstant = Instant.fromEpochSeconds(1722535384)
+        val predictionShortTime = formatTime(predictionInstant)
+
+        val scheduleInstant = Instant.fromEpochSeconds(1722535784)
+        val scheduleShortTime = formatTime(scheduleInstant)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription(
+                "and $scheduleShortTime train early, arriving at $predictionShortTime"
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -210,7 +361,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)))
         }
-        composeTestRule.onNodeWithText("1 hr 5 min").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("1 hr 5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 hr 5 min", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -218,7 +373,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)))
         }
-        composeTestRule.onNodeWithText("1 hr").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("1 hr")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 hr", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -248,6 +407,40 @@ class UpcomingTripViewTest {
             .onNodeWithText("5 min")
             .assertIsDisplayed()
             .assertContentDescriptionContains("and in 5 min", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeHoursAndMinutesOtherBus() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)),
+                routeType = RouteType.BUS,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText("1 hr 5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("and in 1 hr 5 min", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeHoursOtherBus() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)),
+                routeType = RouteType.BUS,
+                isFirst = false,
+            )
+        }
+        composeTestRule
+            .onNodeWithText("1 hr")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("and in 1 hr", substring = true)
             .assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }

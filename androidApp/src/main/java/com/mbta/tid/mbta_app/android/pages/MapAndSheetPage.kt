@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -67,7 +68,6 @@ import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
-import com.mbta.tid.mbta_app.android.util.currentRoute
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
@@ -88,6 +88,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -279,8 +280,9 @@ fun MapAndSheetPage(
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
         mapViewModel.setSelectedVehicle(null)
-        navController.navigateFrom<SheetRoutes.RoutePicker>(
-            SheetRoutes.RouteDetails(routeId, context)
+        navController.navigateFrom(
+            SheetRoutes.RoutePicker::class,
+            SheetRoutes.RouteDetails(routeId, context),
         ) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -316,11 +318,22 @@ fun MapAndSheetPage(
         updateTripFilter(stopId, TripDetailsFilter(tripId, vehicle.id, stopSequence, true))
     }
 
+    val popUp: NavOptionsBuilder.() -> Unit = {
+        popUpTo(navController.graph.id) { inclusive = true }
+    }
+
     fun navigateToEntrypoint() {
         try {
-            navController.navigate(sheetNavEntrypoint) {
-                popUpTo(navController.graph.id) { inclusive = true }
-            }
+            navController.navigate(sheetNavEntrypoint, popUp)
+        } catch (e: IllegalStateException) {
+            // This should only happen in tests when the navigation graph hasn't been initialized
+            Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
+        }
+    }
+
+    fun <T : SheetRoutes> navigateToEntrypointFrom(routeType: KClass<T>) {
+        try {
+            navController.navigateFrom(routeType, sheetNavEntrypoint as SheetRoutes, popUp)
         } catch (e: IllegalStateException) {
             // This should only happen in tests when the navigation graph hasn't been initialized
             Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
@@ -419,7 +432,7 @@ fun MapAndSheetPage(
         ) {
             composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
                 fun navigate(route: SheetRoutes) {
-                    navController.navigateFrom<SheetRoutes.Favorites>(route)
+                    navController.navigateFrom(SheetRoutes.Favorites::class, route)
                 }
                 FavoritesPage(
                     openSheetRoute = ::navigate,
@@ -431,7 +444,7 @@ fun MapAndSheetPage(
 
             composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
                 EditFavoritesPage(
-                    onClose = { navController.popBackStackFrom<SheetRoutes.EditFavorites>() },
+                    onClose = { navController.popBackStackFrom(SheetRoutes.EditFavorites::class) },
                     global = nearbyTransit.globalResponse,
                     favoritesViewModel = favoritesViewModel,
                 )
@@ -486,7 +499,7 @@ fun MapAndSheetPage(
                     navRoute.context,
                     onOpenPickerPath = { newPath, context ->
                         val currentPickerRoute =
-                            navController.currentRouteAs<SheetRoutes.RoutePicker>()
+                            navController.currentRouteAs(SheetRoutes.RoutePicker::class)
                         if (currentPickerRoute == null || currentPickerRoute.path != newPath) {
                             navController.navigate(SheetRoutes.RoutePicker(newPath, context))
                         }
@@ -495,17 +508,13 @@ fun MapAndSheetPage(
                     onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
                     onBack = onBack@{
                             val currentPickerRoute =
-                                navController.currentRouteAs<SheetRoutes.RoutePicker>()
+                                navController.currentRouteAs(SheetRoutes.RoutePicker::class)
                                     ?: return@onBack
                             if (currentPickerRoute.path != RoutePickerPath.Root) {
-                                navController.popBackStackFrom<SheetRoutes.RoutePicker>()
+                                navController.popBackStackFrom(SheetRoutes.RoutePicker::class)
                             }
                         },
-                    onClose = {
-                        while (navController.currentRoute is SheetRoutes.RoutePicker) {
-                            navController.popBackStackFrom<SheetRoutes.RoutePicker>()
-                        }
-                    },
+                    onClose = { navigateToEntrypointFrom(SheetRoutes.RoutePicker::class) },
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }
@@ -522,7 +531,8 @@ fun MapAndSheetPage(
                     selectionId = navRoute.routeId,
                     context = navRoute.context,
                     onOpenStopDetails = ::handleStopNavigation,
-                    onClose = { navController.popBackStackFrom<SheetRoutes.RouteDetails>() },
+                    onBack = { navController.popBackStackFrom(SheetRoutes.RouteDetails::class) },
+                    onClose = { navigateToEntrypointFrom(SheetRoutes.RouteDetails::class) },
                     errorBannerViewModel = errorBannerViewModel,
                 )
             }

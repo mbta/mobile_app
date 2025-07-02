@@ -5,7 +5,8 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
-    <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
+    <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
+    <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>
     <string name="additional_service_sentence_case">Plis sèvis</string>
     <plurals name="affected_stops">
@@ -60,6 +61,7 @@
     <string name="coast_guard_restriction">Gad Kot Mete Restriksyon</string>
     <string name="coast_guard_restriction_lowercase">Restriksyon Gad Kòt</string>
     <string name="collapse_remaining_stops">retire arè ki rete yo</string>
+    <string name="collapse_stops">efondreman sispann</string>
     <string name="congestion">Blokis</string>
     <string name="congestion_lowercase">anbouteyaj</string>
     <string name="connection_to">Koneksyon ak %1$s</string>
@@ -79,6 +81,7 @@
     <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
+    <string name="direction_service_only">%1$s sèvis sèlman</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
     <string name="disabled_bus_lowercase">otobis anpann</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
@@ -108,7 +111,7 @@
         <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="zero">This stop has %1$d elevators closed</item>
+        <item quantity="zero">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="one">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="two">Estasyon sa a gen %1$d asansè fèmen</item>
         <item quantity="few">Estasyon sa a gen %1$d asansè fèmen</item>
@@ -122,6 +125,7 @@
     <string name="escalator_closure">Fèmti Eskalye</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> èdtan</string>
     <string name="expand_remaining_stops">elaji arè ki rete yo</string>
+    <string name="expand_stops">elaji arè</string>
     <string name="explainer_headline_finishing_another">Ap fini yon lòt vwayaj</string>
     <string name="explainer_headline_no_prediction">Prediksyon poko disponib</string>
     <string name="explainer_headline_no_vehicle">Pozisyon %1$s poko disponib</string>
@@ -212,6 +216,7 @@
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
+    <string name="no_stops_added">Pa gen arè te ajoute</string>
     <string name="no_stops_nearby">Ou deyò zòn sèvis MBTA a.</string>
     <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
     <string name="no_stops_nearby_search">Chèche dapre arè a</string>
@@ -387,8 +392,17 @@
     <string name="vehicle_cancelled_other">epi a %1$s anile</string>
     <string name="vehicle_desc_accessibility_desc">Chwazi %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Chwazi %1$s %2$s %3$s, arè ou chwazi a</string>
+    <string name="vehicle_prediction_actual_arrival">ap rive a %2$s</string>
+    <string name="vehicle_prediction_hours_first">%1$s ap rive nan %2$d èdtan</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s rive nan %2$d è %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">epi nan %1$d è %2$d min</string>
+    <string name="vehicle_prediction_hours_other">epi nan %1$d èdtan</string>
     <string name="vehicle_prediction_minutes_first">%1$s ap rive nan %2$d minit</string>
     <string name="vehicle_prediction_minutes_other">epi nan %1$d min</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s reta</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">epi %1$s %2$s an reta</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s byen bonè</string>
+    <string name="vehicle_prediction_schedule_status_early_other">ak %1$s %2$s byen bonè</string>
     <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>
     <string name="vehicle_prediction_time_other">epi a %1$s</string>
     <string name="vehicle_schedule_minutes_first">%1$s ap rive nan %2$d min pwograme</string>

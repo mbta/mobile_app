@@ -64,7 +64,10 @@ data class Alert(
             Effect.ElevatorClosure -> AlertSignificance.Accessibility
             Effect.TrackChange -> AlertSignificance.Minor
             Effect.Delay ->
-                if (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) {
+                if (
+                    (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
+                        cause == Cause.SingleTracking
+                ) {
                     AlertSignificance.Minor
                 } else {
                     AlertSignificance.None

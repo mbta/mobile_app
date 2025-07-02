@@ -11,6 +11,12 @@ import SwiftUI
 import ViewInspector
 
 extension InspectableView {
+    func find(
+        viewWithAccessibilityLabelMatching accessibilityLabelRegex: Regex<Substring>
+    ) throws -> InspectableView<ViewType.ClassifiedView> {
+        try find { try accessibilityLabelRegex.wholeMatch(in: $0.accessibilityLabel().string()) != nil }
+    }
+
     func findAndCallOnChange(
         relation: ViewSearch.Relation = .child,
         newValue value: some Equatable,

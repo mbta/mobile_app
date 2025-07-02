@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.android.util
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import kotlin.reflect.KClass
+import kotlin.reflect.safeCast
 
 /** The current stack entry as a SheetRoute, null if none exists */
 val NavHostController.currentRoute: SheetRoutes?
@@ -10,22 +12,23 @@ val NavHostController.currentRoute: SheetRoutes?
 
 /** If the current nav entry is StopDetails, this is the selected stop ID, otherwise null */
 val NavHostController.selectedStopId: String?
-    get() = this.currentRouteAs<SheetRoutes.StopDetails>()?.stopId
+    get() = this.currentRouteAs(SheetRoutes.StopDetails::class)?.stopId
 
 /** Return the current stack entry as the provided type if they match, otherwise return null */
-inline fun <reified T : SheetRoutes> NavHostController.currentRouteAs(): T? =
-    this.currentRoute?.let { it as? T }
+fun <T : SheetRoutes> NavHostController.currentRouteAs(routeType: KClass<T>): T? =
+    routeType.safeCast(this.currentRoute)
 
 /** Return true if the current nav entry matches the provided type */
-inline fun <reified T : SheetRoutes> NavHostController.currentRouteMatches(): Boolean =
-    this.currentRoute?.let { it::class == T::class } == true
+fun <T : SheetRoutes> NavHostController.currentRouteMatches(routeType: KClass<T>): Boolean =
+    this.currentRoute?.let { it::class == routeType } == true
 
 /** Prevent quick double taps during animation to the new route from retriggering navigation */
-inline fun <reified T : SheetRoutes> NavHostController.navigateFrom(
+fun <T : SheetRoutes> NavHostController.navigateFrom(
+    routeType: KClass<T>,
     route: SheetRoutes,
-    noinline builder: NavOptionsBuilder.() -> Unit = {},
-) = if (this.currentRouteMatches<T>()) this.navigate(route, builder) else {}
+    builder: NavOptionsBuilder.() -> Unit = {},
+) = if (this.currentRouteMatches(routeType)) this.navigate(route, builder) else {}
 
 /** Prevent quick double taps during animation to the new route from retriggering navigation */
-inline fun <reified T : SheetRoutes> NavHostController.popBackStackFrom(): Boolean =
-    if (this.currentRouteMatches<T>()) this.popBackStack() else false
+fun <T : SheetRoutes> NavHostController.popBackStackFrom(routeType: KClass<T>): Boolean =
+    if (this.currentRouteMatches(routeType)) this.popBackStack() else false

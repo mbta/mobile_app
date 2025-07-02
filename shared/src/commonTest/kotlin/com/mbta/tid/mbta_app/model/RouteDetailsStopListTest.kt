@@ -1,9 +1,10 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
@@ -201,6 +202,7 @@ class RouteDetailsStopListTest {
 
         assertEquals(
             RouteDetailsStopList(
+                0,
                 listOf(
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -212,13 +214,32 @@ class RouteDetailsStopListTest {
                         ),
                         hasRouteLine = true,
                     )
-                )
+                ),
             ),
             RouteDetailsStopList.fromPieces(
                 mainRoute.id,
-                RouteStopsResponse(listOf(mainStop.id)),
+                0,
+                RouteStopsResult(mainRoute.id, 0, listOf(mainStop.id)),
                 globalData,
             ),
+        )
+    }
+
+    @Test
+    fun `fromPieces returns null if direction doesn't match`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val mainStop = objects.stop {}
+        val mainRoute = objects.route()
+
+        val globalData = GlobalResponse(objects)
+
+        assertNull(
+            RouteDetailsStopList.fromPieces(
+                mainRoute.id,
+                0,
+                RouteStopsResult(mainRoute.id, 1, listOf(mainStop.id)),
+                globalData,
+            )
         )
     }
 
@@ -271,6 +292,7 @@ class RouteDetailsStopListTest {
 
         assertEquals(
             RouteDetailsStopList(
+                0,
                 listOf(
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -344,11 +366,14 @@ class RouteDetailsStopListTest {
                         ),
                         hasRouteLine = false,
                     ),
-                )
+                ),
             ),
             RouteDetailsStopList.fromPieces(
                 mainRoute.id,
-                RouteStopsResponse(
+                0,
+                RouteStopsResult(
+                    mainRoute.id,
+                    0,
                     listOf(
                         stop0.id,
                         stop1.id,
@@ -357,8 +382,72 @@ class RouteDetailsStopListTest {
                         stop4.id,
                         stop5NonTypical.id,
                         stop6.id,
+                    ),
+                ),
+                globalData,
+            ),
+        )
+    }
+
+    @Test
+    fun `fromPieces breaks segments by typicality in the selected direction`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val stop0 = objects.stop { id = "stop0" }
+        val stop1 = objects.stop { id = "stop1" }
+        val stop2 = objects.stop { id = "stop2" }
+
+        val mainRoute = objects.route()
+
+        val patternTypical0 =
+            objects.routePattern(mainRoute) {
+                id = "typical_0"
+                directionId = 0
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop2.id) }
+            }
+
+        val patternTypicalOppositeDirection =
+            objects.routePattern(mainRoute) {
+                id = "typical_opposite_direction"
+                directionId = 1
+                sortOrder = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(stop2.id, stop1.id, stop0.id) }
+            }
+
+        val globalData = GlobalResponse(objects)
+
+        assertEquals(
+            RouteDetailsStopList(
+                0,
+                listOf(
+                    RouteDetailsStopList.Segment(
+                        listOf(
+                            RouteDetailsStopList.Entry(
+                                stop0,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternTypical0),
+                            ),
+                            RouteDetailsStopList.Entry(
+                                stop1,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternTypical0),
+                            ),
+                            RouteDetailsStopList.Entry(
+                                stop2,
+                                connectingRoutes = listOf(),
+                                patterns = listOf(patternTypical0),
+                            ),
+                        ),
+                        hasRouteLine = true,
                     )
                 ),
+            ),
+            RouteDetailsStopList.fromPieces(
+                mainRoute.id,
+                0,
+                RouteStopsResult(mainRoute.id, 0, listOf(stop0.id, stop1.id, stop2.id)),
                 globalData,
             ),
         )

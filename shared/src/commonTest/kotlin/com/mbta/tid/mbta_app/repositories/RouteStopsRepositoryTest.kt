@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -70,7 +69,9 @@ class RouteStopsRepositoryTest : KoinTest {
             assertEquals("route_id=Orange&direction_id=0", requestUrl.encodedQuery)
             assertEquals(
                 ApiResult.Ok(
-                    RouteStopsResponse(
+                    RouteStopsResult(
+                        "Orange",
+                        0,
                         listOf(
                             "place-ogmnl",
                             "place-mlmnl",
@@ -92,7 +93,7 @@ class RouteStopsRepositoryTest : KoinTest {
                             "place-sbmnl",
                             "place-grnst",
                             "place-forhl",
-                        )
+                        ),
                     )
                 ),
                 response,

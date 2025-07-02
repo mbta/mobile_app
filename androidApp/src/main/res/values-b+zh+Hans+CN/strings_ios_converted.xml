@@ -5,7 +5,8 @@
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
-    <string name="add_to_favorites_title">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
+    <string name="add_to_favorites_title">在 &lt;b>%2$s&lt;/b> 添加 &lt;b>%1$s&lt;/b></string>
+    <string name="add_to_favorites_title_stop_details">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
     <string name="additional_service">附加服务</string>
     <string name="additional_service_sentence_case">附加服务</string>
     <plurals name="affected_stops">
@@ -55,6 +56,7 @@
     <string name="coast_guard_restriction">海岸警卫队警戒</string>
     <string name="coast_guard_restriction_lowercase">海岸警卫队警戒</string>
     <string name="collapse_remaining_stops">折叠剩余站点</string>
+    <string name="collapse_stops">崩溃停止</string>
     <string name="congestion">交通拥堵</string>
     <string name="congestion_lowercase">交通拥堵</string>
     <string name="connection_to">连接到%1$s</string>
@@ -74,6 +76,7 @@
     <string name="details">详情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
+    <string name="direction_service_only">仅限 %1$s 服务</string>
     <string name="disabled_bus">巴士抛锚</string>
     <string name="disabled_bus_lowercase">巴士抛锚</string>
     <string name="disabled_train">列车停运</string>
@@ -107,6 +110,7 @@
     <string name="escalator_closure">自动扶梯关闭</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小时</string>
     <string name="expand_remaining_stops">展开剩余站点</string>
+    <string name="expand_stops">扩展停止</string>
     <string name="explainer_headline_finishing_another">完成其他行程</string>
     <string name="explainer_headline_no_prediction">预测功能暂不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s定位服务暂不可用</string>
@@ -197,6 +201,7 @@
     <string name="no_service">无服务</string>
     <string name="no_service_sentence_case">无服务</string>
     <string name="no_service_today">今日无服务</string>
+    <string name="no_stops_added">未添加停靠站</string>
     <string name="no_stops_nearby">您不在MBTA服务区内。</string>
     <string name="no_stops_nearby_pan">查看波士顿车站附近的交通运输服务</string>
     <string name="no_stops_nearby_search">按站点搜索</string>
@@ -362,8 +367,17 @@
     <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
     <string name="vehicle_desc_accessibility_desc">选定%1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">选定%1$s %2$s %3$s，选定站点</string>
+    <string name="vehicle_prediction_actual_arrival">于%2$s到站</string>
+    <string name="vehicle_prediction_hours_first">%1$s将于%2$d小时内到站</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s将于%2$d小时%3$d分钟内到站</string>
+    <string name="vehicle_prediction_hours_minutes_other">下一趟车将在%1$d小时%2$d分钟内抵达</string>
+    <string name="vehicle_prediction_hours_other">下一趟车将在%1$d小时内抵达</string>
     <string name="vehicle_prediction_minutes_first">%1$s将在%2$d分钟内到站</string>
     <string name="vehicle_prediction_minutes_other">下一趟车将在%1$d分钟内抵达</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s 延迟</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">下一趟%1$s%2$s延迟</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s%2$s提前</string>
+    <string name="vehicle_prediction_schedule_status_early_other">下一趟%1$s%2$s提前</string>
     <string name="vehicle_prediction_time_first">%1$s于%2$s到站</string>
     <string name="vehicle_prediction_time_other">下一趟车将于%1$s到站</string>
     <string name="vehicle_schedule_minutes_first">%1$s预定将于%2$d分钟内到站</string>

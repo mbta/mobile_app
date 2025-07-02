@@ -6,7 +6,8 @@
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Add</string>
     <string name="add_stops" tools:ignore="MissingTranslation">Add stops</string>
-    <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
+    <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="add_to_favorites_title_stop_details">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
     <string name="additional_service_sentence_case">Additional service</string>
     <plurals name="affected_stops">
@@ -57,6 +58,7 @@
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
     <string name="collapse_remaining_stops">collapse remaining stops</string>
+    <string name="collapse_stops">collapse stops</string>
     <string name="congestion">Congestion</string>
     <string name="congestion_lowercase">congestion</string>
     <string name="connection_to">Connection to %1$s</string>
@@ -77,6 +79,7 @@
     <string name="details">Details</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
+    <string name="direction_service_only">%1$s service only</string>
     <string name="disabled_bus">Disabled Bus</string>
     <string name="disabled_bus_lowercase">disabled bus</string>
     <string name="disabled_train">Disabled Train</string>
@@ -116,6 +119,7 @@
     <string name="escalator_closure">Escalator Closure</string>
     <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
     <string name="expand_remaining_stops">expand remaining stops</string>
+    <string name="expand_stops">expand stops</string>
     <string name="explainer_headline_finishing_another">Finishing another trip</string>
     <string name="explainer_headline_no_prediction">Prediction not available yet</string>
     <string name="explainer_headline_no_vehicle">%1$s location not available yet</string>
@@ -207,7 +211,7 @@
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
     <string name="no_service_today">No service today</string>
-    <string name="no_stops_added" tools:ignore="MissingTranslation">No stops added</string>
+    <string name="no_stops_added">No stops added</string>
     <string name="no_stops_nearby">You’re outside the MBTA service area.</string>
     <string name="no_stops_nearby_pan">View transit near Boston</string>
     <string name="no_stops_nearby_search">Search by stop</string>
@@ -375,8 +379,17 @@
     <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
     <string name="vehicle_desc_accessibility_desc">Selected %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Selected %1$s %2$s %3$s, selected stop</string>
+    <string name="vehicle_prediction_actual_arrival">arriving at %1$s</string>
+    <string name="vehicle_prediction_hours_first">%1$s arriving in %2$d hr</string>
+    <string name="vehicle_prediction_hours_other">and in %1$d hr</string>
+    <string name="vehicle_prediction_hours_minutes_first">%1$s arriving in %2$d hr %3$d min</string>
+    <string name="vehicle_prediction_hours_minutes_other">and in %1$d hr %2$d min</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s delayed</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">and %1$s %2$s delayed</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s early</string>
+    <string name="vehicle_prediction_schedule_status_early_other">and %1$s %2$s early</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
     <string name="vehicle_prediction_time_other">and at %1$s</string>
     <string name="vehicle_schedule_minutes_first">%1$s arriving in %2$d min scheduled</string>

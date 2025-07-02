@@ -68,13 +68,19 @@ fun StopDetailsUnfilteredRoutesView(
     val elevatorAlerts =
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
+    val multiRoute = servedRoutes.size > 1
+
     Column(
         Modifier.background(colorResource(R.color.fill2)),
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         Column(Modifier.heightIn(min = 48.dp)) {
-            SheetHeader(onClose = onClose, title = stop.name)
-            if (servedRoutes.size > 1) {
+            SheetHeader(
+                if (!multiRoute) Modifier.padding(bottom = 16.dp) else Modifier,
+                title = stop.name,
+                onClose = onClose,
+            )
+            if (multiRoute) {
                 Box(Modifier.height(56.dp).fillMaxWidth()) {
                     StopDetailsFilterPills(
                         servedRoutes = servedRoutes,

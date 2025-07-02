@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -98,14 +99,7 @@ private fun Header(
         Alignment.CenterVertically,
     ) {
         Text(text = stringResource(R.string.edit_favorites), style = Typography.title2Bold)
-        NavTextButton(
-            stringResource(R.string.done),
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.key),
-                    contentColor = colorResource(R.color.fill2),
-                ),
-        ) {
+        NavTextButton(stringResource(R.string.done), colors = ButtonDefaults.key()) {
             viewModel.updateFavorites(currentState?.toMap(), onFinish = onClose)
         }
     }
