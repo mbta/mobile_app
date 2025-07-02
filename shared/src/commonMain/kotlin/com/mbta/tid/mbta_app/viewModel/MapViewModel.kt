@@ -60,8 +60,6 @@ interface IMapViewModel {
 
     fun mapStyleLoaded()
 
-    fun clearSelectedVehicle()
-
     fun layerManagerInitialized(layerManager: IMapLayerManager)
 
     fun locationPermissionsChanged(hasPermission: Boolean)
@@ -100,8 +98,6 @@ class MapViewModel(
         data class RouteCardDataChanged(val data: List<RouteCardData>?) : Event
 
         data object MapStyleLoaded : Event
-
-        data object ClearSelectedVehicle : Event
 
         data class LayerManagerInitialized(val layerManager: IMapLayerManager) : Event
 
@@ -262,12 +258,6 @@ class MapViewModel(
                             )
                         }
                     }
-                    is Event.ClearSelectedVehicle -> {
-                        if (state is State.VehicleSelected) {
-                            val previousState = state as State.VehicleSelected
-                            state = State.StopSelected(previousState.stop, previousState.stopFilter)
-                        }
-                    }
                     is Event.LayerManagerInitialized -> {
                         if (layerManager == null) layerManager = event.layerManager
                     }
@@ -310,8 +300,6 @@ class MapViewModel(
 
     override fun mapStyleLoaded() = fireEvent(Event.MapStyleLoaded)
 
-    override fun clearSelectedVehicle() = fireEvent(Event.ClearSelectedVehicle)
-
     override fun layerManagerInitialized(layerManager: IMapLayerManager) =
         fireEvent(Event.LayerManagerInitialized(layerManager))
 
@@ -340,8 +328,13 @@ class MapViewModel(
                 else -> null
             }
         val stop = globalResponse?.getStop(stopDetails?.stopId)
+        val routePickerOrDetails =
+            currentNavEntry is SheetRoutes.RoutePicker ||
+                currentNavEntry is SheetRoutes.RouteDetails
         val newState =
-            if (stopDetails == null) {
+            if (routePickerOrDetails && currentState is State.VehicleSelected) {
+                State.StopSelected(currentState.stop, currentState.stopFilter)
+            } else if (stopDetails == null) {
                 State.Unfiltered
             } else {
                 State.StopSelected(stop, stopDetails.stopFilter)

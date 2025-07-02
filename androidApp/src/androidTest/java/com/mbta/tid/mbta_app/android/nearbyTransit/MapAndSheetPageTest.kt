@@ -241,6 +241,7 @@ class MapAndSheetPageTest : KoinTest {
                         {},
                         {},
                         bottomBar = {},
+                        mock<IMapViewModel>(MockMode.autofill),
                     )
                 }
             }
@@ -354,6 +355,7 @@ class MapAndSheetPageTest : KoinTest {
                         {},
                         {},
                         bottomBar = {},
+                        mock<IMapViewModel>(MockMode.autofill),
                     )
                 }
             }

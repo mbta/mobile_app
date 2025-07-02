@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import kotlin.test.AfterTest
@@ -123,7 +124,7 @@ class MapViewModelTests : KoinTest {
     }
 
     @Test
-    fun clearSelectedVehicle() = runTest {
+    fun clearsSelectedVehicle() = runTest {
         val viewportProvider = MockViewportManager()
         val viewModel: MapViewModel = get()
         testViewModelFlow(viewModel).test {
@@ -134,7 +135,7 @@ class MapViewModelTests : KoinTest {
             val stop = TestData.stops["70113"]!!
             viewModel.selectedVehicle(vehicle, stop, null)
             assertEquals(MapViewModel.State.VehicleSelected(vehicle, stop, null), awaitItem())
-            viewModel.clearSelectedVehicle()
+            viewModel.navChanged(SheetRoutes.RouteDetails("", RouteDetailsContext.Details))
             assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
         }
     }

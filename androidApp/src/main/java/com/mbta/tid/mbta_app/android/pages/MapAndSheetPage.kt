@@ -272,7 +272,6 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.clearSelectedVehicle()
         navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -282,7 +281,6 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.clearSelectedVehicle()
         navController.navigateFrom(
             SheetRoutes.RoutePicker::class,
             SheetRoutes.RouteDetails(routeId, context),
