@@ -74,15 +74,15 @@ settingGroups:
       Debug:
         DEBUG_INFORMATION_FORMAT: dwarf
 packages:
-  CustomAlert:
-    url: https://github.com/divadretlaw/CustomAlert.git
-    from: 4.1.1
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
     from: 11.14.0
   MapboxMaps:
     url: https://github.com/mapbox/mapbox-maps-ios.git
     from: 11.12.2
+  MijickPopups:
+    url: https://github.com/Mijick/Popups.git
+    from: 4.0.1
   swift-collections:
     url: https://github.com/apple/swift-collections.git
     from: 1.2.0
@@ -102,10 +102,10 @@ targets:
     deploymentTarget: "16.4"
     sources: [iosApp]
     dependencies:
-      - package: CustomAlert
       - package: Firebase
         product: FirebaseAnalyticsWithoutAdIdSupport
       - package: MapboxMaps
+      - package: MijickPopups
       - package: swift-collections
         product: Collections
       - package: SwiftPhoenixClient

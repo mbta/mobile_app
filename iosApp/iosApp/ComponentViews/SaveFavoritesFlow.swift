@@ -6,8 +6,8 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 import Collections
-import CustomAlert
 import Foundation
+import MijickPopups
 import Shared
 import SwiftUI
 
@@ -15,6 +15,8 @@ enum SaveFavoritesContext {
     case favorites
     case stopDetails
 }
+
+let popupId = "favoritesPopup"
 
 struct SaveFavoritesFlow: View {
     let lineOrRoute: RouteCardData.LineOrRoute
@@ -88,39 +90,67 @@ struct FavoriteConfirmationDialog: View {
     let updateFavorites: ([RouteStopDirection: Bool]) -> Void
     let onClose: () -> Void
 
-    @State var showDialog = false
-    @State var favoritesToSave: [Direction: Bool] = [:]
-
     var body: some View {
         VStack {}
             .onAppear {
-                favoritesToSave = directions.reduce(into: [Direction: Bool]()) { acc, direction in
-                    acc[direction] = proposedFavorites[direction.id] ?? false
+                Task {
+                    await FavoriteConfirmationPopup(lineOrRoute: lineOrRoute,
+                                                    stop: stop,
+                                                    directions: directions,
+                                                    selectedDirection: selectedDirection,
+                                                    context: context,
+                                                    proposedFavorites: proposedFavorites,
+                                                    updateFavorites: updateFavorites,
+                                                    onClose: {
+                                                        Task { await dismissPopup(popupId) }
+                                                        onClose()
+                                                    })
+                                                    .setCustomID(popupId)
+                                                    .present()
                 }
-                showDialog = true
             }
-            .customAlert(
-                isPresented: $showDialog,
-                content: {
-                    FavoriteConfirmationDialogContents(lineOrRoute: lineOrRoute,
-                                                       stop: stop, directions: directions,
-                                                       selectedDirection: selectedDirection,
-                                                       context: context,
-                                                       favoritesToSave: favoritesToSave,
-                                                       updateLocalFavorite: { direction, isFavorite in
-                                                           favoritesToSave[direction] = isFavorite
-                                                       })
-                },
-                actions: {
-                    MultiButton {
-                        FavoriteConfirmationDialogActions(lineOrRoute: lineOrRoute,
-                                                          stop: stop,
-                                                          favoritesToSave: favoritesToSave,
-                                                          updateFavorites: updateFavorites,
-                                                          onClose: onClose)
-                    }
-                }
-            )
+    }
+}
+
+struct FavoriteConfirmationPopup: CenterPopup {
+    let lineOrRoute: RouteCardData.LineOrRoute
+    let stop: Stop
+    let directions: [Direction]
+    let selectedDirection: Int32
+    let context: SaveFavoritesContext
+    let proposedFavorites: [Int32: Bool]
+    let updateFavorites: ([RouteStopDirection: Bool]) -> Void
+    let onClose: () -> Void
+
+    @State var favoritesToSave: [Direction: Bool] = [:]
+
+    var body: some View {
+        VStack(spacing: 16) {
+            FavoriteConfirmationDialogContents(lineOrRoute: lineOrRoute,
+                                               stop: stop, directions: directions,
+                                               selectedDirection: selectedDirection,
+                                               context: context,
+                                               favoritesToSave: favoritesToSave,
+                                               updateLocalFavorite: { direction, isFavorite in
+                                                   favoritesToSave[direction] = isFavorite
+                                               }).padding(.horizontal, 8)
+            FavoriteConfirmationDialogActions(lineOrRoute: lineOrRoute,
+                                              stop: stop,
+                                              favoritesToSave: favoritesToSave,
+                                              updateFavorites: updateFavorites,
+                                              onClose: onClose)
+        }.onAppear {
+            favoritesToSave = directions.reduce(into: [Direction: Bool]()) { acc, direction in
+                acc[direction] = proposedFavorites[direction.id] ?? false
+            }
+        }
+        .padding(.top, 16)
+        .background(Color.fill2)
+    }
+
+    func configurePopup(config: CenterPopupConfig) -> CenterPopupConfig {
+        config
+            .popupHorizontalPadding(40)
     }
 }
 
@@ -153,11 +183,13 @@ struct FavoriteConfirmationDialogContents: View {
                 .font(Typography.body)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h1)
+                .multilineTextAlignment(.center)
             if directions.count == 1, directions.first!.id != selectedDirection {
                 Text("\(DirectionLabel.directionNameFormatted(directions.first!)) service only")
                     .font(Typography.footnoteSemibold)
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
+                    .multilineTextAlignment(.center)
             }
             VStack(spacing: 0) {
                 DirectionButtons(lineOrRoute: lineOrRoute,
@@ -189,9 +221,13 @@ struct DirectionButtons: View {
     }
 
     var body: some View {
+        let sortedDirections = directionValues
+            .sorted(by: { $0.direction.id < $1.direction.id })
+            .enumerated()
+            .sorted(by: { $0.offset < $1.offset })
         VStack(spacing: 0) {
             ForEach(
-                directionValues.enumerated().sorted(by: { $0.element.direction.id < $1.element.direction.id }),
+                sortedDirections,
                 id: \.element.hashValue
             ) { index, directionValue in
                 Button(action: {
@@ -207,11 +243,13 @@ struct DirectionButtons: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
-                        if index < directionValues.count - 1 {
+
+                        if index < sortedDirections.count - 1 {
                             HaloSeparator()
                         }
                     }
                 }
+                .foregroundStyle(Color.text)
                 .accessibilityAddTraits(directionValue.isFavorite ? [.isSelected] : [])
                 .fullFocusSize()
                 .background(Color.fill3)
@@ -230,26 +268,35 @@ struct FavoriteConfirmationDialogActions: View {
     let onClose: () -> Void
 
     var body: some View {
-        HStack {
-            Button {
-                onClose()
-            } label: {
-                Text("Cancel")
+        VStack(spacing: 0) {
+            HaloSeparator()
+            HStack(spacing: 0) {
+                Button {
+                    onClose()
+                } label: {
+                    Text("Cancel")
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.vertical, 16)
+                VerticalHaloSeparator()
+                Button {
+                    updateFavorites(favoritesToSave
+                        .reduce(into: [RouteStopDirection: Bool]()) { partialResult, entry in
+                            partialResult[RouteStopDirection(
+                                route: lineOrRoute.id,
+                                stop: stop.id,
+                                direction: entry.key.id
+                            )] = entry.value
+                        })
+                    onClose()
+                } label: {
+                    Text("Add")
+                }
+                .disabled(favoritesToSave.values.allSatisfy { $0 == false })
+                .padding(.vertical, 16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-
-            Button {
-                updateFavorites(favoritesToSave
-                    .reduce(into: [RouteStopDirection: Bool]()) { partialResult, entry in
-                        partialResult[RouteStopDirection(
-                            route: lineOrRoute.id,
-                            stop: stop.id,
-                            direction: entry.key.id
-                        )] = entry.value
-                    })
-                onClose()
-            } label: {
-                Text("Add")
-            }.disabled(favoritesToSave.values.allSatisfy { $0 == false })
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

@@ -15,3 +15,11 @@ struct HaloSeparator: View {
         Color.halo.frame(height: height)
     }
 }
+
+struct VerticalHaloSeparator: View {
+    var width: CGFloat = 1
+
+    var body: some View {
+        Color.halo.frame(width: width)
+    }
+}

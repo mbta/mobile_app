@@ -40,6 +40,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return false
         }
     }
+
+    func application(
+        _: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options _: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let sceneConfig = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        sceneConfig.delegateClass = CustomPopupSceneDelegate.self
+        return sceneConfig
+    }
 }
 
 @main
