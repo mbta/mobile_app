@@ -9,4 +9,5 @@ actual fun viewModelModule() = module {
     viewModelOf(::FavoritesViewModel)
     viewModelOf(::SearchRoutesViewModel)
     viewModelOf(::SearchViewModel)
+    viewModelOf(::MapViewModel)
 }

@@ -17,17 +17,17 @@ final class MapViewModelTests: XCTestCase {
 
     func testSetsHttpInterceptor() {
         var interceptorSet = false
-        let mapVM = MapViewModel(setHttpInterceptor: { _ in interceptorSet = true })
+        let mapVM = iosApp.MapViewModel(setHttpInterceptor: { _ in interceptorSet = true })
         XCTAssertTrue(interceptorSet)
     }
 
     func testUpdatesSources() {
         let updateRouteSourceCalled = XCTestExpectation(description: "Update route source called")
-        let layerManager: IMapLayerManager = MockLayerManager(updateRouteDataCallback: { _ in
+        let layerManager: iosApp.IMapLayerManager = MockLayerManager(updateRouteDataCallback: { _ in
             updateRouteSourceCalled.fulfill()
         })
 
-        let mapVM = MapViewModel(layerManager: layerManager)
+        let mapVM = iosApp.MapViewModel(layerManager: layerManager)
         mapVM.updateRouteSource(globalData: nil, globalMapData: nil)
 
         wait(for: [updateRouteSourceCalled], timeout: 1)

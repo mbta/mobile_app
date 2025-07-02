@@ -23,10 +23,11 @@ import com.mbta.tid.mbta_app.map.StopIcons
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
+import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MapLayerManager(val map: MapboxMap, context: Context) {
+class MapLayerManager(val map: MapboxMap, context: Context) : IMapLayerManager {
     init {
         for (icon in StopIcons.all + AlertIcons.all) {
             val drawable = context.resources.getDrawable(drawableByName(icon), null)
@@ -35,7 +36,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    suspend fun addSource(source: GeoJsonSource) {
+    private suspend fun addSource(source: GeoJsonSource) {
         withContext(Dispatchers.Main) {
             try {
                 map.addSource(source)
@@ -48,7 +49,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    suspend fun addLayers(
+    override suspend fun addLayers(
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
@@ -62,7 +63,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         )
     }
 
-    suspend fun addLayers(
+    override suspend fun addLayers(
         routes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
@@ -114,7 +115,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    fun resetPuckPosition() {
+    override fun resetPuckPosition() {
         if (map.styleLayerExists("puck")) {
             map.moveStyleLayer("puck", null)
         }
@@ -136,7 +137,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    suspend fun updateRouteSourceData(routeData: List<RouteSourceData>) {
+    override suspend fun updateRouteSourceData(routeData: List<RouteSourceData>) {
         for (data in routeData) {
             updateSourceData(
                 RouteFeaturesBuilder.getRouteSourceId(data.routeId),
@@ -145,8 +146,10 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    suspend fun updateStopSourceData(stopData: FeatureCollection) {
-        updateSourceData(StopFeaturesBuilder.stopSourceId, stopData)
+    override suspend fun updateStopSourceData(
+        stopData: com.mbta.tid.mbta_app.map.style.FeatureCollection
+    ) {
+        updateSourceData(StopFeaturesBuilder.stopSourceId, stopData.toMapbox())
     }
 
     companion object {

@@ -61,14 +61,14 @@ extension HomeMapView {
         }
     }
 
-    func initializeLayers(_ layerManager: IMapLayerManager) {
+    func initializeLayers(_ layerManager: iosApp.IMapLayerManager) {
         handleSetRailSources(railRouteShapes: railRouteShapes)
         handleSetStopSources()
 
         addLayers(layerManager)
     }
 
-    func addLayers(_ layerManager: IMapLayerManager) {
+    func addLayers(_ layerManager: iosApp.IMapLayerManager) {
         guard let globalData = mapVM.globalData else { return }
         layerManager.addLayers(
             routes: mapVM.routeSourceData,
