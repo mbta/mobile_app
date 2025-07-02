@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -33,13 +33,14 @@ enum class ActionButtonKind(
 @Composable
 fun ActionButton(
     kind: ActionButtonKind,
+    modifier: Modifier = Modifier,
     size: Dp = 32.dp,
     colors: ButtonColors = ButtonDefaults.contrast(),
     action: () -> Unit,
 ) {
     Button(
         onClick = action,
-        modifier = Modifier.size(size).width(size),
+        modifier = modifier.sizeIn(minWidth = size, minHeight = size),
         shape = CircleShape,
         colors = colors,
         contentPadding = PaddingValues(5.dp),

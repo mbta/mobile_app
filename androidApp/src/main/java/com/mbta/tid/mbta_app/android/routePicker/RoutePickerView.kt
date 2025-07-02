@@ -3,9 +3,7 @@ package com.mbta.tid.mbta_app.android.routePicker
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -30,15 +28,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.ActionButton
-import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.ErrorCard
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
-import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SearchInput
+import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
@@ -87,42 +83,31 @@ fun RoutePickerView(
         )
     val routes = remember(globalData, path) { globalData.getRoutesForPicker(path) }
 
-    Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
-        Row(
-            Modifier.heightIn(min = 48.dp)
-                .padding(start = 24.dp, top = 0.dp, end = 16.dp, bottom = 8.dp)
-                .fillMaxWidth(),
-            Arrangement.SpaceBetween,
-            Alignment.CenterVertically,
-        ) {
-            Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
-                if (path !is RoutePickerPath.Root)
-                    ActionButton(
-                        ActionButtonKind.Back,
-                        colors = ButtonDefaults.contrastTranslucent(),
-                        action = onBack,
-                    )
-                Text(
-                    when (path) {
-                        is RoutePickerPath.Root ->
-                            when (context) {
-                                is RouteDetailsContext.Favorites ->
-                                    stringResource(R.string.route_picker_header_favorites)
+    val headerTitle =
+        when (path) {
+            is RoutePickerPath.Root ->
+                when (context) {
+                    is RouteDetailsContext.Favorites ->
+                        stringResource(R.string.route_picker_header_favorites)
 
-                                is RouteDetailsContext.Details -> TODO("Implement details header")
-                            }
+                    is RouteDetailsContext.Details -> TODO("Implement details header")
+                }
 
-                        is RoutePickerPath.Bus -> stringResource(R.string.bus)
-                        is RoutePickerPath.Silver -> "Silver Line"
-                        is RoutePickerPath.CommuterRail -> "Commuter Rail"
-                        is RoutePickerPath.Ferry -> stringResource(R.string.ferry)
-                    },
-                    style = Typography.title2Bold,
-                    color = path.textColor,
-                )
-            }
-            NavTextButton(stringResource(R.string.done), action = onClose)
+            is RoutePickerPath.Bus -> stringResource(R.string.bus)
+            is RoutePickerPath.Silver -> "Silver Line"
+            is RoutePickerPath.CommuterRail -> "Commuter Rail"
+            is RoutePickerPath.Ferry -> stringResource(R.string.ferry)
         }
+
+    Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
+        SheetHeader(
+            title = headerTitle,
+            titleColor = path.textColor,
+            closeText = stringResource(R.string.done),
+            onBack = if (path !is RoutePickerPath.Root) onBack else null,
+            onClose = onClose,
+            buttonColors = ButtonDefaults.contrastTranslucent(),
+        )
         ErrorBanner(errorBannerViewModel, Modifier.padding(start = 14.dp, top = 6.dp, end = 14.dp))
         AnimatedVisibility(searchVMState is SearchRoutesViewModel.State.Error) {
             ErrorCard(
@@ -153,7 +138,7 @@ fun RoutePickerView(
                     searchInputFocused = it
                 },
                 searchFocusRequester,
-                modifier = Modifier.padding(bottom = 14.dp),
+                modifier = Modifier.padding(top = 8.dp, bottom = 14.dp),
             ) {
                 Text(stringResource(R.string.filter_routes), style = Typography.callout)
             }
