@@ -35,6 +35,7 @@ import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
+import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.state.getRouteStops
@@ -242,6 +243,7 @@ private fun RouteStops(
                         stop.stop,
                         onClick = { onTapStop(stop) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+                        stopListContext = StopListContext.RouteDetails,
                         modifier = Modifier.minimumInteractiveComponentSize().fillMaxWidth(),
                         connectingRoutes = stop.connectingRoutes,
                         stopPlacement = stopPlacement,

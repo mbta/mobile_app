@@ -37,6 +37,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
+import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
@@ -62,6 +63,7 @@ fun CollapsableStopList(
             stop.stop,
             onClick = { onClick(stop) },
             routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+            stopListContext = StopListContext.RouteDetails,
             modifier =
                 Modifier.minimumInteractiveComponentSize().background(colorResource(R.color.fill1)),
             connectingRoutes = stop.connectingRoutes,
@@ -152,6 +154,7 @@ fun CollapsableStopList(
                         stop.stop,
                         onClick = { onClick(stop) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+                        stopListContext = StopListContext.RouteDetails,
                         modifier =
                             Modifier.minimumInteractiveComponentSize()
                                 .background(colorResource(R.color.fill1)),
