@@ -71,7 +71,7 @@ fun StopDetailsFilteredPickerView(
     val lineOrRoute = routeStopData.lineOrRoute
     val stop = routeStopData.stop
 
-    val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
+    val availableDirections = routeStopData.availableDirections.sorted()
     val directions = routeStopData.directions
 
     val routeHex: String = lineOrRoute.backgroundColor

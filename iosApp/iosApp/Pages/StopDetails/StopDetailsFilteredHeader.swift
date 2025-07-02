@@ -50,10 +50,9 @@ struct StopDetailsFilteredHeader: View {
             .accessibilityLabel(accessibilityLabel)
 
             HStack(alignment: .center, spacing: 16) {
-                PinButton(pinned: pinned, action: onPin)
+                PinButton(pinned: pinned, color: Color.text, action: onPin)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 44, maxHeight: 44)
-                    .foregroundStyle(Color.text)
                 ActionButton(kind: .close, action: onClose)
             }
         }
