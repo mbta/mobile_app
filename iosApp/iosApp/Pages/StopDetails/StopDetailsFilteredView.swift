@@ -38,6 +38,8 @@ struct StopDetailsFilteredView: View {
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
     var nowInstant: Instant { now.toKotlinInstant() }
 
+    let inspection = Inspection<Self>()
+
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
@@ -133,6 +135,7 @@ struct StopDetailsFilteredView: View {
                 loadingBody()
             }
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder
@@ -143,7 +146,7 @@ struct StopDetailsFilteredView: View {
         }
         VStack(spacing: 0) {
             if let stopData,
-               inSaveFavoritesFlow == true {
+               inSaveFavoritesFlow {
                 SaveFavoritesFlow(lineOrRoute: stopData.lineOrRoute,
                                   stop: stopData.stop,
                                   directions: stopData.directions
@@ -166,8 +169,6 @@ struct StopDetailsFilteredView: View {
                                       }
                                   },
                                   onClose: {
-                                      print("closing inSaveFavoritesFlow")
-
                                       inSaveFavoritesFlow = false
                                   })
             }
@@ -182,15 +183,15 @@ struct StopDetailsFilteredView: View {
                         if favoriteBridge is FavoriteBridge.Pinned {
                             toggleFavorite()
                         } else {
-                            print("Triggering inSaveFavoritesFlow")
                             inSaveFavoritesFlow = true
                         }
                     },
                     onClose: { nearbyVM.goBack() }
                 )
-                DebugView {
-                    Text(verbatim: "stop id: \(stopId)")
-                }.padding(.horizontal, 16)
+                /*  DebugView {
+                      Text(verbatim: "stop id: \(stopId)")
+                  }.padding(.horizontal, 16)
+                 */
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
             }
             .fixedSize(horizontal: false, vertical: true)

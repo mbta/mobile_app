@@ -26,19 +26,38 @@ struct SaveFavoritesFlow: View {
     let updateFavorites: ([RouteStopDirection: Bool]) -> Void
     let onClose: () -> Void
 
+    var selectedDirectionIsAvailableAtStop: Bool { directions.contains(where: { $0.id == selectedDirection }) }
+
     var isUnFavoriting: Bool {
-        (directions.contains(where: { $0.id == selectedDirection })) &&
+        selectedDirectionIsAvailableAtStop &&
             isFavorite(RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection))
     }
 
-    var isBusOneDirection: Bool { directions.count == 1 && lineOrRoute.sortRoute.type == RouteType.bus }
+    var isBusOneDirection: Bool { directions.count == 1 && lineOrRoute.type == RouteType.bus }
 
     let inspection = Inspection<Self>()
+
+    func proposedFavorites() -> [Int32: Bool] {
+        directions
+            .reduce(into: [Int32: Bool]()) { acc, direction in
+                // if selectedDirection and already a favorite, then removing favorite.
+                // if this is not the selected direction and already a favorite, then keep it.
+                let isFavorite = ((direction.id == selectedDirection) !=
+                    isFavorite(RouteStopDirection(
+                        route: lineOrRoute.id,
+                        stop: stop.id,
+                        direction: direction.id
+                    ))) ||
+                    // If the only direction is the opposite one, mark it as favorite whether or not it already is
+                    (directions.count == 1 && direction.id != selectedDirection)
+                acc[direction.id] = isFavorite
+            }
+    }
 
     var body: some View {
         // Save automatically without confirmation modal
         VStack(spacing: 0) {
-            if isUnFavoriting || isBusOneDirection, directions.contains(where: { $0.id == selectedDirection }) {
+            if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
                 VStack {}
                     .onAppear {
                         let rsd = RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection)
@@ -52,25 +71,7 @@ struct SaveFavoritesFlow: View {
                                            directions: directions,
                                            selectedDirection: selectedDirection,
                                            context: context,
-                                           proposedFavorites: directions
-                                               .reduce(into: [Int32: Bool]()) { acc, direction in
-
-                                                   // if selectedDirection and already a favorite, then removing
-                                                   // favorite.
-                                                   // if this is not the selected direction and already a favorite, then
-                                                   // keep
-                                                   // it.
-                                                   let isFavorite = ((direction.id == selectedDirection) !=
-                                                       isFavorite(RouteStopDirection(
-                                                           route: lineOrRoute.id,
-                                                           stop: stop.id,
-                                                           direction: direction.id
-                                                       ))) ||
-                                                       // If the only direction is the opposite one, mark it as favorite
-                                                       // whether or not it already is
-                                                       (directions.count == 1 && direction.id != selectedDirection)
-                                                   acc[direction.id] = isFavorite
-                                               },
+                                           proposedFavorites: proposedFavorites(),
                                            updateFavorites: updateFavorites, onClose: onClose)
             }
         }.onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -91,19 +92,6 @@ struct FavoriteConfirmationDialog: View {
     @State var favoritesToSave: [Direction: Bool] = [:]
 
     var body: some View {
-        let headerText = if context == SaveFavoritesContext.favorites { String(format: NSLocalizedString(
-            "Add **%1$@** at **%2$@**",
-            comment: """
-            """
-        ), lineOrRoute.name, stop.name)
-        } else {
-            String(format: NSLocalizedString(
-                "Add **%1$@** at **%2$@** to Favorites",
-                comment: """
-                """
-            ), lineOrRoute.name, stop.name)
-        }
-
         VStack {}
             .onAppear {
                 favoritesToSave = directions.reduce(into: [Direction: Bool]()) { acc, direction in
@@ -146,17 +134,16 @@ struct FavoriteConfirmationDialogContents: View {
     let updateLocalFavorite: (Direction, Bool) -> Void
 
     var body: some View {
-        let headerText = if context == SaveFavoritesContext.favorites { String(format: NSLocalizedString(
-            "Add **%1$@** at **%2$@**",
-            comment: """
-            """
-        ), lineOrRoute.name, stop.name)
+        let headerText = if context == SaveFavoritesContext.favorites {
+            String(format: NSLocalizedString("Add **%1$@** at **%2$@**",
+                                             comment: """
+                                             Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]
+                                             """), lineOrRoute.name, stop.name)
         } else {
-            String(format: NSLocalizedString(
-                "Add **%1$@** at **%2$@** to Favorites",
-                comment: """
-                """
-            ), lineOrRoute.name, stop.name)
+            String(format: NSLocalizedString("Add **%1$@** at **%2$@** to Favorites",
+                                             comment: """
+                                             Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites
+                                             """), lineOrRoute.name, stop.name)
         }
 
         VStack {
