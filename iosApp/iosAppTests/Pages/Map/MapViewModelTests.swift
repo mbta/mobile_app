@@ -23,7 +23,7 @@ final class MapViewModelTests: XCTestCase {
 
     func testUpdatesSources() {
         let updateRouteSourceCalled = XCTestExpectation(description: "Update route source called")
-        let layerManager: IMapLayerManager = MockLayerManager(updateRouteDataCallback: { _ in
+        let layerManager: iosApp.IMapLayerManager = MockLayerManager(updateRouteDataCallback: { _ in
             updateRouteSourceCalled.fulfill()
         })
 
