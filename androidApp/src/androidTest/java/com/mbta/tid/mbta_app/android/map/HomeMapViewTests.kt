@@ -18,6 +18,9 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.model.SheetRoutes
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.MockStopRepository
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -44,7 +47,12 @@ class HomeMapViewTests {
 
         locationManager.hasPermission = false
 
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -74,7 +82,12 @@ class HomeMapViewTests {
     @Test
     fun testRecenterNotShownWhenPermissionsAndAtDefaultCenter(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
@@ -111,7 +124,12 @@ class HomeMapViewTests {
                 ViewportProvider.Companion.Defaults.center.longitude() + 1,
             )
 
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider =
             ViewportProvider(
                 MapViewportState(
@@ -148,7 +166,12 @@ class HomeMapViewTests {
     @Test
     fun testLocationAuthShownWhenNoPermissions(): Unit = runBlocking {
         val locationManager = MockLocationDataManager(null)
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
@@ -177,7 +200,12 @@ class HomeMapViewTests {
     @Test
     fun testLocationAuthNotShownWhenPermissions() = runBlocking {
         val locationManager = MockLocationDataManager()
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
@@ -207,7 +235,12 @@ class HomeMapViewTests {
     @Test
     fun testLocationAuthNotShownStopDetails() = runBlocking {
         val locationManager = MockLocationDataManager()
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
@@ -237,7 +270,12 @@ class HomeMapViewTests {
     @Test
     fun testOverviewNotShownWhenNoPermissionsStopDetails() = runBlocking {
         val locationManager = MockLocationDataManager()
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
@@ -310,7 +348,12 @@ class HomeMapViewTests {
 
     @Test
     fun testPlaceholderGrid(): Unit = runBlocking {
-        val viewModel = MapViewModel()
+        val viewModel =
+            MapViewModel(
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockStopRepository(),
+            )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
         open class MockConfigManager : IMapboxConfigManager {
