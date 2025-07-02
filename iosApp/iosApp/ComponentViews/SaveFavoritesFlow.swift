@@ -139,7 +139,9 @@ struct FavoriteConfirmationPopup: CenterPopup {
                                               favoritesToSave: favoritesToSave,
                                               updateFavorites: updateFavorites,
                                               onClose: onClose)
-        }.onAppear {
+        }
+        .accessibilityAddTraits(.isModal)
+        .onAppear {
             favoritesToSave = directions.reduce(into: [Direction: Bool]()) { acc, direction in
                 acc[direction] = proposedFavorites[direction.id] ?? false
             }
@@ -196,7 +198,7 @@ struct FavoriteConfirmationDialogContents: View {
                                  favorites: favoritesToSave,
                                  updateLocalFavorite: updateLocalFavorite)
             }
-        }.accessibilityAddTraits(.isModal)
+        }
     }
 }
 
