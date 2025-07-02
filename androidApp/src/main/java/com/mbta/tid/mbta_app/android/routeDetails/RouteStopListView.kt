@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,18 +36,23 @@ import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
+import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
+import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -165,27 +171,12 @@ fun RouteStopListView(
             lineOrRoute.sortRoute,
             selectedDirection,
             updateDirectionId = { selectedDirection = it },
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
         )
 
         if (lineOrRoute is RouteCardData.LineOrRoute.Line && routes.size > 1) {
-            Column {
-                for (route in routes) {
-                    val selected = route.id == selectedRouteId
-                    Row(
-                        Modifier.fillMaxWidth()
-                            .background(
-                                if (selected) colorResource(R.color.fill3) else Color.Transparent
-                            )
-                            .clickable { selectedRouteId = route.id }
-                            .padding(8.dp),
-                        Arrangement.spacedBy(8.dp),
-                        Alignment.CenterVertically,
-                    ) {
-                        RoutePill(route, lineOrRoute.line, RoutePillType.Fixed)
-                        Text(route.directionDestinations[selectedDirection] ?: "")
-                    }
-                }
+            LineRoutePicker(lineOrRoute.line, routes, selectedRouteId, selectedDirection) {
+                selectedRouteId = it
             }
         }
 
@@ -242,6 +233,7 @@ private fun RouteStops(
                         stop.stop,
                         onClick = { onTapStop(stop) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
+                        stopListContext = StopListContext.RouteDetails,
                         modifier = Modifier.minimumInteractiveComponentSize().fillMaxWidth(),
                         connectingRoutes = stop.connectingRoutes,
                         stopPlacement = stopPlacement,
@@ -260,6 +252,50 @@ private fun RouteStops(
                 ) { stop, modifier ->
                     rightSideContent(stopRowContext(stop.stop), modifier)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LineRoutePicker(
+    line: Line,
+    routes: List<Route>,
+    selectedRouteId: String,
+    selectedDirection: Int,
+    onSelect: (String) -> Unit,
+) {
+    val backgroundColor =
+        colorResource(R.color.deselected_toggle_2)
+            .copy(alpha = 0.6f)
+            .compositeOver(Color.fromHex(line.color))
+
+    Column(
+        Modifier.padding(horizontal = 14.dp)
+            .padding(top = 6.dp, bottom = 4.dp)
+            .haloContainer(1.dp, backgroundColor, backgroundColor)
+    ) {
+        for (route in routes) {
+            val selected = route.id == selectedRouteId
+            val haloColor = if (selected) colorResource(R.color.halo) else Color.Transparent
+            val rowColor = if (selected) colorResource(R.color.fill3) else Color.Transparent
+            val textColor =
+                if (selected) colorResource(R.color.text) else Color.fromHex(line.textColor)
+            Row(
+                Modifier.fillMaxWidth()
+                    .heightIn(min = 44.dp)
+                    .haloContainer(1.dp, haloColor, rowColor, 7.dp)
+                    .clickable { onSelect(route.id) }
+                    .padding(8.dp),
+                Arrangement.spacedBy(8.dp),
+                Alignment.CenterVertically,
+            ) {
+                RoutePill(route, line, RoutePillType.Fixed)
+                Text(
+                    route.directionDestinations[selectedDirection] ?: "",
+                    color = textColor,
+                    style = Typography.title3Semibold,
+                )
             }
         }
     }

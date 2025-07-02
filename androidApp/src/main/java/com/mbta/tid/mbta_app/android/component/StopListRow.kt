@@ -56,6 +56,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import kotlinx.serialization.Serializable
 
 class StopPlacement(
     val isFirst: Boolean = false,
@@ -63,11 +64,19 @@ class StopPlacement(
     val includeLineDiagram: Boolean = true,
 )
 
+@Serializable
+sealed class StopListContext {
+    data object Trip : StopListContext()
+
+    data object RouteDetails : StopListContext()
+}
+
 @Composable
 fun StopListRow(
     stop: Stop,
     onClick: () -> Unit,
     routeAccents: TripRouteAccents,
+    stopListContext: StopListContext,
     modifier: Modifier = Modifier,
     activeElevatorAlerts: Int = 0,
     alertSummaries: Map<String, AlertSummary?> = emptyMap(),
@@ -103,7 +112,9 @@ fun StopListRow(
 
     Column {
         Box(
-            Modifier.padding(horizontal = 6.dp)
+            Modifier.padding(
+                    horizontal = if (stopListContext is StopListContext.Trip) 6.dp else 0.dp
+                )
                 .then(modifier)
                 .height(IntrinsicSize.Min)
                 .defaultMinSize(minHeight = 48.dp)
