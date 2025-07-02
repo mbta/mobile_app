@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import androidx.annotation.ColorRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,8 +28,6 @@ import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 
-@ColorRes private fun deselectedBackgroundColor(route: Route): Int = R.color.deselected_toggle_2
-
 @Composable
 fun DirectionPicker(
     availableDirections: List<Int>,
@@ -42,7 +39,7 @@ fun DirectionPicker(
 ) {
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor =
-            colorResource(deselectedBackgroundColor(route))
+            colorResource(R.color.deselected_toggle_2)
                 .copy(alpha = 0.6f)
                 .compositeOver(Color.fromHex(route.color))
 
