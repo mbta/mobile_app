@@ -470,11 +470,4 @@ mokkery {
     ignoreFinalMembers.set(true)
 }
 
-sentryKmp {
-    autoInstall.commonMain.enabled = false
-    if (autoInstall.cocoapods.sentryCocoaVersion.getOrElse("") == "~> 8.44.0") {
-        autoInstall.cocoapods.sentryCocoaVersion.set("~> 8.46.0")
-    } else {
-        throw IllegalStateException("sentry-kmp was updated, delete explicit sentry-cocoa version")
-    }
-}
+sentryKmp { autoInstall.commonMain.enabled = false }
