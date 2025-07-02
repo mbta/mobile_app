@@ -10,7 +10,7 @@
 import Shared
 import XCTest
 
-final class iosApp.MapViewModelTests: XCTestCase {
+final class MapViewModelTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }

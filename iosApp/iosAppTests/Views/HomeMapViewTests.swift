@@ -840,7 +840,7 @@ final class HomeMapViewTests: XCTestCase {
         class FakeLocationFetcher: LocationFetcher {
             var didRequestAuthorization = false
 
-            var locationFetcherDelegate: (any iosApp.LocationFetcherDelegate)?
+            var locationFetcherDelegate: (any LocationFetcherDelegate)?
 
             var authorizationStatus: CLAuthorizationStatus = .notDetermined
 
