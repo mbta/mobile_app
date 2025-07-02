@@ -137,12 +137,14 @@ struct FavoriteConfirmationDialogContents: View {
         let headerText = if context == SaveFavoritesContext.favorites {
             String(format: NSLocalizedString("Add **%1$@** at **%2$@**",
                                              comment: """
-                                             Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]
+                                             Title for a confirmation modal when a user adds a favorite favorite.
+                                             Ex: Add [Green Line] at [Boylston]
                                              """), lineOrRoute.name, stop.name)
         } else {
             String(format: NSLocalizedString("Add **%1$@** at **%2$@** to Favorites",
                                              comment: """
-                                             Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites
+                                             Title for a confirmation modal when a user adds a favorite route + stop.
+                                             Ex: Add [Green Line] at [Boylston] to Favorites
                                              """), lineOrRoute.name, stop.name)
         }
 
