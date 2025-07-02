@@ -217,6 +217,8 @@ class MapAndSheetPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -241,7 +243,7 @@ class MapAndSheetPageTest : KoinTest {
                         {},
                         {},
                         bottomBar = {},
-                        mock<IMapViewModel>(MockMode.autofill),
+                        mockMapVM,
                     )
                 }
             }
@@ -331,6 +333,8 @@ class MapAndSheetPageTest : KoinTest {
 
     @Test
     fun testHidesMap() {
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -355,7 +359,7 @@ class MapAndSheetPageTest : KoinTest {
                         {},
                         {},
                         bottomBar = {},
-                        mock<IMapViewModel>(MockMode.autofill),
+                        mockMapVM,
                     )
                 }
             }

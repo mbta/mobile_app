@@ -44,9 +44,6 @@ class HomeMapViewTests {
     @Test
     fun testRecenterNotShownWhenNoPermissions() = runBlocking {
         val locationManager = MockLocationDataManager()
-
-        locationManager.hasPermission = false
-
         val viewModel =
             MapViewModel(
                 MockGlobalRepository(),
@@ -56,6 +53,7 @@ class HomeMapViewTests {
         val viewportProvider = ViewportProvider(MapViewportState())
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
+        locationManager.hasPermission = false
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
@@ -105,7 +103,7 @@ class HomeMapViewTests {
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
                 routeCardData = null,
-                viewModel = viewModel,
+                viewModel = mock<IMapViewModel>(MockMode.autofill),
                 isSearchExpanded = false,
                 configManager,
             )
