@@ -12,7 +12,7 @@ import SwiftUI
 struct MorePage: View {
     let inspection = Inspection<Self>()
 
-    var viewModel = SettingsViewModel()
+    var viewModel = MoreViewModel()
 
     var body: some View {
         NavigationStack {

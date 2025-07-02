@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.SettingsViewModel
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -29,7 +30,9 @@ class MoreSectionViewTests {
                     ),
                 settingsCache =
                     SettingsCache(
-                        MockSettingsRepository(onSaveSettings = { toggleCallbackCalled = true })
+                        SettingsViewModel(
+                            MockSettingsRepository(onSaveSettings = { toggleCallbackCalled = true })
+                        )
                     ),
             )
         }

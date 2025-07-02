@@ -1,5 +1,5 @@
 //
-//  SettingsViewModel.swift
+//  MoreViewModel.swift
 //  iosApp
 //
 //  Created by Brandon Rodriguez on 7/11/24.
@@ -11,7 +11,7 @@ import Foundation
 import Shared
 import SwiftUI
 
-class SettingsViewModel: ObservableObject {
+class MoreViewModel: ObservableObject {
     @Published var sections = [MoreSection]()
 
     // swiftlint:disable:next function_body_length

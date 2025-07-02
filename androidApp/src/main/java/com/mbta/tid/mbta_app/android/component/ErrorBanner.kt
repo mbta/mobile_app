@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.SettingsViewModel
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import org.koin.compose.KoinContext
@@ -203,7 +204,7 @@ private fun ErrorBannerPreviews() {
     // but it won't actually use the debug value set here when displayed
     val settingsRepo = MockSettingsRepository(mapOf(Settings.DevDebugMode to false))
     val koinApplication = koinApplication {
-        modules(module { single<SettingsCache> { SettingsCache(settingsRepo) } })
+        modules(module { single<SettingsCache> { SettingsCache(SettingsViewModel(settingsRepo)) } })
     }
     KoinContext(koinApplication.koin) {
         MyApplicationTheme {
