@@ -26,7 +26,7 @@ struct StopDetailsFilteredView: View {
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: MapViewModel
+    @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -46,7 +46,7 @@ struct StopDetailsFilteredView: View {
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: MapViewModel,
+        mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel
     ) {
         self.stopId = stopId
