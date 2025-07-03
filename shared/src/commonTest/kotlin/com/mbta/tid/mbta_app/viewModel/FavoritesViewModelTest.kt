@@ -18,7 +18,6 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
@@ -292,7 +291,6 @@ class FavoritesViewModelTest : KoinTest {
             )
 
         testViewModelFlow(viewModel).test {
-            advanceUntilIdle()
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
@@ -319,7 +317,7 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = expectedRealtimeData,
                     staticRouteCardData = expectedStaticData,
                 ),
-                expectMostRecentItem(),
+                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
             )
         }
     }
@@ -403,9 +401,6 @@ class FavoritesViewModelTest : KoinTest {
             )
 
         testViewModelFlow(viewModel).test {
-            println("before advance")
-            advanceUntilIdle()
-            println("after advance")
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
@@ -413,7 +408,9 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
                 ),
-                expectMostRecentItem(),
+                awaitItemSatisfying {
+                    it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
+                },
             )
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
@@ -458,20 +455,22 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(Position(0.0, 0.0))
 
         testViewModelFlow(viewModel).test {
-            println("before advance")
+            awaitItemSatisfying {
+                it.routeCardData != null && !it.awaitingPredictionsAfterBackground
+            }
             advanceUntilIdle()
-            println("after advance")
-            val item = expectMostRecentItem()
-            assertNotNull(item.routeCardData)
-            assertFalse(item.awaitingPredictionsAfterBackground)
             assertTrue(predictionsConnected)
             viewModel.setActive(false, wasSentToBackground = true)
+            awaitItemSatisfying {
+                it.routeCardData != null && it.awaitingPredictionsAfterBackground
+            }
             advanceUntilIdle()
-            assertTrue(awaitItem().awaitingPredictionsAfterBackground)
             assertFalse(predictionsConnected)
             viewModel.setActive(true)
+            awaitItemSatisfying {
+                it.routeCardData != null && !it.awaitingPredictionsAfterBackground
+            }
             advanceUntilIdle()
-            assertFalse(awaitItem().awaitingPredictionsAfterBackground)
             assertTrue(predictionsConnected)
         }
     }
@@ -513,12 +512,9 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
-            println("before advance")
-            advanceUntilIdle()
-            println("after advance")
             assertEquals(
                 emptyList(),
-                expectMostRecentItem()
+                awaitItemSatisfying { it.routeCardData != null }
                     .routeCardData!!
                     .flatMap { it.stopData }
                     .flatMap { it.data }
@@ -551,12 +547,12 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
-            println("before advance")
-            advanceUntilIdle()
-            println("after advance")
             assertEquals(
                 listOf(stop1, stop2),
-                expectMostRecentItem().routeCardData!!.flatMap { it.stopData }.map { it.stop },
+                awaitItemSatisfying { it.routeCardData != null }
+                    .routeCardData!!
+                    .flatMap { it.stopData }
+                    .map { it.stop },
             )
             viewModel.setLocation(stop2.position)
             assertEquals(
@@ -583,15 +579,17 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
-            println("before advance")
-            advanceUntilIdle()
-            println("after advance")
             assertEquals(
                 listOf(now),
-                expectMostRecentItem().routeCardData!!.map { it.at }.distinct(),
+                awaitItemSatisfying { it.routeCardData != null }
+                    .routeCardData!!
+                    .map { it.at }
+                    .distinct(),
             )
             viewModel.setNow(later)
-            assertEquals(listOf(later), awaitItem().routeCardData!!.map { it.at }.distinct())
+            awaitItemSatisfying {
+                it.routeCardData?.map { card -> card.at }?.distinct() == listOf(later)
+            }
         }
     }
 }

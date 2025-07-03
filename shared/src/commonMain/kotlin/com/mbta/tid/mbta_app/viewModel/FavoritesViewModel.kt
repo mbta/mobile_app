@@ -92,14 +92,10 @@ class FavoritesViewModel(
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
-        LaunchedEffect(Unit) {
-            println("LaunchedEffect 0: set favorites")
-            favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-        }
+        LaunchedEffect(Unit) { favorites = favoritesUsecases.getRouteStopDirectionFavorites() }
 
         LaunchedEffect(Unit) {
             events.collect { event ->
-                println("LaunchedEffect 1: event received ${event}")
                 when (event) {
                     Event.ReloadFavorites ->
                         favorites = favoritesUsecases.getRouteStopDirectionFavorites()
@@ -126,15 +122,9 @@ class FavoritesViewModel(
             now,
             favorites,
         ) {
-            println(
-                "LaunchedEffect 2: ${stopIds} ${globalData.hashCode()} ${location} ${schedules.hashCode()} ${predictions.hashCode()} ${alerts.hashCode()} ${now} ${favorites.hashCode()}"
-            )
-
             if (stopIds == null || globalData == null || location == null) {
-                println("LaunchedEffect 2: set routeCardData null")
                 routeCardData = null
             } else if (stopIds.isEmpty()) {
-                println("LaunchedEffect 2: set routeCardData empty")
                 routeCardData = emptyList()
             } else {
                 val loadedRouteCardData =
@@ -150,18 +140,14 @@ class FavoritesViewModel(
                         RouteCardData.Context.Favorites,
                         coroutineDispatcher,
                     )
-                println("LaunchedEffect 2: set routeCardData actual")
                 routeCardData = filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
         }
 
         LaunchedEffect(stopIds, globalData, favorites) {
-            println("LaunchedEffect 3: ${stopIds} ${globalData.hashCode()} ${favorites.hashCode()}")
             if (stopIds == null || globalData == null) {
-                println("LaunchedEffect 3: set staticRouteCardData null")
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
-                println("LaunchedEffect 3: set staticRouteCardData empty")
                 staticRouteCardData = emptyList()
             } else {
                 val loadedRouteCardData =
@@ -173,7 +159,6 @@ class FavoritesViewModel(
                         now,
                         coroutineDispatcher,
                     )
-                println("LaunchedEffect 3: set staticRouteCardData actual")
                 staticRouteCardData =
                     filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
