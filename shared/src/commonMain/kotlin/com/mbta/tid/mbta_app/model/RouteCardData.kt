@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.style.Color
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -643,6 +644,7 @@ data class RouteCardData(
          * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext] are omitted.
          * Cancelled trips are also omitted when [context] = NearbyTransit.
          */
+        @DefaultArgumentInterop.Enabled
         suspend fun routeCardsForStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
@@ -653,31 +655,7 @@ data class RouteCardData(
             now: Instant,
             pinnedRoutes: Set<String>,
             context: Context,
-        ): List<RouteCardData>? =
-            routeCardsForStopList(
-                stopIds,
-                globalData,
-                sortByDistanceFrom,
-                schedules,
-                predictions,
-                alerts,
-                now,
-                pinnedRoutes,
-                context,
-                Dispatchers.Default,
-            )
-
-        suspend fun routeCardsForStopList(
-            stopIds: List<String>,
-            globalData: GlobalResponse?,
-            sortByDistanceFrom: Position?,
-            schedules: ScheduleResponse?,
-            predictions: PredictionsStreamDataResponse?,
-            alerts: AlertsStreamDataResponse?,
-            now: Instant,
-            pinnedRoutes: Set<String>,
-            context: Context,
-            coroutineDispatcher: CoroutineDispatcher,
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
 
@@ -720,20 +698,13 @@ data class RouteCardData(
          * 1. subway routes
          * 2. route pattern sort order
          */
+        @DefaultArgumentInterop.Enabled
         suspend fun routeCardsForStaticStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             context: Context,
             now: Instant = Clock.System.now(),
-        ): List<RouteCardData>? =
-            routeCardsForStaticStopList(stopIds, globalData, context, now, Dispatchers.Default)
-
-        suspend fun routeCardsForStaticStopList(
-            stopIds: List<String>,
-            globalData: GlobalResponse?,
-            context: Context,
-            now: Instant = Clock.System.now(),
-            coroutineDispatcher: CoroutineDispatcher,
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
                 // if global data was still loading, there'd be no nearby data, and null handling is
