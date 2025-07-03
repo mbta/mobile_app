@@ -5,6 +5,7 @@
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Ajouter</string>
+    <string name="add_favorite">ajouter aux favoris</string>
     <string name="add_to_favorites_title">Ajoutez &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b> aux favoris</string>
     <string name="additional_service">Service supplémentaire</string>
@@ -127,6 +128,7 @@
     <string name="extra_service_sentence_case">Service supplémentaire</string>
     <string name="facility_issue">Problème d’infrastructure</string>
     <string name="facility_issue_sentence_case">Problème d’infrastructure</string>
+    <string name="favorite_stop">arrêt préféré</string>
     <string name="favorites_link">Favoris</string>
     <string name="feature_flag_debug_mode">Mode débogage</string>
     <string name="feature_flag_route_search">Recherche de trajet</string>
@@ -258,6 +260,7 @@
     <string name="refresh">Actualiser</string>
     <string name="refresh_predictions">Actualiser les prévisions</string>
     <string name="reload_data">Recharger les données</string>
+    <string name="remove_favorite">supprimer les favoris</string>
     <string name="resources_link_fare_info">Informations sur les tarifs</string>
     <string name="resources_link_mticket">Titres pour train de banlieue et ferry</string>
     <string name="resources_link_mticket_note">Application mTicket</string>

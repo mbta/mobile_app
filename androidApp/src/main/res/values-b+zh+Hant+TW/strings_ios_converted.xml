@@ -5,6 +5,7 @@
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
+    <string name="add_favorite">新增收藏</string>
     <string name="add_to_favorites_title">在 &lt;b>%2$s&lt;/b> 加 &lt;b>%1$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">將 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 加入到收藏夾</string>
     <string name="additional_service">附加服務</string>
@@ -121,6 +122,7 @@
     <string name="extra_service_sentence_case">額外服務</string>
     <string name="facility_issue">設施問題</string>
     <string name="facility_issue_sentence_case">設施問題</string>
+    <string name="favorite_stop">最喜歡的一站</string>
     <string name="favorites_link">收藏夾</string>
     <string name="feature_flag_debug_mode">調試模式</string>
     <string name="feature_flag_route_search">線路搜尋</string>
@@ -252,6 +254,7 @@
     <string name="refresh">重新整理</string>
     <string name="refresh_predictions">重新整理預測</string>
     <string name="reload_data">重新載入資料</string>
+    <string name="remove_favorite">刪除收藏夾</string>
     <string name="resources_link_fare_info">票價資訊</string>
     <string name="resources_link_mticket">通勤鐵路和渡輪票</string>
     <string name="resources_link_mticket_note">mTicket應用程式</string>

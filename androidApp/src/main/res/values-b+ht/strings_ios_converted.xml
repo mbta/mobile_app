@@ -5,6 +5,7 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
+    <string name="add_favorite">ajoute nan favori</string>
     <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>
@@ -136,6 +137,7 @@
     <string name="extra_service_sentence_case">Sèvis anplis</string>
     <string name="facility_issue">Pwoblèm Lokal</string>
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
+    <string name="favorite_stop">arè pi renmen</string>
     <string name="favorites_link">Favori</string>
     <string name="feature_flag_debug_mode">Mòd Debogaj</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
@@ -267,6 +269,7 @@
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
     <string name="reload_data">Rechaje done</string>
+    <string name="remove_favorite">retire favori</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>

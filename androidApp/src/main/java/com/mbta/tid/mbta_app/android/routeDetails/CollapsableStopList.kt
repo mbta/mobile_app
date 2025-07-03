@@ -50,6 +50,7 @@ fun CollapsableStopList(
     lineOrRoute: RouteCardData.LineOrRoute,
     segment: RouteDetailsStopList.Segment,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
+    onClickLabel: @Composable (RouteDetailsStopList.Entry) -> String? = { null },
     isFirstSegment: Boolean = false,
     isLastSegment: Boolean = false,
     rightSideContent: @Composable RowScope.(RouteDetailsStopList.Entry, Modifier) -> Unit,
@@ -67,6 +68,7 @@ fun CollapsableStopList(
             modifier =
                 Modifier.minimumInteractiveComponentSize().background(colorResource(R.color.fill1)),
             connectingRoutes = stop.connectingRoutes,
+            onClickLabel = onClickLabel(stop),
             stopPlacement = StopPlacement(isFirstSegment, isLastSegment, false),
             descriptor = {
                 Text(stringResource(R.string.less_common_stop), style = Typography.footnote)
@@ -154,6 +156,7 @@ fun CollapsableStopList(
                             Modifier.minimumInteractiveComponentSize()
                                 .background(colorResource(R.color.fill1)),
                         connectingRoutes = stop.connectingRoutes,
+                        onClickLabel = onClickLabel(stop),
                         stopPlacement =
                             StopPlacement(
                                 isFirstSegment && index == 0,
