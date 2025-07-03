@@ -5,6 +5,7 @@
     <string name="accident">Accidente</string>
     <string name="accident_lowercase">accidente</string>
     <string name="add_confirmation_button">Agregar</string>
+    <string name="add_favorite">añadir favorito</string>
     <string name="add_to_favorites_title">Añadir &lt;b>%1$s&lt;/b> en &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Añadir &lt;b>%1$s&lt;/b> en &lt;b>%2$s&lt;/b> a Favoritos</string>
     <string name="additional_service">Servicio adicional</string>
@@ -127,6 +128,7 @@
     <string name="extra_service_sentence_case">Servicio extra</string>
     <string name="facility_issue">Problema en las instalaciones</string>
     <string name="facility_issue_sentence_case">Problema en las instalaciones</string>
+    <string name="favorite_stop">parada favorita</string>
     <string name="favorites_link">Favoritos</string>
     <string name="feature_flag_debug_mode">Modo de depuración</string>
     <string name="feature_flag_route_search">Buscador de rutas</string>
@@ -258,6 +260,7 @@
     <string name="refresh">Refrescar</string>
     <string name="refresh_predictions">Refrescar predicciones</string>
     <string name="reload_data">Recargar datos</string>
+    <string name="remove_favorite">eliminar favorito</string>
     <string name="resources_link_fare_info">Información de tarifas</string>
     <string name="resources_link_mticket">Billetes de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>

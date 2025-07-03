@@ -52,13 +52,13 @@ class CollapsableStopListTest {
                 onClick = { clicked = true },
                 isFirstSegment = false,
                 isLastSegment = false,
-                { _, _ -> },
+                rightSideContent = { _, _ -> },
             )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNodeWithText("Less common stop").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("mbta_logo").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("mbta_logo", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop1.name).performClick()
         assertTrue(clicked)
     }
@@ -98,7 +98,7 @@ class CollapsableStopListTest {
                 onClick = {},
                 isFirstSegment = false,
                 isLastSegment = false,
-                { _, _ -> },
+                rightSideContent = { _, _ -> },
             )
         }
         composeTestRule.onNodeWithText(stop1.name).assertIsNotDisplayed()
@@ -107,8 +107,8 @@ class CollapsableStopListTest {
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNode(hasClickActionLabel("collapse stops")).assertExists()
-        composeTestRule.onNodeWithTag("mbta_logo").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("stop_bus").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("mbta_logo", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("stop_bus", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
 
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()

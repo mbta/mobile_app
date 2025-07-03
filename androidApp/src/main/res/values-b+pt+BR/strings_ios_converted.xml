@@ -5,6 +5,7 @@
     <string name="accident">Acidente</string>
     <string name="accident_lowercase">acidente</string>
     <string name="add_confirmation_button">Adicionar</string>
+    <string name="add_favorite">adicionar favorito</string>
     <string name="add_to_favorites_title">Adicione &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Adicione &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> aos favoritos</string>
     <string name="additional_service">Serviço adicional</string>
@@ -127,6 +128,7 @@
     <string name="extra_service_sentence_case">Serviço extra</string>
     <string name="facility_issue">Problema nas instalações</string>
     <string name="facility_issue_sentence_case">Problema nas instalações</string>
+    <string name="favorite_stop">parada favorita</string>
     <string name="favorites_link">Favoritos</string>
     <string name="feature_flag_debug_mode">Modo de depuração</string>
     <string name="feature_flag_route_search">Pesquisa de rotas</string>
@@ -258,6 +260,7 @@
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>
     <string name="reload_data">Recarregar dados</string>
+    <string name="remove_favorite">remover favorito</string>
     <string name="resources_link_fare_info">Informações sobre tarifas</string>
     <string name="resources_link_mticket">Bilhetes de transporte diário por trem e balsa</string>
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>

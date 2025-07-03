@@ -278,24 +278,30 @@ class TripStopRowTest {
             )
         }
 
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
+            .assertIsDisplayed()
         composeTestRule
             .onNodeWithContentDescription("This stop is not accessible", useUnmergedTree = true)
             .assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertDoesNotExist()
 
         testEntry = entry(accessibleStop)
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
+        composeTestRule
+            .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertDoesNotExist()
 
         testEntry =
             entry(
                 accessibleStop,
                 listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) }),
             )
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule
             .onNodeWithContentDescription("This stop has 1 elevator closed", useUnmergedTree = true)
             .assertIsDisplayed()

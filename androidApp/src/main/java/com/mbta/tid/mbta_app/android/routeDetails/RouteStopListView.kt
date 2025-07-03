@@ -73,7 +73,8 @@ fun RouteStopListView(
     lineOrRoute: RouteCardData.LineOrRoute,
     context: RouteDetailsContext,
     globalData: GlobalResponse,
-    onClick: (RouteDetailsStopList.Entry) -> Unit,
+    onClick: (RouteDetailsRowContext) -> Unit,
+    onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
@@ -186,6 +187,7 @@ fun RouteStopListView(
             selectedDirection,
             context,
             onTapStop = onClick,
+            onClickLabel = onClickLabel,
             stopRowContext = ::stopRowContext,
             rightSideContent = rightSideContent,
         )
@@ -198,7 +200,8 @@ private fun RouteStops(
     stopList: RouteDetailsStopList?,
     selectedDirection: Int,
     context: RouteDetailsContext,
-    onTapStop: (RouteDetailsStopList.Entry) -> Unit,
+    onTapStop: (RouteDetailsRowContext) -> Unit,
+    onClickLabel: @Composable (RouteDetailsRowContext) -> String?,
     stopRowContext: (Stop) -> RouteDetailsRowContext,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
     loading: Boolean = false,
@@ -229,16 +232,18 @@ private fun RouteStops(
                             includeLineDiagram = segment.hasRouteLine,
                         )
 
+                    val stopRowContext = stopRowContext(stop.stop)
                     StopListRow(
                         stop.stop,
-                        onClick = { onTapStop(stop) },
+                        onClick = { onTapStop(stopRowContext) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
                         stopListContext = StopListContext.RouteDetails,
                         modifier = Modifier.minimumInteractiveComponentSize().fillMaxWidth(),
                         connectingRoutes = stop.connectingRoutes,
+                        onClickLabel = onClickLabel(stopRowContext),
                         stopPlacement = stopPlacement,
                         rightSideContent = { modifier ->
-                            rightSideContent(stopRowContext(stop.stop), modifier)
+                            rightSideContent(stopRowContext, modifier)
                         },
                     )
                 }
@@ -246,7 +251,8 @@ private fun RouteStops(
                 CollapsableStopList(
                     lineOrRoute,
                     segment,
-                    onTapStop,
+                    onClick = { onTapStop(stopRowContext(it.stop)) },
+                    onClickLabel = { onClickLabel(stopRowContext(it.stop)) },
                     segmentIndex == 0,
                     segmentIndex == stopList.segments.lastIndex,
                 ) { stop, modifier ->
@@ -319,6 +325,7 @@ private fun LoadingRouteStops(
             selectedDirection = selectedDirection,
             context = context,
             onTapStop = { _ -> },
+            onClickLabel = { null },
             stopRowContext = { stop ->
                 when (context) {
                     is RouteDetailsContext.Details -> RouteDetailsRowContext.Details(stop)
