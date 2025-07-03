@@ -91,8 +91,8 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-mapbox-android = { module = "com.mapbox.maps:android", version.ref = "mapbox" }
-mapbox-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapbox" }
+mapbox-android = { module = "com.mapbox.maps:android-ndk27", version.ref = "mapbox" }
+mapbox-compose = { module = "com.mapbox.extension:maps-compose-ndk27", version.ref = "mapbox" }
 mapbox-turf = { module = "com.mapbox.mapboxsdk:mapbox-sdk-turf", version.ref = "mapboxTurf" }
 molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version.ref = "molecule" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
