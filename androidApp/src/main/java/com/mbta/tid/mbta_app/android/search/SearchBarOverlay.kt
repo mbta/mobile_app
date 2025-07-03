@@ -1,17 +1,9 @@
 package com.mbta.tid.mbta_app.android.search
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
@@ -33,11 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.SearchInput
-import com.mbta.tid.mbta_app.android.search.results.RouteResultsView
-import com.mbta.tid.mbta_app.android.search.results.StopResultsView
-import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.search.results.SearchResultsView
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -56,7 +45,6 @@ fun SearchBarOverlay(
 ) {
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val searchVMState by searchVM.models.collectAsState()
-    val includeRoutes = SettingsCache.get(Settings.SearchRouteResults)
 
     LaunchedEffect(searchInputState) { searchVM.setQuery(searchInputState) }
     LaunchedEffect(showSearchBar, expanded) {
@@ -94,66 +82,11 @@ fun SearchBarOverlay(
                     expanded = expanded,
                     onExpandedChange = onExpandedChange,
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth().background(colorResource(R.color.fill1)),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        if (searchInputState.isEmpty()) {
-                            item {
-                                Text(
-                                    modifier = Modifier.padding(bottom = 10.dp),
-                                    text = stringResource(R.string.recently_viewed),
-                                    style = Typography.subheadlineSemibold,
-                                )
-                            }
-                        }
-                        val (stopResults, routeResults) =
-                            when (val state = searchVMState) {
-                                SearchViewModel.State.Loading -> Pair(null, null)
-                                is SearchViewModel.State.RecentStops -> Pair(state.stops, null)
-                                is SearchViewModel.State.Results -> Pair(state.stops, state.routes)
-                                SearchViewModel.State.Error -> Pair(null, null)
-                            }
-                        itemsIndexed(stopResults ?: emptyList()) { index, stopResult ->
-                            val shape =
-                                if (stopResults?.size == 1) {
-                                    RoundedCornerShape(10.dp)
-                                } else if (stopResults?.first() == stopResult) {
-                                    RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
-                                } else if (stopResults?.last() == stopResult) {
-                                    RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
-                                } else {
-                                    RoundedCornerShape(0.dp)
-                                }
-                            if (index != 0) {
-                                HorizontalDivider(color = colorResource(R.color.fill1))
-                            }
-                            StopResultsView(shape, stopResult, onStopNavigation)
-                        }
-                        if (includeRoutes && !routeResults.isNullOrEmpty()) {
-                            item {
-                                Text(
-                                    stringResource(R.string.routes),
-                                    Modifier.padding(vertical = 8.dp),
-                                    style = Typography.subheadlineSemibold,
-                                )
-                            }
-                            items(routeResults) { routeResult ->
-                                val shape =
-                                    if (routeResults.size == 1) {
-                                        RoundedCornerShape(10.dp)
-                                    } else if (routeResults.first() == routeResult) {
-                                        RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
-                                    } else if (routeResults.last() == routeResult) {
-                                        RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
-                                    } else {
-                                        RoundedCornerShape(0.dp)
-                                    }
-                                HorizontalDivider(color = colorResource(R.color.fill1))
-                                RouteResultsView(shape, routeResult, onRouteNavigation)
-                            }
-                        }
-                    }
+                    SearchResultsView(
+                        state = searchVMState,
+                        handleStopTap = onStopNavigation,
+                        handleRouteTap = onRouteNavigation,
+                    )
                 }
             }
         }

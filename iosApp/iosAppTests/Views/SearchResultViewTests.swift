@@ -30,7 +30,7 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testPending() throws {
         let sut = SearchResultsView(state: SearchViewModel.StateLoading.shared, handleStopTap: { _ in })
             .withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResults.self))
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResultsView.self))
     }
 
     @MainActor func testResultLoad() throws {

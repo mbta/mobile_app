@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -23,6 +25,31 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
+
+@Composable
+fun RouteResultsView(routes: List<SearchViewModel.RouteResult>, handleSearch: (String) -> Unit) {
+    Text(
+        stringResource(R.string.routes),
+        Modifier.padding(vertical = 8.dp),
+        style = Typography.subheadlineSemibold,
+    )
+    Column {
+        routes.forEachIndexed { index, routeResult ->
+            val shape =
+                if (routes.size == 1) {
+                    RoundedCornerShape(10.dp)
+                } else if (index == 0) {
+                    RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                } else if (index == routes.lastIndex) {
+                    RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
+                } else {
+                    RoundedCornerShape(0.dp)
+                }
+            HorizontalDivider(color = colorResource(R.color.fill1))
+            RouteResultsView(shape, routeResult, handleSearch)
+        }
+    }
+}
 
 @Composable
 fun RouteResultsView(

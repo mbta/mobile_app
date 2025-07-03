@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +30,34 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.text
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
+
+@Composable
+fun StopResultsView(
+    stops: List<SearchViewModel.StopResult>,
+    handleSearch: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        stops.forEachIndexed { index, stopResult ->
+            val shape =
+                if (stops.size == 1) {
+                    RoundedCornerShape(10.dp)
+                } else if (index == 0) {
+                    RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                } else if (index == stops.lastIndex) {
+                    RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
+                } else {
+                    RoundedCornerShape(0.dp)
+                }
+            if (index != 0) {
+                HorizontalDivider(color = colorResource(R.color.fill1))
+            }
+            StopResultsView(shape, stopResult, handleSearch)
+        }
+    }
+}
 
 @Composable
 fun StopResultsView(
@@ -48,7 +76,7 @@ fun StopResultsView(
                     .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val iconModifier = Modifier.height(32.dp).width(32.dp)
+            val iconModifier = Modifier.height(32.dp).width(32.dp).placeholderIfLoading()
 
             val routePillsData = stop.routePills
 
@@ -81,7 +109,9 @@ fun StopResultsView(
             ) {
                 Text(
                     text = stop.name,
-                    modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 16.dp),
+                    modifier =
+                        Modifier.padding(top = 12.dp, bottom = 8.dp, start = 16.dp)
+                            .placeholderIfLoading(),
                     style = Typography.bodySemibold,
                 )
                 Row(
@@ -89,6 +119,7 @@ fun StopResultsView(
                         Modifier.horizontalScroll(scrollState)
                             .padding(start = 16.dp, bottom = 12.dp)
                             .clearAndSetSemantics { contentDescription = routesContentDescription }
+                            .placeholderIfLoading()
                 ) {
                     routePillsData.map { spec ->
                         RoutePill(
