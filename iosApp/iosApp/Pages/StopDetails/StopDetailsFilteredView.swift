@@ -135,6 +135,7 @@ struct StopDetailsFilteredView: View {
                 loadingBody()
             }
         }
+        .accessibilityHidden(inSaveFavoritesFlow)
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
