@@ -182,16 +182,18 @@ struct DirectionButtons: View {
         let isFavorite: Bool
     }
 
-    var directionValues: [DirectionFavorite] { favorites.map { DirectionFavorite(
-        direction: $0.key,
-        isFavorite: $0.value
-    ) }
+    var directionValues: [DirectionFavorite] {
+        favorites
+            .map { DirectionFavorite(direction: $0.key, isFavorite: $0.value) }
+            .sorted(by: { $0.direction.id < $1.direction.id })
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(
-                directionValues.enumerated().sorted(by: { $0.element.direction.id < $1.element.direction.id }),
+                directionValues
+                    .enumerated()
+                    .sorted(by: { $0.offset < $1.offset }),
                 id: \.element.hashValue
             ) { index, directionValue in
                 Button(action: {
