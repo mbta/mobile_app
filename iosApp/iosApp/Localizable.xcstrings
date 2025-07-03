@@ -11761,6 +11761,53 @@
         }
       }
     },
+    "No results found 🤔" : {
+      "comment" : "Displayed when search has no results",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se encontraron resultados 🤔"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aucun résultat trouvé 🤔"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pa jwenn rezilta 🤔"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nenhum resultado encontrado 🤔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không tìm thấy kết quả nào 🤔"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未找到结果🤔"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未找到結果🤔"
+          }
+        }
+      }
+    },
     "No service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -13836,6 +13883,53 @@
         }
       }
     },
+    "Results failed to load ☹️" : {
+      "comment" : "Displayed when search encounters an error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los resultados no se pudieron cargar ☹️"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Les résultats n’ont pas pu être chargés ☹️"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rezilta yo pa t chaje ☹️"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Falha ao carregar os resultados ☹️"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kết quả không tải được ☹️"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "结果加载失败☹️"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "結果載入失敗☹️"
+          }
+        }
+      }
+    },
     "Route Search" : {
       "comment" : "A setting on the More page to display routes in search (only visible for developers)",
       "localizations" : {
@@ -14478,7 +14572,7 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Envoyer des commentaires sur l’application"
           }
         },
@@ -18859,6 +18953,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trip Planner"
+          }
+        }
+      }
+    },
+    "Try a different spelling or name." : {
+      "comment" : "Displayed when search has no results",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pruebe con una ortografía o un nombre diferente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Essayez une orthographe ou un nom différent."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eseye yon lòt òtograf oswa non."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tente uma grafia ou nome diferente."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hãy thử cách viết hoặc tên khác."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "尝试不同的拼写或名称。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "嘗試不同的拼字或名稱。"
+          }
+        }
+      }
+    },
+    "Try your search again." : {
+      "comment" : "Displayed when search encounters an error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intente su búsqueda nuevamente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Réessayez votre recherche."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eseye rechèch ou an ankò."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tente sua pesquisa novamente."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hãy thử tìm kiếm lại."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "再次尝试搜索。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "再次嘗試搜尋。"
           }
         }
       }
