@@ -32,6 +32,8 @@ import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okio.FileSystem
 import okio.SYSTEM
 import org.koin.core.module.Module
@@ -42,6 +44,7 @@ fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
+        module { single<CoroutineDispatcher> { Dispatchers.Default } },
         repositoriesModule(RealRepositories()),
     )
 }
