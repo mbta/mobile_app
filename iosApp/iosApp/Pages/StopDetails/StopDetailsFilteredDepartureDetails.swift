@@ -189,6 +189,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: leaf) { leaf in
             leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
         }
+        .onChange(of: now) { now in
+            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
+        }
         .onChange(of: AlertSummaryParams(
             global: stopDetailsVM.global,
             alerts: alerts,
