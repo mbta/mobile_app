@@ -42,6 +42,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
@@ -350,18 +351,20 @@ private fun TripStopsPreview() {
             },
         )
     MyApplicationTheme {
-        TripStops(
-            targetId = stops[4].id,
-            stopList,
-            4,
-            TripHeaderSpec.NoVehicle,
-            Clock.System.now(),
-            emptyMap(),
-            GlobalResponse(objects),
-            onTapLink = {},
-            onOpenAlertDetails = {},
-            TripRouteAccents(route),
-            showStationAccessibility = true,
-        )
+        Column(Modifier.background(Color.fromHex(route.color))) {
+            TripStops(
+                targetId = stops[4].id,
+                stopList,
+                4,
+                TripHeaderSpec.NoVehicle,
+                Clock.System.now(),
+                emptyMap(),
+                GlobalResponse(objects),
+                onTapLink = {},
+                onOpenAlertDetails = {},
+                TripRouteAccents(route),
+                showStationAccessibility = true,
+            )
+        }
     }
 }

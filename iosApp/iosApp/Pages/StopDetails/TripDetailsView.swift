@@ -19,7 +19,7 @@ struct TripDetailsView: View {
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: MapViewModel
+    @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @State var stops: TripDetailsStopList?
@@ -38,7 +38,7 @@ struct TripDetailsView: View {
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: MapViewModel,
+        mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         analytics: Analytics = AnalyticsProvider.shared

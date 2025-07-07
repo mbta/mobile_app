@@ -74,11 +74,16 @@ class RouteStopListViewTest {
         }
 
         val clicks = mutableListOf<RouteDetailsStopList.Entry>()
-        var closed = false
+        var backTapped = false
+        var closeTapped = false
 
         val koin =
             testKoinApplication(objects) {
-                routeStops = MockRouteStopsRepository(listOf(stop1.id, stop2.id, stop3.id))
+                routeStops =
+                    MockRouteStopsRepository(
+                        listOf(stop1.id, stop2.id, stop3.id),
+                        routeId = mainRoute.id,
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
@@ -89,7 +94,8 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = clicks::add,
-                    onClose = { closed = true },
+                    onBack = { backTapped = true },
+                    onClose = { closeTapped = true },
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { context, _ ->
                         when (context) {
@@ -129,8 +135,11 @@ class RouteStopListViewTest {
             clicks,
         )
 
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        assertTrue(backTapped)
+
         composeTestRule.onNodeWithContentDescription("Close").performClick()
-        assertTrue(closed)
+        assertTrue(closeTapped)
     }
 
     @Test
@@ -179,6 +188,7 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     defaultSelectedRouteId = route2.id,
@@ -235,7 +245,8 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops =
                     MockRouteStopsRepository(
-                        listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id)
+                        listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id),
+                        routeId = mainRoute.id,
                     )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
@@ -247,6 +258,7 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { _, _ -> },
@@ -268,21 +280,26 @@ class RouteStopListViewTest {
     @Test
     fun testFavoritesWithConfirmationDialog() {
         val objects = TestData.clone()
+        val route = RouteCardData.LineOrRoute.Route(objects.getRoute("Red"))
 
         val koin =
             testKoinApplication(objects) {
                 routeStops =
-                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+                    MockRouteStopsRepository(
+                        listOf("place-alfcl", "place-davis", "place-portr"),
+                        routeId = route.id,
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
                 RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    route,
                     RouteDetailsContext.Favorites,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     rightSideContent = { rowContext, _ ->

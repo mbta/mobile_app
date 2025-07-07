@@ -1,5 +1,5 @@
 {
-  "originHash" : "e617080b0d8c905c709b45cc004aaf8646fc086a0dbbe47ba9df4d3cf913bc0d",
+  "originHash" : "05aaebb4b542c8243816a3d9ea6f659b59048c059ad3bcbd9bf49befa67162ef",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
         "version" : "11.2.0"
+      }
+    },
+    {
+      "identity" : "customalert",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divadretlaw/CustomAlert.git",
+      "state" : {
+        "revision" : "a76ce9ffaca03ff2ee21bc51cf4f8da95eeadf18",
+        "version" : "4.1.1"
       }
     },
     {
@@ -197,6 +206,33 @@
       "state" : {
         "revision" : "a6fcac8485bc8f57b2d2b55bb6d97138e8659e4b",
         "version" : "0.10.2"
+      }
+    },
+    {
+      "identity" : "windowkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divadretlaw/WindowKit",
+      "state" : {
+        "revision" : "2e689d5ebf019ed3e7abffa4e6ddb06287f231e9",
+        "version" : "2.6.1"
+      }
+    },
+    {
+      "identity" : "windowreader",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divadretlaw/WindowReader",
+      "state" : {
+        "revision" : "fe6639ab9968e247bb44e98ae298cf23a137dd76",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "windowscenereader",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divadretlaw/WindowSceneReader",
+      "state" : {
+        "revision" : "7321112ff9df9921256d31fa6d1a07ca5ab695b6",
+        "version" : "3.2.0"
       }
     }
   ],

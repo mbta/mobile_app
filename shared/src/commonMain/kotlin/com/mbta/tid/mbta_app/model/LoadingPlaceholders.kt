@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
@@ -91,6 +92,42 @@ object LoadingPlaceholders {
         val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), now)
 
         return routeData
+    }
+
+    fun routeDetailsStops(
+        lineOrRoute: RouteCardData.LineOrRoute,
+        directionId: Int,
+    ): RouteDetailsStopList {
+        val objects = ObjectCollectionBuilder()
+        val fixedRand = Random("${lineOrRoute.id}-$directionId".hashCode())
+        fun randString(from: Int, until: Int) =
+            (1..fixedRand.nextInt(from, until)).joinToString("") { " " }
+
+        return RouteDetailsStopList(
+            directionId = directionId,
+            segments =
+                listOf(
+                    RouteDetailsStopList.Segment(
+                        (1..20).map {
+                            val stopName = randString(15, 30)
+                            val transferRoutes =
+                                (0..fixedRand.nextInt(0, 7)).map {
+                                    objects.route { shortName = randString(2, 5) }
+                                }
+                            RouteDetailsStopList.Entry(
+                                objects.stop { name = stopName },
+                                listOf(
+                                    objects.routePattern(lineOrRoute.sortRoute) {
+                                        typicality = RoutePattern.Typicality.Typical
+                                    }
+                                ),
+                                transferRoutes,
+                            )
+                        },
+                        hasRouteLine = true,
+                    )
+                ),
+        )
     }
 
     fun stopDetailsRouteCards() =

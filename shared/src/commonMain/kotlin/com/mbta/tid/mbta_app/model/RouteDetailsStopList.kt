@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.RouteStopsResponse
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteDetailsStopList(val segments: List<Segment>) {
+data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment>) {
 
     /** A subset of consecutive stops that are all typical or all non-typical. */
     data class Segment(val stops: List<Entry>, val hasRouteLine: Boolean) {
@@ -74,11 +74,16 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
         suspend fun fromPieces(
             routeId: String,
             directionId: Int,
-            routeStops: RouteStopsResponse?,
+            routeStops: RouteStopsResult?,
             globalData: GlobalResponse,
         ): RouteDetailsStopList? =
             withContext(Dispatchers.Default) {
-                if (routeStops == null) return@withContext null
+                if (
+                    routeStops == null ||
+                        routeStops.routeId != routeId ||
+                        routeStops.directionId != directionId
+                )
+                    return@withContext null
 
                 val stops =
                     routeStops.stopIds.mapNotNull { stopId ->
@@ -96,7 +101,7 @@ data class RouteDetailsStopList(val segments: List<Segment>) {
 
                 val segments = splitIntoSegments(stops)
 
-                RouteDetailsStopList(segments)
+                RouteDetailsStopList(directionId, segments)
             }
 
         /**

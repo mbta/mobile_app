@@ -88,7 +88,7 @@ private fun ToastActionButton(snackbarData: SnackbarData, toastState: ToastViewM
             modifier =
                 Modifier.padding(
                     start = 8.dp,
-                    end = if (snackbarData.visuals.withDismissAction) 0.dp else 16.dp,
+                    end = if (snackbarData.visuals.withDismissAction) 0.dp else 8.dp,
                 ),
             colors =
                 ButtonDefaults.buttonColors(
@@ -110,7 +110,7 @@ private fun ToastCloseButton(snackbarData: SnackbarData, toastState: ToastViewMo
     if (snackbarData.visuals.withDismissAction)
         ActionButton(
             ActionButtonKind.Close,
-            modifier = Modifier.padding(start = 8.dp, end = 16.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = colorResource(R.color.halo_inverse),

@@ -29,7 +29,9 @@ struct RouteCard: View {
                 routeType: cardData.lineOrRoute.type,
                 backgroundColor: Color(hex: cardData.lineOrRoute.backgroundColor),
                 textColor: Color(hex: cardData.lineOrRoute.textColor),
-                rightContent: { PinButton(pinned: pinned, action: { onPin(cardData.lineOrRoute.id) }) }
+                rightContent: { PinButton(pinned: pinned,
+                                          color: Color(hex: cardData.lineOrRoute.textColor),
+                                          action: { onPin(cardData.lineOrRoute.id) }) }
             )
             .accessibilityElement(children: .contain)
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in

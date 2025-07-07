@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.FavoriteConfirmationDialog
+import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
+import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -38,6 +38,7 @@ import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -70,7 +71,7 @@ fun StopDetailsFilteredPickerView(
     val lineOrRoute = routeStopData.lineOrRoute
     val stop = routeStopData.stop
 
-    val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
+    val availableDirections = routeStopData.availableDirections.sorted()
     val directions = routeStopData.directions
 
     val routeHex: String = lineOrRoute.backgroundColor
@@ -86,28 +87,22 @@ fun StopDetailsFilteredPickerView(
             FavoriteBridge.Pinned(lineOrRoute.id)
         }
 
-    var showFavoritesConfirmation by rememberSaveable { mutableStateOf(false) }
+    var inSaveFavoritesFlow by rememberSaveable { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        if (showFavoritesConfirmation) {
-            FavoriteConfirmationDialog(
+        if (inSaveFavoritesFlow) {
+            SaveFavoritesFlow(
                 lineOrRoute,
                 stop,
                 directions.filter { it.id in availableDirections },
-                proposedFavorites =
-                    availableDirections.associateWith {
-                        it == stopFilter.directionId ||
-                            isFavorite(
-                                FavoriteBridge.Favorite(
-                                    RouteStopDirection(lineOrRoute.id, stop.id, it)
-                                )
-                            )
-                    },
+                selectedDirection = stopFilter.directionId,
+                context = SaveFavoritesContext.StopDetails,
                 updateFavorites = { newValues ->
                     updateFavorites(FavoriteUpdateBridge.Favorites(newValues))
                 },
+                isFavorite = { rsd -> isFavorite(FavoriteBridge.Favorite(rsd)) },
             ) {
-                showFavoritesConfirmation = false
+                inSaveFavoritesFlow = false
             }
         }
         StopDetailsFilteredHeader(
@@ -118,16 +113,8 @@ fun StopDetailsFilteredPickerView(
             onPin = {
                 if (favoriteBridge is FavoriteBridge.Pinned) {
                     updateFavorites(FavoriteUpdateBridge.Pinned(favoriteBridge.routeId))
-                } else if (
-                    favoriteBridge is FavoriteBridge.Favorite && isFavorite(favoriteBridge)
-                ) {
-                    updateFavorites(
-                        FavoriteUpdateBridge.Favorites(
-                            mapOf(favoriteBridge.routeStopDirection to false)
-                        )
-                    )
                 } else {
-                    showFavoritesConfirmation = !showFavoritesConfirmation
+                    inSaveFavoritesFlow = true
                 }
             },
             onClose = onClose,

@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.android.more.MoreButton
 import com.mbta.tid.mbta_app.android.more.MoreSectionView
 import com.mbta.tid.mbta_app.android.more.MoreViewModel
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
@@ -115,11 +116,7 @@ fun MorePage(bottomBar: @Composable () -> Unit) {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Button(
-                                colors =
-                                    ButtonDefaults.buttonColors(
-                                        contentColor = colorResource(R.color.key),
-                                        containerColor = colorResource(R.color.fill3),
-                                    ),
+                                colors = ButtonDefaults.key(),
                                 onClick = { navController.popBackStack() },
                             ) {
                                 Icon(
@@ -179,11 +176,7 @@ fun MorePage(bottomBar: @Composable () -> Unit) {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Button(
-                                colors =
-                                    ButtonDefaults.buttonColors(
-                                        contentColor = colorResource(R.color.key),
-                                        containerColor = colorResource(R.color.fill3),
-                                    ),
+                                colors = ButtonDefaults.key(),
                                 onClick = { navController.popBackStack() },
                             ) {
                                 Icon(

@@ -98,6 +98,9 @@ data class RouteCardData(
 
         val id = stop.id
 
+        /** The directions for the lineOrRoute that are actually served by this stop */
+        val availableDirections: Set<Int> = data.map { it.directionId }.toSet()
+
         val elevatorAlerts: List<Alert>
             get() =
                 data

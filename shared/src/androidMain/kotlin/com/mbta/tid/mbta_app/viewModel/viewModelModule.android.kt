@@ -8,6 +8,7 @@ actual fun viewModelModule() = module {
     // can’t `viewModel<IFavoritesViewModel>` since `IFavoritesViewModel` might not be a real
     // Android ViewModel
     viewModelOf(::FavoritesViewModel)
+    viewModelOf(::MapViewModel)
     viewModelOf(::SearchRoutesViewModel)
     viewModelOf(::SearchViewModel)
     // Use singleOf to ensure a shared ToastViewModel across all views that need it, it should be

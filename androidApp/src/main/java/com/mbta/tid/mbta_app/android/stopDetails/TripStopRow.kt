@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
@@ -59,6 +60,7 @@ fun TripStopRow(
         stop = stop.stop,
         onClick = { onTapLink(stop) },
         routeAccents = routeAccents,
+        stopListContext = StopListContext.Trip,
         modifier = modifier,
         activeElevatorAlerts = activeElevatorAlerts.size,
         alertSummaries = alertSummaries,

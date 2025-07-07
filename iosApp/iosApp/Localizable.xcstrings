@@ -1582,6 +1582,60 @@
         }
       }
     },
+    "%@ service only" : {
+      "comment" : "Notice that there is only service in a single direction for a route at a stop within the favorites flow. Ex: [Easbound] service only.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ service only"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ solo servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Service %@ uniquement"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ sèvis sèlman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ somente serviço"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ chỉ dịch vụ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "仅限 %@ 服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "僅限 %@ 服務"
+          }
+        }
+      }
+    },
     "%@ to" : {
       "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]\"",
       "localizations" : {
@@ -2600,6 +2654,60 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "添加"
+          }
+        }
+      }
+    },
+    "Add **%1$@** at **%2$@**" : {
+      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add **%1$@** at **%2$@**"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadir **%1$@** en **%2$@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoutez **%1$@** à **%2$@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute **%1$@** nan **%2$@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicione **%1$@** em **%2$@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm **%1$@** vào **%2$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在 **%2$@** 添加 **%1$@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在 **%2$@** 加 **%1$@**"
           }
         }
       }

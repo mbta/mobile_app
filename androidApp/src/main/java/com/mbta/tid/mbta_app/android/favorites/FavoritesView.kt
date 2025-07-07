@@ -14,13 +14,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
@@ -31,8 +29,10 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -94,18 +94,14 @@ fun FavoritesView(
         ) {
             Text(
                 text = stringResource(R.string.favorites_link),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.padding(start = 8.dp).weight(1f),
                 style = Typography.title2Bold,
             )
             Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
                 if (!routeCardData.isNullOrEmpty()) {
                     ActionButton(
                         ActionButtonKind.Plus,
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = colorResource(R.color.text).copy(alpha = 0.6f),
-                                contentColor = colorResource(R.color.fill2),
-                            ),
+                        colors = ButtonDefaults.contrastTranslucent(),
                         action = ::onAddFavorites,
                     )
                     NavTextButton(stringResource(R.string.edit)) {
