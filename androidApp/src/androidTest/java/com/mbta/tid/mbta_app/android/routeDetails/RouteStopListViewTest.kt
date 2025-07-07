@@ -344,6 +344,7 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Favorites,
                     GlobalResponse(objects),
                     onClick = {},
+                    onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
                     toastViewModel = toastVM,
