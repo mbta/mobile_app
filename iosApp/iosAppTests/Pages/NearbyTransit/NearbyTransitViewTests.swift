@@ -170,7 +170,6 @@ final class NearbyTransitViewTests: XCTestCase {
     struct LoadedStops {
         let predictionStops: [String]
         let scheduleStops: [String]
-        let pinnedRoutes: [String]
     }
 
     func setUpSut(
@@ -187,14 +186,11 @@ final class NearbyTransitViewTests: XCTestCase {
         let schedulePub = PassthroughSubject<[String], Never>()
         let pinnedRoutesPub = PassthroughSubject<[String], Never>()
 
-        let pinnedRoutesRepository = MockPinnedRoutesRepository(
-            initialPinnedRoutes: pinnedRoutes,
-            onGet: { pinnedRoutesPub.send(pinnedRoutes.sorted()) }
-        )
+        let pinnedRoutesRepository = MockPinnedRoutesRepository(initialPinnedRoutes: pinnedRoutes)
 
-        Publishers.Zip3(predictionPub, schedulePub, pinnedRoutesPub).sink { predictionStops, scheduleStops, _ in
+        Publishers.Zip(predictionPub, schedulePub).sink { predictionStops, scheduleStops in
             loadPublisher.send(
-                LoadedStops(predictionStops: predictionStops, scheduleStops: scheduleStops, pinnedRoutes: [])
+                LoadedStops(predictionStops: predictionStops, scheduleStops: scheduleStops)
             )
         }.store(in: &cancellables)
 
@@ -488,7 +484,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }.store(in: &cancellables)
 
         let sut = setUpSut(route52Objects(), loadPublisher)
-        ViewHosting.host(view: sut.withFixedSettings([:]))
+        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: false]))
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
