@@ -5,6 +5,7 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
+    <string name="add_favorite">ajoute nan favori</string>
     <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>
@@ -136,6 +137,7 @@
     <string name="extra_service_sentence_case">Sèvis anplis</string>
     <string name="facility_issue">Pwoblèm Lokal</string>
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
+    <string name="favorite_stop">arè pi renmen</string>
     <string name="favorites_link">Favori</string>
     <string name="feature_flag_debug_mode">Mòd Debogaj</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
@@ -213,6 +215,7 @@
     <string name="next_stop">Pwochen arè</string>
     <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
+    <string name="no_results_found">Pa jwenn rezilta 🤔</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
@@ -267,10 +270,12 @@
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
     <string name="reload_data">Rechaje done</string>
+    <string name="remove_favorite">retire favori</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
+    <string name="results_failed_to_load">Rezilta yo pa t chaje ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Ajoute arè ou pi renmen yo</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -371,6 +376,8 @@
     <string name="trains">tren yo</string>
     <string name="trip_cancelled">Vwayaj la anile</string>
     <string name="trip_cancelled_details">Vwayaj sa a anile. Nou regrèt deranjman an.</string>
+    <string name="try_a_different_spelling_or_name">Eseye yon lòt òtograf oswa non.</string>
+    <string name="try_your_search_again">Eseye rechèch ou an ankò.</string>
     <string name="unable_to_connect">Pa ka konekte</string>
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unruly_passenger_lowercase">pasaje ap fè dezòd</string>

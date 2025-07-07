@@ -5,6 +5,7 @@
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
     <string name="add_confirmation_button">Thêm vào</string>
+    <string name="add_favorite">thêm mục yêu thích</string>
     <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> vào &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
@@ -121,6 +122,7 @@
     <string name="extra_service_sentence_case">Dịch vụ bổ sung</string>
     <string name="facility_issue">Vấn đề về cơ sở vật chất</string>
     <string name="facility_issue_sentence_case">Vấn đề về cơ sở vật chất</string>
+    <string name="favorite_stop">điểm dừng yêu thích</string>
     <string name="favorites_link">Yêu thích</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
@@ -198,6 +200,7 @@
     <string name="next_stop">Điểm dừng tiếp theo</string>
     <string name="no_matching_routes">Không có tuyến xe %1$s nào phù hợp</string>
     <string name="no_predictions">Dự đoán không có sẵn</string>
+    <string name="no_results_found">Không tìm thấy kết quả nào 🤔</string>
     <string name="no_service">Không có dịch vụ</string>
     <string name="no_service_sentence_case">Không có dịch vụ</string>
     <string name="no_service_today">Hôm nay không có dịch vụ</string>
@@ -252,10 +255,12 @@
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>
     <string name="reload_data">Tải lại dữ liệu</string>
+    <string name="remove_favorite">xóa mục yêu thích</string>
     <string name="resources_link_fare_info">Thông tin giá vé</string>
     <string name="resources_link_mticket">Vé phà vé đường sắt ngoại ô (Commuter Rail)</string>
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
+    <string name="results_failed_to_load">Kết quả không tải được ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Thêm điểm dừng yêu thích</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -351,6 +356,8 @@
     <string name="trains">tàu</string>
     <string name="trip_cancelled">Chuyến đi đã bị hủy</string>
     <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>
+    <string name="try_a_different_spelling_or_name">Hãy thử cách viết hoặc tên khác.</string>
+    <string name="try_your_search_again">Hãy thử tìm kiếm lại.</string>
     <string name="unable_to_connect">Không thể kết nối</string>
     <string name="unruly_passenger">Hành khách ngỗ ngược</string>
     <string name="unruly_passenger_lowercase">hành khách ngỗ ngược</string>

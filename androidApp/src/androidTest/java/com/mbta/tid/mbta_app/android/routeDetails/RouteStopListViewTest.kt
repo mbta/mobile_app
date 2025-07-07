@@ -1,16 +1,13 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
-import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -20,7 +17,6 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -73,7 +69,7 @@ class RouteStopListViewTest {
             representativeTrip { stopIds = listOf(stop2.id) }
         }
 
-        val clicks = mutableListOf<RouteDetailsStopList.Entry>()
+        val clicks = mutableListOf<RouteDetailsRowContext>()
         var backTapped = false
         var closeTapped = false
 
@@ -130,8 +126,8 @@ class RouteStopListViewTest {
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithText(stop2.name).performClick()
-        assertEquals(
-            listOf(RouteDetailsStopList.Entry(stop2, listOf(pattern0), listOf(connectingRoute))),
+        assertEquals<List<RouteDetailsRowContext>>(
+            listOf(RouteDetailsRowContext.Details(stop2)),
             clicks,
         )
 
@@ -298,23 +294,16 @@ class RouteStopListViewTest {
                     route,
                     RouteDetailsContext.Favorites,
                     GlobalResponse(objects),
-                    onClick = {},
+                    onClick = {
+                        when (it) {
+                            is RouteDetailsRowContext.Details -> {}
+                            is RouteDetailsRowContext.Favorites -> it.onTapStar()
+                        }
+                    },
                     onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
-                    rightSideContent = { rowContext, _ ->
-                        Text(
-                            "Tap me",
-                            modifier =
-                                Modifier.clickable {
-                                    when (rowContext) {
-                                        is RouteDetailsRowContext.Details -> {}
-                                        is RouteDetailsRowContext.Favorites ->
-                                            rowContext.onTapStar()
-                                    }
-                                },
-                        )
-                    },
+                    rightSideContent = { _, _ -> },
                 )
             }
         }
@@ -324,7 +313,7 @@ class RouteStopListViewTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Southbound to"))
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Ashmont/Braintree"))
 
-        composeTestRule.onAllNodesWithText("Tap me")[1].performClick()
+        composeTestRule.onNodeWithText("Davis").performClick()
 
         // 2 sets of direction labels - one on toggle, and one in favorites confirmation modal
         composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Southbound to"), 2)

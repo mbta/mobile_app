@@ -5,6 +5,7 @@
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
+    <string name="add_favorite">添加收藏</string>
     <string name="add_to_favorites_title">在 &lt;b>%2$s&lt;/b> 添加 &lt;b>%1$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
     <string name="additional_service">附加服务</string>
@@ -121,6 +122,7 @@
     <string name="extra_service_sentence_case">额外服务</string>
     <string name="facility_issue">设施问题</string>
     <string name="facility_issue_sentence_case">设施问题</string>
+    <string name="favorite_stop">最喜欢的一站</string>
     <string name="favorites_link">收藏夹</string>
     <string name="feature_flag_debug_mode">调试模式</string>
     <string name="feature_flag_route_search">线路搜索</string>
@@ -198,6 +200,7 @@
     <string name="next_stop">下一站</string>
     <string name="no_matching_routes">没有匹配的%1$s路线</string>
     <string name="no_predictions">预测不可用</string>
+    <string name="no_results_found">未找到结果🤔</string>
     <string name="no_service">无服务</string>
     <string name="no_service_sentence_case">无服务</string>
     <string name="no_service_today">今日无服务</string>
@@ -252,10 +255,12 @@
     <string name="refresh">刷新</string>
     <string name="refresh_predictions">刷新预测</string>
     <string name="reload_data">重新加载数据</string>
+    <string name="remove_favorite">删除收藏夹</string>
     <string name="resources_link_fare_info">票价信息</string>
     <string name="resources_link_mticket">通勤铁路和渡轮票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="results_failed_to_load">结果加载失败☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">添加最喜欢的站点</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -351,6 +356,8 @@
     <string name="trains">列车</string>
     <string name="trip_cancelled">行程已取消</string>
     <string name="trip_cancelled_details">此行程已取消。我们对此造成的不便深表歉意。</string>
+    <string name="try_a_different_spelling_or_name">尝试不同的拼写或名称。</string>
+    <string name="try_your_search_again">再次尝试搜索。</string>
     <string name="unable_to_connect">无法连接</string>
     <string name="unruly_passenger">乘客干扰</string>
     <string name="unruly_passenger_lowercase">乘客干扰</string>
