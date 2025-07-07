@@ -210,6 +210,7 @@
     <string name="next_stop">Next stop</string>
     <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
+    <string name="no_results_found">No results found 🤔</string>
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
     <string name="no_service_today">No service today</string>
@@ -269,6 +270,7 @@
     <string name="resources_link_mticket">Commuter Rail and Ferry Tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="results_failed_to_load">Results failed to load ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Add favorite stops</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -364,6 +366,8 @@
     <string name="trains">trains</string>
     <string name="trip_cancelled">Trip cancelled</string>
     <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
+    <string name="try_a_different_spelling_or_name">Try a different spelling or name.</string>
+    <string name="try_your_search_again">Try your search again.</string>
     <string name="unable_to_connect">Unable to connect</string>
     <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unruly_passenger_lowercase">unruly passenger</string>

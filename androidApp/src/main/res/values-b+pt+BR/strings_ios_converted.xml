@@ -206,6 +206,7 @@
     <string name="next_stop">Próxima parada</string>
     <string name="no_matching_routes">Nenhuma rota de %1$s correspondente</string>
     <string name="no_predictions">Previsões indisponíveis</string>
+    <string name="no_results_found">Nenhum resultado encontrado 🤔</string>
     <string name="no_service">Sem serviço</string>
     <string name="no_service_sentence_case">Sem serviço</string>
     <string name="no_service_today">Sem serviço hoje</string>
@@ -265,6 +266,7 @@
     <string name="resources_link_mticket">Bilhetes de transporte diário por trem e balsa</string>
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
+    <string name="results_failed_to_load">Falha ao carregar os resultados ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Adicionar paradas favoritas</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -361,6 +363,8 @@
     <string name="trains">trens</string>
     <string name="trip_cancelled">Viagem cancelada</string>
     <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
+    <string name="try_a_different_spelling_or_name">Tente uma grafia ou nome diferente.</string>
+    <string name="try_your_search_again">Tente sua pesquisa novamente.</string>
     <string name="unable_to_connect">Impossível conectar</string>
     <string name="unruly_passenger">Passageiro indisciplinado</string>
     <string name="unruly_passenger_lowercase">passageiro problemático</string>

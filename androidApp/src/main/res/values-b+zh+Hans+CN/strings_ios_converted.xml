@@ -200,6 +200,7 @@
     <string name="next_stop">下一站</string>
     <string name="no_matching_routes">没有匹配的%1$s路线</string>
     <string name="no_predictions">预测不可用</string>
+    <string name="no_results_found">未找到结果🤔</string>
     <string name="no_service">无服务</string>
     <string name="no_service_sentence_case">无服务</string>
     <string name="no_service_today">今日无服务</string>
@@ -259,6 +260,7 @@
     <string name="resources_link_mticket">通勤铁路和渡轮票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="results_failed_to_load">结果加载失败☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">添加最喜欢的站点</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -353,6 +355,8 @@
     <string name="trains">列车</string>
     <string name="trip_cancelled">行程已取消</string>
     <string name="trip_cancelled_details">此行程已取消。我们对此造成的不便深表歉意。</string>
+    <string name="try_a_different_spelling_or_name">尝试不同的拼写或名称。</string>
+    <string name="try_your_search_again">再次尝试搜索。</string>
     <string name="unable_to_connect">无法连接</string>
     <string name="unruly_passenger">乘客干扰</string>
     <string name="unruly_passenger_lowercase">乘客干扰</string>

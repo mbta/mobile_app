@@ -206,6 +206,7 @@
     <string name="next_stop">Próxima parada</string>
     <string name="no_matching_routes">No hay rutas de %1$s que coincidan</string>
     <string name="no_predictions">Las predicciones no están disponibles</string>
+    <string name="no_results_found">No se encontraron resultados 🤔</string>
     <string name="no_service">Sin servicio</string>
     <string name="no_service_sentence_case">Sin servicio</string>
     <string name="no_service_today">No hay servicio hoy</string>
@@ -265,6 +266,7 @@
     <string name="resources_link_mticket">Billetes de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Planificador de viaje</string>
+    <string name="results_failed_to_load">Los resultados no se pudieron cargar ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Añadir paradas favoritas</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -361,6 +363,8 @@
     <string name="trains">trenes</string>
     <string name="trip_cancelled">Viaje cancelado</string>
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
+    <string name="try_a_different_spelling_or_name">Pruebe con una ortografía o un nombre diferente.</string>
+    <string name="try_your_search_again">Intente su búsqueda nuevamente.</string>
     <string name="unable_to_connect">No se puede conectar</string>
     <string name="unruly_passenger">Pasajero indisciplinado</string>
     <string name="unruly_passenger_lowercase">pasajero rebelde</string>
