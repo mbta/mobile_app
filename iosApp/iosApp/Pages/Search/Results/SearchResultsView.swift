@@ -49,7 +49,7 @@ struct SearchResultsView: View {
                             subheadline: NSLocalizedString(
                                 "Try a different spelling or name.",
                                 comment: "Displayed when search has no results"
-                            ),
+                            )
                         )
                         .padding(.top, 16)
                     } else {
@@ -70,7 +70,7 @@ struct SearchResultsView: View {
                         subheadline: NSLocalizedString(
                             "Try your search again.",
                             comment: "Displayed when search encounters an error"
-                        ),
+                        )
                     )
                     .padding(.top, 16)
                 }
