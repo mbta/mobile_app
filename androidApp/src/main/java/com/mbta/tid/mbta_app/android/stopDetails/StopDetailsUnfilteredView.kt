@@ -18,7 +18,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.koin.compose.koinInject
 
 @Composable

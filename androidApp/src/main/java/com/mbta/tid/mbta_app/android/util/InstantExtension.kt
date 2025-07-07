@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.android.util
 import android.icu.text.DateFormat
 import com.mbta.tid.mbta_app.utils.coerceInServiceDay
 import java.util.Date
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /** Converts this [Instant] into a [Date]. For use with [android.icu.text.DateFormat]. */
 fun Instant.toJavaDate() = Date(toEpochMilliseconds())

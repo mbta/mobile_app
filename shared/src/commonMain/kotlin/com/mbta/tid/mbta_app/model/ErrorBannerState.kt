@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 sealed class ErrorBannerState {
     /** What to do when the button in the error banner is pressed */

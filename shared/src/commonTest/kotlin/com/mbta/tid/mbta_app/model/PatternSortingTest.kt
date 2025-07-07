@@ -5,8 +5,8 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
 
 class PatternSortingTest {
     var objects = ObjectCollectionBuilder()

@@ -20,7 +20,7 @@ import Shared
  - Returns: A localized and formatted string describing the active period.
   */
 extension Shared.Alert.ActivePeriod {
-    private func format(instant: Instant, isStart: Bool) -> AttributedString {
+    private func format(instant: KotlinInstant, isStart: Bool) -> AttributedString {
         let date = instant.toNSDate()
         let dateFormat = Date.FormatStyle().weekday(.wide).month().day()
         var formattedDate = date.formatted(dateFormat)

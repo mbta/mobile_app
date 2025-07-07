@@ -33,7 +33,7 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.koin.compose.koinInject
 
 @Composable

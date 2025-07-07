@@ -32,7 +32,10 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
+    compilerOptions {
+        optIn.add("kotlin.time.ExperimentalTime")
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
 
@@ -76,6 +79,7 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.encoding)

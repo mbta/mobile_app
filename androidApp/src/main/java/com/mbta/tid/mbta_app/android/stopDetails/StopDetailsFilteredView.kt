@@ -21,7 +21,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun StopDetailsFilteredView(

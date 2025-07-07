@@ -6,8 +6,8 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 

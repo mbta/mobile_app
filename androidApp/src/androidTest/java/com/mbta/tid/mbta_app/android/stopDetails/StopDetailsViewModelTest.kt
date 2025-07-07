@@ -37,11 +37,11 @@ import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext

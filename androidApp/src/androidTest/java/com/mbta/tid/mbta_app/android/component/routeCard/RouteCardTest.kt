@@ -12,7 +12,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
