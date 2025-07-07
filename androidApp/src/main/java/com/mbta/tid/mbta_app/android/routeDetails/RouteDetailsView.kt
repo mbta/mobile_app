@@ -4,15 +4,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.PinButton
+import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -41,7 +44,23 @@ fun RouteDetailsView(
         lineOrRoute,
         context,
         globalData,
-        onClick = { onOpenStopDetails(it.stop.id) },
+        onClick = {
+            when (it) {
+                is RouteDetailsRowContext.Details -> onOpenStopDetails(it.stop.id)
+                is RouteDetailsRowContext.Favorites -> it.onTapStar()
+            }
+        },
+        onClickLabel = {
+            when (it) {
+                is RouteDetailsRowContext.Details -> null
+                is RouteDetailsRowContext.Favorites ->
+                    if (it.isFavorited) {
+                        stringResource(R.string.remove_favorite)
+                    } else {
+                        stringResource(R.string.add_favorite)
+                    }
+            }
+        },
         onBack = onBack,
         onClose = onClose,
         errorBannerViewModel,
@@ -55,12 +74,16 @@ fun RouteDetailsView(
                         modifier = modifier.width(8.dp),
                         colorFilter = ColorFilter.tint(colorResource(R.color.deemphasized)),
                     )
-                is RouteDetailsRowContext.Favorites ->
-                    PinButton(
+                is RouteDetailsRowContext.Favorites -> {
+                    val favoriteCD = stringResource(R.string.favorite_stop)
+                    StarIcon(
                         rowContext.isFavorited,
                         colorResource(R.color.text),
-                        rowContext.onTapStar,
+                        Modifier.semantics {
+                            contentDescription = if (rowContext.isFavorited) favoriteCD else ""
+                        },
                     )
+                }
             }
         },
     )
@@ -78,6 +101,7 @@ private fun LoadingRouteStopListView(
             context,
             GlobalResponse(ObjectCollectionBuilder()),
             onClick = {},
+            onClickLabel = { null },
             onBack = {},
             onClose = {},
             errorBannerViewModel,
