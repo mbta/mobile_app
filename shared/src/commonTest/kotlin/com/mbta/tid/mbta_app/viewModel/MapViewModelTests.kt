@@ -78,13 +78,13 @@ class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.navChanged(SheetRoutes.NearbyTransit)
-            assertEquals(MapViewModel.State.Unfiltered, awaitItem())
+            assertEquals(MapViewModel.State.Overview, awaitItem())
             val stop = TestData.stops["70113"]!!
             val stopDetails = SheetRoutes.StopDetails(stop.id, null, null)
             viewModel.navChanged(stopDetails)
             assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
             viewModel.navChanged(SheetRoutes.NearbyTransit)
-            assertEquals(MapViewModel.State.Unfiltered, awaitItem())
+            assertEquals(MapViewModel.State.Overview, awaitItem())
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
@@ -104,7 +104,7 @@ class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Unfiltered, awaitItem())
+            assertEquals(MapViewModel.State.Overview, awaitItem())
             viewModel.recenter()
             // This delay approach seems potentially flakey
             delay(10)
@@ -130,7 +130,7 @@ class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Unfiltered, awaitItem())
+            assertEquals(MapViewModel.State.Overview, awaitItem())
             val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
             val stop = TestData.stops["70113"]!!
             viewModel.selectedVehicle(vehicle, stop, null)

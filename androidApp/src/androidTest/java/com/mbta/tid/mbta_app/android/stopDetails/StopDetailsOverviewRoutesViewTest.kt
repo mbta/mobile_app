@@ -24,7 +24,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
-class StopDetailsUnfilteredRoutesViewTest {
+class StopDetailsOverviewRoutesViewTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
