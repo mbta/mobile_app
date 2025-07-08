@@ -13,6 +13,7 @@ import SwiftUI
 struct SearchResultsView: View {
     private var state: SearchViewModel.State
     private var handleStopTap: (String) -> Void
+    private var handleRouteTap: (String) -> Void
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -20,10 +21,12 @@ struct SearchResultsView: View {
 
     init(
         state: SearchViewModel.State,
-        handleStopTap: @escaping (String) -> Void
+        handleStopTap: @escaping (String) -> Void,
+        handleRouteTap: @escaping (String) -> Void,
     ) {
         self.state = state
         self.handleStopTap = handleStopTap
+        self.handleRouteTap = handleRouteTap
     }
 
     var body: some View {
@@ -56,7 +59,7 @@ struct SearchResultsView: View {
                         VStack(spacing: 8) {
                             StopResultsView(stops: state.stops, handleStopTap: handleStopTap)
                             if includeRoutes, !state.routes.isEmpty {
-                                RouteResultsView(routes: state.routes)
+                                RouteResultsView(routes: state.routes, handleRouteTap: handleRouteTap)
                                     .padding(.top, 8)
                             }
                         }
