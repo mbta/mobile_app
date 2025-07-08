@@ -34,17 +34,31 @@ import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import okio.FileSystem
 import okio.SYSTEM
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+
+enum class CoroutineDispatcherKoinId {
+    Default,
+    IO,
+}
 
 /** Define the koin module with the resources to use in dependency injection */
 fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
-        module { single<CoroutineDispatcher> { Dispatchers.Default } },
+        module {
+            single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.Default)) {
+                Dispatchers.Default
+            }
+        },
+        module {
+            single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.IO)) { Dispatchers.IO }
+        },
         repositoriesModule(RealRepositories()),
     )
 }

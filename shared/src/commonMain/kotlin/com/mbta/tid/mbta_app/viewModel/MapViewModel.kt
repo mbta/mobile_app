@@ -33,8 +33,7 @@ import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -72,6 +71,8 @@ class MapViewModel(
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val stopRepository: IStopRepository,
+    private val defaultCoroutineDispatcher: CoroutineDispatcher,
+    private val iOCoroutineDispatcher: CoroutineDispatcher,
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
 
     private lateinit var viewportManager: ViewportManager
@@ -475,7 +476,7 @@ class MapViewModel(
         globalMapData: GlobalMapData?,
         railRouteSourceData: List<RouteSourceData>?,
     ) =
-        withContext(Dispatchers.Default) {
+        withContext(defaultCoroutineDispatcher) {
             StopFeaturesBuilder.buildCollection(globalMapData, railRouteSourceData.orEmpty())
         }
 
@@ -484,12 +485,12 @@ class MapViewModel(
         globalResponse: GlobalResponse?,
         alertsData: AlertsStreamDataResponse?,
     ): GlobalMapData? =
-        withContext(Dispatchers.Default) {
+        withContext(defaultCoroutineDispatcher) {
             globalResponse?.let { GlobalMapData(it, alertsData, now) }
         }
 
     private suspend fun getStopMapData(stopId: String): StopMapResponse? =
-        withContext(Dispatchers.IO) {
+        withContext(iOCoroutineDispatcher) {
             when (val data = stopRepository.getStopMapData(stopId)) {
                 is ApiResult.Ok -> data.data
                 is ApiResult.Error -> null
@@ -510,7 +511,7 @@ class MapViewModel(
     }
 
     private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? =
-        withContext(Dispatchers.IO) {
+        withContext(iOCoroutineDispatcher) {
             when (val data = railRouteShapeRepository.getRailRouteShapes()) {
                 is ApiResult.Ok -> data.data
                 is ApiResult.Error -> null

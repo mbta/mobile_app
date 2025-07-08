@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
+import com.mbta.tid.mbta_app.dependencyInjection.CoroutineDispatcherKoinId
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
@@ -19,17 +20,19 @@ import dev.mokkery.mock
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -61,10 +64,19 @@ class MapViewModelTests : KoinTest {
         override suspend fun isDefault(): Boolean = isDefaultCalled()
     }
 
-    @BeforeTest
-    fun setupKoin() {
+    fun setUpKoin(coroutineDispatcher: CoroutineDispatcher) {
         startKoin {
             modules(
+                module {
+                    single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.Default)) {
+                        coroutineDispatcher
+                    }
+                },
+                module {
+                    single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.IO)) {
+                        coroutineDispatcher
+                    }
+                },
                 repositoriesModule(MockRepositories().apply { useObjects(TestData.clone()) }),
                 viewModelModule(),
                 module { single<Clock> { Clock.System } },
@@ -79,6 +91,8 @@ class MapViewModelTests : KoinTest {
 
     @Test
     fun handleNavChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
         var timesSaveViewportCalled = 0
         var timesRestoreViewportCalled = 0
         val viewportProvider =
@@ -105,6 +119,8 @@ class MapViewModelTests : KoinTest {
 
     @Test
     fun recenter() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
         var timesFollowCalled = 0
         var timesVehicleOverViewCalled = 0
         val viewportProvider =
@@ -137,6 +153,8 @@ class MapViewModelTests : KoinTest {
 
     @Test
     fun clearsSelectedVehicle() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
         val viewportProvider = MockViewportManager()
         val viewModel: MapViewModel = get()
         testViewModelFlow(viewModel).test {
@@ -152,9 +170,11 @@ class MapViewModelTests : KoinTest {
         }
     }
 
-    // TODO:
     @Test
     fun whenInStopDetailsNotResetToAllRailOnAlertChange() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+
         val viewportProvider = MockViewportManager()
         val viewModel: MapViewModel = get()
         val layerManger = mock<IMapLayerManager>(MockMode.autofill)
@@ -204,6 +224,9 @@ class MapViewModelTests : KoinTest {
 
     @Test
     fun allRailResetOnAlertChangeWhenInOverview() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+
         val viewportProvider = MockViewportManager()
         val viewModel: MapViewModel = get()
         val layerManger = mock<IMapLayerManager>(MockMode.autofill)
@@ -246,6 +269,9 @@ class MapViewModelTests : KoinTest {
 
     @Test
     fun allRailLayersResetWhenNavigatingToNearby() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+
         val viewportProvider = MockViewportManager()
         val viewModel: MapViewModel = get()
         val layerManger = mock<IMapLayerManager>(MockMode.autofill)

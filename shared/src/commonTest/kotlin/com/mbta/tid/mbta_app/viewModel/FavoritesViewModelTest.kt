@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
+import com.mbta.tid.mbta_app.dependencyInjection.CoroutineDispatcherKoinId
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
@@ -30,6 +31,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -74,7 +76,11 @@ class FavoritesViewModelTest : KoinTest {
     ) {
         startKoin {
             modules(
-                module { single<CoroutineDispatcher> { coroutineDispatcher } },
+                module {
+                    single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.Default)) {
+                        coroutineDispatcher
+                    }
+                },
                 repositoriesModule(
                     MockRepositories().apply {
                         useObjects(objects)
