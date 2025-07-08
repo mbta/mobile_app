@@ -16,9 +16,9 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
