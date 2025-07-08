@@ -344,6 +344,7 @@
     <string name="switch_issue_lowercase">problema de cambio de carril</string>
     <string name="switch_problem">Problema de cambio de carril</string>
     <string name="switch_problem_lowercase">problema del interruptor</string>
+    <string name="tap_favorites_hint">Toca las estrellas para añadirlas a Favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>

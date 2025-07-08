@@ -336,6 +336,7 @@
     <string name="switch_issue_lowercase">道岔問題</string>
     <string name="switch_problem">道岔故障</string>
     <string name="switch_problem_lowercase">道岔故障</string>
+    <string name="tap_favorites_hint">點按星星即可加入收藏夾</string>
     <string name="technical_problem">技術故障</string>
     <string name="technical_problem_lowercase">技術故障</string>
     <string name="tie_replacement">更換軌枕</string>

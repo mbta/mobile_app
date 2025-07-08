@@ -17769,6 +17769,54 @@
         }
       }
     },
+    "Tap stars to add to Favorites" : {
+      "comment" : "Hint text that shows up on a toast when the user enters a route on the add favorites flow for the first time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Toca las estrellas para añadirlas a Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Appuyez sur les étoiles pour ajouter aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tape zetwal yo pou ajoute nan Favori yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Toque nas estrelas para adicionar aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhấn vào các ngôi sao để thêm vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "点按星星即可添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "點按星星即可加入收藏夾"
+          }
+        }
+      }
+    },
     "technical problem" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {

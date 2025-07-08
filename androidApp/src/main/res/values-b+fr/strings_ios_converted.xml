@@ -344,6 +344,7 @@
     <string name="switch_issue_lowercase">problème de commutation</string>
     <string name="switch_problem">Problème d’aiguillage</string>
     <string name="switch_problem_lowercase">problème de commutation</string>
+    <string name="tap_favorites_hint">Appuyez sur les étoiles pour ajouter aux favoris</string>
     <string name="technical_problem">Problème technique</string>
     <string name="technical_problem_lowercase">problème technique</string>
     <string name="tie_replacement">Remplacement de traverses</string>

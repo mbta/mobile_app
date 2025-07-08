@@ -336,6 +336,7 @@
     <string name="switch_issue_lowercase">vấn đề chuyển đổi</string>
     <string name="switch_problem">Vấn đề chuyển đổi</string>
     <string name="switch_problem_lowercase">vấn đề chuyển đổi</string>
+    <string name="tap_favorites_hint">Nhấn vào các ngôi sao để thêm vào mục Yêu thích</string>
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="technical_problem_lowercase">vấn đề kỹ thuật</string>
     <string name="tie_replacement">Thay tà vẹt</string>

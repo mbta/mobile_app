@@ -347,6 +347,7 @@
     <string name="switch_issue_lowercase">switch issue</string>
     <string name="switch_problem">Switch Problem</string>
     <string name="switch_problem_lowercase">switch problem</string>
+    <string name="tap_favorites_hint">Tap stars to add to Favorites</string>
     <string name="technical_problem">Technical Problem</string>
     <string name="technical_problem_lowercase">technical problem</string>
     <string name="tie_replacement">Tie Replacement</string>

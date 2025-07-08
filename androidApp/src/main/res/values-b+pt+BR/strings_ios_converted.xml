@@ -344,6 +344,7 @@
     <string name="switch_issue_lowercase">problema na agulha</string>
     <string name="switch_problem">Problema de troca</string>
     <string name="switch_problem_lowercase">problema na agulha</string>
+    <string name="tap_favorites_hint">Toque nas estrelas para adicionar aos favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="tie_replacement">Troca de pneu</string>

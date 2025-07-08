@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +60,10 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 sealed class RouteDetailsRowContext {
     data class Details(val stop: Stop) : RouteDetailsRowContext()
@@ -78,6 +82,7 @@ fun RouteStopListView(
     onBack: () -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
+    toastViewModel: IToastViewModel = koinInject(),
     defaultSelectedRouteId: String? = null,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
@@ -119,6 +124,30 @@ fun RouteStopListView(
         coroutineScope.launch { updateFavorites(updatedValues) }
     }
 
+    val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)
+    var showFirstTimeFavoritesToast by rememberSaveable { mutableStateOf<Boolean?>(null) }
+
+    LaunchedEffect(context, favorites) {
+        // If favorites have not been loaded, we don't know whether or not to show the toast,
+        // and if the bool has already been set, we want to keep that value
+        if (favorites == null || showFirstTimeFavoritesToast != null) return@LaunchedEffect
+        showFirstTimeFavoritesToast =
+            context is RouteDetailsContext.Favorites && favorites.isEmpty()
+    }
+
+    LaunchedEffect(showFirstTimeFavoritesToast) {
+        if (showFirstTimeFavoritesToast == true) {
+            toastViewModel.showToast(
+                ToastViewModel.Toast(
+                    message = firstTimeToastMessage,
+                    onClose = { showFirstTimeFavoritesToast = false },
+                )
+            )
+        } else if (showFirstTimeFavoritesToast == false) {
+            toastViewModel.hideToast()
+        }
+    }
+
     var showFavoritesStopConfirmation by rememberSaveable { mutableStateOf<Stop?>(null) }
 
     fun stopRowContext(stop: Stop) =
@@ -128,7 +157,10 @@ fun RouteStopListView(
                 RouteDetailsRowContext.Favorites(
                     isFavorited =
                         isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)),
-                    onTapStar = { showFavoritesStopConfirmation = stop },
+                    onTapStar = {
+                        showFirstTimeFavoritesToast = false
+                        showFavoritesStopConfirmation = stop
+                    },
                 )
         }
 
@@ -161,7 +193,10 @@ fun RouteStopListView(
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)
                 else null,
             onBack = onBack,
-            onClose = onClose,
+            onClose = {
+                showFirstTimeFavoritesToast = false
+                onClose()
+            },
             buttonColors = ButtonDefaults.contrastTranslucent(),
         )
         ErrorBanner(errorBannerViewModel)
