@@ -41,24 +41,15 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-enum class CoroutineDispatcherKoinId {
-    Default,
-    IO,
-}
-
 /** Define the koin module with the resources to use in dependency injection */
 fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
         module {
-            single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.Default)) {
-                Dispatchers.Default
-            }
+            single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
         },
-        module {
-            single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.IO)) { Dispatchers.IO }
-        },
+        module { single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO } },
         repositoriesModule(RealRepositories()),
     )
 }

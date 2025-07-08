@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
-import com.mbta.tid.mbta_app.dependencyInjection.CoroutineDispatcherKoinId
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
@@ -77,7 +76,7 @@ class FavoritesViewModelTest : KoinTest {
         startKoin {
             modules(
                 module {
-                    single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.Default)) {
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
                         coroutineDispatcher
                     }
                 },

@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.viewModel
 
-import com.mbta.tid.mbta_app.dependencyInjection.CoroutineDispatcherKoinId
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -11,14 +10,14 @@ import org.koin.dsl.module
 actual fun viewModelModule() = module {
     // can’t `viewModel<IFavoritesViewModel>` since `IFavoritesViewModel` might not be a real
     // Android ViewModel
-    viewModel { FavoritesViewModel(get(), get(named(CoroutineDispatcherKoinId.Default))) }
+    viewModel { FavoritesViewModel(get(), get(named("coroutineDispatcherDefault"))) }
     viewModel {
         MapViewModel(
             get(),
             get(),
             get(),
-            get(named(CoroutineDispatcherKoinId.Default)),
-            get(named(CoroutineDispatcherKoinId.IO)),
+            get(named("coroutineDispatcherDefault")),
+            get(named("coroutineDispatcherIO")),
         )
     }
     viewModelOf(::SearchRoutesViewModel)

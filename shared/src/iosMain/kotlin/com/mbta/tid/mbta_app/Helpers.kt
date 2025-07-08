@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.dependencyInjection.CoroutineDispatcherKoinId
 import com.mbta.tid.mbta_app.dependencyInjection.IRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
@@ -76,12 +75,10 @@ fun startKoinIOSTestApp() {
                 viewModelModule() +
                 module {
                     single<Analytics> { MockAnalytics() }
-                    single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.Default)) {
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
                         Dispatchers.Default
                     }
-                    single<CoroutineDispatcher>(named(CoroutineDispatcherKoinId.IO)) {
-                        Dispatchers.IO
-                    }
+                    single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
                 }
         )
     }
