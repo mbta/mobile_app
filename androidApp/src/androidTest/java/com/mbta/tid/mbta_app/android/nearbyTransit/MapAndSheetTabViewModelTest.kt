@@ -9,7 +9,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import org.junit.Test
 
 class MapAndSheetTabViewModelTest {

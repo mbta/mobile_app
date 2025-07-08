@@ -3,9 +3,9 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 
 class AlertTest {
     @Test

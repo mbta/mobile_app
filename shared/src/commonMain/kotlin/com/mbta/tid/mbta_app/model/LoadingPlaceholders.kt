@@ -2,10 +2,10 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.random.Random
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 object LoadingPlaceholders {
     fun nearbyRoute() =

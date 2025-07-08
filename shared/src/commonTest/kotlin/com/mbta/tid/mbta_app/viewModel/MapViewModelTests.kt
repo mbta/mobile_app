@@ -13,9 +13,9 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin

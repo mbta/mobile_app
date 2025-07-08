@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class TileData(
     val route: Route?,

@@ -19,8 +19,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 

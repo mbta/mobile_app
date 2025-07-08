@@ -91,13 +91,13 @@ import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

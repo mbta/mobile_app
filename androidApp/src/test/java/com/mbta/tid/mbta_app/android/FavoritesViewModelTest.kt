@@ -14,8 +14,8 @@ import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Instant
 import org.junit.Test
 
 class FavoritesViewModelTest {

@@ -15,8 +15,8 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.time.Instant
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 
 class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases

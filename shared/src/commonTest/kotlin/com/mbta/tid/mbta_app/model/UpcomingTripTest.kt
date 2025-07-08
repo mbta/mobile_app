@@ -11,9 +11,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 
 class UpcomingTripTest {
     class DisplayTest {

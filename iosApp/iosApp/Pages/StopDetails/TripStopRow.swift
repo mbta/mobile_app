@@ -12,7 +12,7 @@ import SwiftUI
 struct TripStopRow: View {
     var stop: TripDetailsStopList.Entry
     var trip: Trip
-    var now: Instant
+    var now: KotlinInstant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var onOpenAlertDetails: (Shared.Alert) -> Void
     var routeAccents: TripRouteAccents

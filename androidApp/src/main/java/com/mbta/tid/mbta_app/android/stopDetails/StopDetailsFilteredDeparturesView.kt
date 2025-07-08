@@ -46,8 +46,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.Settings
+import kotlin.time.Instant
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
 @Composable

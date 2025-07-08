@@ -12,7 +12,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import kotlin.test.assertTrue
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 

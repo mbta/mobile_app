@@ -56,7 +56,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 @Composable
 fun EditFavoritesPage(

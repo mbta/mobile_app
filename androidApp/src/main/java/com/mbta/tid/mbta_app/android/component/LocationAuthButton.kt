@@ -34,9 +34,9 @@ import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.util.Typography
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

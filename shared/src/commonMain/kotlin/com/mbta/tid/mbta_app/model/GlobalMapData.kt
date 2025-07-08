@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class MapStop(
     val stop: Stop,

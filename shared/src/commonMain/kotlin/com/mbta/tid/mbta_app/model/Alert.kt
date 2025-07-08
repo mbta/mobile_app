@@ -4,7 +4,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.ServiceDateRounding
 import com.mbta.tid.mbta_app.utils.serviceDate
 import com.mbta.tid.mbta_app.utils.toBostonTime
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

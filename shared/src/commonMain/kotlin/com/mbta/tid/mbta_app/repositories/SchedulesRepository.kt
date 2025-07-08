@@ -6,9 +6,9 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
 import io.ktor.http.path
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

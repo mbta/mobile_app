@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 sealed class UpcomingFormat {
     sealed class NoTripsFormat {

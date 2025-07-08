@@ -10,9 +10,9 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
