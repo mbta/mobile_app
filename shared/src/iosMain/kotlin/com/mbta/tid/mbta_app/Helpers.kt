@@ -10,11 +10,14 @@ import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndModule
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
+import kotlin.time.Instant
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.datetime.toKotlinInstant
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import platform.Foundation.NSDate
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -77,3 +80,11 @@ fun startKoinE2E() {
         )
     }
 }
+
+/**
+ * Converts an [NSDate] into a Kotlin stdlib [Instant].
+ *
+ * Necessary because the real [kotlinx.datetime.toKotlinInstant] has an internal-visibility-only
+ * default parameter and default parameters evaporate in Objective-C interop.
+ */
+fun NSDate.toKotlinInstant(): Instant = this.toKotlinInstant()

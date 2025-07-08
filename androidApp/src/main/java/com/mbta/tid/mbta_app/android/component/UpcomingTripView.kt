@@ -50,9 +50,9 @@ import com.mbta.tid.mbta_app.utils.MinutesFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.min
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime

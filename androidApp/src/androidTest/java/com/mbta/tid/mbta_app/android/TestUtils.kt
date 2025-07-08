@@ -18,7 +18,7 @@ import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.math.abs
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import org.junit.Assert.fail
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module

@@ -10,7 +10,7 @@ import Foundation
 import Shared
 
 extension Date {
-    init(instant: Instant) {
+    init(instant: KotlinInstant) {
         self.init(timeIntervalSince1970: TimeInterval(instant.epochSeconds))
     }
 }

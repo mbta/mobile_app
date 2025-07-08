@@ -9,12 +9,12 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.jvm.JvmName
 import kotlin.math.max
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 // These are used in LineOrRoute to disambiguate them from LineOrRoute.Route and LineOrRoute.Line
 
@@ -97,6 +97,9 @@ data class RouteCardData(
         )
 
         val id = stop.id
+
+        /** The directions for the lineOrRoute that are actually served by this stop */
+        val availableDirections: Set<Int> = data.map { it.directionId }.toSet()
 
         val elevatorAlerts: List<Alert>
             get() =

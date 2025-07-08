@@ -8,27 +8,25 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 
 @Composable
 fun NavTextButton(
     string: String,
-    colors: ButtonColors =
-        ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.text).copy(alpha = 0.6f),
-            contentColor = colorResource(R.color.fill2),
-        ),
-    onTap: () -> Unit,
+    modifier: Modifier = Modifier,
+    height: Dp = 32.dp,
+    colors: ButtonColors = ButtonDefaults.contrastTranslucent(),
+    action: () -> Unit,
 ) {
     Button(
-        onTap,
+        action,
         colors = colors,
         contentPadding = PaddingValues(horizontal = 12.dp),
-        modifier = Modifier.heightIn(min = 32.dp),
+        modifier = modifier.heightIn(min = height),
     ) {
-        Text(string, style = Typography.callout)
+        Text(string, style = Typography.callout, maxLines = 1)
     }
 }

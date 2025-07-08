@@ -15,8 +15,8 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 

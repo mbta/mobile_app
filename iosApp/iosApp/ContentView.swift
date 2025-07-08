@@ -24,7 +24,7 @@ struct ContentView: View {
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
-    @StateObject var mapVM = MapViewModel()
+    @StateObject var mapVM = iosApp.MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 

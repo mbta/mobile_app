@@ -22,6 +22,8 @@ plugins {
     id("check-mapbox-bridge")
 }
 
+kotlin { compilerOptions { optIn.add("kotlin.time.ExperimentalTime") } }
+
 sentry {
     // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
     // This enables source context, allowing you to see your source

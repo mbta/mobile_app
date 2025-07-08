@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.Routes
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.model.SheetRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

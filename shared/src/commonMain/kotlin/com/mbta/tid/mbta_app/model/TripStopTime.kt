@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 interface TripStopTime : Comparable<TripStopTime> {
     val arrivalTime: Instant?

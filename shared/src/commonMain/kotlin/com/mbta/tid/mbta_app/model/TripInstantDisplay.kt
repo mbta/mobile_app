@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /**
  * The state in which a prediction/schedule should be shown.

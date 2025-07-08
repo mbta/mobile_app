@@ -25,7 +25,7 @@ protocol IMapLayerManager {
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
 }
 
-extension IMapLayerManager {
+extension iosApp.IMapLayerManager {
     func addLayers(
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
         state: StopLayerGenerator.State,
@@ -43,7 +43,7 @@ extension IMapLayerManager {
 
 struct MapImageError: Error {}
 
-class MapLayerManager: IMapLayerManager {
+class MapLayerManager: iosApp.IMapLayerManager {
     var currentScheme: ColorScheme?
     let map: MapboxMap
 

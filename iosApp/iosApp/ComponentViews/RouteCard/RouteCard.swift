@@ -19,6 +19,8 @@ struct RouteCard: View {
     let showStopHeader: Bool
 
     @EnvironmentObject var settingsCache: SettingsCache
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
+    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
@@ -29,14 +31,24 @@ struct RouteCard: View {
                 routeType: cardData.lineOrRoute.type,
                 backgroundColor: Color(hex: cardData.lineOrRoute.backgroundColor),
                 textColor: Color(hex: cardData.lineOrRoute.textColor),
-                rightContent: { PinButton(pinned: pinned, action: { onPin(cardData.lineOrRoute.id) }) }
+                rightContent: {
+                    HStack {
+                        if !enhancedFavorites {
+                            PinButton(
+                                pinned: pinned,
+                                color: Color(hex: cardData.lineOrRoute.textColor),
+                                action: { onPin(cardData.lineOrRoute.id) }
+                            )
+                        }
+                    }
+                }
             )
             .accessibilityElement(children: .contain)
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
                 if showStopHeader {
                     RouteCardStopHeader(
                         data: stopData,
-                        showStationAccessibility: settingsCache.get(.stationAccessibility)
+                        showStationAccessibility: showStationAccessibility
                     )
                 }
                 RouteCardDepartures(

@@ -54,7 +54,7 @@ extension TripInstantDisplay {
                    """)
     }
 
-    private func cancelledLabel(_ scheduledTime: Instant, _ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func cancelledLabel(_ scheduledTime: KotlinInstant, _ isFirst: Bool, _ vehicleType: String) -> Text {
         let time = timeFormatter.string(from: Date(instant: scheduledTime))
         return isFirst
             ? Text(
@@ -74,7 +74,7 @@ extension TripInstantDisplay {
             )
     }
 
-    private func delayString(_ scheduledTime: Instant, _ isFirst: Bool, _ vehicleType: String) -> String {
+    private func delayString(_ scheduledTime: KotlinInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
         let time = timeFormatter.string(from: Date(instant: scheduledTime))
         return isFirst
             ? String(format: NSLocalizedString(
@@ -169,7 +169,7 @@ extension TripInstantDisplay {
             return Text(delayString(trip.predictionTime, isFirst, vehicleType))
         }
 
-        guard let predictionInstant: Instant = switch onEnum(of: self) {
+        guard let predictionInstant: KotlinInstant = switch onEnum(of: self) {
         case let .time(trip): trip.predictionTime
         case let .timeWithStatus(trip): trip.predictionTime
         default: nil
@@ -303,7 +303,7 @@ extension TripInstantDisplay {
         }
     }
 
-    private func scheduleTimeLabel(_ scheduledTime: Instant, _ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func scheduleTimeLabel(_ scheduledTime: KotlinInstant, _ isFirst: Bool, _ vehicleType: String) -> Text {
         let time = timeFormatter.string(from: Date(instant: scheduledTime))
         return isFirst
             ? Text("\(vehicleType) arriving at \(time) scheduled",

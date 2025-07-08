@@ -4,7 +4,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /**
  * Conceptually, an [UpcomingTrip] represents a trip's future arrival and departure at a stop.

@@ -33,10 +33,12 @@ import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -46,6 +48,7 @@ import org.koin.compose.koinInject
 fun ContentView(
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
+    mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
     val navController = rememberNavController()
@@ -75,6 +78,8 @@ fun ContentView(
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) { mapViewModel.setViewportManager(viewportProvider) }
 
     LifecycleResumeEffect(null) {
         socket.attach()
@@ -119,6 +124,7 @@ fun ContentView(
                 navBarVisible = navBarVisible,
                 showNavBar = { navBarVisible = true },
                 hideNavBar = { navBarVisible = false },
+                mapViewModel = mapViewModel,
                 bottomBar = {
                     if (navBarVisible) {
                         BottomNavBar(

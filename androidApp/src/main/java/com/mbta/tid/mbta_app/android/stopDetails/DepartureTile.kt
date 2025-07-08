@@ -43,7 +43,7 @@ import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 @Composable
 fun DepartureTile(

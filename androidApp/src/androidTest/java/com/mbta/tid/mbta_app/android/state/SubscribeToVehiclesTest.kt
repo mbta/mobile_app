@@ -19,7 +19,7 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

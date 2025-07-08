@@ -25,7 +25,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext

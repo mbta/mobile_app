@@ -26,10 +26,23 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.RoundedCornerColumn
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.text
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
+
+@Composable
+fun StopResultsView(
+    stops: List<SearchViewModel.StopResult>,
+    handleSearch: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    RoundedCornerColumn(stops, modifier) { shape, stopResult ->
+        StopResultsView(shape, stopResult, handleSearch)
+    }
+}
 
 @Composable
 fun StopResultsView(
@@ -48,7 +61,7 @@ fun StopResultsView(
                     .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val iconModifier = Modifier.height(32.dp).width(32.dp)
+            val iconModifier = Modifier.height(32.dp).width(32.dp).placeholderIfLoading()
 
             val routePillsData = stop.routePills
 
@@ -81,7 +94,9 @@ fun StopResultsView(
             ) {
                 Text(
                     text = stop.name,
-                    modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 16.dp),
+                    modifier =
+                        Modifier.padding(top = 12.dp, bottom = 8.dp, start = 16.dp)
+                            .placeholderIfLoading(),
                     style = Typography.bodySemibold,
                 )
                 Row(
@@ -89,6 +104,7 @@ fun StopResultsView(
                         Modifier.horizontalScroll(scrollState)
                             .padding(start = 16.dp, bottom = 12.dp)
                             .clearAndSetSemantics { contentDescription = routesContentDescription }
+                            .placeholderIfLoading()
                 ) {
                     routePillsData.map { spec ->
                         RoutePill(

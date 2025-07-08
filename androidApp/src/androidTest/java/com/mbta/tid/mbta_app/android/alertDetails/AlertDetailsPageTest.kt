@@ -8,8 +8,8 @@ import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext

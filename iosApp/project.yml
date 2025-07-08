@@ -74,6 +74,9 @@ settingGroups:
       Debug:
         DEBUG_INFORMATION_FORMAT: dwarf
 packages:
+  CustomAlert:
+    url: https://github.com/divadretlaw/CustomAlert.git
+    from: 4.1.1
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
     from: 11.14.0
@@ -99,6 +102,7 @@ targets:
     deploymentTarget: "16.4"
     sources: [iosApp]
     dependencies:
+      - package: CustomAlert
       - package: Firebase
         product: FirebaseAnalyticsWithoutAdIdSupport
       - package: MapboxMaps

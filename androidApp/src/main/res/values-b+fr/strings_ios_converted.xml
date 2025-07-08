@@ -5,6 +5,7 @@
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Ajouter</string>
+    <string name="add_favorite">ajouter aux favoris</string>
     <string name="add_to_favorites_title">Ajoutez &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b> aux favoris</string>
     <string name="additional_service">Service supplémentaire</string>
@@ -127,6 +128,7 @@
     <string name="extra_service_sentence_case">Service supplémentaire</string>
     <string name="facility_issue">Problème d’infrastructure</string>
     <string name="facility_issue_sentence_case">Problème d’infrastructure</string>
+    <string name="favorite_stop">arrêt préféré</string>
     <string name="favorites_link">Favoris</string>
     <string name="feature_flag_debug_mode">Mode débogage</string>
     <string name="feature_flag_route_search">Recherche de trajet</string>
@@ -204,6 +206,7 @@
     <string name="next_stop">Prochain arrêt</string>
     <string name="no_matching_routes">Aucun itinéraire de %1$s correspondant</string>
     <string name="no_predictions">Les prévisions ne sont pas encore disponibles</string>
+    <string name="no_results_found">Aucun résultat trouvé 🤔</string>
     <string name="no_service">Pas de service</string>
     <string name="no_service_sentence_case">Aucun service</string>
     <string name="no_service_today">Aucun service aujourd’hui</string>
@@ -258,10 +261,12 @@
     <string name="refresh">Actualiser</string>
     <string name="refresh_predictions">Actualiser les prévisions</string>
     <string name="reload_data">Recharger les données</string>
+    <string name="remove_favorite">supprimer les favoris</string>
     <string name="resources_link_fare_info">Informations sur les tarifs</string>
     <string name="resources_link_mticket">Titres pour train de banlieue et ferry</string>
     <string name="resources_link_mticket_note">Application mTicket</string>
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
+    <string name="results_failed_to_load">Les résultats n’ont pas pu être chargés ☹️</string>
     <string name="route_effect">%2$s %1$s</string>
     <string name="route_picker_header_favorites">Ajouter des arrêts favoris</string>
     <string name="route_with_type">%2$s %1$s</string>
@@ -358,6 +363,8 @@
     <string name="trains">trains</string>
     <string name="trip_cancelled">Trajet annulé</string>
     <string name="trip_cancelled_details">Ce voyage a été annulé. Nous sommes désolés pour la gêne occasionnée.</string>
+    <string name="try_a_different_spelling_or_name">Essayez une orthographe ou un nom différent.</string>
+    <string name="try_your_search_again">Réessayez votre recherche.</string>
     <string name="unable_to_connect">Impossible de se connecter</string>
     <string name="unruly_passenger">Passager indiscipliné</string>
     <string name="unruly_passenger_lowercase">passager indiscipliné</string>

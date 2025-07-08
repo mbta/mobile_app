@@ -15,14 +15,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.RoundedCornerColumn
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
+
+@Composable
+fun RouteResultsView(routes: List<SearchViewModel.RouteResult>, handleSearch: (String) -> Unit) {
+    Text(
+        stringResource(R.string.routes),
+        Modifier.padding(vertical = 8.dp),
+        style = Typography.subheadlineSemibold,
+    )
+    RoundedCornerColumn(routes) { shape, routeResult ->
+        RouteResultsView(shape, routeResult, handleSearch)
+    }
+}
 
 @Composable
 fun RouteResultsView(
