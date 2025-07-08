@@ -13,15 +13,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
 fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val onClickLabel =
-        if (pinned) {
-            stringResource(id = R.string.unstar_route_hint)
+        if (enhancedFavorites) {
+            if (pinned) {
+                stringResource(R.string.remove_favorite)
+            } else {
+                stringResource(R.string.add_favorite)
+            }
         } else {
-            stringResource(id = R.string.star_route_hint)
+            if (pinned) {
+                stringResource(id = R.string.unstar_route_hint)
+            } else {
+                stringResource(id = R.string.star_route_hint)
+            }
         }
     IconToggleButton(
         checked = pinned,

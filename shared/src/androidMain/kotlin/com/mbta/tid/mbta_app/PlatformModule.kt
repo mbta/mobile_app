@@ -4,7 +4,7 @@ import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.network.NetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.utils.AndroidSystemPaths
 import com.mbta.tid.mbta_app.utils.SystemPaths
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import org.koin.dsl.module
 
 fun platformModule() = module {

@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

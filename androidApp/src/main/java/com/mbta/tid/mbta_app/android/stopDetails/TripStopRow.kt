@@ -32,9 +32,9 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun TripStopRow(
@@ -66,8 +66,8 @@ fun TripStopRow(
         alertSummaries = alertSummaries,
         connectingRoutes = stop.routes,
         disruption = disruption,
-        stopPlacement = StopPlacement(firstStop, lastStop, true),
         isTruncating = stop.isTruncating,
+        stopPlacement = StopPlacement(firstStop, lastStop, true),
         onOpenAlertDetails = onOpenAlertDetails,
         showDownstreamAlert = showDownstreamAlert,
         showStationAccessibility = showStationAccessibility,

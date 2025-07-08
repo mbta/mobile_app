@@ -1,10 +1,11 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.random.Random
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 object LoadingPlaceholders {
     fun nearbyRoute() =
@@ -137,6 +138,26 @@ object LoadingPlaceholders {
                 now = Clock.System.now(),
             )
         }
+
+    fun stopResults(): List<SearchViewModel.StopResult> {
+        val otherRoutePill =
+            RoutePillSpec(
+                textColor = "8A9199",
+                routeColor = "8A9199",
+                content = RoutePillSpec.Content.Text("Loading"),
+                size = RoutePillSpec.Size.FlexPillSmall,
+                shape = RoutePillSpec.Shape.Capsule,
+                contentDescription = null,
+            )
+        return (1..10).map { index ->
+            SearchViewModel.StopResult(
+                "$index",
+                isStation = index % 3 == 0,
+                name = index.toString().repeat(index) + " Stop",
+                routePills = listOf(otherRoutePill),
+            )
+        }
+    }
 
     data class TripDetailsInfo(
         val stops: TripDetailsStopList,

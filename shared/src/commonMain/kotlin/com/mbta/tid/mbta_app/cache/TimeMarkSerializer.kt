@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.cache
 
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlin.time.TimeSource
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import io.github.dellisd.spatialk.geojson.Position
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

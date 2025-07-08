@@ -19,9 +19,9 @@ import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalTurfApi::class)
 class RouteFeaturesBuilderTest {

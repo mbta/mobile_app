@@ -31,7 +31,7 @@ struct SearchResultsView: View {
             Group {
                 switch onEnum(of: state) {
                 case .loading:
-                    LoadingResults()
+                    LoadingResultsView()
                 case let .recentStops(state):
                     VStack {
                         Text("Recently Viewed")
@@ -40,10 +40,16 @@ struct SearchResultsView: View {
                         StopResultsView(stops: state.stops, handleStopTap: handleStopTap)
                     }
                 case let .results(state):
-                    if state.isEmpty(includeRoutes: includeRoutes) == true {
+                    if state.isEmpty(includeRoutes: includeRoutes) {
                         EmptyStateView(
-                            headline: "No results found 🤔",
-                            subheadline: "Try a different spelling or name."
+                            headline: NSLocalizedString(
+                                "No results found 🤔",
+                                comment: "Displayed when search has no results"
+                            ),
+                            subheadline: NSLocalizedString(
+                                "Try a different spelling or name.",
+                                comment: "Displayed when search has no results"
+                            )
                         )
                         .padding(.top, 16)
                     } else {
@@ -57,8 +63,14 @@ struct SearchResultsView: View {
                     }
                 case .error:
                     EmptyStateView(
-                        headline: "Results failed to load ☹️",
-                        subheadline: "Try your search again."
+                        headline: NSLocalizedString(
+                            "Results failed to load ☹️",
+                            comment: "Displayed when search encounters an error"
+                        ),
+                        subheadline: NSLocalizedString(
+                            "Try your search again.",
+                            comment: "Displayed when search encounters an error"
+                        )
                     )
                     .padding(.top, 16)
                 }

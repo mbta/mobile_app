@@ -228,7 +228,7 @@ final class FavoritesViewTests: XCTestCase {
 
     @MainActor func testSetsNow() throws {
         let setFirstExp = expectation(description: "sets a time")
-        var firstTime: Instant?
+        var firstTime: KotlinInstant?
         let setSecondExp = expectation(description: "sets a different time later")
         setSecondExp.assertForOverFulfill = false
         let favoritesVM = MockFavoritesViewModel()
