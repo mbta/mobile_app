@@ -168,7 +168,14 @@ struct RouteStopListView<RightSideContent: View>: View {
                                 )
                             }
                         } else {
-                            // TODO: CollapsableStopList
+                            CollapsableStopList(
+                                lineOrRoute: lineOrRoute,
+                                segment: segment,
+                                onClick: { onTapStop(stopRowContext($0.stop)) },
+                                isFirstSegment: segmentIndex == stopList.segments.startIndex,
+                                isLastSegment: segmentIndex == stopList.segments.endIndex,
+                                rightSideContent: { stop in rightSideContent(stopRowContext(stop.stop)) }
+                            )
                         }
                     }
                 }

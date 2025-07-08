@@ -14,10 +14,7 @@ import XCTest
 final class NoNearbyStopsViewTests: XCTestCase {
     func testCopy() throws {
         let sut = NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}).withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().find(
-            ViewType.Image.self,
-            where: { try $0.actualImage().name() == "mbta-logo" }
-        ))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mbta-logo"))
         XCTAssertNotNil(try sut.inspect().find(text: "No nearby stops"))
         XCTAssertNotNil(try sut.inspect().find(text: "You’re outside the MBTA service area."))
     }

@@ -165,4 +165,71 @@ final class RouteStopListViewTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
+
+    @MainActor func testCollapsesNonTypicalStops() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { $0.name = "Stop 1" }
+        let stop2 = objects.stop { $0.name = "Stop 2" }
+        let stop3NonTypical = objects.stop { $0.name = "Stop 3" }
+        let stop4NonTypical = objects.stop { $0.name = "Stop 4" }
+        let mainRoute = objects.route { route in
+            route.directionNames = ["West", "East"]
+            route.directionNames = ["Here", "There"]
+            route.longName = "Mauve Line"
+            route.type = .heavyRail
+        }
+        objects.routePattern(route: mainRoute) { pattern in
+            pattern.directionId = 0
+            pattern.typicality = .typical
+            pattern.representativeTrip { $0.stopIds = [stop1.id, stop2.id] }
+        }
+        objects.routePattern(route: mainRoute) { pattern in
+            pattern.directionId = 0
+            pattern.typicality = .deviation
+            pattern.representativeTrip { $0.stopIds = [stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id] }
+        }
+
+        let gotRouteStops = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.routeStops = MockRouteStopsRepository(
+            stopIds: [stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id],
+            routeId: mainRoute.id,
+            onGet: { _, _ in gotRouteStops.send() }
+        )
+        HelpersKt.loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository())
+
+        let sut = RouteStopListView(
+            lineOrRoute: .route(mainRoute),
+            context: .Details.shared,
+            globalData: .init(objects: objects),
+            onClick: { _ in },
+            onBack: {},
+            onClose: {},
+            errorBannerVM: errorBannerVM,
+            rightSideContent: { _ in EmptyView() }
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotRouteStops, after: 1) { view in
+            XCTAssertNil(
+                try? view.find(where: { (try? $0.modifier(LoadingPlaceholderModifier.self)) != nil }).pathToRoot,
+                "has not finished loading"
+            )
+            XCTAssertNotNil(try view.find(text: stop1.name))
+            XCTAssertNotNil(try view.find(text: stop2.name))
+            XCTAssertNil(try? view.find(text: stop1.name).find(ViewType.DisclosureGroup.self, relation: .parent))
+            XCTAssertNotNil(try view.find(text: stop3NonTypical.name))
+            XCTAssertNotNil(try view.find(text: stop3NonTypical.name).find(
+                ViewType.DisclosureGroup.self,
+                relation: .parent
+            ))
+            XCTAssertEqual(
+                "2 less common stops",
+                try view.find(ViewType.DisclosureGroup.self).labelView().find(ViewType.Text.self).string()
+            )
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+    }
 }

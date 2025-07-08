@@ -340,9 +340,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
         XCTAssertNotNil(try sut.inspect()
             .find(text: "This trip has been cancelled. We’re sorry for the inconvenience."))
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "mode-bus-slash"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-bus-slash"))
     }
 
     func testShowsNoTripCard() throws {

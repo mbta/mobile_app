@@ -143,9 +143,7 @@ final class TripHeaderCardTests: XCTestCase {
             now: now
         )
 
-        XCTAssertNotNil(try targeted.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertNotNil(try targeted.inspect().find(imageName: "stop-pin-indicator"))
 
         let notTargeted = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
@@ -156,9 +154,7 @@ final class TripHeaderCardTests: XCTestCase {
             now: now
         )
 
-        XCTAssertThrowsError(try notTargeted.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertThrowsError(try notTargeted.inspect().find(imageName: "stop-pin-indicator"))
     }
 
     func testAtTerminal() throws {
@@ -196,9 +192,7 @@ final class TripHeaderCardTests: XCTestCase {
         )
 
         try XCTAssertNotNil(sut.inspect().find(text: "Waiting to depart"))
-        try XCTAssertNotNil(sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        try XCTAssertNotNil(sut.inspect().find(imageName: "stop-pin-indicator"))
         try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
     }
 
@@ -278,9 +272,7 @@ final class TripHeaderCardTests: XCTestCase {
         try XCTAssertNotNil(sut.inspect().find(text: "Scheduled to depart"))
         try XCTAssertNotNil(sut.inspect().find(text: stop.name))
         try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
-        try XCTAssertThrowsError(sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "fa-circle-info"
-        }))
+        try XCTAssertThrowsError(sut.inspect().find(imageName: "fa-circle-info"))
     }
 
     func testScheduledTap() throws {
@@ -315,9 +307,7 @@ final class TripHeaderCardTests: XCTestCase {
 
         try sut.inspect().find(ViewType.ZStack.self).callOnTapGesture()
         wait(for: [tapExpectation], timeout: 1)
-        try XCTAssertNotNil(sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "fa-circle-info"
-        }))
+        try XCTAssertNotNil(sut.inspect().find(imageName: "fa-circle-info"))
     }
 
     func testAccessibility() throws {
