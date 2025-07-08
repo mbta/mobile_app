@@ -1,13 +1,23 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Event
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Toast
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
-class ToastViewModel : MoleculeViewModel<ToastViewModel.Event, ToastViewModel.State>() {
+interface IToastViewModel {
+    val models: StateFlow<ToastViewModel.State>
+
+    fun hideToast()
+
+    fun showToast(toast: Toast)
+}
+
+class ToastViewModel : IToastViewModel, MoleculeViewModel<Event, ToastViewModel.State>() {
 
     /**
      * These are parallel to [androidx.compose.material3.SnackbarDuration], because the Jetpack
@@ -55,10 +65,22 @@ class ToastViewModel : MoleculeViewModel<ToastViewModel.Event, ToastViewModel.St
             .value
     }
 
-    val models
+    override val models
         get() = internalModels
 
-    fun hideToast() = fireEvent(Event.Hide)
+    override fun hideToast() = fireEvent(Event.Hide)
 
-    fun showToast(toast: Toast) = fireEvent(Event.ShowToast(toast))
+    override fun showToast(toast: Toast) = fireEvent(Event.ShowToast(toast))
+}
+
+class MockToastViewModel(initialState: ToastViewModel.State = ToastViewModel.State.Hidden) :
+    IToastViewModel {
+    override val models = MutableStateFlow(initialState)
+
+    var onHideToast = {}
+    var onShowToast = { _: Toast -> }
+
+    override fun hideToast() = onHideToast()
+
+    override fun showToast(toast: Toast) = onShowToast(toast)
 }

@@ -6,7 +6,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
+import kotlinx.coroutines.flow.update
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,7 +17,13 @@ class BarAndToastScaffoldTest {
 
     @Test
     fun testToastDisplay() {
-        val toastVM = ToastViewModel()
+        val toastVM = MockToastViewModel()
+        var toastShown = false
+
+        toastVM.onShowToast = { toast ->
+            toastVM.models.update { ToastViewModel.State.Visible(toast) }
+            toastShown = true
+        }
 
         composeTestRule.setContent {
             BarAndToastScaffold(toastViewModel = toastVM) { Text("Content") }
@@ -24,12 +32,19 @@ class BarAndToastScaffoldTest {
         toastVM.showToast(ToastViewModel.Toast(message = "Toast message"))
 
         composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { toastShown }
         composeTestRule.onNodeWithText("Toast message").assertIsDisplayed()
     }
 
     @Test
     fun testToastAction() {
-        val toastVM = ToastViewModel()
+        val toastVM = MockToastViewModel()
+        var toastShown = false
+
+        toastVM.onShowToast = { toast ->
+            toastVM.models.update { ToastViewModel.State.Visible(toast) }
+            toastShown = true
+        }
 
         composeTestRule.setContent {
             BarAndToastScaffold(toastViewModel = toastVM) { Text("Content") }
@@ -45,6 +60,7 @@ class BarAndToastScaffoldTest {
         )
 
         composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { toastShown }
         composeTestRule.onNodeWithText("Action").assertIsDisplayed().performClick()
 
         assert(actionTapped)
@@ -52,16 +68,20 @@ class BarAndToastScaffoldTest {
 
     @Test
     fun testToastClose() {
-        val toastVM = ToastViewModel()
-
+        var closeTapped = false
+        val toastVM =
+            MockToastViewModel(
+                ToastViewModel.State.Visible(
+                    ToastViewModel.Toast(
+                        message = "Toast message",
+                        onClose = { closeTapped = true },
+                    )
+                )
+            )
+        toastVM.onHideToast()
         composeTestRule.setContent {
             BarAndToastScaffold(toastViewModel = toastVM) { Text("Content") }
         }
-
-        var closeTapped = false
-        toastVM.showToast(
-            ToastViewModel.Toast(message = "Toast message", onClose = { closeTapped = true })
-        )
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Close").assertIsDisplayed().performClick()
