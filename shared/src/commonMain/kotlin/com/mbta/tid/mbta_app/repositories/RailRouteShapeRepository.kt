@@ -2,6 +2,10 @@ package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.cache.ResponseCache
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteSegment
+import com.mbta.tid.mbta_app.model.SegmentedRouteShape
+import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -44,6 +48,40 @@ constructor(
     val response: MapFriendlyRouteResponse = MapFriendlyRouteResponse(emptyList()),
     val onGet: () -> Unit = {},
 ) : IRailRouteShapeRepository {
+
+    constructor(
+        objects: ObjectCollectionBuilder
+    ) : this(
+        response =
+            MapFriendlyRouteResponse(
+                objects.routes.values
+                    .filter { it.type.isSubway() }
+                    .map {
+                        val rp = objects.routePatterns.values.first { rp -> rp.routeId == it.id }
+                        MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                            it.id,
+                            listOf(
+                                SegmentedRouteShape(
+                                    rp.id,
+                                    it.id,
+                                    0,
+                                    listOf(
+                                        RouteSegment(
+                                            "fake-id-${rp.id}",
+                                            rp.id,
+                                            it.id,
+                                            objects.trips[rp.representativeTripId]!!.stopIds!!,
+                                            mapOf(),
+                                        )
+                                    ),
+                                    Shape("fake-shape-id${it.id}"),
+                                )
+                            ),
+                        )
+                    }
+            )
+    )
+
     override val state = MutableStateFlow(response)
 
     override suspend fun getRailRouteShapes(): ApiResult<MapFriendlyRouteResponse> {

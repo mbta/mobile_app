@@ -59,6 +59,7 @@ import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -217,5 +218,6 @@ class MockRepositories : IRepositories {
                     ApiResult.Ok(VehicleStreamDataResponse(objects.vehicles.values.singleOrNull()))
             )
         vehicles = MockVehiclesRepository(objects)
+        railRouteShapes = MockRailRouteShapeRepository(objects)
     }
 }

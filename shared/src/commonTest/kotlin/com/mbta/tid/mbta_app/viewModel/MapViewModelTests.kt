@@ -3,12 +3,21 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
+import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify.VerifyMode
+import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -139,4 +148,49 @@ class MapViewModelTests : KoinTest {
             assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
         }
     }
+
+    // TODO:
+    @Test
+    fun railLayersNotResetWhenInStopDetails() = runTest {
+        val viewportProvider = MockViewportManager()
+        val viewModel: MapViewModel = get()
+        val layerManger = mock<IMapLayerManager>(MockMode.autofill)
+
+        val stop = TestData.stops["70113"]!!
+
+        val objects = ObjectCollectionBuilder()
+        objects.put(stop)
+        val alert =
+            ObjectCollectionBuilder().alert {
+                effect = Alert.Effect.Suspension
+                activePeriod = mutableListOf(Alert.ActivePeriod(Clock.System.now(), null))
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                            stop = stop.id,
+                        )
+                    )
+            }
+
+        testViewModelFlow(viewModel).test {
+            viewModel.setViewportManager(viewportProvider)
+            viewModel.layerManagerInitialized(layerManger)
+            viewModel.densityChanged(1f)
+            assertEquals(MapViewModel.State.Overview, awaitItem())
+            viewModel.navChanged(SheetRoutes.StopDetails(stop.id, null, null))
+            assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+            viewModel.alertsChanged(AlertsStreamDataResponse(objects))
+            //   awaitComplete()
+        }
+        // once for overview, once for stopDetails, never b/c alerts changed
+        verifySuspend(VerifyMode.exactly(0)) { layerManger.updateRouteSourceData(any()) }
+    }
+
+    // fun railLayersResetOnAlertChangeWhenInOverview() = runTest {
+
+    // fun stopRoutesDisplayedWhenNavChange
 }
