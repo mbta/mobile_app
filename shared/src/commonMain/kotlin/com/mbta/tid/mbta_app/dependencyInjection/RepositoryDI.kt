@@ -64,6 +64,7 @@ import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.MockStopRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -202,7 +203,9 @@ class MockRepositories : IRepositories {
         nearby = MockNearbyRepository(NearbyResponse(objects))
         predictions =
             MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
+        railRouteShapes = MockRailRouteShapeRepository(objects)
         schedules = MockScheduleRepository(ScheduleResponse(objects))
+        stop = MockStopRepository(objects)
         trip =
             MockTripRepository(
                 TripSchedulesResponse.Schedules(objects.schedules.values.toList()),
@@ -218,6 +221,5 @@ class MockRepositories : IRepositories {
                     ApiResult.Ok(VehicleStreamDataResponse(objects.vehicles.values.singleOrNull()))
             )
         vehicles = MockVehiclesRepository(objects)
-        railRouteShapes = MockRailRouteShapeRepository(objects)
     }
 }

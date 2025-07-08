@@ -160,11 +160,11 @@ class MapViewModel(
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
         LaunchedEffect(now, globalData, alerts) {
-            println("Alerts changed effect")
+            println("AGlobalMapData changed effect")
             globalMapData = globalMapData(now, globalData, alerts)
         }
         LaunchedEffect(allRailRouteShapes, globalData, globalMapData) {
-            println("RailRouteShapes changed effect")
+            println("allRail changed effect")
             allRailRouteSourceData = routeLineData(globalData, globalMapData, allRailRouteShapes)
             allStopSourceData = stopSourceData(globalMapData, allRailRouteSourceData)
         }
@@ -279,8 +279,15 @@ class MapViewModel(
             }
         }
 
-        LaunchedEffect(routeSourceData, routeShapes, stopLayerGeneratorState) {
-            println("UpdateMapDisplay launchedEffect triggered")
+        LaunchedEffect(
+            globalData,
+            routeSourceData,
+            routeShapes,
+            stopLayerGeneratorState,
+            isDarkMode,
+            layerManager,
+        ) {
+            println("UpdateMapDisplay launchedEffect triggered ${routeSourceData?.size}")
             updateMapDisplay(
                 globalData,
                 routeSourceData,
@@ -403,8 +410,12 @@ class MapViewModel(
         List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         StopLayerGenerator.State,
     >? {
+        println(
+            "In featuresToDisplayForStop ${stopId} ${globalResponse == null} ${railRouteShapes == null}"
+        )
         if (globalResponse == null || railRouteShapes == null) return null
         val stopMapData = getStopMapData(stopId = stopId) ?: return null
+        println("Past featuresToDisplayForStop null checks")
 
         val filteredRouteShapes =
             if (stopFilter != null) {
@@ -426,6 +437,8 @@ class MapViewModel(
                 globalResponse,
                 globalMapData(now, globalResponse, alerts),
             )
+
+        println("featuresToDisplayForStop filteredRouteSourceData${filteredRouteSourceData.size}")
 
         return Triple(
             filteredRouteSourceData,
