@@ -11,6 +11,7 @@ import SwiftUI
 
 struct RouteResultsView: View {
     let routes: [SearchViewModel.RouteResult]
+    let handleRouteTap: (String) -> Void
 
     var body: some View {
         VStack {
@@ -20,15 +21,19 @@ struct RouteResultsView: View {
             ResultContainer {
                 VStack(spacing: .zero) {
                     ForEach(routes, id: \.id) { route in
-                        HStack {
-                            RoutePill(spec: route.routePill)
-                            Text(route.name)
-                                .font(Typography.bodySemibold)
-                                .foregroundStyle(Color.text)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                        Button {
+                            handleRouteTap(route.id)
+                        } label: {
+                            HStack {
+                                RoutePill(spec: route.routePill)
+                                Text(route.name)
+                                    .font(Typography.bodySemibold)
+                                    .foregroundStyle(Color.text)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(12)
                         }
-                        .padding(12)
                         if route != routes.last {
                             Divider().overlay(Color.halo)
                         }

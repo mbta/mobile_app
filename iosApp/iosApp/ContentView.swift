@@ -202,6 +202,23 @@ struct ContentView: View {
                 case .favorites, .nearby:
                     tabbedSheetContents.transition(transition)
 
+                case let .routeDetails(navEntry):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        RouteDetailsView(
+                            selectionId: navEntry.routeId, context: navEntry.context,
+                            onOpenStopDetails: { nearbyVM.pushNavEntry(.stopDetails(
+                                stopId: $0,
+                                stopFilter: nil,
+                                tripFilter: nil
+                            )) }, onBack: { nearbyVM.goBack() }, onClose: { nearbyVM.popToEntrypoint() },
+                            errorBannerVM: errorBannerVM
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    .transition(transition)
+
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
