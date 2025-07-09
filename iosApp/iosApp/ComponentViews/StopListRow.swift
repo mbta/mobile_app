@@ -155,17 +155,14 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
             HStack(alignment: .center, spacing: 0) {
                 HStack(alignment: .center) {
                     if showStationAccessibility, activeElevatorAlerts > 0 {
-                        Image(.accessibilityIconAlert)
-                            .accessibilityHidden(true)
-                            .tag("elevator_alert")
+                        Image(.accessibilityIconAlert).tag("elevator_alert")
                     } else if showStationAccessibility, !stop.isWheelchairAccessible {
-                        Image(.accessibilityIconNotAccessible)
-                            .accessibilityHidden(true)
-                            .tag("wheelchair_not_accessible")
+                        Image(.accessibilityIconNotAccessible).tag("wheelchair_not_accessible")
                     } else {
-                        EmptyView().accessibilityHidden(true)
+                        EmptyView()
                     }
                 }
+                .accessibilityHidden(true)
                 .frame(minWidth: 28, maxWidth: 28)
                 .padding(.leading, 6)
                 if stopPlacement.includeLineDiagram {
