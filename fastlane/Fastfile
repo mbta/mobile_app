@@ -199,6 +199,7 @@ platform :ios do
       device: 'iPhone 15 (17.5)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
+      include_simulator_logs: true,
       xcodebuild_formatter: options[:xcodebuild_formatter],
       number_of_retries: 3
     )

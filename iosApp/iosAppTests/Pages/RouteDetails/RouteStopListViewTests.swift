@@ -85,6 +85,10 @@ final class RouteStopListViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "rightSideContent for \(stop2.name)"))
             XCTAssertNotNil(try view.find(text: "rightSideContent for \(stop3.name)"))
             XCTAssertNotNil(try view.find(text: connectingRoute.shortName))
+            try debugPrint(
+                "testDisplaysEverything - all text:",
+                view.findAll(ViewType.Text.self).map { try $0.string() }
+            )
 
             try view.find(text: stop2.name).find(ViewType.Button.self, relation: .parent).tap()
             XCTAssertEqual([RouteDetailsRowContext.details(stop: stop2)], clicks)
