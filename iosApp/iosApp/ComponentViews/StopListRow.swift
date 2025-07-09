@@ -211,6 +211,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                             }
                         }
                     )
+                    .simultaneousGesture(TapGesture())
                     .accessibilityElement(children: .combine)
                     .accessibilityInputLabels([stop.name])
                     .accessibilityAddTraits(.isHeader)
