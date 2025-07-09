@@ -93,7 +93,7 @@ final class RouteStopListViewTests: XCTestCase {
             try view.find(ViewType.Button.self, where: { try $0.accessibilityLabel().string() == "Close" }).tap()
             XCTAssertTrue(closeTapped)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
     }
 
@@ -156,7 +156,7 @@ final class RouteStopListViewTests: XCTestCase {
             XCTAssertEqual(route1.id, lastSelectedRoute)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 }

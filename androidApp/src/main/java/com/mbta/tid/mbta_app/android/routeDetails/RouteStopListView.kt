@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -60,6 +61,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.launch
@@ -277,6 +279,7 @@ private fun RouteStops(
                         connectingRoutes = stop.connectingRoutes,
                         onClickLabel = onClickLabel(stopRowContext),
                         stopPlacement = stopPlacement,
+                        showStationAccessibility = SettingsCache.get(Settings.StationAccessibility),
                         rightSideContent = { modifier ->
                             rightSideContent(stopRowContext, modifier)
                         },
