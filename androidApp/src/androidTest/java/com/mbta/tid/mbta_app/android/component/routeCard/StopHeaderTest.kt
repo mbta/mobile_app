@@ -4,12 +4,16 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class StopHeaderTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -27,8 +31,7 @@ class StopHeaderTest {
                     stop,
                     emptyList(),
                     emptyList(),
-                ),
-                false,
+                )
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
@@ -40,16 +43,20 @@ class StopHeaderTest {
         val route = objects.route()
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
 
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
         composeTestRule.setContent {
-            StopHeader(
-                RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
-                    stop,
-                    emptyList(),
-                    emptyList(),
-                ),
-                true,
-            )
+            KoinContext(koin.koin) {
+                StopHeader(
+                    RouteCardData.RouteStopData(
+                        RouteCardData.LineOrRoute.Route(route),
+                        stop,
+                        emptyList(),
+                        emptyList(),
+                    )
+                )
+            }
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
@@ -61,16 +68,20 @@ class StopHeaderTest {
         val route = objects.route()
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE }
 
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
         composeTestRule.setContent {
-            StopHeader(
-                RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
-                    stop,
-                    emptyList(),
-                    emptyList(),
-                ),
-                true,
-            )
+            KoinContext(koin.koin) {
+                StopHeader(
+                    RouteCardData.RouteStopData(
+                        RouteCardData.LineOrRoute.Route(route),
+                        stop,
+                        emptyList(),
+                        emptyList(),
+                    )
+                )
+            }
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
@@ -85,30 +96,34 @@ class StopHeaderTest {
         val alert = objects.alert { effect = Alert.Effect.ElevatorClosure }
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
         composeTestRule.setContent {
-            StopHeader(
-                RouteCardData.RouteStopData(
-                    lineOrRoute,
-                    stop,
-                    emptyList(),
-                    listOf(
-                        RouteCardData.Leaf(
-                            lineOrRoute,
-                            stop,
-                            0,
-                            emptyList(),
-                            emptySet(),
-                            emptyList(),
-                            listOf(alert),
-                            true,
-                            true,
-                            emptyList(),
-                            RouteCardData.Context.StopDetailsUnfiltered,
-                        )
-                    ),
-                ),
-                true,
-            )
+            KoinContext(koin.koin) {
+                StopHeader(
+                    RouteCardData.RouteStopData(
+                        lineOrRoute,
+                        stop,
+                        emptyList(),
+                        listOf(
+                            RouteCardData.Leaf(
+                                lineOrRoute,
+                                stop,
+                                0,
+                                emptyList(),
+                                emptySet(),
+                                emptyList(),
+                                listOf(alert),
+                                true,
+                                true,
+                                emptyList(),
+                                RouteCardData.Context.StopDetailsUnfiltered,
+                            )
+                        ),
+                    )
+                )
+            }
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithText("1 elevator closed").assertIsDisplayed()

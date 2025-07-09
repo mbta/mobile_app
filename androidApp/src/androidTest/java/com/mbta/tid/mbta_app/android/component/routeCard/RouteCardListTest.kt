@@ -187,7 +187,6 @@ class RouteCardListTest : KoinTest {
                         now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
-                        showStationAccessibility = false,
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -219,7 +218,6 @@ class RouteCardListTest : KoinTest {
                         now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
-                        showStationAccessibility = false,
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -260,7 +258,6 @@ class RouteCardListTest : KoinTest {
                         now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
-                        showStationAccessibility = false,
                         onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
                     )
                 }

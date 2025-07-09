@@ -18,7 +18,6 @@ fun LoadingRouteCard() {
             { false },
             {},
             showStopHeader = true,
-            showStationAccessibility = false,
             { _, _ -> },
         )
     }

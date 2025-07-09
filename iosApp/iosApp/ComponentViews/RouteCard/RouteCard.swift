@@ -20,7 +20,6 @@ struct RouteCard: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
@@ -47,8 +46,7 @@ struct RouteCard: View {
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
                 if showStopHeader {
                     RouteCardStopHeader(
-                        data: stopData,
-                        showStationAccessibility: showStationAccessibility
+                        data: stopData
                     )
                 }
                 RouteCardDepartures(

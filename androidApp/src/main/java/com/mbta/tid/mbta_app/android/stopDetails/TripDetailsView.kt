@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -32,7 +31,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Instant
 import org.koin.compose.koinInject
 
@@ -50,7 +48,6 @@ fun TripDetailsView(
     analytics: Analytics = koinInject(),
     modifier: Modifier = Modifier,
 ) {
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
     val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
     val vehicle = tripData?.vehicle
@@ -119,7 +116,6 @@ fun TripDetailsView(
             now,
             alertSummaries,
             globalResponse,
-            showStationAccessibility,
             modifier,
         )
     } else {
@@ -152,7 +148,6 @@ fun TripDetailsView(
                     now,
                     emptyMap(),
                     globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
-                    showStationAccessibility,
                 )
             }
         }
@@ -173,7 +168,6 @@ private fun TripDetailsView(
     now: Instant,
     alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
-    showStationAccessibility: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -201,7 +195,6 @@ private fun TripDetailsView(
                 onTapStop,
                 onOpenAlertDetails,
                 routeAccents,
-                showStationAccessibility,
             )
         }
     }

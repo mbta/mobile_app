@@ -17,7 +17,6 @@ struct TripStopRow: View {
     var onOpenAlertDetails: (Shared.Alert) -> Void
     var routeAccents: TripRouteAccents
     var alertSummaries: [String: AlertSummary?]
-    var showStationAccessibility: Bool = false
     var showDownstreamAlert: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
@@ -51,7 +50,6 @@ struct TripStopRow: View {
             stopPlacement: .init(isFirst: firstStop, isLast: lastStop, includeLineDiagram: true),
             onOpenAlertDetails: onOpenAlertDetails,
             showDownstreamAlert: showDownstreamAlert,
-            showStationAccessibility: showStationAccessibility,
             targeted: targeted,
             trackNumber: stop.trackNumber,
             descriptor: { EmptyView() },
@@ -120,8 +118,7 @@ struct TripStopRow: View {
                 color: Color(hex: "DA291C"),
                 type: .heavyRail
             ),
-            alertSummaries: [:],
-            showStationAccessibility: true
+            alertSummaries: [:]
         )
         TripStopRow(
             stop: .init(
@@ -152,8 +149,7 @@ struct TripStopRow: View {
                 color: Color(hex: "DA291C"),
                 type: .heavyRail
             ),
-            alertSummaries: [:],
-            showStationAccessibility: true
+            alertSummaries: [:]
         )
         TripStopRow(
             stop: .init(
@@ -182,10 +178,10 @@ struct TripStopRow: View {
                 color: Color(hex: "DA291C"),
                 type: .heavyRail
             ),
-            alertSummaries: [:],
-            showStationAccessibility: true
+            alertSummaries: [:]
         )
     }
+    .withFixedSettings([.stationAccessibility: true])
     .font(Typography.body)
     .background(Color.fill3)
 }
@@ -230,8 +226,7 @@ struct TripStopRow: View {
                     color: Color(hex: "DA291C"),
                     type: .heavyRail
                 ),
-                alertSummaries: [:],
-                showDownstreamAlert: true
+                alertSummaries: [:]
             )
             TripStopRow(
                 stop:
@@ -263,8 +258,7 @@ struct TripStopRow: View {
                     color: Color(hex: "DA291C"),
                     type: .heavyRail
                 ),
-                alertSummaries: [:],
-                showDownstreamAlert: true
+                alertSummaries: [:]
             )
             TripStopRow(
                 stop:
@@ -288,9 +282,10 @@ struct TripStopRow: View {
                     color: Color(hex: "DA291C"),
                     type: .heavyRail
                 ),
-                alertSummaries: [:],
-                showDownstreamAlert: true
+                alertSummaries: [:]
             )
         }
-    }.padding(6)
+    }
+    .padding(6)
+    .withFixedSettings([.stationAccessibility: true])
 }

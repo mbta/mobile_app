@@ -11,21 +11,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
 fun StopDetailsNoTripCard(
     status: UpcomingFormat.NoTripsFormat,
     accentColor: Color,
     routeType: RouteType,
-    hideMaps: Boolean,
 ) {
 
     StopDetailsIconCard(
         accentColor = accentColor,
-        details = detailText(status, routeType, hideMaps),
+        details = detailText(status, routeType),
         header = { modifier -> HeaderText(status, modifier) },
     ) { modifier ->
         HeaderImage(status, routeType, modifier)
@@ -48,9 +49,9 @@ private fun HeaderText(status: UpcomingFormat.NoTripsFormat, modifier: Modifier 
 private fun detailText(
     status: UpcomingFormat.NoTripsFormat,
     routeType: RouteType,
-    hideMaps: Boolean,
 ): (@Composable () -> Unit)? {
     val context = LocalContext.current
+    val hideMaps = SettingsCache.get(Settings.HideMaps)
 
     var predictionsUnavailableString =
         stringResource(R.string.predictions_unavailable_details, routeType.typeText(context, false))
