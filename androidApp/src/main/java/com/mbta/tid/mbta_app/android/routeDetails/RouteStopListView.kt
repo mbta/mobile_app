@@ -192,7 +192,10 @@ fun RouteStopListView(
             closeText =
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)
                 else null,
-            onBack = onBack,
+            onBack = {
+                showFirstTimeFavoritesToast = false
+                onBack()
+            },
             onClose = {
                 showFirstTimeFavoritesToast = false
                 onClose()
