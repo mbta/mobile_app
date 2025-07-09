@@ -42,7 +42,7 @@ final class CollapsableStopListTests: XCTestCase {
             isFirstSegment: false,
             isLastSegment: false,
             rightSideContent: { _ in EmptyView() }
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: stop1.name))
         XCTAssertNotNil(try sut.inspect().find(text: "Less common stop"))
@@ -96,7 +96,7 @@ final class CollapsableStopListTests: XCTestCase {
             XCTAssertNotNil(try view.find(imageName: "map-stop-close-BUS"))
             XCTAssertNotNil(try view.find(text: stop2.name))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 }
