@@ -46,11 +46,13 @@ final class RouteStopListViewTests: XCTestCase {
         var backTapped = false
         var closeTapped = false
 
+        let gotRouteStops = PassthroughSubject<Void, Never>()
         let repositories = MockRepositories()
         repositories.useObjects(objects: objects)
         repositories.routeStops = MockRouteStopsRepository(
             stopIds: [stop1.id, stop2.id, stop3.id],
-            routeId: mainRoute.id
+            routeId: mainRoute.id,
+            onGet: { _, _ in gotRouteStops.send() }
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
         let errorBannerVM = ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository())
@@ -70,7 +72,7 @@ final class RouteStopListViewTests: XCTestCase {
             }}
         )
 
-        let exp = sut.inspection.inspect(after: 0.5) { view in
+        let exp = sut.inspection.inspect(onReceive: gotRouteStops, after: 0.2) { view in
             XCTAssertNotNil(try view.find(text: mainRoute.longName))
             XCTAssertNotNil(try view.find(text: "Westbound to"))
             XCTAssertNotNil(try view.find(text: "Here"))
