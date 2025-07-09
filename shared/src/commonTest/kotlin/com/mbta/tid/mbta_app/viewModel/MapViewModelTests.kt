@@ -297,25 +297,26 @@ class MapViewModelTests : KoinTest {
             assertEquals(MapViewModel.State.Overview, awaitItem())
             advanceUntilIdle()
             viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
-            advanceUntilIdle()
-
             assertEquals(MapViewModel.State.StopSelected(chestnutHill, null), awaitItem())
             advanceUntilIdle()
             viewModel.navChanged(SheetRoutes.NearbyTransit)
+            assertEquals(MapViewModel.State.Overview, awaitItem())
         }
-
+        //  advanceUntilIdle()
         advanceUntilIdle()
+
+        //     verifySuspend { layerManger.updateRouteSourceData(matching { it.size == 1 }) }
 
         verifySuspend(VerifyMode.order) {
             //  2 for initial setup
+            //        layerManger.updateRouteSourceData(matching { it.size == 6 })
             //      layerManger.updateRouteSourceData(matching { it.size == 6 })
-            //     layerManger.updateRouteSourceData(matching { it.size == 6 })
 
             // 1 for stop details - this is missing
-            //     layerManger.updateRouteSourceData(matching { it.size == 1 })
+            //    layerManger.updateRouteSourceData(matching { it.size == 1 })
 
             // 1 for back to overview
-            //      layerManger.updateRouteSourceData(matching { it.size == 6 })
+            //    layerManger.updateRouteSourceData(matching { it.size == 6 })
         }
     }
 }

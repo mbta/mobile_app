@@ -162,9 +162,6 @@ object RouteFeaturesBuilder {
         val fullLineString = LineString(coordinates)
         val alertAwareSegments =
             routePatternShape.routeSegments.flatMap { segment ->
-                if (segment.sourceRouteId == "Green-B") {
-                    println("Green-B segment found")
-                }
                 segment.splitAlertingSegments(alertsByStop = alertsByStop ?: emptyMap())
             }
         return alertAwareSegments.mapNotNull { segment ->
