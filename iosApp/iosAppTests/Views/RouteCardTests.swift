@@ -38,9 +38,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "66"))
-        XCTAssertNotNil(try? sut.inspect().find(ViewType.Image.self) { image in
-            try image.actualImage().name() == "mode-bus"
-        })
+        XCTAssertNotNil(try? sut.inspect().find(imageName: "mode-bus"))
     }
 
     func testLineHeader() throws {
@@ -70,9 +68,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Green Line"))
-        XCTAssertNotNil(try? sut.inspect().find(ViewType.Image.self) { image in
-            try image.actualImage().name() == "mode-subway"
-        })
+        XCTAssertNotNil(try? sut.inspect().find(imageName: "mode-subway"))
     }
 
     func testPinRoute() throws {

@@ -23,12 +23,8 @@ final class ExplainerPageTests: XCTestCase {
             onClose: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Finishing another trip"))
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "turnaround-icon-bus"
-        }))
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "turnaround-shape"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "turnaround-icon-bus"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "turnaround-shape"))
     }
 
     func testNoPrediction() throws {
@@ -43,9 +39,7 @@ final class ExplainerPageTests: XCTestCase {
 
     func testRouteType() throws {
         let sut = ExplainerPage(explainer: .init(type: .noPrediction, routeAccents: .init(type: .bus)), onClose: {})
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "mode-bus"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-bus"))
     }
 
     func testClose() throws {
