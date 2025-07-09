@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.style.Color
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -13,6 +14,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -642,6 +644,7 @@ data class RouteCardData(
          * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext] are omitted.
          * Cancelled trips are also omitted when [context] = NearbyTransit.
          */
+        @DefaultArgumentInterop.Enabled
         suspend fun routeCardsForStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
@@ -652,8 +655,9 @@ data class RouteCardData(
             now: Instant,
             pinnedRoutes: Set<String>,
             context: Context,
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
-            withContext(Dispatchers.Default) {
+            withContext(coroutineDispatcher) {
 
                 // if predictions or alerts are still loading, this is the loading state
                 if (predictions == null || alerts == null) return@withContext null
@@ -694,13 +698,15 @@ data class RouteCardData(
          * 1. subway routes
          * 2. route pattern sort order
          */
+        @DefaultArgumentInterop.Enabled
         suspend fun routeCardsForStaticStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             context: Context,
             now: Instant = Clock.System.now(),
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
-            withContext(Dispatchers.Default) {
+            withContext(coroutineDispatcher) {
                 // if global data was still loading, there'd be no nearby data, and null handling is
                 // annoying
                 if (globalData == null) return@withContext null

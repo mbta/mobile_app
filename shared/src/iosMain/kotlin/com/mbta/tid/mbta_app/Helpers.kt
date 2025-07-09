@@ -12,6 +12,8 @@ import com.mbta.tid.mbta_app.endToEnd.endToEndModule
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.time.Instant
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.toKotlinInstant
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -67,7 +69,12 @@ subsequently load in specific modules to override these base definitions.
 fun startKoinIOSTestApp() {
     startKoin {
         modules(
-            platformModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
+            platformModule() +
+                viewModelModule() +
+                module {
+                    single<Analytics> { MockAnalytics() }
+                    single<CoroutineDispatcher> { Dispatchers.Default }
+                }
         )
     }
     loadDefaultRepoModules()
