@@ -158,41 +158,22 @@ class MapViewModel(
                     currentState.stop?.id to null
                 }
             }
-        LaunchedEffect(null) {
-            println("setting globalData for first time")
-            globalRepository.getGlobalData()
-        }
-        LaunchedEffect(null) {
-            allRailRouteShapes = fetchRailRouteShapes()
-            println(
-                "setting allRailRouteShapes for first time - complete ${allRailRouteShapes?.routesWithSegmentedShapes?.size}"
-            )
-        }
+        LaunchedEffect(null) { globalRepository.getGlobalData() }
+        LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
         LaunchedEffect(now, globalData, alerts) {
-            println("setting globalMapData")
             globalMapData = globalMapData(now, globalData, alerts)
         }
         LaunchedEffect(allRailRouteShapes, globalData, globalMapData) {
-            println(
-                "setting allRailRouteSourceData and allStopSourceData ${globalMapData?.alertsByStop?.values?.count { it.relevantAlerts.isNotEmpty() } }}"
-            )
             allRailRouteSourceData = routeLineData(globalData, globalMapData, allRailRouteShapes)
             allStopSourceData = stopSourceData(globalMapData, allRailRouteSourceData)
         }
 
         LaunchedEffect(allStopSourceData, layerManager) {
-            allStopSourceData?.let {
-                println("updating stopSourceData in layermanager")
-
-                layerManager?.updateStopSourceData(it)
-            }
+            allStopSourceData?.let { layerManager?.updateStopSourceData(it) }
         }
 
         LaunchedEffect(allRailRouteSourceData, allStopSourceData, state) {
             if (state is State.Overview) {
-                println(
-                    "updating routeSourceData in overview state ${allRailRouteSourceData?.size}"
-                )
                 routeSourceData = allRailRouteSourceData
                 routeShapes = allRailRouteShapes?.routesWithSegmentedShapes
                 stopLayerGeneratorState = StopLayerGenerator.State(null, null)
@@ -287,7 +268,6 @@ class MapViewModel(
                         routeCardData = routeCardData,
                     )
                 featuresToDisplayForStop?.let {
-                    println("updating routeSourceData for stop ${it.first.size}")
                     routeSourceData = it.first
                     routeShapes = it.second
                     stopLayerGeneratorState = it.third
@@ -448,8 +428,6 @@ class MapViewModel(
                 globalMapData,
             )
 
-        println("featuresToDisplayForStop filteredRouteSourceData ${filteredRouteSourceData.size}")
-
         return Triple(
             filteredRouteSourceData,
             filteredRouteShapes,
@@ -470,9 +448,6 @@ class MapViewModel(
             return
         }
 
-        println(
-            "SUT: updating routeSourceData in layermanager ${routeSourceData?.hashCode()} ${routeShapes?.hashCode()} ${stopLayerGeneratorState} ${isDarkMode} ${layerManager.hashCode()}"
-        )
         layerManager?.updateRouteSourceData(routeSourceData)
         layerManager?.addLayers(
             routeShapes,
