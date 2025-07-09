@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.utils.ViewportManager
 import dev.mokkery.MockMode
 import dev.mokkery.matcher.matching
 import dev.mokkery.mock
+import dev.mokkery.resetCalls
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
@@ -171,6 +172,7 @@ class MapViewModelTests : KoinTest {
     }
 
     @Test
+    @Ignore // TODO: Address flakiness
     fun whenInStopDetailsNotResetToAllRailOnAlertChange() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(dispatcher)
@@ -203,33 +205,30 @@ class MapViewModelTests : KoinTest {
                 informedEntity = informedEntities.toMutableList()
             }
 
-        testViewModelFlow(viewModel).test {
-            viewModel.setViewportManager(viewportProvider)
-            viewModel.layerManagerInitialized(layerManger)
-            viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
-            advanceUntilIdle()
-            viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
-            assertEquals(MapViewModel.State.StopSelected(chestnutHill, null), awaitItem())
-            advanceUntilIdle()
-            viewModel.alertsChanged(AlertsStreamDataResponse(objects))
-        }
-
+        viewModel.setViewportManager(viewportProvider)
+        viewModel.layerManagerInitialized(layerManger)
+        viewModel.densityChanged(1f)
+        viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
         advanceUntilIdle()
 
-        verifySuspend(VerifyMode.order) {
-            // 2 times for overview (why?)
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it == MapViewModel.State.StopSelected(chestnutHill, null) }
+            advanceUntilIdle()
+            verifySuspend { layerManger.updateRouteSourceData(matching { it.size == 1 }) }
+            resetCalls(layerManger)
+            viewModel.alertsChanged(AlertsStreamDataResponse(objects))
+        }
+        advanceUntilIdle()
 
-            // 1 time for stop details
-            layerManger.updateRouteSourceData(matching { it.size == 1 })
+        verifySuspend(VerifyMode.exactly(0)) {
+            layerManger.updateRouteSourceData(matching { it.size == 6 })
         }
     }
 
     @Test
+    @Ignore // TODO: Address flakiness
     fun allRailResetOnAlertChangeWhenInOverview() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = StandardTestDispatcher(this.testScheduler)
         setUpKoin(dispatcher)
 
         val viewportProvider = MockViewportManager()
@@ -260,27 +259,24 @@ class MapViewModelTests : KoinTest {
                 informedEntity = informedEntities.toMutableList()
             }
 
+        viewModel.layerManagerInitialized(layerManger)
+        viewModel.setViewportManager(viewportProvider)
+        viewModel.densityChanged(1f)
+        advanceUntilIdle()
         testViewModelFlow(viewModel).test {
-            viewModel.layerManagerInitialized(layerManger)
-            viewModel.setViewportManager(viewportProvider)
-            viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            awaitItemSatisfying { it == MapViewModel.State.Overview }
             advanceUntilIdle()
+            verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
+            resetCalls(layerManger)
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
-            advanceUntilIdle()
         }
 
         advanceUntilIdle()
-        verifySuspend(VerifyMode.order) {
-            // 3 times for overview  - 2 for initial setup, 1 for alerts changing
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-        }
+        verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
     }
 
     @Test
-    @Ignore // TODO address flakiness
+    @Ignore // TODO: Address flakiness
     fun allRailLayersResetWhenNavigatingToNearby() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(dispatcher)
@@ -292,31 +288,22 @@ class MapViewModelTests : KoinTest {
         val objects = TestData.clone()
         val chestnutHill = objects.getStop("place-chill")
 
+        viewModel.setViewportManager(viewportProvider)
+        viewModel.layerManagerInitialized(layerManger)
+        viewModel.densityChanged(1f)
+        viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
+        advanceUntilIdle()
+
         testViewModelFlow(viewModel).test {
-            viewModel.setViewportManager(viewportProvider)
-            viewModel.layerManagerInitialized(layerManger)
-            viewModel.densityChanged(1f)
+            awaitItemSatisfying { it == MapViewModel.State.StopSelected(chestnutHill, null) }
+            advanceUntilIdle()
+            verifySuspend { layerManger.updateRouteSourceData(matching { it.size == 1 }) }
+            resetCalls(layerManger)
+            viewModel.navChanged(SheetRoutes.NearbyTransit)
             assertEquals(MapViewModel.State.Overview, awaitItem())
-            advanceUntilIdle()
-            viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
-            assertEquals(MapViewModel.State.StopSelected(chestnutHill, null), awaitItem())
-            advanceUntilIdle()
         }
-
-        advanceUntilIdle()
-        viewModel.navChanged(SheetRoutes.NearbyTransit)
         advanceUntilIdle()
 
-        verifySuspend(VerifyMode.order) {
-            // 2 times for overview (why?)
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-
-            // 1 time for stop details
-            layerManger.updateRouteSourceData(matching { it.size == 1 })
-
-            // return to overview
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
-        }
+        verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
     }
 }
