@@ -14,7 +14,10 @@ import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import dev.mokkery.MockMode
+import dev.mokkery.matcher.matching
 import dev.mokkery.mock
+import dev.mokkery.verify.VerifyMode
+import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -205,17 +208,17 @@ class MapViewModelTests : KoinTest {
             assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
             advanceUntilIdle()
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
-            //   awaitComplete()
         }
 
         advanceUntilIdle()
 
-        // once for overview, once for stopDetails, never b/c alerts changed
-        // verifySuspend(VerifyMode.exactly(1)) { layerManger.updateRouteSourceData(matching {
-        // it.size == 6 }) }
-        //  verifySuspend(VerifyMode.exactly(1)) { layerManger.updateRouteSourceData(matching {
-        // it.size == 1 }) }
-
+        verifySuspend(VerifyMode.order) {
+            // 2 times for overview (why?)
+            layerManger.updateRouteSourceData(matching { it.size == 6 })
+            layerManger.updateRouteSourceData(matching { it.size == 6 })
+            // stop details
+            layerManger.updateRouteSourceData(matching { it.size == 1 })
+        }
     }
 
     @Test
@@ -252,15 +255,20 @@ class MapViewModelTests : KoinTest {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
             assertEquals(MapViewModel.State.Overview, awaitItem())
+            advanceUntilIdle()
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
+            advanceUntilIdle()
+
             //   awaitComplete()
         }
 
         advanceUntilIdle()
-        // once for overview, once once b/c alerts changed
-        //      verifySuspend(VerifyMode.exactly(2)) {
-        //          layerManger.updateRouteSourceData(matching { it.size == 6 })
-        //      }
+        verifySuspend(VerifyMode.order) {
+            // 3 times for overview  - 2 for initial setup, 1 for alerts changing
+            layerManger.updateRouteSourceData(matching { it.size == 6 })
+            layerManger.updateRouteSourceData(matching { it.size == 6 })
+            layerManger.updateRouteSourceData(matching { it.size == 6 })
+        }
     }
 
     @Test

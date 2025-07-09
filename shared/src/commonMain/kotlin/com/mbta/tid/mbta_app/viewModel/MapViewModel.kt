@@ -165,7 +165,6 @@ class MapViewModel(
             globalMapData = globalMapData(now, globalData, alerts)
         }
         LaunchedEffect(allRailRouteShapes, globalData, globalMapData) {
-            println("allRail changed effect")
             allRailRouteSourceData = routeLineData(globalData, globalMapData, allRailRouteShapes)
             allStopSourceData = stopSourceData(globalMapData, allRailRouteSourceData)
         }
@@ -288,7 +287,9 @@ class MapViewModel(
             isDarkMode,
             layerManager,
         ) {
-            println("UpdateMapDisplay launchedEffect triggered ${routeSourceData?.size}")
+            println(
+                "UpdateMapDisplay launchedEffect triggered ${globalData.hashCode()} ${routeSourceData?.hashCode()} ${routeShapes?.hashCode()} ${stopLayerGeneratorState} ${isDarkMode} ${layerManager.hashCode()}"
+            )
             updateMapDisplay(
                 globalData,
                 routeSourceData,
