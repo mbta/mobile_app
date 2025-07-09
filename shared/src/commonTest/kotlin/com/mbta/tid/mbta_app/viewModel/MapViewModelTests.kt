@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -22,6 +21,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -178,24 +178,28 @@ class MapViewModelTests : KoinTest {
         val viewModel: MapViewModel = get()
         val layerManger = mock<IMapLayerManager>(MockMode.autofill)
 
-        val stop = TestData.stops["70113"]!!
-
-        val objects = ObjectCollectionBuilder()
-        objects.put(stop)
-        val alert =
-            ObjectCollectionBuilder().alert {
-                effect = Alert.Effect.Suspension
-                activePeriod = mutableListOf(Alert.ActivePeriod(Clock.System.now(), null))
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            listOf(
-                                Alert.InformedEntity.Activity.Board,
-                                Alert.InformedEntity.Activity.Ride,
-                            ),
-                            stop = stop.id,
-                        )
+        val objects = TestData.clone()
+        val chestnutHill = objects.getStop("place-chill")
+        val southStreet = objects.getStop("place-sougr")
+        val informedEntities =
+            listOf(chestnutHill, southStreet).flatMap {
+                listOf(
+                    Alert.InformedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        stop = it.id,
+                        route = "Green-B",
                     )
+                )
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod =
+                    mutableListOf(Alert.ActivePeriod(Clock.System.now().minus(5.hours), null))
+                informedEntity = informedEntities.toMutableList()
             }
 
         testViewModelFlow(viewModel).test {
@@ -204,8 +208,8 @@ class MapViewModelTests : KoinTest {
             viewModel.densityChanged(1f)
             assertEquals(MapViewModel.State.Overview, awaitItem())
             advanceUntilIdle()
-            viewModel.navChanged(SheetRoutes.StopDetails(stop.id, null, null))
-            assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+            viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
+            assertEquals(MapViewModel.State.StopSelected(chestnutHill, null), awaitItem())
             advanceUntilIdle()
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
         }
@@ -216,7 +220,8 @@ class MapViewModelTests : KoinTest {
             // 2 times for overview (why?)
             layerManger.updateRouteSourceData(matching { it.size == 6 })
             layerManger.updateRouteSourceData(matching { it.size == 6 })
-            // stop details
+
+            // 1 time for stop details
             layerManger.updateRouteSourceData(matching { it.size == 1 })
         }
     }
@@ -230,24 +235,28 @@ class MapViewModelTests : KoinTest {
         val viewModel: MapViewModel = get()
         val layerManger = mock<IMapLayerManager>(MockMode.autofill)
 
-        val stop = TestData.stops["70113"]!!
-
-        val objects = ObjectCollectionBuilder()
-        objects.put(stop)
-        val alert =
-            ObjectCollectionBuilder().alert {
-                effect = Alert.Effect.Suspension
-                activePeriod = mutableListOf(Alert.ActivePeriod(Clock.System.now(), null))
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            listOf(
-                                Alert.InformedEntity.Activity.Board,
-                                Alert.InformedEntity.Activity.Ride,
-                            ),
-                            stop = stop.id,
-                        )
+        val objects = TestData.clone()
+        val chestnutHill = objects.getStop("place-chill")
+        val southStreet = objects.getStop("place-sougr")
+        val informedEntities =
+            listOf(chestnutHill, southStreet).flatMap {
+                listOf(
+                    Alert.InformedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        stop = it.id,
+                        route = "Green-B",
                     )
+                )
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod =
+                    mutableListOf(Alert.ActivePeriod(Clock.System.now().minus(5.hours), null))
+                informedEntity = informedEntities.toMutableList()
             }
 
         testViewModelFlow(viewModel).test {
@@ -258,8 +267,6 @@ class MapViewModelTests : KoinTest {
             advanceUntilIdle()
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
             advanceUntilIdle()
-
-            //   awaitComplete()
         }
 
         advanceUntilIdle()
@@ -280,10 +287,8 @@ class MapViewModelTests : KoinTest {
         val viewModel: MapViewModel = get()
         val layerManger = mock<IMapLayerManager>(MockMode.autofill)
 
-        val stop = TestData.stops["70113"]!!
-
-        val objects = ObjectCollectionBuilder()
-        objects.put(stop)
+        val objects = TestData.clone()
+        val chestnutHill = objects.getStop("place-chill")
 
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
@@ -291,20 +296,26 @@ class MapViewModelTests : KoinTest {
             viewModel.densityChanged(1f)
             assertEquals(MapViewModel.State.Overview, awaitItem())
             advanceUntilIdle()
-            viewModel.navChanged(SheetRoutes.StopDetails(stop.id, null, null))
-            assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+            viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
+            advanceUntilIdle()
+
+            assertEquals(MapViewModel.State.StopSelected(chestnutHill, null), awaitItem())
             advanceUntilIdle()
             viewModel.navChanged(SheetRoutes.NearbyTransit)
-            //   awaitComplete()
         }
 
         advanceUntilIdle()
 
-        // once for overview, once for stopDetails, never b/c alerts changed
-        // verifySuspend(VerifyMode.exactly(1)) { layerManger.updateRouteSourceData(matching {
-        // it.size == 6 }) }
-        //  verifySuspend(VerifyMode.exactly(1)) { layerManger.updateRouteSourceData(matching {
-        // it.size == 1 }) }
+        verifySuspend(VerifyMode.order) {
+            //  2 for initial setup
+            //      layerManger.updateRouteSourceData(matching { it.size == 6 })
+            //     layerManger.updateRouteSourceData(matching { it.size == 6 })
 
+            // 1 for stop details - this is missing
+            //     layerManger.updateRouteSourceData(matching { it.size == 1 })
+
+            // 1 for back to overview
+            //      layerManger.updateRouteSourceData(matching { it.size == 6 })
+        }
     }
 }

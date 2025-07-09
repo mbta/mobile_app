@@ -70,11 +70,21 @@ constructor(
                                             "fake-id-${rp.id}",
                                             rp.id,
                                             it.id,
-                                            objects.trips[rp.representativeTripId]!!.stopIds!!,
+                                            objects.trips[rp.representativeTripId]!!
+                                                .stopIds!!
+                                                .map { stopId ->
+                                                    objects.stops[stopId]?.parentStationId ?: stopId
+                                                },
                                             mapOf(),
                                         )
                                     ),
-                                    Shape("fake-shape-id${it.id}"),
+                                    // All set to a real Red Line polyline so that it actually
+                                    // decodes properly.
+                                    Shape(
+                                        "fake-shape-id${it.id}",
+                                        polyline =
+                                            "\"}nwaG~|eqLGyNIqAAc@S_CAEWu@g@}@u@k@u@Wu@OMGIMISQkAOcAGw@SoDFkCf@sUXcJJuERwHPkENqCJmB^mDn@}D??D[TeANy@\\\\iAt@qB`AwBl@cAl@m@b@Yn@QrBEtCKxQ_ApMT??R?`m@hD`Np@jAF|@C`B_@hBi@n@s@d@gA`@}@Z_@RMZIl@@fBFlB\\\\tAP??~@L^?HCLKJWJ_@vC{NDGLQvG}HdCiD`@e@Xc@b@oAjEcPrBeGfAsCvMqVl@sA??jByD`DoGd@cAj@cBJkAHqBNiGXeHVmJr@kR~@q^HsB@U\"",
+                                    ),
                                 )
                             ),
                         )

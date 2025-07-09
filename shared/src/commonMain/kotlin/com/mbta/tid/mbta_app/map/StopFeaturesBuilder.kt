@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.map
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.style.Feature
 import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.map.style.FeatureProperty
@@ -11,6 +12,7 @@ import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.nearestPointOnLine
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -32,16 +34,20 @@ object StopFeaturesBuilder {
     /** Routes and directions are stored as "<route id>/<direction id>". */
     val propAllRouteDirectionsKey = FeatureProperty<List<String>>("allRouteDirections")
 
+    @DefaultArgumentInterop.Enabled
     suspend fun buildCollection(
         globalMapData: GlobalMapData?,
         routeSourceDetails: List<RouteSourceData>,
-    ) = buildCollection(globalMapData?.mapStops.orEmpty(), routeSourceDetails)
+        coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) = buildCollection(globalMapData?.mapStops.orEmpty(), routeSourceDetails, coroutineDispatcher)
 
+    @DefaultArgumentInterop.Enabled
     internal suspend fun buildCollection(
         stops: Map<String, MapStop>,
         routeSourceDetails: List<RouteSourceData>,
+        coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): FeatureCollection =
-        withContext(Dispatchers.Default) {
+        withContext(coroutineDispatcher) {
             val stopFeatures = generateStopFeatures(stops, routeSourceDetails)
             buildCollection(stopFeatures = stopFeatures)
         }

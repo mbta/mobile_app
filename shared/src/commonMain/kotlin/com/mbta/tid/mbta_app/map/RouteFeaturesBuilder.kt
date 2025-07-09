@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.map
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.style.Feature
 import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.map.style.FeatureProperty
@@ -24,6 +25,7 @@ import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -48,18 +50,28 @@ object RouteFeaturesBuilder {
 
     val propAlertStateKey = FeatureProperty<String>("alertState")
 
+    @DefaultArgumentInterop.Enabled
     suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalData: GlobalResponse,
         globalMapData: GlobalMapData?,
-    ) = generateRouteSources(routeData, globalData.stops, globalMapData?.alertsByStop.orEmpty())
+        coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) =
+        generateRouteSources(
+            routeData,
+            globalData.stops,
+            globalMapData?.alertsByStop.orEmpty(),
+            coroutineDispatcher,
+        )
 
+    @DefaultArgumentInterop.Enabled
     suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
+        coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): List<RouteSourceData> =
-        withContext(Dispatchers.Default) {
+        withContext(coroutineDispatcher) {
             routeData.map {
                 generateRouteSource(
                     routeId = it.routeId,
@@ -150,6 +162,9 @@ object RouteFeaturesBuilder {
         val fullLineString = LineString(coordinates)
         val alertAwareSegments =
             routePatternShape.routeSegments.flatMap { segment ->
+                if (segment.sourceRouteId == "Green-B") {
+                    println("Green-B segment found")
+                }
                 segment.splitAlertingSegments(alertsByStop = alertsByStop ?: emptyMap())
             }
         return alertAwareSegments.mapNotNull { segment ->
