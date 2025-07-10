@@ -44,8 +44,6 @@ struct RouteStopListView<RightSideContent: View>: View {
     @State var routeStops: RouteStopsResult?
     @State var stopList: RouteDetailsStopList?
 
-    @EnvironmentObject var settingsCache: SettingsCache
-
     @State var selectedRouteId: String
     @State var selectedDirection: Int32
 
@@ -162,7 +160,6 @@ struct RouteStopListView<RightSideContent: View>: View {
                                     stopListContext: .routeDetails,
                                     connectingRoutes: stop.connectingRoutes,
                                     stopPlacement: stopPlacement,
-                                    showStationAccessibility: settingsCache.get(.stationAccessibility),
                                     descriptor: { EmptyView() },
                                     rightSideContent: { rightSideContent(stopRowContext) }
                                 )

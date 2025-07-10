@@ -38,11 +38,7 @@ fun NearbyTransitPage(
         setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
         onOpenStopDetails = onOpenStopDetails,
         noNearbyStopsView = {
-            NoNearbyStopsView(
-                nearbyTransit.hideMaps,
-                openSearch,
-                nearbyTransit.viewportProvider::panToDefaultCenter,
-            )
+            NoNearbyStopsView(openSearch, nearbyTransit.viewportProvider::panToDefaultCenter)
         },
         errorBannerViewModel = errorBannerViewModel,
     )

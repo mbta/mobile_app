@@ -51,7 +51,6 @@ class RouteCardTest {
                 isFavorite = { false },
                 onPin = {},
                 showStopHeader = true,
-                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -92,7 +91,6 @@ class RouteCardTest {
                 isFavorite = { false },
                 onPin = { onPinCalled = true },
                 showStopHeader = true,
-                showStationAccessibility = false,
             ) { _, _ ->
             }
         }
@@ -139,7 +137,6 @@ class RouteCardTest {
                     isFavorite = { false },
                     onPin = { false },
                     showStopHeader = true,
-                    showStationAccessibility = false,
                 ) { _, _ ->
                 }
             }
@@ -181,7 +178,6 @@ class RouteCardTest {
                 isFavorite = { false },
                 onPin = {},
                 showStopHeader = false,
-                showStationAccessibility = false,
             ) { _, _ ->
             }
         }

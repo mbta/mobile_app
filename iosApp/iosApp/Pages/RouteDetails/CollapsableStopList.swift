@@ -18,7 +18,6 @@ struct CollapsableStopList<RightSideContent: View>: View {
     let rightSideContent: (RouteDetailsStopList.Entry) -> RightSideContent
 
     @State var stopsExpanded = false
-    @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
 
@@ -47,7 +46,6 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 stopListContext: .routeDetails,
                 connectingRoutes: stop.connectingRoutes,
                 stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment, includeLineDiagram: false),
-                showStationAccessibility: settingsCache.get(.stationAccessibility),
                 descriptor: { Text("Less common stop").font(Typography.footnote) },
                 rightSideContent: { rightSideContent(stop) }
             ).background(Color.fill1)
@@ -67,7 +65,6 @@ struct CollapsableStopList<RightSideContent: View>: View {
                                 isLast: isLastSegment && index == segment.stops.index(before: segment.stops.endIndex),
                                 includeLineDiagram: false
                             ),
-                            showStationAccessibility: settingsCache.get(.stationAccessibility),
                             descriptor: { EmptyView() },
                             rightSideContent: { rightSideContent(stop) }
                         ).background(Color.fill1)

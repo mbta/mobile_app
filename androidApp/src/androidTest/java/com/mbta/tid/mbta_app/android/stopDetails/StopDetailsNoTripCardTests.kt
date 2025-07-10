@@ -5,10 +5,14 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class StopDetailsNoTripCardTests {
 
@@ -16,13 +20,15 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testPredictionsUnavailable() {
+        val koin = testKoinApplication()
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                accentColor = Color.Black,
-                routeType = RouteType.BUS,
-                hideMaps = false,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                    accentColor = Color.Black,
+                    routeType = RouteType.BUS,
+                )
+            }
         }
 
         composeTestRule.onNodeWithTag("live_data_slash").assertIsDisplayed()
@@ -37,13 +43,18 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testPredictionsUnavailableHideMaps() {
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.HideMaps to true))
+        }
+
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                accentColor = Color.Black,
-                routeType = RouteType.BUS,
-                hideMaps = true,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                    accentColor = Color.Black,
+                    routeType = RouteType.BUS,
+                )
+            }
         }
 
         composeTestRule
@@ -56,13 +67,15 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testServiceEnded() {
+        val koin = testKoinApplication()
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                accentColor = Color.Black,
-                routeType = RouteType.FERRY,
-                hideMaps = false,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+                    accentColor = Color.Black,
+                    routeType = RouteType.FERRY,
+                )
+            }
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
@@ -70,13 +83,15 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testNoSchedulesToday() {
+        val koin = testKoinApplication()
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.NoSchedulesToday,
-                accentColor = Color.Black,
-                routeType = RouteType.COMMUTER_RAIL,
-                hideMaps = false,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.NoSchedulesToday,
+                    accentColor = Color.Black,
+                    routeType = RouteType.COMMUTER_RAIL,
+                )
+            }
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("No service today").assertIsDisplayed()

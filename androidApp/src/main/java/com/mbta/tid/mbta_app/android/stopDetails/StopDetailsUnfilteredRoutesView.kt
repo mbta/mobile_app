@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -42,6 +43,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -55,7 +57,6 @@ fun StopDetailsUnfilteredRoutesView(
     routeCardData: List<RouteCardData>,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
-    showStationAccessibility: Boolean,
     now: Instant,
     globalData: GlobalResponse?,
     isPinned: (String) -> Boolean,
@@ -65,6 +66,7 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
 ) {
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val elevatorAlerts =
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
@@ -137,7 +139,6 @@ fun StopDetailsUnfilteredRoutesView(
                         },
                         onPin = pinRoute,
                         showStopHeader = false,
-                        showStationAccessibility,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
                         },
@@ -289,7 +290,6 @@ private fun StopDetailsRoutesViewPreview() {
                 routeCardData,
                 listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
                 errorBannerVM,
-                showStationAccessibility = true,
                 now = now,
                 globalData,
                 isPinned = { false },

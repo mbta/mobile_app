@@ -46,7 +46,6 @@ fun TripStopRow(
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
     modifier: Modifier = Modifier,
-    showStationAccessibility: Boolean = false,
     showDownstreamAlert: Boolean = false,
     targeted: Boolean = false,
     firstStop: Boolean = false,
@@ -70,7 +69,6 @@ fun TripStopRow(
         stopPlacement = StopPlacement(firstStop, lastStop, true),
         onOpenAlertDetails = onOpenAlertDetails,
         showDownstreamAlert = showDownstreamAlert,
-        showStationAccessibility = showStationAccessibility,
         targeted = targeted,
         trackNumber = stop.trackNumber,
         rightSideContent = { rightSideModifier ->
@@ -155,7 +153,6 @@ private fun TripStopRowPreview() {
                     color = Color.fromHex("DA291C"),
                 ),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true,
             )
             TripStopRow(
                 stop =
@@ -189,7 +186,6 @@ private fun TripStopRowPreview() {
                     color = Color.fromHex("DA291C"),
                 ),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true,
             )
             TripStopRow(
                 stop =
@@ -218,7 +214,6 @@ private fun TripStopRowPreview() {
                     color = Color.fromHex("DA291C"),
                 ),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true,
             )
         }
     }

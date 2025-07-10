@@ -68,6 +68,7 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.typeMap
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
@@ -87,6 +88,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
@@ -105,7 +107,6 @@ import org.koin.compose.koinInject
 data class NearbyTransit(
     val alertData: AlertsStreamDataResponse?,
     val globalResponse: GlobalResponse?,
-    val hideMaps: Boolean,
     val lastNearbyTransitLocationState: MutableState<Position?>,
     val nearbyTransitSelectingLocationState: MutableState<Boolean>,
     val scaffoldState: BottomSheetScaffoldState,
@@ -140,6 +141,7 @@ fun MapAndSheetPage(
 
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
+    val hideMaps = SettingsCache.get(Settings.HideMaps)
 
     val currentNavBackStackEntry by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -233,7 +235,7 @@ fun MapAndSheetPage(
     }
 
     fun handleRouteSearchExpandedChange(expanded: Boolean) {
-        if (expanded && !nearbyTransit.hideMaps) {
+        if (expanded && !hideMaps) {
             scope.launch {
                 nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Large)
             }
@@ -244,14 +246,14 @@ fun MapAndSheetPage(
         searchExpanded = expanded
         if (expanded) {
             hideNavBar()
-            if (!nearbyTransit.hideMaps) {
+            if (!hideMaps) {
                 scope.launch {
                     nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Hidden)
                 }
             }
         } else {
             showNavBar()
-            if (!nearbyTransit.hideMaps) {
+            if (!hideMaps) {
                 scope.launch {
                     nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
                 }
@@ -562,7 +564,7 @@ fun MapAndSheetPage(
     BarAndToastScaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
         outerSheetPadding ->
         val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
-        if (nearbyTransit.hideMaps) {
+        if (hideMaps) {
             LaunchedEffect(null) {
                 nearbyTransit.locationDataManager.currentLocation.collect { location ->
                     nearbyTransit.viewportProvider.updateCameraState(location)

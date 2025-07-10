@@ -78,7 +78,6 @@ fun StopDetailsFilteredDeparturesView(
 
     val alertSummaries by viewModel.alertSummaries.collectAsState()
 
-    val hideMaps = SettingsCache.get(Settings.HideMaps)
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val (elevatorAlerts, alertsHere) =
@@ -239,7 +238,6 @@ fun StopDetailsFilteredDeparturesView(
                     status = noPredictionsStatus,
                     accentColor = routeColor,
                     routeType = routeType,
-                    hideMaps = hideMaps,
                 )
             }
         } else if (selectedTripIsCancelled) {

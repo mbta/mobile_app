@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -19,6 +20,8 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -28,6 +31,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class TripStopRowTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -264,18 +268,23 @@ class TripStopRowTest {
                 elevatorAlerts = elevatorAlerts,
             )
 
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
+
         var testEntry by mutableStateOf(entry(inaccessibleStop))
         composeTestRule.setContent {
-            TripStopRow(
-                testEntry,
-                trip,
-                now,
-                onTapLink = {},
-                onOpenAlertDetails = {},
-                TripRouteAccents(route),
-                alertSummaries = emptyMap(),
-                showStationAccessibility = true,
-            )
+            KoinContext(koin.koin) {
+                TripStopRow(
+                    testEntry,
+                    trip,
+                    now,
+                    onTapLink = {},
+                    onOpenAlertDetails = {},
+                    TripRouteAccents(route),
+                    alertSummaries = emptyMap(),
+                )
+            }
         }
 
         composeTestRule

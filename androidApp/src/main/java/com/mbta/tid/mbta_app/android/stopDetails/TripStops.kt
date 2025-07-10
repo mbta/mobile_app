@@ -72,7 +72,6 @@ fun TripStops(
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
-    showStationAccessibility: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -136,7 +135,6 @@ fun TripStops(
                         onOpenAlertDetails,
                         routeAccents,
                         alertSummaries,
-                        showStationAccessibility = showStationAccessibility,
                         firstStop = true,
                     )
                 }
@@ -219,7 +217,6 @@ fun TripStops(
                             onOpenAlertDetails,
                             routeAccents,
                             alertSummaries,
-                            showStationAccessibility,
                         )
                     }
                 }
@@ -249,7 +246,6 @@ fun TripStops(
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
-                    showStationAccessibility = showStationAccessibility,
                 )
 
                 HaloUnderRouteLine(routeAccents.color)
@@ -264,7 +260,6 @@ fun TripStops(
                 onOpenAlertDetails,
                 routeAccents,
                 alertSummaries,
-                showStationAccessibility,
                 showDownstreamAlerts = true,
             )
         }
@@ -291,7 +286,6 @@ private fun StopList(
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
-    showStationAccessibility: Boolean,
     showDownstreamAlerts: Boolean = false,
 ) {
     for (stop in list) {
@@ -303,7 +297,6 @@ private fun StopList(
             onOpenAlertDetails,
             routeAccents,
             alertSummaries,
-            showStationAccessibility = showStationAccessibility,
             showDownstreamAlert = showDownstreamAlerts,
             lastStop = stop.stopSequence == lastStopSequence,
         )
@@ -363,7 +356,6 @@ private fun TripStopsPreview() {
                 onTapLink = {},
                 onOpenAlertDetails = {},
                 TripRouteAccents(route),
-                showStationAccessibility = true,
             )
         }
     }

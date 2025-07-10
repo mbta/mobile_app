@@ -42,6 +42,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.ColoredRouteLine
 import com.mbta.tid.mbta_app.android.stopDetails.RouteLineState
 import com.mbta.tid.mbta_app.android.stopDetails.StopDot
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -53,6 +54,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.serialization.Serializable
 
 class StopPlacement(
@@ -84,13 +86,13 @@ fun StopListRow(
     stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
     showDownstreamAlert: Boolean = false,
-    showStationAccessibility: Boolean = false,
     targeted: Boolean = false,
     trackNumber: String? = null,
     descriptor: @Composable () -> Unit = {},
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val lineStateBefore =
         when {

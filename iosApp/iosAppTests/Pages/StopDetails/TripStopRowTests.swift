@@ -42,7 +42,7 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: stop.name))
     }
@@ -72,7 +72,7 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(UpcomingTripView.self))
     }
@@ -108,7 +108,7 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: .init(route: route),
             alertSummaries: [:]
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Track 7"))
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Boarding on track 7"))
@@ -140,7 +140,7 @@ final class TripStopRowTests: XCTestCase {
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             targeted: true
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try targeted.inspect().find(imageName: "stop-pin-indicator"))
 
@@ -156,7 +156,7 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
-        )
+        ).withFixedSettings([:])
 
         XCTAssertThrowsError(try notTargeted.inspect().find(imageName: "stop-pin-indicator"))
     }
@@ -188,7 +188,7 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
-        )
+        ).withFixedSettings([:])
         XCTAssertNotNil(try basicRow.inspect().find(viewWithAccessibilityLabel: "stop"))
 
         let selectedRow = TripStopRow(
@@ -200,7 +200,7 @@ final class TripStopRowTests: XCTestCase {
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             targeted: true
-        )
+        ).withFixedSettings([:])
         XCTAssertNotNil(try selectedRow.inspect().find(viewWithAccessibilityLabel: "stop, selected stop"))
 
         let firstRow = TripStopRow(
@@ -212,7 +212,7 @@ final class TripStopRowTests: XCTestCase {
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             firstStop: true
-        )
+        ).withFixedSettings([:])
         XCTAssertNotNil(try firstRow.inspect().find(viewWithAccessibilityLabel: "stop, first stop"))
 
         let selectedFirstRow = TripStopRow(
@@ -225,7 +225,7 @@ final class TripStopRowTests: XCTestCase {
             alertSummaries: [:],
             targeted: true,
             firstStop: true
-        )
+        ).withFixedSettings([:])
         XCTAssertNotNil(try selectedFirstRow.inspect().find(
             viewWithAccessibilityLabel: "stop, selected stop, first stop"
         ))
@@ -260,9 +260,8 @@ final class TripStopRowTests: XCTestCase {
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
-            showStationAccessibility: true
-        )
+            alertSummaries: [:]
+        ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
         XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "This stop is not accessible"))
     }
@@ -301,9 +300,8 @@ final class TripStopRowTests: XCTestCase {
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
-            showStationAccessibility: true
-        )
+            alertSummaries: [:]
+        ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
         XCTAssertNotNil(try row.inspect().find(viewWithAccessibilityLabel: "This stop has 1 elevator closed"))
     }
@@ -341,7 +339,7 @@ final class TripStopRowTests: XCTestCase {
             routeAccents: .init(route: route),
             alertSummaries: [alert.id: summary],
             showDownstreamAlert: true
-        )
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect()
             .find(text: "Shuttle buses from Roxbury Crossing to Green Street through tomorrow"))

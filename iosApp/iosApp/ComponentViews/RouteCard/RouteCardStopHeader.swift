@@ -11,7 +11,9 @@ import SwiftUI
 
 struct RouteCardStopHeader: View {
     let data: RouteCardData.RouteStopData
-    let showStationAccessibility: Bool
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     var elevatorAlerts: Int { data.elevatorAlerts.count }
     var showInaccessible: Bool { showStationAccessibility && !data.stop.isWheelchairAccessible }
