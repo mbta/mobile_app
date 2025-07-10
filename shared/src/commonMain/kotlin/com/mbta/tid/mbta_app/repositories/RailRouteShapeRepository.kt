@@ -56,8 +56,30 @@ constructor(
             MapFriendlyRouteResponse(
                 objects.routes.values
                     .filter { it.type.isSubway() }
-                    .map {
-                        val rp = objects.routePatterns.values.first { rp -> rp.routeId == it.id }
+                    .mapNotNull {
+                        val rp =
+                            objects.routePatterns.values.firstOrNull() { rp -> rp.routeId == it.id }
+
+                        if (rp == null) {
+                            return@mapNotNull null
+                        }
+
+                        val segments =
+                            listOf(
+                                RouteSegment(
+                                    "fake-id-${rp.id}",
+                                    rp.id,
+                                    it.id,
+                                    objects.trips[rp.representativeTripId]?.stopIds?.let { stopIds
+                                        ->
+                                        stopIds.map { stopId ->
+                                            objects.stops[stopId]?.parentStationId ?: stopId
+                                        }
+                                    } ?: emptyList(),
+                                    mapOf(),
+                                )
+                            )
+
                         MapFriendlyRouteResponse.RouteWithSegmentedShapes(
                             it.id,
                             listOf(
@@ -65,19 +87,7 @@ constructor(
                                     rp.id,
                                     it.id,
                                     0,
-                                    listOf(
-                                        RouteSegment(
-                                            "fake-id-${rp.id}",
-                                            rp.id,
-                                            it.id,
-                                            objects.trips[rp.representativeTripId]!!
-                                                .stopIds!!
-                                                .map { stopId ->
-                                                    objects.stops[stopId]?.parentStationId ?: stopId
-                                                },
-                                            mapOf(),
-                                        )
-                                    ),
+                                    segments,
                                     // All set to a real Red Line polyline so that it actually
                                     // decodes properly.
                                     Shape(
