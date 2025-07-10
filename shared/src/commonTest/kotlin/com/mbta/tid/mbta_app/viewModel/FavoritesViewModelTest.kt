@@ -30,6 +30,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -74,7 +75,11 @@ class FavoritesViewModelTest : KoinTest {
     ) {
         startKoin {
             modules(
-                module { single<CoroutineDispatcher> { coroutineDispatcher } },
+                module {
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                        coroutineDispatcher
+                    }
+                },
                 repositoriesModule(
                     MockRepositories().apply {
                         useObjects(objects)

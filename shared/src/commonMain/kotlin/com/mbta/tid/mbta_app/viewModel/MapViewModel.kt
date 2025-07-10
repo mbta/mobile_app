@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
+import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SheetRoutes
@@ -32,8 +33,7 @@ import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -71,6 +71,8 @@ class MapViewModel(
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val stopRepository: IStopRepository,
+    private val defaultCoroutineDispatcher: CoroutineDispatcher,
+    private val iOCoroutineDispatcher: CoroutineDispatcher,
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
 
     private lateinit var viewportManager: ViewportManager
@@ -106,9 +108,9 @@ class MapViewModel(
 
     sealed class State {
 
-        data object Unfiltered : State()
+        data object Overview : State()
 
-        data class StopSelected(val stop: Stop?, val stopFilter: StopDetailsFilter?) : State()
+        data class StopSelected(val stop: Stop, val stopFilter: StopDetailsFilter?) : State()
 
         data class VehicleSelected(
             val vehicle: Vehicle,
@@ -122,47 +124,62 @@ class MapViewModel(
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
-        var railRouteShapes by remember { mutableStateOf<MapFriendlyRouteResponse?>(null) }
-        var railRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
+
+        // Cached sources to display in overview mode
+        var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
+        var allRailRouteShapes by remember { mutableStateOf<MapFriendlyRouteResponse?>(null) }
+        var allStopSourceData by remember { mutableStateOf<FeatureCollection?>(null) }
+
+        // The current route source & stop layer state to display
+        var routeSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
+        var routeShapes by remember {
+            mutableStateOf<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>?>(null)
+        }
+        var stopLayerGeneratorState by remember {
+            mutableStateOf(StopLayerGenerator.State(null, null))
+        }
+
         var alerts by remember { mutableStateOf<AlertsStreamDataResponse?>(null) }
         var previousNavEntry by remember { mutableStateOf<SheetRoutes?>(null) }
         var routeCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
         var isDarkMode by remember { mutableStateOf<Boolean?>(null) }
         var density by remember { mutableStateOf<Float?>(null) }
         var layerManager by remember { mutableStateOf<IMapLayerManager?>(null) }
-        var state by remember { mutableStateOf<State>(State.Unfiltered) }
+        var state by remember { mutableStateOf<State>(State.Overview) }
         val (stopId: String?, stopFilter: StopDetailsFilter?) =
             when (state) {
                 is State.StopSelected -> {
                     val currentState = (state as State.StopSelected)
-                    currentState.stop?.id to currentState.stopFilter
+                    currentState.stop.id to currentState.stopFilter
                 }
-                is State.Unfiltered -> null to null
-
+                is State.Overview -> null to null
                 is State.VehicleSelected -> {
                     val currentState = (state as State.VehicleSelected)
                     currentState.stop?.id to null
                 }
             }
         LaunchedEffect(null) { globalRepository.getGlobalData() }
-        LaunchedEffect(null) { railRouteShapes = fetchRailRouteShapes() }
+        LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
         LaunchedEffect(now, globalData, alerts) {
             globalMapData = globalMapData(now, globalData, alerts)
         }
-        LaunchedEffect(railRouteShapes, globalData, globalMapData) {
-            railRouteSourceData = routeLineData(globalData, globalMapData, railRouteShapes)
-            refreshRouteLineSource(
-                globalData,
-                railRouteShapes,
-                isDarkMode == true,
-                railRouteSourceData,
-                stopId,
-                stopFilter,
-                layerManager,
-            )
-            val stopSourceData = stopSourceData(globalMapData, railRouteSourceData)
-            layerManager?.updateStopSourceData(stopSourceData)
+        LaunchedEffect(allRailRouteShapes, globalData, globalMapData) {
+            allRailRouteSourceData = routeLineData(globalData, globalMapData, allRailRouteShapes)
+            allStopSourceData = stopSourceData(globalMapData, allRailRouteSourceData)
         }
+
+        LaunchedEffect(allStopSourceData, layerManager) {
+            allStopSourceData?.let { layerManager?.updateStopSourceData(it) }
+        }
+
+        LaunchedEffect(allRailRouteSourceData, allStopSourceData, state) {
+            if (state is State.Overview) {
+                routeSourceData = allRailRouteSourceData
+                routeShapes = allRailRouteShapes?.routesWithSegmentedShapes
+                stopLayerGeneratorState = StopLayerGenerator.State(null, null)
+            }
+        }
+
         LaunchedEffect(null) {
             events.collect { event ->
                 when (event) {
@@ -177,26 +194,17 @@ class MapViewModel(
                                 event.currentNavEntry,
                                 previousNavEntry,
                                 globalData,
-                                railRouteShapes,
-                                isDarkMode == true,
-                                railRouteSourceData,
-                                stopId,
-                                stopFilter,
-                                layerManager,
                             )
                         previousNavEntry = event.currentNavEntry
                     }
-
                     Event.Recenter -> {
                         when (state) {
                             is State.StopSelected -> {
                                 viewportManager.follow(null)
                             }
-
-                            is State.Unfiltered -> {
+                            is State.Overview -> {
                                 viewportManager.follow(null)
                             }
-
                             is State.VehicleSelected -> {
                                 val currentState = state as State.VehicleSelected
                                 density?.let {
@@ -210,17 +218,6 @@ class MapViewModel(
                         }
                     }
                     is Event.SelectedStop -> {
-                        updateDisplayedRoutesBasedOnStop(
-                            globalResponse = globalData,
-                            railRouteShapes = railRouteShapes,
-                            stopId = event.stop.id,
-                            stopFilter = event.stopFilter,
-                            now = now,
-                            alerts = alerts,
-                            routeCardData = routeCardData,
-                            isDarkMode = isDarkMode,
-                            layerManager,
-                        )
                         viewportManager.saveNearbyTransitViewport()
                         viewportManager.stopCenter(event.stop)
                         state = State.StopSelected(event.stop, event.stopFilter)
@@ -234,24 +231,12 @@ class MapViewModel(
                                 density = density!!,
                             )
                         }
-                        updateDisplayedRoutesBasedOnStop(
-                            globalResponse = globalData,
-                            railRouteShapes = railRouteShapes,
-                            stopId = event.stop?.id,
-                            stopFilter = event.stopFilter,
-                            now = now,
-                            alerts = alerts,
-                            routeCardData = routeCardData,
-                            isDarkMode = isDarkMode,
-                            layerManager,
-                        )
                         state = State.VehicleSelected(event.vehicle, event.stop, event.stopFilter)
                     }
                     is Event.MapStyleLoaded -> {
-                        val stopLayerGeneratorState = stopLayerGeneratorState(stopId, stopFilter)
                         layerManager?.run {
                             addLayers(
-                                railRouteShapes ?: return@run,
+                                allRailRouteShapes ?: return@run,
                                 stopLayerGeneratorState,
                                 globalData ?: return@run,
                                 if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
@@ -269,6 +254,43 @@ class MapViewModel(
                     }
                 }
             }
+        }
+
+        LaunchedEffect(stopId, stopFilter, allRailRouteShapes, globalData, globalMapData) {
+            if (stopId != null) {
+                val featuresToDisplayForStop =
+                    featuresToDisplayForStop(
+                        globalResponse = globalData,
+                        railRouteShapes = allRailRouteShapes,
+                        stopId = stopId,
+                        stopFilter = stopFilter,
+                        globalMapData = globalMapData,
+                        routeCardData = routeCardData,
+                    )
+                featuresToDisplayForStop?.let {
+                    routeSourceData = it.first
+                    routeShapes = it.second
+                    stopLayerGeneratorState = it.third
+                }
+            }
+        }
+
+        LaunchedEffect(
+            globalData,
+            routeSourceData,
+            routeShapes,
+            stopLayerGeneratorState,
+            isDarkMode,
+            layerManager,
+        ) {
+            updateMapDisplay(
+                globalData,
+                routeSourceData,
+                routeShapes,
+                stopLayerGeneratorState,
+                isDarkMode,
+                layerManager,
+            )
         }
         return state
     }
@@ -315,12 +337,6 @@ class MapViewModel(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
         globalResponse: GlobalResponse?,
-        railRouteShapes: MapFriendlyRouteResponse?,
-        isDarkMode: Boolean,
-        railRouteSourceData: List<RouteSourceData>?,
-        stopId: String?,
-        stopFilter: StopDetailsFilter?,
-        layerManager: IMapLayerManager?,
     ): State {
         val stopDetails =
             when (currentNavEntry) {
@@ -333,38 +349,29 @@ class MapViewModel(
                 currentNavEntry is SheetRoutes.RouteDetails
         val newState =
             if (routePickerOrDetails && currentState is State.VehicleSelected) {
-                State.StopSelected(currentState.stop, currentState.stopFilter)
+                if (currentState.stop != null) {
+                    State.StopSelected(currentState.stop, currentState.stopFilter)
+                } else {
+                    State.Overview
+                }
             } else if (stopDetails == null) {
-                State.Unfiltered
+                State.Overview
             } else {
-                State.StopSelected(stop, stopDetails.stopFilter)
+                if (stop == null) {
+                    State.Overview
+                } else {
+                    State.StopSelected(stop, stopDetails.stopFilter)
+                }
             }
         // If we're already in this state, there's no need to perform these actions again
         if (newState == currentState) return currentState
-        handleViewportRestoration(
-            currentNavEntry,
-            previousNavEntry,
-            globalResponse,
-            railRouteShapes,
-            isDarkMode,
-            railRouteSourceData,
-            stopId,
-            stopFilter,
-            layerManager,
-        )
+        handleViewportRestoration(currentNavEntry, previousNavEntry)
         return newState
     }
 
     private suspend fun handleViewportRestoration(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
-        globalResponse: GlobalResponse?,
-        railRouteShapes: MapFriendlyRouteResponse?,
-        isDarkMode: Boolean,
-        railRouteSourceData: List<RouteSourceData>?,
-        stopId: String?,
-        stopFilter: StopDetailsFilter?,
-        layerManager: IMapLayerManager?,
     ) {
         if (
             (previousNavEntry is SheetRoutes.NearbyTransit ||
@@ -377,56 +384,30 @@ class MapViewModel(
                 (currentNavEntry is SheetRoutes.NearbyTransit ||
                     currentNavEntry is SheetRoutes.Favorites)
         ) {
-            refreshRouteLineSource(
-                globalResponse,
-                railRouteShapes,
-                isDarkMode,
-                railRouteSourceData,
-                stopId,
-                stopFilter,
-                layerManager,
-            )
             viewportManager.restoreNearbyTransitViewport()
         }
     }
 
-    private suspend fun refreshRouteLineSource(
+    /**
+     * Get the features that should be displayed on the map for the selected stop. Returns null if
+     * missing key data, and therefore nothing to show for the stop.
+     */
+    private suspend fun featuresToDisplayForStop(
         globalResponse: GlobalResponse?,
         railRouteShapes: MapFriendlyRouteResponse?,
-        isDarkMode: Boolean,
-        railRouteSourceData: List<RouteSourceData>?,
-        stopId: String?,
+        stopId: String,
         stopFilter: StopDetailsFilter?,
-        layerManager: IMapLayerManager?,
-    ) {
-        val routeData = railRouteSourceData ?: return
-        val stopLayerGeneratorState = stopLayerGeneratorState(stopId, stopFilter)
-        layerManager?.run {
-            updateRouteSourceData(routeData)
-            addLayers(
-                railRouteShapes ?: return@run,
-                stopLayerGeneratorState,
-                globalResponse ?: return@run,
-                if (isDarkMode) ColorPalette.dark else ColorPalette.light,
-            )
-        }
-    }
-
-    private suspend fun updateDisplayedRoutesBasedOnStop(
-        globalResponse: GlobalResponse?,
-        railRouteShapes: MapFriendlyRouteResponse?,
-        stopId: String?,
-        stopFilter: StopDetailsFilter?,
-        now: Instant,
-        alerts: AlertsStreamDataResponse?,
+        globalMapData: GlobalMapData?,
         routeCardData: List<RouteCardData>?,
-        isDarkMode: Boolean?,
-        layerManager: IMapLayerManager?,
-    ) {
-        if (globalResponse == null || railRouteShapes == null) return
-        val stopMapData = stopId?.let { getStopMapData(stopId = it) } ?: return
+    ): Triple<
+        List<RouteSourceData>,
+        List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
+        StopLayerGenerator.State,
+    >? {
+        if (globalResponse == null || railRouteShapes == null || globalMapData == null) return null
+        val stopMapData = getStopMapData(stopId = stopId) ?: return null
 
-        val filteredRoutes =
+        val filteredRouteShapes =
             if (stopFilter != null) {
                 RouteFeaturesBuilder.filteredRouteShapesForStop(
                     stopMapData,
@@ -440,49 +421,61 @@ class MapViewModel(
                     globalResponse,
                 )
             }
-        val newRailData =
+        val filteredRouteSourceData =
             RouteFeaturesBuilder.generateRouteSources(
-                filteredRoutes,
+                filteredRouteShapes,
                 globalResponse,
-                globalMapData(now, globalResponse, alerts),
+                globalMapData,
             )
-        val stopLayerGeneratorState = stopLayerGeneratorState(stopId, stopFilter)
-        layerManager?.run {
-            updateRouteSourceData(newRailData)
-            addLayers(
-                filteredRoutes,
-                stopLayerGeneratorState,
-                globalResponse,
-                if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
-            )
+
+        return Triple(
+            filteredRouteSourceData,
+            filteredRouteShapes,
+            StopLayerGenerator.State(stopId, stopFilter),
+        )
+    }
+
+    /** Set the map's sources and layers based on the given data */
+    private suspend fun updateMapDisplay(
+        globalResponse: GlobalResponse?,
+        routeSourceData: List<RouteSourceData>?,
+        routeShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>?,
+        stopLayerGeneratorState: StopLayerGenerator.State,
+        isDarkMode: Boolean?,
+        layerManager: IMapLayerManager?,
+    ) {
+        if (globalResponse == null || routeSourceData == null || routeShapes == null) {
+            return
         }
+
+        layerManager?.updateRouteSourceData(routeSourceData)
+        layerManager?.addLayers(
+            routeShapes,
+            stopLayerGeneratorState,
+            globalResponse,
+            if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
+        )
     }
 
     private suspend fun stopSourceData(
         globalMapData: GlobalMapData?,
         railRouteSourceData: List<RouteSourceData>?,
     ) =
-        withContext(Dispatchers.Default) {
+        withContext(defaultCoroutineDispatcher) {
             StopFeaturesBuilder.buildCollection(globalMapData, railRouteSourceData.orEmpty())
         }
-
-    private suspend fun stopLayerGeneratorState(
-        stopId: String?,
-        stopFilter: StopDetailsFilter?,
-    ): StopLayerGenerator.State =
-        withContext(Dispatchers.Default) { StopLayerGenerator.State(stopId, stopFilter) }
 
     private suspend fun globalMapData(
         now: Instant,
         globalResponse: GlobalResponse?,
         alertsData: AlertsStreamDataResponse?,
     ): GlobalMapData? =
-        withContext(Dispatchers.Default) {
+        withContext(defaultCoroutineDispatcher) {
             globalResponse?.let { GlobalMapData(it, alertsData, now) }
         }
 
     private suspend fun getStopMapData(stopId: String): StopMapResponse? =
-        withContext(Dispatchers.IO) {
+        withContext(iOCoroutineDispatcher) {
             when (val data = stopRepository.getStopMapData(stopId)) {
                 is ApiResult.Ok -> data.data
                 is ApiResult.Error -> null
@@ -499,11 +492,12 @@ class MapViewModel(
             railRouteShapes.routesWithSegmentedShapes,
             globalResponse,
             globalMapData,
+            defaultCoroutineDispatcher,
         )
     }
 
     private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? =
-        withContext(Dispatchers.IO) {
+        withContext(iOCoroutineDispatcher) {
             when (val data = railRouteShapeRepository.getRailRouteShapes()) {
                 is ApiResult.Ok -> data.data
                 is ApiResult.Error -> null

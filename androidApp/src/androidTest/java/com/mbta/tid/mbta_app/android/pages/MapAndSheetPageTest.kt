@@ -74,7 +74,7 @@ class MapAndSheetPageTest {
         val locationDataManager = MockLocationDataManager(stop1.position)
         val viewportProvider = ViewportProvider(MapViewportState())
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         composeTestRule.setContent {
             KoinContext(koin.koin) {
                 MapAndSheetPage(

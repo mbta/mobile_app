@@ -104,7 +104,7 @@ fun HomeMapView(
     val following =
         when (state) {
             is State.StopSelected,
-            is State.Unfiltered -> viewportProvider.isFollowingPuck
+            is State.Overview -> viewportProvider.isFollowingPuck
             is State.VehicleSelected -> false
         }
     val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
@@ -118,7 +118,7 @@ fun HomeMapView(
                 val state = (state as State.StopSelected)
                 state.stop to state.stopFilter
             }
-            is State.Unfiltered -> null to null
+            is State.Overview -> null to null
 
             is State.VehicleSelected -> {
                 val state = (state as State.VehicleSelected)
@@ -129,7 +129,7 @@ fun HomeMapView(
     val showTripRecenterButton =
         when (state) {
             is State.StopSelected,
-            is State.Unfiltered -> false
+            is State.Overview -> false
             is State.VehicleSelected -> !viewportProvider.isVehicleOverview && !isSearchExpanded
         }
 

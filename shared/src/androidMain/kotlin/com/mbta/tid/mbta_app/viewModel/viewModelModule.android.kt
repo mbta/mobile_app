@@ -1,15 +1,25 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 actual fun viewModelModule() = module {
     // can’t `viewModel<IFavoritesViewModel>` since `IFavoritesViewModel` might not be a real
     // Android ViewModel
-    viewModelOf(::FavoritesViewModel)
-    viewModelOf(::MapViewModel)
+    viewModel { FavoritesViewModel(get(), get(named("coroutineDispatcherDefault"))) }
+    viewModel {
+        MapViewModel(
+            get(),
+            get(),
+            get(),
+            get(named("coroutineDispatcherDefault")),
+            get(named("coroutineDispatcherIO")),
+        )
+    }
     viewModelOf(::SearchRoutesViewModel)
     viewModelOf(::SearchViewModel)
     // Use singleOf to ensure a shared ToastViewModel across all views that need it, it should be
