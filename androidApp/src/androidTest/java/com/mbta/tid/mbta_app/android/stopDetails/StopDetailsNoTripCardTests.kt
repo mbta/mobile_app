@@ -20,12 +20,15 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testPredictionsUnavailable() {
+        val koin = testKoinApplication()
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                accentColor = Color.Black,
-                routeType = RouteType.BUS,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
+                    accentColor = Color.Black,
+                    routeType = RouteType.BUS,
+                )
+            }
         }
 
         composeTestRule.onNodeWithTag("live_data_slash").assertIsDisplayed()
@@ -64,12 +67,15 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testServiceEnded() {
+        val koin = testKoinApplication()
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                accentColor = Color.Black,
-                routeType = RouteType.FERRY,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+                    accentColor = Color.Black,
+                    routeType = RouteType.FERRY,
+                )
+            }
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
@@ -77,12 +83,15 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testNoSchedulesToday() {
+        val koin = testKoinApplication()
         composeTestRule.setContent {
-            StopDetailsNoTripCard(
-                status = UpcomingFormat.NoTripsFormat.NoSchedulesToday,
-                accentColor = Color.Black,
-                routeType = RouteType.COMMUTER_RAIL,
-            )
+            KoinContext(koin.koin) {
+                StopDetailsNoTripCard(
+                    status = UpcomingFormat.NoTripsFormat.NoSchedulesToday,
+                    accentColor = Color.Black,
+                    routeType = RouteType.COMMUTER_RAIL,
+                )
+            }
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("No service today").assertIsDisplayed()
