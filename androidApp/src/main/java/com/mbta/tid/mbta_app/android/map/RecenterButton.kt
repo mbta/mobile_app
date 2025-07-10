@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -28,9 +29,10 @@ fun RecenterButton(painter: Painter, modifier: Modifier = Modifier, onClick: () 
         modifier =
             modifier
                 .semantics(mergeDescendants = true) {}
-                .clickable(onClick = onClick, role = Role.Button)
                 .size(44.dp)
-                .background(colorResource(R.color.halo), CircleShape),
+                .background(colorResource(R.color.halo), CircleShape)
+                .clip(CircleShape)
+                .clickable(onClick = onClick, role = Role.Button),
         contentAlignment = Alignment.Center,
     ) {
         Box(

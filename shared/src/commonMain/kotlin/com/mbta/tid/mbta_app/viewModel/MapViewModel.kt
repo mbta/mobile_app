@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
+import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
@@ -48,7 +49,7 @@ interface IMapViewModel {
 
     fun navChanged(currentNavEntry: SheetRoutes?)
 
-    fun recenter()
+    fun recenter(type: RecenterType = RecenterType.CurrentLocation)
 
     fun alertsChanged(alerts: AlertsStreamDataResponse?)
 
@@ -79,6 +80,11 @@ class MapViewModel(
 
     sealed interface Event {
 
+        enum class RecenterType {
+            CurrentLocation,
+            Trip,
+        }
+
         data class SelectedStop(val stop: Stop, val stopFilter: StopDetailsFilter?) : Event
 
         data class SelectedVehicle(
@@ -89,7 +95,7 @@ class MapViewModel(
 
         data class NavChanged(val currentNavEntry: SheetRoutes?) : Event
 
-        data object Recenter : Event
+        data class Recenter(val type: RecenterType) : Event
 
         data class AlertsChanged(val alerts: AlertsStreamDataResponse?) : Event
 
@@ -197,7 +203,7 @@ class MapViewModel(
                             )
                         previousNavEntry = event.currentNavEntry
                     }
-                    Event.Recenter -> {
+                    is Event.Recenter -> {
                         when (state) {
                             is State.StopSelected -> {
                                 viewportManager.follow(null)
@@ -206,13 +212,18 @@ class MapViewModel(
                                 viewportManager.follow(null)
                             }
                             is State.VehicleSelected -> {
-                                val currentState = state as State.VehicleSelected
-                                density?.let {
-                                    viewportManager.vehicleOverview(
-                                        vehicle = currentState.vehicle,
-                                        stop = currentState.stop,
-                                        density = it,
-                                    )
+                                when (event.type) {
+                                    RecenterType.CurrentLocation -> viewportManager.follow(null)
+                                    RecenterType.Trip -> {
+                                        val currentState = state as State.VehicleSelected
+                                        density?.let {
+                                            viewportManager.vehicleOverview(
+                                                vehicle = currentState.vehicle,
+                                                stop = currentState.stop,
+                                                density = it,
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -307,7 +318,7 @@ class MapViewModel(
     override fun navChanged(currentNavEntry: SheetRoutes?) =
         fireEvent(Event.NavChanged(currentNavEntry))
 
-    override fun recenter() = fireEvent(Event.Recenter)
+    override fun recenter(type: RecenterType) = fireEvent(Event.Recenter(type))
 
     override fun alertsChanged(alerts: AlertsStreamDataResponse?) =
         fireEvent(Event.AlertsChanged(alerts))

@@ -69,6 +69,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
+import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.State
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.flow.map
@@ -359,7 +360,9 @@ fun HomeMapView(
                         if (routeType != null) {
                             RecenterButton(
                                 routeIcon(routeType).first,
-                                onClick = { viewModel.recenter() },
+                                onClick = {
+                                    viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
+                                },
                                 modifier =
                                     Modifier.padding(horizontal = 16.dp)
                                         .testTag("tripRecenterButton"),
