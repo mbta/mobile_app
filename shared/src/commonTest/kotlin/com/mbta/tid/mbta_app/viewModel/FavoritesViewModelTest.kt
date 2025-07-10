@@ -19,15 +19,22 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 import org.koin.test.KoinTest
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
@@ -63,10 +70,16 @@ class FavoritesViewModelTest : KoinTest {
 
     private fun setUpKoin(
         objects: ObjectCollectionBuilder = this.objects,
+        coroutineDispatcher: CoroutineDispatcher,
         repositoriesBlock: MockRepositories.() -> Unit = {},
     ) {
         startKoin {
             modules(
+                module {
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                        coroutineDispatcher
+                    }
+                },
                 repositoriesModule(
                     MockRepositories().apply {
                         useObjects(objects)
@@ -100,7 +113,10 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `loads empty favorites`() = runTest {
-        setUpKoin { favorites = MockFavoritesRepository(Favorites(emptySet())) }
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            favorites = MockFavoritesRepository(Favorites(emptySet()))
+        }
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(Clock.System.now())
@@ -144,7 +160,8 @@ class FavoritesViewModelTest : KoinTest {
         val predictions = predictionsEverywhere(objects, now)
 
         val globalData = GlobalResponse(objects)
-        setUpKoin(objects)
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -320,7 +337,9 @@ class FavoritesViewModelTest : KoinTest {
         val favoritesRepo = MockFavoritesRepository(favoritesBefore)
 
         val globalData = GlobalResponse(objects)
-        setUpKoin { favorites = favoritesRepo }
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
 
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -394,7 +413,9 @@ class FavoritesViewModelTest : KoinTest {
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
                 ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
+                awaitItemSatisfying {
+                    it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
+                },
             )
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
@@ -423,7 +444,9 @@ class FavoritesViewModelTest : KoinTest {
     fun `disconnects when inactive and awaits predictions in background`() = runTest {
         var predictionsConnected = false
 
-        setUpKoin {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) {
             predictions =
                 MockPredictionsRepository(
                     onConnectV2 = { predictionsConnected = true },
@@ -437,15 +460,22 @@ class FavoritesViewModelTest : KoinTest {
         viewModel.setLocation(Position(0.0, 0.0))
 
         testViewModelFlow(viewModel).test {
-            assertFalse(
-                awaitItemSatisfying { it.routeCardData != null }.awaitingPredictionsAfterBackground
-            )
+            awaitItemSatisfying {
+                it.routeCardData != null && !it.awaitingPredictionsAfterBackground
+            }
+            advanceUntilIdle()
             assertTrue(predictionsConnected)
             viewModel.setActive(false, wasSentToBackground = true)
-            assertTrue(awaitItem().awaitingPredictionsAfterBackground)
+            awaitItemSatisfying {
+                it.routeCardData != null && it.awaitingPredictionsAfterBackground
+            }
+            advanceUntilIdle()
             assertFalse(predictionsConnected)
             viewModel.setActive(true)
-            assertFalse(awaitItem().awaitingPredictionsAfterBackground)
+            awaitItemSatisfying {
+                it.routeCardData != null && !it.awaitingPredictionsAfterBackground
+            }
+            advanceUntilIdle()
             assertTrue(predictionsConnected)
         }
     }
@@ -478,7 +508,8 @@ class FavoritesViewModelTest : KoinTest {
                 )
             }
 
-        setUpKoin(objects)
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -512,7 +543,8 @@ class FavoritesViewModelTest : KoinTest {
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
-        setUpKoin(objects)
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -542,9 +574,11 @@ class FavoritesViewModelTest : KoinTest {
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
-        setUpKoin(objects)
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
+
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -558,7 +592,9 @@ class FavoritesViewModelTest : KoinTest {
                     .distinct(),
             )
             viewModel.setNow(later)
-            assertEquals(listOf(later), awaitItem().routeCardData!!.map { it.at }.distinct())
+            awaitItemSatisfying {
+                it.routeCardData?.map { card -> card.at }?.distinct() == listOf(later)
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 @Composable
 fun LoadingRouteCard() {

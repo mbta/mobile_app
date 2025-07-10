@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.utils
 
 import kotlin.time.Duration.Companion.hours
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant

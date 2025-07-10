@@ -32,11 +32,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCard
@@ -56,6 +53,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import kotlinx.serialization.Serializable
 
 class StopPlacement(
     val isFirst: Boolean = false,
@@ -63,17 +61,26 @@ class StopPlacement(
     val includeLineDiagram: Boolean = true,
 )
 
+@Serializable
+sealed class StopListContext {
+    data object Trip : StopListContext()
+
+    data object RouteDetails : StopListContext()
+}
+
 @Composable
 fun StopListRow(
     stop: Stop,
     onClick: () -> Unit,
     routeAccents: TripRouteAccents,
+    stopListContext: StopListContext,
     modifier: Modifier = Modifier,
     activeElevatorAlerts: Int = 0,
     alertSummaries: Map<String, AlertSummary?> = emptyMap(),
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
     isTruncating: Boolean = false,
+    onClickLabel: String? = null,
     stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
     showDownstreamAlert: Boolean = false,
@@ -103,7 +110,9 @@ fun StopListRow(
 
     Column {
         Box(
-            Modifier.padding(horizontal = 6.dp)
+            Modifier.padding(
+                    horizontal = if (stopListContext is StopListContext.Trip) 6.dp else 0.dp
+                )
                 .then(modifier)
                 .height(IntrinsicSize.Min)
                 .defaultMinSize(minHeight = 48.dp)
@@ -112,15 +121,14 @@ fun StopListRow(
                 HaloSeparator(Modifier.align(Alignment.BottomCenter))
             }
             Row(
-                Modifier.fillMaxHeight().semantics { isTraversalGroup = true },
+                Modifier.fillMaxHeight()
+                    .semantics(mergeDescendants = true) {}
+                    .clickable(onClickLabel = onClickLabel) { onClick() },
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
-                    Modifier.padding(start = 6.dp).width(28.dp).semantics {
-                        isTraversalGroup = true
-                        traversalIndex = 1F
-                    },
+                    Modifier.padding(start = 6.dp).width(28.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {
@@ -146,15 +154,8 @@ fun StopListRow(
                 } else {
                     StandaloneStopIcon(stop, routeAccents)
                 }
-                Column(
-                    Modifier.padding(vertical = 12.dp).padding(start = 16.dp).semantics {
-                        isTraversalGroup = true
-                        traversalIndex = 0F
-                    }
-                ) {
+                Column(Modifier.padding(vertical = 12.dp).padding(start = 16.dp)) {
                     Row(
-                        Modifier.semantics(mergeDescendants = true) { heading() }
-                            .clickable { onClick() },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -236,10 +237,9 @@ fun StopListRow(
                         ScrollRoutes(
                             connectingRoutes,
                             Modifier.clearAndSetSemantics {
-                                    contentDescription =
-                                        scrollRoutesAccessibilityLabel(connectingRoutes, context)
-                                }
-                                .clickable { onClick() },
+                                contentDescription =
+                                    scrollRoutesAccessibilityLabel(connectingRoutes, context)
+                            },
                         )
                     }
                 }
@@ -298,27 +298,31 @@ fun ScrollRoutes(routes: List<Route>, modifier: Modifier = Modifier) {
     }
 }
 
+// leading "." creates sentence break
 private fun scrollRoutesAccessibilityLabel(
     connectingRoutes: List<Route>,
     context: Context,
 ): String =
-    when {
-        connectingRoutes.isEmpty() -> ""
-        connectingRoutes.size == 1 ->
-            context.getString(
-                R.string.connection_to,
-                connectionLabel(connectingRoutes.single(), context),
-            )
-        else -> {
-            val firstConnections = connectingRoutes.dropLast(1)
-            val lastConnection = connectingRoutes.last()
-            context.getString(
-                R.string.connections_to_and,
-                firstConnections.joinToString(separator = ", ") { connectionLabel(it, context) },
-                connectionLabel(lastConnection, context),
-            )
+    ". " +
+        when {
+            connectingRoutes.isEmpty() -> ""
+            connectingRoutes.size == 1 ->
+                context.getString(
+                    R.string.connection_to,
+                    connectionLabel(connectingRoutes.single(), context),
+                )
+            else -> {
+                val firstConnections = connectingRoutes.dropLast(1)
+                val lastConnection = connectingRoutes.last()
+                context.getString(
+                    R.string.connections_to_and,
+                    firstConnections.joinToString(separator = ", ") {
+                        connectionLabel(it, context)
+                    },
+                    connectionLabel(lastConnection, context),
+                )
+            }
         }
-    }
 
 private fun stopAccessibilityLabel(
     stop: Stop,

@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
@@ -30,14 +29,6 @@ fun NearbyTransitPage(
         updateTargetLocation = { targetLocation = it },
         reset = { nearbyViewModel.reset() },
     )
-    suspend fun panToDefaultCenter() {
-        nearbyTransit.viewportProvider.isManuallyCentering = true
-        nearbyTransit.viewportProvider.isFollowingPuck = false
-        nearbyTransit.viewportProvider.animateTo(
-            ViewportProvider.Companion.Defaults.center,
-            zoom = 13.75,
-        )
-    }
 
     NearbyTransitView(
         alertData = nearbyTransit.alertData,
@@ -47,7 +38,11 @@ fun NearbyTransitPage(
         setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
         onOpenStopDetails = onOpenStopDetails,
         noNearbyStopsView = {
-            NoNearbyStopsView(nearbyTransit.hideMaps, openSearch, ::panToDefaultCenter)
+            NoNearbyStopsView(
+                nearbyTransit.hideMaps,
+                openSearch,
+                nearbyTransit.viewportProvider::panToDefaultCenter,
+            )
         },
         errorBannerViewModel = errorBannerViewModel,
     )

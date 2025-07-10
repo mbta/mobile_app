@@ -19,6 +19,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case favorites
     case more
     case nearby
+    case routeDetails(SheetRoutes.RouteDetails)
     case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
 
     var id: Int {
@@ -37,6 +38,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .favorites: .favorites
         case .more: .settings
         case .nearby: .nearbyTransit
+        case .routeDetails: .routeDetails
         case let .stopDetails(_, stopFilter, _): stopFilter == nil ? .stopDetailsUnfiltered : .stopDetailsFiltered
         default: nil
         }
@@ -48,6 +50,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .favorites: "favorites"
         case .more: "more"
         case .nearby: "nearby"
+        case .routeDetails: "routeDetails"
         case .stopDetails: "stopDetails"
         }
     }
@@ -86,6 +89,7 @@ struct NearbySheetItem: Identifiable {
         switch stackEntry {
         case .favorites: "favorites"
         case .nearby: "nearby"
+        case .routeDetails: "routeDetails"
         case let .stopDetails(stopId, _, _): stopId
         default: ""
         }

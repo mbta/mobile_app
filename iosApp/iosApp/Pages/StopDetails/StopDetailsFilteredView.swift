@@ -26,15 +26,19 @@ struct StopDetailsFilteredView: View {
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: MapViewModel
+    @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
+
+    @State var inSaveFavoritesFlow = false
 
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
-    var nowInstant: Instant { now.toKotlinInstant() }
+    var nowInstant: KotlinInstant { now.toKotlinInstant() }
+
+    let inspection = Inspection<Self>()
 
     init(
         stopId: String,
@@ -46,7 +50,7 @@ struct StopDetailsFilteredView: View {
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: MapViewModel,
+        mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel
     ) {
         self.stopId = stopId
@@ -131,6 +135,8 @@ struct StopDetailsFilteredView: View {
                 loadingBody()
             }
         }
+        .accessibilityHidden(inSaveFavoritesFlow)
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder
@@ -139,22 +145,59 @@ struct StopDetailsFilteredView: View {
         case let .line(line): line.line
         default: nil
         }
-        VStack(spacing: 8) {
-            StopDetailsFilteredHeader(
-                route: stopData?.lineOrRoute.sortRoute,
-                line: line,
-                stop: stop,
-                pinned: isFavorite,
-                onPin: toggleFavorite,
-                onClose: { nearbyVM.goBack() }
-            )
-            DebugView {
-                Text(verbatim: "stop id: \(stopId)")
-            }.padding(.horizontal, 16)
-            ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+        VStack(spacing: 0) {
+            if let stopData,
+               inSaveFavoritesFlow {
+                SaveFavoritesFlow(lineOrRoute: stopData.lineOrRoute,
+                                  stop: stopData.stop,
+                                  directions: stopData.directions
+                                      .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
+                                  selectedDirection: routeStopDirection.direction,
+                                  context: .stopDetails,
+                                  isFavorite: { rsd in
+                                      stopDetailsVM.isFavorite(
+                                          .Favorite(routeStopDirection: rsd),
+                                          enhancedFavorites: true
+                                      )
+                                  },
+                                  updateFavorites: { newFavorites in
+                                      Task {
+                                          await stopDetailsVM.updateFavorites(
+                                              .Favorites(updatedValues: newFavorites
+                                                  .mapValues { KotlinBoolean(bool: $0) }),
+                                              enhancedFavorites: true
+                                          )
+                                      }
+                                  },
+                                  onClose: {
+                                      inSaveFavoritesFlow = false
+                                  })
+            }
+
+            VStack(spacing: 8) {
+                StopDetailsFilteredHeader(
+                    route: stopData?.lineOrRoute.sortRoute,
+                    line: line,
+                    stop: stop,
+                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
+                    onPin: {
+                        if favoriteBridge is FavoriteBridge.Pinned {
+                            toggleFavorite()
+                        } else {
+                            inSaveFavoritesFlow = true
+                        }
+                    },
+                    onClose: { nearbyVM.goBack() }
+                )
+                /*  DebugView {
+                      Text(verbatim: "stop id: \(stopId)")
+                  }.padding(.horizontal, 16)
+                 */
+                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 
     @ViewBuilder private func loadingBody() -> some View {

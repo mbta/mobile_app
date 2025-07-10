@@ -31,7 +31,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext

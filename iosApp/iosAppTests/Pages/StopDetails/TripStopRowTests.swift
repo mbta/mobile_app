@@ -142,9 +142,7 @@ final class TripStopRowTests: XCTestCase {
             targeted: true
         )
 
-        XCTAssertNotNil(try targeted.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertNotNil(try targeted.inspect().find(imageName: "stop-pin-indicator"))
 
         let notTargeted = TripStopRow(
             stop: .init(
@@ -160,9 +158,7 @@ final class TripStopRowTests: XCTestCase {
             alertSummaries: [:]
         )
 
-        XCTAssertThrowsError(try notTargeted.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertThrowsError(try notTargeted.inspect().find(imageName: "stop-pin-indicator"))
     }
 
     func testAccessibility() throws {

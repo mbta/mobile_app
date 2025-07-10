@@ -61,7 +61,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .commuterRail,
             isFirst: true
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/train arriving at 4:00\sPM/#))
     }
 
     func testPredictionTimeAccessibilityLabel() throws {
@@ -71,7 +71,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .commuterRail,
             isFirst: false
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and at 4:00\u{202F}PM"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM/#))
     }
 
     func testTimeWithStatus() throws {
@@ -85,7 +85,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .commuterRail
         )
         XCTAssertNotNil(try sut.inspect().find(
-            viewWithAccessibilityLabel: "train arriving at 4:00\u{202F}PM, All aboard"
+            viewWithAccessibilityLabelMatching: #/train arriving at 4:00\sPM, All aboard/#
         ))
         XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
     }
@@ -100,7 +100,7 @@ final class UpcomingTripViewTests: XCTestCase {
             )),
             routeType: .commuterRail
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/4:00\sPM train delayed/#))
     }
 
     func testTimeWithStatusDelayed() throws {
@@ -113,7 +113,7 @@ final class UpcomingTripViewTests: XCTestCase {
             )),
             routeType: .commuterRail
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/4:00\sPM train delayed/#))
     }
 
     func testTimeWithScheduleEarly() throws {
@@ -128,7 +128,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .commuterRail
         )
         XCTAssertNotNil(try sut.inspect().find(
-            viewWithAccessibilityLabel: "4:00\u{202F}PM train early, arriving at 3:55\u{202F}PM"
+            viewWithAccessibilityLabelMatching: #/4:00\sPM train early, arriving at 3:55\sPM/#
         ))
     }
 
@@ -144,7 +144,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .commuterRail
         )
         XCTAssertNotNil(try sut.inspect().find(
-            viewWithAccessibilityLabel: "4:00\u{202F}PM train delayed, arriving at 4:05\u{202F}PM"
+            viewWithAccessibilityLabelMatching: #/4:00\sPM train delayed, arriving at 4:05\sPM/#
         ))
     }
 
@@ -157,7 +157,7 @@ final class UpcomingTripViewTests: XCTestCase {
             isOnly: false
         )
         XCTAssertNotNil(try sut.inspect()
-            .find(viewWithAccessibilityLabel: "buses arriving at 4:00\u{202F}PM scheduled"))
+            .find(viewWithAccessibilityLabelMatching: #/buses arriving at 4:00\sPM scheduled/#))
     }
 
     func testScheduledAccessibilityLabel() throws {
@@ -167,7 +167,7 @@ final class UpcomingTripViewTests: XCTestCase {
             routeType: .bus,
             isFirst: false
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and at 4:00\u{202F}PM scheduled"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM scheduled/#))
     }
 
     func testFirstApproachingAccessibilityLabel() throws {
@@ -210,7 +210,7 @@ final class UpcomingTripViewTests: XCTestCase {
         let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
                                    routeType: .heavyRail,
                                    isFirst: false)
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and at 4:00\u{202F}PM cancelled"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM cancelled/#))
     }
 
     func testShuttleAccessibilityLabel() throws {
@@ -241,8 +241,6 @@ final class UpcomingTripViewTests: XCTestCase {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .snowRoute }
         let disruption = UpcomingFormat.Disruption(alert: alert, mapStopRoute: .bus)
         let sut = UpcomingTripView(prediction: .disruption(.init(alert: alert), iconName: disruption.iconName))
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "alert-large-bus-issue"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-large-bus-issue"))
     }
 }

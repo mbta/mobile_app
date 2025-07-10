@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
@@ -39,12 +38,13 @@ import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun StopDetailsFilteredPickerView(
@@ -71,7 +71,7 @@ fun StopDetailsFilteredPickerView(
     val lineOrRoute = routeStopData.lineOrRoute
     val stop = routeStopData.stop
 
-    val availableDirections = routeStopData.data.map { it.directionId }.distinct().sorted()
+    val availableDirections = routeStopData.availableDirections.sorted()
     val directions = routeStopData.directions
 
     val routeHex: String = lineOrRoute.backgroundColor

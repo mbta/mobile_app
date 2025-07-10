@@ -2766,6 +2766,54 @@
         }
       }
     },
+    "add favorite" : {
+      "comment" : "On-click label, as in “double-tap to add favorite”",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "añadir favorito"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ajouter aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ajoute nan favori"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "adicionar favorito"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "thêm mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加收藏"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "新增收藏"
+          }
+        }
+      }
+    },
     "Add favorite stops" : {
       "comment" : "Header for the route details picker when entering from the favorites page to select favorite stops",
       "extractionState" : "manual",
@@ -8308,6 +8356,54 @@
         }
       }
     },
+    "favorite stop" : {
+      "comment" : "Description for an icon representing that a stop is a favorite",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "parada favorita"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "arrêt préféré"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "arè pi renmen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "parada favorita"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "điểm dừng yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "最喜欢的一站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "最喜歡的一站"
+          }
+        }
+      }
+    },
     "Favorites" : {
       "comment" : "The label for the Favorites tab in the navigation bar",
       "extractionState" : "manual",
@@ -11761,6 +11857,53 @@
         }
       }
     },
+    "No results found 🤔" : {
+      "comment" : "Displayed when search has no results",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se encontraron resultados 🤔"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aucun résultat trouvé 🤔"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pa jwenn rezilta 🤔"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nenhum resultado encontrado 🤔"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không tìm thấy kết quả nào 🤔"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未找到结果🤔"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "未找到結果🤔"
+          }
+        }
+      }
+    },
     "No service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -13695,6 +13838,54 @@
         }
       }
     },
+    "remove favorite" : {
+      "comment" : "On-click label, as in “double-tap to remove favorite”",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "eliminar favorito"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "supprimer les favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "retire favori"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "remover favorito"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "xóa mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "删除收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "刪除收藏夾"
+          }
+        }
+      }
+    },
     "Remove the filter and display all routes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13832,6 +14023,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "資源"
+          }
+        }
+      }
+    },
+    "Results failed to load ☹️" : {
+      "comment" : "Displayed when search encounters an error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los resultados no se pudieron cargar ☹️"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Les résultats n’ont pas pu être chargés ☹️"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rezilta yo pa t chaje ☹️"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Falha ao carregar os resultados ☹️"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kết quả không tải được ☹️"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "结果加载失败☹️"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "結果載入失敗☹️"
           }
         }
       }
@@ -14478,7 +14716,7 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Envoyer des commentaires sur l’application"
           }
         },
@@ -17531,6 +17769,54 @@
         }
       }
     },
+    "Tap stars to add to Favorites" : {
+      "comment" : "Hint text that shows up on a toast when the user enters a route on the add favorites flow for the first time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Toca las estrellas para añadirlas a Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Appuyez sur les étoiles pour ajouter aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tape zetwal yo pou ajoute nan Favori yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Toque nas estrelas para adicionar aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhấn vào các ngôi sao để thêm vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "点按星星即可添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "點按星星即可加入收藏夾"
+          }
+        }
+      }
+    },
     "technical problem" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -18859,6 +19145,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trip Planner"
+          }
+        }
+      }
+    },
+    "Try a different spelling or name." : {
+      "comment" : "Displayed when search has no results",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pruebe con una ortografía o un nombre diferente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Essayez une orthographe ou un nom différent."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eseye yon lòt òtograf oswa non."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tente uma grafia ou nome diferente."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hãy thử cách viết hoặc tên khác."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "尝试不同的拼写或名称。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "嘗試不同的拼字或名稱。"
+          }
+        }
+      }
+    },
+    "Try your search again." : {
+      "comment" : "Displayed when search encounters an error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intente su búsqueda nuevamente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Réessayez votre recherche."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eseye rechèch ou an ankò."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tente sua pesquisa novamente."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hãy thử tìm kiếm lại."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "再次尝试搜索。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "再次嘗試搜尋。"
           }
         }
       }

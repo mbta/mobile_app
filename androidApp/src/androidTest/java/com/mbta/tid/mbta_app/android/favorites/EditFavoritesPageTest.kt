@@ -19,8 +19,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext

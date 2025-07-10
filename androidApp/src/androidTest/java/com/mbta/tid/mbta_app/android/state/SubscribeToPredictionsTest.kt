@@ -20,8 +20,8 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

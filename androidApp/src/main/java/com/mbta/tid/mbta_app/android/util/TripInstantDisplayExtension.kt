@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.android.component.formatTime
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.utils.MinutesFormat
 import io.sentry.Sentry
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String): String =

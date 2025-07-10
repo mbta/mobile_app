@@ -11,6 +11,16 @@ import SwiftUI
 import ViewInspector
 
 extension InspectableView {
+    func find(
+        viewWithAccessibilityLabelMatching accessibilityLabelRegex: Regex<Substring>
+    ) throws -> InspectableView<ViewType.ClassifiedView> {
+        try find { try accessibilityLabelRegex.wholeMatch(in: $0.accessibilityLabel().string()) != nil }
+    }
+
+    func find(imageName: String) throws -> InspectableView<ViewType.Image> {
+        try find(ViewType.Image.self, where: { try $0.actualImage().name() == imageName })
+    }
+
     func findAndCallOnChange(
         relation: ViewSearch.Relation = .child,
         newValue value: some Equatable,

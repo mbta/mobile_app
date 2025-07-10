@@ -39,10 +39,15 @@ struct SearchResultsContainer: View {
         nearbyVM.pushNavEntry(.stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil))
     }
 
+    func handleRouteTap(routeId: String) {
+        nearbyVM.pushNavEntry(.routeDetails(.init(routeId: routeId, context: .Details.shared)))
+    }
+
     var body: some View {
         SearchResultsView(
             state: searchVMState,
-            handleStopTap: handleStopTap
+            handleStopTap: handleStopTap,
+            handleRouteTap: handleRouteTap,
         )
         .task {
             for await state in searchVM.models {
@@ -97,7 +102,8 @@ struct SearchResultView_Previews: PreviewProvider {
                     ),
                 ]
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in },
+            handleRouteTap: { _ in },
         ).font(Typography.body).previewDisplayName("SearchResultView")
     }
 }

@@ -18,8 +18,11 @@ import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.math.abs
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.junit.Assert.fail
+import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -110,6 +113,9 @@ fun testKoinApplication(
 ) = koinApplication {
     modules(
         module {
+            single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
+            single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
+
             single<Analytics> { analytics }
             single<PhoenixSocket> { socket }
             single<Clock> { clock }

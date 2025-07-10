@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,19 +46,19 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
+import com.mbta.tid.mbta_app.android.component.BarAndToastScaffold
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
+import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.map.HomeMapView
-import com.mbta.tid.mbta_app.android.map.IMapViewModel
-import com.mbta.tid.mbta_app.android.map.MapViewModel
+import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
@@ -68,6 +67,7 @@ import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
+import com.mbta.tid.mbta_app.android.typeMap
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
@@ -78,6 +78,7 @@ import com.mbta.tid.mbta_app.android.util.selectedStopId
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.history.Visit
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -87,15 +88,16 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -124,12 +126,13 @@ fun MapAndSheetPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    mapViewModel: IMapViewModel = koinInject(),
     errorBannerViewModel: ErrorBannerViewModel =
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
     favoritesViewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModel.Factory()),
+    mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
 
@@ -187,7 +190,9 @@ fun MapAndSheetPage(
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
-            setMapSelectedVehicle = mapViewModel::setSelectedVehicle,
+            setMapSelectedVehicle = { vehicle ->
+                vehicle?.let { mapViewModel.selectedVehicle(it, null, null) }
+            },
             now = now,
         )
 
@@ -258,8 +263,6 @@ fun MapAndSheetPage(
         if (navController.selectedStopId == stopId) return
 
         updateVisitHistory(stopId)
-        mapViewModel.setSelectedVehicle(null)
-
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -269,7 +272,6 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.setSelectedVehicle(null)
         navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -279,7 +281,6 @@ fun MapAndSheetPage(
         routeId: String,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
-        mapViewModel.setSelectedVehicle(null)
         navController.navigateFrom(
             SheetRoutes.RoutePicker::class,
             SheetRoutes.RouteDetails(routeId, context),
@@ -301,7 +302,6 @@ fun MapAndSheetPage(
                 else -> null
             } ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
-
         val routeCard =
             viewModel.routeCardData.value?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
 
@@ -359,14 +359,12 @@ fun MapAndSheetPage(
         onPauseOrDispose { backgroundTimestamp = clock.now().toEpochMilliseconds() }
     }
 
-    LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
-        mapViewModel.loadConfig()
+    LaunchedEffect(
+        mapboxConfigManager.lastMapboxErrorTimestamp.collectAsState(initial = null).value
+    ) {
+        mapboxConfigManager.loadConfig()
     }
-    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.setAlertsData(nearbyTransit.alertData) }
-
-    LaunchedEffect(nearbyTransit.globalResponse) {
-        mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
-    }
+    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) { navigateToEntrypoint() }
     LaunchedEffect(currentNavEntry) {
@@ -558,9 +556,10 @@ fun MapAndSheetPage(
             }
         }
     }
+
     // setting WindowInsets top to 0 to prevent the sheet from having extra padding on top even
     // when not fully expanded https://stackoverflow.com/a/77361483
-    Scaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
+    BarAndToastScaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
         outerSheetPadding ->
         val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
         if (nearbyTransit.hideMaps) {
@@ -658,6 +657,7 @@ fun MapAndSheetPage(
                         routeCardData = routeCardData,
                         viewModel = mapViewModel,
                         isSearchExpanded = searchExpanded,
+                        mapboxConfigManager = mapboxConfigManager,
                     )
                 }
             }

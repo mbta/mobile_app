@@ -24,7 +24,7 @@ struct ContentView: View {
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
-    @StateObject var mapVM = MapViewModel()
+    @StateObject var mapVM = iosApp.MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
@@ -201,6 +201,23 @@ struct ContentView: View {
                 switch navEntry {
                 case .favorites, .nearby:
                     tabbedSheetContents.transition(transition)
+
+                case let .routeDetails(navEntry):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        RouteDetailsView(
+                            selectionId: navEntry.routeId, context: navEntry.context,
+                            onOpenStopDetails: { nearbyVM.pushNavEntry(.stopDetails(
+                                stopId: $0,
+                                stopFilter: nil,
+                                tripFilter: nil
+                            )) }, onBack: { nearbyVM.goBack() }, onClose: { nearbyVM.popToEntrypoint() },
+                            errorBannerVM: errorBannerVM
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    .transition(transition)
 
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit

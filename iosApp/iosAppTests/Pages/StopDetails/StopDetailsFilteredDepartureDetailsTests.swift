@@ -125,6 +125,47 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
     }
 
+    @MainActor
+    func testUpdatesTilesWhenNowChanges() throws {
+        let objects = ObjectCollectionBuilder()
+        let now = Date.now
+        let stop = objects.stop { _ in }
+        let route = objects.route()
+        let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "A" }
+            prediction.departureTime = (now + 15).toKotlinInstant()
+        })
+
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip1], objects: objects)
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: .init(),
+            viewportProvider: .init()
+        )
+
+        let updateNowExp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(text: "A"))
+            XCTAssertNotNil(try view.find(text: "ARR"))
+            try view.find(ViewType.VStack.self).callOnChange(newValue: now + 120)
+            XCTAssertThrowsError(try view.find(text: "ARR"))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        wait(for: [updateNowExp], timeout: 2)
+    }
+
     func testShowsHeadsignAndPillsWhenBranchingLine() throws {
         let objects = ObjectCollectionBuilder()
         let now = Date.now
@@ -299,9 +340,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
         XCTAssertNotNil(try sut.inspect()
             .find(text: "This trip has been cancelled. We’re sorry for the inconvenience."))
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "mode-bus-slash"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-bus-slash"))
     }
 
     func testShowsNoTripCard() throws {

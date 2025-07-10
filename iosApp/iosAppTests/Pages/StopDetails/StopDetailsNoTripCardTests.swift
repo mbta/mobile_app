@@ -23,9 +23,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             accentColor: Color.text,
             routeType: .bus
         ).withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "live-data-slash"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "live-data-slash"))
         XCTAssertNotNil(try sut.inspect().find(text: "Predictions unavailable"))
         XCTAssertNotNil(try sut.inspect().find(ViewType.Divider.self))
         XCTAssertNotNil(try sut.inspect().find(
@@ -40,9 +38,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             accentColor: Color.text,
             routeType: .ferry
         ).withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "mode-ferry-slash"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-ferry-slash"))
         XCTAssertNotNil(try sut.inspect().find(text: "Service ended"))
         XCTAssertThrowsError(try sut.inspect().find(ViewType.Divider.self))
     }
@@ -53,9 +49,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             accentColor: Color.text,
             routeType: .commuterRail
         ).withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "mode-cr-slash"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
         XCTAssertNotNil(try sut.inspect().find(text: "No service today"))
         XCTAssertThrowsError(try sut.inspect().find(ViewType.Divider.self))
     }
