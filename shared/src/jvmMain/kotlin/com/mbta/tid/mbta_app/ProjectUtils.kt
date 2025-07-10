@@ -9,7 +9,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.PropertySpec
 import kotlin.io.path.Path
 import kotlinx.coroutines.runBlocking
-import okio.Path
 import okio.Path.Companion.toOkioPath
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -17,11 +16,9 @@ import org.koin.dsl.module
 val platformModule = module {
     single<SystemPaths> {
         object : SystemPaths {
-            override val data: Path
-                get() = Path("build/projectUtils/data").toOkioPath()
+            override val data = Path("build/projectUtils/data").toOkioPath()
 
-            override val cache: Path
-                get() = Path("build/projectUtils/cache").toOkioPath()
+            override val cache = Path("build/projectUtils/cache").toOkioPath()
         }
     }
 }
@@ -47,13 +44,17 @@ object ProjectUtils {
                 "Orange",
                 "Red",
             )
-        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Red")
+        val nonTypicalPatternsForRoutes = setOf("CR-Providence")
+        val allStopsOnRoutes =
+            setOf("CR-Providence", "Green-B", "Green-C", "Green-D", "Green-E", "Red")
         val stops =
             setOf(
                 "1432",
                 "14320",
                 "2595",
                 "26131",
+                "place-DB-0095",
+                "place-NEC-1919",
                 "place-astao",
                 "place-aqucl",
                 "place-rugg",
@@ -62,7 +63,7 @@ object ProjectUtils {
     }
 
     fun fetchTestData(): Unit = runBlocking {
-        startKoin { modules(appModule(AppVariant.Prod), platformModule) }
+        startKoin { modules(appModule(AppVariant.Staging), platformModule) }
 
         val globalData = GlobalRepository().getGlobalData().dataOrThrow()
 
@@ -74,7 +75,8 @@ object ProjectUtils {
             }
         val patterns =
             globalData.routePatterns.filterValues {
-                routes.containsKey(it.routeId) && it.isTypical()
+                routes.containsKey(it.routeId) &&
+                    (it.isTypical() || it.routeId in TestDataFilters.nonTypicalPatternsForRoutes)
             }
         val stopIdsForRoutes =
             patterns.values
@@ -232,6 +234,8 @@ object ProjectUtils {
 
         testDataFile.writeTo(Path("shared/src/commonMain/kotlin"))
     }
+
+    fun checkRouteBranching(): Unit = runBlocking { RouteBranchingVisualizer.checkRouteBranching() }
 }
 
 private inline fun <reified T : Enum<T>> T?.encode() =
