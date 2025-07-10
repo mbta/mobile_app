@@ -25,7 +25,18 @@ struct FavoritesView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SheetHeader(title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"))
+            SheetHeader(
+                title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
+                rightActionContents: {
+                    NavTextButton(string: NSLocalizedString("Edit",
+                                                            comment: "Button text to enter edit favorites flow"),
+                                  backgroundColor: Color.text.opacity(0.6),
+                                  textColor: Color.fill2) {
+                        nearbyVM.pushNavEntry(.editFavorites)
+                    }
+                }
+            )
+
             ErrorBanner(errorBannerVM)
             RouteCardList(
                 routeCardData: favoritesVMState.routeCardData,

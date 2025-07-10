@@ -7312,6 +7312,9 @@
         }
       }
     },
+    "Done" : {
+      "comment" : "Button text for closing flow"
+    },
     "Drag handle" : {
       "comment" : "Screen reader text for the sheet drag handle to move the textual content over the map",
       "extractionState" : "manual",
@@ -7500,6 +7503,12 @@
           }
         }
       }
+    },
+    "Edit" : {
+      "comment" : "Button text to enter edit favorites flow"
+    },
+    "Edit Favorites" : {
+      "comment" : "Title for flow to edit favorites"
     },
     "electrical work" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
@@ -18443,6 +18452,9 @@
           }
         }
       }
+    },
+    "TODO" : {
+
     },
     "Track %@" : {
       "comment" : "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc",
