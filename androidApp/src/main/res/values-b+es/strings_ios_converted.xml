@@ -74,6 +74,7 @@
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Retrasos&lt;/b></string>
+    <string name="delete">Borrar</string>
     <string name="demonstration">Demostración</string>
     <string name="demonstration_lowercase">demostración</string>
     <string name="departure_tile_on_click_label">mostrar más información sobre este viaje</string>

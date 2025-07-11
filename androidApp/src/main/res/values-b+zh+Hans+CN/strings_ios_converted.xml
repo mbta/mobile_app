@@ -72,6 +72,7 @@
     <string name="delay">延误</string>
     <string name="delays_due_to_cause">由于 &lt;b>%1$s&lt;/b> 造成延误</string>
     <string name="delays_unknown_reason">&lt;b>延误&lt;/b></string>
+    <string name="delete">删除</string>
     <string name="demonstration">示威</string>
     <string name="demonstration_lowercase">示威</string>
     <string name="departure_tile_on_click_label">显示有关此行程的更多信息</string>

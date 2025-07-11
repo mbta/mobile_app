@@ -72,6 +72,7 @@
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Sự chậm trễ&lt;/b></string>
+    <string name="delete">Xóa bỏ</string>
     <string name="demonstration">Biểu tình</string>
     <string name="demonstration_lowercase">cuộc biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>

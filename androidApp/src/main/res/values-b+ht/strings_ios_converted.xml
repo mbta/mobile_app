@@ -77,6 +77,7 @@
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Reta&lt;/b></string>
+    <string name="delete">Efase</string>
     <string name="demonstration">Demonstrasyon</string>
     <string name="demonstration_lowercase">manifestasyon</string>
     <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>

@@ -74,6 +74,7 @@
     <string name="delay">Retard</string>
     <string name="delays_due_to_cause">Retards dus à &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Retards&lt;/b></string>
+    <string name="delete">Supprimer</string>
     <string name="demonstration">Manifestation</string>
     <string name="demonstration_lowercase">manifestation</string>
     <string name="departure_tile_on_click_label">afficher plus d’informations sur ce trajet</string>
